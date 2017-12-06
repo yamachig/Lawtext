@@ -1,0 +1,17 @@
+*~
+*.pyc
+*.cache
+*.DS_Store
+venv*
+*.pyc
+*.egg-info*
+__pycache__*
+__javascript__*
+.vscode
+staticfiles
+.env
+db.sqlite3
+debug.log
+out*
+node_modules
+package-lock.json

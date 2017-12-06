@@ -1,0 +1,684 @@
+﻿{%- macro m_law(law) -%}
+{%- for el in law.children -%}
+  {%- if el.tag == 'LawBody' -%}
+    {{- m_law_body(el) -}}
+  {%- elif el.tag == 'LawNum' -%}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_law_body(law_body) -%}
+{%- for el in law_body.children -%}
+  {%- if el.tag == 'LawTitle' -%}
+    {{- m_law_title(el) -}}
+  {%- elif el.tag == 'EnactStatement' -%}
+    {{- m_enact_statement(el) -}}
+  {%- elif el.tag == 'TOC' -%}
+    {{- m_toc(el) -}}
+  {%- elif el.tag in ['MainProvision', 'SupplProvision'] -%}
+    {{- m_article_group(el) -}}
+  {%- elif el.tag == 'AppdxTable' -%}
+    {{- m_appdx_table(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_law_title(law_title) %}
+<w:p>
+  {{- m_run(law_title, 1) -}}
+</w:p>
+{%- for child in law.children -%}
+  {%- if child.tag == 'LawNum' %}
+<w:p>
+  <w:r>
+    <w:rStyle w:val="Emphasis"/>
+    <w:t>（</w:t>
+  </w:r>
+  {{- m_run(child, 1) -}}
+  <w:r>
+    <w:rStyle w:val="Emphasis"/>
+    <w:t>）</w:t>
+  </w:r>
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_enact_statement(enact_statement) %}
+<w:p>
+  {{- m_run(enact_statement) -}}
+</w:p>
+{%- endmacro -%}
+
+
+
+{%- macro m_toc(toc) %}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"/>
+  </w:pPr>
+</w:p>
+{%- for el in toc.children -%}
+  {%- if el.tag == 'TOCLabel' %}
+<w:p>
+  {{- m_run(el) -}}
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+{%- for el in toc.children -%}
+  {%- if el.tag == 'TOCLabel' -%}
+  {%- elif el.tag in ['TOCPart', 'TOCChapter', 'TOCSection', 'TOCSupplProvision'] -%}
+    {{- m_toc_group(el, 1) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_toc_group(toc_group, indent) %}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="Indent{{ indent }}"/>
+  </w:pPr>
+  {%- for el in toc_group.children -%}
+    {%- if el.tag in ['TOCChapter', 'TOCSection', 'TOCSubsection', 'TOCDivision'] -%}
+    {%- elif el.tag in [
+            'SupplProvisionLabel',
+            'PartTitle', 'ChapterTitle', 'SectionTitle',
+            'SubsectionTitle', 'DivisionTitle'
+        ] -%}
+    {{- m_run(el) -}}
+    {%- elif el.tag == 'ArticleRange' -%}
+      {{- m_run(el) -}}
+    {%- endif -%}
+  {%- endfor %}
+</w:p>
+{%- for el in toc_group.children -%}
+  {%- if el.tag in ['TOCChapter', 'TOCSection', 'TOCSubsection', 'TOCDivision'] -%}
+    {{- m_toc_group(el, indent + 1) -}}
+  {%- elif el.tag in [
+          'SupplProvisionLabel',
+          'PartTitle', 'ChapterTitle', 'SectionTitle',
+          'SubsectionTitle', 'DivisionTitle'
+      ] -%}
+  {%- elif el.tag == 'ArticleRange' -%}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_article_group(article_group) -%}
+{%- for el in article_group.children -%}
+  {%- if el.tag in ['Part', 'Chapter', 'Section', 'Subsection', 'Division'] -%}
+    {{- m_article_group(el) -}}
+  {%- elif el.tag in [
+          'SupplProvisionLabel',
+          'PartTitle', 'ChapterTitle', 'SectionTitle',
+          'SubsectionTitle', 'DivisionTitle'
+      ] -%}
+    {%- set title_indent = {
+            'SupplProvisionLabel': 3,
+            'PartTitle': 2, 'ChapterTitle': 3, 'SectionTitle': 4,
+            'SubsectionTitle': 5, 'DivisionTitle': 6
+        }[el.tag] %}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"/>
+  </w:pPr>
+</w:p>
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="IndentHanging{{ title_indent }}"/>
+  </w:pPr>
+      {{- m_run(el, 1) -}}
+      {%- if 'AmendLawNum' in article_group.attr %}
+  <w:r>
+    <w:rStyle w:val="Emphasis"/>
+    <w:t>
+        （{{- article_group.attr['AmendLawNum'] -}}）
+    </w:t>
+  </w:r>
+      {%- endif -%}
+      {%- if article_group.attr['Extract'] == 'true' -%}
+        {{- m_run('　抄', 1) -}}
+      {%- endif %}
+</w:p>
+  {%- elif el.tag == 'Article' -%}
+    {{- m_article(el) -}}
+  {%- elif el.tag == 'Paragraph' -%}
+    {{- m_paragraph_item(el, {}, 0) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_article(article) %}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"/>
+  </w:pPr>
+</w:p>
+{%- for el in article.children -%}
+  {%- if el.tag == 'ArticleCaption' %}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="IndentHanging{{ 1 }}"/>
+  </w:pPr>
+  {{- m_run(el) -}}
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+{%- for el in article.children -%}
+  {%- if el.tag == 'ArticleCaption' -%}
+  {%- elif el.tag == 'ArticleTitle' -%}
+  {%- elif el.tag == 'Paragraph' -%}
+    {{- m_paragraph_item(el, article, 0) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_paragraph_item(paragraph_item, article, indent) -%}
+
+{%- for el in paragraph_item.children -%}
+  {%- if el.tag == 'ParagraphCaption' %}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="IndentHanging{{ 1 }}"/>
+  </w:pPr>
+  {{- m_run(el) -}}
+</w:p>
+  {%- endif -%}
+{%- endfor %}
+<w:p>
+  <w:pPr>
+
+  {{- context.set('no_title', 1) -}}
+
+  {%- for el in paragraph_item.children -%}
+    {%- if el.tag in [
+            'ParagraphNum', 'ItemTitle',
+            'Subitem1Title', 'Subitem2Title', 'Subitem3Title', 'Subitem4Title',
+            'Subitem5Title', 'Subitem6Title', 'Subitem7Title', 'Subitem8Title',
+            'Subitem9Title', 'Subitem10Title'
+        ] -%}
+
+      {%- if article and paragraph_item.tag == 'Paragraph' and paragraph_item.attr['Num'] == '1' -%}
+        {%- for el2 in article.children -%}
+          {%- if el2.tag == 'ArticleTitle' -%}
+            {%- if el2.children | length -%}
+              {{- context.set('no_title', 0) -}}
+            {%- endif %}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- if el.children | length -%}
+        {{- context.set('no_title', 0) -}}
+      {%- endif %}
+
+    {%- endif %}
+  {%- endfor %}
+
+  {%- if context.get('no_title') -%}
+    <w:pStyle w:val="IndentFirstLine{{ indent }}"/>
+  {%- else -%}
+    <w:pStyle w:val="{{ paragraph_item.tag }}"/>
+  {%- endif -%}
+
+  </w:pPr>
+  {%- for el in paragraph_item.children -%}
+    {%- if el.tag == 'ParagraphCaption' -%}
+    {%- elif el.tag in [
+            'ParagraphNum', 'ItemTitle',
+            'Subitem1Title', 'Subitem2Title', 'Subitem3Title', 'Subitem4Title',
+            'Subitem5Title', 'Subitem6Title', 'Subitem7Title', 'Subitem8Title',
+            'Subitem9Title', 'Subitem10Title'
+        ] -%}
+      {%- if article and paragraph_item.tag == 'Paragraph' and paragraph_item.attr['Num'] == '1' -%}
+        {%- for el2 in article.children -%}
+          {%- if el2.tag == 'ArticleTitle' -%}
+            {{- m_run(el2, 1) -}}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+      {%- if el.children | length -%}
+        {{- m_run(el, 1) -}}
+      {%- endif %}
+      {%- if not context.get('no_title') -%}
+      <w:r>
+        <w:t>{{- '　' -}}</w:t>
+      </w:r>
+      {%- endif -%}
+    {%- elif el.tag in [
+            'ParagraphSentence', 'ItemSentence',
+            'Subitem1Sentence', 'Subitem2Sentence', 'Subitem3Sentence', 'Subitem4Sentence',
+            'Subitem5Sentence', 'Subitem6Sentence', 'Subitem7Sentence', 'Subitem8Sentence',
+            'Subitem9Sentence', 'Subitem10Sentence'
+        ] -%}
+      {{- m_paragraph_item_sentence_run(el) -}}
+    {%- endif -%}
+  {%- endfor %}
+</w:p>
+
+{%- for el in paragraph_item.children -%}
+  {%- if el.tag == 'ParagraphCaption' -%}
+  {%- elif el.tag in [
+          'ParagraphNum', 'ItemTitle',
+          'Subitem1Title', 'Subitem2Title', 'Subitem3Title', 'Subitem4Title',
+          'Subitem5Title', 'Subitem6Title', 'Subitem7Title', 'Subitem8Title',
+          'Subitem9Title', 'Subitem10Title'
+      ] -%}
+  {%- elif el.tag in [
+          'ParagraphSentence', 'ItemSentence',
+          'Subitem1Sentence', 'Subitem2Sentence', 'Subitem3Sentence', 'Subitem4Sentence',
+          'Subitem5Sentence', 'Subitem6Sentence', 'Subitem7Sentence', 'Subitem8Sentence',
+          'Subitem9Sentence', 'Subitem10Sentence'
+      ] -%}
+  {%- elif el.tag in [
+          'Item',
+          'Subitem1', 'Subitem2', 'Subitem3', 'Subitem4',
+          'Subitem5', 'Subitem6', 'Subitem7', 'Subitem8',
+          'Subitem9', 'Subitem10'
+      ] -%}
+    {{- m_paragraph_item(el, article, indent + 1) -}}
+  {%- elif el.tag == 'TableStruct' -%}
+    {{- m_table_struct(el, indent + 1) -}}
+  {%- elif el.tag == 'List' -%}
+    {{- m_list(el, indent + 2) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- endmacro -%}
+
+
+
+{%- macro m_paragraph_item_sentence_run(paragraph_item_sentence) -%}
+{%- for el in paragraph_item_sentence.children -%}
+  {%- if el.tag == 'Sentence' -%}
+    {{- m_run(el) -}}
+  {%- elif el.tag == 'Column' -%}
+    {{- m_column(el) -}}
+    {%- if not loop.last -%}
+      {{- '　' -}}
+    {%- endif -%}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_column(column) -%}
+{%- for el in column.children -%}
+  {%- if el.tag == 'Sentence' -%}
+    {{- m_run(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_table_struct(table_struct, indent) -%}
+{%- for el in table_struct.children -%}
+  {%- if el.tag == 'Table' -%}
+    {{- m_table(el, indent) -}}
+  {%- elif el.tag == 'Remarks' -%}
+    {{- m_remarks(el, indent) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_table(table, indent) -%}
+{%- set table = restructure_table(table) %}
+<w:tbl>
+  <w:tblPr>
+    <w:tblStyle w:val="IndentTable{{ indent }}"/>
+  </w:tblPr>
+  {%- for el in table.children -%}
+    {%- if el.tag == 'TableRow' -%}
+      {{- m_table_row(el) -}}
+    {%- else -%}
+      {{- m_element(el) -}}
+    {%- endif -%}
+  {%- endfor %}
+</w:tbl>
+{%- endmacro -%}
+
+
+
+{%- macro m_table_row(table_row) %}
+  <w:tr>
+    {%- for el in table_row.children -%}
+      {%- if el.tag == 'TableColumn' -%}
+        {{- m_table_column(el) -}}
+      {%- elif el.tag == 'TableColumnMerged' -%}
+        {{- m_table_column_merged(el) -}}
+      {%- else -%}
+        {{- m_element(el) -}}
+      {%- endif -%}
+    {%- endfor %}
+  </w:tr>
+{%- endmacro -%}
+
+
+
+{%- macro m_table_column(table_column) %}
+    <w:tc>
+      <w:tcPr>
+        {%- if 'colspan' in table_column.attr %}
+          <w:gridSpan w:val="{{- table_column.attr['colspan'] -}}"/>
+        {%- endif -%}
+        {%- if 'rowspan' in table_column.attr %}
+          <w:vMerge w:val="restart"/>
+        {%- endif -%}
+        {%- set valign_dict = {
+                'top': 'top', 'middle': 'center', 'bottom': 'bottom'
+            } -%}
+        {%- if 'Align' in table_column.attr %}
+          <w:jc w:val="{{- table_column.attr['Align'] -}}"/>
+        {%- endif -%}
+        {%- if 'Valign' in table_column.attr %}
+          <w:vAlign w:val="{{- valign_dict[table_column.attr['Valign']] -}}"/>
+        {%- else %}
+          <w:vAlign w:val="center"/>
+        {%- endif %}
+        <w:tcBorders>
+          {%- set border_dict = {
+                  'none': 'nil', 'solid': 'single', 'dotted': 'dotted', 'double': 'double'
+              } -%}
+          {%- if 'BorderTop' in table_column.attr %}
+            <w:top w:val="{{- border_dict[table_column.attr['BorderTop']] -}}"/>
+          {%- endif -%}
+          {%- if 'BorderBottom' in table_column.attr %}
+            <w:bottom w:val="{{- border_dict[table_column.attr['BorderTop']] -}}"/>
+          {%- endif -%}
+          {%- if 'BorderLeft' in table_column.attr %}
+            <w:left w:val="{{- border_dict[table_column.attr['BorderTop']] -}}"/>
+          {%- endif -%}
+          {%- if 'BorderRight' in table_column.attr %}
+            <w:right w:val="{{- border_dict[table_column.attr['BorderTop']] -}}"/>
+          {%- endif -%}
+        </w:tcBorders>
+      </w:tcPr>
+      {%- for el in table_column.children -%}
+        {%- if el.tag == 'Sentence' %}
+          <w:p>
+            {{- m_run(el) }}
+          </w:p>
+        {%- else -%}
+          {{- m_element(el) -}}
+        {%- endif -%}
+      {%- endfor %}
+    </w:tc>
+{%- endmacro -%}
+
+
+
+{%- macro m_table_column_merged(table_column) %}
+<w:tc>
+  <w:tcPr>
+    {%- if 'colspan' in table_column.attr -%}
+      <w:gridSpan w:val="{{- table_column.attr['colspan'] -}}"/>
+    {%- endif -%}
+    <w:vMerge/>
+  </w:tcPr>
+  <w:p></w:p>
+</w:tc>
+{%- endmacro -%}
+
+
+
+{%- macro m_appdx_table(appdx_table) %}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"/>
+  </w:pPr>
+</w:p>
+{%- for el in appdx_table.children -%}
+  {%- if el.tag == 'AppdxTableTitle' %}
+<w:p>
+  {{- m_run(el, 1) -}}
+  {%- for el2 in appdx_table.children -%}
+    {%- if el2.tag == 'RelatedArticleNum' -%}
+      {{- m_run(el2, 1) -}}
+    {%- endif -%}
+  {%- endfor %}
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- for el in appdx_table.children -%}
+  {%- if el.tag == 'AppdxTableTitle' -%}
+  {%- elif el.tag == 'RelatedArticleNum' -%}
+  {%- elif el.tag == 'TableStruct' -%}
+    {{- m_table_struct(el, 1) -}}
+  {%- elif el.tag == 'Item' -%}
+    {{- m_paragraph_item(el, {}, 1) -}}
+  {%- elif el.tag == 'Remarks' -%}
+    {{- m_remarks(el, 1) -}}
+  {%- else %}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(child) -}}</w:t>
+  </w:r>
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- endmacro -%}
+
+
+
+{%- macro m_list(list, indent) -%}
+
+{%- for el in list.children -%}
+  {%- if el.tag == 'ListSentence' -%}
+    {{- m_list_sentence(el, indent) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- endmacro -%}
+
+
+
+{%- macro m_list_sentence(list_sentence, indent) -%}
+
+{%- for el in list_sentence.children -%}
+  {%- if el.tag == 'Sentence' %}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="Indent{{ 1 }}"/>
+  </w:pPr>
+  {{- m_run(el) -}}
+</w:p>
+  {%- else %}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(child) -}}</w:t>
+  </w:r>
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- endmacro -%}
+
+
+
+{%- macro m_remarks(remarks, indent) -%}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="IndentHanging{{ indent }}"/>
+  </w:pPr>
+  {%- for el in remarks.children -%}
+    {%- if el.tag == 'RemarksLabel' -%}
+      {{- m_run(el) -}}
+    {%- elif el.tag == 'Sentence' -%}
+      {{- m_run('　') -}}{{- m_run(el) -}}
+      {%- if loop.last -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+</w:p>
+
+{%- for el in remarks.children -%}
+  {%- if el.tag == 'RemarksLabel' -%}
+  {%- elif el.tag == 'Sentence' -%}
+  {%- elif el.tag == 'Item' -%}
+    {{- m_paragraph_item(el, {}, indent) -}}
+  {%- else %}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(child) -}}</w:t>
+  </w:r>
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- endmacro -%}
+
+
+
+{%- macro m_element(el) -%}
+{{- m_element_raw(el)|e -}}
+{%- endmacro -%}
+
+
+
+{%- macro m_element_raw(el) -%}
+{%- if not el -%}
+{%- elif not el.tag -%}
+  {{- el -}}
+{%- else -%}
+  <{{ el.tag }} {%- for key, value in el.attr | dictsort -%}
+    {{- ' ' -}}{{- key -}}="{{- value -}}"
+  {%- endfor -%}>
+    {%- for child in el.children -%}
+      {%- if not child.tag -%}
+        {{- child -}}
+      {%- else -%}
+        {{- m_element_raw(child) -}}
+      {%- endif -%}
+    {%- endfor -%}
+  </{{ el.tag }}>
+{%- endif -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_run(el, emphasis) -%}
+{%- if not el -%}
+{%- elif not el.tag %}
+  <w:r>
+    {%- if emphasis %}
+    <w:rStyle w:val="Emphasis"/>
+    {%- endif %}
+    <w:t>{{- el -}}</w:t>
+  </w:r>
+{%- else -%}
+  {%- for child in el.children -%}
+    {%- if not child.tag %}
+  <w:r>
+    {%- if emphasis %}
+    <w:rStyle w:val="Emphasis"/>
+    {%- endif %}
+    <w:t>{{- child -}}</w:t>
+  </w:r>
+    {%- elif child.tag == 'Ruby' -%}
+      {{- m_ruby_run(child, emphasis) -}}
+    {%- else %}
+  <w:r>
+    {%- if emphasis %}
+    <w:rStyle w:val="Emphasis"/>
+    {%- endif %}
+    <w:t>{{- m_element(child) -}}</w:t>
+  </w:r>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_ruby_run(el, emphasis) %}
+  <w:r>
+    {%- if emphasis %}
+    <w:rStyle w:val="Emphasis"/>
+    {%- endif %}
+    <w:ruby>
+      {%- for child in el.children -%}
+        {%- if child.tag == 'Rt' %}
+      <w:rt>
+        <w:r>
+          <w:t>
+            {%- for subchild in child.children -%}
+              {{ subchild }}
+            {%- endfor -%}
+          </w:t>
+        </w:r>
+      </w:rt>
+        {%- endif -%}
+      {%- endfor %}
+      {%- for child in el.children -%}
+        {%- if not child.tag %}
+      <w:rubyBase>
+        <w:r>
+          <w:t>{{- child -}}</w:t>
+        </w:r>
+      </w:rubyBase>
+        {%- endif -%}
+      {%- endfor %}
+    </w:ruby>
+  </w:r>
+{%- for child in el.children -%}
+  {%- if not child.tag -%}
+  {%- elif child.tag == 'Rt' -%}
+  {%- else %}
+  <w:r>
+    {%- if emphasis %}
+    <w:rStyle w:val="Emphasis"/>
+    {%- endif %}
+    <w:t>{{- m_element(child) -}}</w:t>
+  </w:r>
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+<?xml version="1.0" encoding="utf-8"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    {{- m_law(law) -}}
+  </w:body>
+</w:document>

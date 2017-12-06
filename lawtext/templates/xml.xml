@@ -1,0 +1,21 @@
+﻿{%- macro m_element_raw(el) -%}
+{%- if not el -%}
+{%- elif not el.tag -%}
+  {{- el -}}
+{%- else -%}
+  <{{ el.tag }} {%- for key, value in el.attr | dictsort -%}
+    {{- ' ' -}}{{- key -}}="{{- value -}}"
+  {%- endfor -%}>
+    {%- for child in el.children -%}
+      {%- if not child.tag -%}
+        {{- child -}}
+      {%- else -%}
+        {{- m_element_raw(child) -}}
+      {%- endif -%}
+    {%- endfor -%}
+  </{{ el.tag }}>
+{%- endif -%}
+{%- endmacro -%}
+
+<?xml version="1.0" encoding="utf-8"?>
+{{- m_element_raw(law) -}}

@@ -1,0 +1,146 @@
+{% set font_size_pt = 10.5 -%}
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+
+  <w:docDefaults>
+    <w:rPrDefault>
+      <w:rPr>
+        <w:rFonts w:asciiTheme="minorHAnsi" w:eastAsiaTheme="minorEastAsia" w:hAnsiTheme="minorHAnsi" w:cstheme="minorBidi"/>
+        <w:kern w:val="2"/>
+        <w:sz w:val="21"/>
+        <w:szCs w:val="22"/>
+        <w:lang w:val="en-US" w:eastAsia="ja-JP" w:bidi="ar-SA"/>
+      </w:rPr>
+    </w:rPrDefault>
+    <w:pPrDefault/>
+  </w:docDefaults>
+
+  <w:style w:type="character" w:default="1" w:styleId="DefaultCharacter">
+    <w:name w:val="c00 デフォルト文字"/>
+    <w:uiPriority w:val="1"/>
+  </w:style>
+
+  <w:style w:type="paragraph" w:customStyle="1" w:styleId="EmptyParagraph">
+    <w:name w:val="04 空の段落"/>
+    <w:basedOn w:val="DefaultParagraph"/>
+    <w:qFormat/>
+  </w:style>
+
+  <w:style w:type="character" w:customStyle="1" w:styleId="Emphasis">
+    <w:name w:val="c01 強調文字"/>
+    <w:basedOn w:val="DefaultCharacter"/>
+    <w:uiPriority w:val="1"/>
+    <w:qFormat/>
+    <w:rPr>
+      <w:rFonts w:eastAsia="ＭＳ ゴシック"/>
+    </w:rPr>
+  </w:style>
+
+  <w:style w:type="paragraph" w:default="1" w:styleId="DefaultParagraph">
+    <w:name w:val="00 デフォルト段落"/>
+    <w:qFormat/>
+    <w:pPr>
+      <w:widowControl w:val="0"/>
+      <w:jc w:val="start"/>
+      <w:autoSpaceDE w:val="0"/>
+      <w:autoSpaceDN w:val="0"/>
+    </w:pPr>
+    <w:rPr>
+      <w:rFonts w:ascii="ＭＳ 明朝" w:eastAsia="ＭＳ 明朝" w:hAnsi="ＭＳ 明朝"/>
+      <w:sz w:val="{{ font_size_pt * 2 }}"/>
+    </w:rPr>
+  </w:style>
+
+  <w:style w:type="paragraph" w:customStyle="1" w:styleId="Paragraph">
+    <w:name w:val="01-01 条項"/>
+    <w:basedOn w:val="DefaultParagraph"/>
+    <w:qFormat/>
+    <w:pPr>
+      <w:ind w:hangingChars="100"/>
+    </w:pPr>
+  </w:style>
+
+  <w:style w:type="paragraph" w:customStyle="1" w:styleId="Item">
+    <w:name w:val="01-02 号"/>
+    <w:basedOn w:val="DefaultParagraph"/>
+    <w:qFormat/>
+    <w:pPr>
+      <w:ind w:leftChars="100" w:hangingChars="100"/>
+    </w:pPr>
+  </w:style>
+
+{% for i in range(1, 11) -%}
+<w:style w:type="paragraph" w:customStyle="1" w:styleId="Subitem{{ i }}">
+  <w:name w:val="01-{{ '0' if i < 8 else '' }}{{ i + 2 }} 号の細分{{ i }}"/>
+  <w:basedOn w:val="DefaultParagraph"/>
+  <w:qFormat/>
+  <w:pPr>
+    <w:ind w:leftChars="{{ (i + 1) * 100 }}" w:hangingChars="100"/>
+  </w:pPr>
+</w:style>
+{%- endfor %}
+
+{% for i in range(1, 11) -%}
+<w:style w:type="paragraph" w:customStyle="1" w:styleId="Indent{{ i }}">
+  <w:name w:val="02-{{ '0' if i < 10 else '' }}{{ i }} インデント{{ i }}"/>
+  <w:basedOn w:val="DefaultParagraph"/>
+  <w:qFormat/>
+  <w:pPr>
+    <w:ind w:leftChars="{{ i * 100 }}"/>
+  </w:pPr>
+</w:style>
+{%- endfor %}
+
+{% for i in range(1, 11) -%}
+<w:style w:type="paragraph" w:customStyle="1" w:styleId="IndentHanging{{ i }}">
+  <w:name w:val="03-{{ '0' if i < 10 else '' }}{{ i }} ぶら下げインデント{{ i }}"/>
+  <w:basedOn w:val="DefaultParagraph"/>
+  <w:qFormat/>
+  <w:pPr>
+    <w:ind w:leftChars="{{ i * 100 }}" w:hangingChars="100"/>
+  </w:pPr>
+</w:style>
+{%- endfor %}
+
+{% for i in range(0, 11) -%}
+<w:style w:type="paragraph" w:customStyle="1" w:styleId="IndentFirstLine{{ i }}">
+  <w:name w:val="04-{{ '0' if i < 10 else '' }}{{ i }} 字下げインデント{{ i }}"/>
+  <w:basedOn w:val="DefaultParagraph"/>
+  <w:qFormat/>
+  <w:pPr>
+    <w:ind w:leftChars="{{ i * 100 }}" w:firstLineChars="100"/>
+  </w:pPr>
+</w:style>
+{%- endfor %}
+
+<w:style w:type="table" w:default="1" w:styleId="DefaultTable">
+  <w:name w:val="t00 デフォルト表"/>
+  <w:tblPr>
+    <w:tblBorders>
+      <w:top w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+      <w:left w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+      <w:bottom w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+      <w:right w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+      <w:insideH w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+      <w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+    </w:tblBorders>
+    <w:tblCellMar>
+      <w:top w:w="{{ font_size_pt * 5 }}" w:type="dxa"/>
+      <w:left w:w="{{ font_size_pt * 5 }}" w:type="dxa"/>
+      <w:bottom w:w="{{ font_size_pt * 5 }}" w:type="dxa"/>
+      <w:right w:w="{{ font_size_pt * 5 }}" w:type="dxa"/>
+    </w:tblCellMar>
+  </w:tblPr>
+</w:style>
+
+{% for i in range(1, 11) -%}
+<w:style w:type="table" w:customStyle="1" w:styleId="IndentTable{{ i }}">
+  <w:name w:val="t01-{{ '0' if i < 10 else '' }}{{ i }} インデント表{{ i }}"/>
+  <w:basedOn w:val="DefaultTable"/>
+  <w:tblPr>
+    <w:tblInd w:w="{{ font_size_pt * 20 * i + font_size_pt * 5 }}" w:type="dxa"/>
+  </w:tblPr>
+</w:style>
+{%- endfor %}
+
+</w:styles>

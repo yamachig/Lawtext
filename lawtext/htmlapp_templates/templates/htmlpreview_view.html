@@ -1,0 +1,73 @@
+var Lawtext = Lawtext || {};
+Lawtext.htmlpreview_view_template = `
+
+<style>
+.lawtext-htmlpreview-view {
+}
+
+.lawtext-htmlpreview-view .state-block {
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.lawtext-htmlpreview-view .hello-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.lawtext-htmlpreview-view .no-law-block {
+  padding-top: 5rem;
+}
+
+.lawtext-htmlpreview-view .htmlpreview-block {
+  padding: 2rem 3rem 10rem 3rem;
+}
+</style>
+
+<% if(data.opening_file) { %>
+<div class="lawtext-htmlpreview-overlay state-block">
+  <div class="container-fluid">
+    <p>ファイルを読み込み中です...</p>
+  </div>
+</div>
+<% } %>
+
+<% if(!data.opening_file && _(law_html).isNull()) { %>
+<div class="lawtext-htmlpreview-overlay hello-block">
+  <div>
+    <div class="container-fluid">
+      <p style="font-size: 3em; text-align: center;">
+        Lawtextへようこそ！
+      </p>
+    </div>
+  </div>
+  <div>
+    <div class="container-fluid">
+      <div style="text-align: center;">
+        <button class="lawtext-open-file-button btn btn-primary">法令ファイルを開く</button>
+      </div>
+    </div>
+  </div>
+  <div style="align-self: center; max-width: 500px; margin-top: 4em; color: gray;">
+    <div class="container-fluid">
+      <p style="text-align: center;">
+        法令ファイルがありませんか？
+      </p>
+      <ul>
+        <li><a href="http://elaws.e-gov.go.jp/" target="_blank">e-Gov</a>から法令XMLをダウンロードできます。</li>
+        <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank">Lawtext</a>ファイルを作れます。<a class="lawtext-download-sample-lawtext-button" href="#" onclick="return false;">サンプルをダウンロード</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<% if(!_(law_html).isNull()) { %>
+<div class="htmlpreview-block">
+  <%= law_html %>
+</div>
+<% } %>
+
+`;
