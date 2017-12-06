@@ -7,12 +7,19 @@ Lawtext
 Lawtext makes easy to manage law documents utilizing numerous freely available tools for source code management. For example:
 
     - **Editing with usual text editors** such as notepad. You don't need special editing apps.
-    - **Version vontrol with common VCS** such as Git, Mercurial, etc.
-    - **Comparing between versions and making patchs**\ , using diff.
+    - **Version vontrol with common VCS** such as
+      `Git <https://git-scm.com/>`__ and
+      `Mercurial <https://www.mercurial-scm.org/>`__\ , etc.
+      `Sample <https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commits>`__
+    - **Comparing between versions and making patchs**\ , using diff, VCS host such as
+      `GitHub <https://github.com/>`__ and
+      `Bitbucket <https://bitbucket.org/>`__\ , or code editor like
+      `Visual Studio Code <https://code.visualstudio.com/>`__\ .
+      `Sample <https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commits>`__
 
 Lawtext (\*.law.txt) can be converted from `Japanese Standard Law XML <http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2>`__ (\*.xml), to Word document (\*.docx), to Web page (\*.html), and to Japanese Standard Law XML again.
 
-Try it: https://lawtext.herokuapp.com/
+Try it: https://yamachig.github.io/lawtext-app/
 
 ------------
 
@@ -21,12 +28,15 @@ Try it: https://lawtext.herokuapp.com/
 Lawtextを用いることで、無償で提供されている数多くのソースコード管理ツールを活用することができるようになり、法令文書の管理が容易になります。例えば：
 
     - **普通のテキストエディタ**\ （メモ帳など）\ **を用いた編集**\ 。特殊な編集ソフトは必要ありません。
-    - **一般的なバージョン管理システム**\ （GitやMercurialなど）\ **を用いたバージョン管理**\ 。
-    - diffを用いた\ **バージョン間比較と差分の生成**\ 。
+    - **一般的なバージョン管理システム**\ （\ `Git <https://git-scm.com/>`__ や `Mercurial <https://www.mercurial-scm.org/>`__ など）\ **を用いたバージョン管理**\ 。
+      `サンプル <https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commits>`__
+    - diffやバージョン管理ホスティングサービス（\ `GitHub <https://github.com/>`__ や
+      `Bitbucket <https://bitbucket.org/>`__ など）、ソースコードエディタ（\ `Visual Studio Code <https://code.visualstudio.com/>`__ など）を用いた\ **バージョン間比較と差分の生成**\ 。
+      `サンプル <https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commits>`__
 
 Lawtext (\*.law.txt) は `法令標準XML <http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2>`__ (\*.xml) から変換することができ、また、Wordファイル（\*.docx）、Webページ（\*.html）、法令標準XMLへ変換することができます。
 
-こちらからお試しください: https://lawtext.herokuapp.com/
+こちらからお試しください: https://yamachig.github.io/lawtext-app/
 
 ------------
 
