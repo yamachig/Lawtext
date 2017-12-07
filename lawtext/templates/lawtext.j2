@@ -192,7 +192,7 @@
     {%- for _ in range(indent) -%}
       {{- indent_space -}}
     {%- endfor -%}
-    {%- if el.children -%}
+    {%- if el.children | length -%}
       {{- m_text(el) -}}
       {{- context.set('paragraph_item_title_exists', 1) -}}
     {%- endif -%}

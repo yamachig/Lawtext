@@ -36,8 +36,8 @@ def main(outdir, preserve_compiled_files):
         ], shell=True).decode(encoding='utf-8')
         write_text(templates_js_path, outtext)
 
-    parse_decorate_js_path = Path(outdir / 'src' / '_parse_decorate.js')
-    if not preserve_compiled_files or not parse_decorate_js_path.exists():
+    import_parse_decorate_js_path = Path(outdir / 'src' / 'parse_decorate.js')
+    if not preserve_compiled_files or not import_parse_decorate_js_path.exists():
         subprocess.check_call([
             'transcrypt',
             '--build',
@@ -50,7 +50,7 @@ def main(outdir, preserve_compiled_files):
         ])
         shutil.copyfile(
             str(Path(__file__).parent.resolve() / '__javascript__' / '_parse_decorate.js'),
-            str(parse_decorate_js_path),
+            str(import_parse_decorate_js_path),
         )
 
 

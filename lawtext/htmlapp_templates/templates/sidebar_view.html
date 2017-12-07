@@ -28,6 +28,7 @@ Lawtext.sidebar_view_template = `
 
 .lawtext-sidebar-view .law-nav-block {
   flex-grow: 1;
+  flex-basis: 0;
   overflow-y: auto;
   border-top: 1px solid #d6d6d6;
   border-bottom: 1px solid #d6d6d6;
@@ -171,7 +172,6 @@ function process_suppl_provision(suppl_provision) {
         var amend_law_num = suppl_provision.attr["AmendLawNum"] || "";
         var text = name + (amend_law_num ? ("（" + amend_law_num + "）") : "");
         text = text.replace(/[\s　]+/, "");
-        console.log(text);
         var obj = $("<div>")
             .addClass("toc-item law-link")
             .css({"padding-left": (indent + 2) + "em"})

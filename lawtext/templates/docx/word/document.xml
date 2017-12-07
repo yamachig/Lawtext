@@ -90,7 +90,7 @@
 {%- macro m_toc_group(toc_group, indent) %}
 <w:p>
   <w:pPr>
-    <w:pStyle w:val="Indent{{ indent }}"/>
+    <w:pStyle w:val="IndentHanging{{ indent }}"/>
   </w:pPr>
   {%- for el in toc_group.children -%}
     {%- if el.tag in ['TOCChapter', 'TOCSection', 'TOCSubsection', 'TOCDivision'] -%}
