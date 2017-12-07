@@ -15,7 +15,7 @@ Lawtext makes easy to manage law documents utilizing numerous freely available t
       `GitHub <https://github.com/>`__ and
       `Bitbucket <https://bitbucket.org/>`__\ , or code editor like
       `Visual Studio Code <https://code.visualstudio.com/>`__\ .
-      `Sample <https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed>`__
+      `Sample <https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split>`__
 
 Lawtext (\*.law.txt) can be converted from `Japanese Standard Law XML <http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2>`__ (\*.xml), to Word document (\*.docx), to Web page (\*.html), and to Japanese Standard Law XML again.
 
@@ -33,7 +33,7 @@ Lawtextを用いることで、無償で提供されている数多くのソー�
       `サンプル <https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commits>`__
     - diffやバージョン管理ホスティングサービス（\ `GitHub <https://github.com/>`__ や
       `Bitbucket <https://bitbucket.org/>`__ など）、ソースコードエディタ（\ `Visual Studio Code <https://code.visualstudio.com/>`__ など）を用いた\ **バージョン間比較と差分の生成**\ 。
-      `サンプル <https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed>`__
+      `サンプル <https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split>`__
 
 Lawtext (\*.law.txt) は `法令標準XML <http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2>`__ (\*.xml) から変換することができ、また、Wordファイル（\*.docx）、Webページ（\*.html）、法令標準XMLへ変換することができます。
 
