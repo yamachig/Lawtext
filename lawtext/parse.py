@@ -3,10 +3,11 @@ import re
 DEFAULT_INDENT = '　'
 
 class LawtextParseError(Exception):
-    def __init__(self, *args, lines=[], lineno=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.lines = lines
+    def __init__(self, message, lineno, lines):
+        super().__init__(message)
+        self.message = message
         self.lineno = lineno
+        self.lines = lines
     def __str__(self):
         lines = [
             f'{ "==>" if lineno == self.lineno else "   " }{lineno:5}|{self.lines[lineno]}\n'
@@ -15,22 +16,24 @@ class LawtextParseError(Exception):
                 min(len(self.lines), self.lineno + 2 + 1),
             )
         ]
-        return f'''\
-{' '.join(self.args)}
-{''.join(lines)}
-'''
+        lines_str = ''.join(lines)
+        return self.message + '\r\n\r\n' + lines_str
 
 class LexerError(Exception):
-    def __init__(self, *args, lineno=None, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, message, lineno):
+        super().__init__(message)
+        self.message = message
         self.lineno = lineno
 
 class LexerInternalError(Exception):
-    pass
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message
 
 class ParserError(Exception):
-    def __init__(self, *args, lineno=None, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, message, lineno):
+        super().__init__(message)
+        self.message = message
         self.lineno = lineno
 
 
@@ -129,7 +132,7 @@ def lex(lines):
         try:
             ret.append(lex_line(line, indent))
         except LexerInternalError as error:
-            raise LexerError(*error.args, lineno=lineno)
+            raise LexerError(error.message, lineno)
 
     return ret
 
@@ -302,7 +305,7 @@ class Parser:
                 if line_type == 'DefaultLine':
                     match = re_LawNum.match(data['body'])
                     if not match:
-                        ParserError('法令番号は括弧（　）で囲ってください。', lineno=lineno)
+                        ParserError('法令番号は括弧（　）で囲ってください。', lineno)
                     law_num = {
                         'tag': 'LawNum',
                         'attr': {},
@@ -383,7 +386,7 @@ class Parser:
                     if indent <= toc_base_indent:
                         break
                     elif indent != toc_base_indent + 1:
-                        ParserError('目次の内容のインデントが整っていません。', lineno=lineno)
+                        ParserError('目次の内容のインデントが整っていません。', lineno)
                     sub_toc_group = self.process_toc_group()
                     if sub_toc_group:
                         toc_group_children.append(sub_toc_group)
@@ -434,7 +437,7 @@ class Parser:
                 line_type, indent, data = self.here()
                 if line_type == 'DefaultLine':
                     if indent != toc_base_indent + 1:
-                        ParserError('目次の内容のインデントが整っていません。', lineno=lineno)
+                        ParserError('目次の内容のインデントが整っていません。', lineno)
                     toc_group = self.process_toc_group()
                     if toc_group:
                         toc_children.append(toc_group)
@@ -1196,7 +1199,7 @@ def parse_lawtext(lawtext):
         lexed_lines = lex(lines)
     except LexerError as error:
         lineno = error.lineno
-        raise LawtextParseError(*error.args, lines=lines, lineno=lineno)
+        raise LawtextParseError(error.message, lineno, lines)
 
     parser = Parser(lexed_lines)
 
@@ -1204,14 +1207,14 @@ def parse_lawtext(lawtext):
         law = parser.process_law()
     except ParserError as error:
         lineno = error.lineno
-        raise LawtextParseError(*error.args, lines=lines, lineno=lineno)
+        raise LawtextParseError(error.message, lineno, lines)
     except LawtextParseError as e:
         raise e
     except Exception as e:
-        raise LawtextParseError('この行の処理中にエラーが発生しました。', lines=lines, lineno=parser.lineno)
+        raise LawtextParseError('この行の処理中にエラーが発生しました。', parser.lineno, lines)
 
     if parser.continuing():
         lineno = parser.lineno
-        raise LawtextParseError('この行の種類が判別できません。', lines=lines, lineno=lineno)
+        raise LawtextParseError('この行の種類が判別できません。', lineno, lines)
 
     return law

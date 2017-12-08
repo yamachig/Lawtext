@@ -201,16 +201,35 @@ Lawtext.Data = Backbone.Model.extend({
         var file = evt.target.files[0];
         var reader = new FileReader();
         reader.onload = (function(e) {
+            $(evt.target).val('');
             var div = $('<div>');
             var intext = e.target.result;
             var law = null;
             if(/^<\?xml/.test(intext.trim())) {
                 law = Lawtext.xml_to_json(intext);
             } else {
-                law = _parse_decorate.parse_lawtext(intext);
-                _parse_decorate.decorate(law);
+                try {
+                    law = _parse_decorate.parse_lawtext(intext);
+                    _parse_decorate.decorate(law);
+                } catch(err) {
+                    var err_str = err.__str__();
+                    err_str = err_str.replace(/ /g, "&nbsp;")
+                    var modal = $("#errorModal");
+                    var pre = $("<pre>")
+                        .css({"white-space": "pre-line"})
+                        .css({"line-height": "1.2em"})
+                        .css({"padding": "1em 0"})
+                        .html(err_str);
+                    modal.find(".modal-body").html(pre);
+                    modal.modal('show');
+                    law = null;
+                }
             }
-            self.set({opening_file: false, law: law});
+            if(law) {
+                self.set({opening_file: false, law: law});
+            } else {
+                self.set({opening_file: false});
+            }
         });
         reader.readAsText(file);
     },

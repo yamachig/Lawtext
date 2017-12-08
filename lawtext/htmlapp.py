@@ -41,17 +41,18 @@ def main(outdir, preserve_compiled_files):
         subprocess.check_call([
             'transcrypt',
             '--build',
-            '--esv', '6',
+            # '--esv', '6',
             '--fcall',
             '--dextex',
             '--nomin',
             '--xpath', str(Path(__file__).parents[1].resolve()),
             str(Path(__file__).parent.resolve() / '_parse_decorate.py'),
         ])
-        shutil.copyfile(
-            str(Path(__file__).parent.resolve() / '__javascript__' / '_parse_decorate.js'),
-            str(import_parse_decorate_js_path),
-        )
+        outtext = (Path(__file__).parent.resolve() / '__javascript__' / '_parse_decorate.js').read_text(encoding='utf-8')
+        outtext = outtext.replace('error.args', 'error.__args__')
+        outtext = outtext.replace('join (self.args)', 'join (self.__args__)')
+        outtext = outtext.replace(', __kwargtrans__ (kwargs)', ', __kwargtrans__ ([].slice.apply (arguments).slice (2))')
+        write_text(import_parse_decorate_js_path, outtext)
 
 
 if __name__ == '__main__':
