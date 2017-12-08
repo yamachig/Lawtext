@@ -46,13 +46,11 @@ def detect_indent(lines):
         if match:
             indents.add(match.group(1))
 
-    if not indents:
+    if not len(indents):
         return DEFAULT_INDENT
 
     indents = sorted(indents, key=len)
-    indent = indents[0] if indents else DEFAULT_INDENT
-
-    return indent
+    return indents[0]
 
 def indent_level(indents, indent):
     s, n = re.subn(indent, '', indents)

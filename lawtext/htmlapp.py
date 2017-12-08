@@ -41,7 +41,7 @@ def main(outdir, preserve_compiled_files):
         subprocess.check_call([
             'transcrypt',
             '--build',
-            # '--esv', '6',
+            '--esv', '6',
             '--fcall',
             '--dextex',
             '--nomin',
