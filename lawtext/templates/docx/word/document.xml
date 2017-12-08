@@ -323,7 +323,7 @@
   {%- elif el.tag == 'Column' -%}
     {{- m_column(el) -}}
     {%- if not loop.last -%}
-      {{- '　' -}}
+      {{- m_run('　') -}}
     {%- endif -%}
   {%- else -%}
     {{- m_element(el) -}}
