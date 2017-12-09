@@ -1179,20 +1179,23 @@ class Parser:
                     'attr': {},
                     'children': [fig],
                 }
-                appdx_style_children.append(style)
+                style_struct_children.append(style)
 
             remarks = self.process_remarks(current_indent + 1)
             if remarks:
                 style_struct_children.append(remarks)
 
-            appdx_style = {
-                'tag': 'AppdxStyle',
-                'attr': {},
-                'children': [{
+            if len(style_struct_children):
+                appdx_style_children.append({
                     'tag': 'StyleStruct',
                     'attr': {},
                     'children': style_struct_children,
-                }],
+                })
+
+            appdx_style = {
+                'tag': 'AppdxStyle',
+                'attr': {},
+                'children': appdx_style_children,
             }
 
         return appdx_style

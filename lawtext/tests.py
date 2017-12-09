@@ -220,11 +220,24 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
                         yield from self._compare_text(lines_1, lines_2, sub_lines, law_num)
                     elif type_ == 'xml':
                         yield from self._compare_xml(lines_1, lines_2, sub_lines, law_num, filename1=filename1, filename2=filename2)
+                    else:
+                        raise Exception
                     sub_lines = []
                     lines_1 = []
                     lines_2 = []
                     continue
                 lines_2.append(line)
+        if sub_lines:
+            state = 0
+            if type_ == 'text':
+                yield from self._compare_text(lines_1, lines_2, sub_lines, law_num)
+            elif type_ == 'xml':
+                yield from self._compare_xml(lines_1, lines_2, sub_lines, law_num, filename1=filename1, filename2=filename2)
+            else:
+                raise Exception
+            sub_lines = []
+            lines_1 = []
+            lines_2 = []
 
     def _flatten_html(self, html_raw):
         import lxml.html
@@ -312,6 +325,12 @@ class TestRender(AbstractTest):
 
                 self.assertNotEqual(rendered_text, '')
 
+                rendered_text = re.sub(
+                    r'\[.+?\]',
+                    '[別画面で表示]',
+                    rendered_text,
+                )
+
                 print('  Comparing ...', file=sys.stderr)
                 out_text = self._get_diff_out_text(
                     self._get_reference_text(law_id).split(),
@@ -350,8 +369,13 @@ class TestRender(AbstractTest):
                 rendered_body_el = rendered_el.find('.//body')
                 rendered_text = '\n'.join(rendered_body_el.itertext())
 
-
                 self.assertNotEqual(rendered_text, '')
+
+                rendered_text = re.sub(
+                    r'\[.+?\]',
+                    '[別画面で表示]',
+                    rendered_text,
+                )
 
                 print('  Comparing ...', file=sys.stderr)
                 out_text = self._get_diff_out_text(
@@ -454,8 +478,14 @@ class TestRender(AbstractTest):
                     flags=re.M,
                 )
                 rendered_text = re.sub(
-                    r'[(?:</?Ruby>)(?:</?Rt>)]',
+                    r'(?:</?Ruby>)|(?:</?Rt>)',
                     '',
+                    rendered_text,
+                    flags=re.M,
+                )
+                rendered_text = re.sub(
+                    r'^(\s*)\.\.(?:\s*)figure::(?:\s*)(?:.+)$',
+                    r'\1[別画面で表示]',
                     rendered_text,
                     flags=re.M,
                 )
