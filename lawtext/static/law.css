@@ -82,3 +82,7 @@
 .law td {
     border: 1px solid black;
 }
+
+.law pre {
+    white-space: pre-wrap;
+}

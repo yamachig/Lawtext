@@ -213,10 +213,9 @@ Lawtext.Data = Backbone.Model.extend({
                     _parse_decorate.decorate(law);
                 } catch(err) {
                     var err_str = err.__str__();
-                    err_str = err_str.replace(/ /g, "&nbsp;")
                     var modal = $("#errorModal");
                     var pre = $("<pre>")
-                        .css({"white-space": "pre-line"})
+                        .css({"white-space": "pre-wrap"})
                         .css({"line-height": "1.2em"})
                         .css({"padding": "1em 0"})
                         .html(err_str);

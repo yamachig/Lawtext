@@ -474,7 +474,9 @@ paragraph-item-body
 
 
 {%- macro m_element(el) -%}
-{{- m_element_raw(el)|e -}}
+<pre>
+{{- ('' + m_element_raw(el)) | escape -}}
+</pre>
 {%- endmacro -%}
 
 

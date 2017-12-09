@@ -4,7 +4,11 @@
     {{- m_law_body(el) -}}
   {%- elif el.tag == 'LawNum' -%}
   {%- else -%}
-    {{- m_element(el) -}}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}
@@ -24,7 +28,11 @@
   {%- elif el.tag == 'AppdxTable' -%}
     {{- m_appdx_table(el) -}}
   {%- else -%}
-    {{- m_element(el) -}}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}
@@ -80,7 +88,11 @@
   {%- elif el.tag in ['TOCPart', 'TOCChapter', 'TOCSection', 'TOCSupplProvision'] -%}
     {{- m_toc_group(el, 1) -}}
   {%- else -%}
-    {{- m_element(el) -}}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}
@@ -115,7 +127,11 @@
       ] -%}
   {%- elif el.tag == 'ArticleRange' -%}
   {%- else -%}
-    {{- m_element(el) -}}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}
@@ -163,7 +179,11 @@
   {%- elif el.tag == 'Paragraph' -%}
     {{- m_paragraph_item(el, {}, 0) -}}
   {%- else -%}
-    {{- m_element(el) -}}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}
@@ -192,7 +212,11 @@
   {%- elif el.tag == 'Paragraph' -%}
     {{- m_paragraph_item(el, article, 0) -}}
   {%- else -%}
-    {{- m_element(el) -}}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}
@@ -308,7 +332,11 @@
   {%- elif el.tag == 'List' -%}
     {{- m_list(el, indent + 2) -}}
   {%- else -%}
-    {{- m_element(el) -}}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
   {%- endif -%}
 {%- endfor -%}
 
@@ -326,7 +354,9 @@
       {{- m_run('　') -}}
     {%- endif -%}
   {%- else -%}
-    {{- m_element(el) -}}
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}
@@ -338,7 +368,9 @@
   {%- if el.tag == 'Sentence' -%}
     {{- m_run(el) -}}
   {%- else -%}
-    {{- m_element(el) -}}
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}
@@ -352,7 +384,11 @@
   {%- elif el.tag == 'Remarks' -%}
     {{- m_remarks(el, indent) -}}
   {%- else -%}
-    {{- m_element(el) -}}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}
@@ -369,7 +405,15 @@
     {%- if el.tag == 'TableRow' -%}
       {{- m_table_row(el) -}}
     {%- else -%}
-      {{- m_element(el) -}}
+  <w:tr>
+    <w:tc>
+      <w:p>
+        <w:r>
+          <w:t>{{- m_element(el) -}}</w:t>
+        </w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
     {%- endif -%}
   {%- endfor %}
 </w:tbl>
@@ -385,7 +429,13 @@
       {%- elif el.tag == 'TableColumnMerged' -%}
         {{- m_table_column_merged(el) -}}
       {%- else -%}
-        {{- m_element(el) -}}
+    <w:tc>
+      <w:p>
+        <w:r>
+          <w:t>{{- m_element(el) -}}</w:t>
+        </w:r>
+      </w:p>
+    </w:tc>
       {%- endif -%}
     {%- endfor %}
   </w:tr>
@@ -433,11 +483,15 @@
       </w:tcPr>
       {%- for el in table_column.children -%}
         {%- if el.tag == 'Sentence' %}
-          <w:p>
-            {{- m_run(el) }}
-          </w:p>
+        <w:p>
+          {{- m_run(el) }}
+        </w:p>
         {%- else -%}
-          {{- m_element(el) -}}
+        <w:p>
+          <w:r>
+            <w:t>{{- m_element(el) -}}</w:t>
+          </w:r>
+        </w:p>
         {%- endif -%}
       {%- endfor %}
     </w:tc>
@@ -490,7 +544,7 @@
   {%- else %}
 <w:p>
   <w:r>
-    <w:t>{{- m_element(child) -}}</w:t>
+    <w:t>{{- m_element(el) -}}</w:t>
   </w:r>
 </w:p>
   {%- endif -%}
@@ -506,7 +560,11 @@
   {%- if el.tag == 'ListSentence' -%}
     {{- m_list_sentence(el, indent) -}}
   {%- else -%}
-    {{- m_element(el) -}}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
   {%- endif -%}
 {%- endfor -%}
 
@@ -527,7 +585,7 @@
   {%- else %}
 <w:p>
   <w:r>
-    <w:t>{{- m_element(child) -}}</w:t>
+    <w:t>{{- m_element(el) -}}</w:t>
   </w:r>
 </w:p>
   {%- endif -%}
@@ -561,7 +619,7 @@
   {%- else %}
 <w:p>
   <w:r>
-    <w:t>{{- m_element(child) -}}</w:t>
+    <w:t>{{- m_element(el) -}}</w:t>
   </w:r>
 </w:p>
   {%- endif -%}
@@ -572,7 +630,7 @@
 
 
 {%- macro m_element(el) -%}
-{{- m_element_raw(el)|e -}}
+{{- ('' + m_element_raw(el)) | escape -}}
 {%- endmacro -%}
 
 
