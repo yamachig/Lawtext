@@ -102,6 +102,8 @@ function process_law_body(law_body) {
             process_suppl_provision(el);
         } else if(el.tag == "AppdxTable") {
             process_appdx_table(el);
+        } else if(el.tag == "AppdxStyle") {
+            process_appdx_style(el);
         }
     });
 }
@@ -192,6 +194,21 @@ function process_appdx_table(appdx_table) {
             .addClass("toc-item law-link")
             .css({"padding-left": (indent + 2) + "em"})
             .attr({"data-tag": appdx_table.tag})
+            .attr({"data-name": name})
+            .attr({"title": name})
+            .html(name);
+        print(obj[0].outerHTML);
+    }
+}
+
+function process_appdx_style(appdx_style) {
+    var appdx_style_title = _(appdx_style.children).findWhere({tag: "AppdxStyleTitle"});
+    if(appdx_style_title) {
+        var name = appdx_style_title.children[0];
+        var obj = $("<div>")
+            .addClass("toc-item law-link")
+            .css({"padding-left": (indent + 2) + "em"})
+            .attr({"data-tag": appdx_style.tag})
             .attr({"data-name": name})
             .attr({"title": name})
             .html(name);

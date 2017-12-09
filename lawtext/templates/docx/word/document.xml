@@ -27,6 +27,8 @@
     {{- m_article_group(el) -}}
   {%- elif el.tag == 'AppdxTable' -%}
     {{- m_appdx_table(el) -}}
+  {%- elif el.tag == 'AppdxStyle' -%}
+    {{- m_appdx_style(el) -}}
   {%- else -%}
 <w:p>
   <w:r>
@@ -513,6 +515,44 @@
 
 
 
+{%- macro m_style_struct(style_struct, indent) -%}
+{%- for el in style_struct.children -%}
+  {%- if el.tag == 'StyleStructTitle' -%}
+<w:p>
+  {{- m_run(el, indent) -}}
+</w:p>
+  {%- elif el.tag == 'Style' -%}
+    {{- m_style(el, indent) -}}
+  {%- elif el.tag == 'Remarks' -%}
+    {{- m_remarks(el) -}}
+  {%- else -%}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_style(style, indent) -%}
+{%- for el in style.children -%}
+  {%- if el.tag == 'Fig' -%}
+    {{- m_fig(el, indent) -}}
+  {%- else -%}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
 {%- macro m_appdx_table(appdx_table) %}
 <w:p>
   <w:pPr>
@@ -554,6 +594,41 @@
 
 
 
+{%- macro m_appdx_style(appdx_style) -%}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"/>
+  </w:pPr>
+</w:p>
+{#- new #}
+{# line -#}
+{%- for el in appdx_style.children -%}
+  {%- if el.tag == 'AppdxStyleTitle' -%}
+<w:p>
+  {{- m_run(el, 1) -}}
+  {%- for el2 in appdx_style.children -%}
+    {%- if el2.tag == 'RelatedArticleNum' -%}
+      {{- m_run(el2, 1) -}}
+    {%- endif -%}
+  {%- endfor %}
+</w:p>
+  {%- elif el.tag == 'RelatedArticleNum' -%}
+  {%- elif el.tag == 'StyleStruct' -%}
+    {{- m_style_struct(el, 1) -}}
+  {%- elif el.tag == 'Remarks' -%}
+    {{- m_remarks(el) -}}
+  {%- else -%}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
 {%- macro m_list(list, indent) -%}
 
 {%- for el in list.children -%}
@@ -591,6 +666,26 @@
   {%- endif -%}
 {%- endfor -%}
 
+{%- endmacro -%}
+
+
+
+{%- macro m_fig(fig, indent) -%}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="Indent{{ 1 }}"/>
+  </w:pPr>
+  <w:r>
+    <w:t>[{{ fig.attr['src'] -}}]</w:t>
+  </w:r>
+</w:p>
+{%- for el in fig.children -%}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
+{%- endfor -%}
 {%- endmacro -%}
 
 

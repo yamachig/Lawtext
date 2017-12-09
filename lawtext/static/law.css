@@ -69,6 +69,18 @@
     padding-left: 1em;
 }
 
+.law .appdx_style {
+    margin-top: 1em;
+}
+
+.law .appdx_style_title {
+    font-weight: bold;
+}
+
+.law .appdx_style_body {
+    padding-left: 1em;
+}
+
 .law .list {
     text-indent: 0;
     padding-left: 1em;

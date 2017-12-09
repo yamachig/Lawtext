@@ -23,6 +23,8 @@
     {{- m_article_group(el) -}}
   {%- elif el.tag == 'AppdxTable' -%}
     {{- m_appdx_table(el) -}}
+  {%- elif el.tag == 'AppdxStyle' -%}
+    {{- m_appdx_style(el) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -387,6 +389,36 @@ paragraph-item-body
 
 
 
+{%- macro m_style_struct(style_struct) -%}
+{%- for el in style_struct.children -%}
+  {%- if el.tag == 'StyleStructTitle' -%}
+    <div class="style_struct_title">
+      {{- m_text(el) -}}
+    </div>
+  {%- elif el.tag == 'Style' -%}
+    {{- m_style(el) -}}
+  {%- elif el.tag == 'Remarks' -%}
+    {{- m_remarks(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_style(style) -%}
+{%- for el in style.children -%}
+  {%- if el.tag == 'Fig' -%}
+    {{- m_fig(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
 {%- macro m_appdx_table(appdx_table) -%}
 <div class="appdx_table">
 {%- for el in appdx_table.children -%}
@@ -411,6 +443,40 @@ paragraph-item-body
     {{- m_table_struct(el) -}}
   {%- elif el.tag == 'Item' -%}
     {{- m_paragraph_item(el) -}}
+  {%- elif el.tag == 'Remarks' -%}
+    {{- m_remarks(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+</div>
+</div>
+{%- endmacro -%}
+
+
+
+{%- macro m_appdx_style(appdx_style) -%}
+<div class="appdx_style">
+{%- for el in appdx_style.children -%}
+  {%- if el.tag == 'AppdxStyleTitle' -%}
+    <div class="appdx_style_title law-anchor"
+        data-tag="{{- appdx_style.tag -}}"
+        data-name="{{- el.children[0] -}}">
+      {{- m_text(el) -}}
+      {%- for el2 in appdx_style.children -%}
+        {%- if el2.tag == 'RelatedArticleNum' -%}
+          {{- m_text(el2) -}}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+{%- endfor -%}
+<div class="appdx_style_body">
+{%- for el in appdx_style.children -%}
+  {%- if el.tag == 'AppdxStyleTitle' -%}
+  {%- elif el.tag == 'RelatedArticleNum' -%}
+  {%- elif el.tag == 'StyleStruct' -%}
+    {{- m_style_struct(el) -}}
   {%- elif el.tag == 'Remarks' -%}
     {{- m_remarks(el) -}}
   {%- else -%}
@@ -449,6 +515,15 @@ paragraph-item-body
   {%- endif -%}
 {%- endfor -%}
 </div>
+{%- endmacro -%}
+
+
+
+{%- macro m_fig(fig) -%}
+[{{ fig.attr['src'] | escape -}}]
+{%- for el in fig.children -%}
+  {{- m_element(el) -}}
+{%- endfor -%}
 {%- endmacro -%}
 
 

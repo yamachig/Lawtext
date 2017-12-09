@@ -17,7 +17,7 @@ class LawtextParseError(Exception):
             )
         ]
         lines_str = ''.join(lines)
-        return self.message + '\r\n\r\n' + lines_str
+        return self.message + '\n\n' + lines_str
 
 class LexerError(Exception):
     def __init__(self, message, lineno):
@@ -64,6 +64,7 @@ def indent_level(indents, indent):
 
 re_TC1stLine   = re.compile(r'^(?P<indents>\s*)\* - (?P<tcbody>.*)$')
 re_TCnthLine   = re.compile(r'^(?P<indents>\s*)  - (?P<tcbody>.*)$')
+re_FigLine   = re.compile(r'^(?P<indents>\s*)\.\.(?:\s+)figure::(?:\s+)(?P<figbody>.*)$')
 re_DefaultLine = re.compile(r'^(?P<indents>\s*)(?P<linebody>\S.*)$')
 re_BlankLine   = re.compile(r'^\s*$')
 
@@ -83,6 +84,16 @@ def lex_line(line, indent):
             'TCnthLine',
             indent_level(match.group(1), indent),
             lex_tcbody(match.group(2)),
+        ]
+
+    match = re_FigLine.match(line)
+    if match:
+        return [
+            'FigLine',
+            indent_level(match.group(1), indent),
+            {
+                'body': match.group(2),
+            }
         ]
 
     match = re_DefaultLine.match(line)
@@ -238,6 +249,7 @@ re_ParagraphCaption  = re.compile(r'^[(（](?P<body>.+?)[）)]$')
 re_ParagraphItemBody = re.compile(r'^(?P<title>\S+)\s+(?P<body>\S.*)$')
 re_SupplProvisionLabel = re.compile(r'^(?P<title>.+?)\s*(?:[(（](?P<amend_law_num>.+?)[）)])?(?:\s+(?P<extract>抄?))?$')
 re_AppdxTableLabel = re.compile(r'^(?P<title>.+?)\s*(?:(?P<related_article_num>[(（].+?[）)]))?$')
+re_AppdxStyleLabel = re.compile(r'^(?P<title>.+?)\s*(?:(?P<related_article_num>[(（].+?[）)]))?$')
 
 class Parser:
     def __init__(self, lexed_lines, lineno=0):
@@ -951,6 +963,27 @@ class Parser:
 
         return table_column
 
+    def process_fig(self, current_indent):
+        self.skip_blank_lines()
+        fig = None
+
+        line_type, indent, data = self.here()
+
+        if (
+            line_type == 'FigLine' and
+            indent == current_indent
+        ):
+            fig = {
+                'tag': 'Fig',
+                'attr': {
+                    'src': data['body'],
+                },
+                'children': [],
+            }
+            self.forward()
+
+        return fig
+
     def process_list(self, current_indent):
         self.skip_blank_lines()
         list_ = None
@@ -1066,11 +1099,13 @@ class Parser:
         line_type, indent, data = self.here()
         next_line_type, next_indent, next_data = self.next()
         match = re_AppdxTableLabel.match(data['body'])
+        titlejoin = re.sub(r'\s+', '', match.group(1)) if match else ''
 
         if (
             line_type == 'DefaultLine' and
             indent == 0 and
-            match
+            match and
+            titlejoin.startswith('別表')
         ):
             appdx_table_children.append({
                 'tag': 'AppdxTableTitle',
@@ -1102,6 +1137,65 @@ class Parser:
             }
 
         return appdx_table
+
+    def process_appdx_style(self):
+        self.skip_blank_lines()
+        appdx_style = None
+        appdx_style_children = []
+        style_struct_children = []
+
+        line_type, indent, data = self.here()
+        match = re_AppdxStyleLabel.match(data['body'])
+        body_split = re.split(r'\s+', data['body'], maxsplit=1) if len(data) else ['']
+
+        if (
+            line_type == 'DefaultLine' and
+            indent == 0 and
+            body_split[0].startswith('様式')
+        ):
+            appdx_style_children.append({
+                'tag': 'AppdxStyleTitle',
+                'attr': {},
+                'children': [match.group(1)],
+            })
+            if match.group(2):
+                appdx_style_children.append({
+                    'tag': 'RelatedArticleNum',
+                    'attr': {},
+                    'children': [match.group(2)],
+                })
+            self.forward()
+
+            current_indent = indent
+
+            remarks = self.process_remarks(current_indent + 1)
+            if remarks:
+                style_struct_children.append(remarks)
+
+            fig = self.process_fig(current_indent + 1)
+            if fig:
+                style = {
+                    'tag': 'Style',
+                    'attr': {},
+                    'children': [fig],
+                }
+                appdx_style_children.append(style)
+
+            remarks = self.process_remarks(current_indent + 1)
+            if remarks:
+                style_struct_children.append(remarks)
+
+            appdx_style = {
+                'tag': 'AppdxStyle',
+                'attr': {},
+                'children': [{
+                    'tag': 'StyleStruct',
+                    'attr': {},
+                    'children': style_struct_children,
+                }],
+            }
+
+        return appdx_style
 
     def process_remarks(self, current_indent):
         self.skip_blank_lines()
@@ -1173,6 +1267,10 @@ class Parser:
             appdx_table = self.process_appdx_table()
             if appdx_table:
                 law_body_children.append(appdx_table)
+                continue
+            appdx_style = self.process_appdx_style()
+            if appdx_style:
+                law_body_children.append(appdx_style)
                 continue
             break
 

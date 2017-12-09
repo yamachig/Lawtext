@@ -28,6 +28,8 @@
     {{- m_article_group(el) -}}
   {%- elif el.tag == 'AppdxTable' -%}
     {{- m_appdx_table(el) -}}
+  {%- elif el.tag == 'AppdxStyle' -%}
+    {{- m_appdx_style(el) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -349,6 +351,39 @@
 
 
 
+{%- macro m_style_struct(style_struct, indent) -%}
+{%- for el in style_struct.children -%}
+  {%- if el.tag == 'StyleStructTitle' -%}
+    {%- for _ in range(indent) -%}
+      {{- indent_space -}}
+    {%- endfor -%}
+    {{- m_text(el) -}}
+{#- new #}
+{# line -#}
+  {%- elif el.tag == 'Style' -%}
+    {{- m_style(el, indent) -}}
+  {%- elif el.tag == 'Remarks' -%}
+    {{- m_remarks(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_style(style, indent) -%}
+{%- for el in style.children -%}
+  {%- if el.tag == 'Fig' -%}
+    {{- m_fig(el, indent) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
 {%- macro m_appdx_table(appdx_table) -%}
 {#- new #}
 {# line -#}
@@ -367,6 +402,34 @@
     {{- m_table_struct(el, 1) -}}
   {%- elif el.tag == 'Item' -%}
     {{- m_paragraph_item(el, 1) -}}
+  {%- elif el.tag == 'Remarks' -%}
+    {{- m_remarks(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+{#- new #}
+{# line -#}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_appdx_style(appdx_style) -%}
+{#- new #}
+{# line -#}
+{%- for el in appdx_style.children -%}
+  {%- if el.tag == 'AppdxStyleTitle' -%}
+    {{- m_text(el) -}}
+    {%- for el2 in appdx_style.children -%}
+      {%- if el2.tag == 'RelatedArticleNum' -%}
+        {{- m_text(el2) -}}
+      {%- endif -%}
+    {%- endfor -%}
+{#- new #}
+{# line -#}
+  {%- elif el.tag == 'RelatedArticleNum' -%}
+  {%- elif el.tag == 'StyleStruct' -%}
+    {{- m_style_struct(el, 1) -}}
   {%- elif el.tag == 'Remarks' -%}
     {{- m_remarks(el) -}}
   {%- else -%}
@@ -403,6 +466,20 @@
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
+{%- macro m_fig(fig, indent) -%}
+{%- for _ in range(indent) -%}
+  {{- indent_space -}}
+{%- endfor -%}
+.. figure:: {{ fig.attr['src'] -}}
+{#- new #}
+{# line -#}
+{%- for el in fig.children -%}
+  {{- m_element(el) -}}
 {%- endfor -%}
 {%- endmacro -%}
 
