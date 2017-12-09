@@ -484,7 +484,7 @@ paragraph-item-body
 {%- macro m_element_raw(el) -%}
 {%- if not el -%}
 {%- elif not el.tag -%}
-  {{- el -}}
+  {{- el | escape -}}
 {%- else -%}
   <{{ el.tag }} {%- for key, value in el.attr | dictsort -%}
     {{- ' ' -}}{{- key -}}="{{- value -}}"

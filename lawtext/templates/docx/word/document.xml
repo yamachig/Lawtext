@@ -638,7 +638,7 @@
 {%- macro m_element_raw(el) -%}
 {%- if not el -%}
 {%- elif not el.tag -%}
-  {{- el -}}
+  {{- el | escape -}}
 {%- else -%}
   <{{ el.tag }} {%- for key, value in el.attr | dictsort -%}
     {{- ' ' -}}{{- key -}}="{{- value -}}"
@@ -663,7 +663,7 @@
     {%- if emphasis %}
     <w:rStyle w:val="Emphasis"/>
     {%- endif %}
-    <w:t>{{- el -}}</w:t>
+    <w:t>{{- el | escape -}}</w:t>
   </w:r>
 {%- else -%}
   {%- for child in el.children -%}
@@ -672,7 +672,7 @@
     {%- if emphasis %}
     <w:rStyle w:val="Emphasis"/>
     {%- endif %}
-    <w:t>{{- child -}}</w:t>
+    <w:t>{{- child | escape -}}</w:t>
   </w:r>
     {%- elif child.tag == 'Ruby' -%}
       {{- m_ruby_run(child, emphasis) -}}
