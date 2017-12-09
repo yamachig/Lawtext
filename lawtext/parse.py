@@ -241,15 +241,15 @@ def get_sentences(text):
 
     return els
 
-re_LawNum            = re.compile(r'^[(（](?P<body>.+?)[）)]$')
-re_ArticleRange      = re.compile(r'(?P<body>[(（].+?[）)])$')
-re_ArticleCaption    = re.compile(r'^[(（](?P<body>.+?)[）)]$')
-re_ArticleBody       = re.compile(r'^(?P<title>\S+)\s+(?P<body>\S.*)$')
-re_ParagraphCaption  = re.compile(r'^[(（](?P<body>.+?)[）)]$')
-re_ParagraphItemBody = re.compile(r'^(?P<title>\S+)\s+(?P<body>\S.*)$')
-re_SupplProvisionLabel = re.compile(r'^(?P<title>.+?)\s*(?:[(（](?P<amend_law_num>.+?)[）)])?(?:\s+(?P<extract>抄?))?$')
-re_AppdxTableLabel = re.compile(r'^(?P<title>.+?)\s*(?:(?P<related_article_num>[(（].+?[）)]))?$')
-re_AppdxStyleLabel = re.compile(r'^(?P<title>.+?)\s*(?:(?P<related_article_num>[(（].+?[）)]))?$')
+re_LawNum            = re.compile(r'^[(（](?P<body>.+?)[）)](?:\s*)$')
+re_ArticleRange      = re.compile(r'(?P<body>[(（].+?[）)])(?:\s*)$')
+re_ArticleCaption    = re.compile(r'^[(（](?P<body>.+?)[）)](?:\s*)$')
+re_ArticleBody       = re.compile(r'^(?P<title>\S+)\s+(?P<body>\S.*)(?:\s*)$')
+re_ParagraphCaption  = re.compile(r'^[(（](?P<body>.+?)[）)](?:\s*)$')
+re_ParagraphItemBody = re.compile(r'^(?P<title>\S+)\s+(?P<body>\S.*)(?:\s*)$')
+re_SupplProvisionLabel = re.compile(r'^(?P<title>.+?)\s*(?:[(（](?P<amend_law_num>.+?)[）)])?(?:\s+(?P<extract>抄?))?(?:\s*)$')
+re_AppdxTableLabel = re.compile(r'^(?P<title>.+?)\s*(?:(?P<related_article_num>[(（].+?[）)]))?(?:\s*)$')
+re_AppdxStyleLabel = re.compile(r'^(?P<title>.+?)\s*(?:(?P<related_article_num>[(（].+?[）)]))?(?:\s*)$')
 
 class Parser:
     def __init__(self, lexed_lines, lineno=0):
