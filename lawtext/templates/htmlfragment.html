@@ -161,11 +161,13 @@
   {%- endif -%}
 {%- endfor -%}
 <div class="article-body">
+{{- context.set('first_paragraph', 1) -}}
 {%- for el in article.children -%}
   {%- if el.tag == 'ArticleCaption' -%}
   {%- elif el.tag == 'ArticleTitle' -%}
   {%- elif el.tag == 'Paragraph' -%}
-    {{- m_paragraph_item(el, article) -}}
+    {{- m_paragraph_item(el, article, context.get('first_paragraph')) -}}
+    {{- context.set('first_paragraph', 0) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -176,7 +178,7 @@
 
 
 
-{%- macro m_paragraph_item(paragraph_item, article) -%}
+{%- macro m_paragraph_item(paragraph_item, article, first_paragraph=0) -%}
 <div class="paragraph-item">
 {%- for el in paragraph_item.children -%}
   {%- if el.tag == 'ParagraphCaption' -%}
@@ -198,7 +200,7 @@
           'Subitem9Title', 'Subitem10Title'
       ] -%}
 
-    {%- if article and paragraph_item.tag == 'Paragraph' and paragraph_item.attr['Num'] == '1' -%}
+    {%- if article and paragraph_item.tag == 'Paragraph' and first_paragraph -%}
       {%- for el2 in article.children -%}
         {%- if el2.tag == 'ArticleTitle' -%}
           {%- if el2.children | length -%}
@@ -229,7 +231,7 @@ paragraph-item-body
           'Subitem5Title', 'Subitem6Title', 'Subitem7Title', 'Subitem8Title',
           'Subitem9Title', 'Subitem10Title'
       ] -%}
-    {%- if article and paragraph_item.tag == 'Paragraph' and paragraph_item.attr['Num'] == '1' -%}
+    {%- if article and paragraph_item.tag == 'Paragraph' and first_paragraph -%}
       {%- for el2 in article.children -%}
         {%- if el2.tag == 'ArticleTitle' -%}
           <span class="article-title law-anchor"
