@@ -1248,11 +1248,12 @@ class Parser:
         if law_title:
             law_body_children.append(law_title)
 
-        if law_title:
-
+        while self.continuing():
             enact_statement = self.process_enact_statement()
             if enact_statement:
                 law_body_children.append(enact_statement)
+                continue
+            break
 
         toc = self.process_toc()
         if toc:
