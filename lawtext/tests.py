@@ -1,9 +1,18 @@
-import unittest
-import sys
-import re
 import io
+import re
+import sys
+import unittest
 from abc import ABCMeta
+import time
 
+import requests
+
+import requests_cache
+
+requests_cache.install_cache()
+
+_web_law_cache = {}
+_ref_text_cache = {}
 
 
 class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
@@ -23,6 +32,7 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
             ('406CO0000000265', '平成六年政令第二百六十五号', '行政手続法施行令'),
             ('428M60000008031', '平成二十八年総務省令第三十一号', '第二種指定電気通信設備接続料規則'),
             ('426M60000002044', '平成二十六年内閣府令第四十四号', '子ども・子育て支援法施行規則'),
+            ('129AC0000000089', '明治二十九年法律第八十九号', '民法'),
         ]
     ]
 
@@ -247,14 +257,15 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
         return html_text
 
     def _request(self, url):
-        from urllib.request import urlopen, Request
-        req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36')
-        with urlopen(req) as f:
-            response = f.read().decode('utf-8')
-        return response
+        import requests
+        response = requests.get(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+        })
+        return response.text
 
     def _get_web_law(self, law_num):
+        if law_num in _web_law_cache:
+            return _web_law_cache[law_num]
         from urllib.parse import quote
         from xml.etree import ElementTree as ET
         from html import unescape
@@ -268,9 +279,13 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
 
         law = xml_to_json(xml_law_data_text)
 
+        _web_law_cache[law_num] = law
+
         return law
 
     def _get_reference_text(self, law_id):
+        if law_id in _ref_text_cache:
+            return _ref_text_cache[law_id]
         import lxml.html
 
         html_url = f'http://elaws.e-gov.go.jp/search/elawsSearch/elaws_search/lsg0500/viewContents?lawId={law_id}'
@@ -279,6 +294,8 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
         html_el = lxml.html.fromstring(html_raw)
         html_law_el = html_el.find('.//div[@class="LawBody"]')
         html_text = '\n'.join(html_law_el.itertext())
+
+        _ref_text_cache[law_id] = html_text
 
         return html_text
 
@@ -312,14 +329,14 @@ class TestRender(AbstractTest):
 
             with self.subTest(**law):
 
-                print(f'Subtest {law_name}（{law_num}）', file=sys.stderr)
+                print(f'\nSubtest {law_name}（{law_num}）', file=sys.stderr)
 
-                print('  Downloading web XML ...', file=sys.stderr)
+                # print('  Downloading web XML ...', file=sys.stderr)
                 xml_law_data_text = self._get_web_law(law_num)
-                print('  Rendering HTML fragment ...', file=sys.stderr)
+                # print('  Rendering HTML fragment ...', file=sys.stderr)
                 rendered_raw = render_htmlfragment(xml_law_data_text)
 
-                print('  Extracting text from HTML fragment ...', file=sys.stderr)
+                # print('  Extracting text from HTML fragment ...', file=sys.stderr)
                 rendered_el = lxml.html.fromstring(rendered_raw)
                 rendered_text = '\n'.join(rendered_el.itertext())
 
@@ -354,17 +371,17 @@ class TestRender(AbstractTest):
 
             with self.subTest(**law):
 
-                print(f'Subtest {law_name}（{law_num}）', file=sys.stderr)
+                print(f'\nSubtest {law_name}（{law_num}）', file=sys.stderr)
 
-                print('  Downloading web XML ...', file=sys.stderr)
+                # print('  Downloading web XML ...', file=sys.stderr)
                 xml_law_data_text = self._get_web_law(law_num)
-                print('  Rendering HTML ...', file=sys.stderr)
+                # print('  Rendering HTML ...', file=sys.stderr)
                 rendered_raw = render_html(xml_law_data_text)
                 rendered_out_path = (out_test_dir / f'rendered_{law_name}.html').resolve()
                 print(f'    Writing "{str(rendered_out_path)}" ...', file=sys.stderr)
                 rendered_out_path.write_text(rendered_raw, encoding='utf-8')
 
-                print('  Extracting text from HTML ...', file=sys.stderr)
+                # print('  Extracting text from HTML ...', file=sys.stderr)
                 rendered_el = lxml.html.fromstring(rendered_raw)
                 rendered_body_el = rendered_el.find('.//body')
                 rendered_text = '\n'.join(rendered_body_el.itertext())
@@ -401,17 +418,17 @@ class TestRender(AbstractTest):
 
             with self.subTest(**law):
 
-                print(f'Subtest {law_name}（{law_num}）', file=sys.stderr)
+                print(f'\nSubtest {law_name}（{law_num}）', file=sys.stderr)
 
-                print('  Downloading web XML ...', file=sys.stderr)
+                # print('  Downloading web XML ...', file=sys.stderr)
                 xml_law_data_text = self._get_web_law(law_num)
-                print('  Rendering docx ...', file=sys.stderr)
+                # print('  Rendering docx ...', file=sys.stderr)
                 rendered_docx = render_docx(xml_law_data_text)
                 rendered_out_path = (out_test_dir / f'rendered_{law_name}.docx').resolve()
                 print(f'    Writing "{str(rendered_out_path)}" ...', file=sys.stderr)
                 rendered_out_path.write_bytes(rendered_docx)
 
-                print('  Extracting text from docx ...', file=sys.stderr)
+                # print('  Extracting text from docx ...', file=sys.stderr)
                 with io.BytesIO(rendered_docx) as f:
                     with ZipFile(f) as zip_:
                         rendered_document = zip_.read('word/document.xml').decode()
@@ -463,14 +480,14 @@ class TestRender(AbstractTest):
 
             with self.subTest(**law):
 
-                print(f'Subtest {law_name}（{law_num}）', file=sys.stderr)
+                print(f'\nSubtest {law_name}（{law_num}）', file=sys.stderr)
 
-                print('  Downloading web XML ...', file=sys.stderr)
+                # print('  Downloading web XML ...', file=sys.stderr)
                 xml_law_data_text = self._get_web_law(law_num)
-                print('  Rendering Lawtext ...', file=sys.stderr)
+                # print('  Rendering Lawtext ...', file=sys.stderr)
                 rendered_text = render_lawtext(xml_law_data_text)
 
-                print('  Extracting text from Lawtext ...', file=sys.stderr)
+                # print('  Extracting text from Lawtext ...', file=sys.stderr)
                 rendered_text = re.sub(
                     r'^\s*(?:\* )?- (?:\[\S+?\])*(.*)$',
                     r'\1',
@@ -520,27 +537,36 @@ class TestParse(AbstractTest):
 
             with self.subTest(**law):
 
-                print(f'Subtest {law_name}（{law_num}）', file=sys.stderr)
+                print(f'\nSubtest {law_name}（{law_num}）', file=sys.stderr)
                 out_test_dir.mkdir(parents=True, exist_ok=True)
 
-                print('  Downloading web XML ...', file=sys.stderr)
+                # print('  Downloading web XML ...', file=sys.stderr)
                 web_law = self._get_web_law(law_num)
-                print('  Parsing web XML ...', file=sys.stderr)
+                # print('  Parsing web XML ...', file=sys.stderr)
                 web_xml = render_xml(web_law)
                 web_outtext = minidom.parseString(web_xml).toprettyxml(indent='  ')
                 web_out_path = (out_test_dir / f'web_{law_name}.xml').resolve()
                 print(f'    Writing "{str(web_out_path)}" ...', file=sys.stderr)
                 web_out_path.write_text(web_outtext, encoding='utf-8')
 
-                print('  Rendering lawtext ...', file=sys.stderr)
+                # print('  Rendering lawtext ...', file=sys.stderr)
                 lawtext = render_lawtext(web_law)
                 rendered_out_path = (out_test_dir / f'rendered_{law_name}.law.txt').resolve()
                 print(f'    Writing "{str(rendered_out_path)}" ...', file=sys.stderr)
                 rendered_out_path.write_text(lawtext, encoding='utf-8')
 
                 print('  Parsing lawtext ...', file=sys.stderr)
+
+                t0 = time.time()
                 parsed_law = parse_lawtext(lawtext)
+                t1 = time.time()
                 decorate(parsed_law)
+                t2 = time.time()
+                lines_count = len(lawtext.splitlines())
+
+                print(f'    parse:    {(t1 - t0) * 1_000_000 / lines_count:3,.0f} μs/line  =  {(t1 - t0) * 1_000:5,.0f} ms / {lines_count:,} lines')
+                print(f'    decorate: {(t2 - t1) * 1_000_000 / lines_count:3,.0f} μs/line  =  {(t2 - t1) * 1_000:5,.0f} ms / {lines_count:,} lines')
+
                 parsed_xml = render_xml(parsed_law)
                 parsed_outtext = minidom.parseString(parsed_xml).toprettyxml(indent="  ")
                 parsed_out_path = (out_test_dir / f'parsed_{law_name}.xml').resolve()
@@ -578,4 +604,3 @@ class TestParse(AbstractTest):
                         filename1=str(web_out_path),
                         filename2=str(parsed_out_path),
                     )
-
