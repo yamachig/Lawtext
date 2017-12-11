@@ -40,9 +40,21 @@ Lawtext (\*.law.txt) は `法令標準XML <http://search.e-gov.go.jp/servlet/Pub
 - こちらからお試しください: https://yamachig.github.io/lawtext-app/ (IE以外のブラウザでご利用ください☺)
 - オフライン版をダウンロード: https://github.com/yamachig/lawtext-app/blob/master/app.zip?raw=true
 
-------------
 
-Example 例
+
+Screenshots / スクリーンショット
+========================
+
+.. image:: https://github.com/yamachig/Lawtext/wiki/images/screenshot1.png
+    :target: https://github.com/yamachig/Lawtext/wiki/images/screenshot1.png
+
+
+.. image:: https://github.com/yamachig/Lawtext/wiki/images/screenshot2.png
+    :target: https://github.com/yamachig/Lawtext/wiki/images/screenshot2.png
+
+
+
+Example of Lawtext file / Lawtextファイルの例
 ========================
 
 .. sourcecode :: none
