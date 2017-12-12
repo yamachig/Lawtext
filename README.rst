@@ -21,6 +21,7 @@ Lawtext (\*.law.txt) can be converted from `Japanese Standard Law XML <http://se
 
 - Try it: https://yamachig.github.io/lawtext-app/ (IE is not supported ☺)
 - Download offline version: https://github.com/yamachig/lawtext-app/blob/master/app.zip?raw=true
+- VSCode extension: https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext
 
 ------------
 
@@ -39,6 +40,7 @@ Lawtext (\*.law.txt) は `法令標準XML <http://search.e-gov.go.jp/servlet/Pub
 
 - こちらからお試しください: https://yamachig.github.io/lawtext-app/ (IE以外のブラウザでご利用ください☺)
 - オフライン版をダウンロード: https://github.com/yamachig/lawtext-app/blob/master/app.zip?raw=true
+- VSCode拡張機能: https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext
 
 
 
@@ -51,6 +53,9 @@ Screenshots / スクリーンショット
 
 .. image:: https://github.com/yamachig/Lawtext/wiki/images/screenshot2.png
     :target: https://github.com/yamachig/Lawtext/wiki/images/screenshot2.png
+
+.. image:: https://github.com/yamachig/Lawtext/wiki/images/screenshot3.png
+    :target: https://github.com/yamachig/Lawtext/wiki/images/screenshot3.png
 
 
 
