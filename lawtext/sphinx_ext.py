@@ -1,21 +1,53 @@
-from lawtext.parse import parse_lawtext
-from lawtext.render import render_htmlfragment
-from docutils import nodes
-from docutils.parsers.rst import Directive
 from pathlib import Path
 
-class LawTextDirective(Directive):
+from docutils import nodes
+from docutils.parsers.rst import Directive, directives
+from docutils.utils.error_reporting import ErrorString
 
+from lawtext.parse import parse_lawtext
+from lawtext.render import render_htmlfragment
+
+
+class LawTextDirective(Directive):
     has_content = True
 
+    option_spec = {
+        'file': directives.path,
+        'encoding': directives.encoding,
+    }
+
     def run(self):
+        attributes = {
+            'format': 'html',
+        }
         encoding = self.options.get(
             'encoding', self.state.document.settings.input_encoding)
-        lawtext = '\n'.join(self.content)
+
+        if self.content:
+            if 'file' in self.options:
+                raise self.error(
+                    '"%s" directive may not both specify an external file '
+                    'and have content.' % self.name)
+            lawtext = '\n'.join(self.content)
+
+        elif 'file' in self.options:
+
+            source_dir = Path(self.state.document.current_source).parent
+            path = source_dir / self.options['file']
+            try:
+                lawtext = path.read_text(encoding)
+                self.state.document.settings.record_dependencies.add(str(path))
+            except IOError as error:
+                raise self.severe(u'Problems with "%s" directive path:\n%s.'
+                                  % (self.name, ErrorString(error)))
+            except UnicodeError as error:
+                raise self.severe(u'Problem with "%s" directive:\n%s'
+                    % (self.name, ErrorString(error)))
+            attributes['source'] = path
+
         law = parse_lawtext(lawtext)
         rendered = render_htmlfragment(law)
-        self.assert_has_content()
-        raw_node = nodes.raw('', rendered, format='html')
+        raw_node = nodes.raw('', rendered, **attributes)
         (raw_node.source, raw_node.line) = self.state_machine.get_source_and_line(self.lineno)
         return [raw_node]
 
