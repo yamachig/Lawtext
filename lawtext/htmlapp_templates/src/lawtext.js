@@ -273,7 +273,13 @@ Lawtext.Data = Backbone.Model.extend({
         zip.file('word/_rels/document.xml.rels', s_document_rels)
         zip.file('word/document.xml', s_document)
         zip.file('word/styles.xml', s_styles)
-        zip.generateAsync({type:"uint8array"})
+        zip.generateAsync({
+            type:"uint8array",
+            compression: "DEFLATE",
+            compressionOptions: {
+                level: 9
+            }
+        })
         .then(function(buffer) {
             var blob = new Blob(
                 [buffer],

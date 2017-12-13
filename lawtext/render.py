@@ -1,6 +1,6 @@
 from pathlib import Path
 from io import BytesIO
-from zipfile import ZipFile
+from zipfile import ZipFile, ZIP_DEFLATED
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -140,7 +140,7 @@ def render_docx(law):
     s_styles = t_styles.render()
 
     buffer = BytesIO()
-    with ZipFile(buffer, mode='w') as zipfile:
+    with ZipFile(buffer, mode='w', compression=ZIP_DEFLATED) as zipfile:
         zipfile.writestr('[Content_Types].xml', s_content_types)
         zipfile.writestr('_rels/.rels', s_rels)
         zipfile.writestr('word/_rels/document.xml.rels', s_document_rels)
