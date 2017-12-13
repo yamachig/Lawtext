@@ -17,6 +17,21 @@ def parse_jpnum(text):
         return str(d1000 * 1000 + d100 * 100 + d10 * 10 + d1)
     return None
 
+def parse_romannum(text):
+    num = 0
+    for i, char in enumerate(text):
+        if char in ('i', 'I', 'ｉ', 'Ｉ'):
+            if (
+                i + 1 < len(text) and
+                text[i + 1] in ('x', 'X', 'ｘ', 'Ｘ')
+            ):
+                num -= 1
+            else:
+                num += 1
+        if char in ('x', 'X', 'ｘ', 'Ｘ'):
+            num += 10
+    return num
+
 eras = {
     '明治': 'Meiji', '大正': 'Taisho',
     '昭和': 'Showa', '平成': 'Heisei',
@@ -75,11 +90,10 @@ re_NamedNum = re.compile(r'^(?P<circle>○?)第?(?P<num>[一二三四五六七�
 IROHA_CHARS = 'イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン'
 re_ItemNum = re.compile(r'^\D*(?P<num>\d+)\D*$')
 
-
 def parse_named_num(text):
     nums_group = []
 
-    for subtext in text.replace('及び', '、').replace('から', '、').replace('まで', '').split('、'):
+    for subtext in text.replace('及び', '、').replace('から', '、').replace('まで', '').replace('～', '、').replace('・', '、').split('、'):
 
         match = re_NamedNum.match(subtext)
         if match:
@@ -107,6 +121,10 @@ def parse_named_num(text):
             if match:
                 nums_group.append(match.group(1))
                 continue
+
+        roman_num = parse_romannum(subtext)
+        if roman_num:
+            nums_group.append(str(roman_num))
 
     return ':'.join(nums_group)
 
