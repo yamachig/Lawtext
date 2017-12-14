@@ -20,7 +20,7 @@ Lawtext makes easy to manage law documents utilizing numerous freely available t
 Lawtext (\*.law.txt) can be converted from `Japanese Standard Law XML <http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2>`__ (\*.xml), to Word document (\*.docx), to Web page (\*.html), and to Japanese Standard Law XML again.
 
 - Try it: https://yamachig.github.io/lawtext-app/ (IE is not supported ☺)
-- Download offline version: https://github.com/yamachig/lawtext-app/blob/master/app.zip?raw=true
+- Download offline version: https://yamachig.github.io/lawtext-app/download.html
 - VSCode extension: https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext
 
 ------------
@@ -39,7 +39,7 @@ Lawtextを用いることで、無償で提供されている数多くのソー�
 Lawtext (\*.law.txt) は `法令標準XML <http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2>`__ (\*.xml) から変換することができ、また、Wordファイル（\*.docx）、Webページ（\*.html）、法令標準XMLへ変換することができます。
 
 - こちらからお試しください: https://yamachig.github.io/lawtext-app/ (IE以外のブラウザでご利用ください☺)
-- オフライン版をダウンロード: https://github.com/yamachig/lawtext-app/blob/master/app.zip?raw=true
+- オフライン版をダウンロード: https://yamachig.github.io/lawtext-app/download.html
 - VSCode拡張機能: https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext
 
 
