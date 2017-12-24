@@ -64,20 +64,43 @@ Lawtext.sidebar_view_template = `
 <div class="sidebar-head-block">
   <div class="container-fluid">
 
-      <h1>Lawtext</h1>
+    <h1>Lawtext</h1>
 
+    <% if(!data.opening_file) { %>
       <div class="list-group" style="text-align: center;">
 
-        <% if(!data.opening_file) { %>
-          <button class="lawtext-open-file-button list-group-item list-group-item-sm list-group-item-action">法令ファイルを開く</button>
-        <% } %>
+        <button class="lawtext-open-file-button list-group-item list-group-item-sm list-group-item-action">法令ファイルを開く</button>
 
-        <% if(!_(data.law).isNull()) { %>
-          <button class="lawtext-download-docx-button list-group-item list-group-item-sm list-group-item-action">Wordファイルをダウンロード</button>
-          <button class="lawtext-download-lawtext-button list-group-item list-group-item-sm list-group-item-action">Lawtextをダウンロード</button>
-          <button class="lawtext-download-xml-button list-group-item list-group-item-sm list-group-item-action">法令XMLをダウンロード</button>
-        <% } %>
+        <form class="list-group-item list-group-item-sm" style="padding: 0;">
+          <div class="input-group">
+            <input class="form-control form-control-sm search-law-textbox"
+                  style="border: none; padding: 0.45em; border-radius: 0; border-bottom-left-radius: .25rem;"
+                  placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
+                  <% if(data.law_search_key) { %>value="<%= data.law_search_key %>"<% } %>
+                  >
+            <span class="input-group-btn">
+              <button class="btn btn-sm btn-secondary search-law-button" type="submit"
+                  style="border-radius: 0; border-bottom-right-radius: .25rem;"
+                  >
+                検索
+              </button>
+            </span>
+          </div>
+        </form>
+
       </div>
+    <% } %>
+
+    <% if(!_(data.law).isNull()) { %>
+      <div style=" margin-top: 0.5rem;">
+        <span style="font-size: .875rem;">保存：</span>
+        <span class="btn-group btn-group-sm">
+          <button class="lawtext-download-docx-button btn btn-outline-primary">Word</button>
+          <button class="lawtext-download-lawtext-button btn btn-outline-primary">Lawtext</button>
+          <button class="lawtext-download-xml-button btn btn-outline-primary">法令XML</button>
+        </span>
+      </div>
+    <% } %>
 
   </div>
 

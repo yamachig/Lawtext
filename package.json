@@ -1,0 +1,8 @@
+{
+    "devDependencies": {
+        "babel-cli": "",
+        "babel-preset-es2015": "",
+        "babel-polyfill": "",
+        "nunjucks": ""
+    }
+}

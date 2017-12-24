@@ -1,3 +1,12 @@
+'use strict';
+
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position) {
+        position = position || 0;
+        return this.indexOf(searchString, position) === position;
+    };
+}
+
 var Lawtext = Lawtext || {};
 
 Lawtext.element_to_json = function(el) {
@@ -58,23 +67,23 @@ Lawtext.xml_to_json = function(xml) {
 };
 
 Lawtext.restructure_table = function(table) {
-     new_table_children = [];
-     rowspan_state = {};
-     colspan_value = {};
-     _(table['children']).each(function(row){
+    var new_table_children = [];
+    var rowspan_state = {};
+    var colspan_value = {};
+    _(table['children']).each(function(row){
 
         if(row['tag'] != 'TableRow') {
             new_table_children.push(row);
             return;
         }
-        new_row_children = [];
-        c = 0;
-        ci = 0;
+        var new_row_children = [];
+        var c = 0;
+        var ci = 0;
         while(true){
 
-            rss = rowspan_state[c] || 0;
+            var rss = rowspan_state[c] || 0;
             if(rss) {
-                colspan = colspan_value[c] || 0;
+                var colspan = colspan_value[c] || 0;
                 new_row_children.push({
                     tag: 'TableColumnMerged',
                     attr: colspan ? {
@@ -94,16 +103,16 @@ Lawtext.restructure_table = function(table) {
                 break;
             }
 
-            column = row['children'][ci];
+            var column = row['children'][ci];
             new_row_children.push(column);
             if(column['tag'] != 'TableColumn') {
                 ci += 1;
                 continue;
             }
 
-            colspan = Number(column['attr']['colspan'] || 0);
+            var colspan = Number(column['attr']['colspan'] || 0);
             if(_(column['attr']).has('rowspan')) {
-                rowspan = Number(column['attr']['rowspan']);
+                var rowspan = Number(column['attr']['rowspan']);
                 rowspan_state[c] = rowspan - 1;
                 colspan_value[c] = colspan;
                 if(colspan) {
@@ -121,7 +130,7 @@ Lawtext.restructure_table = function(table) {
         });
      });
 
-    ret = {
+    var ret = {
         tag: table['tag'],
         attr: table['attr'],
         children: new_table_children,
@@ -172,6 +181,7 @@ Lawtext.Data = Backbone.Model.extend({
     defaults: {
         "law": null,
         "opening_file": false,
+        "law_search_key": null,
     },
 
     initialize: function(options) {
@@ -203,34 +213,79 @@ Lawtext.Data = Backbone.Model.extend({
         reader.onload = (function(e) {
             $(evt.target).val('');
             var div = $('<div>');
-            var intext = e.target.result;
-            var law = null;
-            if(/^<\?xml/.test(intext.trim())) {
-                law = Lawtext.xml_to_json(intext);
-            } else {
-                try {
-                    law = _parse_decorate.parse_lawtext(intext);
-                    _parse_decorate.decorate(law);
-                } catch(err) {
-                    var err_str = err.__str__();
-                    var modal = $("#errorModal");
-                    var pre = $("<pre>")
-                        .css({"white-space": "pre-wrap"})
-                        .css({"line-height": "1.2em"})
-                        .css({"padding": "1em 0"})
-                        .html(err_str);
-                    modal.find(".modal-body").html(pre);
-                    modal.modal('show');
-                    law = null;
-                }
-            }
-            if(law) {
-                self.set({opening_file: false, law: law});
-            } else {
-                self.set({opening_file: false});
-            }
+            var text = e.target.result;
+            self.load_law_text(text);
+            self.set({law_search_key: null});
+            self.trigger("file-loaded");
         });
         reader.readAsText(file);
+    },
+
+    load_law_text: function(text) {
+        var self = this;
+
+        var div = $('<div>');
+        var law = null;
+        if(/^(?:<\?xml|<Law)/.test(text.trim())) {
+            law = Lawtext.xml_to_json(text);
+        } else {
+            try {
+                law = _parse_decorate.parse_lawtext(text);
+                _parse_decorate.decorate(law);
+            } catch(err) {
+                var err_str = err.__str__();
+                var modal = $("#errorModal");
+                var pre = $("<pre>")
+                    .css({"white-space": "pre-wrap"})
+                    .css({"line-height": "1.2em"})
+                    .css({"padding": "1em 0"})
+                    .html(err_str);
+                modal.find(".modal-body").html(pre);
+                modal.modal('show');
+                law = null;
+            }
+        }
+        if(law) {
+            self.set({opening_file: false, law: law});
+        } else {
+            self.set({opening_file: false});
+        }
+    },
+
+    search_law: function(law_search_key) {
+        var self = this;
+
+        self.set({opening_file: true});
+
+        var load_law_num = function(lawnum) {
+            var url = "https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=";
+            url += encodeURI(lawnum);
+            $.get(url)
+            .done(function(data){
+                var serializer = new XMLSerializer();
+                var xml = serializer.serializeToString(data);
+                self.load_law_text(xml);
+            });
+        };
+
+        var lawnum = null;
+        var re_lawnum = /(?:明治|大正|昭和|平成)\S+年\S+第\S+号/;
+        var match = re_lawnum.exec(law_search_key);
+        if(match) {
+            lawnum = match[0];
+            load_law_num(lawnum);
+        } else {
+            var url = "https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=";
+            url += encodeURI(law_search_key);
+            $.get(url)
+            .done(function(data){
+                if(data.length) {
+                    load_law_num(data[0][1]);
+                    return;
+                }
+                self.set({opening_file: false});
+            });
+        }
     },
 
     get_law_name: function() {
@@ -338,7 +393,7 @@ Lawtext.SidebarView = Backbone.View.extend({
         var self = this;
 
         self.data = options.data;
-        self.listenTo(self.data, "change", self.render);
+        self.listenTo(self.data, "change:law change:opening_file", self.render);
     },
 
     render: function(options) {
@@ -361,7 +416,7 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
         self.data = options.data;
         self.law_html = null;
         self.listenTo(self.data, "change:law", self.law_change);
-        self.listenTo(self.data, "change", self.render);
+        self.listenTo(self.data, "change:law change:opening_file", self.render);
         self.listenTo(self.data, "scroll-to-law-anchor", self.scroll_to_law_anchor);
     },
 
@@ -405,6 +460,7 @@ Lawtext.MainView = Backbone.View.extend({
     events: {
         "click .lawtext-open-file-button": "open_file_button_click",
         "click .lawtext-download-sample-lawtext-button": "download_sample_lawtext_button_click",
+        "click .search-law-button": "search_law_button_click",
         "click .lawtext-download-docx-button": "download_docx_button_click",
         "click .lawtext-download-lawtext-button": "download_lawtext_button_click",
         "click .lawtext-download-xml-button": "download_xml_button_click",
@@ -415,6 +471,7 @@ Lawtext.MainView = Backbone.View.extend({
         var self = this;
 
         self.data = options.data;
+        self.router = options.router;
 
         self.sidebar_view = new Lawtext.SidebarView({
             data: Lawtext.data,
@@ -422,6 +479,8 @@ Lawtext.MainView = Backbone.View.extend({
         self.htmlpreview_view = new Lawtext.HTMLpreviewView({
             data: Lawtext.data,
         });
+
+        self.listenTo(self.data, "change:law_search_key", self.law_search_key_change);
     },
 
     render: function(options) {
@@ -437,6 +496,18 @@ Lawtext.MainView = Backbone.View.extend({
         self.sidebar_view.render();
         self.$(".lawtext-htmlpreview-view-place").replaceWith(self.htmlpreview_view.el);
         self.htmlpreview_view.render();
+    },
+
+    search_law_button_click: function(e) {
+        var self = this;
+        var obj = $(e.currentTarget);
+
+        var textbox = obj.parent().parent().find(".search-law-textbox");
+        var text = textbox.val().trim();
+
+        self.router.navigate(text, {trigger: true});
+
+        return false;
     },
 
     open_file_button_click: function(e) {
@@ -477,18 +548,66 @@ Lawtext.MainView = Backbone.View.extend({
         var self = this;
         var obj = $(e.currentTarget);
 
-        self.data.trigger("scroll-to-law-anchor", obj.data("tag"), obj.data("name"))
+        self.data.trigger("scroll-to-law-anchor", obj.data("tag"), obj.data("name"));
     },
+
+    law_search_key_change: function() {
+        var self = this;
+
+        var law_search_key = self.data.get("law_search_key");
+
+        if(law_search_key) {
+            self.data.search_law(law_search_key);
+        }
+    },
+});
+
+Lawtext.Router = Backbone.Router.extend({
+    routes: {
+        ":law_search_key": "law",
+        "": "index",
+    },
+
+    initialize: function(options) {
+        var self = this;
+
+        self.data = options.data;
+
+        self.listenTo(self.data, "file-loaded", function(){
+            self.navigate("", {trigger: false});
+        });
+    },
+
+    law: function(law_search_key) {
+        var self = this;
+
+        self.data.set({law_search_key: law_search_key});
+    },
+
+    index: function() {
+        var self = this;
+
+        self.data.set({law_search_key: null, law: null});
+    }
 });
 
 $(function(){
 
     Lawtext.data = new Lawtext.Data();
 
+    Lawtext.router = new Lawtext.Router({
+        data: Lawtext.data,
+    });
+
     Lawtext.main_view = new Lawtext.MainView({
         data: Lawtext.data,
+        router: Lawtext.router,
     });
     $(".lawtext-main-view-place").replaceWith(Lawtext.main_view.el);
     Lawtext.main_view.render();
+
+    Backbone.history.start({pushState: false});
+
+    $(".search-law-textbox").focus();
 
 });

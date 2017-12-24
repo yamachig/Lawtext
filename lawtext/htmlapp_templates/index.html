@@ -29,6 +29,7 @@ SOFTWARE.
 
 <title>Lawtext</title>
 
+<script src="lib/polyfill.min.js"></script>
 <script src="lib/jquery-3.2.1.min.js"></script>
 <script src="lib/underscore-min.js"></script>
 <script src="lib/backbone-min.js"></script>
@@ -39,6 +40,7 @@ SOFTWARE.
 <link rel="stylesheet" href="lib/bootstrap.min.css">
 
 <link rel="stylesheet" href="src/law.css">
+
 <script src="src/templates.js"></script>
 <script src="src/parse_decorate.js"></script>
 
@@ -46,8 +48,23 @@ SOFTWARE.
 <script src="templates/sidebar_view.html"></script>
 <script src="templates/htmlpreview_view.html"></script>
 <script src="templates/sample_lawtext.html"></script>
+
 <link rel="stylesheet" href="src/lawtext.css">
+
 <script src="src/lawtext.js"></script>
+
+<script>
+var userAgent = window.navigator.userAgent.toLowerCase();
+if (userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1) {
+    document.write('<script src="src/ie_templates.js"><\/script>');
+    document.write('<script src="src/ie_parse_decorate.js"><\/script>');
+    document.write('<script src="templates/ie_main_view.html"><\/script>');
+    document.write('<script src="templates/ie_sidebar_view.html"><\/script>');
+    document.write('<script src="templates/ie_htmlpreview_view.html"><\/script>');
+    document.write('<script src="templates/ie_sample_lawtext.html"><\/script>');
+    document.write('<script src="src/ie_lawtext.js"><\/script>');
+}
+</script>
 
 </head>
 <body>
