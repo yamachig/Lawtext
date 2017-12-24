@@ -47,15 +47,26 @@ Lawtext (\*.law.txt) は `法令標準XML <http://search.e-gov.go.jp/servlet/Pub
 Screenshots / スクリーンショット
 ========================
 
-.. image:: https://github.com/yamachig/Lawtext/wiki/images/screenshot1.png
-    :target: https://github.com/yamachig/Lawtext/wiki/images/screenshot1.png
+Browser App / ブラウザアプリ
+--------------------------------
 
+.. image:: https://github.com/yamachig/Lawtext/wiki/images/app-screenshot1.png
+    :target: https://github.com/yamachig/Lawtext/wiki/images/app-screenshot1.png
 
-.. image:: https://github.com/yamachig/Lawtext/wiki/images/screenshot2.png
-    :target: https://github.com/yamachig/Lawtext/wiki/images/screenshot2.png
+.. image:: https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png
+    :target: https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png
 
-.. image:: https://github.com/yamachig/Lawtext/wiki/images/screenshot3.png
-    :target: https://github.com/yamachig/Lawtext/wiki/images/screenshot3.png
+VSCode extension / VSCode拡張機能
+--------------------------------
+
+.. image:: https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png
+    :target: https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png
+
+.. image:: https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot2.png
+    :target: https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot2.png
+
+.. image:: https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot3.png
+    :target: https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot3.png
 
 
 
