@@ -80,14 +80,6 @@ Lawtext.htmlpreview_view_template = `
     </div>
   </div>
 
-  <% var userAgent = window.navigator.userAgent.toLowerCase();
-     if (userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1) {
-    %>
-    <div style="align-self: center; max-width: 500px; margin-top: 4em; color: rgb(136, 69, 69);">
-      ご利用のブラウザは Internet Explorer です。このページを Internet Explorer で表示した場合、動作が遅くなることがあります。
-    </div>
-  <% } %>
-
   <% if(location.href.startsWith("file:")) { %>
     <div class="text-muted" style="align-self: center; max-width: 500px; margin-top: 4em;">
       このページはファイルから直接表示されているため、法令名・番号検索機能など、一部の機能が動作しない場合があります。
