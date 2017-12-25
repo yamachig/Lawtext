@@ -258,6 +258,20 @@ Lawtext.Data = Backbone.Model.extend({
         self.set({opening_file: true});
 
         var load_law_num = function(lawnum) {
+
+            var law_data = localStorage.getItem("law_for:" + lawnum)
+            if(law_data) {
+                law_data = JSON.parse(law_data);
+                var datetime = new Date(law_data.datetime);
+                var now = new Date();
+                var ms = now.getTime() - datetime.getTime();
+                var days = ms / (1000 * 60 * 60 * 24);
+                if(days < 1) {
+                    self.load_law_text(law_data.xml);
+                    return;
+                }
+            }
+
             var url = "https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=";
             url += encodeURI(lawnum);
             $.get(url)
@@ -265,22 +279,58 @@ Lawtext.Data = Backbone.Model.extend({
                 var serializer = new XMLSerializer();
                 var xml = serializer.serializeToString(data);
                 self.load_law_text(xml);
+                localStorage.setItem(
+                    "law_for:" + lawnum,
+                    JSON.stringify({
+                        datetime: new Date().toISOString(),
+                        xml: xml,
+                    }),
+                );
             });
         };
 
         var lawnum = null;
+
+        var law_num_data = localStorage.getItem("law_num_for:" + law_search_key)
+        if(law_num_data) {
+            law_num_data = JSON.parse(law_num_data);
+            var datetime = new Date(law_num_data.datetime);
+            var now = new Date();
+            var ms = now.getTime() - datetime.getTime();
+            var days = ms / (1000 * 60 * 60 * 24);
+            if(days < 1) {
+                load_law_num(law_num_data.lawnum);
+                return;
+            }
+        }
+
         var re_lawnum = /(?:明治|大正|昭和|平成)\S+年\S+第\S+号/;
         var match = re_lawnum.exec(law_search_key);
         if(match) {
             lawnum = match[0];
             load_law_num(lawnum);
+            localStorage.setItem(
+                "law_num_for:" + law_search_key,
+                JSON.stringify({
+                    datetime: new Date().toISOString(),
+                    lawnum: lawnum,
+                }),
+            );
         } else {
             var url = "https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=";
             url += encodeURI(law_search_key);
             $.get(url)
             .done(function(data){
                 if(data.length) {
-                    load_law_num(data[0][1]);
+                    lawnum = data[0][1];
+                    load_law_num(lawnum);
+                    localStorage.setItem(
+                        "law_num_for:" + law_search_key,
+                        JSON.stringify({
+                            datetime: new Date().toISOString(),
+                            lawnum: lawnum,
+                        }),
+                    );
                     return;
                 }
                 self.set({opening_file: false});
