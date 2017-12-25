@@ -481,6 +481,7 @@ Lawtext.MainView = Backbone.View.extend({
         });
 
         self.listenTo(self.data, "change:law_search_key", self.law_search_key_change);
+        self.listenTo(self.data, "change:law", self.law_change);
     },
 
     render: function(options) {
@@ -558,6 +559,21 @@ Lawtext.MainView = Backbone.View.extend({
 
         if(law_search_key) {
             self.data.search_law(law_search_key);
+        }
+    },
+
+    law_change: function() {
+        var self = this;
+
+        var law = self.data.get("law");
+        var law_search_key = self.data.get("law_search_key");
+
+        if(law && law_search_key) {
+            var law_body = _(law.children).findWhere({tag: "LawBody"});
+            var law_title = _(law_body.children).findWhere({tag: "LawTitle"});
+            document.title = law_title.children[0] + " | Lawtext";
+        } else {
+            document.title = "Lawtext";
         }
     },
 });
