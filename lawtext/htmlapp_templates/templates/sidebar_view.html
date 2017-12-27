@@ -64,7 +64,7 @@ Lawtext.sidebar_view_template = `
 <div class="sidebar-head-block">
   <div class="container-fluid">
 
-    <h1>Lawtext</h1>
+    <h1><a href="<%= location.protocol + '//' + location.host + location.pathname + location.search %>" style="color: inherit;">Lawtext</a></h1>
 
     <% if(!data.opening_file) { %>
       <div class="list-group" style="text-align: center;">
