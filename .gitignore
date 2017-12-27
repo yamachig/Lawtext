@@ -16,3 +16,5 @@ out*
 node_modules
 package-lock.json
 cache.sqlite
+MANIFEST
+dist
