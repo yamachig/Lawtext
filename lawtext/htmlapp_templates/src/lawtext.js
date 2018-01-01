@@ -182,7 +182,6 @@ Lawtext.Data = Backbone.Model.extend({
         "law": null,
         "opening_file": false,
         "law_search_key": null,
-        "law_search_key": null,
     },
 
     initialize: function(options) {
@@ -271,7 +270,7 @@ Lawtext.Data = Backbone.Model.extend({
 
         var load_law_num = function(lawnum) {
 
-            var law_data = localStorage.getItem("law_for:" + lawnum)
+            var law_data = localStorage ? localStorage.getItem("law_for:" + lawnum) : null;
             if(law_data) {
                 law_data = JSON.parse(law_data);
                 var datetime = new Date(law_data.datetime);
@@ -291,13 +290,15 @@ Lawtext.Data = Backbone.Model.extend({
                 var serializer = new XMLSerializer();
                 var xml = serializer.serializeToString(data);
                 self.load_law_text(xml);
-                localStorage.setItem(
-                    "law_for:" + lawnum,
-                    JSON.stringify({
-                        datetime: new Date().toISOString(),
-                        xml: xml,
-                    }),
-                );
+                if(localStorage) {
+                    localStorage.setItem(
+                        "law_for:" + lawnum,
+                        JSON.stringify({
+                            datetime: new Date().toISOString(),
+                            xml: xml,
+                        }),
+                    );
+                }
             })
             .fail(function(jqXHR, textStatus, errorThrown){
                 console.log(jqXHR, textStatus, errorThrown);
@@ -311,7 +312,7 @@ Lawtext.Data = Backbone.Model.extend({
 
         var lawnum = null;
 
-        var law_num_data = localStorage.getItem("law_num_for:" + law_search_key)
+        var law_num_data = localStorage ? localStorage.getItem("law_num_for:" + law_search_key) : null;
         if(law_num_data) {
             law_num_data = JSON.parse(law_num_data);
             var datetime = new Date(law_num_data.datetime);
@@ -329,13 +330,15 @@ Lawtext.Data = Backbone.Model.extend({
         if(match) {
             lawnum = match[0];
             load_law_num(lawnum);
-            localStorage.setItem(
-                "law_num_for:" + law_search_key,
-                JSON.stringify({
-                    datetime: new Date().toISOString(),
-                    lawnum: lawnum,
-                }),
-            );
+            if(localStorage) {
+                localStorage.setItem(
+                    "law_num_for:" + law_search_key,
+                    JSON.stringify({
+                        datetime: new Date().toISOString(),
+                        lawnum: lawnum,
+                    }),
+                );
+            }
         } else {
             var url = "https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=";
             url += encodeURI(law_search_key);
@@ -344,13 +347,15 @@ Lawtext.Data = Backbone.Model.extend({
                 if(data.length) {
                     lawnum = data[0][1];
                     load_law_num(lawnum);
-                    localStorage.setItem(
-                        "law_num_for:" + law_search_key,
-                        JSON.stringify({
-                            datetime: new Date().toISOString(),
-                            lawnum: lawnum,
-                        }),
-                    );
+                    if(localStorage) {
+                        localStorage.setItem(
+                            "law_num_for:" + law_search_key,
+                            JSON.stringify({
+                                datetime: new Date().toISOString(),
+                                lawnum: lawnum,
+                            }),
+                        );
+                    }
                     return;
                 } else {
                     self.invoke_error(
