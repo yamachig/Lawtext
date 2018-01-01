@@ -64,6 +64,7 @@ def indent_level(indents, indent):
 
 re_TC1stLine   = re.compile(r'^(?P<indents>\s*)\* - (?P<tcbody>.*)$')
 re_TCnthLine   = re.compile(r'^(?P<indents>\s*)  - (?P<tcbody>.*)$')
+re_OptionLine   = re.compile(r'^(?P<indents>\s*):(?P<optname>\S+?):\s*(?P<optbody>.*)$')
 re_FigLine   = re.compile(r'^(?P<indents>\s*)\.\.(?:\s+)figure::(?:\s+)(?P<figbody>.*)$')
 re_DefaultLine = re.compile(r'^(?P<indents>\s*)(?P<linebody>\S.*)$')
 re_BlankLine   = re.compile(r'^\s*$')
@@ -84,6 +85,17 @@ def lex_line(line, indent):
             'TCnthLine',
             indent_level(match.group(1), indent),
             lex_tcbody(match.group(2)),
+        ]
+
+    match = re_OptionLine.match(line)
+    if match:
+        return [
+            'OptionLine',
+            indent_level(match.group(1), indent),
+            {
+                'name': match.group(2),
+                'body': match.group(3),
+            }
         ]
 
     match = re_FigLine.match(line)
@@ -804,9 +816,12 @@ class Parser:
             if table_struct:
                 paragraph_item_children.append(table_struct)
 
-            list_ = self.process_list(current_indent + 2)
-            if list_:
-                paragraph_item_children.append(list_)
+            while self.continuing():
+                list_ = self.process_list(current_indent + 2)
+                if list_:
+                    paragraph_item_children.append(list_)
+                else:
+                    break
 
             paragraph_item = {
                 'tag': paragraph_item_tag,
@@ -826,22 +841,30 @@ class Parser:
         if remarks:
             table_struct_children.append(remarks)
 
-        line_type, indent, data = self.here()
-        next_line_type, next_indent, next_data = self.next()
+        options = {}
 
-        if (
-            line_type == 'TC1stLine' and
-            indent == current_indent
-        ):
-            table_rows = self.process_table_rows(current_indent)
-            if len(table_rows):
-                table_children.extend(table_rows)
-                table = {
-                    'tag': 'Table',
-                    'attr': {},
-                    'children': table_children,
-                }
-                table_struct_children.append(table)
+        while self.continuing():
+            option = self.process_option(current_indent)
+            if option:
+                options[option[0]] = option[1]
+            else:
+                break
+
+        table_struct_title = options.get('table-struct-title')
+        if table_struct_title:
+            table_struct_children.append({
+                'tag': 'TableStructTitle',
+                'attr': {},
+                'children': table_struct_title,
+            })
+
+        table = self.process_table(current_indent)
+        if table:
+            table_struct_children.append(table)
+
+        remarks = self.process_remarks(current_indent)
+        if remarks:
+            table_struct_children.append(remarks)
 
         if len(table_struct_children):
             table_struct = {
@@ -851,6 +874,25 @@ class Parser:
             }
 
         return table_struct
+
+    def process_table(self, current_indent):
+        table = None
+
+        line_type, indent, data = self.here()
+
+        if (
+            line_type == 'TC1stLine' and
+            indent == current_indent
+        ):
+            table_rows = self.process_table_rows(current_indent)
+            if len(table_rows):
+                table = {
+                    'tag': 'Table',
+                    'attr': {},
+                    'children': table_rows,
+                }
+
+        return table
 
     def process_table_rows(self, current_indent):
         table_rows = []
@@ -1011,6 +1053,21 @@ class Parser:
 
         return list_
 
+    def process_option(self, current_indent):
+        self.skip_blank_lines()
+
+        line_type, indent, data = self.here()
+        option = None
+
+        if (
+            line_type == 'OptionLine' and
+            indent == current_indent
+        ):
+            option = data['name'], data['body']
+            self.forward()
+
+        return option
+
     def process_suppl_provision(self):
         self.skip_blank_lines()
         suppl_provision = None
@@ -1168,29 +1225,12 @@ class Parser:
 
             current_indent = indent
 
-            remarks = self.process_remarks(current_indent + 1)
-            if remarks:
-                style_struct_children.append(remarks)
-
-            fig = self.process_fig(current_indent + 1)
-            if fig:
-                style = {
-                    'tag': 'Style',
-                    'attr': {},
-                    'children': [fig],
-                }
-                style_struct_children.append(style)
-
-            remarks = self.process_remarks(current_indent + 1)
-            if remarks:
-                style_struct_children.append(remarks)
-
-            if len(style_struct_children):
-                appdx_style_children.append({
-                    'tag': 'StyleStruct',
-                    'attr': {},
-                    'children': style_struct_children,
-                })
+            while self.continuing():
+                style_struct = self.process_style_struct(current_indent + 1)
+                if style_struct:
+                    appdx_style_children.append(style_struct)
+                else:
+                    break
 
             appdx_style = {
                 'tag': 'AppdxStyle',
@@ -1199,6 +1239,63 @@ class Parser:
             }
 
         return appdx_style
+
+    def process_style_struct(self, current_indent):
+        self.skip_blank_lines()
+        style_struct = None
+        style_struct_children = []
+
+        remarks = self.process_remarks(current_indent)
+        if remarks:
+            style_struct_children.append(remarks)
+
+        line_type, indent, data = self.here()
+        next_line_type, next_indent, next_data = self.next()
+
+        if (
+            line_type == 'DefaultLine' and
+            indent == current_indent and
+            next_line_type != 'BlankLine' and
+            next_indent == current_indent
+        ):
+            style_struct_children.append({
+                'tag': 'StyleStructTitle',
+                'attr': {},
+                'children': [data['body']],
+            })
+
+            self.forward()
+
+        fig = self.process_fig(current_indent)
+        if fig:
+            style = {
+                'tag': 'Style',
+                'attr': {},
+                'children': [fig],
+            }
+            style_struct_children.append(style)
+
+        table = self.process_table(current_indent)
+        if table:
+            style = {
+                'tag': 'Style',
+                'attr': {},
+                'children': [table],
+            }
+            style_struct_children.append(style)
+
+        remarks = self.process_remarks(current_indent)
+        if remarks:
+            style_struct_children.append(remarks)
+
+        if len(style_struct_children):
+            style_struct = {
+                'tag': 'StyleStruct',
+                'attr': {},
+                'children': style_struct_children,
+            }
+
+        return style_struct
 
     def process_remarks(self, current_indent):
         self.skip_blank_lines()
@@ -1210,8 +1307,10 @@ class Parser:
 
         if (
             line_type == 'DefaultLine' and
-            indent == current_indent and
-            body_split[0].startswith('備考')
+            indent == current_indent and (
+                body_split[0].startswith('備考') or
+                body_split[0].startswith('注')
+            )
         ):
             remarks_children.append({
                 'tag': 'RemarksLabel',

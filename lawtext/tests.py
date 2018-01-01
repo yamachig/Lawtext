@@ -30,6 +30,7 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
             ('414AC0000000153', '平成十四年法律第百五十三号', '電子署名等に係る地方公共団体情報システム機構の認証業務に関する法律'),
             ('405AC0000000088', '平成五年法律第八十八号', '行政手続法'),
             ('406CO0000000265', '平成六年政令第二百六十五号', '行政手続法施行令'),
+            ('412M50001000064', '平成十二年郵政省令第六十四号', '第一種指定電気通信設備接続料規則'),
             ('428M60000008031', '平成二十八年総務省令第三十一号', '第二種指定電気通信設備接続料規則'),
             ('426M60000002044', '平成二十六年内閣府令第四十四号', '子ども・子育て支援法施行規則'),
             ('346AC0000000073', '昭和四十六年法律第七十三号', '児童手当法'),
@@ -446,12 +447,23 @@ class TestRender(AbstractTest):
                 rendered_texts = [
                     subtext
                     for el in rendered_el.findall('.//w_t')
-                    for subtext in el.text.split()
+                    for subtext in (el.text or '').split()
                 ]
                 rendered_text = '\n'.join(rendered_texts)
                 rendered_text = re.sub(
                     r'（\s*(?P<body>\S+)\s*）',
                     r'（\g<body>）',
+                    rendered_text,
+                )
+                def repl_tag(match):
+                    return re.sub(
+                        r'</?[^>]*?>',
+                        '',
+                        match.group(0),
+                    )
+                rendered_text = re.sub(
+                    r'<QuoteStruct>.*?</QuoteStruct>',
+                    repl_tag,
                     rendered_text,
                 )
                 rendered_text = re.sub(
@@ -497,6 +509,23 @@ class TestRender(AbstractTest):
                 )
                 rendered_text = re.sub(
                     r'(?:</?Ruby>)|(?:</?Rt>)',
+                    '',
+                    rendered_text,
+                    flags=re.M,
+                )
+                def repl_tag(match):
+                    return re.sub(
+                        r'</?[^>]*?>',
+                        '',
+                        match.group(0),
+                    )
+                rendered_text = re.sub(
+                    r'<QuoteStruct>.*?</QuoteStruct>',
+                    repl_tag,
+                    rendered_text,
+                )
+                rendered_text = re.sub(
+                    r'^\s*:\S*?:',
                     '',
                     rendered_text,
                     flags=re.M,

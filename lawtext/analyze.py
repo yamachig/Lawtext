@@ -81,10 +81,6 @@ def replace_parenthesis(mixed):
         reverse=True,
     )
 
-    if len(positions) > 0:
-        print(mixed)
-        print(positions)
-
     for i, start, end, _type in positions:
         text = mixed[i][start:end]
         rep = text

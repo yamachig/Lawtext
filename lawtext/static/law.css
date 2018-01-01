@@ -93,6 +93,8 @@
 
 .law td {
     border: 1px solid black;
+    min-height: 1em;
+    height: 1em;
 }
 
 .law pre {

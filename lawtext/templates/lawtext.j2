@@ -273,6 +273,13 @@
 {%- for el in table_struct.children -%}
   {%- if el.tag == 'Table' -%}
     {{- m_table(el, indent) -}}
+  {%- elif el.tag == 'TableStructTitle' -%}
+    {%- for _ in range(indent) -%}
+      {{- indent_space -}}
+    {%- endfor -%}
+    :table-struct-title:{{- m_text(el) -}}
+{#- new #}
+{# line -#}
   {%- elif el.tag == 'Remarks' -%}
     {{- m_remarks(el) -}}
   {%- else -%}
@@ -341,6 +348,16 @@
     {{- m_text(el) -}}
 {#- new #}
 {# line -#}
+  {%- elif el.tag == 'Item' -%}
+    {%- for _ in range(indent) -%}
+      {{- indent_space -}}
+    {%- endfor -%}
+    {%- if first_column -%}
+      {{- '* - ' -}}
+    {%- else -%}
+      {{- '  - ' -}}
+    {%- endif -%}
+    {{- m_paragraph_item(el, 0) -}}
   {%- else -%}
     {{- m_element(el) -}}
 {#- new #}
@@ -352,6 +369,8 @@
 
 
 {%- macro m_style_struct(style_struct, indent) -%}
+{#- new #}
+{# line -#}
 {%- for el in style_struct.children -%}
   {%- if el.tag == 'StyleStructTitle' -%}
     {%- for _ in range(indent) -%}
@@ -376,6 +395,8 @@
 {%- for el in style.children -%}
   {%- if el.tag == 'Fig' -%}
     {{- m_fig(el, indent) -}}
+  {%- elif el.tag == 'Table' -%}
+    {{- m_table(el, indent) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -455,18 +476,23 @@
 
 
 {%- macro m_list_sentence(list_sentence, indent) -%}
+{%- for _ in range(indent) -%}
+  {{- indent_space -}}
+{%- endfor -%}
 {%- for el in list_sentence.children -%}
   {%- if el.tag == 'Sentence' -%}
-    {%- for _ in range(indent) -%}
-      {{- indent_space -}}
-    {%- endfor -%}
     {{- m_text(el) -}}
-{#- new #}
-{# line -#}
+  {%- elif el.tag == 'Column' -%}
+    {{- m_column(el) -}}
+    {%- if not loop.last -%}
+      {{- margin_space -}}
+    {%- endif -%}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
 {%- endfor -%}
+{#- new #}
+{# line -#}
 {%- endmacro -%}
 
 
@@ -507,6 +533,12 @@
 
 
 
+{%- macro m_quote_struct(quote_struct) -%}
+{{- m_element(quote_struct) -}}
+{%- endmacro -%}
+
+
+
 {%- macro m_element(el) -%}
 {%- if not el -%}
 {%- elif not el.tag -%}
@@ -536,6 +568,8 @@
   {%- for child in el.children -%}
     {%- if not child.tag -%}
       {{- child -}}
+    {%- elif child.tag == 'QuoteStruct' -%}
+      {{- m_quote_struct(child) -}}
     {%- else -%}
       {{- m_element(child) -}}
     {%- endif -%}
