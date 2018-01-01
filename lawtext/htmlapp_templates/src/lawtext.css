@@ -1,0 +1,27 @@
+.lawtext-analyzed-round-parentheses:hover,
+.lawtext-analyzed-square-parentheses:hover,
+.first-column:hover
+{
+    background-color: rgba(255, 255, 0, 0.3);
+}
+
+.lawtext-analyzed-round-parentheses:hover
+    > .lawtext-analyzed-round-parenthesis-start,
+.lawtext-analyzed-round-parentheses:hover
+    > .lawtext-analyzed-round-parenthesis-end,
+.lawtext-analyzed-square-parentheses:hover
+    > .lawtext-analyzed-square-parenthesis-start,
+.lawtext-analyzed-square-parentheses:hover
+    > .lawtext-analyzed-square-parenthesis-end
+{
+    border: 1px solid gray;
+    margin: -1px;
+}
+
+.lawtext-analyzed-square-parentheses-content {
+    color: rgb(158, 79, 0);
+}
+
+.first-column {
+    color: rgb(121, 113, 0);
+}

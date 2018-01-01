@@ -10,10 +10,11 @@ from urllib.request import Request, urlopen
 from pprint import pformat
 
 from lawtext import parse, render, util
+import lawtext.analyze as lawtext_analyze
 
 
 
-def main(infile, intype=None, outfile=None, outtype=None):
+def main(infile, intype=None, outfile=None, outtype=None, analyze=False):
     if not intype:
         if infile.startswith('http:') or infile.startswith('https:'):
             intype = 'web_xml'
@@ -50,6 +51,12 @@ def main(infile, intype=None, outfile=None, outtype=None):
     if outtype == 'lexed' and intype != 'lawtext':
         raise ValueError('OUTTYPE=lexed can be used only with INTYPE=lawtext.')
 
+    analyzable_outtype = [
+        'xml', 'html', 'htmlfragment',
+    ]
+    if analyze and outtype not in analyzable_outtype:
+        raise ValueError(f'ANALYZE can be used only with OUTTYPE in {analyzable_outtype}.')
+
     if intype == 'web_xml':
         def q(string):
             return quote(string.group(0))
@@ -71,6 +78,9 @@ def main(infile, intype=None, outfile=None, outtype=None):
         else:
             law = parse.parse_lawtext(lawtext)
 
+    if analyze:
+        law = lawtext_analyze.analyze(law)
+
     if outtype == 'docx':
         outbytes = render.render_docx(law)
         if outfile:
@@ -86,8 +96,6 @@ def main(infile, intype=None, outfile=None, outtype=None):
             outtext = render.render_html(law)
         elif outtype == 'htmlfragment':
             outtext = render.render_htmlfragment(law)
-        elif outtype == 'htmlfragment':
-            outtext = render.render_htmlfragment(xml)
         elif outtype == 'lexed':
             outtext = pformat(lexed, indent=2)
 
@@ -116,6 +124,7 @@ if __name__ == '__main__':
         '-it', '--intype',
         choices=['lawtext', 'xml', 'web_xml'],
     )
+    argparser.add_argument('-a', '--analyze', action='store_true')
     argparser.add_argument('outfile', nargs='?')
     argparser.add_argument(
         '-ot', '--outtype',

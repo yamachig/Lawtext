@@ -261,6 +261,13 @@ Lawtext.Data = Backbone.Model.extend({
         var self = this;
 
         self.set({opening_file: true});
+        setTimeout(function(){
+            self.search_law_inner(law_search_key);
+        }, 30);
+    },
+
+    search_law_inner: function(law_search_key) {
+        var self = this;
 
         var load_law_num = function(lawnum) {
 
@@ -506,6 +513,18 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
             data: self.data.attributes,
             law_html: self.law_html,
         }));
+
+        setTimeout(function() {
+            if(!_(law).isNull()) {
+                law = _parse_decorate.analyze(law);
+                self.law_html = Lawtext.render_law('htmlfragment.html', law);
+                self.$el.html(self.template({
+                    data: self.data.attributes,
+                    law_html: self.law_html,
+                }));
+                self.process_law();
+            }
+        }, 0);
     },
 
     scroll_to_law_anchor: function(tag, name) {
@@ -515,6 +534,24 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
             var obj = $(this);
             if(obj.data('tag') == tag && obj.data('name') == name) {
                 $('html,body').animate({scrollTop: obj.offset().top}, 'normal');
+            }
+        });
+    },
+
+    process_law: function() {
+        var self = this;
+
+        self.$(".lawtext-analyzed").each(function(){
+            var obj = $(this);
+
+            if(obj.hasClass("lawtext-analyzed-lawnum")) {
+                var lawnum = obj.data('lawnum');
+                obj.replaceWith(
+                    $("<a>")
+                    .attr('href', '#' + lawnum)
+                    .attr('target', '_blank')
+                    .html(obj.html())
+                );
             }
         });
     },

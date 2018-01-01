@@ -283,7 +283,11 @@ paragraph-item-body
   {%- if el.tag == 'Sentence' -%}
     {{- m_text(el) -}}
   {%- elif el.tag == 'Column' -%}
-    {{- m_column(el) -}}
+    {%- if loop.first -%}
+      <span class="first-column">{{- m_column(el) -}}</span>
+    {%- else -%}
+      {{- m_column(el) -}}
+    {%- endif -%}
     {%- if not loop.last -%}
       {{- '　' -}}
     {%- endif -%}
@@ -582,11 +586,11 @@ paragraph-item-body
 {%- macro m_text(el) -%}
 {%- if not el -%}
 {%- elif not el.tag -%}
-  {{- el -}}
+  {{- el | safe -}}
 {%- else -%}
   {%- for child in el.children -%}
     {%- if not child.tag -%}
-      {{- child -}}
+      {{- child | safe -}}
     {%- elif child.tag == 'Ruby' -%}
       {{- m_element_raw(child) -}}
     {%- else -%}
