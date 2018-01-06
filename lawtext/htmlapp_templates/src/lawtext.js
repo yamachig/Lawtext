@@ -473,7 +473,13 @@ Lawtext.SidebarView = Backbone.View.extend({
         var self = this;
 
         self.data = options.data;
-        self.listenTo(self.data, "change:law change:opening_file", self.render);
+        self.listenTo(
+            self.data,
+            "change:law change:opening_file",
+            _.debounce(function() {
+                self.render();
+            }, 100),
+        );
     },
 
     render: function(options) {
@@ -495,8 +501,16 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
 
         self.data = options.data;
         self.law_html = null;
+        self.analyzed = false;
+
         self.listenTo(self.data, "change:law", self.law_change);
-        self.listenTo(self.data, "change:law change:opening_file", self.render);
+        self.listenTo(
+            self.data,
+            "change:law change:opening_file",
+            _.debounce(function() {
+                self.render();
+            }, 100),
+        );
         self.listenTo(self.data, "scroll-to-law-anchor", self.scroll_to_law_anchor);
     },
 
@@ -504,6 +518,7 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
         var self = this;
 
         self.law_html = null;
+        self.analyzed = false;
     },
 
     render: function(options) {
@@ -519,17 +534,22 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
             law_html: self.law_html,
         }));
 
-        setTimeout(function() {
-            if(!_(law).isNull()) {
-                law = _parse_decorate.analyze(law);
-                self.law_html = Lawtext.render_law('htmlfragment.html', law);
-                self.$el.html(self.template({
-                    data: self.data.attributes,
-                    law_html: self.law_html,
-                }));
-                self.process_law();
-            }
-        }, 0);
+        if(!self.analyzed) {
+            setTimeout(function() {
+                if(!_(law).isNull()) {
+                    law = _parse_decorate.analyze(law);
+                    self.law_html = Lawtext.render_law('htmlfragment.html', law);
+                    self.analyzed = true;
+                    self.$el.html(self.template({
+                        data: self.data.attributes,
+                        law_html: self.law_html,
+                    }));
+                    self.process_law();
+                }
+            }, 0);
+        } else {
+            self.process_law();
+        }
     },
 
     scroll_to_law_anchor: function(tag, name) {
