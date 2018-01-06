@@ -10,11 +10,13 @@ def replace_lawnum(text):
     return re_LawNum.sub(repl, text)
 
 re_ParStartAny = re.compile(r'[(（「]')
-re_ParEndRound = re.compile(r'[)）]')
+re_ParEndAny = re.compile(r'[)）」]')
+
+re_ParStartSquare = re.compile(r'[」]')
 re_ParEndSquare = re.compile(r'[」]')
 
 def replace_parenthesis(mixed):
-    in_square = False
+    square_count = 0
     start_pos = []
     pairs = []
 
@@ -30,46 +32,37 @@ def replace_parenthesis(mixed):
             if len(text) <= search_start_pos:
                 break
 
-            if in_square:
+            if square_count:
+                s_match = re_ParStartSquare.search(text[search_start_pos:])
                 e_match = re_ParEndSquare.search(text[search_start_pos:])
+            else:
+                s_match = re_ParStartAny.search(text[search_start_pos:])
+                e_match = re_ParEndAny.search(text[search_start_pos:])
 
-                if e_match:
+            if not s_match and not e_match:
+                break
+
+            if s_match and e_match:
+                if s_match.start() < e_match.start():
+                    e_match = None
+                else:
+                    s_match = None
+
+            if s_match:
+                start_pos.append((i, s_match.start() + search_start_pos, s_match.end() + search_start_pos))
+                if re_ParStartSquare.match(s_match.group(0)):
+                    square_count += 1
+                search_start_pos += s_match.end()
+            elif e_match:
+                if len(start_pos) > 0:
                     s_i, s_start, s_end = start_pos.pop()
                     pairs.append((
                         (s_i, s_start, s_end),
                         (i, e_match.start() + search_start_pos, e_match.end() + search_start_pos),
                     ))
-                    in_square = False
-                    search_start_pos += e_match.end()
-                else:
-                    break
-
-            else:
-                s_match = re_ParStartAny.search(text[search_start_pos:])
-                e_match = re_ParEndRound.search(text[search_start_pos:])
-
-                if not s_match and not e_match:
-                    break
-
-                if s_match and e_match:
-                    if s_match.start() < e_match.start():
-                        e_match = None
-                    else:
-                        s_match = None
-
-                if s_match:
-                    start_pos.append((i, s_match.start() + search_start_pos, s_match.end() + search_start_pos))
-                    if s_match.group(0) == '「':
-                        in_square = True
-                    search_start_pos += s_match.end()
-                elif e_match:
-                    if len(start_pos) > 0:
-                        s_i, s_start, s_end = start_pos.pop()
-                        pairs.append((
-                            (s_i, s_start, s_end),
-                            (i, e_match.start() + search_start_pos, e_match.end() + search_start_pos),
-                        ))
-                    search_start_pos += e_match.end()
+                if square_count:
+                    square_count -= 1
+                search_start_pos += e_match.end()
 
     positions = []
     for (s_i, s_start, s_end), (e_i, e_start, e_end) in pairs:
