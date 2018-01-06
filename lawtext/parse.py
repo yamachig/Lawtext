@@ -1249,22 +1249,25 @@ class Parser:
         if remarks:
             style_struct_children.append(remarks)
 
-        line_type, indent, data = self.here()
-        next_line_type, next_indent, next_data = self.next()
+        options = {}
 
-        if (
-            line_type == 'DefaultLine' and
-            indent == current_indent and
-            next_line_type != 'BlankLine' and
-            next_indent == current_indent
-        ):
+        while self.continuing():
+            option = self.process_option(current_indent)
+            if option:
+                options[option[0]] = option[1]
+            else:
+                break
+
+        style_struct_title = options.get('style-struct-title')
+        if style_struct_title:
             style_struct_children.append({
                 'tag': 'StyleStructTitle',
                 'attr': {},
-                'children': [data['body']],
+                'children': style_struct_title,
             })
 
-            self.forward()
+        line_type, indent, data = self.here()
+        next_line_type, next_indent, next_data = self.next()
 
         fig = self.process_fig(current_indent)
         if fig:
