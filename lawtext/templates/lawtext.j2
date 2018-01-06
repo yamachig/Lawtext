@@ -376,7 +376,7 @@
     {%- for _ in range(indent) -%}
       {{- indent_space -}}
     {%- endfor -%}
-    {{- m_text(el) -}}
+    :style-struct-title:{{- m_text(el) -}}
 {#- new #}
 {# line -#}
   {%- elif el.tag == 'Style' -%}
