@@ -18,3 +18,4 @@ package-lock.json
 cache.sqlite
 MANIFEST
 dist
+lawtext/js/parser.js

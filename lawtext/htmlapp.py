@@ -18,6 +18,8 @@ def write_text(path, text):
     path.write_text(text, encoding='utf-8')
 
 def main(outdir, preserve_compiled_files, ie=False):
+    os.environ["PATH"] += os.pathsep + str(Path(__file__).resolve().parents[1] / 'node_modules/.bin')
+
     outdir = Path(outdir).resolve()
     if outdir.exists():
         rmtree(str(outdir))
@@ -31,6 +33,20 @@ def main(outdir, preserve_compiled_files, ie=False):
         str(Path(__file__).parent.resolve() / 'static' / 'law.css'),
         str(Path(outdir / 'src' / 'law.css')),
     )
+
+    subprocess.check_call([
+        'pegjs',
+        '-o',
+        str(Path(__file__).parent.resolve() / 'js' / 'parser.js'),
+        str(Path(__file__).parent.resolve() / 'js' / 'parser.pegjs'),
+    ], shell=True)
+
+    subprocess.check_call([
+        'browserify',
+        str(Path(__file__).parent.resolve() / 'js' / 'lawtext.js'),
+        '-o',
+        str(Path(outdir / 'src' / 'lawtext_parse.js')),
+    ], shell=True)
 
     templates_js_path = Path(outdir / 'src' / 'templates.js')
     if not preserve_compiled_files or not templates_js_path.exists():

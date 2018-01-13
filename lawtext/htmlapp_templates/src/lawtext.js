@@ -236,7 +236,11 @@ Lawtext.Data = Backbone.Model.extend({
             law = Lawtext.xml_to_json(text);
         } else {
             try {
-                law = _parse_decorate.parse_lawtext(text);
+                if(Lawtext.use_py_parse) {
+                    law = _parse_decorate.parse_lawtext(text);
+                } else {
+                    law = Lawtext.parse(text);
+                }
                 _parse_decorate.decorate(law);
             } catch(err) {
                 var err_str = err.__str__();
