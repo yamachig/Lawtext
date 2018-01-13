@@ -1,6 +1,7 @@
 "use strict";
 
 var parser = require("./parser");
+var annotate_html = require("./annotate_html");
 var fs = require('fs');
 
 
@@ -84,14 +85,15 @@ function lex(text) {
 
 
 
-function parse(text) {
+function parse(text, options) {
 
     console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
     let t0 = (new Date()).getTime();
 
     let [lexed, indent_memo, lines_count] = lex(text);
     try {
-        var parsed = parser.parse(lexed, { indent_memo: indent_memo });
+        options = Object.assign({}, options, { indent_memo: indent_memo });
+        var parsed = parser.parse(lexed, options);
 
         let t1 = (new Date()).getTime();
         console.error(`/////  parse end  /////`);
@@ -138,9 +140,11 @@ if (typeof require !== 'undefined' && require.main === module) {
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
     exports.parse = parse;
+    exports.annotate_html = annotate_html.parse;
 }
 
 if (typeof window !== 'undefined') {
     window.Lawtext = window.Lawtext || {};
     window.Lawtext.parse = parse;
+    window.Lawtext.annotate_html = annotate_html.parse;
 }

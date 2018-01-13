@@ -34,12 +34,17 @@ def main(outdir, preserve_compiled_files, ie=False):
         str(Path(outdir / 'src' / 'law.css')),
     )
 
-    subprocess.check_call([
-        'pegjs',
-        '-o',
-        str(Path(__file__).parent.resolve() / 'js' / 'parser.js'),
-        str(Path(__file__).parent.resolve() / 'js' / 'parser.pegjs'),
-    ], shell=True)
+    for pegjs in (Path(__file__).parent.resolve() / 'js').glob('*.pegjs'):
+        cache = pegjs.stem in []#['annotate_html']
+        args = ['pegjs']
+        if cache:
+            args.append('--cache')
+        args += [
+            '-o',
+            str(pegjs.parent / f'{pegjs.stem}.js'),
+            str(pegjs),
+        ]
+        subprocess.check_call(args, shell=True)
 
     subprocess.check_call([
         'browserify',
@@ -56,24 +61,6 @@ def main(outdir, preserve_compiled_files, ie=False):
             str(Path(__file__).parent.resolve() / 'templates'),
         ], shell=True).decode(encoding='utf-8')
         write_text(templates_js_path, outtext)
-
-    import_parse_decorate_js_path = Path(outdir / 'src' / 'parse_decorate.js')
-    if not preserve_compiled_files or not import_parse_decorate_js_path.exists():
-        subprocess.check_call([
-            'transcrypt',
-            '--build',
-            '--esv', '5',
-            '--fcall',
-            '--dextex',
-            '--nomin',
-            '--xpath', str(Path(__file__).parents[1].resolve()),
-            str(Path(__file__).parent.resolve() / '_parse_decorate.py'),
-        ])
-        outtext = (Path(__file__).parent.resolve() / '__javascript__' / '_parse_decorate.js').read_text(encoding='utf-8')
-        outtext = outtext.replace('error.args', 'error.__args__')
-        outtext = outtext.replace('join (self.args)', 'join (self.__args__)')
-        outtext = outtext.replace(', __kwargtrans__ (kwargs)', ', __kwargtrans__ ([].slice.apply (arguments).slice (2))')
-        write_text(import_parse_decorate_js_path, outtext)
 
     if ie:
 

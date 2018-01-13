@@ -1183,9 +1183,9 @@ PARENTHESES_INLINE "PARENTHESES_INLINE" =
     SQUARE_PARENTHESES_INLINE
 
 ROUND_PARENTHESES_INLINE "ROUND_PARENTHESES_INLINE" =
-    [(（]
+    start:[(（]
     content:$(NOT_PARENTHESIS_CHAR / PARENTHESES_INLINE)*
-    [)）]
+    end:[)）]
     {
         return {
             text: text(),
@@ -1194,9 +1194,9 @@ ROUND_PARENTHESES_INLINE "ROUND_PARENTHESES_INLINE" =
     }
 
 SQUARE_BRACKETS_INLINE "SQUARE_BRACKETS_INLINE" =
-    [\[［]
+    start:[\[［]
     content:$(NOT_PARENTHESIS_CHAR / PARENTHESES_INLINE)*
-    [\]］]
+    end:[\]］]
     {
         return {
             text: text(),
@@ -1205,9 +1205,9 @@ SQUARE_BRACKETS_INLINE "SQUARE_BRACKETS_INLINE" =
     }
 
 CURLY_BRACKETS_INLINE "CURLY_BRACKETS_INLINE" =
-    [{｛]
+    start:[{｛]
     content:$(NOT_PARENTHESIS_CHAR / PARENTHESES_INLINE)*
-    [}｝]
+    end:[}｝]
     {
         return {
             text: text(),
@@ -1216,9 +1216,9 @@ CURLY_BRACKETS_INLINE "CURLY_BRACKETS_INLINE" =
     }
 
 SQUARE_PARENTHESES_INLINE "SQUARE_PARENTHESES_INLINE" =
-    [「]
+    start:[「]
     content:$([^\r\n「」] / SQUARE_PARENTHESES_INLINE)*
-    [」]
+    end:[」]
     {
         return {
             text: text(),

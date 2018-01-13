@@ -646,12 +646,15 @@ class TestJSParse(AbstractTest):
         import os
 
         os.environ["PATH"] += os.pathsep + str(Path(__file__).resolve().parents[1] / 'node_modules/.bin')
-        subprocess.check_call([
-            'pegjs',
-            '-o',
-            str(Path(__file__).parent.resolve() / 'js' / 'parser.js'),
-            str(Path(__file__).parent.resolve() / 'js' / 'parser.pegjs'),
-        ], shell=True)
+
+
+        for pegjs in (Path(__file__).parent.resolve() / 'js').glob('*.pegjs'):
+            subprocess.check_call([
+                'pegjs',
+                '-o',
+                str(pegjs.parent / f'{pegjs.stem}.js'),
+                str(pegjs),
+            ], shell=True)
 
         out_test_dir = Path('out_test_parse')
 

@@ -157,7 +157,8 @@ Lawtext.render_law = function(template_name, law) {
     return nunjucks.render(template_name, {
         law: law,
         "print": console.log,
-        "context": new Lawtext.Context()
+        "context": new Lawtext.Context(),
+        "annotate_html": Lawtext.annotate_html,
     });
 };
 
@@ -237,7 +238,7 @@ Lawtext.Data = Backbone.Model.extend({
             law = Lawtext.xml_to_json(text);
         } else {
             try {
-                law = Lawtext.parse(text);
+                law = Lawtext.parse(text, {startRule: "start"});
             } catch(err) {
                 var err_str = err.__str__();
                 var pre = $("<pre>")
@@ -527,6 +528,7 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
         var law = self.data.get('law');
         if(!_(law).isNull() && _(self.law_html).isNull()) {
             self.law_html = Lawtext.render_law('htmlfragment.html', law);
+            self.analyzed = true;
         }
 
         self.$el.html(self.template({

@@ -43,7 +43,6 @@ SOFTWARE.
 
 <script src="src/templates.js"></script>
 <script src="src/lawtext_parse.js"></script>
-<script src="src/parse_decorate.js"></script>
 
 <script src="templates/main_view.html"></script>
 <script src="templates/sidebar_view.html"></script>
@@ -59,7 +58,6 @@ var userAgent = window.navigator.userAgent.toLowerCase();
 if (userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1) {
     document.write('<script src="src/ie_templates.js"><\/script>');
     document.write('<script src="src/ie_lawtext_parse.js"><\/script>');
-    document.write('<script src="src/ie_parse_decorate.js"><\/script>');
     document.write('<script src="templates/ie_main_view.html"><\/script>');
     document.write('<script src="templates/ie_sidebar_view.html"><\/script>');
     document.write('<script src="templates/ie_htmlpreview_view.html"><\/script>');
