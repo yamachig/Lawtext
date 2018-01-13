@@ -9,6 +9,7 @@ var fs = require('fs');
 function lex(text) {
 
     let lines = text.split(/\r?\n/);
+    let lines_count = lines.length;
     let replaced_lines = [];
     let indent_depth = 0;
     let indent_memo = {};
@@ -76,7 +77,7 @@ function lex(text) {
 
     let replaced_text = replaced_lines.join("\n");
 
-    return [replaced_text, indent_memo];
+    return [replaced_text, indent_memo, lines_count];
 }
 
 
@@ -84,12 +85,17 @@ function lex(text) {
 
 
 function parse(text) {
-    console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
 
-    let [lexed, indent_memo] = lex(text);
+    console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
+    let t0 = (new Date()).getTime();
+
+    let [lexed, indent_memo, lines_count] = lex(text);
     try {
         var parsed = parser.parse(lexed, { indent_memo: indent_memo });
-        console.error("/////  parse end  /////");
+
+        let t1 = (new Date()).getTime();
+        console.error(`/////  parse end  /////`);
+        console.error(`( ${Math.round((t1 - t0) / lines_count * 1000)} μs/line  =  ${t1 - t0} ms / ${lines_count} lines )`);
     } catch(e) {
         console.error("##### parse error #####");
         if(e.location) {

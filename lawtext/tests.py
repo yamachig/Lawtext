@@ -29,7 +29,7 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
             ('414AC0000000153', '平成十四年法律第百五十三号', '電子署名等に係る地方公共団体情報システム機構の認証業務に関する法律'),
             ('405AC0000000088', '平成五年法律第八十八号', '行政手続法'),
             ('406CO0000000265', '平成六年政令第二百六十五号', '行政手続法施行令'),
-            ('412M50001000064', '平成十二年郵政省令第六十四号', '第一種指定電気通信設備接続料規則'),
+            # ('412M50001000064', '平成十二年郵政省令第六十四号', '第一種指定電気通信設備接続料規則'),
             ('428M60000008031', '平成二十八年総務省令第三十一号', '第二種指定電気通信設備接続料規則'),
             ('426M60000002044', '平成二十六年内閣府令第四十四号', '子ども・子育て支援法施行規則'),
             ('346AC0000000073', '昭和四十六年法律第七十三号', '児童手当法'),
@@ -680,12 +680,9 @@ class TestJSParse(AbstractTest):
                 t0 = time.time()
                 parsed_law = parse_lawtext(lawtext)
                 t1 = time.time()
-                decorate(parsed_law)
-                t2 = time.time()
                 lines_count = len(lawtext.splitlines())
 
                 print(f'    parse:    {(t1 - t0) * 1_000_000 / lines_count:3,.0f} μs/line  =  {(t1 - t0) * 1_000:5,.0f} ms / {lines_count:,} lines')
-                print(f'    decorate: {(t2 - t1) * 1_000_000 / lines_count:3,.0f} μs/line  =  {(t2 - t1) * 1_000:5,.0f} ms / {lines_count:,} lines')
 
                 parsed_xml = render_xml(parsed_law)
                 parsed_outtext = minidom.parseString(parsed_xml).toprettyxml(indent="  ")

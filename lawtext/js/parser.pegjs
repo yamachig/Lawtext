@@ -77,6 +77,126 @@
         '款': 'SubsectionTitle', '目': 'DivisionTitle', '条': 'ArticleTitle',
         '則': 'SupplProvisionLabel'
     };
+
+    let re_kanji_num = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
+
+    function parse_kanji_num(text) {
+        let m = text.match(re_kanji_num)
+        if(m) {
+            let d1000 = m[1] ? kanji_digits[m[2]] || 1 : 0;
+            let d100 = m[3] ? kanji_digits[m[4]] || 1 : 0;
+            let d10 = m[5] ? kanji_digits[m[6]] || 1 : 0;
+            let d1 = kanji_digits[m[7]] || 0;
+            return "" + (d1000 * 1000 + d100 * 100 + d10 * 10 + d1);
+        }
+        return null;
+    }
+
+    function get_lawtype(text) {
+        if(text.match(/^法律/)) return "Act";
+        else if(text.match(/^政令/)) return "CabinetOrder";
+        else if(text.match(/^勅令/)) return "ImperialOrder";
+        else if(text.match(/^^\S*[^政勅]令/)) return "MinisterialOrdinance";
+        else if(text.match(/^\S*規則/)) return "Rule";
+        else return null;
+    }
+
+    let kanji_digits = {
+        '〇': 0, '一': 1, '二': 2, '三': 3, '四': 4,
+        '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
+    };
+
+    let eras = {
+        '明治': 'Meiji', '大正': 'Taisho',
+        '昭和': 'Showa', '平成': 'Heisei',
+    };
+
+    let re_named_num = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
+    let iroha_chars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
+    let re_iroha_char = /[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]/;
+    let re_item_num = /^\D*(\d+)\D*$/;
+
+    function parse_roman_num(text) {
+        let num = 0;
+        for(let i = 0; i < text.length; i++) {
+            let char = text[i];
+            let next_char = text[i + 1] || "";
+            if(char.match(/[iIｉＩ]/)) {
+                if (next_char.match(/[xXｘＸ]/)) num -= 1;
+                else num += 1;
+            }
+            if(char.match(/[xXｘＸ]/)) {
+                num += 10;
+            }
+        }
+        return num;
+    }
+
+    let re_wide_digits = [
+        [/０/g, '0'], [/１/g, '1'], [/２/g, '2'], [/３/g, '3'], [/４/g, '4'],
+        [/５/g, '5'], [/６/g, '6'], [/７/g, '7'], [/８/g, '8'], [/９/g, '9'],
+    ];
+
+    function replace_wide_num(text) {
+        let ret = text;
+
+        for(let i = 0; i < re_wide_digits.length; i++) {
+            let [re_wide, narrow]  = re_wide_digits[i];
+            ret = ret.replace(re_wide, narrow);
+        }
+        return ret;
+    }
+
+    function parse_named_num(text) {
+        let nums_group = [];
+
+        let subtexts = text
+            .split(/\s+/)[0]
+            .replace("及び", "、")
+            .replace("から", "、")
+            .replace("まで", "")
+            .replace("～", "、")
+            .replace("・", "、")
+            .split("、");
+
+        for(let i = 0; i < subtexts.length; i++) {
+            let subtext = subtexts[i];
+
+            let m = subtext.match(re_named_num);
+            if(m) {
+                let nums = [parse_kanji_num(m[2])];
+                if(m[3]) {
+                    let bs = m[3].split(/のノ/g);
+                    for(let j = 0; j < bs.length; j++) {
+                        if(!bs[j]) continue;
+                        nums.push(parse_kanji_num(bs[j]));
+                    }
+                }
+                nums_group.push(nums.join('_'));
+                continue;
+            }
+
+            m = subtext.match(re_iroha_char);
+            if(m) {
+                nums_group.push(iroha_chars.indexOf(m[0]) + 1);
+                continue;
+            }
+
+            subtext = replace_wide_num(subtext);
+            m = subtext.match(re_item_num);
+            if(m) {
+                nums_group.push(m[1]);
+                continue;
+            }
+
+            let roman_num = parse_roman_num(subtext);
+            if(roman_num !== 0) {
+                nums_group.push(roman_num);
+            }
+        }
+
+        return nums_group.join(':');
+    }
 }
 
 
@@ -103,12 +223,29 @@ law =
     main_provision:main_provision
     appdx_items:appdx_item*
     {
-        let law = new EL("Law");
+        let law = new EL("Law", {Lang: "ja"});
         let law_body = new EL("LawBody");
 
         if(law_title !== null) {
             if(law_title.law_num) {
                 law.append(new EL("LawNum", {}, [law_title.law_num]));
+
+                let m = law_title.law_num.match(/(明治|大正|昭和|平成)([一二三四五六七八九十]+)年(\S+?)第([一二三四五六七八九十百千]+)号/);
+                if(m) {
+                    let [era, year, law_type, num] = m.slice(1);
+
+                    let era_val = eras[era];
+                    if(era_val) law.attr.Era = era_val;
+
+                    let year_val = parse_kanji_num(year);
+                    if(year_val !== null) law.attr.Year = year_val;
+
+                    let law_type_val = get_lawtype(law_type);
+                    if(law_type_val !== null) law.attr.LawType = law_type_val;
+
+                    let num_val = parse_kanji_num(num);
+                    if(num_val !== null) law.attr.Num = num_val;
+                }
             }
 
             if(law_title.law_title) {
@@ -197,16 +334,22 @@ toc_item "toc_item" =
     // &(here:$(NEXTINLINE) &{ console.error(`here1.2 line ${location().start.line}: ${here}`); return true; })
     {
         let type_char = title.match(/[編章節款目章則]/)[0];
-        let toc_item = new EL(
-            "TOC" + article_group_type[type_char],
-            {},
-            [],
-        );
+        let toc_item = new EL("TOC" + article_group_type[type_char]);
+
+        if(title.match(/[編章節款目章]/)) {
+            toc_item.attr.Delete = 'false';
+            let num = parse_named_num(title);
+            if(num) {
+                toc_item.attr.Num = num;
+            }
+        }
+
         toc_item.append(new EL(
             article_group_title_tag[type_char],
             {},
             [title],
         ));
+
         if(article_range !== null) {
             toc_item.append(new EL(
                 "ArticleRange",
@@ -214,6 +357,7 @@ toc_item "toc_item" =
                 [article_range],
             ));
         }
+
         toc_item.extend(children || []);
 
         return toc_item;
@@ -247,7 +391,7 @@ article_group_title "article_group_title" =
         "第"
         [^ 　\t\r\n編章節款目]+
         type_char:[編章節款目]
-        ("の" [^ 　\t\r\n]+)?
+        ([のノ] [^ 　\t\r\n]+)?
         (__ INLINE)?
         {
             return {
@@ -279,13 +423,24 @@ article_group "article_group" =
         )
     )+
     {
-        let article_group = new EL(article_group_type[article_group_title.type_char]);
+        let article_group = new EL(
+            article_group_type[article_group_title.type_char],
+            {Delete: "false", Hide: "false"},
+        );
+
         article_group.append(new EL(
             article_group_type[article_group_title.type_char] + "Title",
             {},
             [article_group_title.text],
         ))
+
+        let num = parse_named_num(article_group_title.text);
+        if(num) {
+            article_group.attr.Num = num;
+        }
+
         article_group.extend(children);
+
         return article_group;
     }
 
@@ -305,7 +460,7 @@ article_title "article_title" =
     "第"
     [^ 　\t\r\n条]+
     "条"
-    ("の" [^ 　\t\r\n]+)?
+    ([のノ] [^ 　\t\r\n]+)?
 
 article "article" =
     article_caption:article_paragraph_caption?
@@ -316,7 +471,7 @@ article "article" =
         { return target; }
         /
         _
-        { return [new EL("Sentence")]; }
+        { return [new EL("Sentence", {WritingMode: 'vertical'})]; }
     )
     NEWLINE+
     lists:(
@@ -344,13 +499,23 @@ article "article" =
         { return [target].concat(target_rest); }
     )?
     {
-        let article = new EL("Article");
+        let article = new EL(
+            "Article",
+            {Delete: "false", Hide: "false"},
+        );
         if(article_caption !== null) {
             article.append(new EL("ArticleCaption", {}, [article_caption]));
         }
         article.append(new EL("ArticleTitle", {}, [article_title]));
 
+        let num = parse_named_num(article_title);
+        if(num) {
+            article.attr.Num = num;
+        }
+
         let paragraph = new EL("Paragraph");
+        paragraph.attr.OldStyle = "false";
+        paragraph.attr.Delete = "false";
         article.append(paragraph);
 
         paragraph.append(new EL("ParagraphNum"));
@@ -407,12 +572,28 @@ paragraph_item "paragraph_item" =
             }
         }
 
-        let paragraph_item = new EL(paragraph_item_tags[indent]);
+        let paragraph_item = new EL(
+            paragraph_item_tags[indent],
+            {Hide: "false"},
+        );
+        if(indent === 0) {
+            paragraph_item.attr.OldStyle = "false";
+        } else {
+            paragraph_item.attr.Delete = "false";
+        }
         if(paragraph_caption !== null) {
             paragraph_item.append(new EL("ParagraphCaption", {}, [paragraph_caption]));
         }
+
         paragraph_item.append(new EL(paragraph_item_title_tags[indent], {}, [paragraph_item_title]));
+
+        let num = parse_named_num(paragraph_item_title);
+        if(num) {
+            paragraph_item.attr.Num = num;
+        }
+
         paragraph_item.append(new EL(paragraph_item_sentence_tags[indent], {}, inline_contents));
+
         paragraph_item.extend(lists || []);
         paragraph_item.extend(children || []);
 
@@ -441,7 +622,15 @@ no_name_paragraph "no_name_paragraph" =
         let indent = indent_memo[location().start.line];
         // console.error("paragraph_item: " + JSON.stringify(location().start.line));
         // console.error("    indent: " + indent);
-        let paragraph_item = new EL(paragraph_item_tags[indent]);
+        let paragraph_item = new EL(
+            paragraph_item_tags[indent],
+            {Hide: "false", Num: "1"},
+        );
+        if(indent === 0) {
+            paragraph_item.attr.OldStyle = "false";
+        } else {
+            paragraph_item.attr.Delete = "false";
+        }
         paragraph_item.append(new EL(paragraph_item_title_tags[indent]));
         paragraph_item.append(new EL(paragraph_item_sentence_tags[indent], {}, inline_contents));
         paragraph_item.extend(lists || []);
@@ -521,7 +710,7 @@ table "table" =
         {return [first].concat(rest);}
     )+
     {
-        let table = new EL("Table");
+        let table = new EL("Table", {WritingMode: "vertical"});
         for(let i = 0; i < table_row_columns.length; i++) {
             let table_row = new EL("TableRow", {}, table_row_columns[i]);
             table.append(table_row);
@@ -564,7 +753,12 @@ table_column "table_column" =
         }
         for(let i = 0; i < lines.length; i++) {
             let line = lines[i];
-            table_column.append(new EL("Sentence", {}, [line]));
+            let sentence = new EL(
+                "Sentence",
+                {WritingMode: "vertical"},
+                [line],
+            );
+            table_column.append(sentence);
         }
 
         return table_column;
@@ -572,7 +766,16 @@ table_column "table_column" =
     /
     "-" _ NEWLINE
     {
-        return new EL("TableColumn", {}, [new EL("Sentence")]);
+        return new EL(
+            "TableColumn",
+            {
+                BorderTop: "solid",
+                BorderRight: "solid",
+                BorderBottom: "solid",
+                BorderLeft: "solid",
+            },
+            [new EL("Sentence", {WritingMode: "vertical"}),
+        ]);
     }
 
 
@@ -632,7 +835,13 @@ remarks "remarks" =
     first:(
         __
         _target:$INLINE
-        { return new EL("Sentence", {}, [_target]); }
+        {
+            return new EL(
+                "Sentence",
+                {WritingMode: "vertical"},
+                [_target],
+            );
+        }
     )?
     NEWLINE
     rest:(
@@ -647,7 +856,13 @@ remarks "remarks" =
                 /
                 _target:$INLINE
                 NEWLINE
-                { return new EL("Sentence", {}, [_target]); }
+                {
+                    return new EL(
+                        "Sentence",
+                        {WritingMode: "vertical"},
+                        [_target],
+                        );
+                    }
             )+
             NEWLINE*
         DEDENT DEDENT
@@ -657,6 +872,14 @@ remarks "remarks" =
         let children = rest || [];
         if(first !== null) {
             children = [].concat(first).concat(children);
+        }
+        if(children.length >= 2) {
+            for(let i = 0; i < children.length; i++) {
+                let child = children[i];
+                if(child.tag.match(/Sentence|Column/)) {
+                    child.attr.Num = "" + (i + 1);
+                }
+            }
         }
 
         let remarks = new EL("Remarks");
@@ -729,10 +952,10 @@ appdx_table "appdx_table" =
         let appdx_table = new EL("AppdxTable");
         if(title_struct.table_struct_title !== "") {
             console.error(`### line ${location().start.line}: Maybe irregular AppdxTableTitle!`);
-            appdx_table.append(new EL("AppdxTableTitle", {}, [title_struct.text]));
+            appdx_table.append(new EL("AppdxTableTitle", {WritingMode: "vertical"}, [title_struct.text]));
         } else {
-            appdx_table.append(new EL("AppdxTableTitle", {}, [title_struct.title]));
-            if(title_struct.related_article_num !== null) {
+            appdx_table.append(new EL("AppdxTableTitle", {WritingMode: "vertical"}, [title_struct.title]));
+            if(title_struct.related_article_num) {
                 appdx_table.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
             }
         }
@@ -792,7 +1015,7 @@ appdx_style "appdx_style" =
     {
         let appdx_style = new EL("AppdxStyle");
         appdx_style.append(new EL("AppdxStyleTitle", {}, [title_struct.title]));
-        if(title_struct.related_article_num !== null) {
+        if(title_struct.related_article_num) {
             appdx_style.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
         }
         appdx_style.extend(children || []);
@@ -839,7 +1062,7 @@ suppl_provision "suppl_provision" =
     )
     {
         let suppl_provision = new EL("SupplProvision");
-        if(suppl_provision_label.amend_law_num !== null) {
+        if(suppl_provision_label.amend_law_num) {
             suppl_provision.attr["AmendLawNum"] = suppl_provision_label.amend_law_num;
         }
         if(suppl_provision_label.extract !== null) {
@@ -868,7 +1091,11 @@ columns_or_sentences "columns_or_sentences" =
 
     {
         console.error(`### line ${location().start.line}: Maybe mismatched parenthesis!`);
-        let sentence = new EL("Sentence", {}, [inline]);
+        let sentence = new EL(
+            "Sentence",
+            {WritingMode: "vertical"},
+            [inline],
+        );
         return [sentence];
     }
 
@@ -876,10 +1103,26 @@ period_sentences "period_sentences" =
     fragments:($PERIOD_SENTENCE_FRAGMENT)+
     {
         let sentences = [];
+        let proviso_indices = [];
         for(let i = 0; i < fragments.length; i++) {
             let sentence_str = fragments[i];
-            let sentence = new EL("Sentence", {}, [sentence_str]);
+            let sentence = new EL(
+                "Sentence",
+                {WritingMode: "vertical"},
+                [sentence_str]
+            );
+            if(fragments.length >= 2) sentence.attr.Num = "" + (i + 1);
+            if(sentence_str.match(/^ただし、|但し、/)) {
+                proviso_indices.push(i);
+            }
             sentences.push(sentence);
+        }
+        if(proviso_indices.length > 0) {
+            for(let i = 0; i < sentences.length; i++) {
+                sentences[i].attr.Function =
+                    proviso_indices.indexOf(i) >= 0 ?
+                        'proviso' : 'main';
+            }
         }
         return sentences;
     }
@@ -891,7 +1134,14 @@ columns "columns" =
         let column_inner_sets = [first].concat(rest);
         let columns = [];
         for(let i = 0; i < column_inner_sets.length; i++) {
-            let column = new EL("Column", {}, column_inner_sets[i]);
+            let column = new EL(
+                "Column",
+                {LineBreak: "false"},
+                column_inner_sets[i],
+            );
+            if(column_inner_sets.length >= 2) {
+                column.attr.Num = "" + (i + 1);
+            }
             columns.push(column);
         }
         return columns;
