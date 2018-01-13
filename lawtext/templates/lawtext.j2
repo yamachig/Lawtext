@@ -191,9 +191,11 @@
           'Subitem5Title', 'Subitem6Title', 'Subitem7Title', 'Subitem8Title',
           'Subitem9Title', 'Subitem10Title'
       ] -%}
+
     {%- for _ in range(indent) -%}
       {{- indent_space -}}
     {%- endfor -%}
+
     {%- if el.children | length -%}
       {{- m_text(el) -}}
       {{- context.set('paragraph_item_title_exists', 1) -}}
@@ -281,7 +283,7 @@
 {#- new #}
 {# line -#}
   {%- elif el.tag == 'Remarks' -%}
-    {{- m_remarks(el) -}}
+    {{- m_remarks(el, indent) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -382,7 +384,7 @@
   {%- elif el.tag == 'Style' -%}
     {{- m_style(el, indent) -}}
   {%- elif el.tag == 'Remarks' -%}
-    {{- m_remarks(el) -}}
+    {{- m_remarks(el, indent) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -424,7 +426,7 @@
   {%- elif el.tag == 'Item' -%}
     {{- m_paragraph_item(el, 1) -}}
   {%- elif el.tag == 'Remarks' -%}
-    {{- m_remarks(el) -}}
+    {{- m_remarks(el, 1) -}}
   {%- else -%}
     {{- m_element(el) -}}
 {#- new #}
@@ -452,7 +454,7 @@
   {%- elif el.tag == 'StyleStruct' -%}
     {{- m_style_struct(el, 1) -}}
   {%- elif el.tag == 'Remarks' -%}
-    {{- m_remarks(el) -}}
+    {{- m_remarks(el, 1) -}}
   {%- else -%}
     {{- m_element(el) -}}
 {#- new #}
@@ -511,22 +513,50 @@
 
 
 
-{%- macro m_remarks(remarks) -%}
+{%- macro m_remarks(remarks, indent) -%}
+{{- context.set('remarks_label_line', 0) -}}
 {%- for el in remarks.children -%}
   {%- if el.tag == 'RemarksLabel' -%}
-    {{- indent_space -}}{{- m_text(el) -}}
+    {{- context.set('remarks_label_line', 1) -}}
+  {%- endif -%}
+
+  {%- if el.tag == 'RemarksLabel' -%}
+    {%- for _ in range(indent) -%}
+      {{- indent_space -}}
+    {%- endfor -%}
+  {%- endif -%}
+
+  {%- if el.tag == 'RemarksLabel' -%}
+    {{- m_text(el) -}}
   {%- elif el.tag == 'Sentence' -%}
-    {{- margin_space -}}{{- m_text(el) -}}
-    {%- if loop.last -%}
+
+    {%- if context.get('remarks_label_line') -%}
+      {{- margin_space -}}
+    {%- endif -%}
+
+    {%- if not context.get('remarks_label_line') -%}
+      {%- for _ in range(indent + 2) -%}
+        {{- indent_space -}}
+      {%- endfor -%}
+    {%- endif -%}
+
+    {{- m_text(el) -}}
+{#- new #}
+{# line -#}
+  {%- elif el.tag == 'Item' -%}
+    {%- if context.get('remarks_label_line') -%}
 {#- new #}
 {# line -#}
     {%- endif -%}
-  {%- elif el.tag == 'Item' -%}
-    {{- m_paragraph_item(el, 0) -}}
+    {{- m_paragraph_item(el, indent + 2) -}}
   {%- else -%}
     {{- m_element(el) -}}
 {#- new #}
 {# line -#}
+  {%- endif -%}
+
+  {%- if el.tag != 'RemarksLabel' -%}
+    {{- context.set('remarks_label_line', 0) -}}
   {%- endif -%}
 {%- endfor -%}
 {%- endmacro -%}

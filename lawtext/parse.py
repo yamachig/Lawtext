@@ -62,8 +62,8 @@ def indent_level(indents, indent):
         raise LexerInternalError(f'インデントの文字が整っていません。なお、この文書で用いられているインデント文字は、「{indent}」＝「{indent_description}」であると推測されました。')
     return n
 
-re_TC1stLine   = re.compile(r'^(?P<indents>\s*)\* - (?P<tcbody>.*)$')
-re_TCnthLine   = re.compile(r'^(?P<indents>\s*)  - (?P<tcbody>.*)$')
+re_TC1stLine   = re.compile(r'^(?P<indents>\s*)\* - ?(?P<tcbody>.*)$')
+re_TCnthLine   = re.compile(r'^(?P<indents>\s*)  - ?(?P<tcbody>.*)$')
 re_OptionLine   = re.compile(r'^(?P<indents>\s*):(?P<optname>\S+?):\s*(?P<optbody>.*)$')
 re_FigLine   = re.compile(r'^(?P<indents>\s*)\.\.(?:\s+)figure::(?:\s+)(?P<figbody>.*)$')
 re_DefaultLine = re.compile(r'^(?P<indents>\s*)(?P<linebody>\S.*)$')
@@ -807,6 +807,10 @@ class Parser:
             })
             self.forward()
 
+            table_struct = self.process_table_struct(current_indent + 1)
+            if table_struct:
+                paragraph_item_children.append(table_struct)
+
             paragraph_item_tag = paragraph_item_tags[current_indent]
             sub_paragraph_items = self.process_paragraph_items(current_indent + 1)
             if len(sub_paragraph_items):
@@ -1329,6 +1333,23 @@ class Parser:
             paragraph_items = self.process_paragraph_items(current_indent + 1)
             if len(paragraph_items):
                 remarks_children.extend(paragraph_items)
+
+            while self.continuing():
+                line_type, indent, data = self.here()
+                next_line_type, next_indent, next_data = self.next()
+
+                if (
+                    line_type == 'DefaultLine' and
+                    indent == current_indent + 2
+                ):
+                    remarks_children.append({
+                        'tag': 'Sentence',
+                        'attr': {},
+                        'children': [data['body']],
+                    })
+                    self.forward()
+                else:
+                    break
 
             remarks = {
                 'tag': 'Remarks',
