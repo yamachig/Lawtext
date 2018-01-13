@@ -209,6 +209,7 @@ Lawtext.Data = Backbone.Model.extend({
         self.set({opening_file: true});
 
         var file = evt.target.files[0];
+        if(file === null) return;
         var reader = new FileReader();
         reader.onload = (function(e) {
             $(evt.target).val('');
