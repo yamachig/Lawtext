@@ -34,6 +34,7 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
             ('426M60000002044', '平成二十六年内閣府令第四十四号', '子ども・子育て支援法施行規則'),
             ('346AC0000000073', '昭和四十六年法律第七十三号', '児童手当法'),
             ('129AC0000000089', '明治二十九年法律第八十九号', '民法'),
+            ('363M50001000046', '昭和六十三年郵政省令第四十六号', '電気通信事業報告規則'),
         ]
     ]
 
@@ -677,6 +678,9 @@ class TestJSParse(AbstractTest):
 
                 # print('  Rendering lawtext ...', file=sys.stderr)
                 lawtext = render_lawtext(web_law)
+                rendered_out_path = (out_test_dir / f'rendered_{law_name}.law.txt').resolve()
+                print(f'    Writing "{str(rendered_out_path)}" ...', file=sys.stderr)
+                rendered_out_path.write_text(lawtext, encoding='utf-8')
 
                 print('  Parsing lawtext ...', file=sys.stderr)
 

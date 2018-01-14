@@ -600,7 +600,7 @@ paragraph_item "paragraph_item" =
         return paragraph_item;
     }
 
-no_name_paragraph "no_name_paragraph" =
+no_name_paragraph_item "no_name_paragraph_item" =
     inline_contents:columns_or_sentences
     NEWLINE+
     lists:(
@@ -619,9 +619,16 @@ no_name_paragraph "no_name_paragraph" =
         { return [target].concat(target_rest); }
     )?
     {
-        let indent = indent_memo[location().start.line];
-        // console.error("paragraph_item: " + JSON.stringify(location().start.line));
-        // console.error("    indent: " + indent);
+        let lineno = location().start.line;
+        let indent = indent_memo[lineno];
+
+        if(base_indent_stack.length > 0) {
+            let [base_indent, is_first, base_lineno] = base_indent_stack[base_indent_stack.length - 1];
+            if(!is_first || lineno !== base_lineno) {
+                indent -= base_indent;
+            }
+        }
+
         let paragraph_item = new EL(
             paragraph_item_tags[indent],
             {Hide: "false", Num: "1"},
@@ -848,7 +855,7 @@ remarks "remarks" =
         INDENT INDENT
             target:(
                 &("" &{ base_indent_stack.push([indent_memo[location().start.line] - 1, false, location().start.line]); return true; })
-                _target:paragraph_item
+                _target:(paragraph_item / no_name_paragraph_item)
                 &("" &{ base_indent_stack.pop(); return true; })
                 { return _target; }
                 /
@@ -944,9 +951,10 @@ appdx_table "appdx_table" =
     children:(
         INDENT
             target:appdx_table_children
+            remarkses:remarks*
             NEWLINE*
         DEDENT
-        { return target; }
+        { return target.concat(remarkses); }
     )?
     {
         let appdx_table = new EL("AppdxTable");
@@ -1056,7 +1064,7 @@ suppl_provision "suppl_provision" =
         /
         paragraph_item+
         /
-        first:no_name_paragraph
+        first:no_name_paragraph_item
         rest:paragraph_item*
         { return [first].concat(rest); }
     )

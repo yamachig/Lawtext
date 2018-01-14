@@ -210,9 +210,6 @@
     {%- if sentence_text | trim | length -%}
       {%- if context.get('paragraph_item_title_exists') or article -%}
         {{- margin_space -}}
-      {%- else -%}
-{#- new #}
-{# line -#}
       {%- endif -%}
       {{- sentence_text -}}
     {%- else -%}
