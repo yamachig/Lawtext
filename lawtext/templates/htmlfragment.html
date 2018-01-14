@@ -266,6 +266,8 @@ paragraph-item-body
     {{- m_paragraph_item(el) -}}
   {%- elif el.tag == 'TableStruct' -%}
     {{- m_table_struct(el) -}}
+  {%- elif el.tag == 'StyleStruct' -%}
+    {{- m_style_struct(el) -}}
   {%- elif el.tag == 'List' -%}
     {{- m_list(el) -}}
   {%- else -%}
@@ -389,7 +391,9 @@ paragraph-item-body
       {{- m_text(el) -}}
     </div>
   {%- elif el.tag == 'Item' -%}
-    {{- m_paragraph_item(el) -}}
+    {{- m_paragraph_item(el) -}}}
+  {%- elif el.tag == 'FigStruct' -%}
+    {{- m_fig_struct(el) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -423,6 +427,8 @@ paragraph-item-body
     {{- m_fig(el) -}}
   {%- elif el.tag == 'Table' -%}
     {{- m_table(el) -}}
+  {%- elif el.tag == 'List' -%}
+    {{- m_list(el) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -504,8 +510,14 @@ paragraph-item-body
 {%- macro m_list(list) -%}
 <div class="list">
 {%- for el in list.children -%}
-  {%- if el.tag == 'ListSentence' -%}
+  {%- if el.tag in [
+          'ListSentence', 'Sublist1Sentence', 'Sublist2Sentence', 'Sublist3Sentence'
+      ] -%}
     {{- m_list_sentence(el) -}}
+  {%- elif el.tag in [
+          'Sublist1', 'Sublist2', 'Sublist3'
+      ] -%}
+    {{- m_list(el) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -536,6 +548,18 @@ paragraph-item-body
   {%- endif -%}
 {%- endfor -%}
 </div>
+{%- endmacro -%}
+
+
+
+{%- macro m_fig_struct(fig_struct) -%}
+{%- for el in fig_struct.children -%}
+  {%- if el.tag == 'Fig' -%}
+    {{- m_fig(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
 {%- endmacro -%}
 
 

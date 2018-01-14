@@ -56,7 +56,10 @@
 {%- macro m_enact_statement(enact_statement) -%}
 {#- new #}
 {# line -#}
+{{- indent_space -}}{{- indent_space -}}
 {{- m_text(enact_statement) -}}
+{#- new #}
+{# line -#}
 {#- new #}
 {# line -#}
 {%- endmacro -%}
@@ -138,6 +141,8 @@
     {%- if article_group.attr['Extract'] == 'true' -%}
       {{- margin_space -}}抄
     {%- endif -%}
+{#- new #}
+{# line -#}
 {#- new #}
 {# line -#}
   {%- elif el.tag == 'Article' -%}
@@ -225,6 +230,8 @@
     {{- m_paragraph_item(el, indent + 1) -}}
   {%- elif el.tag == 'TableStruct' -%}
     {{- m_table_struct(el, indent + 1) -}}
+  {%- elif el.tag == 'StyleStruct' -%}
+    {{- m_style_struct(el, indent + 1) -}}
   {%- elif el.tag == 'List' -%}
     {{- m_list(el, indent + 2) -}}
   {%- else -%}
@@ -285,6 +292,8 @@
     {{- m_element(el) -}}
   {%- endif -%}
 {%- endfor -%}
+{#- new #}
+{# line -#}
 {%- endmacro -%}
 
 
@@ -315,48 +324,46 @@
 
 {%- macro m_table_column(table_column, indent, first_column) -%}
 
+{%- for _ in range(indent) -%}
+  {{- indent_space -}}
+{%- endfor -%}
+
+{%- if first_column -%}
+  {{- '* - ' -}}
+{%- else -%}
+  {{- '  - ' -}}
+{%- endif -%}
+
+{%- if 'rowspan' in table_column.attr -%}
+  [rowspan="{{- table_column.attr['rowspan'] -}}"]
+{%- endif -%}
+{%- if 'colspan' in table_column.attr -%}
+  [colspan="{{- table_column.attr['colspan'] -}}"]
+{%- endif -%}
+{%- if 'Align' in table_column.attr -%}
+  [Align="{{- table_column.attr['Align'] -}}"]
+{%- endif -%}
+{%- if 'Valign' in table_column.attr -%}
+  [Valign="{{- table_column.attr['Valign'] -}}"]
+{%- endif -%}
+
 {%- for el in table_column.children -%}
-  {%- if el.tag == 'Sentence' -%}
+
+  {%- if not loop.first -%}
     {%- for _ in range(indent) -%}
       {{- indent_space -}}
     {%- endfor -%}
+    {{- '    ' -}}
+  {%- endif -%}
 
-    {%- if loop.first -%}
-      {%- if first_column -%}
-        {{- '* - ' -}}
-      {%- else -%}
-        {{- '  - ' -}}
-      {%- endif -%}
-
-      {%- if 'rowspan' in table_column.attr -%}
-        [rowspan="{{- table_column.attr['rowspan'] -}}"]
-      {%- endif -%}
-      {%- if 'colspan' in table_column.attr -%}
-        [colspan="{{- table_column.attr['colspan'] -}}"]
-      {%- endif -%}
-      {%- if 'Align' in table_column.attr -%}
-        [Align="{{- table_column.attr['Align'] -}}"]
-      {%- endif -%}
-      {%- if 'Valign' in table_column.attr -%}
-        [Valign="{{- table_column.attr['Valign'] -}}"]
-      {%- endif -%}
-    {%- else -%}
-      {{- '    ' -}}
-    {%- endif -%}
-
+  {%- if el.tag == 'Sentence' -%}
     {{- m_text(el) -}}
 {#- new #}
 {# line -#}
   {%- elif el.tag == 'Item' -%}
-    {%- for _ in range(indent) -%}
-      {{- indent_space -}}
-    {%- endfor -%}
-    {%- if first_column -%}
-      {{- '* - ' -}}
-    {%- else -%}
-      {{- '  - ' -}}
-    {%- endif -%}
     {{- m_paragraph_item(el, 0) -}}
+  {%- elif el.tag == 'FigStruct' -%}
+    {{- m_fig_struct(el, 0) -}}
   {%- else -%}
     {{- m_element(el) -}}
 {#- new #}
@@ -368,8 +375,6 @@
 
 
 {%- macro m_style_struct(style_struct, indent) -%}
-{#- new #}
-{# line -#}
 {%- for el in style_struct.children -%}
   {%- if el.tag == 'StyleStructTitle' -%}
     {%- for _ in range(indent) -%}
@@ -386,6 +391,8 @@
     {{- m_element(el) -}}
   {%- endif -%}
 {%- endfor -%}
+{#- new #}
+{# line -#}
 {%- endmacro -%}
 
 
@@ -396,6 +403,8 @@
     {{- m_fig(el, indent) -}}
   {%- elif el.tag == 'Table' -%}
     {{- m_table(el, indent) -}}
+  {%- elif el.tag == 'List' -%}
+    {{- m_list(el, indent + 2) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -464,8 +473,14 @@
 
 {%- macro m_list(list, indent) -%}
 {%- for el in list.children -%}
-  {%- if el.tag == 'ListSentence' -%}
+  {%- if el.tag in [
+          'ListSentence', 'Sublist1Sentence', 'Sublist2Sentence', 'Sublist3Sentence'
+      ] -%}
     {{- m_list_sentence(el, indent) -}}
+  {%- elif el.tag in [
+          'Sublist1', 'Sublist2', 'Sublist3'
+      ] -%}
+    {{- m_list(el, indent + 2) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -492,6 +507,18 @@
 {%- endfor -%}
 {#- new #}
 {# line -#}
+{%- endmacro -%}
+
+
+
+{%- macro m_fig_struct(fig_struct, indent) -%}
+{%- for el in fig_struct.children -%}
+  {%- if el.tag == 'Fig' -%}
+    {{- m_fig(el, indent) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
 {%- endmacro -%}
 
 
@@ -572,7 +599,7 @@
   {{- el -}}
 {%- else -%}
   <{{ el.tag }} {%- for key, value in el.attr | dictsort -%}
-    {{- ' ' -}}{{- key -}}={{- value -}}
+    {{- ' ' -}}{{- key -}}="{{- value -}}"
   {%- endfor -%}>
     {%- for child in el.children -%}
       {%- if not child.tag -%}

@@ -14,22 +14,22 @@ function lex(text) {
     let replaced_lines = [];
     let indent_depth = 0;
     let indent_memo = {};
-    let re_indent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第\S+[編章節款目章則]|[附付]\s+則|別表))/;
+    let re_indent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章]|[附付]\s+則|別表))/;
     let re_force_dedent_parentheses = /^(?:  |　|\t)[(（][^)）]*[)）][ 　\t]*$/
     let re_indent_in_toc = /^(?:  |　|\t)/;
     let in_toc = false;
 
     for(let i = 0; i < lines.length; i++) {
         let line = lines[i];
-        if(line.match(/^\S*目次$/)) {
-            in_toc = true;
-            replaced_lines.push(line);
-            continue;
-        }
+
         if(line.match(/^\s*$/)) {
             in_toc = false;
             replaced_lines.push(line);
             continue;
+        }
+
+        if(line.match(/^\S*目次$/)) {
+            in_toc = true;
         }
 
         let force_dedent = false;
@@ -91,6 +91,7 @@ function parse(text, options) {
     let t0 = (new Date()).getTime();
 
     let [lexed, indent_memo, lines_count] = lex(text);
+    // console.error(lexed);
     try {
         options = Object.assign({}, options, { indent_memo: indent_memo });
         var parsed = parser.parse(lexed, options);

@@ -36,6 +36,12 @@
 
     }
 
+
+
+    let indent_memo = options.indent_memo;
+
+
+
     let indent_depth = 0;
 
     let base_indent_stack = [];
@@ -62,7 +68,18 @@
         11: 'Subitem10Sentence',
     };
 
-    let indent_memo = options.indent_memo;
+
+
+
+    let list_depth = 0;
+
+    let list_tags = {
+        0: 'List', 1: 'Sublist1', 2: 'Sublist2',  3: 'Sublist3',
+    };
+
+
+
+
 
     let article_group_type_chars = "編章節款目";
 
@@ -218,7 +235,12 @@ start =
 
 law =
     law_title:law_title?
-    enact_statements:enact_statement*
+    enact_statements:(
+        INDENT INDENT
+            target:enact_statement+
+        DEDENT DEDENT
+        { return target; }
+    )?
     toc:toc?
     main_provision:main_provision
     appdx_items:appdx_item*
@@ -255,7 +277,7 @@ law =
 
         law.append(law_body);
 
-        law_body.extend(enact_statements);
+        law_body.extend(enact_statements || []);
         law_body.append(toc);
         law_body.append(main_provision);
         law_body.extend(appdx_items);
@@ -379,6 +401,11 @@ main_provision =
     {
         return new EL("MainProvision", {}, children);
     }
+    /
+    paragraph:no_name_paragraph_item
+    {
+        return new EL("MainProvision", {}, [paragraph]);
+    }
 
 
 
@@ -483,18 +510,22 @@ article "article" =
     )?
     children1:(
         INDENT
-            target:paragraph_item_child
-            target_rest:(_target:paragraph_item_child { return _target; })*
-            NEWLINE*
+            target:paragraph_item_child NEWLINE*
+            target_rest:(
+                _target:paragraph_item_child NEWLINE*
+                { return _target; }
+            )*
         DEDENT
         { return [target].concat(target_rest); }
     )?
     paragraphs:paragraph_item*
     children2:(
         INDENT
-            target:paragraph_item_child
-            target_rest:(_target:paragraph_item_child { return _target; })*
-            NEWLINE*
+            target:paragraph_item_child NEWLINE*
+            target_rest:(
+                _target:paragraph_item_child NEWLINE*
+                { return _target; }
+            )*
         DEDENT
         { return [target].concat(target_rest); }
     )?
@@ -554,9 +585,11 @@ paragraph_item "paragraph_item" =
     )?
     children:(
         INDENT
-            target:paragraph_item_child
-            target_rest:(_target:paragraph_item_child { return _target; })*
-            NEWLINE*
+            target:paragraph_item_child NEWLINE*
+            target_rest:(
+                _target:paragraph_item_child NEWLINE*
+                { return _target; }
+            )*
         DEDENT
         { return [target].concat(target_rest); }
     )?
@@ -612,9 +645,11 @@ no_name_paragraph_item "no_name_paragraph_item" =
     )?
     children:(
         INDENT
-            target:paragraph_item_child
-            target_rest:(_target:paragraph_item_child { return _target; })*
-            NEWLINE*
+            target:paragraph_item_child NEWLINE*
+            target_rest:(
+                _target:paragraph_item_child NEWLINE*
+                { return _target; }
+            )*
         DEDENT
         { return [target].concat(target_rest); }
     )?
@@ -650,21 +685,34 @@ paragraph_item_child "paragraph_item_child" =
     table_struct
     /
     paragraph_item
+    /
+    style_struct
 
 
 
 
 list "list" =
-    // &(here:$(NEXTINLINE) &{ console.error(`here1.1.1 line ${location().start.line}: ${here}`); return true; })
     columns_or_sentences:columns_or_sentences
-    // &(here:$(NEXTINLINE) &{ console.error(`here1.1.2 line ${location().start.line}: ${here}`); return true; })
     NEWLINE+
+    sublists:(
+        &("" &{ list_depth++; return true; })
+        INDENT INDENT
+            target:list+
+            NEWLINE*
+        DEDENT DEDENT
+        &("" &{ list_depth--; return true; })
+        { return target; }
+        /
+        &("" &{ list_depth--; return false; }) "DUMMY"
+    )?
     {
-        let list = new EL("List");
-        let list_sentence = new EL("ListSentence");
+        let list = new EL(list_tags[list_depth]);
+        let list_sentence = new EL(list_tags[list_depth] + "Sentence");
         list.append(list_sentence);
 
         list_sentence.extend(columns_or_sentences);
+
+        list.extend(sublists || []);
 
         return list;
     }
@@ -727,6 +775,7 @@ table "table" =
     }
 
 table_column "table_column" =
+    // &(here:$(NEXTINLINE) &{ console.error(`tc 01 line ${location().start.line}: "${here}"`); return true; })
     "-" __
     attr:(
         "["
@@ -736,14 +785,34 @@ table_column "table_column" =
         "\"]"
         { return [name, value]; }
     )*
-    first:$INLINE?
-    NEWLINE
+    first:(
+        fig_struct
+        /
+        inline:$INLINE? NEWLINE
+        {
+            return new EL(
+                "Sentence",
+                {WritingMode: "vertical"},
+                [inline || ""],
+            )
+        }
+    )
     rest:(
         INDENT INDENT
             target:(
     // &(here:$(NEXTINLINE) &{ console.error(`here0 line ${location().start.line}: "${here}"`); return true; })
-                _target:$INLINE
-                NEWLINE
+                _target:(
+                    fig_struct
+                    /
+                    inline:$INLINE NEWLINE
+                    {
+                        return new EL(
+                            "Sentence",
+                            {WritingMode: "vertical"},
+                            [inline],
+                        )
+                    }
+                )
                 { return _target; }
             )+
             NEWLINE*
@@ -751,26 +820,20 @@ table_column "table_column" =
         { return target; }
     )?
     {
-        let lines = [first || ""].concat(rest || []);
+        let children = [first].concat(rest || []);
 
         let table_column = new EL("TableColumn");
         for(let i = 0; i < attr.length; i++) {
             let [name, value] = attr[i];
             table_column.attr[name] = value
         }
-        for(let i = 0; i < lines.length; i++) {
-            let line = lines[i];
-            let sentence = new EL(
-                "Sentence",
-                {WritingMode: "vertical"},
-                [line],
-            );
-            table_column.append(sentence);
-        }
+
+        table_column.extend(children);
 
         return table_column;
     }
     /
+    &(here:$(NEXTINLINE) &{ console.error(`tc 10 line ${location().start.line}: "${here}"`); return true; })
     "-" _ NEWLINE
     {
         return new EL(
@@ -826,6 +889,14 @@ style "style" =
         table:table { return [table]; }
         /
         fig:fig { return [fig]; }
+        /
+        lists:(
+            INDENT INDENT
+                target:list+
+                NEWLINE*
+            DEDENT DEDENT
+            { return target; }
+        )
     )
     {
         return new EL("Style", {}, children);
@@ -900,6 +971,13 @@ remarks "remarks" =
 
 
 
+
+fig_struct "fig_struct" =
+    // &(here:$(NEXTINLINE) &{ console.error(`fig 0 line ${location().start.line}: "${here}"`); return true; })
+    fig:fig
+    {
+        return new EL("FigStruct", {}, [fig]);
+    }
 
 fig "fig" =
     ".." __ "figure" _ "::" _
@@ -1144,7 +1222,7 @@ columns "columns" =
         for(let i = 0; i < column_inner_sets.length; i++) {
             let column = new EL(
                 "Column",
-                {LineBreak: "false"},
+                {},
                 column_inner_sets[i],
             );
             if(column_inner_sets.length >= 2) {
@@ -1174,7 +1252,12 @@ INLINE_FRAGMENT "INLINE_FRAGMENT" =
 
 PERIOD_SENTENCE_FRAGMENT "PERIOD_SENTENCE_FRAGMENT" =
     !INDENT !DEDENT
-    ([^\r\n()（）\[\]［］{}｛｝「」 　\t。] / PARENTHESES_INLINE)+ ("。" / &__ / &NEWLINE)
+    (
+        !"<QuoteStruct>" [^\r\n()（）\[\]［］{}｛｝「」 　\t。]
+        /
+        PARENTHESES_INLINE
+    )+
+    ("。" / &__ / &NEWLINE)
     /
     "。"
 
@@ -1189,6 +1272,8 @@ PARENTHESES_INLINE "PARENTHESES_INLINE" =
     CURLY_BRACKETS_INLINE
     /
     SQUARE_PARENTHESES_INLINE
+    /
+    quote_struct
 
 ROUND_PARENTHESES_INLINE "ROUND_PARENTHESES_INLINE" =
     start:[(（]
@@ -1227,6 +1312,17 @@ SQUARE_PARENTHESES_INLINE "SQUARE_PARENTHESES_INLINE" =
     start:[「]
     content:$([^\r\n「」] / SQUARE_PARENTHESES_INLINE)*
     end:[」]
+    {
+        return {
+            text: text(),
+            content: content,
+        }
+    }
+
+quote_struct "quote_struct" =
+    start:"<QuoteStruct>"
+    content:$(!"</QuoteStruct>" .)*
+    end:"</QuoteStruct>"
     {
         return {
             text: text(),

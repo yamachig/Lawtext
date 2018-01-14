@@ -35,6 +35,7 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
             ('346AC0000000073', '昭和四十六年法律第七十三号', '児童手当法'),
             ('129AC0000000089', '明治二十九年法律第八十九号', '民法'),
             ('363M50001000046', '昭和六十三年郵政省令第四十六号', '電気通信事業報告規則'),
+            ('415M60000002055', '平成十五年内閣府令第五十五号', '褒章の制式及び形状を定める内閣府令'),
         ]
     ]
 
@@ -85,7 +86,7 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
         conc2 = conc2.replace(' BorderRight="solid"', '')
         conc2 = conc2.replace(' BorderBottom="solid"', '')
         conc2 = conc2.replace(' BorderLeft="solid"', '')
-        conc2 = conc2.replace(' LineBreak="false"', '')
+        conc1 = conc1.replace(' LineBreak="false"', '')
 
         if conc1 == conc2:
             return
@@ -151,6 +152,25 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
             print(f'''\
 ###
 ### [Type] mismatch
+###
+
+*** {filename1}
+--- {filename2}
+***************
+
+{out_text}
+''')
+            return
+
+        conc1 = conc1.replace(' LineBreak="true"', '')
+
+        conc2 = conc2.replace(' LineBreak="true"', '')
+
+        if conc1 == conc2:
+            out_text = '\n'.join(lines).rstrip()
+            print(f'''\
+###
+### [LineBreak] mismatch
 ###
 
 *** {filename1}
@@ -551,91 +571,6 @@ class TestRender(AbstractTest):
                     self._fail_diff_out_text(law_name, law_num, out_text)
 
 
-
-class TestParse(AbstractTest):
-    def test_parse_lawtext_with_elaws(self):
-        from lawtext.render import render_lawtext, render_xml
-        from lawtext.parse import parse_lawtext
-        from lawtext.decorate import decorate
-        from pathlib import Path
-        from xml.dom import minidom
-
-        out_test_dir = Path('out_test_parse')
-
-        for law in self.LAWS:
-            law_num, law_id, law_name = law['law_num'], law['law_id'], law['law_name']
-
-            with self.subTest(**law):
-
-                print(f'\nSubtest {law_name}（{law_num}）', file=sys.stderr)
-                out_test_dir.mkdir(parents=True, exist_ok=True)
-
-                # print('  Downloading web XML ...', file=sys.stderr)
-                web_law = self._get_web_law(law_num)
-                # print('  Parsing web XML ...', file=sys.stderr)
-                web_xml = render_xml(web_law)
-                web_outtext = minidom.parseString(web_xml).toprettyxml(indent='  ')
-                web_out_path = (out_test_dir / f'web_{law_name}.xml').resolve()
-                print(f'    Writing "{str(web_out_path)}" ...', file=sys.stderr)
-                web_out_path.write_text(web_outtext, encoding='utf-8')
-
-                # print('  Rendering lawtext ...', file=sys.stderr)
-                lawtext = render_lawtext(web_law)
-                rendered_out_path = (out_test_dir / f'rendered_{law_name}.law.txt').resolve()
-                print(f'    Writing "{str(rendered_out_path)}" ...', file=sys.stderr)
-                rendered_out_path.write_text(lawtext, encoding='utf-8')
-
-                print('  Parsing lawtext ...', file=sys.stderr)
-
-                t0 = time.time()
-                parsed_law = parse_lawtext(lawtext)
-                t1 = time.time()
-                decorate(parsed_law)
-                t2 = time.time()
-                lines_count = len(lawtext.splitlines())
-
-                print(f'    parse:    {(t1 - t0) * 1_000_000 / lines_count:3,.0f} μs/line  =  {(t1 - t0) * 1_000:5,.0f} ms / {lines_count:,} lines')
-                print(f'    decorate: {(t2 - t1) * 1_000_000 / lines_count:3,.0f} μs/line  =  {(t2 - t1) * 1_000:5,.0f} ms / {lines_count:,} lines')
-
-                parsed_xml = render_xml(parsed_law)
-                parsed_outtext = minidom.parseString(parsed_xml).toprettyxml(indent="  ")
-                parsed_out_path = (out_test_dir / f'parsed_{law_name}.xml').resolve()
-                print(f'    Writing "{str(parsed_out_path)}" ...', file=sys.stderr)
-                parsed_out_path.write_text(parsed_outtext, encoding='utf-8')
-
-                print('  Comparing ...', file=sys.stderr)
-                warning_outtext = None
-                original_stdout = sys.stdout
-                with io.StringIO() as buffer:
-                    sys.stdout = buffer
-                    out_text = self._get_diff_out_text(
-                        web_outtext.splitlines(),
-                        parsed_outtext.splitlines(),
-                        law_num,
-                        type_='xml',
-                        filename1=str(web_out_path),
-                        filename2=str(parsed_out_path),
-                    )
-                    warning_outtext = buffer.getvalue()
-                    sys.stdout = original_stdout
-                sys.stdout = original_stdout
-
-                if warning_outtext:
-                    warning_out_path = (out_test_dir / f'warning_{law_name}.diff').resolve()
-                    print(f'    ###', file=sys.stderr)
-                    print(f'    ### Some warning detected !!!', file=sys.stderr)
-                    print(f'    ### Please see "{str(warning_out_path)}"', file=sys.stderr)
-                    print(f'    ###', file=sys.stderr)
-                    warning_out_path.write_text(warning_outtext, encoding='utf-8')
-
-                if out_text:
-                    self._fail_diff_out_text(
-                        law_name, law_num, out_text,
-                        filename1=str(web_out_path),
-                        filename2=str(parsed_out_path),
-                    )
-
-
 class TestJSParse(AbstractTest):
     def test_js_parse_lawtext_with_elaws(self):
         from lawtext.render import render_lawtext, render_xml
@@ -684,14 +619,14 @@ class TestJSParse(AbstractTest):
 
                 print('  Parsing lawtext ...', file=sys.stderr)
 
-                t0 = time.time()
                 parsed_law = parse_lawtext(lawtext)
-                t1 = time.time()
                 lines_count = len(lawtext.splitlines())
 
-                print(f'    parse:    {(t1 - t0) * 1_000_000 / lines_count:3,.0f} μs/line  =  {(t1 - t0) * 1_000:5,.0f} ms / {lines_count:,} lines')
-
                 parsed_xml = render_xml(parsed_law)
+                parsed_raw_path = (out_test_dir / f'js_parsed_raw_{law_name}.xml').resolve()
+                print(f'    Writing "{str(parsed_raw_path)}" ...', file=sys.stderr)
+                parsed_raw_path.write_text(parsed_xml, encoding='utf-8')
+
                 parsed_outtext = minidom.parseString(parsed_xml).toprettyxml(indent="  ")
                 parsed_out_path = (out_test_dir / f'js_parsed_{law_name}.xml').resolve()
                 print(f'    Writing "{str(parsed_out_path)}" ...', file=sys.stderr)
