@@ -64,14 +64,6 @@ def main(outdir, preserve_compiled_files, ie=False):
 
     if ie:
 
-        pd_path = Path(outdir / 'src' / 'parse_decorate.js')
-        pd_text = pd_path.read_text(encoding='utf-8')
-        pd_text = pd_text.replace(
-            'new RegExp(pattern, jsFlags)',
-            'new RegExp(pattern, jsFlags.replace("u", ""))',
-        )
-        pd_path.write_text(pd_text, encoding='utf-8')
-
         es6_files = list(Path(outdir / 'src').glob('*.js'))
         es6_files += list(Path(outdir / 'templates').glob('*.html'))
         for path in es6_files:
