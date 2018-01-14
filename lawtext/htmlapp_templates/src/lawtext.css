@@ -5,51 +5,64 @@
     margin-left: -7px;
 }
 
-.lawtext-analyzed-round-parentheses:hover,
-.lawtext-analyzed-square-parentheses:hover,
-.lawtext-analyzed-squareb-parentheses:hover,
-.lawtext-analyzed-curly-parentheses:hover,
+.lawtext-analyzed-parentheses:hover,
+.paragraph-item-Paragraph:hover .lawtext-analyzed-parentheses
+{
+    background-color: hsla(60, 100%, 50%, 0.5);
+}
 
-.paragraph-item-Paragraph:hover
-    .lawtext-analyzed-round-parentheses,
-.paragraph-item-Paragraph:hover
-    .lawtext-analyzed-square-parentheses,
-.paragraph-item-Paragraph:hover
-    .lawtext-analyzed-squareb-parentheses,
-.paragraph-item-Paragraph:hover
-    .lawtext-analyzed-curly-parentheses,
+.lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="1"]:hover,
+.paragraph-item-Paragraph:hover .lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="1"]
+{
+    background-color: hsl(60, 100%, 92%);
+}
+
+.lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="2"]:hover,
+.paragraph-item-Paragraph:hover .lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="2"]
+{
+    background-color: hsl(30, 100%, 92%);
+}
+
+.lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="3"]:hover,
+.paragraph-item-Paragraph:hover .lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="3"]
+{
+    background-color: hsl(0, 100%, 92%);
+}
+
+.lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="4"]:hover,
+.paragraph-item-Paragraph:hover .lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="4"]
+{
+    background-color: hsl(330, 100%, 92%);
+}
+
+.lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="5"]:hover,
+.paragraph-item-Paragraph:hover .lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="5"]
+{
+    background-color: hsl(300, 100%, 92%);
+}
+
+.lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="6"]:hover,
+.paragraph-item-Paragraph:hover .lawtext-analyzed-parentheses[data-lawtext-parentheses-depth="6"]
+{
+    background-color: hsl(270, 100%, 92%);
+}
 
 .first-column:hover
 {
-    background-color: rgba(255, 255, 0, 0.3);
+    background-color: rgb(255, 255, 182);
 }
 
-.lawtext-analyzed-round-parentheses:hover
-    > .lawtext-analyzed-round-parenthesis-start,
-.lawtext-analyzed-round-parentheses:hover
-    > .lawtext-analyzed-round-parenthesis-end,
-
-.lawtext-analyzed-square-parentheses:hover
-    > .lawtext-analyzed-square-parenthesis-start,
-.lawtext-analyzed-square-parentheses:hover
-    > .lawtext-analyzed-square-parenthesis-end,
-
-.lawtext-analyzed-squareb-parentheses:hover
-    > .lawtext-analyzed-squareb-parenthesis-start,
-.lawtext-analyzed-squareb-parentheses:hover
-    > .lawtext-analyzed-squareb-parenthesis-end,
-
-.lawtext-analyzed-curly-parentheses:hover
-    > .lawtext-analyzed-curly-parenthesis-start,
-.lawtext-analyzed-curly-parentheses:hover
-    > .lawtext-analyzed-curly-parenthesis-end
+.lawtext-analyzed-parentheses:hover
+    > .lawtext-analyzed-start-parenthesis,
+.lawtext-analyzed-parentheses:hover
+    > .lawtext-analyzed-end-parenthesis
 
 {
     border: 1px solid gray;
     margin: -1px;
 }
 
-.lawtext-analyzed-square-parentheses-content {
+.lawtext-analyzed-parentheses-content[data-lawtext-parentheses-type="square"] {
     color: rgb(158, 79, 0);
 }
 

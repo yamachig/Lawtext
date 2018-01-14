@@ -7,6 +7,8 @@
             },
         );
     }
+
+    let depth = 0;
 }
 
 start = text:TEXT? !. { return text || ""; }
@@ -44,8 +46,15 @@ MISMATCH_END_PARENTHESIS "MISMATCH_END_PARENTHESIS" =
 
 
 
-
 PARENTHESES_INLINE "PARENTHESES_INLINE" =
+    &("" &{ depth++; return true; })
+    target:PARENTHESES_INLINE_INNER
+    &("" &{ depth--; return true; })
+    { return target; }
+    /
+    &("" &{ depth--; return false; }) "DUMMY"
+
+PARENTHESES_INLINE_INNER "PARENTHESES_INLINE_INNER" =
     ROUND_PARENTHESES_INLINE
     /
     SQUARE_BRACKETS_INLINE
@@ -71,7 +80,7 @@ ROUND_PARENTHESES_INLINE "ROUND_PARENTHESES_INLINE" =
     end:[)）]
     {
         let type = "round";
-        return `<span class="lawtext-analyzed lawtext-analyzed-${type}-parentheses"><span class="lawtext-analyzed lawtext-analyzed-${type}-parenthesis-start">${start}</span><span class="lawtext-analyzed lawtext-analyzed-${type}-parentheses-content">${content}</span><span class="lawtext-analyzed lawtext-analyzed-${type}-parenthesis-end">${end}</span></span>`;
+        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses" data-lawtext-parentheses-type="${type}" data-lawtext-parentheses-depth="${depth}"><span class="lawtext-analyzed lawtext-analyzed-start-parenthesis" data-lawtext-parentheses-type="${type}">${start}</span><span class="lawtext-analyzed lawtext-analyzed-parentheses-content" data-lawtext-parentheses-type="${type}">${content}</span><span class="lawtext-analyzed lawtext-analyzed-end-parenthesis" data-lawtext-parentheses-type="${type}">${end}</span></span>`;
     }
 
 SQUARE_BRACKETS_INLINE "SQUARE_BRACKETS_INLINE" =
@@ -89,7 +98,7 @@ SQUARE_BRACKETS_INLINE "SQUARE_BRACKETS_INLINE" =
     end:[\]］]
     {
         let type = "squareb";
-        return `<span class="lawtext-analyzed lawtext-analyzed-${type}-parentheses"><span class="lawtext-analyzed lawtext-analyzed-${type}-parenthesis-start">${start}</span><span class="lawtext-analyzed lawtext-analyzed-${type}-parentheses-content">${content}</span><span class="lawtext-analyzed lawtext-analyzed-${type}-parenthesis-end">${end}</span></span>`;
+        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses" data-lawtext-parentheses-type="${type}" data-lawtext-parentheses-depth="${depth}"><span class="lawtext-analyzed lawtext-analyzed-start-parenthesis" data-lawtext-parentheses-type="${type}">${start}</span><span class="lawtext-analyzed lawtext-analyzed-parentheses-content" data-lawtext-parentheses-type="${type}">${content}</span><span class="lawtext-analyzed lawtext-analyzed-end-parenthesis" data-lawtext-parentheses-type="${type}">${end}</span></span>`;
     }
 
 CURLY_BRACKETS_INLINE "CURLY_BRACKETS_INLINE" =
@@ -107,7 +116,7 @@ CURLY_BRACKETS_INLINE "CURLY_BRACKETS_INLINE" =
     end:[}｝]
     {
         let type = "curly";
-        return `<span class="lawtext-analyzed lawtext-analyzed-${type}-parentheses"><span class="lawtext-analyzed lawtext-analyzed-${type}-parenthesis-start">${start}</span><span class="lawtext-analyzed lawtext-analyzed-${type}-parentheses-content">${content}</span><span class="lawtext-analyzed lawtext-analyzed-${type}-parenthesis-end">${end}</span></span>`;
+        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses" data-lawtext-parentheses-type="${type}" data-lawtext-parentheses-depth="${depth}"><span class="lawtext-analyzed lawtext-analyzed-start-parenthesis" data-lawtext-parentheses-type="${type}">${start}</span><span class="lawtext-analyzed lawtext-analyzed-parentheses-content" data-lawtext-parentheses-type="${type}">${content}</span><span class="lawtext-analyzed lawtext-analyzed-end-parenthesis" data-lawtext-parentheses-type="${type}">${end}</span></span>`;
     }
 
 SQUARE_PARENTHESES_INLINE "SQUARE_PARENTHESES_INLINE" =
@@ -116,5 +125,5 @@ SQUARE_PARENTHESES_INLINE "SQUARE_PARENTHESES_INLINE" =
     end:[」]
     {
         let type = "square";
-        return `<span class="lawtext-analyzed lawtext-analyzed-${type}-parentheses"><span class="lawtext-analyzed lawtext-analyzed-${type}-parenthesis-start">${start}</span><span class="lawtext-analyzed lawtext-analyzed-${type}-parentheses-content">${content}</span><span class="lawtext-analyzed lawtext-analyzed-${type}-parenthesis-end">${end}</span></span>`;
+        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses" data-lawtext-parentheses-type="${type}" data-lawtext-parentheses-depth="${depth}"><span class="lawtext-analyzed lawtext-analyzed-start-parenthesis" data-lawtext-parentheses-type="${type}">${start}</span><span class="lawtext-analyzed lawtext-analyzed-parentheses-content" data-lawtext-parentheses-type="${type}">${content}</span><span class="lawtext-analyzed lawtext-analyzed-end-parenthesis" data-lawtext-parentheses-type="${type}">${end}</span></span>`;
     }
