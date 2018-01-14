@@ -1,6 +1,7 @@
 from pathlib import Path
 from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
+import re
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -41,7 +42,9 @@ def render_xml(law):
 
 def render_lawtext(law):
     template = env.get_template('lawtext.j2')
-    return template.render({'law': law, 'context': Context()})
+    rendered = template.render({'law': law, 'context': Context()})
+    rendered = re.sub(r'(\r?\n\r?\n)(?:\r?\n)+', r'\1', rendered)
+    return rendered
 
 
 
