@@ -1,7 +1,7 @@
 {
     function replace_lawnum(text) {
         return text.replace(
-            /(明治|大正|昭和|平成)([一二三四五六七八九十]+)年(\S+?)第([一二三四五六七八九十百千]+)号/,
+            /(明治|大正|昭和|平成)([一二三四五六七八九十]+)年(\S+?)第([一二三四五六七八九十百千]+)号/g,
             (s) => {
                 return `<span class="lawtext-analyzed lawtext-analyzed-lawnum" data-lawnum="${s}">${s}</span>`;
             },

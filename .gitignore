@@ -19,3 +19,4 @@ cache.sqlite
 MANIFEST
 dist
 lawtext/js/parser.js
+lawtext/js/annotate_html.js
