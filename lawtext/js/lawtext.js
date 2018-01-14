@@ -2,6 +2,7 @@
 
 var parser = require("./parser");
 var annotate_html = require("./annotate_html");
+var analyzer = require("./analyzer");
 var fs = require('fs');
 
 
@@ -110,6 +111,23 @@ function parse(text, options) {
     return parsed;
 }
 
+function analyze(law) {
+
+    console.error("\\\\\\\\\\ analyze start \\\\\\\\\\");
+    let t0 = (new Date()).getTime();
+    var analyzed = analyzer.analyze(law);
+    let t1 = (new Date()).getTime();
+    console.error(`/////  analyze end  /////`);
+    console.error(`(${t1 - t0} ms total)`);
+
+    return analyzed;
+}
+
+
+
+
+
+
 function main(argv) {
 
     if(argv.length >= 3) {
@@ -118,7 +136,11 @@ function main(argv) {
                 throw err;
             }
             var parsed = parse(data);
-            console.log(JSON.stringify(parsed));
+            var analyzed = analyze(parsed);
+            console.log(JSON.stringify({
+                parsed: parsed,
+                analyzed: analyzed,
+            }));
         });
 
     } else {
@@ -130,7 +152,11 @@ function main(argv) {
         });
         process.stdin.on('end', function() {
             var parsed = parse(input);
-            console.log(JSON.stringify(parsed));
+            var analyzed = analyze(parsed);
+            console.log(JSON.stringify({
+                parsed: parsed,
+                analyzed: analyzed,
+            }));
         });
     }
 }
@@ -139,13 +165,24 @@ if (typeof require !== 'undefined' && require.main === module) {
     main(process.argv)
 }
 
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-    exports.parse = parse;
-    exports.annotate_html = annotate_html.parse;
-}
+
+
+
+
 
 if (typeof window !== 'undefined') {
     window.Lawtext = window.Lawtext || {};
     window.Lawtext.parse = parse;
     window.Lawtext.annotate_html = annotate_html.parse;
+    window.Lawtext.sha512 = sha512;
+    window.Lawtext.get_law_name_length = analyze.get_law_name_length;
+    window.Lawtext.analyze = analyze;
 }
+
+if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+    exports.parse = parse;
+    exports.annotate_html = annotate_html.parse;
+    exports.get_law_name_length = analyze.get_law_name_length;
+    exports.analyze = analyze;
+}
+

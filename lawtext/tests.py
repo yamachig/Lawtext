@@ -22,20 +22,20 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
             values,
         ))
         for values in [
-            ('359AC0000000086', '昭和五十九年法律第八十六号', '電気通信事業法'),
-            ('322AC0000000067', '昭和二十二年法律第六十七号', '地方自治法'),
-            ('325AC0000000131', '昭和二十五年法律第百三十一号', '電波法'),
-            ('425AC0000000027', '平成二十五年法律第二十七号', '行政手続における特定の個人を識別するための番号の利用等に関する法律'),
-            ('414AC0000000153', '平成十四年法律第百五十三号', '電子署名等に係る地方公共団体情報システム機構の認証業務に関する法律'),
-            ('405AC0000000088', '平成五年法律第八十八号', '行政手続法'),
-            ('406CO0000000265', '平成六年政令第二百六十五号', '行政手続法施行令'),
+            # ('359AC0000000086', '昭和五十九年法律第八十六号', '電気通信事業法'),
+            # ('322AC0000000067', '昭和二十二年法律第六十七号', '地方自治法'),
+            # ('325AC0000000131', '昭和二十五年法律第百三十一号', '電波法'),
+            # ('425AC0000000027', '平成二十五年法律第二十七号', '行政手続における特定の個人を識別するための番号の利用等に関する法律'),
+            # ('414AC0000000153', '平成十四年法律第百五十三号', '電子署名等に係る地方公共団体情報システム機構の認証業務に関する法律'),
+            # ('405AC0000000088', '平成五年法律第八十八号', '行政手続法'),
+            # ('406CO0000000265', '平成六年政令第二百六十五号', '行政手続法施行令'),
             # ('412M50001000064', '平成十二年郵政省令第六十四号', '第一種指定電気通信設備接続料規則'),
             ('428M60000008031', '平成二十八年総務省令第三十一号', '第二種指定電気通信設備接続料規則'),
-            ('426M60000002044', '平成二十六年内閣府令第四十四号', '子ども・子育て支援法施行規則'),
-            ('346AC0000000073', '昭和四十六年法律第七十三号', '児童手当法'),
-            ('129AC0000000089', '明治二十九年法律第八十九号', '民法'),
-            ('363M50001000046', '昭和六十三年郵政省令第四十六号', '電気通信事業報告規則'),
-            ('415M60000002055', '平成十五年内閣府令第五十五号', '褒章の制式及び形状を定める内閣府令'),
+            # ('426M60000002044', '平成二十六年内閣府令第四十四号', '子ども・子育て支援法施行規則'),
+            # ('346AC0000000073', '昭和四十六年法律第七十三号', '児童手当法'),
+            # ('129AC0000000089', '明治二十九年法律第八十九号', '民法'),
+            # ('363M50001000046', '昭和六十三年郵政省令第四十六号', '電気通信事業報告規則'),
+            # ('415M60000002055', '平成十五年内閣府令第五十五号', '褒章の制式及び形状を定める内閣府令'),
         ]
     ]
 
@@ -580,6 +580,7 @@ class TestJSParse(AbstractTest):
         from xml.dom import minidom
         import subprocess
         import os
+        from pprint import pformat
 
         os.environ["PATH"] += os.pathsep + str(Path(__file__).resolve().parents[1] / 'node_modules/.bin')
 
@@ -619,13 +620,17 @@ class TestJSParse(AbstractTest):
 
                 print('  Parsing lawtext ...', file=sys.stderr)
 
-                parsed_law = parse_lawtext(lawtext)
+                parsed_law, analyzed = parse_lawtext(lawtext, True)
                 lines_count = len(lawtext.splitlines())
 
                 parsed_xml = render_xml(parsed_law)
                 parsed_raw_path = (out_test_dir / f'js_parsed_raw_{law_name}.xml').resolve()
                 print(f'    Writing "{str(parsed_raw_path)}" ...', file=sys.stderr)
                 parsed_raw_path.write_text(parsed_xml, encoding='utf-8')
+
+                # analyzed_path = (out_test_dir / f'js_analyzed_{law_name}.py').resolve()
+                # print(f'    Writing "{str(analyzed_path)}" ...', file=sys.stderr)
+                # analyzed_path.write_text(pformat(analyzed), encoding='utf-8')
 
                 parsed_outtext = minidom.parseString(parsed_xml).toprettyxml(indent="  ")
                 parsed_out_path = (out_test_dir / f'js_parsed_{law_name}.xml').resolve()

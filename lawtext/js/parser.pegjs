@@ -98,7 +98,7 @@
     let re_kanji_num = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 
     function parse_kanji_num(text) {
-        let m = text.match(re_kanji_num)
+        let m = text.match(re_kanji_num);
         if(m) {
             let d1000 = m[1] ? kanji_digits[m[2]] || 1 : 0;
             let d100 = m[3] ? kanji_digits[m[4]] || 1 : 0;
@@ -183,7 +183,7 @@
             if(m) {
                 let nums = [parse_kanji_num(m[2])];
                 if(m[3]) {
-                    let bs = m[3].split(/のノ/g);
+                    let bs = m[3].split(/[のノ]/g);
                     for(let j = 0; j < bs.length; j++) {
                         if(!bs[j]) continue;
                         nums.push(parse_kanji_num(bs[j]));
