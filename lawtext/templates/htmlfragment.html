@@ -179,7 +179,7 @@
 
 
 {%- macro m_paragraph_item(paragraph_item, article, first_paragraph=0) -%}
-<div class="paragraph-item">
+<div class="paragraph-item paragraph-item-{{ paragraph_item.tag }}">
 {%- for el in paragraph_item.children -%}
   {%- if el.tag == 'ParagraphCaption' -%}
     <div class="paragraph-item-caption">
