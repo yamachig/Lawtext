@@ -29,11 +29,11 @@ Lawtext.element_to_json = function(el) {
         var at = el.attributes[i];
         attr[at.name] = at.value;
     }
-    return {
-        tag: el.tagName,
-        attr: attr,
-        children: children
-    };
+    return new Lawtext.EL(
+        el.tagName,
+        attr,
+        children,
+    );
 };
 
 Lawtext.LawNameItem = function(law_name, law_no, promulgation_date) {
@@ -153,12 +153,51 @@ Lawtext.Context.prototype.set = function(key, value) {
     return "";
 };
 
+Lawtext.annotate = function(el) {
+    if(typeof el == 'string' || el instanceof String) {
+        return el;
+    }
+
+    let child_str = el.children.map(child => Lawtext.annotate(child)).join("");
+
+    if(el.tag === "____Declaration") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-declaration" data-declaration-index="${el.attr.declaration_index}">${child_str}</span>`
+
+    } else if(el.tag === "____VarRef") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-varref" data-declaration-index="${el.attr.ref_declaration_index}">${child_str}</span>`
+
+    } else if(el.tag === "____LawNum") {
+        return `<a class="lawtext-analyzed lawtext-analyzed-lawnum" href="#${child_str}" target="_blank">${child_str}</a>`
+
+    } else if(el.tag === "__Parentheses") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses" data-lawtext-parentheses-type="${el.attr.type}" data-lawtext-parentheses-depth="${el.attr.depth}">${child_str}</span>`
+
+    } else if(el.tag === "__PStart") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-start-parenthesis" data-lawtext-parentheses-type="${el.attr.type}">${child_str}</span>`
+
+    } else if(el.tag === "__PContent") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses-content" data-lawtext-parentheses-type="${el.attr.type}">${child_str}</span>`
+
+    } else if(el.tag === "__PEnd") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-end-parenthesis" data-lawtext-parentheses-type="${el.attr.type}">${child_str}</span>`
+
+    } else if(el.tag === "__MismatchStartParenthesis") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-start-parenthesis">${child_str}</span>`
+
+    } else if(el.tag === "__MismatchEndParenthesis") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-end-parenthesis">${child_str}</span>`
+
+    } else {
+        return child_str;
+    }
+}
+
 Lawtext.render_law = function(template_name, law) {
     let rendered = nunjucks.render(template_name, {
         law: law,
         "print": console.log,
         "context": new Lawtext.Context(),
-        "annotate_html": Lawtext.annotate_html,
+        "annotate": Lawtext.annotate,
     });
     if(template_name === "lawtext") {
         rendered = rendered.replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1");
@@ -167,6 +206,21 @@ Lawtext.render_law = function(template_name, law) {
 };
 
 
+
+Lawtext.analyze_xml = function(el) {
+    if(typeof el == 'string' || el instanceof String) {
+        return el;
+    }
+    if(["Sentence", "EnactStatement"].indexOf(el.tag) >= 0) {
+        if(el.text) {
+            el.children = Lawtext.parse(el.text, {startRule: "INLINE"});
+        }
+    } else {
+        for(let child of el.children) {
+            Lawtext.analyze_xml(child);
+        }
+    }
+};
 
 
 
@@ -220,7 +274,7 @@ Lawtext.Data = Backbone.Model.extend({
             $(evt.target).val('');
             var div = $('<div>');
             var text = e.target.result;
-            self.load_law_text(text);
+            self.load_law_text(text, true);
             self.set({law_search_key: null});
             self.trigger("file-loaded");
         });
@@ -233,13 +287,16 @@ Lawtext.Data = Backbone.Model.extend({
         self.trigger("error", title, body_el);
     },
 
-    load_law_text: function(text) {
+    load_law_text: function(text, analyze_xml) {
         var self = this;
 
         var div = $('<div>');
         var law = null;
         if(/^(?:<\?xml|<Law)/.test(text.trim())) {
             law = Lawtext.xml_to_json(text);
+            if(analyze_xml) {
+                Lawtext.analyze_xml(law);
+            }
         } else {
             try {
                 law = Lawtext.parse(text, {startRule: "start"});
@@ -283,7 +340,7 @@ Lawtext.Data = Backbone.Model.extend({
                 var ms = now.getTime() - datetime.getTime();
                 var days = ms / (1000 * 60 * 60 * 24);
                 if(days < 1) {
-                    self.load_law_text(law_data.xml);
+                    self.load_law_text(law_data.xml, true);
                     return;
                 }
             }
@@ -294,7 +351,7 @@ Lawtext.Data = Backbone.Model.extend({
             .done(function(data){
                 var serializer = new XMLSerializer();
                 var xml = serializer.serializeToString(data);
-                self.load_law_text(xml);
+                self.load_law_text(xml, true);
                 if(localStorage) {
                     localStorage.setItem(
                         "law_for:" + lawnum,
@@ -531,6 +588,7 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
 
         var law = self.data.get('law');
         if(!_(law).isNull() && _(self.law_html).isNull()) {
+            Lawtext.analyze(law);
             self.law_html = Lawtext.render_law('htmlfragment.html', law);
             self.analyzed = true;
         }
@@ -540,22 +598,22 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
             law_html: self.law_html,
         }));
 
-        if(!self.analyzed) {
-            setTimeout(function() {
-                if(!_(law).isNull()) {
-                    law = _parse_decorate.analyze(law);
-                    self.law_html = Lawtext.render_law('htmlfragment.html', law);
-                    self.analyzed = true;
-                    self.$el.html(self.template({
-                        data: self.data.attributes,
-                        law_html: self.law_html,
-                    }));
-                    self.process_law();
-                }
-            }, 0);
-        } else {
-            self.process_law();
-        }
+        // if(!self.analyzed) {
+        //     setTimeout(function() {
+        //         if(!_(law).isNull()) {
+        //             law = _parse_decorate.analyze(law);
+        //             self.law_html = Lawtext.render_law('htmlfragment.html', law);
+        //             self.analyzed = true;
+        //             self.$el.html(self.template({
+        //                 data: self.data.attributes,
+        //                 law_html: self.law_html,
+        //             }));
+        //             self.process_law();
+        //         }
+        //     }, 0);
+        // } else {
+        //     self.process_law();
+        // }
     },
 
     scroll_to_law_anchor: function(tag, name) {
@@ -569,23 +627,23 @@ Lawtext.HTMLpreviewView = Backbone.View.extend({
         });
     },
 
-    process_law: function() {
-        var self = this;
+    // process_law: function() {
+    //     var self = this;
 
-        self.$(".lawtext-analyzed").each(function(){
-            var obj = $(this);
+    //     self.$(".lawtext-analyzed").each(function(){
+    //         var obj = $(this);
 
-            if(obj.hasClass("lawtext-analyzed-lawnum")) {
-                var lawnum = obj.data('lawnum');
-                obj.replaceWith(
-                    $("<a>")
-                    .attr('href', '#' + lawnum)
-                    .attr('target', '_blank')
-                    .html(obj.html())
-                );
-            }
-        });
-    },
+    //         if(obj.hasClass("lawtext-analyzed-lawnum")) {
+    //             var lawnum = obj.data('lawnum');
+    //             obj.replaceWith(
+    //                 $("<a>")
+    //                 .attr('href', '#' + lawnum)
+    //                 .attr('target', '_blank')
+    //                 .html(obj.html())
+    //             );
+    //         }
+    //     });
+    // },
 });
 
 Lawtext.MainView = Backbone.View.extend({

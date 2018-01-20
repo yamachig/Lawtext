@@ -620,13 +620,19 @@ class TestJSParse(AbstractTest):
 
                 print('  Parsing lawtext ...', file=sys.stderr)
 
-                parsed_law, analyzed = parse_lawtext(lawtext, True)
-                lines_count = len(lawtext.splitlines())
+                parsed_law = parse_lawtext(lawtext)
+
+                parsed_raw_control_xml = render_xml(parsed_law, True)
+                parsed_raw_control_xml_path = (out_test_dir / f'js_parsed_raw_control_{law_name}.xml').resolve()
+                print(f'    Writing "{str(parsed_raw_control_xml_path)}" ...', file=sys.stderr)
+                parsed_raw_control_xml_path.write_text(parsed_raw_control_xml, encoding='utf-8')
+
+                parsed_control_outtext = minidom.parseString(parsed_raw_control_xml).toprettyxml(indent="  ")
+                parsed_control_xml_path = (out_test_dir / f'js_parsed_control_{law_name}.xml').resolve()
+                print(f'    Writing "{str(parsed_control_xml_path)}" ...', file=sys.stderr)
+                parsed_control_xml_path.write_text(parsed_control_outtext, encoding='utf-8')
 
                 parsed_xml = render_xml(parsed_law)
-                parsed_raw_path = (out_test_dir / f'js_parsed_raw_{law_name}.xml').resolve()
-                print(f'    Writing "{str(parsed_raw_path)}" ...', file=sys.stderr)
-                parsed_raw_path.write_text(parsed_xml, encoding='utf-8')
 
                 # analyzed_path = (out_test_dir / f'js_analyzed_{law_name}.py').resolve()
                 # print(f'    Writing "{str(analyzed_path)}" ...', file=sys.stderr)

@@ -75,3 +75,11 @@
 .first-column {
     color: rgb(121, 113, 0);
 }
+
+.lawtext-analyzed-declaration {
+    font-weight: bold;
+}
+
+.lawtext-analyzed-varref {
+    text-decoration: underline;
+}

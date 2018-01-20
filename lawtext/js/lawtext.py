@@ -4,7 +4,7 @@ import json
 
 JS_PATH = Path(__file__).resolve().parent
 
-def parse(text, with_analyzed=False):
+def parse(text):
     process = subprocess.Popen(
         [
             'node',
@@ -18,11 +18,6 @@ def parse(text, with_analyzed=False):
     indata = text.encode(encoding='utf-8')
     outdata, _ = process.communicate(indata)
 
-    data = json.loads(outdata, encoding='utf-8')
-    law = data['parsed']
-    analyzed = data['analyzed']
+    law = json.loads(outdata, encoding='utf-8')
 
-    if with_analyzed:
-        return law, analyzed
-    else:
-        return law
+    return law

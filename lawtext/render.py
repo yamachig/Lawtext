@@ -36,9 +36,9 @@ def render_html(law):
     style = (Path(__file__).parent.resolve() / 'static/law.css').read_text(encoding='utf-8')
     return template.render({'law': law, 'style': style, 'context': Context()})
 
-def render_xml(law):
+def render_xml(law, with_control_el=False):
     template = env.get_template('xml.xml')
-    return template.render({'law': law})
+    return template.render({'law': law, 'with_control_el': with_control_el})
 
 def render_lawtext(law):
     template = env.get_template('lawtext.j2')

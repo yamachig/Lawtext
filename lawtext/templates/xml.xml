@@ -3,9 +3,13 @@
 {%- elif not el.tag -%}
   {{- el -}}
 {%- else -%}
+
+{%- if with_control_el or el.tag[0] != "_" -%}
   <{{ el.tag }} {%- for key, value in el.attr | dictsort -%}
-    {{- ' ' -}}{{- key -}}="{{- value -}}"
+    {{- ' ' -}}{{- key -}}="{{- value | escape -}}"
   {%- endfor -%}>
+{%- endif -%}
+
     {%- for child in el.children -%}
       {%- if not child.tag -%}
         {{- child -}}
@@ -13,7 +17,11 @@
         {{- m_element_raw(child) -}}
       {%- endif -%}
     {%- endfor -%}
+
+{%- if with_control_el or el.tag[0] != "_" -%}
   </{{ el.tag }}>
+{%- endif -%}
+
 {%- endif -%}
 {%- endmacro -%}
 

@@ -635,8 +635,8 @@ paragraph-item-body
 
 
 {%- macro m_text(el) -%}
-  {%- if annotate_html -%}
-    {{- annotate_html(m_text_raw(el)) | safe -}}
+  {%- if annotate -%}
+    {{- annotate(el) | safe -}}
   {%- else -%}
     {{- m_text_raw(el) -}}
   {%- endif -%}
