@@ -667,10 +667,48 @@ paragraph-item-body
 
 
 
+{% if elements %}
+  {% for el in elements %}
+    {%- if el.tag in [
+      'ParagraphSentence', 'ItemSentence',
+      'Subitem1Sentence', 'Subitem2Sentence', 'Subitem3Sentence', 'Subitem4Sentence',
+      'Subitem5Sentence', 'Subitem6Sentence', 'Subitem7Sentence', 'Subitem8Sentence',
+      'Subitem9Sentence', 'Subitem10Sentence'
+    ] -%}
+      {{- m_paragraph_item_sentence(el) -}}
+    {%- elif el.tag in [
+      'Item',
+      'Subitem1', 'Subitem2', 'Subitem3', 'Subitem4',
+      'Subitem5', 'Subitem6', 'Subitem7', 'Subitem8',
+      'Subitem9', 'Subitem10'
+    ] -%}
+      {{- m_paragraph_item(el) -}}
+    {%- elif el.tag == 'TableStruct' -%}
+      {{- m_table_struct(el) -}}
+    {%- elif el.tag == 'StyleStruct' -%}
+      {{- m_style_struct(el) -}}
+    {%- elif el.tag == 'List' -%}
+      {{- m_list(el) -}}
+    {%- elif el.tag == 'Sentence' -%}
+      {{- m_text(el) -}}
+    {%- elif el.tag == 'Column' -%}
+      {%- if loop.first -%}
+        <span class="first-column">{{- m_column(el) -}}</span>
+      {%- else -%}
+        {{- m_column(el) -}}
+      {%- endif -%}
+      {%- if not loop.last -%}
+        {{- '　' -}}
+      {%- endif -%}
+    {%- else -%}
+      {{- m_text(el) -}}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
 
-
-
+{% if law %}
 <div class="law">
 {{- m_law(law) -}}
 </div>
+{%- endif -%}
 

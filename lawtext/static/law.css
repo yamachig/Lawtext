@@ -7,12 +7,14 @@
 }
 
 .law .enact-statement {
-    margin-top: 1em;
+    clear: both;
+    padding-top: 1em;
     text-indent: 1em;
 }
 
 .law .toc {
-    margin-top: 1em;
+    clear: both;
+    padding-top: 1em;
 }
 
 .law .toc-group {
@@ -20,12 +22,14 @@
 }
 
 .law .article-group-title {
+    clear: both;
     font-weight: bold;
-    margin-top: 1em;
+    padding-top: 1em;
 }
 
 .law .article {
-    margin-top: 1em;
+    clear: both;
+    padding-top: 1em;
 }
 
 .law .article-caption {
@@ -45,6 +49,7 @@
 }
 
 .law .paragraph-item-body {
+    clear: both;
     padding-left: 1em;
     text-indent: -1em;
 }
@@ -58,7 +63,8 @@
 }
 
 .law .appdx_table {
-    margin-top: 1em;
+    clear: both;
+    padding-top: 1em;
 }
 
 .law .appdx_table_title {
@@ -70,7 +76,8 @@
 }
 
 .law .appdx_style {
-    margin-top: 1em;
+    clear: both;
+    padding-top: 1em;
 }
 
 .law .appdx_style_title {

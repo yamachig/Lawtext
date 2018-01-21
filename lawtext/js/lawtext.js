@@ -115,10 +115,11 @@ function analyze(law) {
 
     console.error("\\\\\\\\\\ analyze start \\\\\\\\\\");
     let t0 = (new Date()).getTime();
-    analyzer.analyze(law);
+    let analysis = analyzer.analyze(law);
     let t1 = (new Date()).getTime();
     console.error(`/////  analyze end  /////`);
     console.error(`(${t1 - t0} ms total)`);
+    return analysis;
 }
 
 

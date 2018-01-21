@@ -26,6 +26,7 @@ var span_container_tags = [
     "Subitem4", "Subitem5", "Subitem6",
     "Subitem7", "Subitem8", "Subitem9",
     "Subitem10",
+    "Table", "TableRow", "TableColumn",
 ];
 
 var container_tags = []
@@ -434,6 +435,9 @@ function analyze(law) {
 
         console.error();
     }
+    return {
+        declarations: declarations,
+    };
 }
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
