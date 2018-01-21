@@ -1,93 +1,74 @@
 'use strict';
 
-if (!String.prototype.startsWith) {
-    String.prototype.startsWith = function(searchString, position) {
-        position = position || 0;
-        return this.indexOf(searchString, position) === position;
-    };
+function em(input) {
+    var emSize = parseFloat($("body").css("font-size"));
+    return (emSize * input);
 }
 
 var Lawtext = Lawtext || {};
 
-Lawtext.element_to_json = function(el) {
-    var children = [];
-    for (var i = 0; i < el.childNodes.length; i++) {
-        var node = el.childNodes[i];
-        if(node.nodeType == Node.TEXT_NODE) {
-            var text = node.nodeValue.trim();
+Lawtext.element_to_json = el => {
+    let children = [];
+    for (let node of el.childNodes) {
+        if(node.nodeType === Node.TEXT_NODE) {
+            let text = node.nodeValue.trim();
             if(text) {
                 children.push(text);
             }
-        } else if(node.nodeType == Node.ELEMENT_NODE) {
+        } else if(node.nodeType === Node.ELEMENT_NODE) {
             children.push(Lawtext.element_to_json(node));
         } else {
             console.log(node);
         }
     }
-    var attr = {};
-    for (var i = 0; i < el.attributes.length; i++) {
-        var at = el.attributes[i];
+    let attr = {};
+    for (let at of el.attributes) {
         attr[at.name] = at.value;
     }
-    return {
-        tag: el.tagName,
-        attr: attr,
-        children: children
-    };
+    return new Lawtext.EL(
+        el.tagName,
+        attr,
+        children,
+    );
 };
 
-Lawtext.LawNameItem = function(law_name, law_no, promulgation_date) {
-    var self = this;
-    self.law_name = law_name;
-    self.law_no = law_no;
-    self.promulgation_date = promulgation_date;
-};
+Lawtext.LawNameItem = class {
+    constructor(law_name, law_no, promulgation_date) {
+        this.law_name = law_name;
+        this.law_no = law_no;
+        this.promulgation_date = promulgation_date;
+    }
+}
 
 Lawtext.law_name_data = [];
 
-Lawtext.load_law_name_data = function() {
-    var deferred = new $.Deferred();
-    $.get("http://elaws.e-gov.go.jp/api/1/lawlists/1")
-    .done(function(root){
-        Lawtext.law_name_data = _.each(root.getElementsByTagName('LawNameListInfo'), function(el){
-            var law_name = el.getElementsByTagName('LawName')[0].text;
-            var law_no = el.getElementsByTagName('LawNo')[0].text;
-            var promulgation_date = el.getElementsByTagName('PromulgationDate')[0].text;
-            return new Lawtext.LawNameItem(law_name, law_no, promulgation_date);
-        });
-        deferred.resolve();
-    });
-    return deferred.promise();
-};
-
-Lawtext.xml_to_json = function(xml) {
-    var parser = new DOMParser();
-    var dom = parser.parseFromString(xml, 'text/xml');
+Lawtext.xml_to_json = xml => {
+    let parser = new DOMParser();
+    let dom = parser.parseFromString(xml, "text/xml");
     return Lawtext.element_to_json(dom.documentElement);
 };
 
-Lawtext.restructure_table = function(table) {
-    var new_table_children = [];
-    var rowspan_state = {};
-    var colspan_value = {};
-    _(table['children']).each(function(row){
-
-        if(row['tag'] != 'TableRow') {
+Lawtext.restructure_table = table => {
+    let new_table_children = [];
+    let rowspan_state = {};
+    let colspan_value = {};
+    for(let row of table.children) {
+        if(row.tag !== "TableRow") {
             new_table_children.push(row);
             return;
         }
-        var new_row_children = [];
-        var c = 0;
-        var ci = 0;
+        let new_row_children = [];
+        let c = 0;
+        let ci = 0;
         while(true){
 
-            var rss = rowspan_state[c] || 0;
+            let rss = rowspan_state[c] || 0;
             if(rss) {
-                var colspan = colspan_value[c] || 0;
+                let colspan = colspan_value[c] || 0;
                 new_row_children.push({
-                    tag: 'TableColumnMerged',
+                    tag: "TableColumnMerged",
                     attr: colspan ? {
-                        'colspan': colspan,
+                        colspan: colspan,
                     } : {},
                     children: [],
                 });
@@ -99,20 +80,20 @@ Lawtext.restructure_table = function(table) {
                 continue;
             }
 
-            if(ci >= row['children'].length) {
+            if(ci >= row.children.length) {
                 break;
             }
 
-            var column = row['children'][ci];
+            let column = row.children[ci];
             new_row_children.push(column);
-            if(column['tag'] != 'TableColumn') {
+            if(column.tag !== "TableColumn") {
                 ci += 1;
                 continue;
             }
 
-            var colspan = Number(column['attr']['colspan'] || 0);
-            if(_(column['attr']).has('rowspan')) {
-                var rowspan = Number(column['attr']['rowspan']);
+            let colspan = Number(column.attr.colspan || 0);
+            if(column.attr.rowspan !== undefined) {
+                let rowspan = Number(column.attr.rowspan);
                 rowspan_state[c] = rowspan - 1;
                 colspan_value[c] = colspan;
                 if(colspan) {
@@ -124,41 +105,79 @@ Lawtext.restructure_table = function(table) {
         }
 
         new_table_children.push({
-            tag: row['tag'],
-            attr: row['attr'],
+            tag: row.tag,
+            attr: row.attr,
             children: new_row_children,
         });
-     });
+    }
 
-    var ret = {
-        tag: table['tag'],
-        attr: table['attr'],
+    let ret = {
+        tag: table.tag,
+        attr: table.attr,
         children: new_table_children,
     };
 
     return ret;
 };
 
-Lawtext.Context = function() {
-    var self = this;
-    self.data = {};
-};
-Lawtext.Context.prototype.get = function(key) {
-    var self = this;
-    return self.data[key];
-};
-Lawtext.Context.prototype.set = function(key, value) {
-    var self = this;
-    self.data[key] = value;
-    return "";
+Lawtext.Context = class {
+    constructor() {
+        this.data = {};
+    }
+    get(key) {
+        return this.data[key];
+    }
+    set(key, value) {
+        this.data[key] = value;
+        return "";
+    }
 };
 
-Lawtext.render_law = function(template_name, law) {
+Lawtext.annotate = el => {
+    if(typeof el === "string" || el instanceof String) {
+        return el;
+    }
+
+    let child_str = el.children.map(child => Lawtext.annotate(child)).join("");
+
+    if(el.tag === "____Declaration") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-declaration" lawtext_declaration_index="${el.attr.declaration_index}">${child_str}</span>`
+
+    } else if(el.tag === "____VarRef") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-varref" lawtext_declaration_index="${el.attr.ref_declaration_index}">${child_str}</span>`
+
+    } else if(el.tag === "____LawNum") {
+        return `<a class="lawtext-analyzed lawtext-analyzed-lawnum" href="#${child_str}" target="_blank">${child_str}</a>`
+
+    } else if(el.tag === "__Parentheses") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses" lawtext_parentheses_type="${el.attr.type}" data-lawtext-parentheses-depth="${el.attr.depth}">${child_str}</span>`
+
+    } else if(el.tag === "__PStart") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-start-parenthesis" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
+
+    } else if(el.tag === "__PContent") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses-content" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
+
+    } else if(el.tag === "__PEnd") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-end-parenthesis" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
+
+    } else if(el.tag === "__MismatchStartParenthesis") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-start-parenthesis">${child_str}</span>`
+
+    } else if(el.tag === "__MismatchEndParenthesis") {
+        return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-end-parenthesis">${child_str}</span>`
+
+    } else {
+        return child_str;
+    }
+}
+
+Lawtext.render_law = (template_name, law) => {
     let rendered = nunjucks.render(template_name, {
         law: law,
         "print": console.log,
         "context": new Lawtext.Context(),
-        "annotate_html": Lawtext.annotate_html,
+        "annotate": Lawtext.annotate,
     });
     if(template_name === "lawtext") {
         rendered = rendered.replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1");
@@ -166,6 +185,32 @@ Lawtext.render_law = function(template_name, law) {
     return rendered;
 };
 
+Lawtext.render_elements_fragment = (elements) => {
+    let rendered = nunjucks.render("htmlfragment.html", {
+        elements: elements,
+        "print": console.log,
+        "context": new Lawtext.Context(),
+        "annotate": Lawtext.annotate,
+    });
+    return rendered;
+};
+
+
+
+Lawtext.analyze_xml = el => {
+    if(typeof el === 'string' || el instanceof String) {
+        return el;
+    }
+    if(["Sentence", "EnactStatement"].indexOf(el.tag) >= 0) {
+        if(el.text) {
+            el.children = Lawtext.parse(el.text, {startRule: "INLINE"});
+        }
+    } else {
+        for(let child of el.children) {
+            Lawtext.analyze_xml(child);
+        }
+    }
+};
 
 
 
@@ -181,163 +226,161 @@ Lawtext.render_law = function(template_name, law) {
 
 
 
+Lawtext.Data = class extends Backbone.Model {
 
-Lawtext.Data = Backbone.Model.extend({
-    defaults: {
-        "law": null,
-        "opening_file": false,
-        "law_search_key": null,
-    },
+    get defaults() {
+        return {
+            law: null,
+            opening_file: false,
+            law_search_key: null,
+            analysis: null,
+        };
+    }
 
-    initialize: function(options) {
-        var self = this;
+    constructor() {
+        super(...arguments);
 
-        self.open_file_input = $('<input>')
+        this.open_file_input = $("<input>")
             .attr({
-                type: 'file',
-                accept: 'text/plain,application/xml',
+                type: "file",
+                accept: "text/plain,application/xml",
             })
-            .css({display: 'none'});
-        $("body").append(self.open_file_input);
-        self.open_file_input.change(function(e) { self.open_file_input_change(e); });
-    },
+            .css({display: "none"});
+        $("body").append(this.open_file_input);
+        this.open_file_input.change(e => { this.open_file_input_change(e); });
 
-    open_file: function() {
-        var self = this;
+        $(window).resize(_.throttle(() => {
+            this.trigger("window-resize");
+        }, 300));
+    }
 
-        self.open_file_input.click();
-    },
+    open_file() {
+        this.open_file_input.click();
+    }
 
-    open_file_input_change: function(evt) {
-        var self = this;
+    open_file_input_change(evt) {
+        this.set({opening_file: true});
 
-        self.set({opening_file: true});
-
-        var file = evt.target.files[0];
+        let file = evt.target.files[0];
         if(file === null) return;
-        var reader = new FileReader();
-        reader.onload = (function(e) {
-            $(evt.target).val('');
-            var div = $('<div>');
-            var text = e.target.result;
-            self.load_law_text(text);
-            self.set({law_search_key: null});
-            self.trigger("file-loaded");
+        let reader = new FileReader();
+        reader.onload = (e => {
+            $(evt.target).val("");
+            let div = $("<div>");
+            let text = e.target.result;
+            this.load_law_text(text, true);
+            this.set({law_search_key: null});
+            this.trigger("file-loaded");
         });
         reader.readAsText(file);
-    },
+    }
 
-    invoke_error: function(title, body_el) {
-        var self = this;
+    invoke_error(title, body_el) {
+        this.trigger("error", title, body_el);
+    }
 
-        self.trigger("error", title, body_el);
-    },
-
-    load_law_text: function(text) {
-        var self = this;
-
-        var div = $('<div>');
-        var law = null;
+    load_law_text(text, analyze_xml) {
+        let div = $("<div>");
+        let law = null;
         if(/^(?:<\?xml|<Law)/.test(text.trim())) {
             law = Lawtext.xml_to_json(text);
+            if(analyze_xml) {
+                Lawtext.analyze_xml(law);
+            }
         } else {
             try {
                 law = Lawtext.parse(text, {startRule: "start"});
             } catch(err) {
-                var err_str = err.__str__();
-                var pre = $("<pre>")
+                let err_str = err.toString();
+                let pre = $("<pre>")
                     .css({"white-space": "pre-wrap"})
                     .css({"line-height": "1.2em"})
                     .css({"padding": "1em 0"})
                     .html(err_str);
-                self.invoke_error("読み込んだLawtextにエラーがあります", pre[0]);
+                    this.invoke_error("読み込んだLawtextにエラーがあります", pre[0]);
                 law = null;
             }
         }
         if(law) {
-            self.set({opening_file: false, law: law});
+            this.set({opening_file: false, law: law});
         } else {
-            self.set({opening_file: false});
+            this.set({opening_file: false});
         }
-    },
+    }
 
-    search_law: function(law_search_key) {
-        var self = this;
-
-        self.set({opening_file: true});
-        setTimeout(function(){
-            self.search_law_inner(law_search_key);
+    search_law(law_search_key) {
+        this.set({opening_file: true});
+        setTimeout(() => {
+            this.search_law_inner(law_search_key);
         }, 30);
-    },
+    }
 
-    search_law_inner: function(law_search_key) {
-        var self = this;
+    search_law_inner(law_search_key) {
+        let load_law_num = lawnum => {
 
-        var load_law_num = function(lawnum) {
-
-            var law_data = localStorage ? localStorage.getItem("law_for:" + lawnum) : null;
+            let law_data = localStorage ? localStorage.getItem(`law_for:${lawnum}`) : null;
             if(law_data) {
                 law_data = JSON.parse(law_data);
-                var datetime = new Date(law_data.datetime);
-                var now = new Date();
-                var ms = now.getTime() - datetime.getTime();
-                var days = ms / (1000 * 60 * 60 * 24);
+                let datetime = new Date(law_data.datetime);
+                let now = new Date();
+                let ms = now.getTime() - datetime.getTime();
+                let days = ms / (1000 * 60 * 60 * 24);
                 if(days < 1) {
-                    self.load_law_text(law_data.xml);
+                    this.load_law_text(law_data.xml, true);
                     return;
                 }
             }
 
-            var url = "https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=";
-            url += encodeURI(lawnum);
-            $.get(url)
-            .done(function(data){
-                var serializer = new XMLSerializer();
-                var xml = serializer.serializeToString(data);
-                self.load_law_text(xml);
-                if(localStorage) {
-                    localStorage.setItem(
-                        "law_for:" + lawnum,
-                        JSON.stringify({
-                            datetime: new Date().toISOString(),
-                            xml: xml,
-                        }),
+            fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=${encodeURI(lawnum)}`, {
+                mode: "cors",
+            })
+            .then(response => new Promise((resolve, reject) => {
+                response.text().then(text => resolve([response, text]));
+            }))
+            .then(([response, text]) => {
+                if(response.ok) {
+                    this.load_law_text(text, true);
+                    if(localStorage) {
+                        localStorage.setItem(
+                            `law_for:${lawnum}`,
+                            JSON.stringify({
+                                datetime: new Date().toISOString(),
+                                xml: text,
+                            }),
+                        );
+                    }
+                } else {
+                    console.log(response);
+                    this.set({opening_file: false});
+                    this.invoke_error(
+                        "法令の読み込み中にエラーが発生しました",
+                        text,
                     );
                 }
-            })
-            .fail(function(jqXHR, textStatus, errorThrown){
-                console.log(jqXHR, textStatus, errorThrown);
-                self.set({opening_file: false});
-                self.invoke_error(
-                    "法令の読み込み中にエラーが発生しました",
-                    jqXHR.responseText,
-                );
             });
         };
 
-        var lawnum = null;
-
-        var law_num_data = localStorage ? localStorage.getItem("law_num_for:" + law_search_key) : null;
+        let law_num_data = localStorage ? localStorage.getItem(`law_num_for:${law_search_key}`) : null;
         if(law_num_data) {
             law_num_data = JSON.parse(law_num_data);
-            var datetime = new Date(law_num_data.datetime);
-            var now = new Date();
-            var ms = now.getTime() - datetime.getTime();
-            var days = ms / (1000 * 60 * 60 * 24);
+            let datetime = new Date(law_num_data.datetime);
+            let now = new Date();
+            let ms = now.getTime() - datetime.getTime();
+            let days = ms / (1000 * 60 * 60 * 24);
             if(days < 1) {
                 load_law_num(law_num_data.lawnum);
                 return;
             }
         }
 
-        var re_lawnum = /(?:明治|大正|昭和|平成)\S+年\S+第\S+号/;
-        var match = re_lawnum.exec(law_search_key);
+        let re_lawnum = /(?:明治|大正|昭和|平成)\S+年\S+第\S+号/;
+        let match = re_lawnum.exec(law_search_key);
         if(match) {
-            lawnum = match[0];
+            let lawnum = match[0];
             load_law_num(lawnum);
             if(localStorage) {
                 localStorage.setItem(
-                    "law_num_for:" + law_search_key,
+                    `law_num_for:${law_search_key}`,
                     JSON.stringify({
                         datetime: new Date().toISOString(),
                         lawnum: lawnum,
@@ -345,12 +388,13 @@ Lawtext.Data = Backbone.Model.extend({
                 );
             }
         } else {
-            var url = "https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=";
-            url += encodeURI(law_search_key);
-            $.get(url)
-            .done(function(data){
+            fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=${encodeURI(law_search_key)}`, {
+                mode: "cors",
+            })
+            .then(response => response.json())
+            .then(data => {
                 if(data.length) {
-                    lawnum = data[0][1];
+                    let lawnum = data[0][1];
                     load_law_num(lawnum);
                     if(localStorage) {
                         localStorage.setItem(
@@ -363,237 +407,375 @@ Lawtext.Data = Backbone.Model.extend({
                     }
                     return;
                 } else {
-                    self.invoke_error(
+                    this.invoke_error(
                         "法令が見つかりません",
-                        "「" + law_search_key + "」を検索しましたが、見つかりませんでした。",
+                        `「${law_search_key}」を検索しましたが、見つかりませんでした。`,
                     );
                 }
-                self.set({opening_file: false});
+                this.set({opening_file: false});
             });
         }
-    },
+    }
 
-    get_law_name: function() {
-        var self = this;
+    get_law_name() {
+        let law = this.get("law");
+        if(law === null) return;
 
-        var law = self.get('law');
-        if(_(law).isNull()) return;
+        let law_num = _(law.children).findWhere({tag: "LawNum"});
+        let law_body = _(law.children).findWhere({tag: "LawBody"});
+        let law_title = law_body && _(law_body.children).findWhere({tag: "LawTitle"});
 
-        var law_num = _(law.children).findWhere({tag: 'LawNum'});
-        var law_body = _(law.children).findWhere({tag: 'LawBody'});
-        var law_title = law_body && _(law_body.children).findWhere({tag: 'LawTitle'});
-
-        var s_law_num = law_num ? law_num.children[0] : "";
-        var s_law_title = law_title ? law_title.children[0] : "";
-        s_law_num = (s_law_num && s_law_title) ? ("（" + s_law_num + "）") : s_law_num;
+        let s_law_num = law_num ? law_num.children[0] : "";
+        let s_law_title = law_title ? law_title.children[0] : "";
+        s_law_num = (s_law_num && s_law_title) ? (`（${s_law_num}）`) : s_law_num;
 
         return s_law_title + s_law_num;
-    },
+    }
 
-    download_docx: function() {
-        var self = this;
+    download_docx() {
+        let law = this.get("law");
+        if(law === null) return;
 
-        var law = self.get('law');
-        if(_(law).isNull()) return;
-
-        var s_content_types = nunjucks.render('docx/[Content_Types].xml');
-        var s_rels = nunjucks.render('docx/_rels/.rels');
-        var s_document_rels = nunjucks.render('docx/word/_rels/document.xml.rels');
-        var s_document = nunjucks.render('docx/word/document.xml', {
+        let s_content_types = nunjucks.render("docx/[Content_Types].xml");
+        let s_rels = nunjucks.render("docx/_rels/.rels");
+        let s_document_rels = nunjucks.render("docx/word/_rels/document.xml.rels");
+        let s_document = nunjucks.render("docx/word/document.xml", {
             law: law,
-            "restructure_table": Lawtext.restructure_table,
-            "print": console.log,
-            "context": new Lawtext.Context()
+            restructure_table: Lawtext.restructure_table,
+            print: console.log,
+            context: new Lawtext.Context(),
         });
-        var s_styles = nunjucks.render('docx/word/styles.xml');
+        let s_styles = nunjucks.render("docx/word/styles.xml");
 
-        var zip = new JSZip();
-        zip.file('[Content_Types].xml', s_content_types)
-        zip.file('_rels/.rels', s_rels)
-        zip.file('word/_rels/document.xml.rels', s_document_rels)
-        zip.file('word/document.xml', s_document)
-        zip.file('word/styles.xml', s_styles)
+        let zip = new JSZip();
+        zip.file("[Content_Types].xml", s_content_types)
+        zip.file("_rels/.rels", s_rels)
+        zip.file("word/_rels/document.xml.rels", s_document_rels)
+        zip.file("word/document.xml", s_document)
+        zip.file("word/styles.xml", s_styles)
         zip.generateAsync({
-            type:"uint8array",
+            type: "uint8array",
             compression: "DEFLATE",
             compressionOptions: {
                 level: 9
-            }
+            },
         })
-        .then(function(buffer) {
-            var blob = new Blob(
+        .then(buffer => {
+            let blob = new Blob(
                 [buffer],
-                {type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
+                {type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"},
             );
-            var law_name = self.get_law_name() || "lawtext_output";
-            saveAs(blob, law_name + ".docx");
+            let law_name = this.get_law_name() || "lawtext_output";
+            saveAs(blob, `${law_name}.docx`);
         });
-    },
+    }
 
-    download_lawtext: function() {
-        var self = this;
+    download_lawtext() {
+        let law = this.get("law");
+        if(law === null) return;
 
-        var law = self.get('law');
-        if(_(law).isNull()) return;
-
-        var s_lawtext = nunjucks.render('lawtext.j2', {
+        let s_lawtext = nunjucks.render("lawtext.j2", {
             law: law,
-            "print": console.log,
-            "context": new Lawtext.Context()
+            print: console.log,
+            context: new Lawtext.Context(),
         });
-        var blob = new Blob(
+        let blob = new Blob(
             [s_lawtext],
-            {type: "text/plain"}
+            {type: "text/plain"},
         );
-        var law_name = self.get_law_name() || "lawtext_output";
-        saveAs(blob, law_name + ".law.txt");
-    },
+        let law_name = this.get_law_name() || "lawtext_output";
+        saveAs(blob, `${law_name}.law.txt`);
+    }
 
-    download_xml: function() {
-        var self = this;
+    download_xml() {
+        let law = this.get("law");
+        if(law === null) return;
 
-        var law = self.get('law');
-        if(_(law).isNull()) return;
-
-        var s_lawtext = nunjucks.render('xml.xml', {
+        let s_lawtext = nunjucks.render("xml.xml", {
             law: law,
-            "print": console.log,
-            "context": new Lawtext.Context()
+            print: console.log,
+            context: new Lawtext.Context(),
         });
-        var blob = new Blob(
+        let blob = new Blob(
             [s_lawtext],
-            {type: "application/xml"}
+            {type: "application/xml"},
         );
-        var law_name = self.get_law_name() || "lawtext_output";
-        saveAs(blob, law_name + ".xml");
-    },
-});
+        let law_name = this.get_law_name() || "lawtext_output";
+        saveAs(blob, `${law_name}.xml`);
+    }
 
-Lawtext.SidebarView = Backbone.View.extend({
-    template: _.template(Lawtext.sidebar_view_template),
-    tagName: "div",
-    className: "lawtext-sidebar-view",
+    get_declaration(index) {
+        let analysis = this.get("analysis");
+        if(analysis === null) return null;
 
-    initialize: function(options) {
-        var self = this;
+        let declarations = analysis.declarations;
+        return declarations[index];
+    }
+}
 
-        self.data = options.data;
-        self.listenTo(
-            self.data,
+
+
+Lawtext.SidebarView_template = _.template(Lawtext.sidebar_view_template);
+Lawtext.SidebarView = class extends Backbone.View {
+
+    get tagName() { return "div"; }
+    get className() { return "lawtext-sidebar-view"; }
+
+    constructor(options) {
+        super(...arguments);
+
+        this.data = options.data;
+        this.listenTo(
+            this.data,
             "change:law change:opening_file",
-            _.debounce(function() {
-                self.render();
+            _.debounce(() => {
+                this.render();
             }, 100),
         );
-    },
+    }
 
-    render: function(options) {
-        var self = this;
-
-        self.$el.html(self.template({
-            data: self.data.attributes,
+    render(options) {
+        this.$el.html(Lawtext.SidebarView_template({
+            data: this.data.attributes,
         }));
-    },
-});
+    }
+}
 
-Lawtext.HTMLpreviewView = Backbone.View.extend({
-    template: _.template(Lawtext.htmlpreview_view_template),
-    tagName: "div",
-    className: "lawtext-htmlpreview-view",
 
-    initialize: function(options) {
-        var self = this;
 
-        self.data = options.data;
-        self.law_html = null;
-        self.analyzed = false;
+Lawtext.VarRefView_template = _.template(`
+<span class="lawtext-varref-text"><%= text %></span><span class="lawtext-varref-float-block" style="display: none; height: 0;">
+<div class="lawtext-varref-float-block-inner">
+<div class="lawtext-varref-arrow"></div>
+<div class="lawtext-varref-window">
+</div>
+</div>
+</span>
+`.trim());
+Lawtext.VarRefView = class extends Backbone.View {
 
-        self.listenTo(self.data, "change:law", self.law_change);
-        self.listenTo(
-            self.data,
-            "change:law change:opening_file",
-            _.debounce(function() {
-                self.render();
-            }, 100),
-        );
-        self.listenTo(self.data, "scroll-to-law-anchor", self.scroll_to_law_anchor);
-    },
+    get tagName() { return "span"; }
+    get className() { return "lawtext-varref-view"; }
+    get events() { return {
+        "click .lawtext-varref-text": "text_click",
+    }; }
 
-    law_change: function(options) {
-        var self = this;
+    constructor(options) {
+        super(...arguments);
 
-        self.law_html = null;
-        self.analyzed = false;
-    },
+        this.data = options.data;
+        this.declaration_index = options.declaration_index;
+        this.text = options.text;
 
-    render: function(options) {
-        var self = this;
+        this.text_obj = null;
+        this.block_obj = null;
+        this.inner_obj = null;
+        this.arrow_obj = null;
+        this.window_obj = null;
 
-        var law = self.data.get('law');
-        if(!_(law).isNull() && _(self.law_html).isNull()) {
-            self.law_html = Lawtext.render_law('htmlfragment.html', law);
-            self.analyzed = true;
+        this.rendered = false;
+
+        this.listenTo(this, "rendered", this.update_size);
+        this.listenTo(this.data, "window-resize", this.update_size);
+    }
+
+    get_content() {
+        let declaration = this.data.get_declaration(this.declaration_index);
+        let container_stack = declaration.name_pos.env.container_stack;
+        let names = [];
+        for(let container of container_stack) {
+            if(container.tag === "EnactStatement") {
+                names.push("制定文");
+
+            } else if(container.tag === "Article") {
+                let article_name = _(container.children)
+                    .findWhere({tag: "ArticleTitle"})
+                    .text;
+                names.push(article_name);
+
+            } else if(container.tag === "Paragraph") {
+                let paragraph_num = _(container.children)
+                    .findWhere({tag: "ParagraphNum"})
+                    .text || "１";
+                names.push(paragraph_num);
+
+            } else if([
+                "Item", "Subitem1", "Subitem2", "Subitem3",
+                "Subitem4", "Subitem5", "Subitem6",
+                "Subitem7", "Subitem8", "Subitem9",
+                "Subitem10",
+            ].indexOf(container.tag) >= 0) {
+                let item_title = _(container.children)
+                    .findWhere({tag: `${container.tag}Title`})
+                    .text;
+                names.push(item_title);
+
+            } else if(container.tag === "Table") {
+                let table_struct_title_el = _(container.children)
+                    .findWhere({tag: "TableStructTitle"});
+                let table_struct_title = table_struct_title_el
+                    ? table_struct_title_el.text
+                    : "表"
+                names.push(table_struct_title + "（抜粋）");
+
+            }
         }
 
-        self.$el.html(self.template({
-            data: self.data.attributes,
-            law_html: self.law_html,
-        }));
+        let closest_children = container_stack[container_stack.length - 1].children
+        .filter(el => {
+            return [
+                "ArticleTitle", "ParagraphNum", "ItemTitle",
+                "Subitem1Title", "Subitem2Title", "Subitem3Title",
+                "Subitem4Title", "Subitem5Title", "Subitem6Title",
+                "Subitem7Title", "Subitem8Title", "Subitem9Title",
+                "Subitem10Title",
+                "SupplProvision",
+            ].indexOf(el.tag) < 0;
+        });
+        let fragment = Lawtext.render_elements_fragment(closest_children).trim();
+        return `
+<div class="paragraph-item-body"><span class="paragraph-item-num">${names.join("　")}</span>　${fragment}</div>
+`.trim();
+    }
 
-        if(!self.analyzed) {
-            setTimeout(function() {
-                if(!_(law).isNull()) {
-                    law = _parse_decorate.analyze(law);
-                    self.law_html = Lawtext.render_law('htmlfragment.html', law);
-                    self.analyzed = true;
-                    self.$el.html(self.template({
-                        data: self.data.attributes,
-                        law_html: self.law_html,
-                    }));
-                    self.process_law();
-                }
-            }, 0);
+    render() {
+        this.$el.html(Lawtext.VarRefView_template({
+            data: this.data.attributes,
+            text: this.text,
+        }));
+        this.text_obj = this.$(".lawtext-varref-text");
+        this.block_obj = this.$(".lawtext-varref-float-block");
+        this.inner_obj = this.$(".lawtext-varref-float-block-inner");
+        this.arrow_obj = this.$(".lawtext-varref-arrow");
+        this.window_obj = this.$(".lawtext-varref-window");
+        this.rendered = true;
+
+        this.listenTo(this.block_obj, "transitionend", alert);
+        this.block_obj[0].addEventListener("transitionend", () => {
+            if(!this.is_open) this.block_obj.hide();
+        }, false);
+
+        this.trigger("rendered");
+    }
+
+    update_window() {
+        this.window_obj.html(this.get_content());
+    }
+
+    update_size() {
+        if(!this.rendered) return;
+
+        let text_left = this.text_obj.offset().left;
+        let window_left = this.window_obj.offset().left;
+        let rel_left = text_left - window_left;
+        let left = Math.max(rel_left, em(0.2));
+        this.arrow_obj.css({"margin-left": `${left}px`});
+
+        let inner_height = this.inner_obj.outerHeight();
+        this.block_obj.height(inner_height);
+    }
+
+    get is_open() {
+        return this.$el.hasClass("lawtext-varref-open");
+    }
+
+    set is_open(value) {
+        return this.$el.toggleClass("lawtext-varref-open", value);
+    }
+
+    text_click() {
+        if(this.is_open) {
+            this.block_obj.height(0);
+            this.is_open = false;
         } else {
-            self.process_law();
+            this.update_window();
+            this.block_obj.show();
+            this.update_size();
+            this.is_open = true;
         }
-    },
+    }
+}
 
-    scroll_to_law_anchor: function(tag, name) {
-        var self = this;
 
-        self.$(".law-anchor").each(function(){
-            var obj = $(this);
-            if(obj.data('tag') == tag && obj.data('name') == name) {
-                $('html,body').animate({scrollTop: obj.offset().top}, 'normal');
+
+Lawtext.HTMLpreviewView_template = _.template(Lawtext.htmlpreview_view_template);
+Lawtext.HTMLpreviewView = class extends Backbone.View {
+
+    get tagName() { return "div"; }
+    get className() { return "lawtext-htmlpreview-view"; }
+
+    constructor(options) {
+        super(...arguments);
+
+        this.data = options.data;
+        this.law_html = null;
+        this.analyzed = false;
+
+        this.listenTo(this.data, "change:law", this.law_change);
+        this.listenTo(
+            this.data,
+            "change:law change:opening_file",
+            _.debounce(() => {
+                this.render();
+            }, 100),
+        );
+        this.listenTo(this.data, "scroll-to-law-anchor", this.scroll_to_law_anchor);
+
+        this.varref_views = [];
+    }
+
+    law_change() {
+        this.law_html = null;
+        this.analyzed = false;
+    }
+
+    render() {
+        let law = this.data.get("law");
+        if(law !== null && this.law_html === null) {
+            let analysis = Lawtext.analyze(law);
+            this.law_html = Lawtext.render_law("htmlfragment.html", law);
+            this.analyzed = true;
+            this.data.set({analysis, analysis});
+        }
+
+        this.$el.html(Lawtext.HTMLpreviewView_template({
+            data: this.data.attributes,
+            law_html: this.law_html,
+        }));
+
+        this.varref_views = [];
+        for(let el of this.$(".lawtext-analyzed-varref")) {
+            let obj = $(el);
+            let varref_view = new Lawtext.VarRefView({
+                data: this.data,
+                declaration_index: parseInt(obj.attr("lawtext_declaration_index"), 10),
+                text: obj.text(),
+            });
+            obj.replaceWith(varref_view.el);
+            varref_view.render();
+            this.varref_views.push(varref_view);
+        }
+    }
+
+    scroll_to_law_anchor(tag, name) {
+        for(let el of this.$(".law-anchor")) {
+            let obj = $(el);
+            if(obj.data("tag") === tag && obj.data("name") === name) {
+                $("html,body").animate({scrollTop: obj.offset().top}, "normal");
             }
-        });
-    },
+        }
+    }
+}
 
-    process_law: function() {
-        var self = this;
 
-        self.$(".lawtext-analyzed").each(function(){
-            var obj = $(this);
 
-            if(obj.hasClass("lawtext-analyzed-lawnum")) {
-                var lawnum = obj.data('lawnum');
-                obj.replaceWith(
-                    $("<a>")
-                    .attr('href', '#' + lawnum)
-                    .attr('target', '_blank')
-                    .html(obj.html())
-                );
-            }
-        });
-    },
-});
 
-Lawtext.MainView = Backbone.View.extend({
-    template: _.template(Lawtext.main_view_template),
-    tagName: "div",
-    className: "lawtext-main-view",
+Lawtext.MainView_template = _.template(Lawtext.main_view_template);
+Lawtext.MainView = class extends Backbone.View {
 
-    events: {
+    get tagName() { return "div"; }
+    get className() { return "lawtext-main-view"; }
+    get events() { return {
         "click .lawtext-open-file-button": "open_file_button_click",
         "click .lawtext-download-sample-lawtext-button": "download_sample_lawtext_button_click",
         "click .search-law-button": "search_law_button_click",
@@ -601,157 +783,177 @@ Lawtext.MainView = Backbone.View.extend({
         "click .lawtext-download-lawtext-button": "download_lawtext_button_click",
         "click .lawtext-download-xml-button": "download_xml_button_click",
         "click .law-link": "law_link_click",
-    },
+        "click .lawtext-analyzed-varref-text": "varref_text_click",
+    }; }
 
-    initialize: function(options) {
-        var self = this;
+    constructor(options) {
+        super(...arguments);
 
-        self.data = options.data;
-        self.router = options.router;
+        this.data = options.data;
+        this.router = options.router;
 
-        self.sidebar_view = new Lawtext.SidebarView({
+        this.sidebar_view = new Lawtext.SidebarView({
             data: Lawtext.data,
         });
-        self.htmlpreview_view = new Lawtext.HTMLpreviewView({
+        this.htmlpreview_view = new Lawtext.HTMLpreviewView({
             data: Lawtext.data,
         });
 
-        self.listenTo(self.data, "change:law_search_key", self.law_search_key_change);
-        self.listenTo(self.data, "change:law", self.law_change);
-        self.listenTo(self.data, "error", self.onerror);
-    },
+        this.listenTo(this.data, "change:law_search_key", this.law_search_key_change);
+        this.listenTo(this.data, "change:law", this.law_change);
+        this.listenTo(this.data, "error", this.onerror);
+    }
 
-    render: function(options) {
-        var self = this;
+    render() {
+        this.sidebar_view.$el.detach();
+        this.htmlpreview_view.$el.detach();
 
-        self.sidebar_view.$el.detach();
-        self.htmlpreview_view.$el.detach();
-
-        self.$el.html(self.template({
+        this.$el.html(Lawtext.MainView_template({
         }));
 
-        self.$(".lawtext-sidebar-view-place").replaceWith(self.sidebar_view.el);
-        self.sidebar_view.render();
-        self.$(".lawtext-htmlpreview-view-place").replaceWith(self.htmlpreview_view.el);
-        self.htmlpreview_view.render();
-    },
+        this.$(".lawtext-sidebar-view-place").replaceWith(this.sidebar_view.el);
+        this.sidebar_view.render();
+        this.$(".lawtext-htmlpreview-view-place").replaceWith(this.htmlpreview_view.el);
+        this.htmlpreview_view.render();
+    }
 
-    search_law_button_click: function(e) {
-        var self = this;
-        var obj = $(e.currentTarget);
+    search_law_button_click(e) {
+        let obj = $(e.currentTarget);
 
-        var textbox = obj.parent().parent().find(".search-law-textbox");
-        var text = textbox.val().trim();
+        let textbox = obj.parent().parent().find(".search-law-textbox");
+        let text = textbox.val().trim();
 
-        self.router.navigate(text, {trigger: true});
+        this.router.navigate(text, {trigger: true});
 
         return false;
-    },
+    }
 
-    open_file_button_click: function(e) {
-        var self = this;
+    open_file_button_click(e) {
+        this.data.open_file();
+    }
 
-        self.data.open_file();
-    },
-
-    download_sample_lawtext_button_click: function(e) {
-        var self = this;
-
-        var blob = new Blob(
+    download_sample_lawtext_button_click(e) {
+        let blob = new Blob(
             [Lawtext.sample_lawtext],
-            {type: "text/plain"}
+            {type: "text/plain"},
         );
         saveAs(blob, "sample_lawtext.law.txt");
-    },
+    }
 
-    download_docx_button_click: function(e) {
-        var self = this;
+    download_docx_button_click(e) {
+        this.data.download_docx();
+    }
 
-        self.data.download_docx();
-    },
+    download_lawtext_button_click(e) {
+        this.data.download_lawtext();
+    }
 
-    download_lawtext_button_click: function(e) {
-        var self = this;
+    download_xml_button_click(e) {
+        this.data.download_xml();
+    }
 
-        self.data.download_lawtext();
-    },
+    law_link_click(e) {
+        let obj = $(e.currentTarget);
+        this.data.trigger("scroll-to-law-anchor", obj.data("tag"), obj.data("name"));
+    }
 
-    download_xml_button_click: function(e) {
-        var self = this;
-
-        self.data.download_xml();
-    },
-
-    law_link_click: function(e) {
-        var self = this;
-        var obj = $(e.currentTarget);
-
-        self.data.trigger("scroll-to-law-anchor", obj.data("tag"), obj.data("name"));
-    },
-
-    law_search_key_change: function() {
-        var self = this;
-
-        var law_search_key = self.data.get("law_search_key");
-
+    law_search_key_change() {
+        let law_search_key = this.data.get("law_search_key");
         if(law_search_key) {
-            self.data.search_law(law_search_key);
+            this.data.search_law(law_search_key);
         }
-    },
+    }
 
-    law_change: function() {
-        var self = this;
-
-        var law = self.data.get("law");
-        var law_search_key = self.data.get("law_search_key");
+    law_change() {
+        let law = this.data.get("law");
+        let law_search_key = this.data.get("law_search_key");
 
         if(law && law_search_key) {
-            var law_body = _(law.children).findWhere({tag: "LawBody"});
-            var law_title = _(law_body.children).findWhere({tag: "LawTitle"});
-            document.title = law_title.children[0] + " | Lawtext";
+            let law_body = _(law.children).findWhere({tag: "LawBody"});
+            let law_title = _(law_body.children).findWhere({tag: "LawTitle"});
+            document.title = `${law_title.children[0]} | Lawtext`;
         } else {
             document.title = "Lawtext";
         }
-    },
+    }
 
-    onerror: function(title, body_el) {
-        var self = this;
-
-        var modal = self.$("#errorModal");
+    onerror(title, body_el) {
+        let modal = this.$("#errorModal");
         modal.find(".modal-title").html(title);
         modal.find(".modal-body").html(body_el);
         modal.modal("show");
-    },
-});
+    }
 
-Lawtext.Router = Backbone.Router.extend({
-    routes: {
+    varref_text_click(e) {
+        let obj = $(e.currentTarget);
+
+        let varref = obj.closest(".lawtext-analyzed-varref");
+        let is_open = varref.hasClass("lawtext-analyzed-varref-open");
+
+        let parent_div = varref.closest("div");
+
+        for(let el of parent_div.find(".lawtext-analyzed-varref.lawtext-analyzed-varref-open")) {
+            let varref = $(el);
+            let _parent_div = varref.closest("div");
+            if(!parent_div[0].isEqualNode(_parent_div[0])) return;
+            let arr = $(varref.find(".lawtext-analyzed-varref-arrow")[0]);
+            let win = $(varref.find(".lawtext-analyzed-varref-window")[0]);
+            varref.removeClass("lawtext-analyzed-varref-open");
+            arr.hide();
+            win.slideUp(200);
+        }
+
+        if(!is_open) {
+            let arr = $(varref.find(".lawtext-analyzed-varref-arrow")[0]);
+            let win = $(varref.find(".lawtext-analyzed-varref-window")[0]);
+            let is_empty = win.hasClass("lawtext-analyzed-varref-empty");
+            if(is_empty) {
+                let decl_index = varref.attr("lawtext_declaration_index");
+                let decl = self.$(`.lawtext-analyzed-declaration[lawtext_declaration_index="${decl_index}"]`);
+                let decl_container = decl.closest(".article,.enact-statement").clone();
+                for(let el of decl_container.find(".lawtext-analyzed-declaration[lawtext_declaration_index]")) {
+                    let obj = $(el);
+                    obj.removeAttr("lawtext_declaration_index");
+                }
+                for(let el of decl_container.find(".lawtext-analyzed-varref-window")) {
+                    let obj = $(el);
+                    obj.html();
+                    obj.addClass("lawtext-analyzed-varref-empty");
+                }
+                win.html(decl_container);
+                win.removeClass("lawtext-analyzed-varref-empty");
+            }
+            varref.addClass("lawtext-analyzed-varref-open");
+            arr.show();
+            win.slideDown(200);
+        }
+    }
+}
+
+Lawtext.Router = class extends Backbone.Router {
+    get routes() { return {
         ":law_search_key": "law",
         "": "index",
-    },
+    }; }
 
-    initialize: function(options) {
-        var self = this;
+    constructor(options) {
+        super(...arguments);
 
-        self.data = options.data;
+        this.data = options.data;
 
-        self.listenTo(self.data, "file-loaded", function(){
-            self.navigate("", {trigger: false});
+        this.listenTo(this.data, "file-loaded", () => {
+            this.navigate("", {trigger: false});
         });
-    },
-
-    law: function(law_search_key) {
-        var self = this;
-
-        self.data.set({law_search_key: law_search_key});
-    },
-
-    index: function() {
-        var self = this;
-
-        self.data.set({law_search_key: null, law: null});
     }
-});
+
+    law(law_search_key) {
+        this.data.set({law_search_key: law_search_key});
+    }
+
+    index() {
+        this.data.set({law_search_key: null, law: null});
+    }
+}
 
 $(function(){
 

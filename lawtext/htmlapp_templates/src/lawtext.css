@@ -62,7 +62,7 @@
     margin: -1px;
 }
 
-.lawtext-analyzed-parentheses-content[data-lawtext-parentheses-type="square"] {
+.lawtext-analyzed-parentheses-content[lawtext_parentheses_type="square"] {
     color: rgb(158, 79, 0);
 }
 
@@ -74,4 +74,58 @@
 
 .first-column {
     color: rgb(121, 113, 0);
+}
+
+.lawtext-analyzed-declaration {
+    font-weight: bold;
+}
+
+.lawtext-varref-arrow {
+    position: absolute;
+    border-style: solid;
+    border-width: 0 0.5em 0.5em 0.5em;
+    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+    margin: -0.5em 0 0 0;
+}
+
+.lawtext-varref-text {
+    border-bottom: 1px solid gray;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.lawtext-varref-text:hover {
+    background-color: rgb(255, 249, 160);
+}
+
+.lawtext-varref-open .lawtext-varref-text {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.lawtext-varref-float-block {
+    float: right;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    text-indent: 0;
+    font-size: 0;
+    transition: height 0.3s;
+    overflow: hidden;
+    position: relative;
+    color: initial;
+}
+
+.lawtext-varref-float-block-inner {
+    float: right;
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5em;
+}
+
+.lawtext-varref-window {
+    float: right;
+    width: 100%;
+    padding: 0.5em;
+    border-radius: 0.2em;
+    background-color: rgba(0, 0, 0, 0.1);
 }

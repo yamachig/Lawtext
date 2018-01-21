@@ -760,6 +760,9 @@
 
 
 {%- macro m_element_raw(el) -%}
+
+{%- if with_control_el or el.tag[0] != "_" -%}
+
 {%- if not el -%}
 {%- elif not el.tag -%}
   {{- el | escape -}}
@@ -776,6 +779,11 @@
     {%- endfor -%}
   </{{ el.tag }}>
 {%- endif -%}
+
+{%- else -%}
+  {{- el.text -}}
+{%- endif -%}
+
 {%- endmacro -%}
 
 

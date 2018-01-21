@@ -40,6 +40,7 @@ def main(outdir, preserve_compiled_files, ie=False):
         if cache:
             args.append('--cache')
         args += [
+            '--allowed-start-rules', 'start,INLINE',
             '-o',
             str(pegjs.parent / f'{pegjs.stem}.js'),
             str(pegjs),

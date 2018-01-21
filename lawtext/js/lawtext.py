@@ -19,4 +19,5 @@ def parse(text):
     outdata, _ = process.communicate(indata)
 
     law = json.loads(outdata, encoding='utf-8')
+
     return law

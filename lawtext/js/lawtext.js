@@ -1,7 +1,8 @@
 "use strict";
 
 var parser = require("./parser");
-var annotate_html = require("./annotate_html");
+var analyzer = require("./analyzer");
+var util = require("./util");
 var fs = require('fs');
 
 
@@ -93,7 +94,7 @@ function parse(text, options) {
     let [lexed, indent_memo, lines_count] = lex(text);
     // console.error(lexed);
     try {
-        options = Object.assign({}, options, { indent_memo: indent_memo });
+        options = Object.assign({ indent_memo: indent_memo, startRule: "start" }, options);
         var parsed = parser.parse(lexed, options);
 
         let t1 = (new Date()).getTime();
@@ -110,15 +111,32 @@ function parse(text, options) {
     return parsed;
 }
 
+function analyze(law) {
+
+    console.error("\\\\\\\\\\ analyze start \\\\\\\\\\");
+    let t0 = (new Date()).getTime();
+    let analysis = analyzer.analyze(law);
+    let t1 = (new Date()).getTime();
+    console.error(`/////  analyze end  /////`);
+    console.error(`(${t1 - t0} ms total)`);
+    return analysis;
+}
+
+
+
+
+
+
 function main(argv) {
 
     if(argv.length >= 3) {
-        fs.readFile(argv[2], 'utf-8', function (err, data) {
+        fs.readFile(argv[2], 'utf-8', function (err, input) {
             if (err) {
                 throw err;
             }
-            var parsed = parse(data);
-            console.log(JSON.stringify(parsed));
+            var parsed = parse(input);
+            analyze(parsed);
+            console.log(JSON.stringify(parsed.json()));
         });
 
     } else {
@@ -130,7 +148,8 @@ function main(argv) {
         });
         process.stdin.on('end', function() {
             var parsed = parse(input);
-            console.log(JSON.stringify(parsed));
+            analyze(parsed);
+            console.log(JSON.stringify(parsed.json()));
         });
     }
 }
@@ -139,13 +158,23 @@ if (typeof require !== 'undefined' && require.main === module) {
     main(process.argv)
 }
 
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-    exports.parse = parse;
-    exports.annotate_html = annotate_html.parse;
-}
+
+
+
+
 
 if (typeof window !== 'undefined') {
     window.Lawtext = window.Lawtext || {};
     window.Lawtext.parse = parse;
-    window.Lawtext.annotate_html = annotate_html.parse;
+    window.Lawtext.get_law_name_length = analyze.get_law_name_length;
+    window.Lawtext.analyze = analyze;
+    window.Lawtext.EL = util.EL;
 }
+
+if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+    exports.parse = parse;
+    exports.get_law_name_length = analyze.get_law_name_length;
+    exports.analyze = analyze;
+    exports.EL = util.EL;
+}
+

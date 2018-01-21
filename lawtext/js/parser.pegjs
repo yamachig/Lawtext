@@ -1,42 +1,8 @@
 {
-    class EL {
-
-        constructor(tag, attr, children) {
-            // if(!tag) {
-            //     error(`${JSON.stringify(tag)} is invalid tag.`);
-            // }
-            this.tag= tag;
-            this.attr= attr || {};
-            this.children= children || [];
-        }
-
-        append(child) {
-            if(child !== undefined && child !== null) {
-                // if(!(child instanceof EL) && !(child instanceof String)) {
-                //     error("child is not EL or String.");
-                // }
-                this.children.push(child);
-            }
-            return this;
-        }
-
-        extend(children) {
-            // if(!Array.isArray(children)) {
-            //     error(`${JSON.stringify(children).slice(0,100)} is not Array.`);
-            // }
-            // for(let i = 0; i < children.length; i++) {
-            //     let child = children[i];
-            //     if(!(child instanceof EL) && !(child instanceof String)) {
-            //         error("child is not EL or String.");
-            //     }
-            // }
-            this.children = this.children.concat(children);
-            return this;
-        }
-
-    }
-
-
+    let util = require("./util");
+    let EL = util.EL;
+    let __Text = util.__Text;
+    let __Parentheses = util.__Parentheses;
 
     let indent_memo = options.indent_memo;
 
@@ -98,7 +64,7 @@
     let re_kanji_num = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 
     function parse_kanji_num(text) {
-        let m = text.match(re_kanji_num)
+        let m = text.match(re_kanji_num);
         if(m) {
             let d1000 = m[1] ? kanji_digits[m[2]] || 1 : 0;
             let d100 = m[3] ? kanji_digits[m[4]] || 1 : 0;
@@ -183,7 +149,7 @@
             if(m) {
                 let nums = [parse_kanji_num(m[2])];
                 if(m[3]) {
-                    let bs = m[3].split(/のノ/g);
+                    let bs = m[3].split(/[のノ]/g);
                     for(let j = 0; j < bs.length; j++) {
                         if(!bs[j]) continue;
                         nums.push(parse_kanji_num(bs[j]));
@@ -214,6 +180,8 @@
 
         return nums_group.join(':');
     }
+
+    let parentheses_depth = 0;
 }
 
 
@@ -286,7 +254,7 @@ law =
     }
 
 law_title "law_title" =
-    law_title:$INLINE NEWLINE law_num:PARENTHESES_INLINE NEWLINE+
+    law_title:$INLINE NEWLINE law_num:ROUND_PARENTHESES_INLINE NEWLINE+
     {
         return {
             law_title: law_title,
@@ -306,10 +274,10 @@ enact_statement "enact_statement" =
     !__
     !toc_label
     !article_title
-    target:$INLINE
+    target:INLINE
     NEWLINE+
     {
-        return new EL("EnactStatement", {}, [target]);
+        return new EL("EnactStatement", {}, target);
     }
 
 
@@ -458,7 +426,7 @@ article_group "article_group" =
         article_group.append(new EL(
             article_group_type[article_group_title.type_char] + "Title",
             {},
-            [article_group_title.text],
+            [new __Text(article_group_title.text)],
         ))
 
         let num = parse_named_num(article_group_title.text);
@@ -476,7 +444,7 @@ article_group "article_group" =
 
 article_paragraph_caption "article_paragraph_caption" =
     __
-    article_paragraph_caption:$ROUND_PARENTHESES_INLINE
+    article_paragraph_caption:ROUND_PARENTHESES_INLINE
     NEWLINE
     &[^ 　\t\r\n]
     {
@@ -788,12 +756,12 @@ table_column "table_column" =
     first:(
         fig_struct
         /
-        inline:$INLINE? NEWLINE
+        inline:INLINE? NEWLINE
         {
             return new EL(
                 "Sentence",
                 {WritingMode: "vertical"},
-                [inline || ""],
+                [inline || new __Text("")],
             )
         }
     )
@@ -804,7 +772,7 @@ table_column "table_column" =
                 _target:(
                     fig_struct
                     /
-                    inline:$INLINE NEWLINE
+                    inline:INLINE NEWLINE
                     {
                         return new EL(
                             "Sentence",
@@ -833,7 +801,7 @@ table_column "table_column" =
         return table_column;
     }
     /
-    &(here:$(NEXTINLINE) &{ console.error(`tc 10 line ${location().start.line}: "${here}"`); return true; })
+    // &(here:$(NEXTINLINE) &{ console.error(`tc 10 line ${location().start.line}: "${here}"`); return true; })
     "-" _ NEWLINE
     {
         return new EL(
@@ -912,7 +880,7 @@ remarks "remarks" =
     label:$(("備考" / "注") [^ 　\t\r\n]*)
     first:(
         __
-        _target:$INLINE
+        _target:INLINE
         {
             return new EL(
                 "Sentence",
@@ -932,7 +900,7 @@ remarks "remarks" =
                 /
                 &("" &{ base_indent_stack.pop(); return false; }) "DUMMY"
                 /
-                _target:$INLINE
+                _target:INLINE
                 NEWLINE
                 {
                     return new EL(
@@ -1007,7 +975,7 @@ appdx_item "appdx_item" =
 appdx_table_title "appdx_table_title" =
     title_struct:(
         title:$("別表" [^\r\n(（]*)
-        related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target.text; })?
+        related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
         table_struct_title:$[^\r\n(（]*
         {
             return {
@@ -1063,7 +1031,7 @@ appdx_table_children "appdx_table_children" =
 appdx_style_title "appdx_style_title" =
     title_struct:(
         title:$("様式" [^\r\n(（]*)
-        related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target.text; })?
+        related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
         style_struct_title:[^\r\n(（]*
         {
             return {
@@ -1173,7 +1141,7 @@ columns_or_sentences "columns_or_sentences" =
     /
     period_sentences
     /
-    inline:$INLINE
+    inline:INLINE
 
     {
         console.error(`### line ${location().start.line}: Maybe mismatched parenthesis!`);
@@ -1186,19 +1154,22 @@ columns_or_sentences "columns_or_sentences" =
     }
 
 period_sentences "period_sentences" =
-    fragments:($PERIOD_SENTENCE_FRAGMENT)+
+    fragments:(PERIOD_SENTENCE_FRAGMENT)+
     {
         let sentences = [];
         let proviso_indices = [];
         for(let i = 0; i < fragments.length; i++) {
-            let sentence_str = fragments[i];
+            let sentence_content = fragments[i];
             let sentence = new EL(
                 "Sentence",
                 {WritingMode: "vertical"},
-                [sentence_str]
+                sentence_content,
             );
             if(fragments.length >= 2) sentence.attr.Num = "" + (i + 1);
-            if(sentence_str.match(/^ただし、|但し、/)) {
+            if(
+                sentence_content[0] instanceof __Text &&
+                sentence_content[0].text.match(/^ただし、|但し、/)
+            ) {
                 proviso_indices.push(i);
             }
             sentences.push(sentence);
@@ -1233,7 +1204,18 @@ columns "columns" =
         return columns;
     }
 
-INLINE "INLINE" = !INDENT !DEDENT [^\r\n]+
+INLINE "INLINE" =
+    !INDENT !DEDENT
+    texts:(
+        OUTSIDE_PARENTHESES_INLINE
+        /
+        PARENTHESES_INLINE
+        /
+        MISMATCH_END_PARENTHESIS
+    )+
+    {
+        return texts;
+    }
 
 NEXTINLINE "NEXTINLINE" =
     (INDENT / DEDENT / [\r\n])* inline:INLINE
@@ -1248,23 +1230,82 @@ NOT_PARENTHESIS_CHAR "NOT_PARENTHESIS_CHAR" =
     [^\r\n()（）\[\]［］{}｛｝「」]
 
 INLINE_FRAGMENT "INLINE_FRAGMENT" =
-    !INDENT !DEDENT ([^\r\n()（）\[\]［］{}｛｝「」 　\t] / PARENTHESES_INLINE)+
+    !INDENT !DEDENT
+    texts:(
+        plain:$[^\r\n()（）\[\]［］{}｛｝「」 　\t]+
+        { return new __Text(plain); }
+        /
+        PARENTHESES_INLINE
+        /
+        MISMATCH_END_PARENTHESIS
+    )+
+    {
+        return texts;
+    }
 
 PERIOD_SENTENCE_FRAGMENT "PERIOD_SENTENCE_FRAGMENT" =
     !INDENT !DEDENT
-    (
-        !"<QuoteStruct>" [^\r\n()（）\[\]［］{}｛｝「」 　\t。]
-        /
-        PARENTHESES_INLINE
+    texts:(
+        !"<QuoteStruct>"
+        target:(
+            plain:$[^\r\n()（）\[\]［］{}｛｝「」 　\t。]+
+            { return new __Text(plain); }
+            /
+            PARENTHESES_INLINE
+            /
+            MISMATCH_END_PARENTHESIS
+        )
+        { return target; }
     )+
-    ("。" / &__ / &NEWLINE)
+    tail:("。" / &__ / &NEWLINE)
+    {
+        let last = texts[texts.length - 1];
+        if(tail) {
+            if(last instanceof __Text) {
+                last.text += tail;
+            } else {
+                texts.push(new __Text(tail));
+            }
+        }
+        return texts;
+    }
     /
-    "。"
+    plain:"。"
+    { return [new __Text(plain)]; }
 
 OUTSIDE_PARENTHESES_INLINE "OUTSIDE_PARENTHESES_INLINE" =
-    !INDENT !DEDENT NOT_PARENTHESIS_CHAR+
+    !INDENT !DEDENT
+    plain:$NOT_PARENTHESIS_CHAR+
+    { return new __Text(plain); }
+
+
+
+
+MISMATCH_START_PARENTHESIS "MISMATCH_START_PARENTHESIS" =
+    mismatch:$[(（\[［{｛「]
+    {
+        console.error(`### line ${location().start.line}: Mismatch start parenthesis!`);
+        return new EL("__MismatchStartParenthesis", {}, [mismatch]);
+    }
+
+MISMATCH_END_PARENTHESIS "MISMATCH_END_PARENTHESIS" =
+    mismatch:$[)）\]］}｝」]
+    {
+        console.error(`### line ${location().start.line}: Mismatch end parenthesis!`);
+        return new EL("__MismatchEndParenthesis", {}, [mismatch]);
+    }
+
+
 
 PARENTHESES_INLINE "PARENTHESES_INLINE" =
+    &("" &{ parentheses_depth++; return true; })
+    target:PARENTHESES_INLINE_INNER
+    &("" &{ parentheses_depth--; return true; })
+    { return target; }
+    /
+    &("" &{ parentheses_depth--; return false; }) "DUMMY"
+
+PARENTHESES_INLINE_INNER "PARENTHESES_INLINE_INNER" =
     ROUND_PARENTHESES_INLINE
     /
     SQUARE_BRACKETS_INLINE
@@ -1274,49 +1315,64 @@ PARENTHESES_INLINE "PARENTHESES_INLINE" =
     SQUARE_PARENTHESES_INLINE
     /
     quote_struct
+    /
+    MISMATCH_START_PARENTHESIS
 
 ROUND_PARENTHESES_INLINE "ROUND_PARENTHESES_INLINE" =
     start:[(（]
-    content:$(NOT_PARENTHESIS_CHAR / PARENTHESES_INLINE)*
+    content:(
+        plain:$NOT_PARENTHESIS_CHAR+
+        { return new __Text(plain); }
+        /
+        PARENTHESES_INLINE
+        /
+        ![)）] target:MISMATCH_END_PARENTHESIS { return target; }
+    )*
     end:[)）]
     {
-        return {
-            text: text(),
-            content: content,
-        }
+        return new __Parentheses("round", parentheses_depth, start, end, content, text());
     }
 
 SQUARE_BRACKETS_INLINE "SQUARE_BRACKETS_INLINE" =
     start:[\[［]
-    content:$(NOT_PARENTHESIS_CHAR / PARENTHESES_INLINE)*
+    content:(
+        plain:$NOT_PARENTHESIS_CHAR+
+        { return new __Text(plain); }
+        /
+        PARENTHESES_INLINE
+        /
+        ![\]］] target:MISMATCH_END_PARENTHESIS { return target; }
+    )*
     end:[\]］]
     {
-        return {
-            text: text(),
-            content: content,
-        }
+        return new __Parentheses("squareb", parentheses_depth, start, end, content, text());
     }
 
 CURLY_BRACKETS_INLINE "CURLY_BRACKETS_INLINE" =
     start:[{｛]
-    content:$(NOT_PARENTHESIS_CHAR / PARENTHESES_INLINE)*
+    content:(
+        plain:$NOT_PARENTHESIS_CHAR+
+        { return new __Text(plain); }
+        /
+        PARENTHESES_INLINE
+        /
+        ![}｝] target:MISMATCH_END_PARENTHESIS { return target; }
+    )*
     end:[}｝]
     {
-        return {
-            text: text(),
-            content: content,
-        }
+        return new __Parentheses("curly", parentheses_depth, start, end, content, text());
     }
 
 SQUARE_PARENTHESES_INLINE "SQUARE_PARENTHESES_INLINE" =
     start:[「]
-    content:$([^\r\n「」] / SQUARE_PARENTHESES_INLINE)*
+    content:$(
+        [^\r\n「」]+
+        /
+        SQUARE_PARENTHESES_INLINE
+    )*
     end:[」]
     {
-        return {
-            text: text(),
-            content: content,
-        }
+        return new __Parentheses("square", parentheses_depth, start, end, [new __Text(content)], text());
     }
 
 quote_struct "quote_struct" =
@@ -1324,10 +1380,7 @@ quote_struct "quote_struct" =
     content:$(!"</QuoteStruct>" .)*
     end:"</QuoteStruct>"
     {
-        return {
-            text: text(),
-            content: content,
-        }
+        return new EL("QuoteStruct", {}, [content]);
     }
 
 // ########### sentences control end ###########
