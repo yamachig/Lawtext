@@ -110,3 +110,7 @@
     text-indent: 0;
     background-color: rgba(0, 0, 0, 0.1);
 }
+
+.law .paragraph-item-body {
+    clear: both;
+}
