@@ -89,6 +89,8 @@
 .law table {
     border-collapse: collapse;
     text-indent: 0;
+    table-layout: fixed;
+    width: 100%;
 }
 
 .law td {

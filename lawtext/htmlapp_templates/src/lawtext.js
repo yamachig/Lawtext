@@ -161,10 +161,10 @@ Lawtext.annotate = function(el) {
     let child_str = el.children.map(child => Lawtext.annotate(child)).join("");
 
     if(el.tag === "____Declaration") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-declaration" data-declaration-index="${el.attr.declaration_index}">${child_str}</span>`
+        return `<span class="lawtext-analyzed lawtext-analyzed-declaration" data-lawtext-declaration-index="${el.attr.declaration_index}">${child_str}</span>`
 
     } else if(el.tag === "____VarRef") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-varref" data-declaration-index="${el.attr.ref_declaration_index}">${child_str}</span>`
+        return `<span class="lawtext-analyzed lawtext-analyzed-varref" data-lawtext-declaration-index="${el.attr.ref_declaration_index}"><span class="lawtext-analyzed lawtext-analyzed-varref-text">${child_str}</span><span class="lawtext-analyzed lawtext-analyzed-varref-arrow" style="display: none;"></span><span class="lawtext-analyzed lawtext-analyzed-varref-window lawtext-analyzed-varref-empty" style="display: none;"></span></span>`
 
     } else if(el.tag === "____LawNum") {
         return `<a class="lawtext-analyzed lawtext-analyzed-lawnum" href="#${child_str}" target="_blank">${child_str}</a>`
@@ -659,6 +659,7 @@ Lawtext.MainView = Backbone.View.extend({
         "click .lawtext-download-lawtext-button": "download_lawtext_button_click",
         "click .lawtext-download-xml-button": "download_xml_button_click",
         "click .law-link": "law_link_click",
+        "click .lawtext-analyzed-varref-text": "varref_text_click",
     },
 
     initialize: function(options) {
@@ -779,6 +780,52 @@ Lawtext.MainView = Backbone.View.extend({
         modal.find(".modal-title").html(title);
         modal.find(".modal-body").html(body_el);
         modal.modal("show");
+    },
+
+    varref_text_click: function(e) {
+        let self = this;
+        let obj = $(e.currentTarget);
+
+        let varref = obj.closest(".lawtext-analyzed-varref");
+        let is_open = varref.hasClass("lawtext-analyzed-varref-open");
+
+        let parent_div = varref.closest("div");
+
+        parent_div.find(".lawtext-analyzed-varref.lawtext-analyzed-varref-open").each(function(){
+            let varref = $(this);
+            let _parent_div = varref.closest("div");
+            if(!parent_div[0].isEqualNode(_parent_div[0])) return;
+            let arr = $(varref.find(".lawtext-analyzed-varref-arrow")[0]);
+            let win = $(varref.find(".lawtext-analyzed-varref-window")[0]);
+            varref.removeClass("lawtext-analyzed-varref-open");
+            arr.hide();
+            win.slideUp(200);
+        });
+
+        if(!is_open) {
+            let arr = $(varref.find(".lawtext-analyzed-varref-arrow")[0]);
+            let win = $(varref.find(".lawtext-analyzed-varref-window")[0]);
+            let is_empty = win.hasClass("lawtext-analyzed-varref-empty");
+            if(is_empty) {
+                let decl_index = varref.data("lawtext-declaration-index");
+                let decl = self.$(`.lawtext-analyzed-declaration[data-lawtext-declaration-index="${decl_index}"]`);
+                let decl_container = decl.closest(".article,.enact-statement").clone();
+                decl_container.find(".lawtext-analyzed-declaration[data-lawtext-declaration-index]").each(function(){
+                    let obj = $(this);
+                    obj.removeAttr("data-lawtext-declaration-index");
+                });
+                decl_container.find(".lawtext-analyzed-varref-window").each(function(){
+                    let obj = $(this);
+                    obj.html();
+                    obj.addClass("lawtext-analyzed-varref-empty");
+                });
+                win.html(decl_container);
+                win.removeClass("lawtext-analyzed-varref-empty");
+            }
+            varref.addClass("lawtext-analyzed-varref-open");
+            arr.show();
+            win.slideDown(200);
+        }
     },
 });
 

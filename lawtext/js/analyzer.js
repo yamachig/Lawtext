@@ -364,10 +364,10 @@ function detect_variable_references(law, spans) {
     let detect = span => {
         let ret = [];
         for(let [text_scope, declaration] of span.active_declarations) {
-            let next_start_index_in_span = 0;
+            let next_index_offset = 0;
             for(let child of span.el.children) {
-                let start_index_in_span = next_start_index_in_span;
-                next_start_index_in_span += (child instanceof EL ? child.text : child).length;
+                let index_offset = next_index_offset;
+                next_index_offset += (child instanceof EL ? child.text : child).length;
                 if(child instanceof EL) continue;
 
                 let index = null;
@@ -379,13 +379,13 @@ function detect_variable_references(law, spans) {
                         let ref_pos = new Pos (
                             span,       // span
                             span.index, // span_index
-                            index,      // text_index
+                            index + index_offset,      // text_index
                             declaration.name.length, // length
                             span.env,   // env
                         );
 
                         let varref = new ____VarRef(declaration.name, declaration, ref_pos);
-                        span.el.replace_span(index, search_index, varref);
+                        span.el.replace_span(index + index_offset, search_index + index_offset, varref);
                         ret.push(varref);
                     }
 

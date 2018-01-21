@@ -80,6 +80,33 @@
     font-weight: bold;
 }
 
-.lawtext-analyzed-varref {
-    text-decoration: underline;
+.lawtext-analyzed-varref-arrow {
+    position: absolute;
+    border-style: solid;
+    border-width: 0 0.5em 0.5em 0.5em;
+    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+    margin: 1.51em 0 0 -1em;
+}
+
+.lawtext-analyzed-varref-text {
+    border-bottom: 1px solid gray;
+    cursor: pointer;
+}
+
+.lawtext-analyzed-varref-text:hover {
+    background-color: rgb(255, 249, 160);
+}
+
+.lawtext-analyzed-varref-open .lawtext-analyzed-varref-text {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.lawtext-analyzed-varref-window {
+    float: right;
+    width: 100%;
+    padding: 0.5em;
+    margin: 0.5em 0 0.5em 0;
+    border-radius: 0.2em;
+    text-indent: 0;
+    background-color: rgba(0, 0, 0, 0.1);
 }
