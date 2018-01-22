@@ -102,17 +102,19 @@
 }
 
 .lawtext-varref-text {
-    border-bottom: 1px solid rgba(127, 127, 127, 0.3);
+    border-bottom: 1px solid rgba(40, 167, 69, 0.3);
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.lawtext-varref-text:hover {
-    background-color: rgb(255, 249, 160);
+    transition: background-color 0.3s, border-bottom-color 0.3s;
 }
 
 .lawtext-varref-open .lawtext-varref-text {
     background-color: rgba(127, 127, 127, 0.15);
+    border-bottom: 1px solid rgb(40, 167, 69);
+}
+
+.lawtext-varref-text:hover {
+    background-color: rgb(255, 249, 160);
+    border-bottom: 1px solid rgb(40, 167, 69);
 }
 
 .lawtext-varref-float-block {
