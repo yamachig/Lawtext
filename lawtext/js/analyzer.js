@@ -192,7 +192,7 @@ function detect_declarations(law, spans) {
             start_span.el.attr.type === "round"
         )) return;
 
-        let match = lawnum_span.text.match(/^(?:明治|大正|昭和|平成)[一二三四五六七八九十]+年\S+?第[一二三四五六七八九十百千]+号/);
+        let match = lawnum_span.text.match(/^(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年\S+?第[〇一二三四五六七八九十百千]+号/);
         if(!match) return;
 
         let law_num = match[0];
