@@ -585,7 +585,7 @@ Lawtext.VarRefView = class extends Backbone.View {
         let names = [];
         for(let container of container_stack) {
             if(container.tag === "EnactStatement") {
-                names.push("制定文");
+                names.push("（制定文）");
 
             } else if(container.tag === "Article") {
                 let article_name = _(container.children)
@@ -634,7 +634,7 @@ Lawtext.VarRefView = class extends Backbone.View {
         });
         let fragment = Lawtext.render_elements_fragment(closest_children).trim();
         return `
-<div class="paragraph-item-body"><span class="paragraph-item-num">${names.join("　")}</span>　${fragment}</div>
+<div class="paragraph-item-body"><span class="paragraph-item-num">${names.join("／")}</span>　${fragment}</div>
 `.trim();
     }
 
