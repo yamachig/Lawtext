@@ -86,7 +86,6 @@ function extract_spans(law) {
         if(ignore_span_tag.indexOf(el.tag) >= 0) return;
 
         let env = _env.copy();
-        env.parents.push(el);
 
         let is_mixed = false;
         for(let subel of el.children) {
@@ -104,6 +103,7 @@ function extract_spans(law) {
             el.attr.span_index = spans.length;
             spans.push(new Span(spans.length, el, env));
         } else {
+            env.parents.push(el);
             let is_container = container_tags.indexOf(el.tag) >= 0;
             if(is_container) {
                 env.container_stack.push(el);
@@ -363,6 +363,8 @@ function detect_variable_references(law, spans) {
     let variable_references = [];
 
     let detect = span => {
+        let parent = span.env.parents[span.env.parents.length - 1];
+        if(parent.tag === "__PContent" && parent.attr.type === "square") return;
         let ret = [];
         for(let [text_scope, declaration] of span.active_declarations) {
             let next_index_offset = 0;
