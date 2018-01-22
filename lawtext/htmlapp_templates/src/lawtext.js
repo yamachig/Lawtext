@@ -337,6 +337,15 @@ Lawtext.Data = class extends Backbone.Model {
             .then(response => new Promise((resolve, reject) => {
                 response.text().then(text => resolve([response, text]));
             }))
+            .then(([response, text]) => new Promise((resolve, reject) => {
+                if(response.ok && !/^(?:<\?xml|<Law)/.test(text.trim())) {
+                    JSZip.loadAsync(text, {base64: true})
+                    .then(zip => zip.file("body.xml").async("string"))
+                    .then(xml => resolve([response, xml]));
+                } else {
+                    resolve([response, text]);
+                }
+            }))
             .then(([response, text]) => {
                 if(response.ok) {
                     this.load_law_text(text, true);
@@ -373,7 +382,7 @@ Lawtext.Data = class extends Backbone.Model {
             }
         }
 
-        let re_lawnum = /(?:明治|大正|昭和|平成)\S+年\S+第\S+号/;
+        let re_lawnum = /^(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[〇一二三四五六七八九―]+|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定)$/;
         let match = re_lawnum.exec(law_search_key);
         if(match) {
             let lawnum = match[0];
