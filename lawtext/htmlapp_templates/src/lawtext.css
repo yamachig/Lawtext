@@ -124,6 +124,7 @@
     margin: 0;
     text-indent: 0;
     font-size: 0;
+    font-weight: normal;
     transition: height 0.3s;
     overflow: hidden;
     position: relative;
