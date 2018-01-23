@@ -304,6 +304,7 @@ function detect_declarations(law, spans) {
                 );
 
                 name_span.new_declarations.push(declaration);
+                lawname_span.el.replace_span(lawname_text_index, lawname_text_index + lawname_length, new EL("____DeclarationVal", {}, [law_name]));
                 name_span.el.replace_span(0, name_span.text.length, declaration);
                 lawnum_span.el.replace_span(0, law_num.length, lawnum_el);
                 return declaration;
@@ -412,7 +413,7 @@ function set_active_declarations(spans, declarations) {
             }
         }
 
-        decls.sort(([, decl]) => -decl.name.length);
+        decls = _(decls).sortBy(([, decl]) => -decl.name.length);
 
         span.active_declarations = decls;
     }
