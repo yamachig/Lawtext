@@ -475,18 +475,18 @@ function analyze(law) {
     set_active_declarations(spans, declarations);
     let variable_references = detect_variable_references(law, spans);
 
-    console.error(`${spans.length} spans detected.`);
-    console.error(`${containers.length} containers detected.`);
+    // console.error(`${spans.length} spans detected.`);
+    // console.error(`${containers.length} containers detected.`);
     // console.error(declarations);
-    for(let span_index = 0; span_index < spans.length; span_index++) {
-        let span = spans[span_index];
-        console.error(`${span_index} <${span.el.tag}> "${span.text.slice(0,30)}"${span.text.length > 30 ? " …" : ""}`);
+    // for(let span_index = 0; span_index < spans.length; span_index++) {
+    //     let span = spans[span_index];
+    //     console.error(`${span_index} <${span.el.tag}> "${span.text.slice(0,30)}"${span.text.length > 30 ? " …" : ""}`);
 
-        if(span.new_declarations.length) {
-            console.error(`    ${span.new_declarations.map(declaration => {
-                return `${declaration.type} ${declaration.name} = ${declaration.value}`;
-            }).join(", ")}`);
-        }
+    //     if(span.new_declarations.length) {
+    //         console.error(`    ${span.new_declarations.map(declaration => {
+    //             return `${declaration.type} ${declaration.name} = ${declaration.value}`;
+    //         }).join(", ")}`);
+    //     }
 
         // console.error(`    ${span.active_declarations.map([text_scope,declaration] => {
         //     let s = [];
@@ -496,8 +496,8 @@ function analyze(law) {
         //     return s.join("+");
         // }).join(", ")}`);
 
-        console.error();
-    }
+    //     console.error();
+    // }
     return {
         declarations: declarations,
     };
