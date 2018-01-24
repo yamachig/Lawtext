@@ -88,8 +88,8 @@ function lex(text) {
 
 function parse(text, options) {
 
-    console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
-    let t0 = (new Date()).getTime();
+    // console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
+    // let t0 = (new Date()).getTime();
 
     let [lexed, indent_memo, lines_count] = lex(text);
     // console.error(lexed);
@@ -97,9 +97,9 @@ function parse(text, options) {
         options = Object.assign({ indent_memo: indent_memo, startRule: "start" }, options);
         var parsed = parser.parse(lexed, options);
 
-        let t1 = (new Date()).getTime();
-        console.error(`/////  parse end  /////`);
-        console.error(`( ${Math.round((t1 - t0) / lines_count * 1000)} μs/line  =  ${t1 - t0} ms / ${lines_count} lines )`);
+        // let t1 = (new Date()).getTime();
+        // console.error(`/////  parse end  /////`);
+        // console.error(`( ${Math.round((t1 - t0) / lines_count * 1000)} μs/line  =  ${t1 - t0} ms / ${lines_count} lines )`);
     } catch(e) {
         console.error("##### parse error #####");
         if(e.location) {
@@ -113,12 +113,12 @@ function parse(text, options) {
 
 function analyze(law) {
 
-    console.error("\\\\\\\\\\ analyze start \\\\\\\\\\");
-    let t0 = (new Date()).getTime();
+    // console.error("\\\\\\\\\\ analyze start \\\\\\\\\\");
+    // let t0 = (new Date()).getTime();
     let analysis = analyzer.analyze(law);
-    let t1 = (new Date()).getTime();
-    console.error(`/////  analyze end  /////`);
-    console.error(`(${t1 - t0} ms total)`);
+    // let t1 = (new Date()).getTime();
+    // console.error(`/////  analyze end  /////`);
+    // console.error(`(${t1 - t0} ms total)`);
     return analysis;
 }
 

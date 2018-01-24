@@ -642,9 +642,11 @@ Lawtext.VarRefView = class extends Backbone.View {
             ].indexOf(el.tag) < 0;
         });
         let fragment = Lawtext.render_elements_fragment(closest_children).trim();
-        return `
+        let ret = $(`
 <div class="paragraph-item-body"><span class="paragraph-item-num">${names.join("／")}</span>　${fragment}</div>
-`.trim();
+`);
+        ret.find(`.lawtext-analyzed-declaration[lawtext_declaration_index="${this.declaration_index}"]`).css({"font-weight": "bold"});
+        return ret;
     }
 
     render() {
@@ -668,7 +670,8 @@ Lawtext.VarRefView = class extends Backbone.View {
     }
 
     update_window() {
-        this.window_obj.html(this.get_content());
+        this.window_obj.empty();
+        this.window_obj.append(this.get_content());
     }
 
     update_size() {

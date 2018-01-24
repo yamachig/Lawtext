@@ -252,7 +252,7 @@ function detect_declarations(law, spans) {
         } else if(
             law_num.length < lawnum_span.text.length &&
             lawnum_span.text[law_num.length] == "。" &&
-            lawnum_span.index + 5 <= spans.length
+            lawnum_span.index + 5 < spans.length
         ) {
             let [
                 name_start_span,
@@ -304,6 +304,7 @@ function detect_declarations(law, spans) {
                 );
 
                 name_span.new_declarations.push(declaration);
+                lawname_span.el.replace_span(lawname_text_index, lawname_text_index + lawname_length, new EL("____DeclarationVal", {}, [law_name]));
                 name_span.el.replace_span(0, name_span.text.length, declaration);
                 lawnum_span.el.replace_span(0, law_num.length, lawnum_el);
                 return declaration;
@@ -312,10 +313,70 @@ function detect_declarations(law, spans) {
 
     };
 
+    let detect_name = (spans, span_index) => {
+        if(spans.length < span_index + 5) return;
+        let [
+            name_before_span,
+            name_start_span,
+            name_span,
+            name_end_span,
+            name_after_span,
+        ] = spans.slice(span_index, span_index + 5);
+
+        let scope_match = name_before_span.text.match(/(以下)?(?:([^。]+?)において)?$/);
+        let name_after_match = name_after_span.text.match(/^という。/);
+        if(
+            scope_match &&
+            name_start_span.el.tag === "__PStart" &&
+            name_start_span.el.attr.type === "square" &&
+            name_end_span.el.tag === "__PEnd" &&
+            name_end_span.el.attr.type === "square" &&
+            name_after_match
+        ) {
+            let following = scope_match[1] !== undefined;
+            let scope_text = scope_match[2] || null;
+
+            let scope = [
+                [
+                    {
+                        span_index: name_after_span.index,
+                        text_index: name_after_match[0].length,
+                    },
+                    {
+                        span_index: spans.length,
+                        text_index: 0,
+                    }, // half open
+                ],
+            ];
+
+            let name_pos = new Pos (
+                name_span,       // span
+                name_span.index, // span_index
+                0,               // text_index
+                name_span.text.length, // length
+                name_span.env,   // env
+            );
+
+            let declaration = new ____Declaration(
+                "LawName", // type
+                name_span.text,  // name
+                null,   // value
+                scope,     // scope
+                name_pos,  // name_pos
+            );
+
+            name_span.new_declarations.push(declaration);
+            name_span.el.replace_span(0, name_span.text.length, declaration);
+            return declaration;
+        }
+    };
+
     let declarations = [];
 
     for(let span_index = 0; span_index < spans.length; span_index++) {
-        let declaration = detect_lawname(spans, span_index);
+        let declaration =
+            detect_lawname(spans, span_index) ||
+            detect_name(spans, span_index);
         if(declaration) {
             declaration.attr.declaration_index = declarations.length;
             declarations.push(declaration);
@@ -352,7 +413,7 @@ function set_active_declarations(spans, declarations) {
             }
         }
 
-        decls.sort(([, decl]) => -decl.name.length);
+        decls = _(decls).sortBy(([, decl]) => -decl.name.length);
 
         span.active_declarations = decls;
     }
@@ -414,18 +475,18 @@ function analyze(law) {
     set_active_declarations(spans, declarations);
     let variable_references = detect_variable_references(law, spans);
 
-    console.error(`${spans.length} spans detected.`);
-    console.error(`${containers.length} containers detected.`);
+    // console.error(`${spans.length} spans detected.`);
+    // console.error(`${containers.length} containers detected.`);
     // console.error(declarations);
-    for(let span_index = 0; span_index < spans.length; span_index++) {
-        let span = spans[span_index];
-        console.error(`${span_index} <${span.el.tag}> "${span.text.slice(0,30)}"${span.text.length > 30 ? " …" : ""}`);
+    // for(let span_index = 0; span_index < spans.length; span_index++) {
+    //     let span = spans[span_index];
+    //     console.error(`${span_index} <${span.el.tag}> "${span.text.slice(0,30)}"${span.text.length > 30 ? " …" : ""}`);
 
-        if(span.new_declarations.length) {
-            console.error(`    ${span.new_declarations.map(declaration => {
-                return `${declaration.type} ${declaration.name} = ${declaration.value}`;
-            }).join(", ")}`);
-        }
+    //     if(span.new_declarations.length) {
+    //         console.error(`    ${span.new_declarations.map(declaration => {
+    //             return `${declaration.type} ${declaration.name} = ${declaration.value}`;
+    //         }).join(", ")}`);
+    //     }
 
         // console.error(`    ${span.active_declarations.map([text_scope,declaration] => {
         //     let s = [];
@@ -435,8 +496,8 @@ function analyze(law) {
         //     return s.join("+");
         // }).join(", ")}`);
 
-        console.error();
-    }
+    //     console.error();
+    // }
     return {
         declarations: declarations,
     };
