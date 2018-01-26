@@ -48,7 +48,8 @@ Lawtext.htmlpreview_view_template = `
     <div class="col-md-6" style="max-width: 500px;">
       <form>
         <div class="input-group">
-          <input class="form-control search-law-textbox"
+          <input name="law-query"
+                 class="form-control search-law-textbox"
                  placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
                  <% if(data.law_search_key) { %>value="<%= data.law_search_key %>"<% } %>
                  >

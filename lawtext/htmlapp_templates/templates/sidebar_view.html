@@ -73,7 +73,8 @@ Lawtext.sidebar_view_template = `
 
         <form class="list-group-item list-group-item-sm" style="padding: 0;">
           <div class="input-group">
-            <input class="form-control form-control-sm search-law-textbox"
+            <input name="law-query"
+                  class="form-control form-control-sm search-law-textbox"
                   style="border: none; padding: 0.45em; border-radius: 0; border-bottom-left-radius: .25rem;"
                   placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
                   <% if(data.law_search_key) { %>value="<%= data.law_search_key %>"<% } %>
