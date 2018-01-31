@@ -368,10 +368,6 @@ Lawtext.Data = class extends Backbone.Model {
         $("body").append(this.open_file_input);
         this.open_file_input.change(e => { this.open_file_input_change(e); });
 
-        document.addEventListener("selectionchange", () => {
-            this.trigger("selectionchange");
-        }, false);
-
         $(window).resize(_.throttle(() => {
             this.trigger("window-resize");
         }, 300));
@@ -859,7 +855,6 @@ Lawtext.HTMLpreviewView = class extends Backbone.View {
             }, 100),
         );
         this.listenTo(this.data, "scroll-to-law-anchor", this.scroll_to_law_anchor);
-        this.listenTo(this.data, "selectionchange", this.selectionchange);
 
         this.varref_views = [];
     }
@@ -985,7 +980,7 @@ Lawtext.MainView = class extends Backbone.View {
         let selection = window.getSelection();
 
         let get_pos = (node) => {
-            let el = $(node.parentElement);
+            let el = $(node.parentNode);
             let item_el = _(el.parents("[selection-id]")).last();
             if(!item_el && el.attr("selection-id")) item_el = el[0];
             if(!item_el)  return null;
