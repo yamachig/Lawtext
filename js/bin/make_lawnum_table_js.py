@@ -36,7 +36,7 @@ def main():
         data[key] = value
         table += value
 
-    (Path(__file__).resolve().parent / 'lawnum_table.js').write_text(f'''\
+    (Path(__file__).resolve().parent / 'dest/lawnum_table.js').write_text(f'''\
 "use strict";
 
 var LAWNUM_TABLE = {{}};

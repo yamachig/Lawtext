@@ -1,16 +1,19 @@
 "use strict";
 
+var _ = require('lodash');
+var sha512 = require("hash.js/lib/hash/sha/512");
+var parser = require("../dest/parser");
 var EL = require("./util").EL;
 
-var sha512 = require("hash.js/lib/hash/sha/512");
 
-var LAWNUM_TABLE = require("./lawnum_table").LAWNUM_TABLE;
+var LAWNUM_TABLE = require("../dest/lawnum_table").LAWNUM_TABLE;
 
 function get_law_name_length(law_num) {
-    let digest = sha512().update(law_num).digest("hex")
+    let digest = sha512().update(law_num).digest("hex");
     let key = parseInt(digest.slice(0, 7), 16);
     return LAWNUM_TABLE[key];
 }
+exports.get_law_name_length = get_law_name_length;
 
 var toplevel_container_tags = [
     "EnactStatement", "MainProvision", "AppdxTable", "AppdxStyle",
@@ -502,8 +505,20 @@ function analyze(law) {
         declarations: declarations,
     };
 }
+exports.analyze = analyze;
 
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-    exports.analyze = analyze;
-    exports.get_law_name_length = get_law_name_length;
-}
+function stdxml_to_ext(el) {
+    if(typeof el === 'string' || el instanceof String) {
+        return el;
+    }
+    if(["Sentence", "EnactStatement"].indexOf(el.tag) >= 0) {
+        if(el.text) {
+            el.children = parser.parse(el.text, {startRule: "INLINE"});
+        }
+    } else {
+        for(let child of el.children) {
+            stdxml_to_ext(child);
+        }
+    }
+};
+exports.stdxml_to_ext = stdxml_to_ext;

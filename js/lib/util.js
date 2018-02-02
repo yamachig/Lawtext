@@ -1,6 +1,11 @@
 "use strict";
 
+var DOMParser = DOMParser || require("xmldom").DOMParser;
 
+var Node = Node || {
+    TEXT_NODE: 3,
+    ELEMENT_NODE: 1,
+};
 
 class EL {
 
@@ -102,14 +107,7 @@ class EL {
         }
     }
 }
-
-
-class __Text extends EL {
-
-    constructor(text) {
-        super("__Text", {}, [text]);
-    }
-}
+exports.EL = EL;
 
 
 class __Parentheses extends EL {
@@ -125,12 +123,51 @@ class __Parentheses extends EL {
 
         this.content = text.slice(start.length, text.length - end.length);
     }
-}
+};
+exports.__Parentheses = __Parentheses;
 
 
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-    exports.EL = EL;
-    exports.__Text = __Text;
-    exports.__Parentheses = __Parentheses;
-}
+class __Text extends EL {
+
+    constructor(text) {
+        super("__Text", {}, [text]);
+    }
+};
+exports.__Text = __Text;
+
+
+function element_to_json(el) {
+    let children = [];
+    for (let i = 0; i < el.childNodes.length; i++) {
+        let node = el.childNodes[i];
+        if(node.nodeType === Node.TEXT_NODE) {
+            let text = node.nodeValue.trim();
+            if(text) {
+                children.push(text);
+            }
+        } else if(node.nodeType === Node.ELEMENT_NODE) {
+            children.push(element_to_json(node));
+        } else {
+            console.log(node);
+        }
+    }
+    let attr = {};
+    for (let i = 0; i < el.attributes.length; i++) {
+        let at = el.attributes[i];
+        attr[at.name] = at.value;
+    }
+    return new EL(
+        el.tagName,
+        attr,
+        children,
+    );
+};
+exports.element_to_json = element_to_json;
+
+function xml_to_json(xml) {
+    let parser = new DOMParser();
+    let dom = parser.parseFromString(xml, "text/xml");
+    return element_to_json(dom.documentElement);
+};
+exports.xml_to_json = xml_to_json;
 

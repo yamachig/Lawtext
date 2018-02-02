@@ -1,5 +1,5 @@
 {
-    let util = require("./util");
+    let util = require("../lib/util");
     let EL = util.EL;
     let __Text = util.__Text;
     let __Parentheses = util.__Parentheses;
