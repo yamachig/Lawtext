@@ -718,7 +718,7 @@ table_struct_title "table_struct_title" =
     title:$INLINE
     NEWLINE
     {
-        return new EL("TableStructTitle", {}, [title]);
+        return new EL("TableStructTitle", {}, [new __Text(title)]);
     }
 
 table "table" =
@@ -761,7 +761,7 @@ table_column "table_column" =
             return new EL(
                 "Sentence",
                 {WritingMode: "vertical"},
-                [inline || new __Text("")],
+                inline || [new __Text("")],
             )
         }
     )
@@ -777,7 +777,7 @@ table_column "table_column" =
                         return new EL(
                             "Sentence",
                             {WritingMode: "vertical"},
-                            [inline],
+                            inline,
                         )
                     }
                 )
@@ -849,7 +849,7 @@ style_struct_title "style_struct_title" =
     title:$INLINE
     NEWLINE
     {
-        return new EL("StyleStructTitle", {}, [title]);
+        return new EL("StyleStructTitle", {}, [new __Text(title)]);
     }
 
 style "style" =
@@ -885,7 +885,7 @@ remarks "remarks" =
             return new EL(
                 "Sentence",
                 {WritingMode: "vertical"},
-                [_target],
+                _target,
             );
         }
     )?
@@ -906,7 +906,7 @@ remarks "remarks" =
                     return new EL(
                         "Sentence",
                         {WritingMode: "vertical"},
-                        [_target],
+                        _target,
                         );
                     }
             )+
@@ -929,7 +929,7 @@ remarks "remarks" =
         }
 
         let remarks = new EL("Remarks");
-        remarks.append(new EL("RemarksLabel", {}, [label]));
+        remarks.append(new EL("RemarksLabel", {}, [new __Text(label)]));
         remarks.extend(children);
 
         return remarks;
@@ -1006,9 +1006,9 @@ appdx_table "appdx_table" =
         let appdx_table = new EL("AppdxTable");
         if(title_struct.table_struct_title !== "") {
             console.error(`### line ${location().start.line}: Maybe irregular AppdxTableTitle!`);
-            appdx_table.append(new EL("AppdxTableTitle", {WritingMode: "vertical"}, [title_struct.text]));
+            appdx_table.append(new EL("AppdxTableTitle", {WritingMode: "vertical"}, [new __Text( title_struct.text)]));
         } else {
-            appdx_table.append(new EL("AppdxTableTitle", {WritingMode: "vertical"}, [title_struct.title]));
+            appdx_table.append(new EL("AppdxTableTitle", {WritingMode: "vertical"}, [new __Text(title_struct.title)]));
             if(title_struct.related_article_num) {
                 appdx_table.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
             }
@@ -1068,7 +1068,7 @@ appdx_style "appdx_style" =
     )?
     {
         let appdx_style = new EL("AppdxStyle");
-        appdx_style.append(new EL("AppdxStyleTitle", {}, [title_struct.title]));
+        appdx_style.append(new EL("AppdxStyleTitle", {}, [new __Text(title_struct.title)]));
         if(title_struct.related_article_num) {
             appdx_style.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
         }
@@ -1122,7 +1122,7 @@ suppl_provision "suppl_provision" =
         if(suppl_provision_label.extract !== null) {
             suppl_provision.attr["Extract"] = "true";
         }
-        suppl_provision.append(new EL("SupplProvisionLabel", {}, [suppl_provision_label.label]))
+        suppl_provision.append(new EL("SupplProvisionLabel", {}, [new __Text(suppl_provision_label.label)]))
         suppl_provision.extend(children);
         return suppl_provision;
     }
@@ -1144,11 +1144,11 @@ columns_or_sentences "columns_or_sentences" =
     inline:INLINE
 
     {
-        console.error(`### line ${location().start.line}: Maybe mismatched parenthesis!`);
+        // console.error(`### line ${location().start.line}: Maybe mismatched parenthesis!`);
         let sentence = new EL(
             "Sentence",
             {WritingMode: "vertical"},
-            [inline],
+            inline,
         );
         return [sentence];
     }
@@ -1227,12 +1227,12 @@ NEXTINLINE "NEXTINLINE" =
     }
 
 NOT_PARENTHESIS_CHAR "NOT_PARENTHESIS_CHAR" =
-    [^\r\n()（）\[\]［］{}｛｝「」]
+    [^\r\n<>()（）\[\]［］{}｛｝「」]
 
 INLINE_FRAGMENT "INLINE_FRAGMENT" =
     !INDENT !DEDENT
     texts:(
-        plain:$[^\r\n()（）\[\]［］{}｛｝「」 　\t]+
+        plain:$[^\r\n<>()（）\[\]［］{}｛｝「」 　\t]+
         { return new __Text(plain); }
         /
         PARENTHESES_INLINE
@@ -1247,8 +1247,9 @@ PERIOD_SENTENCE_FRAGMENT "PERIOD_SENTENCE_FRAGMENT" =
     !INDENT !DEDENT
     texts:(
         !"<QuoteStruct>"
+        !"<Ruby>"
         target:(
-            plain:$[^\r\n()（）\[\]［］{}｛｝「」 　\t。]+
+            plain:$[^\r\n<>()（）\[\]［］{}｛｝「」 　\t。]+
             { return new __Text(plain); }
             /
             PARENTHESES_INLINE
@@ -1282,16 +1283,16 @@ OUTSIDE_PARENTHESES_INLINE "OUTSIDE_PARENTHESES_INLINE" =
 
 
 MISMATCH_START_PARENTHESIS "MISMATCH_START_PARENTHESIS" =
-    mismatch:$[(（\[［{｛「]
+    mismatch:$[<(（\[［{｛「]
     {
-        console.error(`### line ${location().start.line}: Mismatch start parenthesis!`);
+        // console.error(`### line ${location().start.line}: Mismatch start parenthesis!`);
         return new EL("__MismatchStartParenthesis", {}, [mismatch]);
     }
 
 MISMATCH_END_PARENTHESIS "MISMATCH_END_PARENTHESIS" =
-    mismatch:$[)）\]］}｝」]
+    mismatch:$[>)）\]］}｝」]
     {
-        console.error(`### line ${location().start.line}: Mismatch end parenthesis!`);
+        // console.error(`### line ${location().start.line}: Mismatch end parenthesis!`);
         return new EL("__MismatchEndParenthesis", {}, [mismatch]);
     }
 
@@ -1315,6 +1316,8 @@ PARENTHESES_INLINE_INNER "PARENTHESES_INLINE_INNER" =
     SQUARE_PARENTHESES_INLINE
     /
     quote_struct
+    /
+    ruby
     /
     MISMATCH_START_PARENTHESIS
 
@@ -1380,7 +1383,29 @@ quote_struct "quote_struct" =
     content:$(!"</QuoteStruct>" .)*
     end:"</QuoteStruct>"
     {
-        return new EL("QuoteStruct", {}, [content]);
+        return new EL("QuoteStruct", {}, [new __Text(content)]);
+    }
+
+ruby "ruby" =
+    start:"<Ruby>"
+    ruby_text1: ruby_text?
+    content:$(!"</Ruby>" !"<Rt>" .)*
+    ruby_text2: ruby_text?
+    end:"</Ruby>"
+    {
+        let ruby = new EL("Ruby");
+        if(ruby_text1 !== null) ruby.append(ruby_text1);
+        ruby.append(new __Text(content));
+        if(ruby_text2 !== null) ruby.append(ruby_text2);
+        return ruby;
+    }
+
+ruby_text "ruby_text" =
+    start:"<Rt>"
+    content:$(!"</Rt>" .)*
+    end:"</Rt>"
+    {
+        return new EL("Rt", {}, [new __Text(content)]);
     }
 
 // ########### sentences control end ###########

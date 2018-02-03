@@ -15,5 +15,5 @@ setup(
         str(p.relative_to(lawtext_dir))
         for p in lawtext_dir.glob('**/*')
     ]},
-    install_requires=['Jinja2', 'transcrypt'],
+    requires=['Jinja2', 'transcrypt', 'nodeenv'],
 )

@@ -66,6 +66,11 @@
 
 {%- macro m_enact_statement(enact_statement) %}
 <w:p>
+  <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"/>
+  </w:pPr>
+</w:p>
+<w:p>
   {{- m_run(enact_statement) -}}
 </w:p>
 {%- endmacro -%}

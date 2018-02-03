@@ -46,14 +46,33 @@ class EL {
         return this;
     }
 
-    json() {
+    json(with_control_el) {
+        let children = [];
+        for(let el of this.children) {
+            if(!(
+                el instanceof EL ||
+                el instanceof String || (typeof el === "string")
+            )) {
+                console.error("[EL.json]", JSON.stringify(this));
+                throw JSON.stringify(this);
+            }
+            if(el instanceof EL && (with_control_el || !el.tag.match(/^_/))) {
+                children.push(el.json(with_control_el));
+            } else {
+                let text = (el instanceof String || (typeof el === "string")) ? el : el.text;
+                let last = children[children.length - 1];
+                if(last instanceof String || (typeof last === "string")) {
+
+                    children[children.length - 1] += text;
+                } else {
+                    children.push(text);
+                }
+            }
+        }
         return {
             tag: this.tag,
             attr: this.attr,
-            children: this.children.map((el) => {
-                if (el instanceof EL) return el.json();
-                return el;
-            }),
+            children: children,
         };
     }
 
@@ -108,6 +127,23 @@ class EL {
     }
 }
 exports.EL = EL;
+
+
+function load_el(raw_law) {
+    if(raw_law instanceof String || (typeof raw_law === "string")) {
+        return raw_law;
+    } else {
+        if(!raw_law.children) {
+            console.error("[load_el]", raw_law);
+        }
+        return new EL(
+            raw_law.tag,
+            raw_law.attr,
+            raw_law.children.map(load_el),
+        );
+    }
+}
+exports.load_el = load_el;
 
 
 class __Parentheses extends EL {

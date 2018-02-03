@@ -103,7 +103,9 @@ function render(template_name, context) {
     ctx = Object.assign(ctx, context);
     let rendered = env.render(template_name, ctx);
     if(template_name === "lawtext.j2") {
+        console.error(template_name, rendered.length);
         rendered = rendered.replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1");
+        console.error(template_name, rendered.length);
     }
     return rendered;
 }
@@ -127,7 +129,7 @@ function render_docx_async(law) {
         "word/styles.xml",
         render("docx/word/styles.xml"),
     ).generateAsync({
-        type: "uint8array",
+        type: JSZip.support.nodebuffer ? "nodebuffer" : "uint8array",
         compression: "DEFLATE",
         compressionOptions: {
             level: 9,
@@ -141,8 +143,8 @@ function render_lawtext(law) {
 }
 exports.render_lawtext = render_lawtext;
 
-function render_xml(law) {
-    return render("xml.xml", {law: law});
+function render_xml(law, with_control_el) {
+    return render("xml.xml", {law: law, with_control_el: with_control_el});
 }
 exports.render_xml = render_xml;
 

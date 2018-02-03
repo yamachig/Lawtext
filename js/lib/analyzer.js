@@ -99,7 +99,7 @@ function extract_spans(law) {
         }
 
         if(is_mixed && el.children.length !== 1) {
-            console.error(`unexpected mixed content! ${el}`);
+            console.error(`unexpected mixed content! ${JSON.stringify(el)}`);
         }
 
         if(is_mixed) {

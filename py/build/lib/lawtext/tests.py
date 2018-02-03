@@ -30,10 +30,10 @@ class AbstractTest(unittest.TestCase, metaclass=ABCMeta):
             # ('405AC0000000088', '平成五年法律第八十八号', '行政手続法'),
             # ('406CO0000000265', '平成六年政令第二百六十五号', '行政手続法施行令'),
             # ('412M50001000064', '平成十二年郵政省令第六十四号', '第一種指定電気通信設備接続料規則'),
-            # ('428M60000008031', '平成二十八年総務省令第三十一号', '第二種指定電気通信設備接続料規則'),
+            ('428M60000008031', '平成二十八年総務省令第三十一号', '第二種指定電気通信設備接続料規則'),
             # ('426M60000002044', '平成二十六年内閣府令第四十四号', '子ども・子育て支援法施行規則'),
             # ('346AC0000000073', '昭和四十六年法律第七十三号', '児童手当法'),
-            ('129AC0000000089', '明治二十九年法律第八十九号', '民法'),
+            # ('129AC0000000089', '明治二十九年法律第八十九号', '民法'),
             # ('363M50001000046', '昭和六十三年郵政省令第四十六号', '電気通信事業報告規則'),
             # ('415M60000002055', '平成十五年内閣府令第五十五号', '褒章の制式及び形状を定める内閣府令'),
         ]
@@ -345,7 +345,7 @@ Mismatching Output:
 class TestRender(AbstractTest):
     def test_render_htmlfragment_with_elaws(self):
         import lxml.html
-        from lawtext import render_htmlfragment
+        from lawtext.render import render_htmlfragment
         for law in self.LAWS:
             law_num, law_id, law_name = law['law_num'], law['law_id'], law['law_name']
 
@@ -356,7 +356,7 @@ class TestRender(AbstractTest):
                 # print('  Downloading web XML ...', file=sys.stderr)
                 xml_law_data_text = self._get_web_law(law_num)
                 # print('  Rendering HTML fragment ...', file=sys.stderr)
-                rendered_raw = render_htmlfragment(xml_law_data_text, True)
+                rendered_raw = render_htmlfragment(xml_law_data_text)
 
                 # print('  Extracting text from HTML fragment ...', file=sys.stderr)
                 rendered_el = lxml.html.fromstring(rendered_raw)
@@ -383,7 +383,7 @@ class TestRender(AbstractTest):
 
     def test_render_html_with_elaws(self):
         import lxml.html
-        from lawtext import render_html
+        from lawtext.render import render_html
         from pathlib import Path
 
         out_test_dir = Path('out_test_parse')
@@ -398,7 +398,7 @@ class TestRender(AbstractTest):
                 # print('  Downloading web XML ...', file=sys.stderr)
                 xml_law_data_text = self._get_web_law(law_num)
                 # print('  Rendering HTML ...', file=sys.stderr)
-                rendered_raw = render_html(xml_law_data_text, True)
+                rendered_raw = render_html(xml_law_data_text)
                 rendered_out_path = (out_test_dir / f'rendered_{law_name}.html').resolve()
                 print(f'    Writing "{str(rendered_out_path)}" ...', file=sys.stderr)
                 rendered_out_path.write_text(rendered_raw, encoding='utf-8')
@@ -428,7 +428,7 @@ class TestRender(AbstractTest):
                     self._fail_diff_out_text(law_name, law_num, out_text)
 
     def test_render_docx_with_elaws(self):
-        from lawtext import render_docx
+        from lawtext.render import render_docx
         from zipfile import ZipFile
         import xml.etree.ElementTree as ET
         from pathlib import Path
@@ -506,7 +506,7 @@ class TestRender(AbstractTest):
                     self._fail_diff_out_text(law_name, law_num, out_text)
 
     def test_render_lawtext_with_elaws(self):
-        from lawtext import render_lawtext
+        from lawtext.render import render_lawtext
 
         for law in self.LAWS:
             law_num, law_id, law_name = law['law_num'], law['law_id'], law['law_name']
@@ -571,14 +571,27 @@ class TestRender(AbstractTest):
                     self._fail_diff_out_text(law_name, law_num, out_text)
 
 
-class TestParse(AbstractTest):
-    def test_parse_lawtext_with_elaws(self):
-        from lawtext import render_lawtext, render_xml, parse
+class TestJSParse(AbstractTest):
+    def test_js_parse_lawtext_with_elaws(self):
+        from lawtext.render import render_lawtext, render_xml
+        from lawtext.js.lawtext import parse as parse_lawtext
+        from lawtext.decorate import decorate
         from pathlib import Path
         from xml.dom import minidom
         import subprocess
         import os
         from pprint import pformat
+
+        os.environ["PATH"] += os.pathsep + str(Path(__file__).resolve().parents[1] / 'node_modules/.bin')
+
+
+        for pegjs in (Path(__file__).parent.resolve() / 'js').glob('*.pegjs'):
+            subprocess.check_call([
+                'pegjs',
+                '-o',
+                str(pegjs.parent / f'{pegjs.stem}.js'),
+                str(pegjs),
+            ], shell=True)
 
         out_test_dir = Path('out_test_parse')
 
@@ -593,7 +606,7 @@ class TestParse(AbstractTest):
                 # print('  Downloading web XML ...', file=sys.stderr)
                 web_law = self._get_web_law(law_num)
                 # print('  Parsing web XML ...', file=sys.stderr)
-                web_xml = render_xml(web_law, noanalyze=True)
+                web_xml = render_xml(web_law)
                 web_outtext = minidom.parseString(web_xml).toprettyxml(indent='  ')
                 web_out_path = (out_test_dir / f'web_{law_name}.xml').resolve()
                 print(f'    Writing "{str(web_out_path)}" ...', file=sys.stderr)
@@ -607,11 +620,9 @@ class TestParse(AbstractTest):
 
                 print('  Parsing lawtext ...', file=sys.stderr)
 
-                parsed_law = parse(lawtext)
+                parsed_law = parse_lawtext(lawtext)
 
-                print('  Parsed', file=sys.stderr)
-
-                parsed_raw_control_xml = render_xml(parsed_law, True, noanalyze=True)
+                parsed_raw_control_xml = render_xml(parsed_law, True)
                 parsed_raw_control_xml_path = (out_test_dir / f'js_parsed_raw_control_{law_name}.xml').resolve()
                 print(f'    Writing "{str(parsed_raw_control_xml_path)}" ...', file=sys.stderr)
                 parsed_raw_control_xml_path.write_text(parsed_raw_control_xml, encoding='utf-8')
@@ -621,7 +632,7 @@ class TestParse(AbstractTest):
                 print(f'    Writing "{str(parsed_control_xml_path)}" ...', file=sys.stderr)
                 parsed_control_xml_path.write_text(parsed_control_outtext, encoding='utf-8')
 
-                parsed_xml = render_xml(parsed_law, noanalyze=True)
+                parsed_xml = render_xml(parsed_law)
 
                 # analyzed_path = (out_test_dir / f'js_analyzed_{law_name}.py').resolve()
                 # print(f'    Writing "{str(analyzed_path)}" ...', file=sys.stderr)
