@@ -9,6 +9,7 @@ from pathlib import Path
 from shutil import rmtree
 
 from jinja2 import Environment, FileSystemLoader
+from .js.make_lawnum_table_js import main as make_lawnum_table_js
 
 env = Environment(loader=FileSystemLoader(str(Path(__file__).parent.resolve() / 'htmlapp_templates'), encoding='utf8'))
 
@@ -33,6 +34,9 @@ def main(outdir, preserve_compiled_files, ie=False):
         str(Path(__file__).parent.resolve() / 'static' / 'law.css'),
         str(Path(outdir / 'src' / 'law.css')),
     )
+
+    if not (Path(__file__).parent.resolve() / 'js' / 'lawnum_table.js').exists():
+        make_lawnum_table_js()
 
     for pegjs in (Path(__file__).parent.resolve() / 'js').glob('*.pegjs'):
         cache = pegjs.stem in []#['annotate_html']

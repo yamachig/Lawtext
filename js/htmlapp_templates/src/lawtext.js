@@ -212,6 +212,137 @@ Lawtext.analyze_xml = el => {
     }
 };
 
+Lawtext.get_law_range = (orig_law, range) => {
+    let s_pos = range.start;
+    let e_pos = range.end;
+
+    let law = new Lawtext.EL(
+        orig_law.tag,
+        orig_law.attr,
+    );
+
+    let orig_law_num = orig_law.children.find((el) => el.tag == "LawNum");
+    if(orig_law_num) {
+        law.append(orig_law_num);
+    }
+
+    let orig_law_body = orig_law.children.find((el) => el.tag == "LawBody");
+    let law_body = new Lawtext.EL(
+        orig_law_body.tag,
+        orig_law_body.attr,
+    );
+    law.append(law_body);
+
+    let orig_law_title = orig_law_body.children.find((el) => el.tag == "LawTitle");
+    if(orig_law_title) {
+        law_body.append(orig_law_title);
+    }
+
+
+    let in_container_range = false;
+    let in_item_range = false;
+
+    let find_els = (el, tag) => {
+        if(!(el instanceof Lawtext.EL)) return [];
+        if(el.tag === tag) return [el];
+        let ret = [];
+        for(let child of el.children) {
+            ret = ret.concat(find_els(child, tag));
+        }
+        return ret;
+    }
+
+    for(let toplevel of orig_law_body.children) {
+        if(
+            !in_container_range &&
+            toplevel.tag === s_pos.container_tag &&
+            (
+                toplevel.tag !== "SupplProvision" ||
+                toplevel.attr.AmendLawNum === s_pos.container_id
+            )
+        ) {
+            in_container_range = true;
+        }
+
+        let container_children = [];
+
+        if(
+            in_container_range &&
+            e_pos.item_tag === "SupplProvisionLabel" &&
+            toplevel.tag === e_pos.container_tag &&
+            (
+                toplevel.tag !== "SupplProvision" ||
+                toplevel.attr.AmendLawNum === e_pos.container_id
+            )
+        ) {
+            in_container_range = false;
+        }
+
+        if(in_container_range) {
+
+            let items = find_els(toplevel, "Article");
+            if(items.length === 0) items = find_els(toplevel, "Paragraph");
+
+            for(let item of items) {
+
+                if(
+                    !in_item_range &&
+                    (
+                        s_pos.item_tag === "SupplProvisionLabel" ||
+                        (
+                            item.tag === s_pos.item_tag &&
+                            (
+                                !s_pos.item_id ||
+                                item.attr.Num === s_pos.item_id
+                            )
+                        )
+                    )
+                ) {
+                    in_item_range = true;
+                }
+
+                if(in_item_range) {
+                    container_children.push(item);
+                }
+
+                if(
+                    in_item_range &&
+                    item.tag === e_pos.item_tag &&
+                    (
+                        !e_pos.item_id ||
+                        item.attr.Num === e_pos.item_id
+                    )
+                ) {
+                    in_item_range = false;
+                }
+            }
+        }
+
+        if(container_children.length > 0) {
+            let suppl_provision_label = toplevel.children.find((el) => el.tag === "SupplProvisionLabel");
+            if(suppl_provision_label) container_children.unshift(suppl_provision_label);
+            law_body.append(new Lawtext.EL(
+                toplevel.tag,
+                toplevel.attr,
+                container_children,
+            ));
+        }
+
+        if(
+            in_container_range &&
+            toplevel.tag === e_pos.container_tag &&
+            (
+                toplevel.tag !== "SupplProvision" ||
+                toplevel.attr.AmendLawNum === e_pos.container_id
+            )
+        ) {
+            in_container_range = false;
+        }
+    }
+
+    return law;
+};
+
 
 
 
@@ -441,9 +572,13 @@ Lawtext.Data = class extends Backbone.Model {
         return s_law_title + s_law_num;
     }
 
-    download_docx() {
+    download_docx(range) {
         let law = this.get("law");
         if(law === null) return;
+
+        if(range) {
+            law = Lawtext.get_law_range(law, range);
+        }
 
         let s_content_types = nunjucks.render("docx/[Content_Types].xml");
         let s_rels = nunjucks.render("docx/_rels/.rels");
@@ -792,6 +927,7 @@ Lawtext.MainView = class extends Backbone.View {
         "click .lawtext-download-sample-lawtext-button": "download_sample_lawtext_button_click",
         "click .search-law-button": "search_law_button_click",
         "click .lawtext-download-docx-button": "download_docx_button_click",
+        "click .lawtext-download-docx-selected-button": "download_docx_selected_button_click",
         "click .lawtext-download-lawtext-button": "download_lawtext_button_click",
         "click .lawtext-download-xml-button": "download_xml_button_click",
         "click .law-link": "law_link_click",
@@ -850,6 +986,42 @@ Lawtext.MainView = class extends Backbone.View {
             {type: "text/plain"},
         );
         saveAs(blob, "sample_lawtext.law.txt");
+    }
+
+    tobe_downloaded_range() {
+        let selection = window.getSelection();
+
+        let get_pos = (node) => {
+            let el = $(node.parentNode);
+            let item_el = _(el.parents("[selection-id]")).last();
+            if(!item_el && el.attr("selection-id")) item_el = el[0];
+            if(!item_el)  return null;
+            let m = item_el.getAttribute("selection-id").match(/([^_]+)(?:_([^_]+))?___([^_]+)(?:_([^_]+))?/);
+            return {
+                container_tag: m[1],
+                container_id: m[2] || null,
+                item_tag: m[3],
+                item_id: m[4] || null,
+            }
+        };
+
+        let s_pos = get_pos(selection.anchorNode);
+        let e_pos = get_pos(selection.focusNode);
+        if(!s_pos || !e_pos) return null;
+
+        return {
+            start: s_pos,
+            end: e_pos,
+        };
+    }
+
+    download_docx_selected_button_click(e) {
+        let range = this.tobe_downloaded_range();
+        if(range) {
+            this.data.download_docx(range);
+        } else {
+            alert("選択範囲が取得できませんでした。");
+        }
     }
 
     download_docx_button_click(e) {

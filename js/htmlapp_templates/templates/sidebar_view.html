@@ -93,13 +93,18 @@ Lawtext.sidebar_view_template = `
     <% } %>
 
     <% if(!_(data.law).isNull()) { %>
-      <div style=" margin-top: 0.5rem;">
-        <span style="font-size: .875rem;">保存：</span>
-        <span class="btn-group btn-group-sm">
-          <button class="lawtext-download-docx-button btn btn-outline-primary">Word</button>
-          <button class="lawtext-download-lawtext-button btn btn-outline-primary">Lawtext</button>
-          <button class="lawtext-download-xml-button btn btn-outline-primary">法令XML</button>
-        </span>
+      <div style="margin-top: 0.5rem; display: flex;">
+        <span style="font-size: .875rem; white-space: nowrap; padding-top: 5px;">保存：</span>
+        <div>
+            <span class="btn-group btn-group-sm">
+              <button class="lawtext-download-docx-button btn btn-outline-primary">Word</button>
+              <button class="lawtext-download-lawtext-button btn btn-outline-primary">Lawtext</button>
+              <button class="lawtext-download-xml-button btn btn-outline-primary">法令XML</button>
+            </span>
+            <span class="btn-group btn-group-sm" style="margin-top: 0.2rem;">
+              <button class="lawtext-download-docx-selected-button btn btn-outline-primary" style="padding: 0 8px;">Word（選択した条のみ）</button>
+            </span>
+        </div>
       </div>
     <% } %>
 
@@ -253,7 +258,7 @@ process_law_body(law_body);
     <a href="https://github.com/yamachig/lawtext" target="_blank" style="margin-right: 2em;">
       GitHub
     </a>
-    &copy; <%= new Date().getFullYear() %> yamachi
+    &copy; 2017-<%= new Date().getFullYear() %> yamachi
   </div>
 
 </div>

@@ -13,6 +13,7 @@
 
 {%- macro m_law_body(law_body) -%}
 {%- for el in law_body.children -%}
+  {{- context.set('current_toplevel', el.tag) -}}
   {%- if el.tag == 'LawTitle' -%}
     {{- m_law_title(el) -}}
   {%- elif el.tag == 'EnactStatement' -%}
@@ -20,6 +21,9 @@
   {%- elif el.tag == 'TOC' -%}
     {{- m_toc(el) -}}
   {%- elif el.tag in ['MainProvision', 'SupplProvision'] -%}
+    {%- if el.tag == 'SupplProvision' and ("AmendLawNum" in el.attr) -%}
+      {{- context.set('current_toplevel', el.tag + "_" + el.attr['AmendLawNum']) -}}
+    {%- endif -%}
     {{- m_article_group(el) -}}
   {%- elif el.tag == 'AppdxTable' -%}
     {{- m_appdx_table(el) -}}
@@ -130,7 +134,11 @@
     <div class="article-group-title law-anchor"
          style="margin-left: {{- title_indent -}}em;"
          data-tag="{{- article_group.tag -}}"
-         data-name="{{- el.children[0] -}}{{- article_group.attr['AmendLawNum'] -}}">
+         data-name="{{- el.children[0] -}}{{- article_group.attr['AmendLawNum'] -}}"
+         {%- if el.tag == 'SupplProvisionLabel' -%}
+           selection-id="{{context.get('current_toplevel')}}___SupplProvisionLabel"
+         {%- endif -%}
+         >
       {{- m_text(el) -}}
       {%- if 'AmendLawNum' in article_group.attr -%}
         （{{- article_group.attr['AmendLawNum'] -}}）
@@ -152,7 +160,8 @@
 
 
 {%- macro m_article(article) -%}
-<div class="article">
+<div class="article"
+    selection-id="{{context.get('current_toplevel')}}___Article_{{article.attr.Num}}">
 {%- for el in article.children -%}
   {%- if el.tag == 'ArticleCaption' -%}
     <div class="article-caption">
@@ -179,7 +188,11 @@
 
 
 {%- macro m_paragraph_item(paragraph_item, article, first_paragraph=0) -%}
-<div class="paragraph-item paragraph-item-{{ paragraph_item.tag }}">
+<div class="paragraph-item paragraph-item-{{ paragraph_item.tag }}"
+  {%- if paragraph_item.tag == 'Paragraph' and not article -%}
+    selection-id="{{context.get('current_toplevel')}}___Paragraph_{{paragraph_item.attr.Num}}"
+  {%- endif -%}
+  >
 {%- for el in paragraph_item.children -%}
   {%- if el.tag == 'ParagraphCaption' -%}
     <div class="paragraph-item-caption">
