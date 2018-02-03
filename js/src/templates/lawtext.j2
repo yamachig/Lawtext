@@ -598,7 +598,7 @@
   {%- if not el -%}
   {%- elif not el.tag -%}
     {{- el -}}
-  {%- else -%}
+  {%- elif el.children | length -%}
     <{{ el.tag }} {%- for key, value in el.attr | dictsort -%}
       {{- ' ' -}}{{- key -}}="{{- value -}}"
     {%- endfor -%}>
@@ -610,6 +610,10 @@
         {%- endif -%}
       {%- endfor -%}
     </{{ el.tag }}>
+  {%- else -%}
+    <{{ el.tag }} {%- for key, value in el.attr | dictsort -%}
+      {{- ' ' -}}{{- key -}}="{{- value -}}"
+    {%- endfor -%}/>
   {%- endif -%}
 
 {%- else -%}

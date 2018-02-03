@@ -4,9 +4,9 @@
     let __Text = util.__Text;
     let __Parentheses = util.__Parentheses;
 
+    let xml_tag_stack = [];
+
     let indent_memo = options.indent_memo;
-
-
 
     let indent_depth = 0;
 
@@ -310,7 +310,7 @@ toc "toc" =
 toc_item "toc_item" =
     !INDENT !DEDENT !NEWLINE
     // &(here:$(NEXTINLINE) &{ console.error(`here1.1 line ${location().start.line}: ${here}`); return true; })
-    title:$(OUTSIDE_PARENTHESES_INLINE)
+    title:OUTSIDE_ROUND_PARENTHESES_INLINE
     article_range:($ROUND_PARENTHESES_INLINE)?
     NEWLINE
     children:(
@@ -323,12 +323,12 @@ toc_item "toc_item" =
     )?
     // &(here:$(NEXTINLINE) &{ console.error(`here1.2 line ${location().start.line}: ${here}`); return true; })
     {
-        let type_char = title.match(/[編章節款目章則]/)[0];
+        let type_char = title.text.match(/[編章節款目章則]/)[0];
         let toc_item = new EL("TOC" + article_group_type[type_char]);
 
-        if(title.match(/[編章節款目章]/)) {
+        if(title.text.match(/[編章節款目章]/)) {
             toc_item.attr.Delete = 'false';
-            let num = parse_named_num(title);
+            let num = parse_named_num(title.text);
             if(num) {
                 toc_item.attr.Num = num;
             }
@@ -337,7 +337,7 @@ toc_item "toc_item" =
         toc_item.append(new EL(
             article_group_title_tag[type_char],
             {},
-            [title],
+            title.content,
         ));
 
         if(article_range !== null) {
@@ -383,16 +383,25 @@ article_group_title "article_group_title" =
     // &(here:$(INLINE / ..........) &{ console.error(`here line ${location().start.line}: ${here}`); return true; })
     __
     title:(
-        "第"
-        [^ 　\t\r\n編章節款目]+
-        type_char:[編章節款目]
-        ([のノ] [^ 　\t\r\n]+)?
-        (__ INLINE)?
+        num:(
+            "第"
+            [^ 　\t\r\n編章節款目]+
+            type_char:[編章節款目]
+            ([のノ] [^ 　\t\r\n]+)?
+            { return {num: text(), type_char: type_char}; }
+        )
+        name:(
+            space:$__
+            inline:INLINE
+            { return {space: space, inline: inline}; }
+        )?
         {
-            return {
-                text: text(),
-                type_char: type_char,
-            };
+            return Object.assign({
+                content: [
+                    new __Text(num.num),
+                    new __Text(name.space),
+                ].concat(name.inline),
+            }, num, name);
         }
     )
     NEWLINE+
@@ -426,10 +435,10 @@ article_group "article_group" =
         article_group.append(new EL(
             article_group_type[article_group_title.type_char] + "Title",
             {},
-            [new __Text(article_group_title.text)],
+            article_group_title.content,
         ))
 
-        let num = parse_named_num(article_group_title.text);
+        let num = parse_named_num(article_group_title.num);
         if(num) {
             article_group.attr.Num = num;
         }
@@ -1246,8 +1255,6 @@ INLINE_FRAGMENT "INLINE_FRAGMENT" =
 PERIOD_SENTENCE_FRAGMENT "PERIOD_SENTENCE_FRAGMENT" =
     !INDENT !DEDENT
     texts:(
-        !"<QuoteStruct>"
-        !"<Ruby>"
         target:(
             plain:$[^\r\n<>()（）\[\]［］{}｛｝「」 　\t。]+
             { return new __Text(plain); }
@@ -1278,6 +1285,22 @@ OUTSIDE_PARENTHESES_INLINE "OUTSIDE_PARENTHESES_INLINE" =
     !INDENT !DEDENT
     plain:$NOT_PARENTHESIS_CHAR+
     { return new __Text(plain); }
+
+
+OUTSIDE_ROUND_PARENTHESES_INLINE "OUTSIDE_ROUND_PARENTHESES_INLINE" =
+    !INDENT !DEDENT
+    target:(
+        !ROUND_PARENTHESES_INLINE
+        _target:(
+            OUTSIDE_PARENTHESES_INLINE
+            /
+            PARENTHESES_INLINE
+            /
+            MISMATCH_END_PARENTHESIS
+        )
+        { return _target; }
+    )+
+    { return {text: text(), content: target}; }
 
 
 
@@ -1315,9 +1338,7 @@ PARENTHESES_INLINE_INNER "PARENTHESES_INLINE_INNER" =
     /
     SQUARE_PARENTHESES_INLINE
     /
-    quote_struct
-    /
-    ruby
+    xml_element
     /
     MISMATCH_START_PARENTHESIS
 
@@ -1378,34 +1399,60 @@ SQUARE_PARENTHESES_INLINE "SQUARE_PARENTHESES_INLINE" =
         return new __Parentheses("square", parentheses_depth, start, end, [new __Text(content)], text());
     }
 
-quote_struct "quote_struct" =
-    start:"<QuoteStruct>"
-    content:$(!"</QuoteStruct>" .)*
-    end:"</QuoteStruct>"
-    {
-        return new EL("QuoteStruct", {}, [new __Text(content)]);
-    }
+xml "xml" =
+    (
+        text:$[^<>]+
+        {return new __Text(text)}
+        /
+        xml_element
+    )*
 
-ruby "ruby" =
-    start:"<Ruby>"
-    ruby_text1: ruby_text?
-    content:$(!"</Ruby>" !"<Rt>" .)*
-    ruby_text2: ruby_text?
-    end:"</Ruby>"
+xml_element "xml_element" =
+    !INDENT !DEDENT
+    "<"
+    tag:$[^> \t\r\n]+
+    _
+    attr:(
+        name:$[^> =\t\r\n]+
+        _ "=" _ '"' value:$[^"]+ '"'
+        {
+            let ret = {};
+            ret[name] = value;
+            return ret;
+        }
+    )*
+    _
+    ">"
+    children:xml
+    (
+        "</"
+        end_tag:$[^> ]+
+        ">"
+        &{
+            return end_tag === tag;
+        }
+    )
     {
-        let ruby = new EL("Ruby");
-        if(ruby_text1 !== null) ruby.append(ruby_text1);
-        ruby.append(new __Text(content));
-        if(ruby_text2 !== null) ruby.append(ruby_text2);
-        return ruby;
+        return new EL(tag, Object.assign({}, ...attr), children);
     }
-
-ruby_text "ruby_text" =
-    start:"<Rt>"
-    content:$(!"</Rt>" .)*
-    end:"</Rt>"
+    /
+    !INDENT !DEDENT
+    "<"
+    tag:$[^> \t\r\n]+
+    _
+    attr:(
+        name:$[^> =\t\r\n]+
+        _ "=" _ '"' value:$[^"]+ '"'
+        {
+            let ret = {};
+            ret[name] = value;
+            return ret;
+        }
+    )*
+    _
+    "/>"
     {
-        return new EL("Rt", {}, [new __Text(content)]);
+        return new EL(tag, Object.assign({}, ...attr));
     }
 
 // ########### sentences control end ###########

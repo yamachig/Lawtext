@@ -103,9 +103,7 @@ function render(template_name, context) {
     ctx = Object.assign(ctx, context);
     let rendered = env.render(template_name, ctx);
     if(template_name === "lawtext.j2") {
-        console.error(template_name, rendered.length);
         rendered = rendered.replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1");
-        console.error(template_name, rendered.length);
     }
     return rendered;
 }

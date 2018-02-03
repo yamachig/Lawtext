@@ -56,7 +56,7 @@ class EL {
                 console.error("[EL.json]", JSON.stringify(this));
                 throw JSON.stringify(this);
             }
-            if(el instanceof EL && (with_control_el || !el.tag.match(/^_/))) {
+            if(el instanceof EL && (with_control_el || el.tag[0] !== "_")) {
                 children.push(el.json(with_control_el));
             } else {
                 let text = (el instanceof String || (typeof el === "string")) ? el : el.text;

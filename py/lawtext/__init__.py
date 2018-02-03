@@ -64,7 +64,7 @@ def parse(text, with_control_el=True, noanalyze=False):
 def render_lawtext(law, noanalyze=True):
     return run('json', 'lawtext', intext=json.dumps(law), noanalyze=noanalyze)
 
-def render_docx(law, noanalyze=False):
+def render_docx(law, noanalyze=True):
     return run('json', 'docx', intext=json.dumps(law), noanalyze=noanalyze)
 
 def render_xml(law, with_control_el=False, noanalyze=True):

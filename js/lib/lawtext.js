@@ -137,6 +137,8 @@ function main(args) {
     let with_control_el = args.with_control_el || false;
     let noanalyze = args.noanalyze || false;
 
+    // console.error("[lawtext.main]", args);
+
     if(!intype && infile) {
         if(infile.match(/\.xml$/)) {
             intype = "xml";
@@ -201,13 +203,9 @@ function main(args) {
             let raw_law = JSON.parse(intext);
             try {
                 law = util.load_el(raw_law);
-                law = util.load_el(law.json());
             } catch(e) {
                 console.error("[loading json at main]", e);
                 throw e;
-            }
-            if(!noanalyze) {
-                analyzer.stdxml_to_ext(law);
             }
         } else if(intype === "lawtext") {
             try {
