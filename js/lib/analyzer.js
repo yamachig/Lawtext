@@ -1,6 +1,6 @@
 "use strict";
 
-var _ = require('lodash');
+var _ = window._ || require('lodash');
 var sha512 = require("hash.js/lib/hash/sha/512");
 var parser = require("../dest/parser");
 var EL = require("./util").EL;

@@ -3,7 +3,9 @@
     "babel-cli": "",
     "babel-polyfill": "",
     "babel-preset-es2015": "",
+    "fs-extra": "",
     "browserify": "",
+    "exorcist": "",
     "lodash": "",
     "hash.js": "",
     "jszip": "",
@@ -19,6 +21,7 @@
   "devDependencies": {},
   "scripts": {
     "build": "node bin/build",
+    "build-htmlapp": "node bin/htmlapp out_htmlapp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": "lib/lawtext.js",

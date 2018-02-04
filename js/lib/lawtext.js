@@ -7,6 +7,10 @@ var util = require("./util");
 var fs = require("fs");
 var argparse = require("argparse");
 
+exports.analyzer = analyzer;
+exports.util = util;
+exports.renderer = renderer;
+
 
 
 function lex(text) {
@@ -111,6 +115,7 @@ function parse(text, options) {
     }
     return parsed;
 }
+exports.parse = parse;
 
 function analyze(law) {
 
@@ -122,6 +127,7 @@ function analyze(law) {
     // console.error(`(${t1 - t0} ms total)`);
     return analysis;
 }
+exports.analyze = analyze;
 
 
 
@@ -237,7 +243,7 @@ function main(args) {
             if(outtype === "lawtext") {
                 outtext = renderer.render_lawtext(law);
             } else if(outtype === "xml") {
-                outtext = renderer.render_xml(law, with_control_el);
+                outtext = renderer.render_xml(law, {with_control_el: with_control_el});
             } else if(outtype === "json") {
                 outtext = JSON.stringify(law.json(with_control_el));
             } else if(outtype === "html") {
@@ -255,6 +261,7 @@ function main(args) {
 
     });
 }
+exports.main = main;
 
 if (typeof require !== "undefined" && require.main === module) {
     process.on('unhandledRejection', (listener) => {
@@ -293,25 +300,5 @@ if (typeof require !== "undefined" && require.main === module) {
     }
 
     main(args);
-}
-
-
-
-
-
-
-if (typeof window !== "undefined") {
-    window.Lawtext = window.Lawtext || {};
-    window.Lawtext.parse = parse;
-    window.Lawtext.get_law_name_length = analyze.get_law_name_length;
-    window.Lawtext.analyze = analyze;
-    window.Lawtext.EL = util.EL;
-}
-
-if (typeof require !== "undefined" && typeof exports !== "undefined") {
-    exports.parse = parse;
-    exports.get_law_name_length = analyze.get_law_name_length;
-    exports.analyze = analyze;
-    exports.EL = util.EL;
 }
 

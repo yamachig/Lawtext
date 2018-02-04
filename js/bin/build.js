@@ -41,6 +41,7 @@ function main() {
         { encoding: "utf-8" },
     );
 }
+exports.main = main;
 
 
 

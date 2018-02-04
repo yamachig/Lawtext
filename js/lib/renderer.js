@@ -136,22 +136,27 @@ function render_docx_async(law) {
 }
 exports.render_docx_async = render_docx_async;
 
-function render_lawtext(law) {
-    return render("lawtext.j2", {law: law});
+function render_lawtext(law, context) {
+    return render("lawtext.j2", Object.assign({law: law}, context));
 }
 exports.render_lawtext = render_lawtext;
 
-function render_xml(law, with_control_el) {
-    return render("xml.xml", {law: law, with_control_el: with_control_el});
+function render_xml(law, context) {
+    return render("xml.xml", Object.assign({law: law}, context));
 }
 exports.render_xml = render_xml;
 
-function render_html(law) {
-    return render("html.html", {law: law});
+function render_html(law, context) {
+    return render("html.html", Object.assign({law: law}, context));
 }
 exports.render_html = render_html;
 
-function render_htmlfragment(law) {
-    return render("htmlfragment.html", {law: law});
+function render_htmlfragment(law, context) {
+    return render("htmlfragment.html", Object.assign({law: law}, context));
 }
 exports.render_htmlfragment = render_htmlfragment;
+
+function render_elements_fragment(elements, context) {
+    return render("htmlfragment.html", Object.assign({elements: elements}, context));
+}
+exports.render_elements_fragment = render_elements_fragment;

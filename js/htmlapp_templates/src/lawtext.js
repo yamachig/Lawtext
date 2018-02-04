@@ -1,36 +1,12 @@
 'use strict';
 
+var lawtext = require("../../lib/lawtext");
+var Lawtext = window.Lawtext || {};
+
 function em(input) {
     var emSize = parseFloat($("body").css("font-size"));
     return (emSize * input);
 }
-
-var Lawtext = Lawtext || {};
-
-Lawtext.element_to_json = el => {
-    let children = [];
-    for (let node of el.childNodes) {
-        if(node.nodeType === Node.TEXT_NODE) {
-            let text = node.nodeValue.trim();
-            if(text) {
-                children.push(text);
-            }
-        } else if(node.nodeType === Node.ELEMENT_NODE) {
-            children.push(Lawtext.element_to_json(node));
-        } else {
-            console.log(node);
-        }
-    }
-    let attr = {};
-    for (let at of el.attributes) {
-        attr[at.name] = at.value;
-    }
-    return new Lawtext.EL(
-        el.tagName,
-        attr,
-        children,
-    );
-};
 
 Lawtext.LawNameItem = class {
     constructor(law_name, law_no, promulgation_date) {
@@ -41,97 +17,6 @@ Lawtext.LawNameItem = class {
 }
 
 Lawtext.law_name_data = [];
-
-Lawtext.xml_to_json = xml => {
-    let parser = new DOMParser();
-    let dom = parser.parseFromString(xml, "text/xml");
-    return Lawtext.element_to_json(dom.documentElement);
-};
-
-Lawtext.restructure_table = table => {
-    let new_table_children = [];
-    let rowspan_state = {};
-    let colspan_value = {};
-    for(let row of table.children) {
-        if(row.tag !== "TableRow") {
-            new_table_children.push(row);
-            return;
-        }
-        let new_row_children = [];
-        let c = 0;
-        let ci = 0;
-        while(true){
-
-            let rss = rowspan_state[c] || 0;
-            if(rss) {
-                let colspan = colspan_value[c] || 0;
-                new_row_children.push({
-                    tag: "TableColumnMerged",
-                    attr: colspan ? {
-                        colspan: colspan,
-                    } : {},
-                    children: [],
-                });
-                rowspan_state[c] = rss - 1;
-                if(colspan) {
-                    c += colspan - 1;
-                }
-                c += 1
-                continue;
-            }
-
-            if(ci >= row.children.length) {
-                break;
-            }
-
-            let column = row.children[ci];
-            new_row_children.push(column);
-            if(column.tag !== "TableColumn") {
-                ci += 1;
-                continue;
-            }
-
-            let colspan = Number(column.attr.colspan || 0);
-            if(column.attr.rowspan !== undefined) {
-                let rowspan = Number(column.attr.rowspan);
-                rowspan_state[c] = rowspan - 1;
-                colspan_value[c] = colspan;
-                if(colspan) {
-                    c += colspan - 1;
-                }
-            }
-            c += 1;
-            ci += 1;
-        }
-
-        new_table_children.push({
-            tag: row.tag,
-            attr: row.attr,
-            children: new_row_children,
-        });
-    }
-
-    let ret = {
-        tag: table.tag,
-        attr: table.attr,
-        children: new_table_children,
-    };
-
-    return ret;
-};
-
-Lawtext.Context = class {
-    constructor() {
-        this.data = {};
-    }
-    get(key) {
-        return this.data[key];
-    }
-    set(key, value) {
-        this.data[key] = value;
-        return "";
-    }
-};
 
 Lawtext.annotate = el => {
     if(typeof el === "string" || el instanceof String) {
@@ -171,46 +56,6 @@ Lawtext.annotate = el => {
         return child_str;
     }
 }
-
-Lawtext.render_law = (template_name, law) => {
-    let rendered = nunjucks.render(template_name, {
-        law: law,
-        "print": console.log,
-        "context": new Lawtext.Context(),
-        "annotate": Lawtext.annotate,
-    });
-    if(template_name === "lawtext") {
-        rendered = rendered.replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1");
-    }
-    return rendered;
-};
-
-Lawtext.render_elements_fragment = (elements) => {
-    let rendered = nunjucks.render("htmlfragment.html", {
-        elements: elements,
-        "print": console.log,
-        "context": new Lawtext.Context(),
-        "annotate": Lawtext.annotate,
-    });
-    return rendered;
-};
-
-
-
-Lawtext.analyze_xml = el => {
-    if(typeof el === 'string' || el instanceof String) {
-        return el;
-    }
-    if(["Sentence", "EnactStatement"].indexOf(el.tag) >= 0) {
-        if(el.text) {
-            el.children = Lawtext.parse(el.text, {startRule: "INLINE"});
-        }
-    } else {
-        for(let child of el.children) {
-            Lawtext.analyze_xml(child);
-        }
-    }
-};
 
 Lawtext.get_law_range = (orig_law, range) => {
     let s_pos = range.start;
@@ -414,9 +259,9 @@ Lawtext.Data = class extends Backbone.Model {
         let div = $("<div>");
         let law = null;
         if(/^(?:<\?xml|<Law)/.test(text.trim())) {
-            law = Lawtext.xml_to_json(text);
+            law = lawtext.util.xml_to_json(text);
             if(analyze_xml) {
-                Lawtext.analyze_xml(law);
+                lawtext.analyzer.stdxml_to_ext(law);
             }
         } else {
             try {
@@ -580,30 +425,7 @@ Lawtext.Data = class extends Backbone.Model {
             law = Lawtext.get_law_range(law, range);
         }
 
-        let s_content_types = nunjucks.render("docx/[Content_Types].xml");
-        let s_rels = nunjucks.render("docx/_rels/.rels");
-        let s_document_rels = nunjucks.render("docx/word/_rels/document.xml.rels");
-        let s_document = nunjucks.render("docx/word/document.xml", {
-            law: law,
-            restructure_table: Lawtext.restructure_table,
-            print: console.log,
-            context: new Lawtext.Context(),
-        });
-        let s_styles = nunjucks.render("docx/word/styles.xml");
-
-        let zip = new JSZip();
-        zip.file("[Content_Types].xml", s_content_types)
-        zip.file("_rels/.rels", s_rels)
-        zip.file("word/_rels/document.xml.rels", s_document_rels)
-        zip.file("word/document.xml", s_document)
-        zip.file("word/styles.xml", s_styles)
-        zip.generateAsync({
-            type: "uint8array",
-            compression: "DEFLATE",
-            compressionOptions: {
-                level: 9
-            },
-        })
+        lawtext.renderer.render_docx_async(law)
         .then(buffer => {
             let blob = new Blob(
                 [buffer],
@@ -618,11 +440,7 @@ Lawtext.Data = class extends Backbone.Model {
         let law = this.get("law");
         if(law === null) return;
 
-        let s_lawtext = nunjucks.render("lawtext.j2", {
-            law: law,
-            print: console.log,
-            context: new Lawtext.Context(),
-        });
+        let s_lawtext = lawtext.renderer.render_lawtext(law);
         let blob = new Blob(
             [s_lawtext],
             {type: "text/plain"},
@@ -635,11 +453,7 @@ Lawtext.Data = class extends Backbone.Model {
         let law = this.get("law");
         if(law === null) return;
 
-        let s_lawtext = nunjucks.render("xml.xml", {
-            law: law,
-            print: console.log,
-            context: new Lawtext.Context(),
-        });
+        let s_lawtext = lawtext.renderer.render_xml(law);
         let blob = new Blob(
             [s_lawtext],
             {type: "application/xml"},
@@ -776,7 +590,12 @@ Lawtext.VarRefView = class extends Backbone.View {
                 "SupplProvision",
             ].indexOf(el.tag) < 0;
         });
-        let fragment = Lawtext.render_elements_fragment(closest_children).trim();
+        let fragment = lawtext.renderer.render_elements_fragment(
+            closest_children,
+            {
+                "annotate": Lawtext.annotate,
+            },
+        ).trim();
         let ret = $(`
 <div class="paragraph-item-body"><span class="paragraph-item-num">${names.join("／")}</span>　${fragment}</div>
 `);
@@ -879,8 +698,10 @@ Lawtext.HTMLpreviewView = class extends Backbone.View {
     render() {
         let law = this.data.get("law");
         if(law !== null && this.law_html === null) {
-            let analysis = Lawtext.analyze(law);
-            this.law_html = Lawtext.render_law("htmlfragment.html", law);
+            let analysis = lawtext.analyze(law);
+            this.law_html = lawtext.renderer.render_htmlfragment(law, {
+                "annotate": Lawtext.annotate,
+            });
             this.analyzed = true;
             this.data.set({analysis, analysis});
         }

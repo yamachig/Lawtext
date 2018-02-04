@@ -4,8 +4,8 @@ from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from docutils.utils.error_reporting import ErrorString
 
-from lawtext.parse import parse_lawtext
-from lawtext.render import render_htmlfragment
+from lawtext import parse
+from lawtext import render_htmlfragment
 
 
 class LawTextDirective(Directive):
@@ -45,7 +45,7 @@ class LawTextDirective(Directive):
                     % (self.name, ErrorString(error)))
             attributes['source'] = path
 
-        law = parse_lawtext(lawtext)
+        law = parse(lawtext)
         rendered = render_htmlfragment(law)
         raw_node = nodes.raw('', rendered, **attributes)
         (raw_node.source, raw_node.line) = self.state_machine.get_source_and_line(self.lineno)
