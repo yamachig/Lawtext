@@ -1,18 +1,18 @@
 {
   "dependencies": {
-    "babel-cli": "",
-    "babel-polyfill": "",
-    "babel-preset-es2015": "",
+    "argparse": "",
+    "babel-core": "",
+    "babel-preset-env": "",
+    "babel-loader": "",
+    "uglifyjs-webpack-plugin": "",
     "fs-extra": "",
-    "browserify": "",
-    "exorcist": "",
-    "lodash": "",
     "hash.js": "",
     "jszip": "",
-    "argparse": "",
-    "xmldom": "",
+    "lodash": "",
     "nunjucks": "",
-    "pegjs": ""
+    "pegjs": "",
+    "webpack": "^3.10.0",
+    "xmldom": ""
   },
   "name": "lawtext",
   "version": "0.0.1",

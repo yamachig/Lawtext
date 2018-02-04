@@ -88,6 +88,32 @@ class EL {
         this._text = null;
     }
 
+    wrapXML(innerXML) {
+        let attr = Object.keys(this.attr).map(key => ` ${key}="${this.attr[key]}"`).join("");
+        if(innerXML) {
+            return `<${this.tag}${attr}>${innerXML}</${this.tag}>`;
+        } else {
+            return `<${this.tag}${attr}/>`;
+        }
+    }
+
+    outerXML(with_control_el) {
+        let innerXML = this.innerXML(with_control_el);
+        if(with_control_el || this.tag[0] !== "_") {
+            return this.wrapXML(innerXML);
+        } else {
+            return innerXML;
+        }
+    }
+
+    innerXML(with_control_el) {
+        return this.children.map(el =>
+            (el instanceof String || (typeof el === "string"))
+            ? el
+            : el.outerXML(with_control_el)
+        ).join("");
+    }
+
     replace_span(start, end/* half open */, repl_children) {
         if(!Array.isArray(repl_children)) {
             repl_children = [repl_children];

@@ -18,42 +18,49 @@ Lawtext.LawNameItem = class {
 
 Lawtext.law_name_data = [];
 
-Lawtext.annotate = el => {
+Lawtext.annotate = (el, m_text_default) => {
+    if(!m_text_default) {
+        throw true;
+    }
     if(typeof el === "string" || el instanceof String) {
         return el;
     }
 
-    let child_str = el.children.map(child => Lawtext.annotate(child)).join("");
+    if(el.tag[0] === "_") {
+        let child_str = el.children.map(child => Lawtext.annotate(child, m_text_default)).join("");
 
-    if(el.tag === "____Declaration") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-declaration" lawtext_declaration_index="${el.attr.declaration_index}">${child_str}</span>`
+        if(el.tag === "____Declaration") {
+            return `<span class="lawtext-analyzed lawtext-analyzed-declaration" lawtext_declaration_index="${el.attr.declaration_index}">${child_str}</span>`
 
-    } else if(el.tag === "____VarRef") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-varref" lawtext_declaration_index="${el.attr.ref_declaration_index}">${child_str}</span>`
+        } else if(el.tag === "____VarRef") {
+            return `<span class="lawtext-analyzed lawtext-analyzed-varref" lawtext_declaration_index="${el.attr.ref_declaration_index}">${child_str}</span>`
 
-    } else if(el.tag === "____LawNum") {
-        return `<a class="lawtext-analyzed lawtext-analyzed-lawnum" href="#${child_str}" target="_blank">${child_str}</a>`
+        } else if(el.tag === "____LawNum") {
+            return `<a class="lawtext-analyzed lawtext-analyzed-lawnum" href="#${child_str}" target="_blank">${child_str}</a>`
 
-    } else if(el.tag === "__Parentheses") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses" lawtext_parentheses_type="${el.attr.type}" data-lawtext-parentheses-depth="${el.attr.depth}">${child_str}</span>`
+        } else if(el.tag === "__Parentheses") {
+            return `<span class="lawtext-analyzed lawtext-analyzed-parentheses" lawtext_parentheses_type="${el.attr.type}" data-lawtext-parentheses-depth="${el.attr.depth}">${child_str}</span>`
 
-    } else if(el.tag === "__PStart") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-start-parenthesis" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
+        } else if(el.tag === "__PStart") {
+            return `<span class="lawtext-analyzed lawtext-analyzed-start-parenthesis" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
 
-    } else if(el.tag === "__PContent") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-parentheses-content" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
+        } else if(el.tag === "__PContent") {
+            return `<span class="lawtext-analyzed lawtext-analyzed-parentheses-content" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
 
-    } else if(el.tag === "__PEnd") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-end-parenthesis" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
+        } else if(el.tag === "__PEnd") {
+            return `<span class="lawtext-analyzed lawtext-analyzed-end-parenthesis" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
 
-    } else if(el.tag === "__MismatchStartParenthesis") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-start-parenthesis">${child_str}</span>`
+        } else if(el.tag === "__MismatchStartParenthesis") {
+            return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-start-parenthesis">${child_str}</span>`
 
-    } else if(el.tag === "__MismatchEndParenthesis") {
-        return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-end-parenthesis">${child_str}</span>`
+        } else if(el.tag === "__MismatchEndParenthesis") {
+            return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-end-parenthesis">${child_str}</span>`
 
+        } else {
+            return child_str;
+        }
     } else {
-        return child_str;
+        return m_text_default(el);
     }
 }
 
@@ -61,7 +68,7 @@ Lawtext.get_law_range = (orig_law, range) => {
     let s_pos = range.start;
     let e_pos = range.end;
 
-    let law = new Lawtext.EL(
+    let law = new lawtext.util.EL(
         orig_law.tag,
         orig_law.attr,
     );
@@ -72,7 +79,7 @@ Lawtext.get_law_range = (orig_law, range) => {
     }
 
     let orig_law_body = orig_law.children.find((el) => el.tag == "LawBody");
-    let law_body = new Lawtext.EL(
+    let law_body = new lawtext.util.EL(
         orig_law_body.tag,
         orig_law_body.attr,
     );
@@ -88,7 +95,7 @@ Lawtext.get_law_range = (orig_law, range) => {
     let in_item_range = false;
 
     let find_els = (el, tag) => {
-        if(!(el instanceof Lawtext.EL)) return [];
+        if(!(el instanceof lawtext.util.EL)) return [];
         if(el.tag === tag) return [el];
         let ret = [];
         for(let child of el.children) {
@@ -166,7 +173,7 @@ Lawtext.get_law_range = (orig_law, range) => {
         if(container_children.length > 0) {
             let suppl_provision_label = toplevel.children.find((el) => el.tag === "SupplProvisionLabel");
             if(suppl_provision_label) container_children.unshift(suppl_provision_label);
-            law_body.append(new Lawtext.EL(
+            law_body.append(new lawtext.util.EL(
                 toplevel.tag,
                 toplevel.attr,
                 container_children,
@@ -410,8 +417,8 @@ Lawtext.Data = class extends Backbone.Model {
         let law_body = _(law.children).findWhere({tag: "LawBody"});
         let law_title = law_body && _(law_body.children).findWhere({tag: "LawTitle"});
 
-        let s_law_num = law_num ? law_num.children[0] : "";
-        let s_law_title = law_title ? law_title.children[0] : "";
+        let s_law_num = law_num ? law_num.text : "";
+        let s_law_title = law_title ? law_title.text : "";
         s_law_num = (s_law_num && s_law_title) ? (`（${s_law_num}）`) : s_law_num;
 
         return s_law_title + s_law_num;
@@ -473,7 +480,7 @@ Lawtext.Data = class extends Backbone.Model {
 
 
 
-Lawtext.SidebarView_template = _.template(Lawtext.sidebar_view_template);
+Lawtext.SidebarView_template = _.template(require("../templates/sidebar_view.html").template);
 Lawtext.SidebarView = class extends Backbone.View {
 
     get tagName() { return "div"; }
@@ -664,7 +671,7 @@ Lawtext.VarRefView = class extends Backbone.View {
 
 
 
-Lawtext.HTMLpreviewView_template = _.template(Lawtext.htmlpreview_view_template);
+Lawtext.HTMLpreviewView_template = _.template(require("../templates/htmlpreview_view.html").template);
 Lawtext.HTMLpreviewView = class extends Backbone.View {
 
     get tagName() { return "div"; }
@@ -738,7 +745,7 @@ Lawtext.HTMLpreviewView = class extends Backbone.View {
 
 
 
-Lawtext.MainView_template = _.template(Lawtext.main_view_template);
+Lawtext.MainView_template = _.template(require("../templates/main_view.html").template);
 Lawtext.MainView = class extends Backbone.View {
 
     get tagName() { return "div"; }
@@ -803,7 +810,7 @@ Lawtext.MainView = class extends Backbone.View {
 
     download_sample_lawtext_button_click(e) {
         let blob = new Blob(
-            [Lawtext.sample_lawtext],
+            [require("../templates/sample_lawtext.html").template],
             {type: "text/plain"},
         );
         saveAs(blob, "sample_lawtext.law.txt");
@@ -876,7 +883,7 @@ Lawtext.MainView = class extends Backbone.View {
         if(law && law_search_key) {
             let law_body = _(law.children).findWhere({tag: "LawBody"});
             let law_title = _(law_body.children).findWhere({tag: "LawTitle"});
-            document.title = `${law_title.children[0]} | Lawtext`;
+            document.title = `${law_title.text} | Lawtext`;
         } else {
             document.title = "Lawtext";
         }

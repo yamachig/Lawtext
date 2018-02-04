@@ -66,7 +66,7 @@
   {%- if el.tag == 'TOCLabel' -%}
     <div class="toc-label law-anchor"
          data-tag="{{- toc.tag -}}"
-         data-name="{{- el.children[0] -}}">
+         data-name="{{- el.text -}}">
       {{- m_text(el) -}}
     </div>
   {%- endif -%}
@@ -134,7 +134,7 @@
     <div class="article-group-title law-anchor"
          style="margin-left: {{- title_indent -}}em;"
          data-tag="{{- article_group.tag -}}"
-         data-name="{{- el.children[0] -}}{{- article_group.attr['AmendLawNum'] -}}"
+         data-name="{{- el.text -}}{{- article_group.attr['AmendLawNum'] -}}"
          {%- if el.tag == 'SupplProvisionLabel' -%}
            selection-id="{{context.get('current_toplevel')}}___SupplProvisionLabel"
          {%- endif -%}
@@ -249,7 +249,7 @@ paragraph-item-body
         {%- if el2.tag == 'ArticleTitle' -%}
           <span class="article-title law-anchor"
                 data-tag="{{- article.tag -}}"
-                data-name="{{- context.get('article_prefix') -}}{{- el2.children[0] -}}">
+                data-name="{{- context.get('article_prefix') -}}{{- el2.text -}}">
             {{- m_text(el2) -}}
           </span>
         {%- endif -%}
@@ -456,7 +456,7 @@ paragraph-item-body
   {%- if el.tag == 'AppdxTableTitle' -%}
     <div class="appdx_table_title law-anchor"
          data-tag="{{- appdx_table.tag -}}"
-         data-name="{{- el.children[0] -}}">
+         data-name="{{- el.text -}}">
       {{- m_text(el) -}}
       {%- for el2 in appdx_table.children -%}
         {%- if el2.tag == 'RelatedArticleNum' -%}
@@ -492,7 +492,7 @@ paragraph-item-body
   {%- if el.tag == 'AppdxStyleTitle' -%}
     <div class="appdx_style_title law-anchor"
         data-tag="{{- appdx_style.tag -}}"
-        data-name="{{- el.children[0] -}}">
+        data-name="{{- el.text -}}">
       {{- m_text(el) -}}
       {%- for el2 in appdx_style.children -%}
         {%- if el2.tag == 'RelatedArticleNum' -%}
@@ -618,30 +618,38 @@ paragraph-item-body
 
 
 
-{%- macro m_element(el) -%}
+{%- macro m_element(el, with_control_el) -%}
 <pre>
-{{- ('' + m_element_raw(el)) | escape -}}
+{{- ('' + m_element_raw(el, with_control_el)) | escape -}}
 </pre>
 {%- endmacro -%}
 
 
 
-{%- macro m_element_raw(el) -%}
+{%- macro m_element_raw(el, with_control_el) -%}
 {%- if not el -%}
 {%- elif not el.tag -%}
   {{- el | escape -}}
 {%- else -%}
+
+  {%- if with_control_el or el.tag[0] != "_" -%}
   <{{ el.tag }} {%- for key, value in el.attr | dictsort -%}
-    {{- ' ' -}}{{- key -}}="{{- value -}}"
+    {{- ' ' -}}{{- key -}}="{{- value | escape -}}"
   {%- endfor -%}>
+  {%- endif -%}
+
     {%- for child in el.children -%}
       {%- if not child.tag -%}
         {{- child -}}
       {%- else -%}
-        {{- m_element_raw(child) -}}
+        {{- m_element_raw(child, with_control_el) -}}
       {%- endif -%}
     {%- endfor -%}
-  </{{ el.tag }}>
+
+  {%- if with_control_el or el.tag[0] != "_" -%}
+    </{{ el.tag }}>
+  {%- endif -%}
+
 {%- endif -%}
 {%- endmacro -%}
 
@@ -649,15 +657,15 @@ paragraph-item-body
 
 {%- macro m_text(el) -%}
   {%- if annotate -%}
-    {{- annotate(el) | safe -}}
+    {{- annotate(el, m_text_default) | safe -}}
   {%- else -%}
-    {{- m_text_raw(el) -}}
+    {{- m_text_default(el) -}}
   {%- endif -%}
 {%- endmacro -%}
 
 
 
-{%- macro m_text_raw(el) -%}
+{%- macro m_text_default(el) -%}
 {%- if not el -%}
 {%- elif not el.tag -%}
   {{- el | safe -}}
@@ -670,7 +678,7 @@ paragraph-item-body
     {%- elif child.tag == 'QuoteStruct' -%}
       {{- m_quote_struct(child) -}}
     {%- else -%}
-      {{- m_element(child) -}}
+      {{- m_text(child) -}}
     {%- endif -%}
   {%- endfor -%}
 {%- endif -%}

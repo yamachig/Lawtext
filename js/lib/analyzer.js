@@ -508,17 +508,14 @@ function analyze(law) {
 exports.analyze = analyze;
 
 function stdxml_to_ext(el) {
-    if(typeof el === 'string' || el instanceof String) {
-        return el;
-    }
-    if(["Sentence", "EnactStatement"].indexOf(el.tag) >= 0) {
-        if(el.text) {
-            el.children = parser.parse(el.text, {startRule: "INLINE"});
-        }
-    } else {
-        for(let child of el.children) {
-            stdxml_to_ext(child);
+    if(["LawNum", "QuoteStruct"].indexOf(el.tag) < 0) {
+        let is_mixed = el.children.some(child => typeof child === 'string' || child instanceof String);
+        if(is_mixed) {
+            el.children = parser.parse(el.innerXML(), {startRule: "INLINE"});
+        } else {
+            el.children = el.children.map(stdxml_to_ext)
         }
     }
+    return el;
 };
 exports.stdxml_to_ext = stdxml_to_ext;

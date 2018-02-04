@@ -1,5 +1,4 @@
-var Lawtext = Lawtext || {};
-Lawtext.sidebar_view_template = `
+exports.template = `
 
 <style style="display: none;">
 .lawtext-sidebar-view {
@@ -140,7 +139,7 @@ function process_law_body(law_body) {
 function process_toc(toc) {
     var toc_label = _(toc.children).findWhere({tag: "TOCLabel"});
     if(toc_label) {
-        var name = toc_label.children[0];
+        var name = toc_label.text;
         var obj = $("<div>")
             .addClass("toc-item law-link")
             .css({"padding-left": "2em"})
@@ -155,7 +154,7 @@ function process_toc(toc) {
 function process_article_group(article_group, indent) {
     var article_group_title = _(article_group.children).findWhere({tag: article_group.tag + "Title"});
     if(article_group_title) {
-      var name = article_group_title.children[0];
+      var name = article_group_title.text;
         var obj = $("<div>")
             .addClass("toc-item law-link")
             .css({"padding-left": (indent + 2) + "em"})
@@ -180,10 +179,10 @@ function process_article(article, indent) {
     var article_title = _(article.children).findWhere({tag: "ArticleTitle"});
 
     if(article_title) {
-        var name = article_title.children[0];
+        var name = article_title.text;
         var text = name;
         if(article_caption) {
-            var append_text = article_caption.children[0];
+            var append_text = article_caption.text;
             text += (append_text[0] == "（" ? "" : "　") + append_text;
         }
         var obj = $("<div>")
@@ -200,7 +199,7 @@ function process_article(article, indent) {
 function process_suppl_provision(suppl_provision) {
     var suppl_provision_label = _(suppl_provision.children).findWhere({tag: "SupplProvisionLabel"});
     if(suppl_provision_label) {
-        var name = suppl_provision_label.children[0];
+        var name = suppl_provision_label.text;
         var amend_law_num = suppl_provision.attr["AmendLawNum"] || "";
         var text = name + (amend_law_num ? ("（" + amend_law_num + "）") : "");
         text = text.replace(/[\s　]+/, "");
@@ -218,7 +217,7 @@ function process_suppl_provision(suppl_provision) {
 function process_appdx_table(appdx_table) {
     var appdx_table_title = _(appdx_table.children).findWhere({tag: "AppdxTableTitle"});
     if(appdx_table_title) {
-        var name = appdx_table_title.children[0];
+        var name = appdx_table_title.text;
         var obj = $("<div>")
             .addClass("toc-item law-link")
             .css({"padding-left": (indent + 2) + "em"})
@@ -233,7 +232,7 @@ function process_appdx_table(appdx_table) {
 function process_appdx_style(appdx_style) {
     var appdx_style_title = _(appdx_style.children).findWhere({tag: "AppdxStyleTitle"});
     if(appdx_style_title) {
-        var name = appdx_style_title.children[0];
+        var name = appdx_style_title.text;
         var obj = $("<div>")
             .addClass("toc-item law-link")
             .css({"padding-left": (indent + 2) + "em"})
