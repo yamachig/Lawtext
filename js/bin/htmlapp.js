@@ -25,7 +25,7 @@ function main(args) {
         path.join(dest_path, "src/law.css"),
     );
 
-    let b = browserify(path.join(src_path, "src/lawtext.js"), {debug: true});
+    let b = browserify(path.join(src_path, "src/lawtext-app.js"), {debug: true});
     b.ignore("lodash");
 
     let dest_stream = fs.createWriteStream(path.join(dest_path, "src/lawtext.js"), 'utf-8');
