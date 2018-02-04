@@ -18,6 +18,4 @@ package-lock.json
 cache.sqlite
 MANIFEST
 dist
-lawtext/js/parser.js
-lawtext/js/annotate_html.js
-lawtext/js/lawnum_table.js
+js/dest/*

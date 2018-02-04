@@ -1,0 +1,38 @@
+{
+  "dependencies": {
+    "argparse": "",
+    "babel-core": "",
+    "babel-preset-env": "",
+    "babel-loader": "",
+    "uglifyjs-webpack-plugin": "",
+    "fs-extra": "",
+    "hash.js": "",
+    "jszip": "",
+    "lodash": "",
+    "nunjucks": "",
+    "pegjs": "",
+    "webpack": "^3.10.0",
+    "xmldom": ""
+  },
+  "name": "lawtext",
+  "version": "0.0.1",
+  "description": "Plain text format for Japanese law",
+  "main": "lib/lawtext.js",
+  "devDependencies": {},
+  "scripts": {
+    "build": "node bin/build",
+    "build-htmlapp": "node bin/htmlapp out_htmlapp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": "lib/lawtext.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yamachig/lawtext.git"
+  },
+  "author": "yamachi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yamachig/lawtext/issues"
+  },
+  "homepage": "https://github.com/yamachig/lawtext#readme"
+}
