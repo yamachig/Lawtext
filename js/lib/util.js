@@ -1,6 +1,6 @@
 "use strict";
 
-var DOMParser = DOMParser || require("xmldom").DOMParser;
+var DOMParser = require("xmldom").DOMParser;
 
 var Node = Node || {
     TEXT_NODE: 3,

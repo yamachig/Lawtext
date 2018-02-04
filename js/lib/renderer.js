@@ -1,6 +1,6 @@
 "use strict";
 
-var nunjucks = window.nunjucks || require("nunjucks");
+var nunjucks = require("nunjucks");
 var templates = require("../dest/templates");
 var JSZip = require("jszip");
 

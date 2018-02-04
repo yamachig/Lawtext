@@ -31,20 +31,20 @@ function main(args) {
         output: {
             path: path.join(dest_path, "src"),
             filename: "lawtext.min.js",
-            publicPath: "/src/",
+            libraryTarget: "window",
         },
         devtool: "source-map",
         target: "web",
         node: {
             fs: "empty",
-            argparse: "empty",
-            xmldom: "empty",
         },
-        externals: [
-            "lodash",
-            "nunjucks",
-            "jszip",
-        ],
+        externals: {
+            lodash: "_",
+            nunjucks: "nunjucks",
+            jszip: "JSZip",
+            xmldom: "window",
+            argparse: "window",
+        },
         module: {
             rules: [
                 {

@@ -1,14 +1,13 @@
 'use strict';
 
 var lawtext = require("../../lib/lawtext");
-var Lawtext = window.Lawtext || {};
 
 function em(input) {
     var emSize = parseFloat($("body").css("font-size"));
     return (emSize * input);
 }
 
-Lawtext.LawNameItem = class {
+class LawNameItem {
     constructor(law_name, law_no, promulgation_date) {
         this.law_name = law_name;
         this.law_no = law_no;
@@ -16,9 +15,9 @@ Lawtext.LawNameItem = class {
     }
 }
 
-Lawtext.law_name_data = [];
+var law_name_data = [];
 
-Lawtext.annotate = (el, m_text_default) => {
+function annotate(el, m_text_default) {
     if(!m_text_default) {
         throw true;
     }
@@ -27,7 +26,7 @@ Lawtext.annotate = (el, m_text_default) => {
     }
 
     if(el.tag[0] === "_") {
-        let child_str = el.children.map(child => Lawtext.annotate(child, m_text_default)).join("");
+        let child_str = el.children.map(child => annotate(child, m_text_default)).join("");
 
         if(el.tag === "____Declaration") {
             return `<span class="lawtext-analyzed lawtext-analyzed-declaration" lawtext_declaration_index="${el.attr.declaration_index}">${child_str}</span>`
@@ -64,7 +63,7 @@ Lawtext.annotate = (el, m_text_default) => {
     }
 }
 
-Lawtext.get_law_range = (orig_law, range) => {
+function get_law_range(orig_law, range) {
     let s_pos = range.start;
     let e_pos = range.end;
 
@@ -193,7 +192,7 @@ Lawtext.get_law_range = (orig_law, range) => {
     }
 
     return law;
-};
+}
 
 
 
@@ -209,7 +208,7 @@ Lawtext.get_law_range = (orig_law, range) => {
 
 
 
-Lawtext.Data = class extends Backbone.Model {
+class Data extends Backbone.Model {
 
     get defaults() {
         return {
@@ -272,7 +271,7 @@ Lawtext.Data = class extends Backbone.Model {
             }
         } else {
             try {
-                law = Lawtext.parse(text, {startRule: "start"});
+                law = lawtext.parse(text, {startRule: "start"});
             } catch(err) {
                 let err_str = err.toString();
                 let pre = $("<pre>")
@@ -429,7 +428,7 @@ Lawtext.Data = class extends Backbone.Model {
         if(law === null) return;
 
         if(range) {
-            law = Lawtext.get_law_range(law, range);
+            law = get_law_range(law, range);
         }
 
         lawtext.renderer.render_docx_async(law)
@@ -480,8 +479,8 @@ Lawtext.Data = class extends Backbone.Model {
 
 
 
-Lawtext.SidebarView_template = _.template(require("../templates/sidebar_view.html").template);
-Lawtext.SidebarView = class extends Backbone.View {
+var SidebarView_template = _.template(require("../templates/sidebar_view.html").template);
+class SidebarView extends Backbone.View {
 
     get tagName() { return "div"; }
     get className() { return "lawtext-sidebar-view"; }
@@ -500,7 +499,7 @@ Lawtext.SidebarView = class extends Backbone.View {
     }
 
     render(options) {
-        this.$el.html(Lawtext.SidebarView_template({
+        this.$el.html(SidebarView_template({
             data: this.data.attributes,
         }));
     }
@@ -508,7 +507,7 @@ Lawtext.SidebarView = class extends Backbone.View {
 
 
 
-Lawtext.VarRefView_template = _.template(`
+var VarRefView_template = _.template(`
 <span class="lawtext-varref-text"><%= text %></span><span class="lawtext-varref-float-block" style="display: none; height: 0;">
 <div class="lawtext-varref-float-block-inner">
 <div class="lawtext-varref-arrow"></div>
@@ -517,7 +516,7 @@ Lawtext.VarRefView_template = _.template(`
 </div>
 </span>
 `.trim());
-Lawtext.VarRefView = class extends Backbone.View {
+class VarRefView extends Backbone.View {
 
     get tagName() { return "span"; }
     get className() { return "lawtext-varref-view"; }
@@ -600,7 +599,7 @@ Lawtext.VarRefView = class extends Backbone.View {
         let fragment = lawtext.renderer.render_elements_fragment(
             closest_children,
             {
-                "annotate": Lawtext.annotate,
+                "annotate": annotate,
             },
         ).trim();
         let ret = $(`
@@ -611,7 +610,7 @@ Lawtext.VarRefView = class extends Backbone.View {
     }
 
     render() {
-        this.$el.html(Lawtext.VarRefView_template({
+        this.$el.html(VarRefView_template({
             data: this.data.attributes,
             text: this.text,
         }));
@@ -671,8 +670,8 @@ Lawtext.VarRefView = class extends Backbone.View {
 
 
 
-Lawtext.HTMLpreviewView_template = _.template(require("../templates/htmlpreview_view.html").template);
-Lawtext.HTMLpreviewView = class extends Backbone.View {
+var HTMLpreviewView_template = _.template(require("../templates/htmlpreview_view.html").template);
+class HTMLpreviewView extends Backbone.View {
 
     get tagName() { return "div"; }
     get className() { return "lawtext-htmlpreview-view"; }
@@ -707,13 +706,13 @@ Lawtext.HTMLpreviewView = class extends Backbone.View {
         if(law !== null && this.law_html === null) {
             let analysis = lawtext.analyze(law);
             this.law_html = lawtext.renderer.render_htmlfragment(law, {
-                "annotate": Lawtext.annotate,
+                "annotate": annotate,
             });
             this.analyzed = true;
             this.data.set({analysis, analysis});
         }
 
-        this.$el.html(Lawtext.HTMLpreviewView_template({
+        this.$el.html(HTMLpreviewView_template({
             data: this.data.attributes,
             law_html: this.law_html,
         }));
@@ -721,7 +720,7 @@ Lawtext.HTMLpreviewView = class extends Backbone.View {
         this.varref_views = [];
         for(let el of this.$(".lawtext-analyzed-varref")) {
             let obj = $(el);
-            let varref_view = new Lawtext.VarRefView({
+            let varref_view = new VarRefView({
                 data: this.data,
                 declaration_index: parseInt(obj.attr("lawtext_declaration_index"), 10),
                 text: obj.text(),
@@ -745,8 +744,8 @@ Lawtext.HTMLpreviewView = class extends Backbone.View {
 
 
 
-Lawtext.MainView_template = _.template(require("../templates/main_view.html").template);
-Lawtext.MainView = class extends Backbone.View {
+var MainView_template = _.template(require("../templates/main_view.html").template);
+class MainView extends Backbone.View {
 
     get tagName() { return "div"; }
     get className() { return "lawtext-main-view"; }
@@ -768,11 +767,11 @@ Lawtext.MainView = class extends Backbone.View {
         this.data = options.data;
         this.router = options.router;
 
-        this.sidebar_view = new Lawtext.SidebarView({
-            data: Lawtext.data,
+        this.sidebar_view = new SidebarView({
+            data: this.data,
         });
-        this.htmlpreview_view = new Lawtext.HTMLpreviewView({
-            data: Lawtext.data,
+        this.htmlpreview_view = new HTMLpreviewView({
+            data: this.data,
         });
 
         this.listenTo(this.data, "change:law_search_key", this.law_search_key_change);
@@ -784,7 +783,7 @@ Lawtext.MainView = class extends Backbone.View {
         this.sidebar_view.$el.detach();
         this.htmlpreview_view.$el.detach();
 
-        this.$el.html(Lawtext.MainView_template({
+        this.$el.html(MainView_template({
         }));
 
         this.$(".lawtext-sidebar-view-place").replaceWith(this.sidebar_view.el);
@@ -942,7 +941,7 @@ Lawtext.MainView = class extends Backbone.View {
     }
 }
 
-Lawtext.Router = class extends Backbone.Router {
+class Router extends Backbone.Router {
     get routes() { return {
         ":law_search_key": "law",
         "": "index",
@@ -967,23 +966,36 @@ Lawtext.Router = class extends Backbone.Router {
     }
 }
 
-$(function(){
+class App {
+    constructor() {
+        this.data = null;
+        this.router = null;
+        this.main_view = null;
+    }
 
-    Lawtext.data = new Lawtext.Data();
+    start() {
+        this.data = new Data();
 
-    Lawtext.router = new Lawtext.Router({
-        data: Lawtext.data,
-    });
+        this.router = new Router({
+            data: this.data,
+        });
 
-    Lawtext.main_view = new Lawtext.MainView({
-        data: Lawtext.data,
-        router: Lawtext.router,
-    });
-    $(".lawtext-main-view-place").replaceWith(Lawtext.main_view.el);
-    Lawtext.main_view.render();
+        this.main_view = new MainView({
+            data: this.data,
+            router: this.router,
+        });
+        $(".lawtext-main-view-place").replaceWith(this.main_view.el);
+        this.main_view.render();
 
-    Backbone.history.start({pushState: false});
+        Backbone.history.start({pushState: false});
 
-    $(".search-law-textbox").focus();
+        $(".search-law-textbox").focus();
+    }
+}
 
-});
+var app = new App();
+$(app.start);
+
+exports.lawtext = lawtext;
+exports.app = app;
+
