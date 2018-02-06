@@ -473,7 +473,7 @@ class Data extends Backbone.Model {
         if(analysis === null) return null;
 
         let declarations = analysis.declarations;
-        return declarations[index];
+        return declarations.get(index);
     }
 }
 

@@ -2,15 +2,15 @@
   "dependencies": {
     "argparse": "",
     "babel-core": "",
-    "babel-preset-env": "",
     "babel-loader": "",
-    "uglifyjs-webpack-plugin": "",
+    "babel-preset-env": "",
     "fs-extra": "",
     "hash.js": "",
     "jszip": "",
     "lodash": "",
     "nunjucks": "",
     "pegjs": "",
+    "uglifyjs-webpack-plugin": "",
     "webpack": "",
     "xmldom": ""
   },

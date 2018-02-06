@@ -44,12 +44,10 @@ function main(args) {
             xmldom: "window",
             argparse: "window",
         },
+        devtool: "source-map",
     };
 
     if(args.dev) {
-        webpack_opt = Object.assign(webpack_opt, {
-            devtool: "source-map",
-        });
     } else {
         webpack_opt = Object.assign(webpack_opt, {
             module: {
@@ -77,7 +75,7 @@ function main(args) {
             },
             plugins: [
                 new webpack.optimize.UglifyJsPlugin({
-                    // sourceMap: true,
+                    sourceMap: true,
                     uglifyOptions: {ecma: 6},
                 }),
             ],

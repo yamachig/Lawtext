@@ -190,13 +190,13 @@ class ____VarRef extends EL {
     }
 }
 
-class Declarations extends Array {
-    add(declaration) {
-        this.push(declaration);
+class Declarations {
+    constructor() {
+        this.declarations = [];
     }
 
     *iterate(span_index) {
-        for(let declaration of this) {
+        for(let declaration of this.declarations) {
             if(
                 declaration.scope.some(range =>
                     range.start_span_index <= span_index &&
@@ -206,6 +206,18 @@ class Declarations extends Array {
                 yield declaration;
             }
         }
+    }
+
+    add(declaration) {
+        this.declarations.push(declaration);
+    }
+
+    get length() {
+        return this.declarations.length;
+    }
+
+    get(index) {
+        return this.declarations[index];
     }
 }
 
