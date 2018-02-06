@@ -1,6 +1,5 @@
 "use strict";
 
-var _ = require('lodash');
 var sha512 = require("hash.js/lib/hash/sha/512");
 var parser = require("../dest/parser");
 var EL = require("./util").EL;
@@ -71,9 +70,6 @@ class Span {
         this.env = env;
 
         this.text = el.text;
-
-        this.new_declarations = [];
-        this.active_declarations = [];
     }
 }
 
@@ -166,6 +162,20 @@ class ____Declaration extends EL {
     }
 }
 
+class ScopeRange {
+    constructor(
+        start_span_index,
+        start_text_index,
+        end_span_index, // half open
+        end_text_index, // half open
+    ) {
+        this.start_span_index = start_span_index;
+        this.start_text_index = start_text_index;
+        this.end_span_index = end_span_index;
+        this.end_text_index = end_text_index;
+    }
+}
+
 class ____VarRef extends EL {
     constructor(ref_name, declaration, ref_pos) {
         super("____VarRef");
@@ -177,6 +187,25 @@ class ____VarRef extends EL {
         this.attr.ref_declaration_index = declaration.attr.declaration_index;
 
         this.append(ref_name);
+    }
+}
+
+class Declarations extends Array {
+    add(declaration) {
+        this.push(declaration);
+    }
+
+    *iterate(span_index) {
+        for(let declaration of this) {
+            if(
+                declaration.scope.some(range =>
+                    range.start_span_index <= span_index &&
+                    span_index < range.end_span_index
+                )
+            ) {
+                yield declaration;
+            }
+        }
     }
 }
 
@@ -217,16 +246,12 @@ function detect_declarations(law, spans) {
                 after_span.el.attr.type === "round"
             ) {
                 let scope = [
-                    [
-                        {
-                            span_index: after_span.index + 1,
-                            text_index: 0,
-                        },
-                        {
-                            span_index: spans.length,
-                            text_index: 0,
-                        }, // half open
-                    ],
+                    new ScopeRange(
+                        after_span.index + 1,
+                        0,
+                        spans.length, // half open
+                        0, // half open
+                    ),
                 ];
 
                 let name_pos = new Pos (
@@ -245,7 +270,6 @@ function detect_declarations(law, spans) {
                     name_pos,  // name_pos
                 );
 
-                lawname_span.new_declarations.push(declaration);
                 lawname_span.el.replace_span(lawname_text_index, lawname_text_index + lawname_length, declaration);
                 lawnum_span.el.replace_span(0, law_num.length, lawnum_el);
 
@@ -278,16 +302,12 @@ function detect_declarations(law, spans) {
                 let scope_text = scope_match[2] || null;
 
                 let scope = [
-                    [
-                        {
-                            span_index: name_after_span.index,
-                            text_index: name_after_match[0].length,
-                        },
-                        {
-                            span_index: spans.length,
-                            text_index: 0,
-                        }, // half open
-                    ],
+                    new ScopeRange(
+                        name_after_span.index,
+                        name_after_match[0].length,
+                        spans.length, // half open
+                        0, // half open
+                    ),
                 ];
 
                 let name_pos = new Pos (
@@ -306,7 +326,6 @@ function detect_declarations(law, spans) {
                     name_pos,  // name_pos
                 );
 
-                name_span.new_declarations.push(declaration);
                 lawname_span.el.replace_span(lawname_text_index, lawname_text_index + lawname_length, new EL("____DeclarationVal", {}, [law_name]));
                 name_span.el.replace_span(0, name_span.text.length, declaration);
                 lawnum_span.el.replace_span(0, law_num.length, lawnum_el);
@@ -340,16 +359,12 @@ function detect_declarations(law, spans) {
             let scope_text = scope_match[2] || null;
 
             let scope = [
-                [
-                    {
-                        span_index: name_after_span.index,
-                        text_index: name_after_match[0].length,
-                    },
-                    {
-                        span_index: spans.length,
-                        text_index: 0,
-                    }, // half open
-                ],
+                new ScopeRange(
+                    name_after_span.index,
+                    name_after_match[0].length,
+                    spans.length, // half open
+                    0, // half open
+                ),
             ];
 
             let name_pos = new Pos (
@@ -368,13 +383,12 @@ function detect_declarations(law, spans) {
                 name_pos,  // name_pos
             );
 
-            name_span.new_declarations.push(declaration);
             name_span.el.replace_span(0, name_span.text.length, declaration);
             return declaration;
         }
     };
 
-    let declarations = [];
+    let declarations = new Declarations();
 
     for(let span_index = 0; span_index < spans.length; span_index++) {
         let declaration =
@@ -382,47 +396,14 @@ function detect_declarations(law, spans) {
             detect_name(spans, span_index);
         if(declaration) {
             declaration.attr.declaration_index = declarations.length;
-            declarations.push(declaration);
+            declarations.add(declaration);
         }
     }
 
     return declarations;
 }
 
-function set_active_declarations(spans, declarations) {
-
-    for(let span_index = 0; span_index < spans.length; span_index++) {
-        let span = spans[span_index];
-        let decls = span.active_declarations;
-
-        for(let declaration of declarations) {
-            for(let [start, end] of declaration.scope) {
-                if(
-                    start.span_index <= span_index &&
-                    span_index < end.span_index // half open
-                ) {
-                    let text_scope = {
-                        start: 0,
-                        end: span.text.length, // half open
-                    };
-                    if(span_index === start.span_index) {
-                        text_scope.start = start.text_index;
-                    }
-                    if(span_index === end.span_index - 1) {
-                        text_scope.end = end.text_index;
-                    }
-                    decls.push([text_scope, declaration]);
-                }
-            }
-        }
-
-        decls = _(decls).sortBy(([, decl]) => -decl.name.length);
-
-        span.active_declarations = decls;
-    }
-}
-
-function detect_variable_references(law, spans) {
+function detect_variable_references(law, spans, declarations) {
 
     let variable_references = [];
 
@@ -430,7 +411,11 @@ function detect_variable_references(law, spans) {
         let parent = span.env.parents[span.env.parents.length - 1];
         if(parent.tag === "__PContent" && parent.attr.type === "square") return;
         let ret = [];
-        for(let [text_scope, declaration] of span.active_declarations) {
+        for(let declaration of declarations.iterate(span.index)) {
+            let text_scope = {
+                start: 0,
+                end: Number.POSITIVE_INFINITY,
+            };
             let next_index_offset = 0;
             for(let child of span.el.children) {
                 let index_offset = next_index_offset;
@@ -475,32 +460,7 @@ function detect_variable_references(law, spans) {
 function analyze(law) {
     let [spans, containers] = extract_spans(law);
     let declarations = detect_declarations(law, spans);
-    set_active_declarations(spans, declarations);
-    let variable_references = detect_variable_references(law, spans);
-
-    // console.error(`${spans.length} spans detected.`);
-    // console.error(`${containers.length} containers detected.`);
-    // console.error(declarations);
-    // for(let span_index = 0; span_index < spans.length; span_index++) {
-    //     let span = spans[span_index];
-    //     console.error(`${span_index} <${span.el.tag}> "${span.text.slice(0,30)}"${span.text.length > 30 ? " …" : ""}`);
-
-    //     if(span.new_declarations.length) {
-    //         console.error(`    ${span.new_declarations.map(declaration => {
-    //             return `${declaration.type} ${declaration.name} = ${declaration.value}`;
-    //         }).join(", ")}`);
-    //     }
-
-        // console.error(`    ${span.active_declarations.map([text_scope,declaration] => {
-        //     let s = [];
-        //     for(let [start, end] of declaration.scope) {
-        //         s.push(`[${start.span_index},${end.span_index})`);
-        //     }
-        //     return s.join("+");
-        // }).join(", ")}`);
-
-    //     console.error();
-    // }
+    let variable_references = detect_variable_references(law, spans, declarations);
     return {
         declarations: declarations,
     };
