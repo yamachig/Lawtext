@@ -11,7 +11,7 @@
     "lodash": "",
     "nunjucks": "",
     "pegjs": "",
-    "webpack": "^3.10.0",
+    "webpack": "",
     "xmldom": ""
   },
   "name": "lawtext",
@@ -22,6 +22,7 @@
   "scripts": {
     "build": "node bin/build",
     "build-htmlapp": "node bin/htmlapp out_htmlapp",
+    "build-htmlapp-dev": "node bin/htmlapp --dev out_htmlapp_dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": "lib/lawtext.js",

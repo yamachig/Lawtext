@@ -12,7 +12,7 @@ function main(args) {
 
     let base_path = path.resolve(path.join(__dirname, ".."));
     let src_path = path.join(base_path, "htmlapp_templates");
-    let dest_path = path.resolve(args.infile);
+    let dest_path = path.resolve(args.dest_path);
 
     if(fs.existsSync(dest_path)) fs.removeSync(dest_path);
     fs.mkdirSync(dest_path);
@@ -33,7 +33,6 @@ function main(args) {
             filename: "lawtext.min.js",
             libraryTarget: "window",
         },
-        devtool: "source-map",
         target: "web",
         node: {
             fs: "empty",
@@ -45,43 +44,56 @@ function main(args) {
             xmldom: "window",
             argparse: "window",
         },
-        module: {
-            rules: [
-                {
-                    test: /\.(?:js|html)$/,
-                    use: [
-                        {
-                            loader: 'babel-loader',
-                            options: {
-                                presets: [
-                                    ['env', {
-                                        'modules': false,
-                                        "targets": {
-                                            "browsers": ["defaults"],
-                                        }
-                                    }],
-                                ],
-                            },
-                        },
-                    ],
-                    exclude: /node_modules/,
-                },
-            ],
-        },
-        plugins: [
-            new webpack.optimize.UglifyJsPlugin({
-                sourceMap: true,
-                uglifyOptions: {ecma: 6},
-            }),
-        ],
     };
+
+    if(args.dev) {
+        webpack_opt = Object.assign(webpack_opt, {
+            devtool: "source-map",
+        });
+    } else {
+        webpack_opt = Object.assign(webpack_opt, {
+            module: {
+                rules: [
+                    {
+                        test: /\.(?:js|html)$/,
+                        use: [
+                            {
+                                loader: 'babel-loader',
+                                options: {
+                                    presets: [
+                                        ['env', {
+                                            'modules': false,
+                                            "targets": {
+                                                "browsers": ["defaults"],
+                                            }
+                                        }],
+                                    ],
+                                },
+                            },
+                        ],
+                        exclude: /node_modules/,
+                    },
+                ],
+            },
+            plugins: [
+                new webpack.optimize.UglifyJsPlugin({
+                    // sourceMap: true,
+                    uglifyOptions: {ecma: 6},
+                }),
+            ],
+        });
+    }
 
     webpack(webpack_opt, (err, stats) => { if(err) throw err; });
 }
 
 if (typeof require !== "undefined" && require.main === module) {
     let argparser = new argparse.ArgumentParser();
-    argparser.addArgument("infile");
+    argparser.addArgument("dest_path");
+    argparser.addArgument(
+        ["-d", "--dev"],
+        { action: "storeTrue"},
+    );
     let args = argparser.parseArgs();
     main(args);
 }
