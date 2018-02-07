@@ -635,7 +635,7 @@ class VarRefView extends Backbone.View {
     }
 
     update_size() {
-        if(!this.rendered) return;
+        if(!this.is_open) return;
 
         let text_left = this.text_obj.offset().left;
         let window_left = this.window_obj.offset().left;
@@ -662,8 +662,8 @@ class VarRefView extends Backbone.View {
         } else {
             this.update_window();
             this.block_obj.show();
-            this.update_size();
             this.is_open = true;
+            this.update_size();
         }
     }
 }
