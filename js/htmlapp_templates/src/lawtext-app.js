@@ -816,8 +816,6 @@ class MainView extends Backbone.View {
     }
 
     tobe_downloaded_range() {
-        let selection = window.getSelection();
-
         let get_pos = (node) => {
             let el = $(node.parentNode);
             let item_el = _(el.parents("[selection-id]")).last();
@@ -832,8 +830,11 @@ class MainView extends Backbone.View {
             }
         };
 
-        let s_pos = get_pos(selection.anchorNode);
-        let e_pos = get_pos(selection.focusNode);
+        let selection = window.getSelection();
+        let range = selection.getRangeAt(0);
+
+        let s_pos = get_pos(range.startContainer);
+        let e_pos = get_pos(range.endContainer);
         if(!s_pos || !e_pos) return null;
 
         return {
