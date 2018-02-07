@@ -385,7 +385,7 @@ class Data extends Backbone.Model {
             .then(response => response.json())
             .then(data => {
                 if(data.length) {
-                    let lawnum = data[0][1];
+                    let lawnum = _(data).sortBy(d => d[0].length)[0][1];
                     load_law_num(lawnum);
                     if(localStorage) {
                         localStorage.setItem(
