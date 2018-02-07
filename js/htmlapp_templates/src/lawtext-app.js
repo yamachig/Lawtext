@@ -109,7 +109,7 @@ function get_law_range(orig_law, range) {
             toplevel.tag === s_pos.container_tag &&
             (
                 toplevel.tag !== "SupplProvision" ||
-                toplevel.attr.AmendLawNum === s_pos.container_id
+                (toplevel.attr.AmendLawNum || null) === s_pos.container_id
             )
         ) {
             in_container_range = true;
@@ -123,7 +123,7 @@ function get_law_range(orig_law, range) {
             toplevel.tag === e_pos.container_tag &&
             (
                 toplevel.tag !== "SupplProvision" ||
-                toplevel.attr.AmendLawNum === e_pos.container_id
+                (toplevel.attr.AmendLawNum || null) === e_pos.container_id
             )
         ) {
             in_container_range = false;
@@ -184,7 +184,7 @@ function get_law_range(orig_law, range) {
             toplevel.tag === e_pos.container_tag &&
             (
                 toplevel.tag !== "SupplProvision" ||
-                toplevel.attr.AmendLawNum === e_pos.container_id
+                (toplevel.attr.AmendLawNum || null) === e_pos.container_id
             )
         ) {
             in_container_range = false;
@@ -821,7 +821,7 @@ class MainView extends Backbone.View {
             let item_el = _(el.parents("[selection-id]")).last();
             if(!item_el && el.attr("selection-id")) item_el = el[0];
             if(!item_el)  return null;
-            let m = item_el.getAttribute("selection-id").match(/([^_]+)(?:_([^_]+))?___([^_]+)(?:_([^_]+))?/);
+            let m = item_el.getAttribute("selection-id").match(/([^-]+)(?:-([^-]+))?---([^-]+)(?:-([^-]+))?/);
             return {
                 container_tag: m[1],
                 container_id: m[2] || null,
