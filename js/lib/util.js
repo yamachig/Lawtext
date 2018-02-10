@@ -233,3 +233,194 @@ function xml_to_json(xml) {
 };
 exports.xml_to_json = xml_to_json;
 
+
+
+let paragraph_item_tags = {
+    0: 'Paragraph', 1: 'Item',
+    2: 'Subitem1',  3: 'Subitem2',  4: 'Subitem3',
+    5: 'Subitem4',  6: 'Subitem5',  7: 'Subitem6',
+    8: 'Subitem7',  9: 'Subitem8', 10: 'Subitem9',
+    11: 'Subitem10',
+};
+exports.paragraph_item_tags = paragraph_item_tags;
+
+let paragraph_item_title_tags = {
+    0: 'ParagraphNum',  1: 'ItemTitle',
+    2: 'Subitem1Title', 3: 'Subitem2Title', 4: 'Subitem3Title',
+    5: 'Subitem4Title', 6: 'Subitem5Title', 7: 'Subitem6Title',
+    8: 'Subitem7Title', 9: 'Subitem8Title', 10: 'Subitem9Title',
+    11: 'Subitem10Title',
+};
+exports.paragraph_item_title_tags = paragraph_item_title_tags;
+
+let paragraph_item_sentence_tags = {
+    0: 'ParagraphSentence',  1: 'ItemSentence',
+    2: 'Subitem1Sentence', 3: 'Subitem2Sentence', 4: 'Subitem3Sentence',
+    5: 'Subitem4Sentence', 6: 'Subitem5Sentence', 7: 'Subitem6Sentence',
+    8: 'Subitem7Sentence', 9: 'Subitem8Sentence', 10: 'Subitem9Sentence',
+    11: 'Subitem10Sentence',
+};
+exports.paragraph_item_sentence_tags = paragraph_item_sentence_tags;
+
+
+
+
+
+let list_tags = {
+    0: 'List', 1: 'Sublist1', 2: 'Sublist2',  3: 'Sublist3',
+};
+exports.list_tags = list_tags;
+
+
+
+
+function get_lawtype(text) {
+    if(text.match(/^法律/)) return "Act";
+    else if(text.match(/^政令/)) return "CabinetOrder";
+    else if(text.match(/^勅令/)) return "ImperialOrder";
+    else if(text.match(/^^\S*[^政勅]令/)) return "MinisterialOrdinance";
+    else if(text.match(/^\S*規則/)) return "Rule";
+    else return null;
+}
+exports.get_lawtype = get_lawtype;
+
+let eras = {
+    '明治': 'Meiji', '大正': 'Taisho',
+    '昭和': 'Showa', '平成': 'Heisei',
+};
+exports.eras = eras;
+
+
+let article_group_type_chars = "編章節款目";
+exports.article_group_type_chars = article_group_type_chars;
+
+let article_group_type = {
+    '編': 'Part', '章': 'Chapter', '節': 'Section',
+    '款': 'Subsection', '目': 'Division',
+    '条': 'Article', '則': 'SupplProvision',
+};
+exports.article_group_type = article_group_type;
+
+let article_group_title_tag = {
+    '編': 'PartTitle', '章': 'ChapterTitle', '節': 'SectionTitle',
+    '款': 'SubsectionTitle', '目': 'DivisionTitle', '条': 'ArticleTitle',
+    '則': 'SupplProvisionLabel'
+};
+exports.article_group_title_tag = article_group_title_tag;
+
+let re_kanji_num = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
+exports.re_kanji_num = re_kanji_num;
+
+function parse_kanji_num(text) {
+    let m = text.match(re_kanji_num);
+    if(m) {
+        let d1000 = m[1] ? kanji_digits[m[2]] || 1 : 0;
+        let d100 = m[3] ? kanji_digits[m[4]] || 1 : 0;
+        let d10 = m[5] ? kanji_digits[m[6]] || 1 : 0;
+        let d1 = kanji_digits[m[7]] || 0;
+        return "" + (d1000 * 1000 + d100 * 100 + d10 * 10 + d1);
+    }
+    return null;
+}
+exports.parse_kanji_num = parse_kanji_num;
+
+let kanji_digits = {
+    '〇': 0, '一': 1, '二': 2, '三': 3, '四': 4,
+    '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
+};
+exports.kanji_digits = kanji_digits;
+
+let re_named_num = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
+exports.re_named_num = re_named_num;
+let iroha_chars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
+exports.iroha_chars = iroha_chars;
+let re_iroha_char = /[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]/;
+exports.re_iroha_char = re_iroha_char;
+let re_item_num = /^\D*(\d+)\D*$/;
+exports.re_item_num = re_item_num;
+
+function parse_roman_num(text) {
+    let num = 0;
+    for(let i = 0; i < text.length; i++) {
+        let char = text[i];
+        let next_char = text[i + 1] || "";
+        if(char.match(/[iIｉＩ]/)) {
+            if (next_char.match(/[xXｘＸ]/)) num -= 1;
+            else num += 1;
+        }
+        if(char.match(/[xXｘＸ]/)) {
+            num += 10;
+        }
+    }
+    return num;
+}
+exports.parse_roman_num = parse_roman_num;
+
+let re_wide_digits = [
+    [/０/g, '0'], [/１/g, '1'], [/２/g, '2'], [/３/g, '3'], [/４/g, '4'],
+    [/５/g, '5'], [/６/g, '6'], [/７/g, '7'], [/８/g, '8'], [/９/g, '9'],
+];
+exports.re_wide_digits = re_wide_digits;
+
+function replace_wide_num(text) {
+    let ret = text;
+
+    for(let i = 0; i < re_wide_digits.length; i++) {
+        let [re_wide, narrow]  = re_wide_digits[i];
+        ret = ret.replace(re_wide, narrow);
+    }
+    return ret;
+}
+exports.replace_wide_num = replace_wide_num;
+
+function parse_named_num(text) {
+    let nums_group = [];
+
+    let subtexts = text
+        .split(/\s+/)[0]
+        .replace("及び", "、")
+        .replace("から", "、")
+        .replace("まで", "")
+        .replace("～", "、")
+        .replace("・", "、")
+        .split("、");
+
+    for(let i = 0; i < subtexts.length; i++) {
+        let subtext = subtexts[i];
+
+        let m = subtext.match(re_named_num);
+        if(m) {
+            let nums = [parse_kanji_num(m[2])];
+            if(m[3]) {
+                let bs = m[3].split(/[のノ]/g);
+                for(let j = 0; j < bs.length; j++) {
+                    if(!bs[j]) continue;
+                    nums.push(parse_kanji_num(bs[j]));
+                }
+            }
+            nums_group.push(nums.join('_'));
+            continue;
+        }
+
+        m = subtext.match(re_iroha_char);
+        if(m) {
+            nums_group.push(iroha_chars.indexOf(m[0]) + 1);
+            continue;
+        }
+
+        subtext = replace_wide_num(subtext);
+        m = subtext.match(re_item_num);
+        if(m) {
+            nums_group.push(m[1]);
+            continue;
+        }
+
+        let roman_num = parse_roman_num(subtext);
+        if(roman_num !== 0) {
+            nums_group.push(roman_num);
+        }
+    }
+
+    return nums_group.join(':');
+}
+exports.parse_named_num = parse_named_num;

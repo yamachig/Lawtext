@@ -5,182 +5,10 @@
     let __Parentheses = util.__Parentheses;
 
     let xml_tag_stack = [];
-
     let indent_memo = options.indent_memo;
-
     let indent_depth = 0;
-
     let base_indent_stack = [];
-
-    let paragraph_item_tags = {
-        0: 'Paragraph', 1: 'Item',
-        2: 'Subitem1',  3: 'Subitem2',  4: 'Subitem3',
-        5: 'Subitem4',  6: 'Subitem5',  7: 'Subitem6',
-        8: 'Subitem7',  9: 'Subitem8', 10: 'Subitem9',
-        11: 'Subitem10',
-    };
-    let paragraph_item_title_tags = {
-        0: 'ParagraphNum',  1: 'ItemTitle',
-        2: 'Subitem1Title', 3: 'Subitem2Title', 4: 'Subitem3Title',
-        5: 'Subitem4Title', 6: 'Subitem5Title', 7: 'Subitem6Title',
-        8: 'Subitem7Title', 9: 'Subitem8Title', 10: 'Subitem9Title',
-        11: 'Subitem10Title',
-    };
-    let paragraph_item_sentence_tags = {
-        0: 'ParagraphSentence',  1: 'ItemSentence',
-        2: 'Subitem1Sentence', 3: 'Subitem2Sentence', 4: 'Subitem3Sentence',
-        5: 'Subitem4Sentence', 6: 'Subitem5Sentence', 7: 'Subitem6Sentence',
-        8: 'Subitem7Sentence', 9: 'Subitem8Sentence', 10: 'Subitem9Sentence',
-        11: 'Subitem10Sentence',
-    };
-
-
-
-
     let list_depth = 0;
-
-    let list_tags = {
-        0: 'List', 1: 'Sublist1', 2: 'Sublist2',  3: 'Sublist3',
-    };
-
-
-
-
-
-    let article_group_type_chars = "編章節款目";
-
-    let article_group_type = {
-        '編': 'Part', '章': 'Chapter', '節': 'Section',
-        '款': 'Subsection', '目': 'Division',
-        '条': 'Article', '則': 'SupplProvision',
-    };
-
-    let article_group_title_tag = {
-        '編': 'PartTitle', '章': 'ChapterTitle', '節': 'SectionTitle',
-        '款': 'SubsectionTitle', '目': 'DivisionTitle', '条': 'ArticleTitle',
-        '則': 'SupplProvisionLabel'
-    };
-
-    let re_kanji_num = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
-
-    function parse_kanji_num(text) {
-        let m = text.match(re_kanji_num);
-        if(m) {
-            let d1000 = m[1] ? kanji_digits[m[2]] || 1 : 0;
-            let d100 = m[3] ? kanji_digits[m[4]] || 1 : 0;
-            let d10 = m[5] ? kanji_digits[m[6]] || 1 : 0;
-            let d1 = kanji_digits[m[7]] || 0;
-            return "" + (d1000 * 1000 + d100 * 100 + d10 * 10 + d1);
-        }
-        return null;
-    }
-
-    function get_lawtype(text) {
-        if(text.match(/^法律/)) return "Act";
-        else if(text.match(/^政令/)) return "CabinetOrder";
-        else if(text.match(/^勅令/)) return "ImperialOrder";
-        else if(text.match(/^^\S*[^政勅]令/)) return "MinisterialOrdinance";
-        else if(text.match(/^\S*規則/)) return "Rule";
-        else return null;
-    }
-
-    let kanji_digits = {
-        '〇': 0, '一': 1, '二': 2, '三': 3, '四': 4,
-        '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
-    };
-
-    let eras = {
-        '明治': 'Meiji', '大正': 'Taisho',
-        '昭和': 'Showa', '平成': 'Heisei',
-    };
-
-    let re_named_num = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
-    let iroha_chars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
-    let re_iroha_char = /[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]/;
-    let re_item_num = /^\D*(\d+)\D*$/;
-
-    function parse_roman_num(text) {
-        let num = 0;
-        for(let i = 0; i < text.length; i++) {
-            let char = text[i];
-            let next_char = text[i + 1] || "";
-            if(char.match(/[iIｉＩ]/)) {
-                if (next_char.match(/[xXｘＸ]/)) num -= 1;
-                else num += 1;
-            }
-            if(char.match(/[xXｘＸ]/)) {
-                num += 10;
-            }
-        }
-        return num;
-    }
-
-    let re_wide_digits = [
-        [/０/g, '0'], [/１/g, '1'], [/２/g, '2'], [/３/g, '3'], [/４/g, '4'],
-        [/５/g, '5'], [/６/g, '6'], [/７/g, '7'], [/８/g, '8'], [/９/g, '9'],
-    ];
-
-    function replace_wide_num(text) {
-        let ret = text;
-
-        for(let i = 0; i < re_wide_digits.length; i++) {
-            let [re_wide, narrow]  = re_wide_digits[i];
-            ret = ret.replace(re_wide, narrow);
-        }
-        return ret;
-    }
-
-    function parse_named_num(text) {
-        let nums_group = [];
-
-        let subtexts = text
-            .split(/\s+/)[0]
-            .replace("及び", "、")
-            .replace("から", "、")
-            .replace("まで", "")
-            .replace("～", "、")
-            .replace("・", "、")
-            .split("、");
-
-        for(let i = 0; i < subtexts.length; i++) {
-            let subtext = subtexts[i];
-
-            let m = subtext.match(re_named_num);
-            if(m) {
-                let nums = [parse_kanji_num(m[2])];
-                if(m[3]) {
-                    let bs = m[3].split(/[のノ]/g);
-                    for(let j = 0; j < bs.length; j++) {
-                        if(!bs[j]) continue;
-                        nums.push(parse_kanji_num(bs[j]));
-                    }
-                }
-                nums_group.push(nums.join('_'));
-                continue;
-            }
-
-            m = subtext.match(re_iroha_char);
-            if(m) {
-                nums_group.push(iroha_chars.indexOf(m[0]) + 1);
-                continue;
-            }
-
-            subtext = replace_wide_num(subtext);
-            m = subtext.match(re_item_num);
-            if(m) {
-                nums_group.push(m[1]);
-                continue;
-            }
-
-            let roman_num = parse_roman_num(subtext);
-            if(roman_num !== 0) {
-                nums_group.push(roman_num);
-            }
-        }
-
-        return nums_group.join(':');
-    }
-
     let parentheses_depth = 0;
 }
 
@@ -224,16 +52,16 @@ law =
                 if(m) {
                     let [era, year, law_type, num] = m.slice(1);
 
-                    let era_val = eras[era];
+                    let era_val = util.eras[era];
                     if(era_val) law.attr.Era = era_val;
 
-                    let year_val = parse_kanji_num(year);
+                    let year_val = util.parse_kanji_num(year);
                     if(year_val !== null) law.attr.Year = year_val;
 
-                    let law_type_val = get_lawtype(law_type);
+                    let law_type_val = util.get_lawtype(law_type);
                     if(law_type_val !== null) law.attr.LawType = law_type_val;
 
-                    let num_val = parse_kanji_num(num);
+                    let num_val = util.parse_kanji_num(num);
                     if(num_val !== null) law.attr.Num = num_val;
                 }
             }
@@ -324,18 +152,18 @@ toc_item "toc_item" =
     // &(here:$(NEXTINLINE) &{ console.error(`here1.2 line ${location().start.line}: ${here}`); return true; })
     {
         let type_char = title.text.match(/[編章節款目章則]/)[0];
-        let toc_item = new EL("TOC" + article_group_type[type_char]);
+        let toc_item = new EL("TOC" + util.article_group_type[type_char]);
 
         if(title.text.match(/[編章節款目章]/)) {
             toc_item.attr.Delete = 'false';
-            let num = parse_named_num(title.text);
+            let num = util.parse_named_num(title.text);
             if(num) {
                 toc_item.attr.Num = num;
             }
         }
 
         toc_item.append(new EL(
-            article_group_title_tag[type_char],
+            util.article_group_title_tag[type_char],
             {},
             title.content,
         ));
@@ -416,8 +244,8 @@ article_group "article_group" =
         /
         (
             &(next_title:article_group_title &{
-                let current_level = article_group_type_chars.indexOf(article_group_title.type_char);
-                let next_level = article_group_type_chars.indexOf(next_title.type_char);
+                let current_level = util.article_group_type_chars.indexOf(article_group_title.type_char);
+                let next_level = util.article_group_type_chars.indexOf(next_title.type_char);
                 return current_level < next_level;
             })
             article_group:article_group
@@ -428,17 +256,17 @@ article_group "article_group" =
     )+
     {
         let article_group = new EL(
-            article_group_type[article_group_title.type_char],
+            util.article_group_type[article_group_title.type_char],
             {Delete: "false", Hide: "false"},
         );
 
         article_group.append(new EL(
-            article_group_type[article_group_title.type_char] + "Title",
+            util.article_group_type[article_group_title.type_char] + "Title",
             {},
             article_group_title.content,
         ))
 
-        let num = parse_named_num(article_group_title.num);
+        let num = util.parse_named_num(article_group_title.num);
         if(num) {
             article_group.attr.Num = num;
         }
@@ -516,7 +344,7 @@ article "article" =
         }
         article.append(new EL("ArticleTitle", {}, [article_title]));
 
-        let num = parse_named_num(article_title);
+        let num = util.parse_named_num(article_title);
         if(num) {
             article.attr.Num = num;
         }
@@ -583,7 +411,7 @@ paragraph_item "paragraph_item" =
         }
 
         let paragraph_item = new EL(
-            paragraph_item_tags[indent],
+            util.paragraph_item_tags[indent],
             {Hide: "false"},
         );
         if(indent === 0) {
@@ -595,14 +423,14 @@ paragraph_item "paragraph_item" =
             paragraph_item.append(new EL("ParagraphCaption", {}, [paragraph_caption]));
         }
 
-        paragraph_item.append(new EL(paragraph_item_title_tags[indent], {}, [paragraph_item_title]));
+        paragraph_item.append(new EL(util.paragraph_item_title_tags[indent], {}, [paragraph_item_title]));
 
-        let num = parse_named_num(paragraph_item_title);
+        let num = util.parse_named_num(paragraph_item_title);
         if(num) {
             paragraph_item.attr.Num = num;
         }
 
-        paragraph_item.append(new EL(paragraph_item_sentence_tags[indent], {}, inline_contents));
+        paragraph_item.append(new EL(util.paragraph_item_sentence_tags[indent], {}, inline_contents));
 
         paragraph_item.extend(lists || []);
         paragraph_item.extend(children || []);
@@ -642,7 +470,7 @@ no_name_paragraph_item "no_name_paragraph_item" =
         }
 
         let paragraph_item = new EL(
-            paragraph_item_tags[indent],
+            util.paragraph_item_tags[indent],
             {Hide: "false", Num: "1"},
         );
         if(indent === 0) {
@@ -650,8 +478,8 @@ no_name_paragraph_item "no_name_paragraph_item" =
         } else {
             paragraph_item.attr.Delete = "false";
         }
-        paragraph_item.append(new EL(paragraph_item_title_tags[indent]));
-        paragraph_item.append(new EL(paragraph_item_sentence_tags[indent], {}, inline_contents));
+        paragraph_item.append(new EL(util.paragraph_item_title_tags[indent]));
+        paragraph_item.append(new EL(util.paragraph_item_sentence_tags[indent], {}, inline_contents));
         paragraph_item.extend(lists || []);
         paragraph_item.extend(children || []);
 
@@ -683,8 +511,8 @@ list "list" =
         &("" &{ list_depth--; return false; }) "DUMMY"
     )?
     {
-        let list = new EL(list_tags[list_depth]);
-        let list_sentence = new EL(list_tags[list_depth] + "Sentence");
+        let list = new EL(util.list_tags[list_depth]);
+        let list_sentence = new EL(util.list_tags[list_depth] + "Sentence");
         list.append(list_sentence);
 
         list_sentence.extend(columns_or_sentences);
