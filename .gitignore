@@ -18,4 +18,7 @@ package-lock.json
 cache.sqlite
 MANIFEST
 dist
-js/dest/*
+js/dist/*
+js/src/parser.ts
+js/src/templates.js
+js/src/lawnum_table.ts

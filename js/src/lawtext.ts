@@ -1,55 +1,51 @@
 "use strict";
 
-var parser = require("../dest/parser");
-var analyzer = require("./analyzer");
-var renderer = require("./renderer");
-var util = require("./util");
-var fs = require("fs");
-var argparse = require("argparse");
-
-exports.analyzer = analyzer;
-exports.util = util;
-exports.renderer = renderer;
+import * as parser from "./parser";
+import * as analyzer from "./analyzer";
+import * as renderer from "./renderer";
+import * as util from "./util";
+import * as fs from "fs";
+import * as argparse from "argparse";
 
 
 
-function lex(text) {
+function lex(text: string): [string, { [key: number]: number }, number] {
 
     let lines = text.split(/\r?\n/);
     let lines_count = lines.length;
-    let replaced_lines = [];
+    let replaced_lines: Array<string> = [];
     let indent_depth = 0;
-    let indent_memo = {};
+    let indent_memo: { [key: number]: number } = {};
     let re_indent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章]|[附付]\s+則|別表))/;
     let re_force_dedent_parentheses = /^(?:  |　|\t)[(（][^)）]*[)）][ 　\t]*$/
     let re_indent_in_toc = /^(?:  |　|\t)/;
     let in_toc = false;
 
-    for(let i = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
 
-        if(line.match(/^\s*$/)) {
+        if (line.match(/^\s*$/)) {
             in_toc = false;
             replaced_lines.push(line);
             continue;
         }
 
-        if(line.match(/^\S*目次$/)) {
+        if (line.match(/^\S*目次$/)) {
             in_toc = true;
         }
 
         let force_dedent = false;
-        if(line.match(re_force_dedent_parentheses)) {
+        if (line.match(re_force_dedent_parentheses)) {
             force_dedent = true;
         }
 
-        let indents = [];
+        let indents: Array<string> = [];
         let pos = 0;
 
-        if(!force_dedent) {
-            while(true) {
+        if (!force_dedent) {
+            while (true) {
                 let match = line.slice(pos).match(in_toc ? re_indent_in_toc : re_indent);
-                if(!match) break;
+                if (!match) break;
                 let indent = match[0];
                 pos += indent.length;
                 indents.push(indent);
@@ -57,13 +53,13 @@ function lex(text) {
         }
 
         let replaced_line = ""
-        if(indent_depth <= indents.length) {
-            for(let j = indent_depth; j < indents.length; j++) {
+        if (indent_depth <= indents.length) {
+            for (let j = indent_depth; j < indents.length; j++) {
                 let indent = indents[j];
                 replaced_line += `<INDENT str="${indent}">`;
             }
         } else {
-            for(let j = 0; j < (indent_depth - indents.length); j++) {
+            for (let j = 0; j < (indent_depth - indents.length); j++) {
                 replaced_line += `<DEDENT>`;
             }
         }
@@ -74,9 +70,9 @@ function lex(text) {
         indent_depth = indents.length;
         indent_memo[i + 1] = indent_depth
     }
-    if(0 < indent_depth) {
+    if (0 < indent_depth) {
         let replaced_line = ""
-        for(let j = 0; j < indent_depth; j++) {
+        for (let j = 0; j < indent_depth; j++) {
             replaced_line += `<DEDENT>`;
         }
         replaced_lines.push(replaced_line);
@@ -91,7 +87,7 @@ function lex(text) {
 
 
 
-function parse(text, options) {
+export function parse(text: string, options?: {}): util.EL {
 
     // console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
     // let t0 = (new Date()).getTime();
@@ -105,19 +101,18 @@ function parse(text, options) {
         // let t1 = (new Date()).getTime();
         // console.error(`/////  parse end  /////`);
         // console.error(`( ${Math.round((t1 - t0) / lines_count * 1000)} μs/line  =  ${t1 - t0} ms / ${lines_count} lines )`);
-    } catch(e) {
+    } catch (e) {
         console.error("##### parse error #####");
-        if(e.location) {
+        if (e.location) {
             console.error(`${e.name} at line ${e.location.start.line} column ${e.location.start.column}: ${e.message}`);
             // console.error(`${JSON.stringify(e, null, 4)}`);
         }
-        throw(e);
+        throw (e);
     }
     return parsed;
 }
-exports.parse = parse;
 
-function analyze(law) {
+export function analyze(law: util.EL) {
 
     // console.error("\\\\\\\\\\ analyze start \\\\\\\\\\");
     // let t0 = (new Date()).getTime();
@@ -127,7 +122,6 @@ function analyze(law) {
     // console.error(`(${t1 - t0} ms total)`);
     return analysis;
 }
-exports.analyze = analyze;
 
 
 
@@ -145,121 +139,123 @@ function main(args) {
 
     // console.error("[lawtext.main]", args);
 
-    if(!intype && infile) {
-        if(infile.match(/\.xml$/)) {
+    if (!intype && infile) {
+        if (infile.match(/\.xml$/)) {
             intype = "xml";
-        } else if(infile.match(/\.law\.txt$/)) {
+        } else if (infile.match(/\.law\.txt$/)) {
             intype = "lawtext";
-        } else if(infile.match(/\.json$/)) {
+        } else if (infile.match(/\.json$/)) {
             intype = "json";
         } else {
             intype = "lawtext";
         }
     }
 
-    if(!outtype && outfile) {
-        if(outfile.match(/\.xml$/)) {
+    if (!outtype && outfile) {
+        if (outfile.match(/\.xml$/)) {
             outtype = "xml";
-        } else if(outfile.match(/\.json$/)) {
+        } else if (outfile.match(/\.json$/)) {
             outtype = "json";
-        } else if(outfile.match(/\.html$/)) {
+        } else if (outfile.match(/\.html$/)) {
             outtype = "html";
-        } else if(outfile.match(/\.law\.txt$/)) {
+        } else if (outfile.match(/\.law\.txt$/)) {
             outtype = "lawtext";
-        } else if(outfile.match(/\.docx$/)) {
+        } else if (outfile.match(/\.docx$/)) {
             outtype = "docx";
-        } else if(intype === "xml") {
+        } else if (intype === "xml") {
             outtype = "lawtext";
-        } else if(intype === "lawtext") {
+        } else if (intype === "lawtext") {
             outtype = "xml";
         } else {
             outtype = "xml";
         }
     }
 
-    let law = null;
-    let analysis = null;
+    let law: util.EL | null = null;
+    let analysis: {} | null = null;
 
     new Promise((resolve, reject) => {
 
-        if(infile) {
+        if (infile) {
             let intext = fs.readFileSync(infile, "utf-8");
             resolve(intext);
-        } else{
+        } else {
             var intext = '';
             process.stdin.resume();
             process.stdin.setEncoding('utf-8');
-            process.stdin.on('data', function(chunk) {
+            process.stdin.on('data', function (chunk) {
                 intext += chunk;
             });
-            process.stdin.on('end', function() {
+            process.stdin.on('end', function () {
                 resolve(intext);
             });
         }
 
     })
-    .then((intext) => {
+        .then((intext: string) => {
 
-        if(intype === "xml") {
-            law = util.xml_to_json(intext);
-            if(!noanalyze) {
-                analyzer.stdxml_to_ext(law);
-            }
-        } else if(intype === "json") {
-            let raw_law = JSON.parse(intext);
-            try {
-                law = util.load_el(raw_law);
-            } catch(e) {
-                console.error("[loading json at main]", e);
-                throw e;
-            }
-        } else if(intype === "lawtext") {
-            try {
-                law = parse(intext);
-            } catch(e) {
-                console.error("[parsing lawtext at main]", e);
-                throw e;
-            }
-            if(noanalyze) {
-                law = util.load_el(law.json());
-            }
-        }
-
-        if(!noanalyze) {
-            analysis = analyzer.analyze(law);
-        }
-
-        if(outtype === "docx") {
-            renderer.render_docx_async(law.json())
-            .then(u8 => {
-                if(outfile) {
-                    fs.writeFileSync(outfile, u8);
-                } else{
-                    process.stdout.write(u8);
+            if (intype === "xml") {
+                law = util.xml_to_json(intext);
+                if (!noanalyze) {
+                    analyzer.stdxml_to_ext(law);
                 }
-            });
-        } else {
-            let outtext = null;
-            if(outtype === "lawtext") {
-                outtext = renderer.render_lawtext(law);
-            } else if(outtype === "xml") {
-                outtext = renderer.render_xml(law, {with_control_el: with_control_el});
-            } else if(outtype === "json") {
-                outtext = JSON.stringify(law.json(with_control_el));
-            } else if(outtype === "html") {
-                outtext = renderer.render_html(law);
-            } else if(outtype === "htmlfragment") {
-                outtext = renderer.render_htmlfragment(law);
+            } else if (intype === "json") {
+                let raw_law = JSON.parse(intext);
+                try {
+                    law = <util.EL>util.load_el(raw_law);
+                } catch (e) {
+                    console.error("[loading json at main]", e);
+                    throw e;
+                }
+            } else if (intype === "lawtext") {
+                try {
+                    law = parse(intext);
+                } catch (e) {
+                    console.error("[parsing lawtext at main]", e);
+                    throw e;
+                }
+                if (noanalyze) {
+                    law = <util.EL>util.load_el(law.json());
+                }
             }
 
-            if(outfile) {
-                fs.writeFileSync(outfile, outtext, "utf-8");
+            if (law === null) return;
+
+            if (!noanalyze) {
+                analysis = analyzer.analyze(law);
+            }
+
+            if (outtype === "docx") {
+                renderer.render_docx_async(law.json())
+                    .then(u8 => {
+                        if (outfile) {
+                            fs.writeFileSync(outfile, u8);
+                        } else {
+                            process.stdout.write(<Buffer>u8);
+                        }
+                    });
             } else {
-                console.log(outtext);
-            }
-        }
+                let outtext = "";
+                if (outtype === "lawtext") {
+                    outtext = renderer.render_lawtext(law);
+                } else if (outtype === "xml") {
+                    outtext = renderer.render_xml(law, { with_control_el: with_control_el });
+                } else if (outtype === "json") {
+                    outtext = JSON.stringify(law.json(with_control_el));
+                } else if (outtype === "html") {
+                    outtext = renderer.render_html(law);
+                } else if (outtype === "htmlfragment") {
+                    outtext = renderer.render_htmlfragment(law);
+                }
 
-    });
+                if (outfile) {
+                    fs.writeFileSync(outfile, outtext, "utf-8");
+                } else {
+                    console.log(outtext);
+                }
+            }
+
+        });
 }
 exports.main = main;
 
@@ -269,14 +265,14 @@ if (typeof require !== "undefined" && require.main === module) {
     });
 
     let argparser = new argparse.ArgumentParser();
-    argparser.addArgument("infile", { nargs: "?"});
+    argparser.addArgument(["infile"], { nargs: "?" });
     argparser.addArgument(
         ["-it", "--intype"],
         { choices: ["lawtext", "xml", "json"] },
     );
     argparser.addArgument(
         ["-na", "--noanalyze"],
-        { action: "storeTrue"},
+        { action: "storeTrue" },
     );
     argparser.addArgument(["-o", "-of", "--outfile"]);
     argparser.addArgument(
@@ -290,12 +286,12 @@ if (typeof require !== "undefined" && require.main === module) {
     );
     argparser.addArgument(
         ["-wc", "--with-control-el"],
-        { action: "storeTrue"},
+        { action: "storeTrue" },
     );
 
     let args = argparser.parseArgs();
 
-    if(!args.intype && !args.infile) {
+    if (!args.intype && !args.infile) {
         argparser.error("INTYPE must be specified when with stdin");
     }
 

@@ -20,7 +20,7 @@ if __name__ == '__main__':
     p = subprocess.run(
         [
             'node',
-            str(JS_PATH / 'lib/lawtext.js'),
+            str(JS_PATH / 'dist/lawtext.js'),
         ] + sys.argv[1:],
         shell=True,
         # stderr=subprocess.DEVNULL,

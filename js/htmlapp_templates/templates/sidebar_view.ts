@@ -1,4 +1,4 @@
-exports.template = `
+export const template = `
 
 <style style="display: none;">
 .lawtext-sidebar-view {

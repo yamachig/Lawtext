@@ -36,16 +36,12 @@ def main():
         data[key] = value
         table += value
 
-    (Path(__file__).resolve().parent / 'dest/lawnum_table.js').write_text(f'''\
+    (Path(__file__).resolve().parent / 'dest/lawnum_table.ts').write_text(f'''\
 "use strict";
 
-var LAWNUM_TABLE = {{}};
+export const LAWNUM_TABLE: { [key: string]: number } = {};
 
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {{
-    exports.LAWNUM_TABLE = LAWNUM_TABLE;
-}}
-
-var LAWNUM_TABLE_RAW = "{table}";
+const LAWNUM_TABLE_RAW =  "{table}";
 
 for(let i = 0; i < LAWNUM_TABLE_RAW.length; i += 9) {{
     let key = parseInt(LAWNUM_TABLE_RAW.slice(i, i + 7), 16);

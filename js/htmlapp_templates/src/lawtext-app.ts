@@ -1,6 +1,17 @@
 'use strict';
 
-var lawtext = require("../../lib/lawtext");
+import * as lawtext from "../../src/lawtext";
+import * as $ from "jquery";
+import * as Backbone from "backbone";
+import * as _ from "underscore";
+import { EL, JsonEL } from "../../src/util";
+import * as util from "../../src/util";
+import * as analyzer from "../../src/analyzer";
+import * as renderer from "../../src/renderer";
+import { saveAs } from "file-saver";
+import { isString } from "util";
+import * as JSZip from "jszip";
+import * as bootstrap from "bootstrap";
 
 function em(input) {
     var emSize = parseFloat($("body").css("font-size"));
@@ -8,51 +19,52 @@ function em(input) {
 }
 
 class LawNameItem {
-    constructor(law_name, law_no, promulgation_date) {
+    law_name: string
+    law_no: string
+    promulgation_date: string
+    constructor(law_name: string, law_no: string, promulgation_date: string) {
         this.law_name = law_name;
         this.law_no = law_no;
         this.promulgation_date = promulgation_date;
     }
 }
 
-var law_name_data = [];
-
-function annotate(el, m_text_default) {
-    if(!m_text_default) {
+function annotate(el: JsonEL | string, m_text_default: (el: JsonEL) => string): string {
+    if (!m_text_default) {
         throw true;
     }
-    if(typeof el === "string" || el instanceof String) {
+    if (isString(el)) {
         return el;
     }
 
-    if(el.tag[0] === "_") {
+    if (el.tag[0] === "_") {
         let child_str = el.children.map(child => annotate(child, m_text_default)).join("");
 
-        if(el.tag === "____Declaration") {
+        if (el.tag === "____Declaration") {
             return `<span class="lawtext-analyzed lawtext-analyzed-declaration" lawtext_declaration_index="${el.attr.declaration_index}">${child_str}</span>`
 
-        } else if(el.tag === "____VarRef") {
+        } else if (el.tag === "____VarRef") {
             return `<span class="lawtext-analyzed lawtext-analyzed-varref" lawtext_declaration_index="${el.attr.ref_declaration_index}">${child_str}</span>`
 
-        } else if(el.tag === "____LawNum") {
+        } else if (el.tag === "____LawNum") {
             return `<a class="lawtext-analyzed lawtext-analyzed-lawnum" href="#${child_str}" target="_blank">${child_str}</a>`
 
-        } else if(el.tag === "__Parentheses") {
+        } else if (el.tag === "__Parentheses") {
             return `<span class="lawtext-analyzed lawtext-analyzed-parentheses" lawtext_parentheses_type="${el.attr.type}" data-lawtext-parentheses-depth="${el.attr.depth}">${child_str}</span>`
 
-        } else if(el.tag === "__PStart") {
+        } else if (el.tag === "__PStart") {
             return `<span class="lawtext-analyzed lawtext-analyzed-start-parenthesis" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
 
-        } else if(el.tag === "__PContent") {
+        } else if (el.tag === "__PContent") {
             return `<span class="lawtext-analyzed lawtext-analyzed-parentheses-content" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
 
-        } else if(el.tag === "__PEnd") {
+        } else if (el.tag === "__PEnd") {
             return `<span class="lawtext-analyzed lawtext-analyzed-end-parenthesis" lawtext_parentheses_type="${el.attr.type}">${child_str}</span>`
 
-        } else if(el.tag === "__MismatchStartParenthesis") {
+        } else if (el.tag === "__MismatchStartParenthesis") {
             return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-start-parenthesis">${child_str}</span>`
 
-        } else if(el.tag === "__MismatchEndParenthesis") {
+        } else if (el.tag === "__MismatchEndParenthesis") {
             return `<span class="lawtext-analyzed lawtext-analyzed-mismatch-end-parenthesis">${child_str}</span>`
 
         } else {
@@ -63,29 +75,29 @@ function annotate(el, m_text_default) {
     }
 }
 
-function get_law_range(orig_law, range) {
+function get_law_range(orig_law: EL, range) {
     let s_pos = range.start;
     let e_pos = range.end;
 
-    let law = new lawtext.util.EL(
+    let law = new EL(
         orig_law.tag,
         orig_law.attr,
     );
 
-    let orig_law_num = orig_law.children.find((el) => el.tag == "LawNum");
-    if(orig_law_num) {
+    let orig_law_num = <EL>orig_law.children.find((el) => !isString(el) && el.tag === "LawNum");
+    if (orig_law_num) {
         law.append(orig_law_num);
     }
 
-    let orig_law_body = orig_law.children.find((el) => el.tag == "LawBody");
-    let law_body = new lawtext.util.EL(
+    let orig_law_body = <EL>orig_law.children.find((el) => !isString(el) && el.tag === "LawBody");
+    let law_body = new EL(
         orig_law_body.tag,
         orig_law_body.attr,
     );
     law.append(law_body);
 
-    let orig_law_title = orig_law_body.children.find((el) => el.tag == "LawTitle");
-    if(orig_law_title) {
+    let orig_law_title = orig_law_body.children.find((el) => !isString(el) && el.tag === "LawTitle");
+    if (orig_law_title) {
         law_body.append(orig_law_title);
     }
 
@@ -94,17 +106,18 @@ function get_law_range(orig_law, range) {
     let in_item_range = false;
 
     let find_els = (el, tag) => {
-        if(!(el instanceof lawtext.util.EL)) return [];
-        if(el.tag === tag) return [el];
+        if (!(el instanceof EL)) return [];
+        if (el.tag === tag) return [el];
         let ret = [];
-        for(let child of el.children) {
+        for (let child of el.children) {
             ret = ret.concat(find_els(child, tag));
         }
         return ret;
     }
 
-    for(let toplevel of orig_law_body.children) {
-        if(
+    for (let toplevel of orig_law_body.children) {
+        if (isString(toplevel)) continue;
+        if (
             !in_container_range &&
             toplevel.tag === s_pos.container_tag &&
             (
@@ -117,7 +130,7 @@ function get_law_range(orig_law, range) {
 
         let container_children = [];
 
-        if(
+        if (
             in_container_range &&
             e_pos.item_tag === "SupplProvisionLabel" &&
             toplevel.tag === e_pos.container_tag &&
@@ -129,14 +142,14 @@ function get_law_range(orig_law, range) {
             in_container_range = false;
         }
 
-        if(in_container_range) {
+        if (in_container_range) {
 
             let items = find_els(toplevel, "Article");
-            if(items.length === 0) items = find_els(toplevel, "Paragraph");
+            if (items.length === 0) items = find_els(toplevel, "Paragraph");
 
-            for(let item of items) {
+            for (let item of items) {
 
-                if(
+                if (
                     !in_item_range &&
                     (
                         s_pos.item_tag === "SupplProvisionLabel" ||
@@ -152,11 +165,11 @@ function get_law_range(orig_law, range) {
                     in_item_range = true;
                 }
 
-                if(in_item_range) {
+                if (in_item_range) {
                     container_children.push(item);
                 }
 
-                if(
+                if (
                     in_item_range &&
                     item.tag === e_pos.item_tag &&
                     (
@@ -169,17 +182,17 @@ function get_law_range(orig_law, range) {
             }
         }
 
-        if(container_children.length > 0) {
-            let suppl_provision_label = toplevel.children.find((el) => el.tag === "SupplProvisionLabel");
-            if(suppl_provision_label) container_children.unshift(suppl_provision_label);
-            law_body.append(new lawtext.util.EL(
+        if (container_children.length > 0) {
+            let suppl_provision_label = toplevel.children.find((el) => !isString(el) && el.tag === "SupplProvisionLabel");
+            if (suppl_provision_label) container_children.unshift(suppl_provision_label);
+            law_body.append(new EL(
                 toplevel.tag,
                 toplevel.attr,
                 container_children,
             ));
         }
 
-        if(
+        if (
             in_container_range &&
             toplevel.tag === e_pos.container_tag &&
             (
@@ -210,7 +223,9 @@ function get_law_range(orig_law, range) {
 
 class Data extends Backbone.Model {
 
-    get defaults() {
+    open_file_input: JQuery
+
+    defaults() {
         return {
             law: null,
             opening_file: false,
@@ -227,7 +242,7 @@ class Data extends Backbone.Model {
                 type: "file",
                 accept: "text/plain,application/xml",
             })
-            .css({display: "none"});
+            .css({ display: "none" });
         $("body").append(this.open_file_input);
         this.open_file_input.change(e => { this.open_file_input_change(e); });
 
@@ -241,17 +256,17 @@ class Data extends Backbone.Model {
     }
 
     open_file_input_change(evt) {
-        this.set({opening_file: true});
+        this.set({ opening_file: true });
 
         let file = evt.target.files[0];
-        if(file === null) return;
+        if (file === null) return;
         let reader = new FileReader();
         reader.onload = (e => {
             $(evt.target).val("");
             let div = $("<div>");
-            let text = e.target.result;
+            let text = e.target["result"];
             this.load_law_text(text, true);
-            this.set({law_search_key: null});
+            this.set({ law_search_key: null });
             this.trigger("file-loaded");
         });
         reader.readAsText(file);
@@ -264,34 +279,34 @@ class Data extends Backbone.Model {
     load_law_text(text, analyze_xml) {
         let div = $("<div>");
         let law = null;
-        if(/^(?:<\?xml|<Law)/.test(text.trim())) {
-            law = lawtext.util.xml_to_json(text);
-            if(analyze_xml) {
-                lawtext.analyzer.stdxml_to_ext(law);
+        if (/^(?:<\?xml|<Law)/.test(text.trim())) {
+            law = util.xml_to_json(text);
+            if (analyze_xml) {
+                analyzer.stdxml_to_ext(law);
             }
         } else {
             try {
-                law = lawtext.parse(text, {startRule: "start"});
-            } catch(err) {
+                law = lawtext.parse(text, { startRule: "start" });
+            } catch (err) {
                 let err_str = err.toString();
                 let pre = $("<pre>")
-                    .css({"white-space": "pre-wrap"})
-                    .css({"line-height": "1.2em"})
-                    .css({"padding": "1em 0"})
+                    .css({ "white-space": "pre-wrap" })
+                    .css({ "line-height": "1.2em" })
+                    .css({ "padding": "1em 0" })
                     .html(err_str);
-                    this.invoke_error("読み込んだLawtextにエラーがあります", pre[0]);
+                this.invoke_error("読み込んだLawtextにエラーがあります", pre[0]);
                 law = null;
             }
         }
-        if(law) {
-            this.set({opening_file: false, law: law});
+        if (law) {
+            this.set({ opening_file: false, law: law });
         } else {
-            this.set({opening_file: false});
+            this.set({ opening_file: false });
         }
     }
 
     search_law(law_search_key) {
-        this.set({opening_file: true});
+        this.set({ opening_file: true });
         setTimeout(() => {
             this.search_law_inner(law_search_key);
         }, 30);
@@ -300,14 +315,14 @@ class Data extends Backbone.Model {
     search_law_inner(law_search_key) {
         let load_law_num = lawnum => {
 
-            let law_data = localStorage ? localStorage.getItem(`law_for:${lawnum}`) : null;
-            if(law_data) {
-                law_data = JSON.parse(law_data);
+            let law_data_str = localStorage ? localStorage.getItem(`law_for:${lawnum}`) : null;
+            if (law_data_str) {
+                let law_data = JSON.parse(law_data_str);
                 let datetime = new Date(law_data.datetime);
                 let now = new Date();
                 let ms = now.getTime() - datetime.getTime();
                 let days = ms / (1000 * 60 * 60 * 24);
-                if(days < 1) {
+                if (days < 1) {
                     this.load_law_text(law_data.xml, true);
                     return;
                 }
@@ -316,49 +331,49 @@ class Data extends Backbone.Model {
             fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=${encodeURI(lawnum)}`, {
                 mode: "cors",
             })
-            .then(response => new Promise((resolve, reject) => {
-                response.text().then(text => resolve([response, text]));
-            }))
-            .then(([response, text]) => new Promise((resolve, reject) => {
-                if(response.ok && !/^(?:<\?xml|<Law)/.test(text.trim())) {
-                    JSZip.loadAsync(text, {base64: true})
-                    .then(zip => zip.file("body.xml").async("string"))
-                    .then(xml => resolve([response, xml]));
-                } else {
-                    resolve([response, text]);
-                }
-            }))
-            .then(([response, text]) => {
-                if(response.ok) {
-                    this.load_law_text(text, true);
-                    if(localStorage) {
-                        localStorage.setItem(
-                            `law_for:${lawnum}`,
-                            JSON.stringify({
-                                datetime: new Date().toISOString(),
-                                xml: text,
-                            }),
+                .then(response => new Promise((resolve, reject) => {
+                    response.text().then(text => resolve([response, text]));
+                }))
+                .then(([response, text]) => new Promise((resolve, reject) => {
+                    if (response.ok && !/^(?:<\?xml|<Law)/.test(text.trim())) {
+                        JSZip.loadAsync(text, { base64: true })
+                            .then(zip => zip.file("body.xml").async("text"))
+                            .then(xml => resolve([response, xml]));
+                    } else {
+                        resolve([response, text]);
+                    }
+                }))
+                .then(([response, text]) => {
+                    if (response.ok) {
+                        this.load_law_text(text, true);
+                        if (localStorage) {
+                            localStorage.setItem(
+                                `law_for:${lawnum}`,
+                                JSON.stringify({
+                                    datetime: new Date().toISOString(),
+                                    xml: text,
+                                }),
+                            );
+                        }
+                    } else {
+                        console.log(response);
+                        this.set({ opening_file: false });
+                        this.invoke_error(
+                            "法令の読み込み中にエラーが発生しました",
+                            text,
                         );
                     }
-                } else {
-                    console.log(response);
-                    this.set({opening_file: false});
-                    this.invoke_error(
-                        "法令の読み込み中にエラーが発生しました",
-                        text,
-                    );
-                }
-            });
+                });
         };
 
-        let law_num_data = localStorage ? localStorage.getItem(`law_num_for:${law_search_key}`) : null;
-        if(law_num_data) {
-            law_num_data = JSON.parse(law_num_data);
+        let law_num_data_str = localStorage ? localStorage.getItem(`law_num_for:${law_search_key}`) : null;
+        if (law_num_data_str) {
+            let law_num_data = JSON.parse(law_num_data_str);
             let datetime = new Date(law_num_data.datetime);
             let now = new Date();
             let ms = now.getTime() - datetime.getTime();
             let days = ms / (1000 * 60 * 60 * 24);
-            if(days < 1) {
+            if (days < 1) {
                 load_law_num(law_num_data.lawnum);
                 return;
             }
@@ -366,10 +381,10 @@ class Data extends Backbone.Model {
 
         let re_lawnum = /^(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[〇一二三四五六七八九―]+|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定)$/;
         let match = re_lawnum.exec(law_search_key);
-        if(match) {
+        if (match) {
             let lawnum = match[0];
             load_law_num(lawnum);
-            if(localStorage) {
+            if (localStorage) {
                 localStorage.setItem(
                     `law_num_for:${law_search_key}`,
                     JSON.stringify({
@@ -382,39 +397,39 @@ class Data extends Backbone.Model {
             fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=${encodeURI(law_search_key)}`, {
                 mode: "cors",
             })
-            .then(response => response.json())
-            .then(data => {
-                if(data.length) {
-                    let lawnum = _(data).sortBy(d => d[0].length)[0][1];
-                    load_law_num(lawnum);
-                    if(localStorage) {
-                        localStorage.setItem(
-                            "law_num_for:" + law_search_key,
-                            JSON.stringify({
-                                datetime: new Date().toISOString(),
-                                lawnum: lawnum,
-                            }),
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length) {
+                        let lawnum = _(data).sortBy(d => d[0].length)[0][1];
+                        load_law_num(lawnum);
+                        if (localStorage) {
+                            localStorage.setItem(
+                                "law_num_for:" + law_search_key,
+                                JSON.stringify({
+                                    datetime: new Date().toISOString(),
+                                    lawnum: lawnum,
+                                }),
+                            );
+                        }
+                        return;
+                    } else {
+                        this.invoke_error(
+                            "法令が見つかりません",
+                            `「${law_search_key}」を検索しましたが、見つかりませんでした。`,
                         );
                     }
-                    return;
-                } else {
-                    this.invoke_error(
-                        "法令が見つかりません",
-                        `「${law_search_key}」を検索しましたが、見つかりませんでした。`,
-                    );
-                }
-                this.set({opening_file: false});
-            });
+                    this.set({ opening_file: false });
+                });
         }
     }
 
     get_law_name() {
         let law = this.get("law");
-        if(law === null) return;
+        if (law === null) return;
 
-        let law_num = _(law.children).findWhere({tag: "LawNum"});
-        let law_body = _(law.children).findWhere({tag: "LawBody"});
-        let law_title = law_body && _(law_body.children).findWhere({tag: "LawTitle"});
+        let law_num = _(law.children).findWhere({ tag: "LawNum" });
+        let law_body = _(law.children).findWhere({ tag: "LawBody" });
+        let law_title = law_body && _(law_body.children).findWhere({ tag: "LawTitle" });
 
         let s_law_num = law_num ? law_num.text : "";
         let s_law_title = law_title ? law_title.text : "";
@@ -423,33 +438,33 @@ class Data extends Backbone.Model {
         return s_law_title + s_law_num;
     }
 
-    download_docx(range) {
+    download_docx(range?) {
         let law = this.get("law");
-        if(law === null) return;
+        if (law === null) return;
 
-        if(range) {
+        if (range) {
             law = get_law_range(law, range);
         }
 
-        lawtext.renderer.render_docx_async(law)
-        .then(buffer => {
-            let blob = new Blob(
-                [buffer],
-                {type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"},
-            );
-            let law_name = this.get_law_name() || "lawtext_output";
-            saveAs(blob, `${law_name}.docx`);
-        });
+        renderer.render_docx_async(law)
+            .then(buffer => {
+                let blob = new Blob(
+                    [buffer],
+                    { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
+                );
+                let law_name = this.get_law_name() || "lawtext_output";
+                saveAs(blob, `${law_name}.docx`);
+            });
     }
 
     download_lawtext() {
         let law = this.get("law");
-        if(law === null) return;
+        if (law === null) return;
 
-        let s_lawtext = lawtext.renderer.render_lawtext(law);
+        let s_lawtext = renderer.render_lawtext(law);
         let blob = new Blob(
             [s_lawtext],
-            {type: "text/plain"},
+            { type: "text/plain" },
         );
         let law_name = this.get_law_name() || "lawtext_output";
         saveAs(blob, `${law_name}.law.txt`);
@@ -457,12 +472,12 @@ class Data extends Backbone.Model {
 
     download_xml() {
         let law = this.get("law");
-        if(law === null) return;
+        if (law === null) return;
 
-        let s_lawtext = lawtext.renderer.render_xml(law);
+        let s_lawtext = renderer.render_xml(law);
         let blob = new Blob(
             [s_lawtext],
-            {type: "application/xml"},
+            { type: "application/xml" },
         );
         let law_name = this.get_law_name() || "lawtext_output";
         saveAs(blob, `${law_name}.xml`);
@@ -470,7 +485,7 @@ class Data extends Backbone.Model {
 
     get_declaration(index) {
         let analysis = this.get("analysis");
-        if(analysis === null) return null;
+        if (analysis === null) return null;
 
         let declarations = analysis.declarations;
         return declarations.get(index);
@@ -478,9 +493,11 @@ class Data extends Backbone.Model {
 }
 
 
+import * as sidebar_view_template from "../templates/sidebar_view"
+var SidebarView_template = _.template(sidebar_view_template.template);
+class SidebarView extends Backbone.View<Backbone.Model> {
 
-var SidebarView_template = _.template(require("../templates/sidebar_view.html").template);
-class SidebarView extends Backbone.View {
+    data: Data
 
     get tagName() { return "div"; }
     get className() { return "lawtext-sidebar-view"; }
@@ -498,10 +515,11 @@ class SidebarView extends Backbone.View {
         );
     }
 
-    render(options) {
+    render() {
         this.$el.html(SidebarView_template({
             data: this.data.attributes,
         }));
+        return this;
     }
 }
 
@@ -516,13 +534,25 @@ var VarRefView_template = _.template(`
 </div>
 </span>
 `.trim());
-class VarRefView extends Backbone.View {
+class VarRefView extends Backbone.View<Backbone.Model> {
+
+    data: Data
+    declaration_index: number
+    text: string
+    text_obj: JQuery
+    block_obj: JQuery
+    inner_obj: JQuery
+    arrow_obj: JQuery
+    window_obj: JQuery
+    rendered: boolean
 
     get tagName() { return "span"; }
     get className() { return "lawtext-varref-view"; }
-    get events() { return {
-        "click .lawtext-varref-text": "text_click",
-    }; }
+    events() {
+        return {
+            "click .lawtext-varref-text": "text_click",
+        };
+    }
 
     constructor(options) {
         super(...arguments);
@@ -547,36 +577,36 @@ class VarRefView extends Backbone.View {
         let declaration = this.data.get_declaration(this.declaration_index);
         let container_stack = declaration.name_pos.env.container_stack;
         let names = [];
-        for(let container of container_stack) {
-            if(container.tag === "EnactStatement") {
+        for (let container of container_stack) {
+            if (container.tag === "EnactStatement") {
                 names.push("（制定文）");
 
-            } else if(container.tag === "Article") {
+            } else if (container.tag === "Article") {
                 let article_name = _(container.children)
-                    .findWhere({tag: "ArticleTitle"})
+                    .findWhere({ tag: "ArticleTitle" })
                     .text;
                 names.push(article_name);
 
-            } else if(container.tag === "Paragraph") {
+            } else if (container.tag === "Paragraph") {
                 let paragraph_num = _(container.children)
-                    .findWhere({tag: "ParagraphNum"})
+                    .findWhere({ tag: "ParagraphNum" })
                     .text || "１";
                 names.push(paragraph_num);
 
-            } else if([
+            } else if ([
                 "Item", "Subitem1", "Subitem2", "Subitem3",
                 "Subitem4", "Subitem5", "Subitem6",
                 "Subitem7", "Subitem8", "Subitem9",
                 "Subitem10",
             ].indexOf(container.tag) >= 0) {
                 let item_title = _(container.children)
-                    .findWhere({tag: `${container.tag}Title`})
+                    .findWhere({ tag: `${container.tag}Title` })
                     .text;
                 names.push(item_title);
 
-            } else if(container.tag === "Table") {
+            } else if (container.tag === "Table") {
                 let table_struct_title_el = _(container.children)
-                    .findWhere({tag: "TableStructTitle"});
+                    .findWhere({ tag: "TableStructTitle" });
                 let table_struct_title = table_struct_title_el
                     ? table_struct_title_el.text
                     : "表"
@@ -586,17 +616,17 @@ class VarRefView extends Backbone.View {
         }
 
         let closest_children = container_stack[container_stack.length - 1].children
-        .filter(el => {
-            return [
-                "ArticleTitle", "ParagraphNum", "ItemTitle",
-                "Subitem1Title", "Subitem2Title", "Subitem3Title",
-                "Subitem4Title", "Subitem5Title", "Subitem6Title",
-                "Subitem7Title", "Subitem8Title", "Subitem9Title",
-                "Subitem10Title",
-                "SupplProvision",
-            ].indexOf(el.tag) < 0;
-        });
-        let fragment = lawtext.renderer.render_elements_fragment(
+            .filter(el => {
+                return [
+                    "ArticleTitle", "ParagraphNum", "ItemTitle",
+                    "Subitem1Title", "Subitem2Title", "Subitem3Title",
+                    "Subitem4Title", "Subitem5Title", "Subitem6Title",
+                    "Subitem7Title", "Subitem8Title", "Subitem9Title",
+                    "Subitem10Title",
+                    "SupplProvision",
+                ].indexOf(el.tag) < 0;
+            });
+        let fragment = renderer.render_elements_fragment(
             closest_children,
             {
                 "annotate": annotate,
@@ -605,7 +635,7 @@ class VarRefView extends Backbone.View {
         let ret = $(`
 <div class="paragraph-item-body"><span class="paragraph-item-num">${names.join("／")}</span>　${fragment}</div>
 `);
-        ret.find(`.lawtext-analyzed-declaration[lawtext_declaration_index="${this.declaration_index}"]`).css({"font-weight": "bold"});
+        ret.find(`.lawtext-analyzed-declaration[lawtext_declaration_index="${this.declaration_index}"]`).css({ "font-weight": "bold" });
         return ret;
     }
 
@@ -623,10 +653,12 @@ class VarRefView extends Backbone.View {
 
         this.listenTo(this.block_obj, "transitionend", alert);
         this.block_obj[0].addEventListener("transitionend", () => {
-            if(!this.is_open) this.block_obj.hide();
+            if (!this.is_open) this.block_obj.hide();
         }, false);
 
         this.trigger("rendered");
+
+        return this;
     }
 
     update_window() {
@@ -635,13 +667,13 @@ class VarRefView extends Backbone.View {
     }
 
     update_size() {
-        if(!this.is_open) return;
+        if (!this.is_open) return;
 
         let text_left = this.text_obj.offset().left;
         let window_left = this.window_obj.offset().left;
         let rel_left = text_left - window_left;
         let left = Math.max(rel_left, em(0.2));
-        this.arrow_obj.css({"margin-left": `${left}px`});
+        this.arrow_obj.css({ "margin-left": `${left}px` });
 
         let inner_height = this.inner_obj.outerHeight();
         this.block_obj.height(inner_height);
@@ -652,11 +684,11 @@ class VarRefView extends Backbone.View {
     }
 
     set is_open(value) {
-        return this.$el.toggleClass("lawtext-varref-open", value);
+        this.$el.toggleClass("lawtext-varref-open", value);
     }
 
     text_click() {
-        if(this.is_open) {
+        if (this.is_open) {
             this.block_obj.height(0);
             this.is_open = false;
         } else {
@@ -670,8 +702,14 @@ class VarRefView extends Backbone.View {
 
 
 
-var HTMLpreviewView_template = _.template(require("../templates/htmlpreview_view.html").template);
-class HTMLpreviewView extends Backbone.View {
+import * as htmlpreview_view_template from "../templates/htmlpreview_view"
+var HTMLpreviewView_template = _.template(htmlpreview_view_template.template);
+class HTMLpreviewView extends Backbone.View<Backbone.Model> {
+
+    data: Data
+    law_html: string
+    analyzed: boolean
+    varref_views: Array<VarRefView>
 
     get tagName() { return "div"; }
     get className() { return "lawtext-htmlpreview-view"; }
@@ -703,13 +741,13 @@ class HTMLpreviewView extends Backbone.View {
 
     render() {
         let law = this.data.get("law");
-        if(law !== null && this.law_html === null) {
+        if (law !== null && this.law_html === null) {
             let analysis = lawtext.analyze(law);
-            this.law_html = lawtext.renderer.render_htmlfragment(law, {
+            this.law_html = renderer.render_htmlfragment(law, {
                 "annotate": annotate,
             });
             this.analyzed = true;
-            this.data.set({analysis, analysis});
+            this.data.set({ analysis: analysis });
         }
 
         this.$el.html(HTMLpreviewView_template({
@@ -718,7 +756,7 @@ class HTMLpreviewView extends Backbone.View {
         }));
 
         this.varref_views = [];
-        for(let el of this.$(".lawtext-analyzed-varref")) {
+        for (let el of this.$(".lawtext-analyzed-varref")) {
             let obj = $(el);
             let varref_view = new VarRefView({
                 data: this.data,
@@ -729,13 +767,14 @@ class HTMLpreviewView extends Backbone.View {
             varref_view.render();
             this.varref_views.push(varref_view);
         }
+        return this;
     }
 
     scroll_to_law_anchor(tag, name) {
-        for(let el of this.$(".law-anchor")) {
+        for (let el of this.$(".law-anchor")) {
             let obj = $(el);
-            if(obj.data("tag") === tag && obj.data("name") === name) {
-                $("html,body").animate({scrollTop: obj.offset().top}, "normal");
+            if (obj.data("tag") === tag && obj.data("name") === name) {
+                $("html,body").animate({ scrollTop: obj.offset().top }, "normal");
             }
         }
     }
@@ -743,23 +782,32 @@ class HTMLpreviewView extends Backbone.View {
 
 
 
+import * as sample_lawtext_template from "../templates/sample_lawtext"
 
-var MainView_template = _.template(require("../templates/main_view.html").template);
-class MainView extends Backbone.View {
+import * as main_view_template from "../templates/main_view"
+var MainView_template = _.template(main_view_template.template);
+class MainView extends Backbone.View<Backbone.Model> {
+
+    data: Data
+    router: Router
+    sidebar_view: SidebarView
+    htmlpreview_view: HTMLpreviewView
 
     get tagName() { return "div"; }
     get className() { return "lawtext-main-view"; }
-    get events() { return {
-        "click .lawtext-open-file-button": "open_file_button_click",
-        "click .lawtext-download-sample-lawtext-button": "download_sample_lawtext_button_click",
-        "click .search-law-button": "search_law_button_click",
-        "click .lawtext-download-docx-button": "download_docx_button_click",
-        "click .lawtext-download-docx-selected-button": "download_docx_selected_button_click",
-        "click .lawtext-download-lawtext-button": "download_lawtext_button_click",
-        "click .lawtext-download-xml-button": "download_xml_button_click",
-        "click .law-link": "law_link_click",
-        "click .lawtext-analyzed-varref-text": "varref_text_click",
-    }; }
+    events() {
+        return {
+            "click .lawtext-open-file-button": "open_file_button_click",
+            "click .lawtext-download-sample-lawtext-button": "download_sample_lawtext_button_click",
+            "click .search-law-button": "search_law_button_click",
+            "click .lawtext-download-docx-button": "download_docx_button_click",
+            "click .lawtext-download-docx-selected-button": "download_docx_selected_button_click",
+            "click .lawtext-download-lawtext-button": "download_lawtext_button_click",
+            "click .lawtext-download-xml-button": "download_xml_button_click",
+            "click .law-link": "law_link_click",
+            "click .lawtext-analyzed-varref-text": "varref_text_click",
+        };
+    }
 
     constructor(options) {
         super(...arguments);
@@ -790,15 +838,17 @@ class MainView extends Backbone.View {
         this.sidebar_view.render();
         this.$(".lawtext-htmlpreview-view-place").replaceWith(this.htmlpreview_view.el);
         this.htmlpreview_view.render();
+
+        return this;
     }
 
     search_law_button_click(e) {
         let obj = $(e.currentTarget);
 
         let textbox = obj.parent().parent().find(".search-law-textbox");
-        let text = textbox.val().trim();
+        let text = String(textbox.val()).trim();
 
-        this.router.navigate(text, {trigger: true});
+        this.router.navigate(text, { trigger: true });
 
         return false;
     }
@@ -809,8 +859,8 @@ class MainView extends Backbone.View {
 
     download_sample_lawtext_button_click(e) {
         let blob = new Blob(
-            [require("../templates/sample_lawtext.html").template],
-            {type: "text/plain"},
+            [sample_lawtext_template.template],
+            { type: "text/plain" },
         );
         saveAs(blob, "sample_lawtext.law.txt");
     }
@@ -818,9 +868,10 @@ class MainView extends Backbone.View {
     tobe_downloaded_range() {
         let get_pos = (node) => {
             let el = $(node.parentNode);
-            let item_el = _(el.parents("[selection-id]")).last();
-            if(!item_el && el.attr("selection-id")) item_el = el[0];
-            if(!item_el)  return null;
+            let parents = el.parents("[selection-id]");
+            let item_el = parents[parents.length - 1];
+            if (!item_el && el.attr("selection-id")) item_el = el[0];
+            if (!item_el) return null;
             let m = item_el.getAttribute("selection-id").match(/([^-]+)(?:-([^-]+))?---([^-]+)(?:-([^-]+))?/);
             return {
                 container_tag: m[1],
@@ -835,7 +886,7 @@ class MainView extends Backbone.View {
 
         let s_pos = get_pos(range.startContainer);
         let e_pos = get_pos(range.endContainer);
-        if(!s_pos || !e_pos) return null;
+        if (!s_pos || !e_pos) return null;
 
         return {
             start: s_pos,
@@ -845,7 +896,7 @@ class MainView extends Backbone.View {
 
     download_docx_selected_button_click(e) {
         let range = this.tobe_downloaded_range();
-        if(range) {
+        if (range) {
             this.data.download_docx(range);
         } else {
             alert("選択範囲が取得できませんでした。");
@@ -871,7 +922,7 @@ class MainView extends Backbone.View {
 
     law_search_key_change() {
         let law_search_key = this.data.get("law_search_key");
-        if(law_search_key) {
+        if (law_search_key) {
             this.data.search_law(law_search_key);
         }
     }
@@ -880,9 +931,9 @@ class MainView extends Backbone.View {
         let law = this.data.get("law");
         let law_search_key = this.data.get("law_search_key");
 
-        if(law && law_search_key) {
-            let law_body = _(law.children).findWhere({tag: "LawBody"});
-            let law_title = _(law_body.children).findWhere({tag: "LawTitle"});
+        if (law && law_search_key) {
+            let law_body = _(law.children).findWhere({ tag: "LawBody" });
+            let law_title = _(law_body.children).findWhere({ tag: "LawTitle" });
             document.title = `${law_title.text} | Lawtext`;
         } else {
             document.title = "Lawtext";
@@ -904,10 +955,10 @@ class MainView extends Backbone.View {
 
         let parent_div = varref.closest("div");
 
-        for(let el of parent_div.find(".lawtext-analyzed-varref.lawtext-analyzed-varref-open")) {
+        for (let el of parent_div.find(".lawtext-analyzed-varref.lawtext-analyzed-varref-open")) {
             let varref = $(el);
             let _parent_div = varref.closest("div");
-            if(!parent_div[0].isEqualNode(_parent_div[0])) return;
+            if (!parent_div[0].isEqualNode(_parent_div[0])) return;
             let arr = $(varref.find(".lawtext-analyzed-varref-arrow")[0]);
             let win = $(varref.find(".lawtext-analyzed-varref-window")[0]);
             varref.removeClass("lawtext-analyzed-varref-open");
@@ -915,24 +966,25 @@ class MainView extends Backbone.View {
             win.slideUp(200);
         }
 
-        if(!is_open) {
+        if (!is_open) {
             let arr = $(varref.find(".lawtext-analyzed-varref-arrow")[0]);
             let win = $(varref.find(".lawtext-analyzed-varref-window")[0]);
             let is_empty = win.hasClass("lawtext-analyzed-varref-empty");
-            if(is_empty) {
+            if (is_empty) {
                 let decl_index = varref.attr("lawtext_declaration_index");
-                let decl = self.$(`.lawtext-analyzed-declaration[lawtext_declaration_index="${decl_index}"]`);
+                let decl = this.$(`.lawtext-analyzed-declaration[lawtext_declaration_index="${decl_index}"]`);
                 let decl_container = decl.closest(".article,.enact-statement").clone();
-                for(let el of decl_container.find(".lawtext-analyzed-declaration[lawtext_declaration_index]")) {
+                for (let el of decl_container.find(".lawtext-analyzed-declaration[lawtext_declaration_index]")) {
                     let obj = $(el);
                     obj.removeAttr("lawtext_declaration_index");
                 }
-                for(let el of decl_container.find(".lawtext-analyzed-varref-window")) {
+                for (let el of decl_container.find(".lawtext-analyzed-varref-window")) {
                     let obj = $(el);
                     obj.html();
                     obj.addClass("lawtext-analyzed-varref-empty");
                 }
-                win.html(decl_container);
+                win.empty();
+                win.append(decl_container);
                 win.removeClass("lawtext-analyzed-varref-empty");
             }
             varref.addClass("lawtext-analyzed-varref-open");
@@ -943,10 +995,15 @@ class MainView extends Backbone.View {
 }
 
 class Router extends Backbone.Router {
-    get routes() { return {
-        ":law_search_key": "law",
-        "": "index",
-    }; }
+
+    data: Data
+
+    get routes() {
+        return {
+            ":law_search_key": "law",
+            "": "index",
+        };
+    }
 
     constructor(options) {
         super(...arguments);
@@ -954,20 +1011,24 @@ class Router extends Backbone.Router {
         this.data = options.data;
 
         this.listenTo(this.data, "file-loaded", () => {
-            this.navigate("", {trigger: false});
+            this.navigate("", { trigger: false });
         });
     }
 
-    law(law_search_key) {
-        this.data.set({law_search_key: law_search_key});
+    law(law_search_key: string) {
+        this.data.set({ law_search_key: law_search_key });
     }
 
     index() {
-        this.data.set({law_search_key: null, law: null});
+        this.data.set({ law_search_key: null, law: null });
     }
 }
 
 class App {
+    data: Data
+    router: Router
+    main_view: MainView
+
     constructor() {
         this.data = null;
         this.router = null;
@@ -988,7 +1049,7 @@ class App {
         $(".lawtext-main-view-place").replaceWith(this.main_view.el);
         this.main_view.render();
 
-        Backbone.history.start({pushState: false});
+        Backbone.history.start({ pushState: false });
 
         $(".search-law-textbox").focus();
     }
@@ -997,6 +1058,5 @@ class App {
 var app = new App();
 $(app.start);
 
-exports.lawtext = lawtext;
 exports.app = app;
 

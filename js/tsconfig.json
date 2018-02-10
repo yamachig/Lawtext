@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        // "outDir": "./dist/",
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "module": "commonjs",
+        "target": "es5",
+        "downlevelIteration": true,
+        "allowJs": true,
+        // "strict": true,
+        // "checkJs": true,
+        // "types" : ["node"]
+    },
+}

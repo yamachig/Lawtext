@@ -2,13 +2,13 @@ var peg = require("pegjs");
 var nunjucks = require("nunjucks");
 var fs = require("fs-extra");
 var path = require("path");
-var build = require("./build").main;
 var webpack = require('webpack');
 var argparse = require("argparse");
-// var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+// var WebpackPreBuildPlugin = require('pre-build-webpack');
+var build = require('../bin/build');
 
 function main(args) {
-    build();
+    build.main();
 
     let base_path = path.resolve(path.join(__dirname, ".."));
     let src_path = path.join(base_path, "htmlapp_templates");
@@ -18,16 +18,16 @@ function main(args) {
     fs.mkdirSync(dest_path);
 
     fs.copySync(src_path, dest_path);
-    fs.removeSync(path.join(dest_path, "src/lawtext-app.js"));
+    fs.removeSync(path.join(dest_path, "src/lawtext-app.ts"));
     fs.removeSync(path.join(dest_path, "templates"));
 
     fs.copyFileSync(
-        path.join(base_path, "lib/static/law.css"),
+        path.join(base_path, "src/static/law.css"),
         path.join(dest_path, "src/law.css"),
     );
 
     let webpack_opt = {
-        entry: path.join(src_path, "src/lawtext-app.js"),
+        entry: path.join(src_path, "src/lawtext-app.ts"),
         output: {
             path: path.join(dest_path, "src"),
             filename: "lawtext.min.js",
@@ -37,42 +37,47 @@ function main(args) {
         node: {
             fs: "empty",
         },
+        resolve: {
+            extensions: [".ts", ".js"],
+        },
         externals: {
+            jquery: "$",
+            backbone: "Backbone",
+            underscore: "_",
+            file_saver: "FileSaver",
+            bootstrap: "window",
+
             lodash: "_",
             nunjucks: "nunjucks",
             jszip: "JSZip",
             xmldom: "window",
             argparse: "window",
         },
+        module: {
+            rules: [{
+                    test: /\.ts$/,
+                    use: {
+                        loader: 'ts-loader',
+                    },
+                },
+                {
+                    enforce: "pre",
+                    test: /\.js$/,
+                    loader: "source-map-loader",
+                },
+            ],
+        },
+        // plugins: [
+        //     new WebpackPreBuildPlugin(function (stats) {
+        //         build.main();
+        //     }),
+        // ],
         devtool: "source-map",
     };
 
     if(args.dev) {
     } else {
         webpack_opt = Object.assign(webpack_opt, {
-            module: {
-                rules: [
-                    {
-                        test: /\.(?:js|html)$/,
-                        use: [
-                            {
-                                loader: 'babel-loader',
-                                options: {
-                                    presets: [
-                                        ['env', {
-                                            'modules': false,
-                                            "targets": {
-                                                "browsers": ["defaults"],
-                                            }
-                                        }],
-                                    ],
-                                },
-                            },
-                        ],
-                        exclude: /node_modules/,
-                    },
-                ],
-            },
             plugins: [
                 new webpack.optimize.UglifyJsPlugin({
                     sourceMap: true,

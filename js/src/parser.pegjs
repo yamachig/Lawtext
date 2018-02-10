@@ -1,13 +1,12 @@
 {
-    let util = require("../lib/util");
     let EL = util.EL;
     let __Text = util.__Text;
     let __Parentheses = util.__Parentheses;
 
-    let xml_tag_stack = [];
+    let xml_tag_stack:Array<string> = [];
     let indent_memo = options.indent_memo;
     let indent_depth = 0;
-    let base_indent_stack = [];
+    let base_indent_stack:Array<[number, boolean, number]> = [];
     let list_depth = 0;
     let parentheses_depth = 0;
 }
@@ -993,8 +992,8 @@ columns_or_sentences "columns_or_sentences" =
 period_sentences "period_sentences" =
     fragments:(PERIOD_SENTENCE_FRAGMENT)+
     {
-        let sentences = [];
-        let proviso_indices = [];
+        let sentences:Array<util.EL> = [];
+        let proviso_indices:Array<number> = [];
         for(let i = 0; i < fragments.length; i++) {
             let sentence_content = fragments[i];
             let sentence = new EL(
@@ -1026,7 +1025,7 @@ columns "columns" =
     rest:(__ target:period_sentences { return target; })+
     {
         let column_inner_sets = [first].concat(rest);
-        let columns = [];
+        let columns:Array<util.EL> = [];
         for(let i = 0; i < column_inner_sets.length; i++) {
             let column = new EL(
                 "Column",

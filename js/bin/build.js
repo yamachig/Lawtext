@@ -1,4 +1,5 @@
 var peg = require("pegjs");
+var tspegjs = require("ts-pegjs");
 var nunjucks = require("nunjucks");
 var fs = require("fs");
 var path = require("path");
@@ -6,9 +7,9 @@ var path = require("path");
 function main() {
     let base_path = path.join(__dirname, "..");
     let src_path = path.join(base_path, "src");
-    let dest_path = path.join(base_path, "dest");
+    // let dest_path = path.join(base_path, "dest");
 
-    if(!fs.existsSync(dest_path)) fs.mkdirSync(dest_path);
+    // if(!fs.existsSync(dest_path)) fs.mkdirSync(dest_path);
 
     fs.readFile(
         path.join(src_path, "parser.pegjs"),
@@ -19,9 +20,14 @@ function main() {
                 allowedStartRules: ["start", "INLINE"],
                 output: "source",
                 format: "commonjs",
+                plugins: [tspegjs],
+                "tspegjs": {
+                    "noTslint": false,
+                    "customHeader": `import * as util from "./util";`
+                },
             });
             fs.writeFileSync(
-                path.join(dest_path, "parser.js"),
+                path.join(src_path, "parser.ts"),
                 parser,
                 { encoding: "utf-8" },
             );
@@ -34,9 +40,12 @@ function main() {
             include: [".+"],
         },
     );
-    templates = `global.window = global.window || {};\n${templates}`;
+    templates = `if(!("window" in global)) global.window = {};
+${templates}
+export const nunjucksPrecompiled = window.nunjucksPrecompiled;
+`;
     fs.writeFileSync(
-        path.join(dest_path, "templates.js"),
+        path.join(src_path, "templates.js"),
         templates,
         { encoding: "utf-8" },
     );

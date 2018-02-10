@@ -1,4 +1,4 @@
-exports.template = `
+export const template = `
 
 <style>
 .lawtext-main-view {

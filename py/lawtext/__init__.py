@@ -27,7 +27,7 @@ def run(
 
     arg = [
         'node',
-        str(JS_PATH / 'lib/lawtext.js'),
+        str(JS_PATH / 'dist/lawtext.js'),
     ] + opts
 
     kwargs = {
