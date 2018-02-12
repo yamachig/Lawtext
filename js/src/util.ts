@@ -2,6 +2,7 @@
 
 import { DOMParser } from "xmldom";
 import { isString } from "util";
+import { AssertionError } from "assert";
 
 var Node = Node || {
     TEXT_NODE: 3,
@@ -11,7 +12,7 @@ var Node = Node || {
 export interface JsonEL {
     tag: string
     attr: { [key: string]: string }
-    children: Array<JsonEL | string>
+    children: (JsonEL | string)[]
 }
 
 function isJsonEL(object: any): object is JsonEL {
@@ -22,10 +23,10 @@ function isJsonEL(object: any): object is JsonEL {
 export class EL {
     tag: string
     attr: { [key: string]: string }
-    children: Array<EL | string>
+    children: (EL | string)[]
     _text: string | null
 
-    constructor(tag: string, attr: { [key: string]: string } = {}, children: Array<EL | string> = []) {
+    constructor(tag: string, attr: { [key: string]: string } = {}, children: (EL | string)[] = []) {
         // if(!tag) {
         //     error(`${JSON.stringify(tag)} is invalid tag.`);
         // }
@@ -47,7 +48,7 @@ export class EL {
         return this;
     }
 
-    extend(children: Array<EL | string>): EL {
+    extend(children: (EL | string)[]): EL {
         // if(!Array.isArray(children)) {
         //     error(`${JSON.stringify(children).slice(0,100)} is not Array.`);
         // }
@@ -63,7 +64,7 @@ export class EL {
     }
 
     json(with_control_el: boolean = false): JsonEL {
-        let children: Array<JsonEL | string> = [];
+        let children: (JsonEL | string)[] = [];
         for (let el of this.children) {
             if (!(el instanceof EL || isString(el))) {
                 console.error("[EL.json]", JSON.stringify(this));
@@ -126,7 +127,7 @@ export class EL {
         ).join("");
     }
 
-    replace_span(start: number, end: number/* half open */, repl_children: Array<EL | string> | EL | string) {
+    replace_span(start: number, end: number/* half open */, repl_children: (EL | string)[] | EL | string) {
         if (!Array.isArray(repl_children)) {
             repl_children = [repl_children];
         }
@@ -145,14 +146,15 @@ export class EL {
                     if (child instanceof EL) {
                         child.replace_span(start_in_child, end_in_child, repl_children);
                     } else {
-                        let new_children: Array<EL | string> = [];
+                        let new_children: (EL | string)[] = [];
                         if (0 < start_in_child) new_children.push(child.slice(0, start_in_child));
                         new_children = new_children.concat(repl_children);
                         if (end_in_child < child.length) new_children.push(child.slice(end_in_child));
-                        new_children = (<Array<EL | string>>[])
-                            .concat(this.children.slice(0, i))
-                            .concat(new_children)
-                            .concat(this.children.slice(i + 1));
+                        new_children = [
+                            ...this.children.slice(0, i),
+                            ...new_children,
+                            ...this.children.slice(i + 1),
+                        ];
                         this.children = new_children;
                         this._text = null;
                     }
@@ -165,6 +167,252 @@ export class EL {
     }
 }
 
+export enum ContainerType {
+    ROOT,
+    TOPLEVEL,
+    ARTICLES,
+    SPANS,
+}
+
+export class Container {
+    el: EL
+    type: ContainerType
+    span_range: [number, number] // half open
+    parent: Container | null
+    children: Container[]
+
+    sub_parent: Container | null
+    sub_children: Container[]
+
+    constructor(
+        el: EL,
+        type: ContainerType,
+        span_range: [number, number] = [NaN, NaN],
+        parent: Container | null = null,
+        children: Container[] = [],
+        sub_parent: Container | null = null,
+        sub_children: Container[] = [],
+    ) {
+        this.el = el;
+        this.type = type;
+        this.span_range = span_range;
+        this.parent = parent;
+        this.children = children;
+        this.sub_parent = sub_parent;
+        this.sub_children = sub_children;
+    }
+
+    add_child(child: Container): Container {
+        this.children.push(child);
+        child.parent = this;
+        if (child.type !== ContainerType.ARTICLES) {
+            let sub_parent = this.type !== ContainerType.ARTICLES
+                ? this
+                : this.closest(container => container.type !== ContainerType.ARTICLES);
+            if (!sub_parent) throw new AssertionError();
+            sub_parent.sub_children.push(child);
+            child.sub_parent = sub_parent;
+        }
+        return this;
+    }
+
+    thisOrClosest(func: (container: Container) => boolean): Container | null {
+        if (func(this)) return this;
+        return this.parents(func).next().value || null;
+    }
+
+    closest(func: (container: Container) => boolean): Container | null {
+        return this.parents(func).next().value || null;
+    }
+
+    *parents(func?: (container: Container) => boolean): IterableIterator<Container> {
+        if (!this.parent) return;
+        if (!func || func(this.parent)) yield this.parent;
+        yield* this.parent.parents(func);
+    }
+
+    linealAscendant(func?: (container: Container) => boolean): Container[] {
+        let ret = [...this.parents(func)].reverse();
+        if (!func || func(this)) ret.push(this);
+        return ret;
+    }
+
+    findAncestorChildren(func: (container: Container) => boolean): Container | null {
+        return this.ancestorChildren(func).next().value || null;
+    }
+
+    *ancestorChildren(func: (container: Container) => boolean): IterableIterator<Container> {
+        if (!this.parent) return;
+        yield* this.parent.children.filter(func);
+        yield* this.parent.ancestorChildren(func);
+    }
+
+    next(func: (container: Container) => boolean): Container | null {
+        return this.nextAll(func).next().value || null;
+    }
+
+    *nextAll(func: (container: Container) => boolean): IterableIterator<Container> {
+        if (!this.parent) return;
+        for (let i = this.parent.children.indexOf(this) + 1; i < this.parent.children.length; i++) {
+            let sibling = this.parent.children[i];
+            if (func(sibling)) yield sibling;
+        }
+    }
+
+    prev(func: (container: Container) => boolean): Container | null {
+        return this.prevAll(func).next().value || null;
+    }
+
+    *prevAll(func: (container: Container) => boolean): IterableIterator<Container> {
+        if (!this.parent) return;
+        for (let i = this.parent.children.indexOf(this) - 1; 0 <= i; i--) {
+            let sibling = this.parent.children[i];
+            if (func(sibling)) yield sibling;
+        }
+    }
+
+    thisOrClosestSub(func: (container: Container) => boolean): Container | null {
+        if (func(this)) return this;
+        return this.parentsSub(func).next().value || null;
+    }
+
+    closestSub(func: (container: Container) => boolean): Container | null {
+        return this.parentsSub(func).next().value || null;
+    }
+
+    *parentsSub(func: (container: Container) => boolean): IterableIterator<Container> {
+        if (!this.sub_parent) return;
+        if (func(this.sub_parent)) yield this.sub_parent;
+        yield* this.sub_parent.parentsSub(func);
+    }
+
+    findAncestorChildrenSub(func: (container: Container) => boolean): Container | null {
+        return this.ancestorChildrenSub(func).next().value || null;
+    }
+
+    *ancestorChildrenSub(func: (container: Container) => boolean): IterableIterator<Container> {
+        if (!this.sub_parent) return;
+        yield* this.sub_parent.sub_children.filter(func);
+        yield* this.sub_parent.ancestorChildrenSub(func);
+    }
+
+    nextSub(func: (container: Container) => boolean): Container | null {
+        return this.nextAllSub(func).next().value || null;
+    }
+
+    *nextAllSub(func: (container: Container) => boolean): IterableIterator<Container> {
+        if (!this.sub_parent) return;
+        for (let i = this.sub_parent.sub_children.indexOf(this) + 1;
+            i < this.sub_parent.sub_children.length; i++) {
+            let sibling = this.sub_parent.sub_children[i];
+            if (func(sibling)) yield sibling;
+        }
+    }
+
+    prevSub(func: (container: Container) => boolean): Container | null {
+        return this.prevAllSub(func).next().value || null;
+    }
+
+    *prevAllSub(func: (container: Container) => boolean): IterableIterator<Container> {
+        if (!this.sub_parent) return;
+        for (let i = this.sub_parent.sub_children.indexOf(this) - 1; 0 <= i; i--) {
+            let sibling = this.sub_parent.sub_children[i];
+            if (func(sibling)) yield sibling;
+        }
+    }
+
+    find(
+        func?: (container: Container) => boolean,
+        cut?: (container: Container) => boolean,
+    ): Container | null {
+        return this.findAll(func, cut).next().value || null;
+    }
+
+    *findAll(
+        func?: (container: Container) => boolean,
+        cut?: (container: Container) => boolean,
+    ): IterableIterator<Container> {
+        for (let child of this.children) {
+            if (cut && cut(child)) return;
+            if (!func || func(child)) yield child;
+            yield* child.findAll(func, cut);
+        }
+    }
+
+    *iterate(
+        func?: (container: Container) => boolean,
+        cut?: (container: Container) => boolean,
+    ): IterableIterator<Container> {
+        if (cut && cut(this)) return;
+        if (!func || func(this)) yield this;
+        for (let child of this.children) yield* child.iterate(func, cut);
+    }
+
+    *iterate_reverse(
+        func?: (container: Container) => boolean,
+        cut?: (container: Container) => boolean,
+    ): IterableIterator<Container> {
+        if (cut && cut(this)) return;
+        for (let i = this.children.length - 1; 0 <= i; i--) {
+            let child = this.children[i];
+            yield* child.iterate_reverse(func, cut);
+        }
+        if (!func || func(this)) yield this;
+    }
+}
+
+export class Env {
+    law_type: string
+    _container: Container | null
+    parents: EL[]
+    constructor(
+        law_type: string,
+        container: Container | null = null,
+        parents: EL[] = [],
+    ) {
+        this.law_type = law_type;
+        this._container = container;
+        this.parents = parents;
+    }
+
+    get container(): Container {
+        if (!this._container) throw new AssertionError();
+        return this._container;
+    }
+
+    set container(container: Container) {
+        this._container = container;
+    }
+
+    add_container(container: Container) {
+        if (this._container) {
+            this._container.add_child(container);
+        }
+        this._container = container;
+    }
+
+    copy() {
+        return new Env(
+            this.law_type,
+            this._container,
+            this.parents.slice(),
+        );
+    }
+}
+
+export class Span {
+    index: number
+    el: EL
+    env: Env
+    text: string
+    constructor(index, el, env) {
+        this.index = index;
+        this.el = el;
+        this.env = env;
+
+        this.text = el.text;
+    }
+}
 
 export function load_el(raw_law: JsonEL | string): EL | string {
     if (isString(raw_law)) {
@@ -207,9 +455,8 @@ export class __Text extends EL {
     }
 };
 
-
 export function element_to_json(el: Element): EL {
-    let children: Array<EL | string> = [];
+    let children: (EL | string)[] = [];
     for (let i = 0; i < el.childNodes.length; i++) {
         let node = el.childNodes[i];
         if (node.nodeType === Node.TEXT_NODE) {
@@ -298,7 +545,7 @@ export const article_group_type_chars = "編章節款目";
 export const article_group_type = {
     '編': 'Part', '章': 'Chapter', '節': 'Section',
     '款': 'Subsection', '目': 'Division',
-    '条': 'Article', '則': 'SupplProvision',
+    '条': 'Article', '項': 'Paragraph', '号': 'Item', '則': 'SupplProvision',
 };
 
 export const article_group_title_tag = {
@@ -347,7 +594,7 @@ export function parse_roman_num(text: string): number {
     return num;
 }
 
-export const re_wide_digits: Array<[RegExp, string]> = [
+export const re_wide_digits: [RegExp, string][] = [
     [/０/g, '0'], [/１/g, '1'], [/２/g, '2'], [/３/g, '3'], [/４/g, '4'],
     [/５/g, '5'], [/６/g, '6'], [/７/g, '7'], [/８/g, '8'], [/９/g, '9'],
 ];
@@ -363,7 +610,7 @@ export function replace_wide_num(text: string): string {
 }
 
 export function parse_named_num(text: string): string {
-    let nums_group: Array<string> = [];
+    let nums_group: string[] = [];
 
     let subtexts = text
         .split(/\s+/)[0]
@@ -411,4 +658,60 @@ export function parse_named_num(text: string): string {
     }
 
     return nums_group.join(':');
+}
+
+export enum RelPos {
+    PREV,
+    HERE,
+    NEXT,
+    SAME,
+    NAMED,
+}
+export function isRelPos(object: any): object is RelPos {
+    return (
+        object === RelPos.PREV ||
+        object === RelPos.HERE ||
+        object === RelPos.NEXT ||
+        object === RelPos.NAMED
+    );
+}
+
+export class PointerFragment {
+    rel_pos: RelPos
+    tag: string
+    name: string
+    num: string | null
+    located_container: Container | null
+
+    constructor(
+        rel_pos: RelPos,
+        tag: string,
+        name: string,
+        num: string | null,
+        located_container: Container | null = null,
+    ) {
+        this.rel_pos = rel_pos;
+        this.tag = tag;
+        this.name = name;
+        this.num = num;
+        this.located_container = located_container;
+    }
+
+    copy() {
+        return new PointerFragment(
+            this.rel_pos,
+            this.tag,
+            this.name,
+            this.num,
+            this.located_container,
+        );
+    }
+}
+
+export type Pointer = PointerFragment[];
+export type Range = [Pointer, Pointer]; // closed
+export type Ranges = Range[];
+
+export const throwAssertionError = () => {
+    throw new AssertionError();
 }

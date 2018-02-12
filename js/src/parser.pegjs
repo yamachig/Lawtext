@@ -1290,6 +1290,143 @@ xml_element "xml_element" =
 
 
 
+// ########### pointer control begin ###########
+
+ranges "ranges" =
+    first:range ("、" / "及び" / "並びに") rest:ranges
+    {
+        return [first].concat(rest);
+    }
+    /
+    range:range
+    {
+        return [range];
+    }
+
+
+range "range" =
+    from:pointer "から" to:pointer "まで"
+    {
+        return [from, to];
+    }
+    /
+    pointer:pointer
+    {
+        return [pointer, pointer];
+    }
+
+pointer "pointer" =
+    pointer_fragment+
+
+kanji_digit "kanji_digit" =
+    [〇一二三四五六七八九十百千]
+
+roman_digit "roman_digit" =
+    [iIｉＩxXｘＸ]
+
+iroha_char "iroha_char" =
+    [イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]
+
+pointer_fragment "pointer_fragment" =
+    "第" kanji_digit+ type_char:[編章節款目章条項号]
+    ("の" kanji_digit+)*
+    {
+        return new util.PointerFragment(
+            util.RelPos.NAMED,
+            util.article_group_type[type_char],
+            text(),
+            util.parse_named_num(text()),
+        );
+    }
+    /
+    "次" type_char:[編章節款目章条項号]
+    {
+        return new util.PointerFragment(
+            util.RelPos.NEXT,
+            util.article_group_type[type_char],
+            text(),
+            null,
+        );
+    }
+    /
+    "前" type_char:[編章節款目章条項号]
+    {
+        return util.PointerFragment(
+            util.RelPos.PREV,
+            util.article_group_type[type_char],
+            text(),
+            null,
+        );
+    }
+    /
+    "この" type_char:[編章節款目章条項号]
+    {
+        return new util.PointerFragment(
+            util.RelPos.HERE,
+            util.article_group_type[type_char],
+            text(),
+            null,
+        );
+    }
+    /
+    "同" type_char:[編章節款目章条項号]
+    {
+        return new util.PointerFragment(
+            util.RelPos.SAME,
+            util.article_group_type[type_char],
+            text(),
+            null,
+        );
+    }
+    /
+    [付附] type_char:"則"
+    {
+        return new util.PointerFragment(
+            util.RelPos.NAMED,
+            util.article_group_type[type_char],
+            text(),
+            null,
+        );
+    }
+    /
+    "別表" ("第" kanji_digit+)?
+    {
+        return new util.PointerFragment(
+            util.RelPos.NAMED,
+            "AppdxTable",
+            text(),
+            util.parse_named_num(text()),
+        );
+    }
+    /
+    "ただし書"
+    {
+        return new util.PointerFragment(
+            util.RelPos.NAMED,
+            "PROVISO",
+            text(),
+            null,
+        );
+    }
+    /
+    (iroha_char / roman_digit+)
+    {
+        return new util.PointerFragment(
+            util.RelPos.NAMED,
+            "SUBITEM",
+            text(),
+            util.parse_named_num(text()),
+        );
+    }
+
+// ########### pointer control end ###########
+
+
+
+
+
+
+
 // ########### indents control begin ###########
 
 INDENT "INDENT" =

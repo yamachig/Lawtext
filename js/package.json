@@ -42,7 +42,7 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack",
     "build-htmlapp": "node bin/htmlapp out_htmlapp",
-    "build-htmlapp-dev": "node bin/htmlapp out_htmlapp_dev",
+    "build-htmlapp-dev": "node bin/htmlapp --dev out_htmlapp_dev",
     "watch": "./node_modules/.bin/webpack --watch"
   },
   "bin": "lib/lawtext.js",

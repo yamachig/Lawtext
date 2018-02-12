@@ -108,7 +108,7 @@ function get_law_range(orig_law: EL, range) {
     let find_els = (el, tag) => {
         if (!(el instanceof EL)) return [];
         if (el.tag === tag) return [el];
-        let ret = [];
+        let ret: EL[] = [];
         for (let child of el.children) {
             ret = ret.concat(find_els(child, tag));
         }
@@ -128,7 +128,7 @@ function get_law_range(orig_law: EL, range) {
             in_container_range = true;
         }
 
-        let container_children = [];
+        let container_children: (EL | string)[] = [];
 
         if (
             in_container_range &&
@@ -278,7 +278,7 @@ class Data extends Backbone.Model {
 
     load_law_text(text, analyze_xml) {
         let div = $("<div>");
-        let law = null;
+        let law: EL | null = null;
         if (/^(?:<\?xml|<Law)/.test(text.trim())) {
             law = util.xml_to_json(text);
             if (analyze_xml) {
@@ -423,9 +423,9 @@ class Data extends Backbone.Model {
         }
     }
 
-    get_law_name() {
+    get_law_name(): string | null {
         let law = this.get("law");
-        if (law === null) return;
+        if (law === null) return null;
 
         let law_num = _(law.children).findWhere({ tag: "LawNum" });
         let law_body = _(law.children).findWhere({ tag: "LawBody" });
@@ -483,7 +483,7 @@ class Data extends Backbone.Model {
         saveAs(blob, `${law_name}.xml`);
     }
 
-    get_declaration(index) {
+    get_declaration(index: number): analyzer.____Declaration | null {
         let analysis = this.get("analysis");
         if (analysis === null) return null;
 
@@ -539,11 +539,11 @@ class VarRefView extends Backbone.View<Backbone.Model> {
     data: Data
     declaration_index: number
     text: string
-    text_obj: JQuery
-    block_obj: JQuery
-    inner_obj: JQuery
-    arrow_obj: JQuery
-    window_obj: JQuery
+    text_obj: JQuery<HTMLElement> | null
+    block_obj: JQuery<HTMLElement> | null
+    inner_obj: JQuery<HTMLElement> | null
+    arrow_obj: JQuery<HTMLElement> | null
+    window_obj: JQuery<HTMLElement> | null
     rendered: boolean
 
     get tagName() { return "span"; }
@@ -573,41 +573,45 @@ class VarRefView extends Backbone.View<Backbone.Model> {
         this.listenTo(this.data, "window-resize", this.update_size);
     }
 
-    get_content() {
+    get_content(): JQuery<HTMLElement> | null {
         let declaration = this.data.get_declaration(this.declaration_index);
-        let container_stack = declaration.name_pos.env.container_stack;
-        let names = [];
+        if (!declaration) return null;
+        let container_stack = declaration.name_pos.env.container.linealAscendant();
+        let names: string[] = [];
         for (let container of container_stack) {
-            if (container.tag === "EnactStatement") {
+            if (container.el.tag === "EnactStatement") {
                 names.push("（制定文）");
 
-            } else if (container.tag === "Article") {
-                let article_name = _(container.children)
-                    .findWhere({ tag: "ArticleTitle" })
-                    .text;
-                names.push(article_name);
+            } else if (container.el.tag === "Article") {
+                let article_title = _(<EL[]>container.el.children)
+                    .findWhere({ tag: "ArticleTitle" });
+                if (article_title) {
+                    names.push(article_title.text);
+                }
 
-            } else if (container.tag === "Paragraph") {
-                let paragraph_num = _(container.children)
-                    .findWhere({ tag: "ParagraphNum" })
-                    .text || "１";
-                names.push(paragraph_num);
+            } else if (container.el.tag === "Paragraph") {
+                let paragraph_num = _(<EL[]>container.el.children)
+                    .findWhere({ tag: "ParagraphNum" });
+                if (paragraph_num) {
+                    names.push(paragraph_num.text || "１");
+                }
 
             } else if ([
                 "Item", "Subitem1", "Subitem2", "Subitem3",
                 "Subitem4", "Subitem5", "Subitem6",
                 "Subitem7", "Subitem8", "Subitem9",
                 "Subitem10",
-            ].indexOf(container.tag) >= 0) {
-                let item_title = _(container.children)
-                    .findWhere({ tag: `${container.tag}Title` })
-                    .text;
-                names.push(item_title);
+            ].indexOf(container.el.tag) >= 0) {
+                let item_title = _(<EL[]>container.el.children)
+                    .findWhere({ tag: `${container.el.tag}Title` });
+                if (item_title) {
+                    names.push(item_title.text);
+                }
 
-            } else if (container.tag === "Table") {
-                let table_struct_title_el = _(container.children)
+            } else if (container.el.tag === "Table") {
+                let table_struct_title_el = _(container.el.children)
                     .findWhere({ tag: "TableStructTitle" });
-                let table_struct_title = table_struct_title_el
+                let table_struct_title = table_struct_title_el instanceof EL
                     ? table_struct_title_el.text
                     : "表"
                 names.push(table_struct_title + "（抜粋）");
@@ -615,8 +619,9 @@ class VarRefView extends Backbone.View<Backbone.Model> {
             }
         }
 
-        let closest_children = container_stack[container_stack.length - 1].children
+        let closest_children = container_stack[container_stack.length - 1].el.children
             .filter(el => {
+                if (!(el instanceof EL)) return false;
                 return [
                     "ArticleTitle", "ParagraphNum", "ItemTitle",
                     "Subitem1Title", "Subitem2Title", "Subitem3Title",
@@ -653,7 +658,7 @@ class VarRefView extends Backbone.View<Backbone.Model> {
 
         this.listenTo(this.block_obj, "transitionend", alert);
         this.block_obj[0].addEventListener("transitionend", () => {
-            if (!this.is_open) this.block_obj.hide();
+            if (!this.is_open && this.block_obj) this.block_obj.hide();
         }, false);
 
         this.trigger("rendered");
@@ -662,21 +667,31 @@ class VarRefView extends Backbone.View<Backbone.Model> {
     }
 
     update_window() {
+        if (!this.window_obj) return;
         this.window_obj.empty();
-        this.window_obj.append(this.get_content());
+        let content = this.get_content();
+        if (content) this.window_obj.append(content);
     }
 
     update_size() {
         if (!this.is_open) return;
+        if (!this.text_obj) return;
+        if (!this.window_obj) return;
+        if (!this.arrow_obj) return;
+        if (!this.block_obj) return;
+        if (!this.inner_obj) return;
 
-        let text_left = this.text_obj.offset().left;
-        let window_left = this.window_obj.offset().left;
+        let text_offset = this.text_obj.offset();
+        let window_offset = this.window_obj.offset();
+
+        let text_left = text_offset ? text_offset.left : 0;
+        let window_left = window_offset ? window_offset.left : 0;
         let rel_left = text_left - window_left;
         let left = Math.max(rel_left, em(0.2));
         this.arrow_obj.css({ "margin-left": `${left}px` });
 
         let inner_height = this.inner_obj.outerHeight();
-        this.block_obj.height(inner_height);
+        if (inner_height) this.block_obj.height(inner_height);
     }
 
     get is_open() {
@@ -688,6 +703,7 @@ class VarRefView extends Backbone.View<Backbone.Model> {
     }
 
     text_click() {
+        if (!this.block_obj) return;
         if (this.is_open) {
             this.block_obj.height(0);
             this.is_open = false;
@@ -707,7 +723,7 @@ var HTMLpreviewView_template = _.template(htmlpreview_view_template.template);
 class HTMLpreviewView extends Backbone.View<Backbone.Model> {
 
     data: Data
-    law_html: string
+    law_html: string | null
     analyzed: boolean
     varref_views: Array<VarRefView>
 
@@ -760,7 +776,7 @@ class HTMLpreviewView extends Backbone.View<Backbone.Model> {
             let obj = $(el);
             let varref_view = new VarRefView({
                 data: this.data,
-                declaration_index: parseInt(obj.attr("lawtext_declaration_index"), 10),
+                declaration_index: parseInt(obj.attr("lawtext_declaration_index") || "", 10),
                 text: obj.text(),
             });
             obj.replaceWith(varref_view.el);
@@ -774,7 +790,8 @@ class HTMLpreviewView extends Backbone.View<Backbone.Model> {
         for (let el of this.$(".law-anchor")) {
             let obj = $(el);
             if (obj.data("tag") === tag && obj.data("name") === name) {
-                $("html,body").animate({ scrollTop: obj.offset().top }, "normal");
+                let offset = obj.offset();
+                if (offset) $("html,body").animate({ scrollTop: offset.top }, "normal");
             }
         }
     }
@@ -872,12 +889,18 @@ class MainView extends Backbone.View<Backbone.Model> {
             let item_el = parents[parents.length - 1];
             if (!item_el && el.attr("selection-id")) item_el = el[0];
             if (!item_el) return null;
-            let m = item_el.getAttribute("selection-id").match(/([^-]+)(?:-([^-]+))?---([^-]+)(?:-([^-]+))?/);
-            return {
-                container_tag: m[1],
-                container_id: m[2] || null,
-                item_tag: m[3],
-                item_id: m[4] || null,
+
+            let m: RegExpMatchArray | null;
+            let id = item_el.getAttribute("selection-id");
+            if (id && (m = id.match(/([^-]+)(?:-([^-]+))?---([^-]+)(?:-([^-]+))?/))) {
+                return {
+                    container_tag: m[1],
+                    container_id: m[2] || null,
+                    item_tag: m[3],
+                    item_id: m[4] || null,
+                }
+            } else {
+                return null;
             }
         };
 
@@ -1030,12 +1053,6 @@ class App {
     main_view: MainView
 
     constructor() {
-        this.data = null;
-        this.router = null;
-        this.main_view = null;
-    }
-
-    start() {
         this.data = new Data();
 
         this.router = new Router({
@@ -1046,6 +1063,9 @@ class App {
             data: this.data,
             router: this.router,
         });
+    }
+
+    start() {
         $(".lawtext-main-view-place").replaceWith(this.main_view.el);
         this.main_view.render();
 
@@ -1056,7 +1076,7 @@ class App {
 }
 
 var app = new App();
-$(app.start);
+$(() => app.start());
 
 exports.app = app;
 

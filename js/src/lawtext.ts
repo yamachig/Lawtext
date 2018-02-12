@@ -7,13 +7,11 @@ import * as util from "./util";
 import * as fs from "fs";
 import * as argparse from "argparse";
 
-
-
 function lex(text: string): [string, { [key: number]: number }, number] {
 
     let lines = text.split(/\r?\n/);
     let lines_count = lines.length;
-    let replaced_lines: Array<string> = [];
+    let replaced_lines: string[] = [];
     let indent_depth = 0;
     let indent_memo: { [key: number]: number } = {};
     let re_indent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章]|[附付]\s+則|別表))/;
@@ -39,7 +37,7 @@ function lex(text: string): [string, { [key: number]: number }, number] {
             force_dedent = true;
         }
 
-        let indents: Array<string> = [];
+        let indents: string[] = [];
         let pos = 0;
 
         if (!force_dedent) {
@@ -87,7 +85,7 @@ function lex(text: string): [string, { [key: number]: number }, number] {
 
 
 
-export function parse(text: string, options?: {}): util.EL {
+export function parse(text: string, options: {} = {}): util.EL {
 
     // console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
     // let t0 = (new Date()).getTime();
@@ -95,7 +93,7 @@ export function parse(text: string, options?: {}): util.EL {
     let [lexed, indent_memo, lines_count] = lex(text);
     // console.error(lexed);
     try {
-        options = Object.assign({ indent_memo: indent_memo, startRule: "start" }, options);
+        options = (<any>Object).assign({ indent_memo: indent_memo, startRule: "start" }, options);
         var parsed = parser.parse(lexed, options);
 
         // let t1 = (new Date()).getTime();
@@ -191,71 +189,70 @@ function main(args) {
             });
         }
 
-    })
-        .then((intext: string) => {
+    }).then((intext: string) => {
 
-            if (intype === "xml") {
-                law = util.xml_to_json(intext);
-                if (!noanalyze) {
-                    analyzer.stdxml_to_ext(law);
-                }
-            } else if (intype === "json") {
-                let raw_law = JSON.parse(intext);
-                try {
-                    law = <util.EL>util.load_el(raw_law);
-                } catch (e) {
-                    console.error("[loading json at main]", e);
-                    throw e;
-                }
-            } else if (intype === "lawtext") {
-                try {
-                    law = parse(intext);
-                } catch (e) {
-                    console.error("[parsing lawtext at main]", e);
-                    throw e;
-                }
-                if (noanalyze) {
-                    law = <util.EL>util.load_el(law.json());
-                }
-            }
-
-            if (law === null) return;
-
+        if (intype === "xml") {
+            law = util.xml_to_json(intext);
             if (!noanalyze) {
-                analysis = analyzer.analyze(law);
+                analyzer.stdxml_to_ext(law);
+            }
+        } else if (intype === "json") {
+            let raw_law = JSON.parse(intext);
+            try {
+                law = <util.EL>util.load_el(raw_law);
+            } catch (e) {
+                console.error("[loading json at main]", e);
+                throw e;
+            }
+        } else if (intype === "lawtext") {
+            try {
+                law = parse(intext);
+            } catch (e) {
+                console.error("[parsing lawtext at main]", e);
+                throw e;
+            }
+            if (noanalyze) {
+                law = <util.EL>util.load_el(law.json());
+            }
+        }
+
+        if (law === null) return;
+
+        if (!noanalyze) {
+            analysis = analyzer.analyze(law);
+        }
+
+        if (outtype === "docx") {
+            renderer.render_docx_async(law.json())
+                .then(u8 => {
+                    if (outfile) {
+                        fs.writeFileSync(outfile, u8);
+                    } else {
+                        process.stdout.write(<Buffer>u8);
+                    }
+                });
+        } else {
+            let outtext = "";
+            if (outtype === "lawtext") {
+                outtext = renderer.render_lawtext(law);
+            } else if (outtype === "xml") {
+                outtext = renderer.render_xml(law, { with_control_el: with_control_el });
+            } else if (outtype === "json") {
+                outtext = JSON.stringify(law.json(with_control_el));
+            } else if (outtype === "html") {
+                outtext = renderer.render_html(law);
+            } else if (outtype === "htmlfragment") {
+                outtext = renderer.render_htmlfragment(law);
             }
 
-            if (outtype === "docx") {
-                renderer.render_docx_async(law.json())
-                    .then(u8 => {
-                        if (outfile) {
-                            fs.writeFileSync(outfile, u8);
-                        } else {
-                            process.stdout.write(<Buffer>u8);
-                        }
-                    });
+            if (outfile) {
+                fs.writeFileSync(outfile, outtext, "utf-8");
             } else {
-                let outtext = "";
-                if (outtype === "lawtext") {
-                    outtext = renderer.render_lawtext(law);
-                } else if (outtype === "xml") {
-                    outtext = renderer.render_xml(law, { with_control_el: with_control_el });
-                } else if (outtype === "json") {
-                    outtext = JSON.stringify(law.json(with_control_el));
-                } else if (outtype === "html") {
-                    outtext = renderer.render_html(law);
-                } else if (outtype === "htmlfragment") {
-                    outtext = renderer.render_htmlfragment(law);
-                }
-
-                if (outfile) {
-                    fs.writeFileSync(outfile, outtext, "utf-8");
-                } else {
-                    console.log(outtext);
-                }
+                console.log(outtext);
             }
+        }
 
-        });
+    });
 }
 exports.main = main;
 

@@ -17,7 +17,7 @@ function main() {
         (err, input) => {
             if (err) throw err;
             let parser = peg.generate(input, {
-                allowedStartRules: ["start", "INLINE"],
+                allowedStartRules: ["start", "INLINE", "ranges"],
                 output: "source",
                 format: "commonjs",
                 plugins: [tspegjs],

@@ -2,15 +2,21 @@
 
 import * as sha512 from "hash.js/lib/hash/sha/512";
 import * as parser from "./parser";
-import { EL } from "./util";
+import { EL, Container, ContainerType, RelPos, Env, Span, throwAssertionError } from "./util";
+import * as util from "./util";
 import { LAWNUM_TABLE } from "./lawnum_table";
 import { isString } from "util";
+import { AssertionError } from "assert";
 
 export function get_law_name_length(law_num) {
     let digest = sha512().update(law_num).digest("hex");
     let key = parseInt(digest.slice(0, 7), 16);
     return LAWNUM_TABLE[key];
 }
+
+var root_container_tags = [
+    "Law",
+];
 
 var toplevel_container_tags = [
     "EnactStatement", "MainProvision", "AppdxTable", "AppdxStyle",
@@ -27,12 +33,23 @@ var span_container_tags = [
     "Subitem7", "Subitem8", "Subitem9",
     "Subitem10",
     "Table", "TableRow", "TableColumn",
+    "Sentence",
 ];
 
-var container_tags = (<Array<string>>[])
-    .concat(toplevel_container_tags)
-    .concat(article_container_tags)
-    .concat(span_container_tags);
+var container_tags = [
+    ...root_container_tags,
+    ...toplevel_container_tags,
+    ...article_container_tags,
+    ...span_container_tags,
+];
+
+function get_container_type(tag: string): ContainerType {
+    if (root_container_tags.indexOf(tag) >= 0) return ContainerType.ROOT;
+    else if (toplevel_container_tags.indexOf(tag) >= 0) return ContainerType.TOPLEVEL;
+    else if (article_container_tags.indexOf(tag) >= 0) return ContainerType.ARTICLES;
+    else if (span_container_tags.indexOf(tag) >= 0) return ContainerType.SPANS;
+    else return ContainerType.SPANS;
+}
 
 var ignore_span_tag = [
     "LawNum", "LawTitle",
@@ -45,43 +62,12 @@ var ignore_span_tag = [
     "SupplProvision",
 ];
 
-class Env {
-    law_type: string
-    container_stack: Array<EL>
-    parents: Array<EL>
-    constructor(law_type: string, container_stack: Array<EL> = [], parents: Array<EL> = []) {
-        this.law_type = law_type;
-        this.container_stack = container_stack;
-        this.parents = parents;
-    }
+function extract_spans(law: EL): [Span[], Container[], Container] {
 
-    copy() {
-        return new Env(
-            this.law_type,
-            this.container_stack.slice(),
-            this.parents.slice(),
-        );
-    }
-}
+    let spans: Span[] = [];
+    let containers: Container[] = [];
 
-class Span {
-    index: number
-    el: EL
-    env: Env
-    text: string
-    constructor(index, el, env) {
-        this.index = index;
-        this.el = el;
-        this.env = env;
-
-        this.text = el.text;
-    }
-}
-
-function extract_spans(law: EL): [Array<Span>, Array<[EL, [number, number]]>] {
-
-    let spans: Array<Span> = [];
-    let containers: Array<[EL, [number, number]]> = [];
+    let root_container: Container | null = null;
 
     let extract = (el: EL, _env: Env) => {
 
@@ -106,11 +92,20 @@ function extract_spans(law: EL): [Array<Span>, Array<[EL, [number, number]]>] {
         if (is_mixed) {
             el.attr.span_index = String(spans.length);
             spans.push(new Span(spans.length, el, env));
+            return;
+
         } else {
             env.parents.push(el);
+
             let is_container = container_tags.indexOf(el.tag) >= 0;
+
+            let container: Container | null = null;
             if (is_container) {
-                env.container_stack.push(el);
+                let type = get_container_type(el.tag);
+                container = new Container(el, type);
+                env.add_container(container);
+                containers.push(container);
+                if (type === ContainerType.ROOT) root_container = container;
             }
 
             let start_span_index = spans.length;
@@ -120,18 +115,15 @@ function extract_spans(law: EL): [Array<Span>, Array<[EL, [number, number]]>] {
             }
             let end_span_index = spans.length; // half open
 
-            if (is_container) {
-                containers.push([
-                    el,
-                    [start_span_index, end_span_index],
-                ]);
-            }
+            if (container) container.span_range = [start_span_index, end_span_index];
         }
     };
 
     extract(law, new Env(law.attr.LawType));
 
-    return [spans, containers];
+    if (!root_container) throw new AssertionError();
+
+    return [spans, containers, root_container];
 }
 
 class Pos {
@@ -149,13 +141,13 @@ class Pos {
     }
 }
 
-class ____Declaration extends EL {
+export class ____Declaration extends EL {
     type: string
     name: string
-    scope: Array<ScopeRange>
+    scope: ScopeRange[]
     value: string | null
     name_pos: Pos
-    constructor(type: string, name: string, value: string | null, scope: Array<ScopeRange>, name_pos: Pos) {
+    constructor(type: string, name: string, value: string | null, scope: ScopeRange[], name_pos: Pos) {
         super("____Declaration");
 
         this.type = type;
@@ -214,7 +206,7 @@ class ____VarRef extends EL {
 }
 
 class Declarations {
-    declarations: Array<____Declaration>
+    declarations: ____Declaration[]
     constructor() {
         this.declarations = [];
     }
@@ -245,9 +237,170 @@ class Declarations {
     }
 }
 
-function detect_declarations(law: EL, spans: Array<Span>) {
+function parse_ranges(text: string): util.Ranges { // closed
+    if (text === "") return [];
+    try {
+        return parser.parse(text, { startRule: "ranges" });
+    } catch (e) {
+        console.error(text, e);
+        return [];
+    }
+}
 
-    let detect_lawname = (spans: Array<Span>, span_index: number) => {
+function locate_ranges(orig_ranges: util.Ranges, current_span: Span) {
+    let ranges: util.Ranges = [];
+
+    let locate_pointer = (
+        orig_pointer: util.Pointer,
+        prev_pointer: util.Pointer | null,
+    ): util.Pointer => {
+
+        let located_pointer: util.Pointer;
+
+        {
+            let head = orig_pointer[0];
+            let head_type = get_container_type(head.tag);
+            let current_container = current_span.env.container;
+
+            let found_index = -1;
+
+            if (ignore_span_tag.indexOf(head.tag) >= 0) {
+                located_pointer = orig_pointer;
+
+            } else if (head.rel_pos === RelPos.SAME) {
+                console.error("RelPos.SAME is detected. Skipping:", current_span, orig_pointer);
+                let copy = head.copy();
+                copy.located_container = current_container
+                    .thisOrClosest(c => c.type === ContainerType.TOPLEVEL);
+                located_pointer = [copy];
+
+            } else if (
+                head.rel_pos === RelPos.HERE ||
+                head.rel_pos === RelPos.PREV ||
+                head.rel_pos === RelPos.NEXT
+            ) {
+                let scope_container = current_container
+                    .thisOrClosest(c => c.el.tag === head.tag);
+
+                if (scope_container) {
+                    head.located_container =
+                        (head.rel_pos === RelPos.HERE)
+                            ? scope_container
+                            : (head_type === ContainerType.ARTICLES)
+                                ? (head.rel_pos === RelPos.PREV)
+                                    ? scope_container.prev(c => c.el.tag === head.tag)
+                                    : (head.rel_pos === RelPos.NEXT)
+                                        ? scope_container.next(c => c.el.tag === head.tag)
+                                        : throwAssertionError()
+                                : (head.rel_pos === RelPos.PREV)
+                                    ? scope_container.prevSub(c => c.el.tag === head.tag)
+                                    : (head.rel_pos === RelPos.NEXT)
+                                        ? scope_container.nextSub(c => c.el.tag === head.tag)
+                                        : throwAssertionError();
+                }
+
+                located_pointer = orig_pointer;
+
+            } else if (
+                prev_pointer &&
+                1 <= (found_index = prev_pointer.findIndex(fragment => fragment.tag === head.tag))
+            ) {
+                located_pointer = [
+                    ...prev_pointer.slice(0, found_index),
+                    ...orig_pointer,
+                ];
+
+            } else if (head_type === ContainerType.TOPLEVEL) {
+                head.located_container = current_container.findAncestorChildrenSub(c => {
+                    if (c.el.tag !== head.tag) return false;
+                    let title_el = <EL>c.el.children.find(el =>
+                        el instanceof EL && el.tag === `${c.el.tag}Title`);
+                    return title_el.text.match(new RegExp(`^${head.name}(?:[(（]|\s|$)`)) !== null;
+                });
+
+                located_pointer = orig_pointer;
+
+            } else {
+                let func = c =>
+                    (
+                        c.el.tag === head.tag ||
+                        head.tag === "SUBITEM" && c.el.tag.match(/^Subitem\d+$/) !== null
+                    ) &&
+                    (c.el.attr.Num || null) === head.num;
+                head.located_container =
+                    head_type === ContainerType.ARTICLES
+                        ? current_container.findAncestorChildren(func)
+                        : current_container.findAncestorChildrenSub(func);
+
+                located_pointer = orig_pointer;
+            }
+        }
+
+        if (located_pointer[0].located_container) {
+            let parent_container = located_pointer[0].located_container;
+            for (let fragment of located_pointer.slice(1)) {
+                if (!parent_container) break;
+                // let fragment_rank = container_tags.indexOf(fragment.tag);
+                // if (fragment_rank < 0) fragment_rank = Number.POSITIVE_INFINITY;
+                parent_container =
+                    fragment.located_container =
+                    parent_container.find(
+                        c =>
+                            (
+                                (
+                                    c.el.tag === fragment.tag ||
+                                    fragment.tag === "SUBITEM" &&
+                                    c.el.tag.match(/^Subitem\d+$/) !== null
+                                ) &&
+                                (c.el.attr.Num || null) === fragment.num
+                            ) ||
+                            fragment.tag === "PROVISO" &&
+                            c.el.tag === "Sentence" &&
+                            c.el.attr.Function === "proviso",
+                        // c => fragment_rank < container_tags.indexOf(c.el.tag),
+                    );
+            }
+        }
+
+        return located_pointer;
+    }
+
+    let prev_pointer: util.Pointer | null = null;
+    for (let [orig_from, orig_to] of orig_ranges) {
+        let from = locate_pointer(orig_from, prev_pointer);
+        prev_pointer = from;
+        let to: util.Pointer | null;
+        if (orig_from === orig_to) {
+            to = from;
+        } else {
+            to = locate_pointer(orig_to, prev_pointer);
+            prev_pointer = to;
+        }
+        ranges.push([from, to]);
+    }
+
+    return ranges;
+}
+
+function get_scope(current_span: Span, scope_text: string): ScopeRange[] {
+    let ret: ScopeRange[] = [];
+    let ranges = locate_ranges(parse_ranges(scope_text), current_span);
+    for (let [from, to] of ranges) {
+        let fromc = from[from.length - 1].located_container;
+        let toc = to[to.length - 1].located_container;
+        if (fromc && toc) {
+            ret.push(new ScopeRange(fromc.span_range[0], 0, toc.span_range[1], 0));
+        } else {
+            console.error("Scope couldn't be detected:", { from: from, to: to });
+        }
+    }
+    console.log(scope_text, ranges, ret);
+    return ret;
+}
+
+function detect_declarations(law: EL, spans: Span[], containers: Container[]) {
+
+    let detect_lawname = (spans: Span[], span_index: number) => {
         if (spans.length <= span_index + 3) return;
         let [
             lawname_span,
@@ -324,7 +477,7 @@ function detect_declarations(law: EL, spans: Array<Span>) {
                 name_after_span,
             ] = spans.slice(lawnum_span.index + 1, lawnum_span.index + 5);
 
-            let scope_match = lawnum_span.text.slice(law_num.length + 1).match(/^(以下)?(?:([^。]+?)において)?$/);
+            let scope_match = lawnum_span.text.slice(law_num.length + 1).match(/^(以下)?(?:([^。]+?)において)?(?:単に)?$/);
             let name_after_match = name_after_span.text.match(/^という。/);
             if (
                 scope_match &&
@@ -337,14 +490,7 @@ function detect_declarations(law: EL, spans: Array<Span>) {
                 let following = scope_match[1] !== undefined;
                 let scope_text = scope_match[2] || null;
 
-                let scope = [
-                    new ScopeRange(
-                        name_after_span.index,
-                        name_after_match[0].length,
-                        spans.length, // half open
-                        0, // half open
-                    ),
-                ];
+                let scope = scope_text ? get_scope(lawnum_span, scope_text) : [];
 
                 let name_pos = new Pos(
                     name_span,       // span
@@ -371,7 +517,7 @@ function detect_declarations(law: EL, spans: Array<Span>) {
 
     };
 
-    let detect_name = (spans: Array<Span>, span_index: number) => {
+    let detect_name = (spans: Span[], span_index: number) => {
         if (spans.length < span_index + 5) return;
         let [
             name_before_span,
@@ -381,7 +527,7 @@ function detect_declarations(law: EL, spans: Array<Span>) {
             name_after_span,
         ] = spans.slice(span_index, span_index + 5);
 
-        let scope_match = name_before_span.text.match(/(以下)?(?:([^。]+?)において)?$/);
+        let scope_match = name_before_span.text.match(/(以下)?(?:([^。]+?)において)?(?:単に)?$/);
         let name_after_match = name_after_span.text.match(/^という。/);
         if (
             scope_match &&
@@ -394,14 +540,7 @@ function detect_declarations(law: EL, spans: Array<Span>) {
             let following = scope_match[1] !== undefined;
             let scope_text = scope_match[2] || null;
 
-            let scope = [
-                new ScopeRange(
-                    name_after_span.index,
-                    name_after_match[0].length,
-                    spans.length, // half open
-                    0, // half open
-                ),
-            ];
+            let scope = scope_text ? get_scope(name_before_span, scope_text) : [];
 
             let name_pos = new Pos(
                 name_span,       // span
@@ -439,14 +578,14 @@ function detect_declarations(law: EL, spans: Array<Span>) {
     return declarations;
 }
 
-function detect_variable_references(law: EL, spans: Array<Span>, declarations: Declarations) {
+function detect_variable_references(law: EL, spans: Span[], declarations: Declarations) {
 
-    let variable_references: Array<____VarRef> = [];
+    let variable_references: ____VarRef[] = [];
 
     let detect = (span: Span) => {
         let parent = span.env.parents[span.env.parents.length - 1];
         if (parent.tag === "__PContent" && parent.attr.type === "square") return;
-        let ret: Array<____VarRef> = [];
+        let ret: ____VarRef[] = [];
         for (let declaration of declarations.iterate(span.index)) {
             let text_scope = {
                 start: 0,
@@ -495,7 +634,7 @@ function detect_variable_references(law: EL, spans: Array<Span>, declarations: D
 
 export function analyze(law: EL) {
     let [spans, containers] = extract_spans(law);
-    let declarations = detect_declarations(law, spans);
+    let declarations = detect_declarations(law, spans, containers);
     let variable_references = detect_variable_references(law, spans, declarations);
     return {
         declarations: declarations,
