@@ -1,4 +1,4 @@
-export const template = `行政手続法
+export default `行政手続法
 （平成五年法律第八十八号）
 
 目次

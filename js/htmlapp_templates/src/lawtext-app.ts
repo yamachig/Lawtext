@@ -493,8 +493,8 @@ class Data extends Backbone.Model {
 }
 
 
-import * as sidebar_view_template from "../templates/sidebar_view"
-var SidebarView_template = _.template(sidebar_view_template.template);
+import sidebar_view_template from "../templates/sidebar_view"
+var SidebarView_template = _.template(sidebar_view_template);
 class SidebarView extends Backbone.View<Backbone.Model> {
 
     data: Data
@@ -718,8 +718,8 @@ class VarRefView extends Backbone.View<Backbone.Model> {
 
 
 
-import * as htmlpreview_view_template from "../templates/htmlpreview_view"
-var HTMLpreviewView_template = _.template(htmlpreview_view_template.template);
+import htmlpreview_view_template from "../templates/htmlpreview_view"
+var HTMLpreviewView_template = _.template(htmlpreview_view_template);
 class HTMLpreviewView extends Backbone.View<Backbone.Model> {
 
     data: Data
@@ -799,10 +799,10 @@ class HTMLpreviewView extends Backbone.View<Backbone.Model> {
 
 
 
-import * as sample_lawtext_template from "../templates/sample_lawtext"
+import sample_lawtext_template from "../templates/sample_lawtext"
 
-import * as main_view_template from "../templates/main_view"
-var MainView_template = _.template(main_view_template.template);
+import main_view_template from "../templates/main_view"
+var MainView_template = _.template(main_view_template);
 class MainView extends Backbone.View<Backbone.Model> {
 
     data: Data
@@ -876,7 +876,7 @@ class MainView extends Backbone.View<Backbone.Model> {
 
     download_sample_lawtext_button_click(e) {
         let blob = new Blob(
-            [sample_lawtext_template.template],
+            [sample_lawtext_template],
             { type: "text/plain" },
         );
         saveAs(blob, "sample_lawtext.law.txt");

@@ -1,4 +1,4 @@
-export const template = `
+export default `
 
 <style style="display: none;">
 .lawtext-sidebar-view {
