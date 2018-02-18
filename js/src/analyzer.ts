@@ -2,11 +2,10 @@
 
 import * as sha512 from "hash.js/lib/hash/sha/512";
 import * as parser from "./parser";
-import { EL, Container, ContainerType, RelPos, Env, Span, throwAssertionError } from "./util";
+import { EL, Container, ContainerType, RelPos, Env, Span, throwError } from "./util";
 import * as util from "./util";
 import { LAWNUM_TABLE } from "./lawnum_table";
 import { isString } from "util";
-import { AssertionError } from "assert";
 
 export function get_law_name_length(law_num) {
     let digest = sha512().update(law_num).digest("hex");
@@ -121,7 +120,7 @@ function extract_spans(law: EL): [Span[], Container[], Container] {
 
     extract(law, new Env(law.attr.LawType));
 
-    if (!root_container) throw new AssertionError();
+    if (!root_container) throw new Error();
 
     return [spans, containers, root_container];
 }
@@ -291,12 +290,12 @@ function locate_ranges(orig_ranges: util.Ranges, current_span: Span) {
                                     ? scope_container.prev(c => c.el.tag === head.tag)
                                     : (head.rel_pos === RelPos.NEXT)
                                         ? scope_container.next(c => c.el.tag === head.tag)
-                                        : throwAssertionError()
+                                        : throwError()
                                 : (head.rel_pos === RelPos.PREV)
                                     ? scope_container.prevSub(c => c.el.tag === head.tag)
                                     : (head.rel_pos === RelPos.NEXT)
                                         ? scope_container.nextSub(c => c.el.tag === head.tag)
-                                        : throwAssertionError();
+                                        : throwError();
                 }
 
                 located_pointer = orig_pointer;

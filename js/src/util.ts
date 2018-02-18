@@ -2,7 +2,6 @@
 
 import { DOMParser } from "xmldom";
 import { isString } from "util";
-import { AssertionError } from "assert";
 
 var Node = Node || {
     TEXT_NODE: 3,
@@ -209,7 +208,7 @@ export class Container {
             let sub_parent = this.type !== ContainerType.ARTICLES
                 ? this
                 : this.closest(container => container.type !== ContainerType.ARTICLES);
-            if (!sub_parent) throw new AssertionError();
+            if (!sub_parent) throw new Error();
             sub_parent.sub_children.push(child);
             child.sub_parent = sub_parent;
         }
@@ -376,7 +375,7 @@ export class Env {
     }
 
     get container(): Container {
-        if (!this._container) throw new AssertionError();
+        if (!this._container) throw new Error();
         return this._container;
     }
 
@@ -712,6 +711,6 @@ export type Pointer = PointerFragment[];
 export type Range = [Pointer, Pointer]; // closed
 export type Ranges = Range[];
 
-export const throwAssertionError = () => {
-    throw new AssertionError();
+export const throwError = () => {
+    throw new Error();
 }
