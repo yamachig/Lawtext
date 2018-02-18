@@ -336,6 +336,8 @@
     {{- m_paragraph_item(el, article, indent + 1) -}}
   {%- elif el.tag == 'TableStruct' -%}
     {{- m_table_struct(el, indent + 1) -}}
+  {%- elif el.tag == 'StyleStruct' -%}
+    {{- m_style_struct(el, indent + 1) -}}
   {%- elif el.tag == 'List' -%}
     {{- m_list(el, indent + 2) -}}
   {%- else -%}
@@ -502,6 +504,8 @@
         </w:p>
         {%- elif el.tag == 'Item' -%}
           {{- m_paragraph_item(el, {}, 0) -}}
+        {%- elif el.tag == 'FigStruct' -%}
+          {{- m_fig_struct(el, 0) -}}
         {%- else -%}
         <w:p>
           <w:r>
@@ -533,6 +537,9 @@
 {%- for el in style_struct.children -%}
   {%- if el.tag == 'StyleStructTitle' -%}
 <w:p>
+  <w:pPr>
+    <w:pStyle w:val="IndentHanging{{ indent }}"/>
+  </w:pPr>
   {{- m_run(el, indent) -}}
 </w:p>
   {%- elif el.tag == 'Style' -%}
@@ -557,6 +564,8 @@
     {{- m_fig(el, indent) -}}
   {%- elif el.tag == 'Table' -%}
     {{- m_table(el, indent) -}}
+  {%- elif el.tag == 'List' -%}
+    {{- m_list(el, indent + 1) -}}
   {%- else -%}
 <w:p>
   <w:r>
@@ -648,8 +657,14 @@
 {%- macro m_list(list, indent) -%}
 
 {%- for el in list.children -%}
-  {%- if el.tag == 'ListSentence' -%}
+  {%- if el.tag in [
+          'ListSentence', 'Sublist1Sentence', 'Sublist2Sentence', 'Sublist3Sentence'
+      ] -%}
     {{- m_list_sentence(el, indent) -}}
+  {%- elif el.tag in [
+          'Sublist1', 'Sublist2', 'Sublist3'
+      ] -%}
+    {{- m_list(el, indent + 1) -}}
   {%- else -%}
 <w:p>
   <w:r>
@@ -669,14 +684,14 @@
   {%- if el.tag == 'Sentence' %}
 <w:p>
   <w:pPr>
-    <w:pStyle w:val="Indent{{ 1 }}"/>
+    <w:pStyle w:val="Indent{{ indent }}"/>
   </w:pPr>
   {{- m_run(el) -}}
 </w:p>
   {%- elif el.tag == 'Column' -%}
 <w:p>
   <w:pPr>
-    <w:pStyle w:val="Indent{{ 1 }}"/>
+    <w:pStyle w:val="Indent{{ indent }}"/>
   </w:pPr>
     {{- m_column(el) -}}
     {%- if not loop.last -%}
@@ -696,10 +711,23 @@
 
 
 
+
+{%- macro m_fig_struct(fig_struct, indent) -%}
+{%- for el in fig_struct.children -%}
+  {%- if el.tag == 'Fig' -%}
+    {{- m_fig(el, indent) -}}
+  {%- else -%}
+    {{- m_element(el, indent) -}}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+
+
 {%- macro m_fig(fig, indent) -%}
 <w:p>
   <w:pPr>
-    <w:pStyle w:val="Indent{{ 1 }}"/>
+    <w:pStyle w:val="Indent{{ indent }}"/>
   </w:pPr>
   <w:r>
     <w:t>[{{ fig.attr['src'] -}}]</w:t>
