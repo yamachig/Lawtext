@@ -10,7 +10,7 @@ var Node = Node || {
 
 export interface JsonEL {
     tag: string
-    attr: { [key: string]: string }
+    attr: { [key: string]: string | undefined }
     children: (JsonEL | string)[]
 }
 
@@ -21,11 +21,11 @@ function isJsonEL(object: any): object is JsonEL {
 
 export class EL {
     tag: string
-    attr: { [key: string]: string }
+    attr: { [key: string]: string | undefined }
     children: (EL | string)[]
     _text: string | null
 
-    constructor(tag: string, attr: { [key: string]: string } = {}, children: (EL | string)[] = []) {
+    constructor(tag: string, attr: { [key: string]: string | undefined } = {}, children: (EL | string)[] = []) {
         // if(!tag) {
         //     error(`${JSON.stringify(tag)} is invalid tag.`);
         // }
@@ -34,6 +34,10 @@ export class EL {
         this.children = children;
 
         this._text = null;
+    }
+
+    get isControl(): boolean {
+        return this.tag[0] == "_";
     }
 
     append(child: EL | string): EL {
@@ -466,7 +470,7 @@ export function element_to_json(el: Element): EL {
         } else if (node.nodeType === Node.ELEMENT_NODE) {
             children.push(element_to_json(<Element>node));
         } else {
-            console.log(node);
+            // console.log(node);
         }
     }
     let attr = {};
@@ -711,6 +715,13 @@ export type Pointer = PointerFragment[];
 export type Range = [Pointer, Pointer]; // closed
 export type Ranges = Range[];
 
+
+export class NotImplementedError extends Error { }
+
 export const throwError = () => {
     throw new Error();
+}
+
+export function assertNever(x: never): never {
+    throw new Error("Unexpected object: " + x);
 }
