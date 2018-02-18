@@ -925,9 +925,7 @@
       <w:rt>
         <w:r>
           <w:t>
-            {%- for subchild in child.children -%}
-              {{ subchild }}
-            {%- endfor -%}
+            {{ child.text }}
           </w:t>
         </w:r>
       </w:rt>
@@ -938,6 +936,12 @@
       <w:rubyBase>
         <w:r>
           <w:t>{{- child -}}</w:t>
+        </w:r>
+      </w:rubyBase>
+        {%- elif child.tag != 'Rt' %}
+      <w:rubyBase>
+        <w:r>
+          <w:t>{{- child.text -}}</w:t>
         </w:r>
       </w:rubyBase>
         {%- endif -%}
