@@ -382,14 +382,18 @@ function locate_ranges(orig_ranges: util.Ranges, current_span: Span) {
     return ranges;
 }
 
-function get_scope(current_span: Span, scope_text: string): ScopeRange[] {
+function get_scope(current_span: Span, scope_text: string, following: boolean, following_index: number): ScopeRange[] {
     let ret: ScopeRange[] = [];
     let ranges = locate_ranges(parse_ranges(scope_text), current_span);
     for (let [from, to] of ranges) {
         let fromc = from[from.length - 1].located_container;
         let toc = to[to.length - 1].located_container;
         if (fromc && toc) {
-            ret.push(new ScopeRange(fromc.span_range[0], 0, toc.span_range[1], 0));
+            if (following) {
+                ret.push(new ScopeRange(following_index, 0, toc.span_range[1], 0));
+            } else {
+                ret.push(new ScopeRange(fromc.span_range[0], 0, toc.span_range[1], 0));
+            }
         } else {
             console.error("Scope couldn't be detected:", { from: from, to: to });
         }
@@ -490,7 +494,9 @@ function detect_declarations(law: EL, spans: Span[], containers: Container[]) {
                 let following = scope_match[1] !== undefined;
                 let scope_text = scope_match[2] || null;
 
-                let scope = scope_text ? get_scope(lawnum_span, scope_text) : [];
+                let scope = scope_text
+                    ? get_scope(lawnum_span, scope_text, following, name_after_span.index)
+                    : [new ScopeRange(name_after_span.index, 0, spans.length, 0)];
 
                 let name_pos = new Pos(
                     name_span,       // span
@@ -540,7 +546,9 @@ function detect_declarations(law: EL, spans: Span[], containers: Container[]) {
             let following = scope_match[1] !== undefined;
             let scope_text = scope_match[2] || null;
 
-            let scope = scope_text ? get_scope(name_before_span, scope_text) : [];
+            let scope = scope_text
+                ? get_scope(name_before_span, scope_text, following, name_after_span.index)
+                : [new ScopeRange(name_after_span.index, 0, spans.length, 0)];
 
             let name_pos = new Pos(
                 name_span,       // span
