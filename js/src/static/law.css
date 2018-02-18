@@ -93,6 +93,14 @@
     padding-left: 1em;
 }
 
+.law .amend-provision-sentence {
+    text-indent: 1em;
+}
+
+.law .new-provision {
+    padding-left: 1em;
+}
+
 .law table {
     border-collapse: collapse;
     text-indent: 0;
@@ -108,4 +116,5 @@
 
 .law pre {
     white-space: pre-wrap;
+    text-indent: 0;
 }

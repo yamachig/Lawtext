@@ -283,6 +283,8 @@ paragraph-item-body
     {{- m_style_struct(el) -}}
   {%- elif el.tag == 'List' -%}
     {{- m_list(el) -}}
+  {%- elif el.tag == 'AmendProvision' -%}
+    {{- m_amend_provision(el) -}}
   {%- else -%}
     {{- m_element(el) -}}
   {%- endif -%}
@@ -404,7 +406,7 @@ paragraph-item-body
       {{- m_text(el) -}}
     </div>
   {%- elif el.tag == 'Item' -%}
-    {{- m_paragraph_item(el) -}}}
+    {{- m_paragraph_item(el) -}}
   {%- elif el.tag == 'FigStruct' -%}
     {{- m_fig_struct(el) -}}
   {%- else -%}
@@ -565,6 +567,40 @@ paragraph-item-body
 
 
 
+{%- macro m_amend_provision(amend_provision) -%}
+<div class="amend-provision">
+{%- for el in amend_provision.children -%}
+  {%- if el.tag == 'AmendProvisionSentence' -%}
+    {{- m_amend_provision_sentence(el) -}}
+  {%- elif el.tag == 'NewProvision' -%}
+    {{- m_new_provision(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+</div>
+{%- endmacro -%}
+
+{%- macro m_amend_provision_sentence(amend_provision_sentence) -%}
+<div class="amend-provision-sentence">
+{%- for el in amend_provision_sentence.children -%}
+  {%- if el.tag == 'Sentence' -%}
+    {{- m_text(el) -}}
+  {%- else -%}
+    {{- m_element(el) -}}
+  {%- endif -%}
+{%- endfor -%}
+</div>
+{%- endmacro -%}
+
+{%- macro m_new_provision(new_provision) -%}
+<div class="new-provision">
+  {{- m_elements(new_provision.children) -}}
+</div>
+{%- endmacro -%}
+
+
+
 {%- macro m_fig_struct(fig_struct) -%}
 {%- for el in fig_struct.children -%}
   {%- if el.tag == 'Fig' -%}
@@ -687,8 +723,7 @@ paragraph-item-body
 
 
 
-
-{% if elements %}
+{%- macro m_elements(elements) -%}
   {% for el in elements %}
     {%- if el.tag in [
       'ParagraphSentence', 'ItemSentence',
@@ -725,6 +760,10 @@ paragraph-item-body
       {{- m_text(el) -}}
     {%- endif -%}
   {%- endfor -%}
+{%- endmacro -%}
+
+{% if elements %}
+{{- m_elements(elements) -}}
 {%- endif -%}
 
 {% if law %}

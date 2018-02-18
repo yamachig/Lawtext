@@ -340,6 +340,8 @@
     {{- m_style_struct(el, indent + 1) -}}
   {%- elif el.tag == 'List' -%}
     {{- m_list(el, indent + 2) -}}
+  {%- elif el.tag == 'AmendProvision' -%}
+    {{- m_amend_provision(el, indent + 1) -}}
   {%- else -%}
 <w:p>
   <w:r>
@@ -707,6 +709,61 @@
   {%- endif -%}
 {%- endfor -%}
 
+{%- endmacro -%}
+
+
+
+{%- macro m_amend_provision(amend_provision, indent) -%}
+
+{%- for el in amend_provision.children -%}
+  {%- if el.tag == 'AmendProvisionSentence' -%}
+    {{- m_amend_provision_sentence(el, indent) -}}
+  {%- elif el.tag == 'NewProvision' -%}
+    {{- m_new_provision(el, indent) -}}
+  {%- else -%}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- endmacro -%}
+
+
+
+{%- macro m_amend_provision_sentence(amend_provision_sentence, indent) -%}
+
+{%- for el in amend_provision_sentence.children -%}
+  {%- if el.tag == 'Sentence' %}
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="Indent{{ indent }}"/>
+  </w:pPr>
+  {{- m_run(el) -}}
+</w:p>
+  {%- else %}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
+  {%- endif -%}
+{%- endfor -%}
+
+{%- endmacro -%}
+
+
+
+{%- macro m_new_provision(new_provision, indent) -%}
+  {%- for el in new_provision.children -%}
+<w:p>
+  <w:r>
+    <w:t>{{- m_element(el) -}}</w:t>
+  </w:r>
+</w:p>
+  {%- endfor -%}
 {%- endmacro -%}
 
 

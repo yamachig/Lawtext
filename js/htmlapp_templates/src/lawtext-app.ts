@@ -34,7 +34,7 @@ function annotate(el: JsonEL | string, m_text_default: (el: JsonEL) => string): 
         throw true;
     }
     if (isString(el)) {
-        return el;
+        return _(el).escape();
     }
 
     if (el.tag[0] === "_") {
