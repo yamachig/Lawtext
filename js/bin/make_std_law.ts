@@ -30,13 +30,18 @@ export interface __EL extends EL {
     isControl: true
 }
 `);
+element_ifs.push(`\
+export interface StdEL extends EL {
+    isControl: false
+}
+`);
 
 for (let element of schema.children.filter(el => !isString(el) && el.tag === "xs:element")) {
     if (isString(element)) continue;
 
     if (element.attr.type === "xs:string") {
         element_ifs.push(`\
-export interface ${element.attr.name} extends EL {
+export interface ${element.attr.name} extends StdEL {
     tag: "${element.attr.name}"
     children: [__EL | string]
 }
@@ -51,7 +56,7 @@ export function is${element.attr.name}(obj: EL): obj is ${element.attr.name} {
             ? "EL | string"
             : element.attr.type;
         element_ifs.push(`\
-export interface ${element.attr.name} extends EL {
+export interface ${element.attr.name} extends StdEL {
     tag: "${element.attr.name}"
     children: [${children_type}]
 }
@@ -80,7 +85,7 @@ export function is${element.attr.name}(obj: EL): obj is ${element.attr.name} {
         let children_type = child_tags.size === 0 ? "never[]" : `(${[...child_tags].join(" | ")})[]`;
 
         element_ifs.push(`\
-export interface ${element.attr.name} extends EL {
+export interface ${element.attr.name} extends StdEL {
     tag: "${element.attr.name}"
     attr: {${attrs_type}}
     children: ${children_type}

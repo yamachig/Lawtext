@@ -138,9 +138,9 @@ export function render_docx_async(law: JsonEL): Promise<Uint8Array | Buffer> {
     });
 }
 
-export function render_lawtext(law: JsonEL, context?: { [key: string]: any }): string {
-    return render("lawtext.j2", Object.assign({ law: law }, context));
-}
+// export function render_lawtext(law: JsonEL, context?: { [key: string]: any }): string {
+//     return render("lawtext.j2", Object.assign({ law: law }, context));
+// }
 
 export function render_xml(law: JsonEL, context?: { [key: string]: any }): string {
     return render("xml.xml", Object.assign({ law: law }, context));

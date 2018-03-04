@@ -8,6 +8,7 @@ import { EL, JsonEL } from "../../src/util";
 import * as util from "../../src/util";
 import * as analyzer from "../../src/analyzer";
 import * as renderer from "../../src/renderer";
+import render_lawtext from "../../src/renderers/lawtext";
 import { saveAs } from "file-saver";
 import { isString } from "util";
 import * as JSZip from "jszip";
@@ -461,7 +462,7 @@ class Data extends Backbone.Model {
         let law = this.get("law");
         if (law === null) return;
 
-        let s_lawtext = renderer.render_lawtext(law);
+        let s_lawtext = render_lawtext(law);
         let blob = new Blob(
             [s_lawtext],
             { type: "text/plain" },

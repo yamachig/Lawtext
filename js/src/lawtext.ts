@@ -3,6 +3,7 @@
 import * as parser from "./parser";
 import * as analyzer from "./analyzer";
 import * as renderer from "./renderer";
+import render_lawtext from "./renderers/lawtext";
 import * as util from "./util";
 import * as fs from "fs";
 import * as argparse from "argparse";
@@ -234,7 +235,7 @@ function main(args) {
         } else {
             let outtext = "";
             if (outtype === "lawtext") {
-                outtext = renderer.render_lawtext(law);
+                outtext = render_lawtext(law);
             } else if (outtype === "xml") {
                 outtext = renderer.render_xml(law, { with_control_el: with_control_el });
             } else if (outtype === "json") {
