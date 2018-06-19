@@ -864,7 +864,7 @@ export function render(el: EL, indent: number = 0): string {
     if (std.isLaw(el)) {
         ret += renderLaw(el, indent);
     }
-    ret = ret.replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1");
+    ret = ret.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1");
     return ret;
 }
 let render_lawtext = render;
