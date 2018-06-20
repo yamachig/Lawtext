@@ -118,7 +118,7 @@ function extract_spans(law: EL): [Span[], Container[], Container] {
         }
     };
 
-    extract(law, new Env(law.attr.LawType));
+    extract(law, new Env(law.attr.LawType || ""));
 
     if (!root_container) throw new Error();
 
@@ -397,7 +397,7 @@ function get_scope(current_span: Span, scope_text: string, following: boolean, f
             console.error("Scope couldn't be detected:", { from: from, to: to });
         }
     }
-    console.log(scope_text, ranges, ret);
+    // console.log(scope_text, ranges, ret);
     return ret;
 }
 

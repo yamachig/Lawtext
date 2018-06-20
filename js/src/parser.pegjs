@@ -1339,41 +1339,49 @@ pointer_fragment "pointer_fragment" =
         );
     }
     /
-    "次" type_char:[編章節款目章条項号]
+    "次" type_char:[編章節款目章条項号表]
     {
         return new util.PointerFragment(
             util.RelPos.NEXT,
-            util.article_group_type[type_char],
+            (type_char === "表")
+                ? "TableStruct"
+                : util.article_group_type[type_char],
             text(),
             null,
         );
     }
     /
-    "前" type_char:[編章節款目章条項号]
+    "前" type_char:[編章節款目章条項号表]
     {
-        return util.PointerFragment(
+        return new util.PointerFragment(
             util.RelPos.PREV,
-            util.article_group_type[type_char],
+            (type_char === "表")
+                ? "TableStruct"
+                : util.article_group_type[type_char],
             text(),
             null,
         );
     }
     /
-    "この" type_char:[編章節款目章条項号]
+    ("この" / "本") type_char:[編章節款目章条項号表]
     {
         return new util.PointerFragment(
             util.RelPos.HERE,
-            util.article_group_type[type_char],
+            (type_char === "表")
+                ? "TableStruct"
+                : util.article_group_type[type_char],
             text(),
             null,
         );
     }
     /
-    "同" type_char:[編章節款目章条項号]
+    "同" type_char:[編章節款目章条項号表]
     {
         return new util.PointerFragment(
             util.RelPos.SAME,
-            util.article_group_type[type_char],
+            (type_char === "表")
+                ? "TableStruct"
+                : util.article_group_type[type_char],
             text(),
             null,
         );
@@ -1396,6 +1404,26 @@ pointer_fragment "pointer_fragment" =
             "AppdxTable",
             text(),
             util.parse_named_num(text()),
+        );
+    }
+    /
+    "前段"
+    {
+        return new util.PointerFragment(
+            util.RelPos.NAMED,
+            "FIRSTPART",
+            text(),
+            null,
+        );
+    }
+    /
+    "後段"
+    {
+        return new util.PointerFragment(
+            util.RelPos.NAMED,
+            "LATTERPART",
+            text(),
+            null,
         );
     }
     /

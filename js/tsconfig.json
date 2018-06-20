@@ -8,10 +8,10 @@
         "downlevelIteration": true,
         "allowJs": true,
         "lib": [
-            "es2015", "dom", "es5", "scripthost",
+            "es2015", "dom", "es5", "scripthost"
         ]
         // "strict": true,
         // "checkJs": true,
         // "types" : ["node"]
-    },
+    }
 }
