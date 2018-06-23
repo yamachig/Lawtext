@@ -3,6 +3,10 @@
 import { DOMParser } from "xmldom";
 import { isString } from "util";
 
+export function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 var Node = Node || {
     TEXT_NODE: 3,
     ELEMENT_NODE: 1,

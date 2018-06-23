@@ -4,7 +4,7 @@ import * as lawtext from "../../src/lawtext";
 import * as $ from "jquery";
 import * as Backbone from "backbone";
 import * as _ from "underscore";
-import { EL, JsonEL } from "../../src/util";
+import { EL, JsonEL, wait } from "../../src/util";
 import * as util from "../../src/util";
 import * as analyzer from "../../src/analyzer";
 import * as renderer from "../../src/renderer";
@@ -12,22 +12,12 @@ import render_lawtext from "../../src/renderers/lawtext";
 import { saveAs } from "file-saver";
 import { isString } from "util";
 import * as JSZip from "jszip";
+import * as lawdata from "./lawdata";
 import * as bootstrap from "bootstrap";
 
 function em(input) {
     var emSize = parseFloat($("body").css("font-size"));
     return (emSize * input);
-}
-
-class LawNameItem {
-    law_name: string
-    law_no: string
-    promulgation_date: string
-    constructor(law_name: string, law_no: string, promulgation_date: string) {
-        this.law_name = law_name;
-        this.law_no = law_no;
-        this.promulgation_date = promulgation_date;
-    }
 }
 
 function annotate(el: JsonEL | string, m_text_default: (el: JsonEL) => string): string {
@@ -265,10 +255,11 @@ class Data extends Backbone.Model {
         reader.onload = (e => {
             $(evt.target).val("");
             let div = $("<div>");
-            let text = e.target["result"];
+            let text = e.target ? e.target.result : "";
             this.load_law_text(text, true);
             this.set({ law_search_key: null });
             this.trigger("file-loaded");
+            this.set({ opening_file: false });
         });
         reader.readAsText(file);
     }
@@ -300,128 +291,20 @@ class Data extends Backbone.Model {
             }
         }
         if (law) {
-            this.set({ opening_file: false, law: law });
-        } else {
-            this.set({ opening_file: false });
+            this.set({ law: law });
         }
     }
 
-    search_law(law_search_key) {
+    async search_law(law_search_key) {
         this.set({ opening_file: true });
-        setTimeout(() => {
-            this.search_law_inner(law_search_key);
-        }, 30);
-    }
-
-    search_law_inner(law_search_key) {
-        let load_law_num = lawnum => {
-
-            let law_data_str = localStorage ? localStorage.getItem(`law_for:${lawnum}`) : null;
-            if (law_data_str) {
-                let law_data = JSON.parse(law_data_str);
-                let datetime = new Date(law_data.datetime);
-                let now = new Date();
-                let ms = now.getTime() - datetime.getTime();
-                let days = ms / (1000 * 60 * 60 * 24);
-                if (days < 1) {
-                    this.load_law_text(law_data.xml, true);
-                    return;
-                }
-            }
-
-            fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=${encodeURI(lawnum)}`, {
-                mode: "cors",
-            })
-                .then(response => new Promise((resolve, reject) => {
-                    response.text().then(text => resolve([response, text]));
-                }))
-                .then(([response, text]) => new Promise((resolve, reject) => {
-                    if (response.ok && !/^(?:<\?xml|<Law)/.test(text.trim())) {
-                        JSZip.loadAsync(text, { base64: true })
-                            .then(zip => zip.file("body.xml").async("text"))
-                            .then(xml => resolve([response, xml]));
-                    } else {
-                        resolve([response, text]);
-                    }
-                }))
-                .then(([response, text]) => {
-                    if (response.ok) {
-                        this.load_law_text(text, true);
-                        if (localStorage) {
-                            localStorage.setItem(
-                                `law_for:${lawnum}`,
-                                JSON.stringify({
-                                    datetime: new Date().toISOString(),
-                                    xml: text,
-                                }),
-                            );
-                        }
-                    } else {
-                        console.log(response);
-                        this.set({ opening_file: false });
-                        this.invoke_error(
-                            "法令の読み込み中にエラーが発生しました",
-                            text,
-                        );
-                    }
-                });
-        };
-
-        let law_num_data_str = localStorage ? localStorage.getItem(`law_num_for:${law_search_key}`) : null;
-        if (law_num_data_str) {
-            let law_num_data = JSON.parse(law_num_data_str);
-            let datetime = new Date(law_num_data.datetime);
-            let now = new Date();
-            let ms = now.getTime() - datetime.getTime();
-            let days = ms / (1000 * 60 * 60 * 24);
-            if (days < 1) {
-                load_law_num(law_num_data.lawnum);
-                return;
-            }
+        await wait(300);
+        try {
+            let law = await lawdata.load_law(law_search_key);
+            this.load_law_text(law, true);
+        } catch (err) {
+            this.invoke_error(err[0], err[1]);
         }
-
-        let re_lawnum = /^(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[〇一二三四五六七八九―]+|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定)$/;
-        let match = re_lawnum.exec(law_search_key);
-        if (match) {
-            let lawnum = match[0];
-            load_law_num(lawnum);
-            if (localStorage) {
-                localStorage.setItem(
-                    `law_num_for:${law_search_key}`,
-                    JSON.stringify({
-                        datetime: new Date().toISOString(),
-                        lawnum: lawnum,
-                    }),
-                );
-            }
-        } else {
-            fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=${encodeURI(law_search_key)}`, {
-                mode: "cors",
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length) {
-                        let lawnum = _(data).sortBy(d => d[0].length)[0][1];
-                        load_law_num(lawnum);
-                        if (localStorage) {
-                            localStorage.setItem(
-                                "law_num_for:" + law_search_key,
-                                JSON.stringify({
-                                    datetime: new Date().toISOString(),
-                                    lawnum: lawnum,
-                                }),
-                            );
-                        }
-                        return;
-                    } else {
-                        this.invoke_error(
-                            "法令が見つかりません",
-                            `「${law_search_key}」を検索しましたが、見つかりませんでした。`,
-                        );
-                    }
-                    this.set({ opening_file: false });
-                });
-        }
+        this.set({ opening_file: false });
     }
 
     get_law_name(): string | null {

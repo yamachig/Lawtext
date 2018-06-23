@@ -16,6 +16,9 @@ function main(args) {
 
     if(fs.existsSync(dest_path)) fs.removeSync(dest_path);
     fs.mkdirSync(dest_path);
+    if(args.local && fs.existsSync(args.local)) {
+        fs.symlinkSync(args.local, path.join(dest_path, "lawdata"), "dir");
+    }
 
     fs.copySync(src_path, dest_path);
     fs.removeSync(path.join(dest_path, "src/lawtext-app.ts"));
@@ -95,8 +98,9 @@ if (typeof require !== "undefined" && require.main === module) {
     argparser.addArgument("dest_path");
     argparser.addArgument(
         ["-d", "--dev"],
-        { action: "storeTrue"},
+        { action: "storeTrue" },
     );
+    argparser.addArgument(["-l", "--local"]);
     let args = argparser.parseArgs();
     main(args);
 }
