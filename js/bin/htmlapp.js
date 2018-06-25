@@ -22,6 +22,7 @@ function main(args) {
 
     fs.copySync(src_path, dest_path);
     fs.removeSync(path.join(dest_path, "src/lawtext-app.ts"));
+    fs.removeSync(path.join(dest_path, "src/lawdata.ts"));
     fs.removeSync(path.join(dest_path, "templates"));
 
     fs.copyFileSync(

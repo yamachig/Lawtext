@@ -1,0 +1,51 @@
+{
+    "name": "lawtext-lawdownload",
+    "version": "0.0.1",
+    "author": "yamachi",
+    "license": "MIT",
+    "description": "",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/yamachig/lawtext.git"
+    },
+    "bugs": {
+        "url": "https://github.com/yamachig/lawtext/issues"
+    },
+    "homepage": "https://github.com/yamachig/lawtext#readme",
+    "scripts": {
+        "watch": "webpack -w --colors --config ./webpack.config.dev.js",
+        "build": "webpack --colors --config ./webpack.config.dev.js",
+        "build:prod": "webpack --config ./webpack.config.prod.js"
+    },
+    "devDependencies": {
+        "@types/file-saver": "",
+        "@types/jquery": "",
+        "@types/jszip": "",
+        "@types/react": "",
+        "@types/react-dom": "",
+        "@types/xmldom": "",
+        "autoprefixer": "",
+        "css-loader": "",
+        "extract-text-webpack-plugin": "next",
+        "html-loader": "",
+        "html-webpack-plugin": "",
+        "node-sass": "",
+        "postcss-loader": "",
+        "sass-loader": "",
+        "style-loader": "",
+        "ts-loader": "",
+        "typescript": "",
+        "webpack": "",
+        "webpack-cli": ""
+    },
+    "dependencies": {
+        "bootstrap": "",
+        "file-saver": "",
+        "jquery": "",
+        "jszip": "",
+        "popper.js": "",
+        "react": "",
+        "react-dom": "",
+        "xmldom": ""
+    }
+}
