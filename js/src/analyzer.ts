@@ -1,13 +1,13 @@
 "use strict";
 
-import * as sha512 from "hash.js/lib/hash/sha/512";
+const sha512 = require("hash.js/lib/hash/sha/512");
 import * as parser from "./parser";
 import { EL, Container, ContainerType, RelPos, Env, Span, throwError } from "./util";
 import * as util from "./util";
 import { LAWNUM_TABLE } from "./lawnum_table";
 import { isString } from "util";
 
-export function get_law_name_length(law_num) {
+export function get_law_name_length(law_num: string) {
     let digest = sha512().update(law_num).digest("hex");
     let key = parseInt(digest.slice(0, 7), 16);
     return LAWNUM_TABLE[key];
@@ -204,7 +204,7 @@ class ____VarRef extends EL {
     }
 }
 
-class Declarations {
+export class Declarations {
     declarations: ____Declaration[]
     constructor() {
         this.declarations = [];
@@ -320,7 +320,7 @@ function locate_ranges(orig_ranges: util.Ranges, current_span: Span) {
                 located_pointer = orig_pointer;
 
             } else {
-                let func = c =>
+                let func = (c: Container) =>
                     (
                         c.el.tag === head.tag ||
                         head.tag === "SUBITEM" && c.el.tag.match(/^Subitem\d+$/) !== null
@@ -404,7 +404,7 @@ function get_scope(current_span: Span, scope_text: string, following: boolean, f
 function detect_declarations(law: EL, spans: Span[], containers: Container[]) {
 
     let detect_lawname = (spans: Span[], span_index: number) => {
-        if (spans.length <= span_index + 3) return;
+        if (spans.length <= span_index + 3) return null;
         let [
             lawname_span,
             start_span,
@@ -414,10 +414,10 @@ function detect_declarations(law: EL, spans: Span[], containers: Container[]) {
         if (!(
             start_span.el.tag === "__PStart" &&
             start_span.el.attr.type === "round"
-        )) return;
+        )) return null;
 
         let match = lawnum_span.text.match(/^(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年\S+?第[〇一二三四五六七八九十百千]+号/);
-        if (!match) return;
+        if (!match) return null;
 
         let law_num = match[0];
         let lawname_length = get_law_name_length(law_num);
@@ -519,11 +519,12 @@ function detect_declarations(law: EL, spans: Span[], containers: Container[]) {
                 return declaration;
             }
         }
+        return null;
 
     };
 
     let detect_name = (spans: Span[], span_index: number) => {
-        if (spans.length < span_index + 5) return;
+        if (spans.length < span_index + 5) return null;
         let [
             name_before_span,
             name_start_span,
@@ -568,6 +569,8 @@ function detect_declarations(law: EL, spans: Span[], containers: Container[]) {
             name_span.el.replace_span(0, name_span.text.length, declaration);
             return declaration;
         }
+
+        return null;
     };
 
     let declarations = new Declarations();

@@ -33,6 +33,7 @@
     "ts-pegjs": "",
     "typescript": "",
     "webpack": "",
+    "webpack-cli": "",
     "webpack-node-externals": "",
     "xmldom": ""
   },
@@ -41,7 +42,7 @@
   "description": "Plain text format for Japanese law",
   "main": "lib/lawtext.js",
   "scripts": {
-    "build": "./node_modules/.bin/webpack",
+    "build": "webpack --colors --config ./webpack.config.js",
     "build-htmlapp": "node bin/htmlapp out_htmlapp",
     "build-htmlapp-dev": "node bin/htmlapp --dev out_htmlapp_dev",
     "watch": "./node_modules/.bin/webpack --watch"
@@ -56,5 +57,8 @@
   "bugs": {
     "url": "https://github.com/yamachig/lawtext/issues"
   },
-  "homepage": "https://github.com/yamachig/lawtext#readme"
+  "homepage": "https://github.com/yamachig/lawtext#readme",
+  "devDependencies": {
+    "webpack-cli": "^3.1.0"
+  }
 }

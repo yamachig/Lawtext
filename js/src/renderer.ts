@@ -3,7 +3,7 @@
 import * as nunjucks from "nunjucks"
 import { nunjucksPrecompiled } from "./templates"
 import * as JSZip from "jszip"
-import { EL, JsonEL } from "./util"
+import { JsonEL } from "./util"
 import { isString } from "util";
 
 
@@ -90,7 +90,7 @@ class Context {
     get(key: string): any {
         return this.data[key];
     }
-    set(key: string, value) {
+    set(key: string, value: any) {
         this.data[key] = value;
         return "";
     }
@@ -154,6 +154,6 @@ export function render_htmlfragment(law: JsonEL, context?: { [key: string]: any 
     return render("htmlfragment.html", Object.assign({ law: law }, context));
 }
 
-export function render_elements_fragment(elements, context?: { [key: string]: any }): string {
+export function render_elements_fragment(elements: JsonEL[], context?: { [key: string]: any }): string {
     return render("htmlfragment.html", Object.assign({ elements: elements }, context));
 }

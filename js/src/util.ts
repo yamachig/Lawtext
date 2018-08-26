@@ -3,11 +3,11 @@
 import { DOMParser } from "xmldom";
 import { isString } from "util";
 
-export function wait(ms) {
+export function wait(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-var Node = Node || {
+const NodeType = {
     TEXT_NODE: 3,
     ELEMENT_NODE: 1,
 };
@@ -18,7 +18,7 @@ export interface JsonEL {
     children: (JsonEL | string)[]
 }
 
-function isJsonEL(object: any): object is JsonEL {
+export function isJsonEL(object: any): object is JsonEL {
     return 'tag' in object && 'attr' in object && 'children' in object;
 }
 
@@ -412,7 +412,7 @@ export class Span {
     el: EL
     env: Env
     text: string
-    constructor(index, el, env) {
+    constructor(index: number, el: EL, env: Env) {
         this.index = index;
         this.el = el;
         this.env = env;
@@ -441,7 +441,7 @@ export class __Parentheses extends EL {
 
     content: string
 
-    constructor(type, depth, start, end, content, text) {
+    constructor(type: string, depth: number, start: string, end: string, content: (string | EL)[], text: string) {
         super("__Parentheses");
 
         this.attr.type = type;
@@ -457,7 +457,7 @@ export class __Parentheses extends EL {
 
 export class __Text extends EL {
 
-    constructor(text) {
+    constructor(text: string) {
         super("__Text", {}, [text]);
     }
 };
@@ -466,12 +466,12 @@ export function element_to_json(el: Element): EL {
     let children: (EL | string)[] = [];
     for (let i = 0; i < el.childNodes.length; i++) {
         let node = el.childNodes[i];
-        if (node.nodeType === Node.TEXT_NODE) {
+        if (node.nodeType === NodeType.TEXT_NODE) {
             let text = (node.nodeValue || "").trim();
             if (text) {
                 children.push(text);
             }
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
+        } else if (node.nodeType === NodeType.ELEMENT_NODE) {
             children.push(element_to_json(<Element>node));
         } else {
             // console.log(node);

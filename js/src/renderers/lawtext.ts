@@ -5,8 +5,8 @@ import { isString } from "util";
 const INDENT = "  "
 const MARGIN = "　"
 const BLANK = ""
-const NEWLINE = `
-`;
+// const NEWLINE = `
+// `;
 
 
 
