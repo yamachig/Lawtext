@@ -23,7 +23,7 @@ export interface LawtextAppPageState {
     loadingLaw: boolean;
     lawSearchKey: string | null;
     lawSearchedKey: string | null;
-    analysis: any | null;
+    analysis: analyzer.Analysis | null;
 }
 
 const initialState: LawtextAppPageState = {
@@ -76,14 +76,17 @@ LawtextAppPageReducer.case(LawtextAppPageActions.invokeError, (state, { title, b
 
 LawtextAppPageReducer.case(LawtextAppPageActions.loadLawText, (state, { text, analyzeXml }) => {
     let law: std.Law | null = null;
+    let analysis: analyzer.Analysis | null = null;
     if (/^(?:<\?xml|<Law)/.test(text.trim())) {
         law = util.xml_to_json(text) as std.Law;
         if (analyzeXml) {
             analyzer.stdxml_to_ext(law);
         }
+        analysis = analyzer.analyze(law);
     } else {
         try {
             law = parse(text, { startRule: "start" }) as std.Law;
+            analysis = analyzer.analyze(law);
         } catch (err) {
             let err_str = err.toString();
             let pre = $("<pre>")
@@ -102,6 +105,7 @@ LawtextAppPageReducer.case(LawtextAppPageActions.loadLawText, (state, { text, an
     const newState: Partial<LawtextAppPageState> = {};
     if (law) {
         newState.law = law;
+        newState.analysis = analysis;
     }
     return Object.assign({}, state, newState);
 });

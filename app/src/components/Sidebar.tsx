@@ -221,6 +221,7 @@ class SidebarBody extends React.Component<Props> {
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
+                    onClick={() => this.props.scrollLaw({ tag: toc.tag, name: tocLabel.text })}
                     data-tag={toc.tag}
                     data-name={tocLabel.text}
                 >
@@ -247,6 +248,7 @@ class SidebarBody extends React.Component<Props> {
                         style={{
                             paddingLeft: (indent + 2) + "em",
                         }}
+                        onClick={() => this.props.scrollLaw({ tag: article_group.tag, name: el.text })}
                         data-tag={article_group.tag}
                         data-name={el.text}
                         title={el.text}
@@ -299,6 +301,7 @@ class SidebarBody extends React.Component<Props> {
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
+                    onClick={() => this.props.scrollLaw({ tag: article.tag, name: name })}
                     data-tag={article.tag}
                     data-name={name}
                     title={text}
@@ -327,6 +330,7 @@ class SidebarBody extends React.Component<Props> {
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
+                    onClick={() => this.props.scrollLaw({ tag: supplProvision.tag, name: name + amendLawNum })}
                     data-tag={supplProvision.tag}
                     data-name={name + amendLawNum}
                     title={text}
@@ -352,6 +356,7 @@ class SidebarBody extends React.Component<Props> {
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
+                    onClick={() => this.props.scrollLaw({ tag: appdxTable.tag, name: appdxTableTitle.text })}
                     data-tag={appdxTable.tag}
                     data-name={appdxTableTitle.text}
                     title={appdxTableTitle.text}
@@ -377,6 +382,7 @@ class SidebarBody extends React.Component<Props> {
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
+                    onClick={() => this.props.scrollLaw({ tag: appdxStyleTitle.tag, name: appdxStyleTitle.text })}
                     data-tag={appdxStyleTitle.tag}
                     data-name={appdxStyleTitle.text}
                     title={appdxStyleTitle.text}

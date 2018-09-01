@@ -45,25 +45,25 @@ export function showErrorModal(title: string, bodyEl: string) {
 }
 
 export function tobeDownloadedRange(): SelectionRange | null {
-    let get_pos = (node: Node) => {
+    const get_pos = (node: Node) => {
         if (!node.parentNode) return null;
-        let el = $(node.parentNode as HTMLElement);
-        let parents = el.parents("[selection-id]");
-        let item_el = parents[parents.length - 1];
-        if (!item_el && el.attr("selection-id")) item_el = el[0];
-        if (!item_el) return null;
+        const el = $(node.parentNode as HTMLElement);
 
-        let m: RegExpMatchArray | null;
-        let id = item_el.getAttribute("selection-id");
-        if (id && (m = id.match(/([^-]+)(?:-([^-]+))?---([^-]+)(?:-([^-]+))?/))) {
-            return {
-                container_tag: m[1],
-                container_id: m[2] || null,
-                item_tag: m[3],
-                item_id: m[4] || null,
-            }
-        } else {
-            return null;
+        const container_el = el.data("container_info")
+            ? el
+            : el.closest("[data-container_info]");
+        if (!container_el) return null;
+        const container_info = container_el.data("container_info");
+
+        const toplevel_container_el = container_el.closest("[data-toplevel_container_info]");
+        if (!toplevel_container_el) return null;
+        const toplevel_container_info = toplevel_container_el.data("toplevel_container_info");
+
+        return {
+            container_tag: toplevel_container_info.tag,
+            container_id: toplevel_container_info.id,
+            item_tag: container_info.tag,
+            item_id: container_info.id,
         }
     };
 

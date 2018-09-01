@@ -68,7 +68,6 @@ function mapDispatchToProps(dispatch: Dispatch<Action<any>>) {
 
 function mapStateToProps(appState: AppState, routeState: states.RouteState) {
     let overwriteState: Partial<states.LawtextAppPageState> = {};
-    console.log(routeState);
     if (routeState.match.params.lawSearchKey) {
         overwriteState.lawSearchKey = routeState.match.params.lawSearchKey;
     }
