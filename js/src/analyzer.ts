@@ -1,6 +1,6 @@
 "use strict";
 
-const sha512 = require("hash.js/lib/hash/sha/512");
+import * as sha512 from "hash.js/lib/hash/sha/512";
 import * as parser from "./parser";
 import { EL, Container, ContainerType, RelPos, Env, Span, throwError } from "./util";
 import * as util from "./util";

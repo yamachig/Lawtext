@@ -10,6 +10,7 @@
     "@types/lodash": "",
     "@types/node": "",
     "@types/nunjucks": "",
+    "@types/node-fetch": "",
     "@types/pegjs": "",
     "@types/underscore": "",
     "@types/webpack": "",
@@ -26,6 +27,7 @@
     "jszip": "",
     "lodash": "",
     "nunjucks": "",
+    "node-fetch": "",
     "pegjs": "",
     "pre-build-webpack": "",
     "source-map-loader": "",
@@ -43,8 +45,10 @@
   "description": "Plain text format for Japanese law",
   "main": "lib/lawtext.js",
   "scripts": {
-    "build": "webpack --colors --config ./webpack.config.ts",
-    "watch": "./node_modules/.bin/webpack --watch"
+    "watch": "webpack -w --colors --config ./webpack.config.dev.js",
+    "watch:prod": "webpack -w --colors --config ./webpack.config.prod.js",
+    "build": "webpack --colors --config ./webpack.config.dev.ts",
+    "build:prod": "webpack --colors --config ./webpack.config.prod.ts"
   },
   "bin": "lib/lawtext.js",
   "repository": {
