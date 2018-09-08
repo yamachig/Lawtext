@@ -10,12 +10,12 @@ export class BuildPlugin {
 }
 
 export default {
-    mode: "production",
+    mode: "development",
     target: "node",
     entry: "./src/lawtext.ts",
     output: {
         filename: "lawtext.js",
-        path: __dirname + "/dist"
+        path: __dirname + "/dist-dev"
     },
     externals: [nodeExternals()],
     resolve: {
