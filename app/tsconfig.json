@@ -1,27 +1,29 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "outDir": "dist-js",
-        "sourceMap": true,
-        "module": "commonjs",
+        "outDir": "dist",
+        "module": "es2015",
         "target": "es5",
         "downlevelIteration": true,
+        "lib": ["dom", "es2018"],
+        "sourceMap": true,
         "allowJs": true,
-        "lib": [
-            "es2015", "dom", "es5", "scripthost"
+        "jsx": "react",
+        "moduleResolution": "node",
+        "rootDirs": [
+            "src",
+            "../js/src"
         ],
-        "rootDir": "./src",
-        "composite": true,
-        "declaration": true,
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
+        "noImplicitAny": false,
         "strictNullChecks": true,
         "suppressImplicitAnyIndexErrors": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": false
     },
     "include": [
         "src/**/*"
     ],
-    "exclude": ["node_modules"]
+    "exclude": ["dist-dev", "node_modules", "**/*.pegjs"]
 }
