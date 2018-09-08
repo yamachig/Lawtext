@@ -6,7 +6,7 @@ import render_lawtext from "./renderers/lawtext";
 import * as util from "./util";
 import * as fs from "fs";
 import * as argparse from "argparse";
-import { parse, analyze } from "./parser_wrapper"
+import { parse } from "./parser_wrapper"
 
 
 interface Args {
@@ -24,7 +24,7 @@ function main(args: Args) {
     let intype = args.intype || null;
     let outfile = args.outfile || null;
     let outtype = args.outtype || null;
-    let analysis_file = args.analysis_file || null;
+    // let analysis_file = args.analysis_file || null;
     let with_control_el = args.with_control_el || false;
     let noanalyze = args.noanalyze || false;
 
@@ -63,7 +63,7 @@ function main(args: Args) {
     }
 
     let law: util.EL | null = null;
-    let analysis: {} | null = null;
+    // let analysis: {} | null = null;
 
     new Promise((resolve, reject) => {
 
@@ -111,9 +111,9 @@ function main(args: Args) {
 
         if (law === null) return;
 
-        if (!noanalyze) {
-            analysis = analyzer.analyze(law);
-        }
+        // if (!noanalyze) {
+        //     analysis = analyzer.analyze(law);
+        // }
 
         if (outtype === "docx") {
             renderer.render_docx_async(law.json())

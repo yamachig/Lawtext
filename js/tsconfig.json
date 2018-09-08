@@ -1,27 +1,21 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "outDir": "dist-js",
+        "outDir": "dist",
         "sourceMap": true,
         "module": "commonjs",
         "target": "es5",
         "downlevelIteration": true,
-        "allowJs": true,
-        "lib": [
-            "es2015", "dom", "es5", "scripthost"
-        ],
+        "moduleResolution": "node",
+        "lib": ["es2015", "dom", "es5", "scripthost"],
         "rootDir": "./src",
         "composite": true,
-        "declaration": true,
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "strictNullChecks": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "noUnusedLocals": true
+        "suppressImplicitAnyIndexErrors": true
     },
-    "include": [
-        "src/**/*"
-    ],
+    "include": ["src/**/*"],
     "exclude": ["node_modules"]
 }

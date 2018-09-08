@@ -644,6 +644,7 @@ function detect_variable_references(law: EL, spans: Span[], declarations: Declar
 
 export interface Analysis {
     declarations: Declarations,
+    variable_references: ____VarRef[],
 }
 
 export function analyze(law: EL): Analysis {
@@ -652,6 +653,7 @@ export function analyze(law: EL): Analysis {
     let variable_references = detect_variable_references(law, spans, declarations);
     return {
         declarations: declarations,
+        variable_references: variable_references,
     };
 }
 
