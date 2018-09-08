@@ -4,12 +4,12 @@ import * as FileSaver from "file-saver";
 import * as path from "path";
 import { DOMParser } from "xmldom";
 
-export function wait(ms:number) {
+export function wait(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export function range(start: number, end: number) {
-    return Array.from({length: (end - start)}, (_, k) => k + start);
+    return Array.from({ length: (end - start) }, (_, k) => k + start);
 }
 
 export class LawDownloader extends React.Component<
@@ -20,9 +20,9 @@ export class LawDownloader extends React.Component<
         progress: number;
         message: string;
     }
-> {
+    > {
     downloader: Downloader;
-    constructor(props:any) {
+    constructor(props: any) {
         super(props);
 
         this.state = {
@@ -37,18 +37,18 @@ export class LawDownloader extends React.Component<
         );
     }
 
-    handleDownloaderProgress(progress:number) {
-        this.setState({progress: progress});
+    handleDownloaderProgress(progress: number) {
+        this.setState({ progress: progress });
     }
 
-    handleDownloaderMessage(message:string) {
-        this.setState({message: message});
+    handleDownloaderMessage(message: string) {
+        this.setState({ message: message });
     }
 
-    handleDownloadButtonClick() {
-        if(this.state.downloading) return;
-        this.setState({downloading: true});
-        this.downloader.run();
+    handleDownloadButtonClick(withPics?: boolean) {
+        if (this.state.downloading) return;
+        this.setState({ downloading: true });
+        this.downloader.run(withPics);
     }
 
     render() {
@@ -57,27 +57,25 @@ export class LawDownloader extends React.Component<
                 {this.state.downloading ? (
                     <DownloadStateView progress={this.state.progress} message={this.state.message} />
                 ) : (
-                    <DownloadButton onClick={() => this.handleDownloadButtonClick()} />
-                )}
+                        <div>
+                            <button
+                                className="btn btn-primary btn-lg"
+                                role="button"
+                                onClick={() => this.handleDownloadButtonClick(true)}
+                            >
+                                e-Gov法令ファイルをダウンロード
+                            </button>
+                            &nbsp;
+                            <button
+                                className="btn btn-primary btn-lg"
+                                role="button"
+                                onClick={() => this.handleDownloadButtonClick(false)}
+                            >
+                                図表なし
+                            </button>
+                        </div>
+                    )}
             </div>
-        );
-    }
-}
-
-class DownloadButton extends React.Component<
-    {
-        onClick: (event:React.MouseEvent<HTMLButtonElement>) => any
-    }
-> {
-    render() {
-        return (
-            <button
-                className="btn btn-primary btn-lg"
-                role="button"
-                onClick={this.props.onClick}
-            >
-                e-Gov法令ファイルをダウンロード
-            </button>
         );
     }
 }
@@ -87,7 +85,7 @@ class DownloadStateView extends React.Component<
         progress: number,
         message: string
     }
-> {
+    > {
     render() {
         return (
             <div>
@@ -100,17 +98,17 @@ class DownloadStateView extends React.Component<
                     {this.props.progress < 1 ? (
                         `ダウンロード中: ${this.props.message}`
                     ) : (
-                        "ダウンロード完了"
-                    )}
+                            "ダウンロード完了"
+                        )}
                 </div>
                 <div
                     className="progress"
-                    style={{backgroundColor: "white"}}
+                    style={{ backgroundColor: "white" }}
                 >
                     <div
                         className="progress-bar progress-bar-striped progress-bar-animated"
                         role="progressbar"
-                        style={{width: `${this.props.progress * 100}%`}}
+                        style={{ width: `${this.props.progress * 100}%` }}
                     ></div>
                 </div>
             </div>
@@ -120,18 +118,18 @@ class DownloadStateView extends React.Component<
 
 class Downloader {
 
-    onProgress: (progress:number)=>void;
-    onMessage: (message:string)=>void;
+    onProgress: (progress: number) => void;
+    onMessage: (message: string) => void;
 
     constructor(
-        onProgress:(progress:number)=>void,
-        onMessage:(message:string)=>void
+        onProgress: (progress: number) => void,
+        onMessage: (message: string) => void
     ) {
         this.onProgress = onProgress;
         this.onMessage = onMessage;
     }
 
-    async run() {
+    async run(withPics: boolean = true) {
         this.onProgress(0);
         this.onMessage("開始しました");
 
@@ -147,23 +145,26 @@ class Downloader {
         let progress_now = 0;
 
         let dest_zip = new JSZip();
-        let lawinfos:LawInfo[] = [];
-        let lawinfo_dict:{[lawnum:string]: LawInfo} = {};
+        let lawinfos: LawInfo[] = [];
+        let lawinfo_dict: { [lawnum: string]: LawInfo } = {};
 
-        for(let filename of filenames) {
+        for (let filename of filenames) {
             let response = await fetch(`http://elaws.e-gov.go.jp/download/${filename}`, {
                 mode: "cors",
             });
             let zip_data = await response.arrayBuffer();
             let src_zip = await JSZip.loadAsync(zip_data);
 
-            let items:[string,JSZip.JSZipObject][] = [];
+            let items: [string, JSZip.JSZipObject][] = [];
             src_zip.forEach((relativePath, file) => {
                 items.push([relativePath, file]);
             });
 
-            for(let [relativePath, file] of items) {
-                if(file.dir) {
+            for (let [relativePath, file] of items) {
+                if (!withPics && /^[^/]+\/[^/]+\/pict\/.*$/.test(relativePath)) {
+                    continue;
+                }
+                if (file.dir) {
                     dest_zip.folder(relativePath);
                 } else {
                     if (/^[^/]+\/[^/]+\/[^/]+.xml$/.test(relativePath)) {
@@ -194,9 +195,9 @@ class Downloader {
 
         this.onMessage(`相互参照を分析しています`);
         let all_lawnums = new Set(lawinfos.map(lawinfo => lawinfo.LawNum));
-        for(let lawinfo of lawinfos) {
-            for(let lawnum of Array.from(lawinfo.ReferencingLawNums)) {
-                if(all_lawnums.has(lawnum)) {
+        for (let lawinfo of lawinfos) {
+            for (let lawnum of Array.from(lawinfo.ReferencingLawNums)) {
+                if (all_lawnums.has(lawnum)) {
                     lawinfo_dict[lawnum].ReferencedLawNums.add(lawinfo.LawNum);
                 } else {
                     lawinfo.ReferencingLawNums.delete(lawnum);
@@ -249,7 +250,7 @@ class LawInfo {
     Path: string;
     XmlZipName: string;
 
-    constructor(xml:string, xml_path:string) {
+    constructor(xml: string, xml_path: string) {
         let law = dom_parser.parseFromString(xml, "text/xml");
         let el_lawnum = law.getElementsByTagName("LawNum")[0];
         let el_lawbody = law.getElementsByTagName("LawBody")[0];
