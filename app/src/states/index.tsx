@@ -4,8 +4,9 @@ import { RouteComponentProps } from 'react-router'
 import { History } from 'history';
 import { reducerWithInitialState } from 'typescript-fsa-reducers/dist';
 import { isString } from "util";
+import * as $ from "jquery"
 import { LawtextAppPageActions } from '../actions';
-import { openFile, showErrorModal, tobeDownloadedRange, scrollToLawAnchor } from '../components/LawtextAppPage'
+import { openFile as origOpenFile, showErrorModal, tobeDownloadedRange, scrollToLawAnchor } from '../components/LawtextAppPage'
 import * as std from "../../../js/src/std_law"
 import * as util from "../../../js/src/util"
 import { parse } from "../../../js/src/parser_wrapper";
@@ -36,16 +37,30 @@ const initialState: LawtextAppPageState = {
 
 export const LawtextAppPageReducer = reducerWithInitialState(initialState);
 
-LawtextAppPageReducer.case(LawtextAppPageActions.openFile, (state) => {
-    openFile();
-    return Object.assign({}, state, {});
-});
+export const openFile =
+    (dispatch: Dispatch<Action<any>>) =>
+        origOpenFile();
 
 interface FileReaderProgressEvent extends ProgressEvent {
     readonly target: FileReader | null;
 }
 
-export function openFileInputChange(
+function readFileAsText(file): Promise<string> {
+    const reader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+        reader.onerror = () => {
+            reader.abort();
+            reject(reader.error);
+        };
+        reader.onload = () => {
+            resolve(reader.result as string);
+        };
+        reader.readAsText(file);
+    });
+}
+
+export async function openFileInputChange(
     dispatch: Dispatch<Action<any>>,
     event: React.ChangeEvent<HTMLInputElement>,
 ) {
@@ -55,65 +70,68 @@ export function openFileInputChange(
 
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true }));
 
-    const reader = new FileReader();
-    reader.onload = (e: FileReaderProgressEvent) => {
-        openFileInput.value = "";
-        const text = e.target ? (e.target.result as string) : "";
-        dispatch(LawtextAppPageActions.loadLawText({ text: text, analyzeXml: true }));
-        dispatch(LawtextAppPageActions.modifyState({ lawSearchKey: null, loadingLaw: false }));
-    };
-    reader.readAsText(file);
+    const text = await readFileAsText(file);
+    openFileInput.value = "";
+    await loadLawText(dispatch, text, true);
+    dispatch(LawtextAppPageActions.modifyState({ lawSearchKey: null, loadingLaw: false }));
 }
 
 LawtextAppPageReducer.case(LawtextAppPageActions.modifyState, (state, newState) => {
     return Object.assign({}, state, newState);
 });
 
-LawtextAppPageReducer.case(LawtextAppPageActions.invokeError, (state, { title, bodyEl }) => {
-    showErrorModal(title, bodyEl)
-    return Object.assign({}, state, {});
-});
+export const invokeError =
+    (dispatch: Dispatch<Action<any>>, title: string, bodyEl: string) =>
+        showErrorModal(title, bodyEl);
 
-LawtextAppPageReducer.case(LawtextAppPageActions.loadLawText, (state, { text, analyzeXml }) => {
+export async function loadLawText(
+    dispatch: Dispatch<Action<any>>,
+    text: string,
+    analyzeXml: boolean,
+) {
     let law: std.Law | null = null;
     let analysis: analyzer.Analysis | null = null;
-    if (/^(?:<\?xml|<Law)/.test(text.trim())) {
-        law = util.xml_to_json(text) as std.Law;
-        if (analyzeXml) {
-            analyzer.stdxml_to_ext(law);
-        }
-        analysis = analyzer.analyze(law);
-    } else {
-        try {
+    try {
+        if (/^(?:<\?xml|<Law)/.test(text.trim())) {
+            console.log("loadLawText: Parse as XML");
+            law = util.xml_to_json(text) as std.Law;
+            if (analyzeXml) {
+                analyzer.stdxml_to_ext(law);
+            }
+            analysis = analyzer.analyze(law);
+        } else {
+            console.log("loadLawText: Parse as Lawtext");
             law = parse(text, { startRule: "start" }) as std.Law;
             analysis = analyzer.analyze(law);
-        } catch (err) {
-            let err_str = err.toString();
-            let pre = $("<pre>")
-                .css({ "white-space": "pre-wrap" })
-                .css({ "line-height": "1.2em" })
-                .css({ "padding": "1em 0" })
-                .html(err_str);
-            store.dispatch(LawtextAppPageActions.invokeError({
-                title: "読み込んだLawtextにエラーがあります",
-                bodyEl: (pre[0] as HTMLElement).outerHTML,
-            }));
-            law = null;
-        }
 
+        }
+    } catch (err) {
+        console.log(err);
+        let err_str = err.toString();
+        let pre = $("<pre>")
+            .css({ "white-space": "pre-wrap" })
+            .css({ "line-height": "1.2em" })
+            .css({ "padding": "1em 0" })
+            .html(err_str);
+        invokeError(
+            dispatch,
+            "読み込んだ法令データにエラーがあります",
+            (pre[0] as HTMLElement).outerHTML,
+        );
+        law = null;
     }
     const newState: Partial<LawtextAppPageState> = {};
     if (law) {
         newState.law = law;
         newState.analysis = analysis;
     }
-    return Object.assign({}, state, newState);
-});
+    dispatch(LawtextAppPageActions.modifyState(newState));
+}
 
 export async function searchLaw(
     dispatch: Dispatch<Action<any>>,
     lawSearchKey: string,
-    history?: History,
+    history: History,
 ) {
     console.log(`searchLaw(${lawSearchKey})`);
     if (history) {
@@ -123,12 +141,14 @@ export async function searchLaw(
     await util.wait(300);
     try {
         let text = await lawdata.loadLaw(lawSearchKey);
-        dispatch(LawtextAppPageActions.loadLawText({ text: text, analyzeXml: true }));
+        await loadLawText(dispatch, text, true);
     } catch (err) {
-        store.dispatch(LawtextAppPageActions.invokeError({
-            title: err[0],
-            bodyEl: err[1],
-        }));
+        console.log(err);
+        invokeError(
+            dispatch,
+            err[0] || "エラー",
+            err[1] || err.toString(),
+        );
     }
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false }));
 }
@@ -343,7 +363,19 @@ export async function downloadXml(
     saveAs(blob, `${lawName}.xml`);
 }
 
-LawtextAppPageReducer.case(LawtextAppPageActions.scrollLaw, (state, { tag, name }) => {
-    scrollToLawAnchor(tag, name);
-    return Object.assign({}, state, {});
-});
+export const scrollLaw =
+    (dispatch: Dispatch<Action<any>>, tag: string, name: string) =>
+        scrollToLawAnchor(tag, name);
+
+const sampleSampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml");
+
+export async function downloadSampleLawtext(
+    dispatch: Dispatch<Action<any>>,
+) {
+    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true }));
+    await util.wait(30);
+    await loadLawText(dispatch, sampleSampleXml, true);
+    await downloadLawtext(dispatch);
+    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false }));
+}
+

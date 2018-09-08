@@ -1223,7 +1223,29 @@ class RunComponent extends React.Component<{ els: (string | std.Line | std.Quote
             } else if (el.isControl) {
                 runs.push(<ControlRunComponent el={el} key={i} />);
 
-            } else if (el.tag === "Ruby" || el.tag === "Sub" || el.tag === "Sup" || el.tag === "QuoteStruct") {
+            } else if (std.isRuby(el)) {
+                const rb = el.children
+                    .map(c =>
+                        isString(c)
+                            ? c
+                            : !std.isRt(c)
+                                ? c.text
+                                : ""
+                    ).join("");
+                const rt = (el.children
+                    .filter(c => !isString(c) && std.isRt(c)) as std.Rt[])
+                    .map(c => c.text)
+                    .join("");
+                console.log(rb, rt);
+                runs.push(<ruby key={i}>{rb}<rt>{rt}</rt></ruby>);
+
+            } else if (el.tag === "Sub") {
+                runs.push(<sub key={i}>{el.text}</sub>);
+
+            } else if (el.tag === "Sup") {
+                runs.push(<sup key={i}>{el.text}</sup>);
+
+            } else if (el.tag === "QuoteStruct") {
                 runs.push(<span key={i}>{el.outerXML()}</span>);
 
             } else if (el.tag === "ArithFormula") {

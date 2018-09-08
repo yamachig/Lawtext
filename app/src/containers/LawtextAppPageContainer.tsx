@@ -15,38 +15,38 @@ import * as states from '../states';
 
 
 export interface Dispatchers {
-    openFile: () => Action<void>,
-    openFileInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
     modifyState: (state: Partial<states.LawtextAppPageState>) => Action<Partial<states.LawtextAppPageState>>,
-
-    invokeError: (params: { title: string, bodyEl: string }) => Action<{ title: string, bodyEl: string }>,
-    loadLawText: (params: { text: string, analyzeXml: boolean }) => Action<{ text: string, analyzeXml: boolean }>,
+    openFile: () => void,
+    openFileInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    invokeError: (title: string, bodyEl: string) => void,
+    loadLawText: (text: string, analyzeXml: boolean) => void,
     searchLaw: (lawSearchKey: string, history: History) => void,
     downloadDocx: (downloadSelection?: boolean) => void,
     downloadLawtext: () => void,
     downloadXml: () => void,
-    scrollLaw: (params: { tag: string, name: string }) => Action<{ tag: string, name: string }>,
+    scrollLaw: (tag: string, name: string) => void,
+    downloadSampleLawtext: () => void,
 }
 
 function mapDispatchToProps(dispatch: Dispatch<Action<any>>) {
     return {
 
+        modifyState: (state: Partial<states.LawtextAppPageState>) =>
+            dispatch(LawtextAppPageActions.modifyState(state)),
+
         openFile: () =>
-            dispatch(LawtextAppPageActions.openFile()),
+            states.openFile(dispatch),
 
         openFileInputChange: (event: React.ChangeEvent<HTMLInputElement>) =>
             states.openFileInputChange(dispatch, event),
 
-        modifyState: (state: Partial<states.LawtextAppPageState>) =>
-            dispatch(LawtextAppPageActions.modifyState(state)),
+        invokeError: (title: string, bodyEl: string) =>
+            states.invokeError(dispatch, title, bodyEl),
 
-        invokeError: (params: { title: string, bodyEl: string }) =>
-            dispatch(LawtextAppPageActions.invokeError(params)),
+        loadLawText: (text: string, analyzeXml: boolean) =>
+            states.loadLawText(dispatch, text, analyzeXml),
 
-        loadLawText: (params: { text: string, analyzeXml: boolean }) =>
-            dispatch(LawtextAppPageActions.loadLawText(params)),
-
-        searchLaw: (lawSearchKey: string, history?: History) =>
+        searchLaw: (lawSearchKey: string, history: History) =>
             states.searchLaw(dispatch, lawSearchKey, history),
 
         downloadDocx: (downloadSelection: boolean = false) =>
@@ -58,8 +58,11 @@ function mapDispatchToProps(dispatch: Dispatch<Action<any>>) {
         downloadXml: () =>
             states.downloadXml(dispatch),
 
-        scrollLaw: (params: { tag: string, name: string }) =>
-            dispatch(LawtextAppPageActions.scrollLaw(params)),
+        scrollLaw: (tag: string, name: string) =>
+            states.scrollLaw(dispatch, tag, name),
+
+        downloadSampleLawtext: () =>
+            states.downloadSampleLawtext(dispatch),
 
     };
 }

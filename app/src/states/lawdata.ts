@@ -61,13 +61,18 @@ async function getLawXml(lawnum: string): Promise<string> {
     );
 
     if (localStorage) {
-        localStorage.setItem(
-            `law_for:${lawnum}`,
-            JSON.stringify({
-                datetime: new Date().toISOString(),
-                xml: xml,
-            }),
-        );
+        try {
+            localStorage.setItem(
+                `law_for:${lawnum}`,
+                JSON.stringify({
+                    datetime: new Date().toISOString(),
+                    xml: xml,
+                }),
+            );
+        } catch (e) {
+            console.log(e);
+            localStorage.clear();
+        }
     }
 
     return xml;
@@ -131,9 +136,6 @@ async function getLawXmlRemote(lawnum: string): Promise<string> {
 }
 
 
-
-
-
 async function getLawnum(lawSearchKey: string): Promise<string> {
 
     let reLawnum = /^(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[〇一二三四五六七八九―]+|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定)$/;
@@ -147,13 +149,20 @@ async function getLawnum(lawSearchKey: string): Promise<string> {
     );
 
     if (localStorage) {
-        localStorage.setItem(
-            "law_num_for:" + lawSearchKey,
-            JSON.stringify({
-                datetime: new Date().toISOString(),
-                lawnum: lawnum,
-            }),
-        );
+        for (let i = 0; i < 5; i++) {
+            try {
+                localStorage.setItem(
+                    "law_num_for:" + lawSearchKey,
+                    JSON.stringify({
+                        datetime: new Date().toISOString(),
+                        lawnum: lawnum,
+                    }),
+                );
+            } catch (e) {
+                console.log(e);
+                localStorage.clear();
+            }
+        }
     }
 
     return lawnum;

@@ -59,6 +59,7 @@
         "node-sass": "",
         "popper.js": "",
         "postcss-loader": "",
+        "raw-loader": "",
         "react": "",
         "react-animate-height": "",
         "react-dom": "",

@@ -69,6 +69,10 @@ module.exports = {
                     }
                 ]),
             },
+            {
+                test: /\.xml$/,
+                loader: 'raw-loader'
+            },
         ]
     },
     resolve: {

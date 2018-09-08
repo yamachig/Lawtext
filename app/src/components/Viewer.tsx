@@ -115,7 +115,7 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
                         </p>
                         <ul>
                             <li><a href="http://elaws.e-gov.go.jp/" target="_blank">e-Gov</a>から法令XMLをダウンロードできます。</li>
-                            <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank">Lawtext</a>ファイルを作れます。<a className="lawtext-download-sample-lawtext-button" href="#" onClick={e => e.preventDefault()}>サンプルをダウンロード</a></li>
+                            <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank">Lawtext</a>ファイルを作れます。<a href="#" onClick={e => { this.props.downloadSampleLawtext(); e.preventDefault(); }}>サンプルをダウンロード</a></li>
                         </ul>
                     </div>
                 </div>

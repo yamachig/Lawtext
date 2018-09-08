@@ -38,7 +38,9 @@ export function openFile() {
 
 const ErrorModalID = "LawtextAppPage.ErrorModal";
 export function showErrorModal(title: string, bodyEl: string) {
-    const modal = $(`#${ErrorModalID}`) as JQuery<HTMLElement> & { modal: Function };
+    const modalEl = document.getElementById(ErrorModalID);
+    if (!modalEl) return;
+    const modal = $(modalEl) as JQuery<HTMLElement> & { modal: Function };
     modal.find(".modal-title").html(title);
     modal.find(".modal-body").html(bodyEl);
     modal.modal("show");

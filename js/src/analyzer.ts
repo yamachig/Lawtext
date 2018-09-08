@@ -659,7 +659,12 @@ export function stdxml_to_ext(el: EL) {
     if (["LawNum", "QuoteStruct"].indexOf(el.tag) < 0) {
         let is_mixed = el.children.some(child => typeof child === 'string' || child instanceof String);
         if (is_mixed) {
-            el.children = parser.parse(el.innerXML(), { startRule: "INLINE" });
+            try {
+                el.children = parser.parse(el.innerXML(), { startRule: "INLINE" });
+            } catch (e) {
+                console.log("stdxml_to_ext: Error", el.innerXML());
+                throw e;
+            }
         } else {
             el.children = el.children.map(stdxml_to_ext)
         }
