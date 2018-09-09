@@ -24,3 +24,4 @@ js/dist/*
 js/src/parser.ts
 js/src/templates.js
 js/src/lawnum_table.ts
+js/test/lawdata

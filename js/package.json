@@ -1,5 +1,30 @@
 {
-  "dependencies": {
+  "name": "lawtext",
+  "version": "0.0.1",
+  "description": "Plain text format for Japanese law",
+  "main": "lib/lawtext.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "watch": "webpack -w --colors --config ./webpack.config.dev.js",
+    "watch:prod": "webpack -w --colors --config ./webpack.config.prod.js",
+    "build": "webpack --colors --config ./webpack.config.dev.ts",
+    "build:prod": "webpack --colors --config ./webpack.config.prod.ts",
+    "test": "node --max_old_space_size=2048 -r ts-node/register ./test/prepare_test.ts && mocha -r ts-node/register test/**/*.ts"
+  },
+  "bin": "lib/lawtext.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yamachig/lawtext.git"
+  },
+  "author": "yamachi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yamachig/lawtext/issues"
+  },
+  "homepage": "https://github.com/yamachig/lawtext#readme",
+  "devDependencies": {
     "@types/argparse": "",
     "@types/backbone": "",
     "@types/bootstrap": "",
@@ -15,6 +40,14 @@
     "@types/underscore": "",
     "@types/webpack": "",
     "@types/xmldom": "",
+    "@types/chai": "",
+    "@types/mocha": "",
+    "@types/cli-progress": "",
+    "chai": "",
+    "mocha": "",
+    "cli-progress": ""
+  },
+  "dependencies": {
     "argparse": "",
     "backbone": "",
     "bootstrap": "",
@@ -39,29 +72,5 @@
     "webpack-cli": "",
     "webpack-node-externals": "",
     "xmldom": ""
-  },
-  "name": "lawtext",
-  "version": "0.0.1",
-  "description": "Plain text format for Japanese law",
-  "main": "lib/lawtext.js",
-  "scripts": {
-    "watch": "webpack -w --colors --config ./webpack.config.dev.js",
-    "watch:prod": "webpack -w --colors --config ./webpack.config.prod.js",
-    "build": "webpack --colors --config ./webpack.config.dev.ts",
-    "build:prod": "webpack --colors --config ./webpack.config.prod.ts"
-  },
-  "bin": "lib/lawtext.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yamachig/lawtext.git"
-  },
-  "author": "yamachi",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/yamachig/lawtext/issues"
-  },
-  "homepage": "https://github.com/yamachig/lawtext#readme",
-  "devDependencies": {
-    "webpack-cli": ""
   }
 }
