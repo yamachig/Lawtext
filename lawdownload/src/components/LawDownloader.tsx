@@ -21,7 +21,7 @@ export class LawDownloader extends React.Component<
         };
     }
 
-    async handleDownloadButtonClick(withPics?: boolean) {
+    async handleDownloadButtonClick(withPict?: boolean) {
         if (this.state.downloading) return;
         this.setState({ downloading: true });
 
@@ -29,9 +29,9 @@ export class LawDownloader extends React.Component<
             this.setState({ ratio: ratio, message: message });
         };
 
-        const data = withPics
+        const data = withPict
             ? (await download({ full: true }, progress)).full
-            : (await download({ withoutPics: true }, progress)).withoutPics;
+            : (await download({ withoutPict: true }, progress)).withoutPict;
 
         FileSaver.saveAs(new Blob([data]), "lawdata.zip");
     }

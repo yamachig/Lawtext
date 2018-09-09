@@ -2,24 +2,24 @@ import * as JSZip from "jszip"
 import * as path from "path"
 import { DOMParser } from "xmldom"
 import { range } from "./util"
-const fetch = (window && window.fetch) || require("node-fetch");
+const fetch = (global["window"] && window.fetch) || require("node-fetch");
 
 export async function download<
     S extends boolean=false,
     T extends boolean=false,
     U extends boolean=false,
     >(
-        options: Partial<{ full: S, withoutPics: T, list: U }>,
+        options: Partial<{ full: S, withoutPict: T, list: U }>,
         onProgress?: (ratio: number, message: string) => void,
 ):
     Promise<(
         (S extends true ? { full: ArrayBuffer } : {}) &
-        (T extends true ? { withoutPics: ArrayBuffer } : {}) &
+        (T extends true ? { withoutPict: ArrayBuffer } : {}) &
         (U extends true ? { list: string } : {})
     )>;
 
 export async function download(
-    { full = false, withoutPics = false, list = false },
+    { full = false, withoutPict = false, list = false },
     onProgress: (ratio: number, message: string) => void = () => { },
 ) {
 
@@ -40,14 +40,14 @@ export async function download(
         ...range(201, 215 + 1),
         ...range(301, 364 + 1),
         ...range(401, 430 + 1),
-        // ...range(428, 430 + 1),
+        // ...range(430, 430 + 1),
     ].map((v) => `${v}.zip`);
 
     const progressTotal = filenames.length + 3;
     let progressNow = 0;
 
     const destZipFull = new JSZip();
-    const destZipWithoutPics = new JSZip();
+    const destZipWithoutPict = new JSZip();
     const lawinfos: LawInfo[] = [];
     const lawinfoDict: { [lawnum: string]: LawInfo } = {};
 
@@ -61,13 +61,13 @@ export async function download(
         });
 
         for (const [relativePath, file] of items) {
-            const isPics = /^[^/]+\/[^/]+\/pict\/.*$/.test(relativePath);
+            const isPict = /^[^/]+\/[^/]+\/pict\/.*$/.test(relativePath);
 
             if (file.dir) {
                 if (full)
                     destZipFull.folder(relativePath);
-                if (withoutPics && !isPics)
-                    destZipWithoutPics.folder(relativePath);
+                if (withoutPict && !isPict)
+                    destZipWithoutPict.folder(relativePath);
 
             } else {
                 if (/^[^/]+\/[^/]+\/[^/]+.xml$/.test(relativePath)) {
@@ -78,7 +78,7 @@ export async function download(
                     progress(undefined, `${lawinfo.LawNum}：${lawinfo.LawTitle}`);
                 }
 
-                if (full || (withoutPics && !isPics)) {
+                if (full || (withoutPict && !isPict)) {
                     const innerZip = new JSZip();
                     const innerData = await file.async("arraybuffer");
                     innerZip.file(file.name, innerData);
@@ -92,8 +92,8 @@ export async function download(
 
                     if (full)
                         destZipFull.file(relativePath + ".zip", innerZipData);
-                    if (withoutPics && !isPics)
-                        destZipWithoutPics.file(relativePath + ".zip", innerZipData);
+                    if (withoutPict && !isPict)
+                        destZipWithoutPict.file(relativePath + ".zip", innerZipData);
                 }
             }
         }
@@ -143,7 +143,7 @@ export async function download(
     });
     const listJson = JSON.stringify(lawlist);
     if (full) destZipFull.file("list.json", listJson);
-    if (withoutPics) destZipWithoutPics.file("list.json", listJson);
+    if (withoutPict) destZipWithoutPict.file("list.json", listJson);
 
     progressNow++;
     progress(progressNow / progressTotal);
@@ -158,9 +158,9 @@ export async function download(
         },
     };
 
-    const ret: Partial<{ full: ArrayBuffer, withoutPics: ArrayBuffer, list: string }> = {
+    const ret: Partial<{ full: ArrayBuffer, withoutPict: ArrayBuffer, list: string }> = {
         ...(full ? { full: await destZipFull.generateAsync(zipOptions) } : {}),
-        ...(withoutPics ? { withoutPics: await destZipFull.generateAsync(zipOptions) } : {}),
+        ...(withoutPict ? { withoutPict: await destZipWithoutPict.generateAsync(zipOptions) } : {}),
         ...(list ? { list: listJson, } : {}),
     };
 
@@ -191,6 +191,6 @@ class LawInfo {
         this.ReferencedLawNums = new Set();
         this.LawTitle = (elLawTitle.textContent || "").trim();
         this.Path = path.dirname(xml_path);
-        this.XmlZipName = `${xml_path}.zip`;
+        this.XmlZipName = `${path.basename(xml_path)}.zip`;
     }
 }
