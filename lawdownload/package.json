@@ -14,8 +14,11 @@
     "homepage": "https://github.com/yamachig/lawtext#readme",
     "scripts": {
         "watch": "webpack -w --colors --config ./webpack.config.dev.js",
+        "watch:prod": "webpack -w --colors --config ./webpack.config.prod.js",
         "build": "webpack --colors --config ./webpack.config.dev.js",
-        "build:prod": "webpack --config ./webpack.config.prod.js"
+        "build:prod": "webpack --config ./webpack.config.prod.js",
+        "server": "http-server dist-dev --cors -o",
+        "server:prod": "http-server dist-prod --cors -o"
     },
     "devDependencies": {
         "@types/file-saver": "",
@@ -29,6 +32,7 @@
         "extract-text-webpack-plugin": "next",
         "html-loader": "",
         "html-webpack-plugin": "",
+        "http-server": "",
         "node-sass": "",
         "postcss-loader": "",
         "sass-loader": "",

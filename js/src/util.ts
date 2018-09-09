@@ -7,6 +7,12 @@ export function wait(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export function* range(start: number, end: number) {
+    for (let i = start; i < end; i++) {
+        yield i;
+    }
+}
+
 const NodeType = {
     TEXT_NODE: 3,
     ELEMENT_NODE: 1,

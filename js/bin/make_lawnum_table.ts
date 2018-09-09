@@ -2,8 +2,8 @@ import * as sha512 from "hash.js/lib/hash/sha/512"
 import { DOMParser } from "xmldom"
 import * as fs from "fs"
 import * as path from "path"
-import fetch from 'node-fetch'
-import { promisify } from "util";
+import fetch from "node-fetch"
+import { promisify } from "util"
 
 function pad16(number: number, size: number) {
     var s = number.toString(16);
