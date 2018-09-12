@@ -195,7 +195,9 @@ class SidebarBody extends React.Component<Props> {
                 list.push(...this.processAppdxTable(el, 0));
             } else if (el.tag === "AppdxStyle") {
                 list.push(...this.processAppdxStyle(el, 0));
-            } else if (el.tag === "LawTitle" || el.tag === "EnactStatement" || el.tag === "Preamble" || el.tag === "AppdxNote" || el.tag === "Appdx" || el.tag === "AppdxFig" || el.tag === "AppdxFormat") {
+            } else if (el.tag === "AppdxFig") {
+                list.push(...this.processAppdxFig(el, 0));
+            } else if (el.tag === "LawTitle" || el.tag === "EnactStatement" || el.tag === "Preamble" || el.tag === "AppdxNote" || el.tag === "Appdx" || el.tag === "AppdxFormat") {
             } else {
                 assertNever(el);
             }
@@ -216,14 +218,11 @@ class SidebarBody extends React.Component<Props> {
         if (tocLabel) {
             list.push(
                 <TOCItemDiv
-                    key={`${toc.tag}/${tocLabel.text}`}
-                    className="law-link"
+                    key={toc.id}
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(toc.tag, tocLabel.text)}
-                    data-tag={toc.tag}
-                    data-name={tocLabel.text}
+                    onClick={() => this.props.scrollLaw(toc.id.toString())}
                 >
                     {tocLabel.text}
                 </TOCItemDiv >
@@ -243,14 +242,11 @@ class SidebarBody extends React.Component<Props> {
             if (el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
                 list.push(
                     <TOCItemDiv
-                        key={`${article_group.tag}/${el.text}`}
-                        className="law-link"
+                        key={el.id}
                         style={{
                             paddingLeft: (indent + 2) + "em",
                         }}
-                        onClick={() => this.props.scrollLaw(article_group.tag, el.text)}
-                        data-tag={article_group.tag}
-                        data-name={el.text}
+                        onClick={() => this.props.scrollLaw(article_group.id.toString())}
                         title={el.text}
                     >
                         {el.text}
@@ -296,14 +292,11 @@ class SidebarBody extends React.Component<Props> {
 
             list.push(
                 <TOCItemDiv
-                    key={`${article.tag}/${name}`}
-                    className="law-link"
+                    key={article.id}
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(article.tag, name)}
-                    data-tag={article.tag}
-                    data-name={name}
+                    onClick={() => this.props.scrollLaw(article.id.toString())}
                     title={text}
                 >
                     {text}
@@ -325,14 +318,11 @@ class SidebarBody extends React.Component<Props> {
             let text = (name + (amendLawNum ? ("（" + amendLawNum + "）") : "")).replace(/[\s　]+/, "");
             list.push(
                 <TOCItemDiv
-                    key={`${supplProvision.tag}/${name + amendLawNum}`}
-                    className="law-link"
+                    key={supplProvision.id}
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(supplProvision.tag, name + amendLawNum)}
-                    data-tag={supplProvision.tag}
-                    data-name={name + amendLawNum}
+                    onClick={() => this.props.scrollLaw(supplProvision.id.toString())}
                     title={text}
                 >
                     {text}
@@ -351,14 +341,11 @@ class SidebarBody extends React.Component<Props> {
         if (appdxTableTitle) {
             list.push(
                 <TOCItemDiv
-                    key={`${appdxTable.tag}/${appdxTableTitle.text}`}
-                    className="law-link"
+                    key={appdxTable.id}
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(appdxTable.tag, appdxTableTitle.text)}
-                    data-tag={appdxTable.tag}
-                    data-name={appdxTableTitle.text}
+                    onClick={() => this.props.scrollLaw(appdxTable.id.toString())}
                     title={appdxTableTitle.text}
                 >
                     {appdxTableTitle.text}
@@ -369,22 +356,42 @@ class SidebarBody extends React.Component<Props> {
         return list;
     }
 
-    processAppdxStyle(appdx_style: std.AppdxStyle, indent: number) {
+    processAppdxStyle(appdxStyle: std.AppdxStyle, indent: number) {
         const list: JSX.Element[] = [];
 
-        const appdxStyleTitle = appdx_style.children.find((el) => el.tag === "AppdxStyleTitle") as std.AppdxStyleTitle | undefined;
+        const appdxStyleTitle = appdxStyle.children.find((el) => el.tag === "AppdxStyleTitle") as std.AppdxStyleTitle | undefined;
 
         if (appdxStyleTitle) {
             list.push(
                 <TOCItemDiv
-                    key={`${appdxStyleTitle.tag}/${appdxStyleTitle.text}`}
-                    className="law-link"
+                    key={appdxStyle.id}
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(appdxStyleTitle.tag, appdxStyleTitle.text)}
-                    data-tag={appdxStyleTitle.tag}
-                    data-name={appdxStyleTitle.text}
+                    onClick={() => this.props.scrollLaw(appdxStyle.id.toString())}
+                    title={appdxStyleTitle.text}
+                >
+                    {appdxStyleTitle.text}
+                </TOCItemDiv>
+            );
+        }
+
+        return list;
+    }
+
+    processAppdxFig(appdxStyle: std.AppdxFig, indent: number) {
+        const list: JSX.Element[] = [];
+
+        const appdxStyleTitle = appdxStyle.children.find((el) => el.tag === "AppdxFigTitle") as std.AppdxFigTitle | undefined;
+
+        if (appdxStyleTitle) {
+            list.push(
+                <TOCItemDiv
+                    key={appdxStyle.id}
+                    style={{
+                        paddingLeft: (indent + 2) + "em",
+                    }}
+                    onClick={() => this.props.scrollLaw(appdxStyle.id.toString())}
                     title={appdxStyleTitle.text}
                 >
                     {appdxStyleTitle.text}

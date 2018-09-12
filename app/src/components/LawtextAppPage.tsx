@@ -83,11 +83,10 @@ export function tobeDownloadedRange(): SelectionRange | null {
 }
 
 
-export function scrollToLawAnchor(tag: string, name: string) {
-    for (let el of $(".law-anchor")) {
-        let obj = $(el);
-        if (obj.data("tag") === tag && obj.data("name") === name) {
-            let offset = obj.offset();
+export function scrollToLawAnchor(id: string) {
+    for (let el of Array.from(document.getElementsByClassName("law-anchor"))) {
+        if ((el as HTMLElement).dataset.el_id === id) {
+            let offset = $(el).offset();
             if (offset) $("html,body").animate({ scrollTop: offset.top }, "normal");
         }
     }

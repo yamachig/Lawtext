@@ -364,8 +364,8 @@ export async function downloadXml(
 }
 
 export const scrollLaw =
-    (dispatch: Dispatch<Action<any>>, tag: string, name: string) =>
-        scrollToLawAnchor(tag, name);
+    (dispatch: Dispatch<Action<any>>, id: string) =>
+        scrollToLawAnchor(id);
 
 const sampleSampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml");
 

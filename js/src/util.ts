@@ -29,11 +29,13 @@ export function isJsonEL(object: any): object is JsonEL {
 }
 
 
+let _currentID = 0;
 export class EL {
     tag: string
     attr: { [key: string]: string | undefined }
     children: (EL | string)[]
     _text: string | null
+    id: number
 
     constructor(tag: string, attr: { [key: string]: string | undefined } = {}, children: (EL | string)[] = []) {
         // if(!tag) {
@@ -44,6 +46,7 @@ export class EL {
         this.children = children;
 
         this._text = null;
+        this.id = ++_currentID;
     }
 
     get isControl(): boolean {
@@ -726,9 +729,13 @@ export type Range = [Pointer, Pointer]; // closed
 export type Ranges = Range[];
 
 
-export class NotImplementedError extends Error { }
+export class NotImplementedError extends Error {
+    toString() {
+        return `NotImplemented: ${super.toString()}`;
+    }
+}
 
-export const throwError = () => {
+export const throwError = (): never => {
     throw new Error();
 }
 

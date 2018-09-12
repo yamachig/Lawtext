@@ -24,7 +24,7 @@ export interface Dispatchers {
     downloadDocx: (downloadSelection?: boolean) => void,
     downloadLawtext: () => void,
     downloadXml: () => void,
-    scrollLaw: (tag: string, name: string) => void,
+    scrollLaw: (id: string) => void,
     downloadSampleLawtext: () => void,
 }
 
@@ -58,8 +58,8 @@ function mapDispatchToProps(dispatch: Dispatch<Action<any>>) {
         downloadXml: () =>
             states.downloadXml(dispatch),
 
-        scrollLaw: (tag: string, name: string) =>
-            states.scrollLaw(dispatch, tag, name),
+        scrollLaw: (id: string) =>
+            states.scrollLaw(dispatch, id),
 
         downloadSampleLawtext: () =>
             states.downloadSampleLawtext(dispatch),

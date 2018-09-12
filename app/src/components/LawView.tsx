@@ -71,31 +71,33 @@ class LawBodyComponent extends React.Component<{ el: std.LawBody, indent: number
             const child = el.children[i];
 
             if (child.tag === "LawTitle") {
-                blocks.push(<LawTitleComponent el={child} indent={indent} LawNum={LawNum} key={i} />);
+                blocks.push(<LawTitleComponent el={child} indent={indent} LawNum={LawNum} key={child.id} />);
 
             } else if (child.tag === "TOC") {
-                blocks.push(<TOCComponent el={child} indent={indent} key={i} />);
+                blocks.push(<TOCComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "MainProvision") {
-                blocks.push(<ArticleGroupComponent el={child} indent={indent} key={i} />);
+                blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "SupplProvision") {
-                blocks.push(<SupplProvisionComponent el={child} indent={indent} key={i} />);
+                blocks.push(<SupplProvisionComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "AppdxTable") {
-                blocks.push(<AppdxTableComponent el={child} indent={indent} key={i} />);
+                blocks.push(<AppdxTableComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "AppdxStyle") {
-                blocks.push(<AppdxStyleComponent el={child} indent={indent} key={i} />);
+                blocks.push(<AppdxStyleComponent el={child} indent={indent} key={child.id} />);
+
+            } else if (child.tag === "AppdxFig") {
+                blocks.push(<AppdxFigComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "EnactStatement") {
-                blocks.push(<EnactStatementComponent el={child} indent={indent} key={i} />);
+                blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} />);
 
             }
             else if (child.tag === "Preamble") { throw new NotImplementedError(child.tag); }
             else if (child.tag === "AppdxNote") { throw new NotImplementedError(child.tag); }
             else if (child.tag === "Appdx") { throw new NotImplementedError(child.tag); }
-            else if (child.tag === "AppdxFig") { throw new NotImplementedError(child.tag); }
             else if (child.tag === "AppdxFormat") { throw new NotImplementedError(child.tag); }
             else { assertNever(child); }
         }
@@ -177,17 +179,16 @@ class TOCComponent extends React.Component<{ el: std.TOC, indent: number }> {
                 blocks.push(
                     <div
                         className="law-anchor"
-                        data-tag={el.tag}
-                        data-name={child.text}
+                        data-el_id={el.id.toString()}
                         style={{ marginLeft: `${indent}em` }}
-                        key={i}
+                        key={child.id}
                     >
                         {child.text}
                     </div>
                 );
 
             } else if (child.tag === "TOCPart" || child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSupplProvision" || child.tag === "TOCArticle" || child.tag === "TOCAppdxTableLabel") {
-                blocks.push(<TOCItemComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<TOCItemComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             }
             else if (child.tag === "TOCPreambleLabel") { throw new NotImplementedError(child.tag); }
@@ -214,13 +215,13 @@ class TOCItemComponent extends React.Component<{ el: std.TOCPart | std.TOCChapte
 
         let blocks: JSX.Element[] = [];
         if (el.tag === "TOCArticle") {
-            let ArticleTitle: JSX.Element | null = null;
-            let ArticleCaption: JSX.Element | null = null;
+            let ArticleTitle: std.ArticleTitle | null = null;
+            let ArticleCaption: std.ArticleCaption | null = null;
             for (let child of el.children) {
                 if (child.tag === "ArticleTitle") {
-                    ArticleTitle = <RunComponent els={child.children} />;
+                    ArticleTitle = child;
                 } else if (child.tag === "ArticleCaption") {
-                    ArticleCaption = <RunComponent els={child.children} />;
+                    ArticleCaption = child;
                 }
                 else { assertNever(child); }
             }
@@ -228,9 +229,10 @@ class TOCItemComponent extends React.Component<{ el: std.TOCPart | std.TOCChapte
                 blocks.push(
                     <div
                         style={{ marginLeft: `${indent}em` }}
-                        key={-2}
+                        key={(ArticleTitle || ArticleCaption || { id: 0 }).id}
                     >
-                        {ArticleTitle}{ArticleCaption}
+                        {ArticleTitle && <RunComponent els={ArticleTitle.children} />}
+                        {ArticleCaption && <RunComponent els={ArticleCaption.children} />}
                     </div>
                 );
             }
@@ -239,17 +241,17 @@ class TOCItemComponent extends React.Component<{ el: std.TOCPart | std.TOCChapte
             throw new NotImplementedError(el.tag);
 
         } else {
-            let TocItemTitle: JSX.Element | null = null;
-            let ArticleRange: JSX.Element | null = null;
+            let TocItemTitle: std.PartTitle | std.ChapterTitle | std.SectionTitle | std.SubsectionTitle | std.DivisionTitle | std.SupplProvisionLabel | null = null;
+            let ArticleRange: std.ArticleRange | null = null;
             let TOCItems: (std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCArticle)[] = [];
             for (let i = 0; i < el.children.length; i++) {
                 const child = el.children[i];
 
                 if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle" || child.tag === "SupplProvisionLabel") {
-                    TocItemTitle = <RunComponent els={child.children} />;
+                    TocItemTitle = child;
 
                 } else if (child.tag === "ArticleRange") {
-                    ArticleRange = <RunComponent els={child.children} />;
+                    ArticleRange = child;
 
                 } else if (child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSubsection" || child.tag === "TOCDivision" || child.tag === "TOCArticle") {
                     TOCItems.push(child);
@@ -261,15 +263,16 @@ class TOCItemComponent extends React.Component<{ el: std.TOCPart | std.TOCChapte
                 blocks.push(
                     <div
                         style={{ marginLeft: `${indent}em` }}
-                        key={-1}
+                        key={(TocItemTitle || ArticleRange || { id: 0 }).id}
                     >
-                        {TocItemTitle}{ArticleRange}
+                        {TocItemTitle && <RunComponent els={TocItemTitle.children} />}
+                        {ArticleRange && <RunComponent els={ArticleRange.children} />}
                     </div>
                 );
             }
             for (let i = 0; i < TOCItems.length; i++) {
                 const TOCItem = TOCItems[i];
-                blocks.push(<TOCItemComponent el={TOCItem} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<TOCItemComponent el={TOCItem} indent={indent + 1} key={TOCItem.id} />); /* >>>> INDENT >>>> */
             }
 
         }
@@ -314,9 +317,8 @@ class AppdxTableComponent extends React.Component<{ el: std.AppdxTable, indent: 
             blocks.push(
                 <AppdxTableTitleDiv
                     className="law-anchor"
-                    data-tag={el.tag}
-                    data-name={AppdxTableTitle && AppdxTableTitle.text}
-                    key={-1}
+                    data-el_id={el.id.toString()}
+                    key={(AppdxTableTitle || RelatedArticleNum || { id: 0 }).id}
                 >
                     {AppdxTableTitle && <RunComponent els={AppdxTableTitle.children} />}
                     {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} />}
@@ -327,13 +329,13 @@ class AppdxTableComponent extends React.Component<{ el: std.AppdxTable, indent: 
         for (let i = 0; i < ChildItems.length; i++) {
             const child = ChildItems[i];
             if (child.tag === "TableStruct") {
-                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             } else if (child.tag === "Item") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             }
             else { assertNever(child); }
@@ -388,9 +390,8 @@ class AppdxStyleComponent extends React.Component<{ el: std.AppdxStyle, indent: 
             blocks.push(
                 <AppdxStyleTitleDiv
                     className="law-anchor"
-                    data-tag={el.tag}
-                    data-name={AppdxStyleTitle && AppdxStyleTitle.text}
-                    key={-1}
+                    data-el_id={el.id.toString()}
+                    key={(AppdxStyleTitle || RelatedArticleNum || { id: 0 }).id}
                 >
                     {AppdxStyleTitle && <RunComponent els={AppdxStyleTitle.children} />}
                     {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} />}
@@ -401,13 +402,13 @@ class AppdxStyleComponent extends React.Component<{ el: std.AppdxStyle, indent: 
         for (let i = 0; i < ChildItems.length; i++) {
             const child = ChildItems[i];
             if (child.tag === "StyleStruct") {
-                blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             } else if (child.tag === "Item") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             }
             else { assertNever(child); }
@@ -419,6 +420,74 @@ class AppdxStyleComponent extends React.Component<{ el: std.AppdxStyle, indent: 
             >
                 {blocks}
             </AppdxStyleDiv>
+        );
+    }
+}
+
+
+const AppdxFigDiv = styled.div`
+    clear: both;
+    padding-top: 1em;
+`;
+
+const AppdxFigTitleDiv = styled.div`
+    font-weight: bold;
+`;
+
+class AppdxFigComponent extends React.Component<{ el: std.AppdxFig, indent: number }> {
+    render() {
+        const el = this.props.el;
+        const indent = this.props.indent;
+
+        let blocks: JSX.Element[] = [];
+
+        let AppdxFigTitle: std.AppdxFigTitle | null = null;
+        let RelatedArticleNum: std.RelatedArticleNum | null = null;
+        let ChildItems: (std.TableStruct | std.FigStruct)[] = [];
+        for (let child of el.children) {
+
+            if (child.tag === "AppdxFigTitle") {
+                AppdxFigTitle = child;
+
+            } else if (child.tag === "RelatedArticleNum") {
+                RelatedArticleNum = child;
+
+            } else {
+                ChildItems.push(child);
+            }
+        }
+
+        if (AppdxFigTitle || RelatedArticleNum) {
+            blocks.push(
+                <AppdxFigTitleDiv
+                    className="law-anchor"
+                    data-el_id={el.id.toString()}
+                    key={(AppdxFigTitle || RelatedArticleNum || { id: 0 }).id}
+                >
+                    {AppdxFigTitle && <RunComponent els={AppdxFigTitle.children} />}
+                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} />}
+                </AppdxFigTitleDiv>
+            );
+        }
+
+        for (let i = 0; i < ChildItems.length; i++) {
+            const child = ChildItems[i];
+            if (child.tag === "TableStruct") {
+                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            } else if (child.tag === "FigStruct") {
+                blocks.push(<FigStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            }
+            else { assertNever(child); }
+        }
+
+        return (
+            <AppdxFigDiv
+                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: AppdxFigTitle && AppdxFigTitle.text })}
+            >
+                {blocks}
+            </AppdxFigDiv>
         );
     }
 }
@@ -455,7 +524,7 @@ class SupplProvisionComponent extends React.Component<{ el: std.SupplProvision, 
             blocks.push(
                 <ArticleGroupTitleDiv
                     style={{ marginLeft: `${indent + 3}em` }}
-                    key={-1}
+                    key={SupplProvisionLabel.id}
                 >
                     <RunComponent els={SupplProvisionLabel.children} />{AmendLawNum}{Extract}
                 </ArticleGroupTitleDiv>
@@ -465,13 +534,13 @@ class SupplProvisionComponent extends React.Component<{ el: std.SupplProvision, 
         for (let i = 0; i < ChildItems.length; i++) {
             const child = ChildItems[i];
             if (child.tag === "Article") {
-                blocks.push(<ArticleComponent el={child} indent={indent} key={i} />);
+                blocks.push(<ArticleComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "Paragraph") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={i} />);
+                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "Chapter") {
-                blocks.push(<ArticleGroupComponent el={child} indent={indent} key={i} />);
+                blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "SupplProvisionAppdxTable") {
                 throw new NotImplementedError(child.tag);
@@ -489,8 +558,7 @@ class SupplProvisionComponent extends React.Component<{ el: std.SupplProvision, 
         return (
             <div
                 className="law-anchor"
-                data-tag={el.tag}
-                data-name={`${SupplProvisionLabel && SupplProvisionLabel.text}${el.attr.AmendLawNum || ""}`}
+                data-el_id={el.id.toString()}
                 data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: el.attr.AmendLawNum })}
             >
                 {blocks}
@@ -537,10 +605,9 @@ class ArticleGroupComponent extends React.Component<{ el: std.MainProvision | st
             blocks.push(
                 <ArticleGroupTitleDiv
                     className="law-anchor"
-                    data-tag={el.tag}
-                    data-name={ArticleGroupTitle.text}
+                    data-el_id={el.id.toString()}
                     style={{ marginLeft: `${indent + titleIndent}em` }}
-                    key={-1}
+                    key={ArticleGroupTitle.id}
                 >
                     <RunComponent els={ArticleGroupTitle.children} />
                 </ArticleGroupTitleDiv>
@@ -550,13 +617,13 @@ class ArticleGroupComponent extends React.Component<{ el: std.MainProvision | st
         for (let i = 0; i < ChildItems.length; i++) {
             const child = ChildItems[i];
             if (child.tag === "Article") {
-                blocks.push(<ArticleComponent el={child} indent={indent} key={i} />);
+                blocks.push(<ArticleComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "Paragraph") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={i} />);
+                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} />);
 
             } else {
-                blocks.push(<ArticleGroupComponent el={child} indent={indent} key={i} />);
+                blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} />);
             }
         }
 
@@ -618,7 +685,7 @@ class ArticleComponent extends React.Component<{ el: std.Article, indent: number
             blocks.push(
                 <ArticleCaptionDiv
                     style={{ marginLeft: `${indent + 1}em` }}
-                    key={-1}
+                    key={ArticleCaption.id}
                 >
                     <RunComponent els={ArticleCaption.children} />
                 </ArticleCaptionDiv>
@@ -632,7 +699,7 @@ class ArticleComponent extends React.Component<{ el: std.Article, indent: number
                     el={Paragraph}
                     indent={indent}
                     ArticleTitle={(i === 0 && ArticleTitle) ? ArticleTitle : undefined}
-                    key={i}
+                    key={Paragraph.id}
                 />
             );
         }
@@ -640,8 +707,7 @@ class ArticleComponent extends React.Component<{ el: std.Article, indent: number
         return (
             <ArticleDiv
                 className="law-anchor"
-                data-tag={el.tag}
-                data-name={ArticleTitle && ArticleTitle.text}
+                data-el_id={el.id.toString()}
                 data-container_info={JSON.stringify({ tag: el.tag, id: el.attr.Num })}
             >
                 {blocks}
@@ -681,20 +747,20 @@ class ParagraphItemComponent extends React.Component<{ el: std.Paragraph | std.I
 
         let blocks: JSX.Element[] = [];
 
-        let ParagraphCaption: JSX.Element | null = null;
-        let ParagraphItemTitle: JSX.Element | null = null;
+        let ParagraphCaption: std.ParagraphCaption | null = null;
+        let ParagraphItemTitle: std.ParagraphNum | std.ItemTitle | std.Subitem1Title | std.Subitem2Title | std.Subitem3Title | std.Subitem4Title | std.Subitem5Title | std.Subitem6Title | std.Subitem7Title | std.Subitem8Title | std.Subitem9Title | std.Subitem10Title | null = null;
         let ParagraphItemSentence: std.ParagraphSentence | std.ItemSentence | std.Subitem1Sentence | std.Subitem2Sentence | std.Subitem3Sentence | std.Subitem4Sentence | std.Subitem5Sentence | std.Subitem6Sentence | std.Subitem7Sentence | std.Subitem8Sentence | std.Subitem9Sentence | std.Subitem10Sentence | undefined = undefined;
         let Children: (std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10 | std.AmendProvision | std.Class | std.TableStruct | std.FigStruct | std.StyleStruct | std.List)[] = [];
         for (let child of el.children) {
 
             if (child.tag === "ParagraphCaption") {
-                ParagraphCaption = <RunComponent els={child.children} />;
+                ParagraphCaption = child;
 
             } else if (child.tag === "ParagraphNum" || child.tag === "ItemTitle" || child.tag ===
                 "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
                 "Subitem5Title" || child.tag === "Subitem6Title" || child.tag === "Subitem7Title" || child.tag === "Subitem8Title" || child.tag ===
                 "Subitem9Title" || child.tag === "Subitem10Title") {
-                ParagraphItemTitle = <RunComponent els={child.children} />;
+                ParagraphItemTitle = child;
 
             } else if (child.tag === "ParagraphSentence" || child.tag === "ItemSentence" || child.tag ===
                 "Subitem1Sentence" || child.tag === "Subitem2Sentence" || child.tag === "Subitem3Sentence" || child.tag === "Subitem4Sentence" || child.tag ===
@@ -711,15 +777,15 @@ class ParagraphItemComponent extends React.Component<{ el: std.Paragraph | std.I
 
         if (ParagraphCaption) {
             blocks.push(
-                <ParagraphCaptionDiv style={{ marginLeft: `${indent + 1}em` }} key={-2}>
-                    {ParagraphCaption}
+                <ParagraphCaptionDiv style={{ marginLeft: `${indent + 1}em` }} key={ParagraphCaption.id}>
+                    <RunComponent els={ParagraphCaption.children} />
                 </ParagraphCaptionDiv>
             );
         }
 
         let Title = (
             <span style={{ fontWeight: "bold" }}>
-                {ParagraphItemTitle}
+                {ParagraphItemTitle && <RunComponent els={ParagraphItemTitle.children} />}
                 {ArticleTitle && <RunComponent els={ArticleTitle.children} />}
             </span>
         );
@@ -737,19 +803,19 @@ class ParagraphItemComponent extends React.Component<{ el: std.Paragraph | std.I
         for (let i = 0; i < Children.length; i++) {
             const child = Children[i];
             if (child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             } else if (child.tag === "TableStruct") {
-                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             } else if (child.tag === "FigStruct") {
-                blocks.push(<FigStructComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<FigStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             } else if (child.tag === "StyleStruct") {
-                blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={i} />); /* >>>> INDENT >>>> */
+                blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             } else if (child.tag === "List") {
-                blocks.push(<ListComponent el={child} indent={indent + 2} key={i} />); /* >>>> INDENT ++++ INDENT >>>> */
+                blocks.push(<ListComponent el={child} indent={indent + 2} key={child.id} />); /* >>>> INDENT ++++ INDENT >>>> */
 
             } else if (child.tag === "AmendProvision" || child.tag === "Class") {
                 throw new NotImplementedError(child.tag);
@@ -788,10 +854,10 @@ class ListComponent extends React.Component<{ el: std.List | std.Sublist1 | std.
             const child = el.children[i];
 
             if (child.tag === "ListSentence" || child.tag === "Sublist1Sentence" || child.tag === "Sublist2Sentence" || child.tag === "Sublist3Sentence") {
-                blocks.push(<BlockSentenceComponent els={child.children} indent={indent} key={i} />);
+                blocks.push(<BlockSentenceComponent els={child.children} indent={indent} key={child.id} />);
 
             } else if (child.tag === "Sublist1" || child.tag === "Sublist2" || child.tag === "Sublist3") {
-                blocks.push(<ListComponent el={child} indent={indent + 2} key={i} />); /* >>>> INDENT ++++ INDENT >>>> */
+                blocks.push(<ListComponent el={child} indent={indent + 2} key={child.id} />); /* >>>> INDENT ++++ INDENT >>>> */
 
             }
             else { assertNever(child); }
@@ -819,16 +885,16 @@ class TableStructComponent extends React.Component<{ el: std.TableStruct, indent
 
             if (child.tag === "TableStructTitle") {
                 blocks.push(
-                    <div key={i}>
+                    <div key={child.id}>
                         <RunComponent els={child.children} />
                     </div>
                 );
 
             } else if (child.tag === "Table") {
-                blocks.push(<TableComponent el={child} indent={indent} key={i} />);
+                blocks.push(<TableComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent} key={i} />);
+                blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} />);
 
             }
             else { assertNever(child); }
@@ -861,7 +927,7 @@ class TableComponent extends React.Component<{ el: std.Table, indent: number }> 
             const child = el.children[i];
 
             if (child.tag === "TableRow" || child.tag === "TableHeaderRow") {
-                rows.push(<TableRowComponent el={child} indent={indent} key={i} />);
+                rows.push(<TableRowComponent el={child} indent={indent} key={child.id} />);
 
             }
             else { assertNever(child); }
@@ -889,12 +955,12 @@ class RemarksComponent extends React.Component<{ el: std.Remarks, indent: number
 
         let blocks: JSX.Element[] = [];
 
-        let RemarksLabel: JSX.Element | null = null;
+        let RemarksLabel: std.RemarksLabel | null = null;
         let ChildItems: (std.Item | std.Sentence)[] = [];
         for (let child of el.children) {
 
             if (child.tag === "RemarksLabel") {
-                RemarksLabel = <RunComponent els={child.children} style={{ fontWeight: "bold" }} />;
+                RemarksLabel = child;
 
             } else {
                 ChildItems.push(child);
@@ -908,21 +974,21 @@ class RemarksComponent extends React.Component<{ el: std.Remarks, indent: number
                 blocks.push(
                     <BlockSentenceComponent
                         els={[child]}
-                        Title={(i === 0 && RemarksLabel) || undefined}
+                        Title={(i === 0 && RemarksLabel && <RunComponent els={RemarksLabel.children} style={{ fontWeight: "bold" }} />) || undefined}
                         indent={0}
-                        key={i}
+                        key={child.id}
                     />
                 );
 
             } else if (child.tag === "Item") {
-                if (i == 0) {
+                if (i == 0 && RemarksLabel) {
                     blocks.push(
-                        <div key={i}>
-                            {RemarksLabel}
+                        <div key={RemarksLabel.id}>
+                            <RunComponent els={RemarksLabel.children} style={{ fontWeight: "bold" }} />
                         </div>
                     );
                 }
-                blocks.push(<ParagraphItemComponent el={child} indent={1} key={i} />);
+                blocks.push(<ParagraphItemComponent el={child} indent={1} key={child.id} />);
 
             }
             else { assertNever(child); }
@@ -948,7 +1014,7 @@ class TableRowComponent extends React.Component<{ el: std.TableRow | std.TableHe
             let child = el.children[i];
 
             if (child.tag === "TableColumn" || child.tag === "TableHeaderColumn") {
-                columns.push(<TableColumnComponent el={child} indent={1} key={i} />);
+                columns.push(<TableColumnComponent el={child} indent={1} key={child.id} />);
 
             }
             else { assertNever(child); }
@@ -984,7 +1050,7 @@ class TableColumnComponent extends React.Component<{ el: std.TableColumn | std.T
 
         if (el.tag === "TableHeaderColumn") {
             blocks.push(
-                <div key={-1}>
+                <div key={el.id}>
                     <RunComponent els={el.children} />
                 </div>
             );
@@ -994,12 +1060,15 @@ class TableColumnComponent extends React.Component<{ el: std.TableColumn | std.T
                 let child = el.children[i];
 
                 if (child.tag === "Sentence" || child.tag === "Column") {
-                    blocks.push(<BlockSentenceComponent els={[child]} indent={0} key={i} />);
+                    blocks.push(<BlockSentenceComponent els={[child]} indent={0} key={child.id} />);
 
                 } else if (child.tag === "FigStruct") {
-                    blocks.push(<FigStructComponent el={child} indent={0} key={i} />);
+                    blocks.push(<FigStructComponent el={child} indent={0} key={child.id} />);
 
-                } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division" || child.tag === "Article" || child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10" || child.tag === "Remarks") {
+                } else if (child.tag === "Remarks") {
+                    blocks.push(<RemarksComponent el={child} indent={0} key={child.id} />);
+
+                } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division" || child.tag === "Article" || child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
                     throw new NotImplementedError(child.tag);
                 }
                 else { assertNever(child); }
@@ -1048,7 +1117,7 @@ class StyleStructComponent extends React.Component<{ el: std.StyleStruct, indent
 
             if (child.tag === "StyleStructTitle") {
                 blocks.push(
-                    <div key={i}>
+                    <div key={child.id}>
                         <RunComponent els={child.children} />
                     </div>
                 );
@@ -1060,17 +1129,17 @@ class StyleStructComponent extends React.Component<{ el: std.StyleStruct, indent
                         throw new NotImplementedError("string");
 
                     } else if (std.isTable(subchild)) {
-                        blocks.push(<TableComponent el={subchild} indent={indent} key={i} />);
+                        blocks.push(<TableComponent el={subchild} indent={indent} key={subchild.id} />);
 
                     } else if (std.isFig(subchild)) {
                         blocks.push(
-                            <div key={i}>
+                            <div key={subchild.id}>
                                 <FigRunComponent el={subchild} />
                             </div>
                         );
 
                     } else if (std.isList(subchild)) {
-                        blocks.push(<ListComponent el={subchild} indent={indent + 2} key={i} />); /* >>>> INDENT ++++ INDENT >>>> */
+                        blocks.push(<ListComponent el={subchild} indent={indent + 2} key={subchild.id} />); /* >>>> INDENT ++++ INDENT >>>> */
 
                     } else {
                         throw new NotImplementedError(subchild.tag);
@@ -1079,7 +1148,7 @@ class StyleStructComponent extends React.Component<{ el: std.StyleStruct, indent
                 }
 
             } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent} key={i} />);
+                blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} />);
 
             }
             else { assertNever(child); }
@@ -1106,20 +1175,20 @@ class FigStructComponent extends React.Component<{ el: std.FigStruct, indent: nu
 
             if (child.tag === "FigStructTitle") {
                 blocks.push(
-                    <div key={i}>
+                    <div key={child.id}>
                         <RunComponent els={child.children} />
                     </div>
                 );
 
             } else if (child.tag === "Fig") {
                 blocks.push(
-                    <div key={i}>
+                    <div key={child.id}>
                         <FigRunComponent el={child} />
                     </div>
                 );
 
             } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent} key={i} />);
+                blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} />);
 
             }
             else { assertNever(child); }
@@ -1197,7 +1266,7 @@ class BlockSentenceComponent extends React.Component<{ els: (std.Sentence | std.
         }
 
         return (
-            <div style={Object.assign({}, { marginLeft: `${indent}em` }, style)}>
+            <div style={{ marginLeft: `${indent}em`, ...style }}>
                 {runs}
             </div>
         );
@@ -1236,7 +1305,6 @@ class RunComponent extends React.Component<{ els: (string | std.Line | std.Quote
                     .filter(c => !isString(c) && std.isRt(c)) as std.Rt[])
                     .map(c => c.text)
                     .join("");
-                console.log(rb, rt);
                 runs.push(<ruby key={i}>{rb}<rt>{rt}</rt></ruby>);
 
             } else if (el.tag === "Sub") {
@@ -1681,13 +1749,13 @@ class __ParenthesesComponent extends React.Component<{ el: std.__EL }> {
                 throw new NotImplementedError;
 
             } else if (child.tag === "__PStart") {
-                blocks.push(<__PStartComponent el={child as std.__EL} key={i} />);
+                blocks.push(<__PStartComponent el={child as std.__EL} key={child.id} />);
 
             } else if (child.tag === "__PContent") {
-                blocks.push(<__PContentComponent el={child as std.__EL} key={i} />);
+                blocks.push(<__PContentComponent el={child as std.__EL} key={child.id} />);
 
             } else if (child.tag === "__PEnd") {
-                blocks.push(<__PEndComponent el={child as std.__EL} key={i} />);
+                blocks.push(<__PEndComponent el={child as std.__EL} key={child.id} />);
 
             } else {
                 throw new NotImplementedError(child.tag);
