@@ -5,7 +5,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     mode: "production",
-    entry: "./src/index.tsx",
+    entry: ["./src/polyfills.ts", "./src/index.tsx"],
     output: {
         filename: "bundle.js",
         path: __dirname + "/dist-prod"
@@ -85,4 +85,8 @@ module.exports = {
             filename: "index.html"
         })
     ],
+
+    watchOptions: {
+      ignored: /node_modules/
+    },
 };
