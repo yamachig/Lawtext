@@ -151,12 +151,10 @@ export async function loadLawText(
 export async function searchLaw(
     dispatch: Dispatch<Action<any>>,
     lawSearchKey: string,
-    history: History,
 ) {
     console.log(`searchLaw(${lawSearchKey})`);
-    if (history) {
-        history.push(`/${lawSearchKey}`);
-    }
+    const state = store.getState().lawtextAppPage;
+    if (lawSearchKey === state.lawSearchedKey) return;
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true, lawSearchedKey: lawSearchKey, loadingLawMessage: "法令を検索しています..." }));
     console.log("searchLaw: Searching Law");
     await util.wait(30);

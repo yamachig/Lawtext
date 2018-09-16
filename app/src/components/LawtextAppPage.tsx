@@ -5,6 +5,7 @@ import { LawtextAppPageState, SelectionRange, RouteState } from '../states';
 import { Sidebar } from './Sidebar'
 import { Viewer } from './Viewer'
 import * as $ from "jquery"
+import { UnregisterCallback } from "history";
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
@@ -93,11 +94,26 @@ export function scrollToLawAnchor(id: string) {
 }
 
 export class LawtextAppPage extends React.Component<Props> {
+    unsubscribeFromHistory?: UnregisterCallback;
     componentWillMount() {
-        if (this.props.lawSearchKey && (this.props.lawSearchKey !== this.props.lawSearchedKey)) {
-            this.props.searchLaw(this.props.lawSearchKey, this.props.history);
-        }
+        this.onNavigate();
+        this.unsubscribeFromHistory = this.props.history.listen(() => this.onNavigate());
     }
+
+    componentWillUnmount() {
+        if (this.unsubscribeFromHistory) this.unsubscribeFromHistory();
+    }
+
+    onNavigate() {
+        console.log(`onNavigate: before timer:`, this.props.lawSearchKey);
+        setTimeout(() => {
+            console.log(`onNavigate: after timer:`, this.props.lawSearchKey);
+            if (this.props.lawSearchKey) {
+                this.props.searchLaw(this.props.lawSearchKey);
+            }
+        }, 30);
+    }
+
     render() {
         return (
             <div>

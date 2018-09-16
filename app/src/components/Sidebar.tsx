@@ -32,7 +32,7 @@ class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
 
     handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        this.props.searchLaw(this.state.lawSearchKey, this.props.history);
+        this.props.history.push(`/${this.state.lawSearchKey}`);
     }
 
     render() {

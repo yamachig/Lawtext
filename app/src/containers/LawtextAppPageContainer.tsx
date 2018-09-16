@@ -20,7 +20,7 @@ export interface Dispatchers {
     openFileInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
     invokeError: (title: string, bodyEl: string) => void,
     loadLawText: (text: string, analyzeXml: boolean) => void,
-    searchLaw: (lawSearchKey: string, history: History) => void,
+    searchLaw: (lawSearchKey: string) => void,
     downloadDocx: (downloadSelection?: boolean) => void,
     downloadLawtext: () => void,
     downloadXml: () => void,
@@ -46,8 +46,8 @@ function mapDispatchToProps(dispatch: Dispatch<Action<any>>) {
         loadLawText: (text: string, analyzeXml: boolean) =>
             states.loadLawText(dispatch, text, analyzeXml),
 
-        searchLaw: (lawSearchKey: string, history: History) =>
-            states.searchLaw(dispatch, lawSearchKey, history),
+        searchLaw: (lawSearchKey: string) =>
+            states.searchLaw(dispatch, lawSearchKey),
 
         downloadDocx: (downloadSelection: boolean = false) =>
             states.downloadDocx(dispatch, downloadSelection),
