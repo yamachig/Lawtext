@@ -25,7 +25,7 @@ export async function prepare() {
     const data = (await download({ withoutPict: true }, (ratio, message) => {
         bar.update(
             ratio,
-            { message: message.length > 30 ? message.slice(0, 30) + "..." : message },
+            { message: message.length > 30 ? message.slice(0, 30) + " ..." : message },
         );
     })).withoutPict;
     bar.stop();

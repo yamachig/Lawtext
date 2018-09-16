@@ -730,8 +730,8 @@ export type Ranges = Range[];
 
 
 export class NotImplementedError extends Error {
-    toString() {
-        return `NotImplemented: ${super.toString()}`;
+    constructor(message) {
+        super(`NotImplemented: ${message}`)
     }
 }
 
