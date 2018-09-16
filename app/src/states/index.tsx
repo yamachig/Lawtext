@@ -124,6 +124,11 @@ export async function loadLawText(
     if (law) {
         newState.law = law;
         newState.analysis = analysis;
+        const lawBody = law.children.find(el => el.tag === "LawBody") as std.LawBody | undefined;
+        const lawTitle = lawBody && lawBody.children.find(el => el.tag === "LawTitle") as std.LawTitle | undefined;
+        document.title = lawTitle ? `${lawTitle.text} | Lawtext` : "Lawtext";
+    } else {
+        document.title = "Lawtext";
     }
     dispatch(LawtextAppPageActions.modifyState(newState));
 }
