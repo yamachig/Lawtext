@@ -10,6 +10,7 @@ import * as analyzer from "../../../js/src/analyzer";
 import EventListener from 'react-event-listener';
 import { isString } from "util";
 import { store } from "../store";
+import { LawtextAppPageActions } from "../actions/index";
 
 const MARGIN = "　";
 
@@ -27,11 +28,24 @@ const LawViewDiv = styled.div`
 
 export class LawView extends React.Component<Props> {
     render() {
-        if (!this.props.law) return null;
         return (
             <LawViewDiv>
-                <LawComponent el={this.props.law} indent={0} />
+                {this.props.hasError && <LawViewError {...this.props} />}
+                {this.props.law && <LawComponent el={this.props.law} indent={0} />}
             </LawViewDiv >
+        );
+    }
+}
+
+const LawViewErrorDiv = styled.div`
+`;
+
+class LawViewError extends React.Component<Props> {
+    render() {
+        return (
+            <LawViewErrorDiv className="alert alert-danger">
+                レンダリング時に{this.props.errors.length}個のエラーが発生しました
+            </LawViewErrorDiv>
         );
     }
 }
@@ -49,6 +63,8 @@ class BaseLawComponent<P = {}, S = {}, SS = any> extends React.Component<P, S & 
 
     componentDidCatch(error, info) {
         this.setState({ hasError: true, error: error });
+        const currentState = store.getState().lawtextAppPage;
+        store.dispatch(LawtextAppPageActions.modifyState({ hasError: true, errors: [...currentState.errors, error] }));
     }
 
     render(): JSX.Element | JSX.Element[] | null | undefined {
@@ -1316,8 +1332,14 @@ class TableColumnComponent extends BaseLawComponent<TableColumnComponentProps> {
                 } else if (child.tag === "Remarks") {
                     blocks.push(<RemarksComponent el={child} indent={0} key={child.id} />);
 
-                } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division" || child.tag === "Article" || child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
-                    throw new NotImplementedError(child.tag);
+                } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
+                    blocks.push(<ArticleGroupComponent el={child} indent={0} key={child.id} />);
+
+                } else if (child.tag === "Article") {
+                    blocks.push(<ArticleComponent el={child} indent={0} key={child.id} />);
+
+                } else if (child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
+                    blocks.push(<ParagraphItemComponent el={child} indent={0} key={child.id} />);
                 }
                 else { assertNever(child); }
             }

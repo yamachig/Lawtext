@@ -3,6 +3,17 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+class WatchMessagePlugin {
+    apply(compiler) {
+        compiler.hooks.watchRun.tap("WatchMessagePlugin", () => {
+            console.log("\x1b[36m" + "Begin compile at " + new Date() + " \x1b[39m");
+        });
+        compiler.hooks.done.tap("WatchMessagePlugin", () => {
+            console.log("\x1b[36m" + "Done compile at " + new Date() + " \x1b[39m");
+        });
+    }
+}
+
 module.exports = {
     mode: "development",
     entry: ["./src/polyfills.ts", "./src/index.tsx"],
@@ -79,6 +90,7 @@ module.exports = {
         extensions: [".ts", ".tsx", ".js", ".json"]
     },
     plugins: [
+        new WatchMessagePlugin(),
         new ExtractTextPlugin('style.css'),
         new HtmlWebPackPlugin({
             template: "./src/index.html",

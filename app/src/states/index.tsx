@@ -25,6 +25,8 @@ export interface LawtextAppPageState {
     lawSearchKey: string | null;
     lawSearchedKey: string | null;
     analysis: analyzer.Analysis | null;
+    hasError: boolean;
+    errors: Error[];
 }
 
 const initialState: LawtextAppPageState = {
@@ -33,6 +35,8 @@ const initialState: LawtextAppPageState = {
     lawSearchKey: null,
     lawSearchedKey: null,
     analysis: null,
+    hasError: false,
+    errors: [],
 };
 
 export const LawtextAppPageReducer = reducerWithInitialState(initialState);

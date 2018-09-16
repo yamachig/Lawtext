@@ -730,7 +730,7 @@ export type Ranges = Range[];
 
 
 export class NotImplementedError extends Error {
-    constructor(message) {
+    constructor(message: string) {
         super(`NotImplemented: ${message}`)
     }
 }
