@@ -25,8 +25,8 @@ class ViewerLoading extends React.Component<Props> {
     render() {
         return (
             <ViewerLoadingDiv>
-                <div className="container-fluid">
-                    <p>ファイルを読み込み中です...</p>
+                <div className="container-fluid" style={{ textAlign: "right" }}>
+                    <span className="badge badge-secondary">{this.props.loadingLawMessage}</span>
                 </div>
             </ViewerLoadingDiv >
         );
