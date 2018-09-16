@@ -93,10 +93,12 @@ export function scrollToLawAnchor(id: string) {
 }
 
 export class LawtextAppPage extends React.Component<Props> {
-    render() {
+    componentWillMount() {
         if (this.props.lawSearchKey && (this.props.lawSearchKey !== this.props.lawSearchedKey)) {
             this.props.searchLaw(this.props.lawSearchKey, this.props.history);
         }
+    }
+    render() {
         return (
             <div>
                 <HiddenInput
