@@ -161,8 +161,8 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
         else if (isAppdxComponentProps(this.props)) { throw new NotImplementedError("Appdx"); }
         else if (isAppdxFormatComponentProps(this.props)) { throw new NotImplementedError("AppdxFormat"); }
         else if (isSupplNoteComponentProps(this.props)) { throw new NotImplementedError("SupplNote"); }
-        else if (isSupplProvisionAppdxTableComponentProps(this.props)) { throw new NotImplementedError("SupplProvisionAppdxTable"); }
-        else if (isSupplProvisionAppdxStyleComponentProps(this.props)) { throw new NotImplementedError("SupplProvisionAppdxStyle"); }
+        else if (isSupplProvisionAppdxTableComponentProps(this.props)) { return <SupplProvisionAppdxTableComponent {...this.props} /> }
+        else if (isSupplProvisionAppdxStyleComponentProps(this.props)) { return <SupplProvisionAppdxStyleComponent {...this.props} /> }
         else if (isSupplProvisionAppdxComponentProps(this.props)) { throw new NotImplementedError("SupplProvisionAppdx"); }
         else if (isNoteStructComponentProps(this.props)) { throw new NotImplementedError("NoteStruct"); }
         else if (isFormatStructComponentProps(this.props)) { throw new NotImplementedError("FormatStruct"); }
@@ -186,12 +186,6 @@ function isAppdxFormatComponentProps(props: ELComponentProps): props is AppdxFor
 
 interface SupplNoteComponentProps extends ELComponentProps { el: std.SupplNote, indent: number };
 function isSupplNoteComponentProps(props: ELComponentProps): props is SupplNoteComponentProps { return props.el.tag === "SupplNote"; }
-
-interface SupplProvisionAppdxTableComponentProps extends ELComponentProps { el: std.SupplProvisionAppdxTable, indent: number };
-function isSupplProvisionAppdxTableComponentProps(props: ELComponentProps): props is SupplProvisionAppdxTableComponentProps { return props.el.tag === "SupplProvisionAppdxTable"; }
-
-interface SupplProvisionAppdxStyleComponentProps extends ELComponentProps { el: std.SupplProvisionAppdxStyle, indent: number };
-function isSupplProvisionAppdxStyleComponentProps(props: ELComponentProps): props is SupplProvisionAppdxStyleComponentProps { return props.el.tag === "SupplProvisionAppdxStyle"; }
 
 interface SupplProvisionAppdxComponentProps extends ELComponentProps { el: std.SupplProvisionAppdx, indent: number };
 function isSupplProvisionAppdxComponentProps(props: ELComponentProps): props is SupplProvisionAppdxComponentProps { return props.el.tag === "SupplProvisionAppdx"; }
@@ -707,6 +701,158 @@ class AppdxFigComponent extends BaseLawComponent<AppdxFigComponentProps> {
 }
 
 
+const SupplProvisionAppdxTableDiv = styled.div`
+    clear: both;
+    padding-top: 1em;
+`;
+
+const SupplProvisionAppdxTableTitleDiv = styled.div`
+    font-weight: bold;
+`;
+
+interface SupplProvisionAppdxTableComponentProps extends ELComponentProps { el: std.SupplProvisionAppdxTable, indent: number };
+
+function isSupplProvisionAppdxTableComponentProps(props: ELComponentProps): props is SupplProvisionAppdxTableComponentProps { return props.el.tag === "SupplProvisionAppdxTable"; }
+
+class SupplProvisionAppdxTableComponent extends BaseLawComponent<SupplProvisionAppdxTableComponentProps> {
+    renderNormal() {
+        const el = this.props.el;
+        const indent = this.props.indent;
+
+        let blocks: JSX.Element[] = [];
+
+        let SupplProvisionAppdxTableTitle: std.SupplProvisionAppdxTableTitle | null = null;
+        let RelatedArticleNum: std.RelatedArticleNum | null = null;
+        let ChildItems: (std.TableStruct | std.Item | std.Remarks)[] = [];
+        for (let child of el.children) {
+
+            if (child.tag === "SupplProvisionAppdxTableTitle") {
+                SupplProvisionAppdxTableTitle = child;
+
+            } else if (child.tag === "RelatedArticleNum") {
+                RelatedArticleNum = child;
+
+            } else {
+                ChildItems.push(child);
+            }
+        }
+
+        if (SupplProvisionAppdxTableTitle || RelatedArticleNum) {
+            blocks.push(
+                <SupplProvisionAppdxTableTitleDiv
+                    className="law-anchor"
+                    data-el_id={el.id.toString()}
+                    key={(SupplProvisionAppdxTableTitle || RelatedArticleNum || { id: 0 }).id}
+                >
+                    {SupplProvisionAppdxTableTitle && <RunComponent els={SupplProvisionAppdxTableTitle.children} />}
+                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} />}
+                </SupplProvisionAppdxTableTitleDiv>
+            );
+        }
+
+        for (let i = 0; i < ChildItems.length; i++) {
+            const child = ChildItems[i];
+            if (child.tag === "TableStruct") {
+                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            } else if (child.tag === "Item") {
+                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            } else if (child.tag === "Remarks") {
+                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            }
+            else { assertNever(child); }
+        }
+
+        return (
+            <SupplProvisionAppdxTableDiv
+                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: SupplProvisionAppdxTableTitle && SupplProvisionAppdxTableTitle.text })}
+            >
+                {blocks}
+            </SupplProvisionAppdxTableDiv>
+        );
+    }
+}
+
+
+
+
+const SupplProvisionAppdxStyleDiv = styled.div`
+    clear: both;
+    padding-top: 1em;
+`;
+
+const SupplProvisionAppdxStyleTitleDiv = styled.div`
+    font-weight: bold;
+`;
+
+interface SupplProvisionAppdxStyleComponentProps extends ELComponentProps { el: std.SupplProvisionAppdxStyle, indent: number };
+
+function isSupplProvisionAppdxStyleComponentProps(props: ELComponentProps): props is SupplProvisionAppdxStyleComponentProps { return props.el.tag === "SupplProvisionAppdxStyle"; }
+
+class SupplProvisionAppdxStyleComponent extends BaseLawComponent<SupplProvisionAppdxStyleComponentProps> {
+    renderNormal() {
+        const el = this.props.el;
+        const indent = this.props.indent;
+
+        let blocks: JSX.Element[] = [];
+
+        let SupplProvisionAppdxStyleTitle: std.SupplProvisionAppdxStyleTitle | null = null;
+        let RelatedArticleNum: std.RelatedArticleNum | null = null;
+        let ChildItems: (std.StyleStruct | std.Item | std.Remarks)[] = [];
+        for (let child of el.children) {
+
+            if (child.tag === "SupplProvisionAppdxStyleTitle") {
+                SupplProvisionAppdxStyleTitle = child;
+
+            } else if (child.tag === "RelatedArticleNum") {
+                RelatedArticleNum = child;
+
+            } else {
+                ChildItems.push(child);
+            }
+        }
+
+        if (SupplProvisionAppdxStyleTitle || RelatedArticleNum) {
+            blocks.push(
+                <SupplProvisionAppdxStyleTitleDiv
+                    className="law-anchor"
+                    data-el_id={el.id.toString()}
+                    key={(SupplProvisionAppdxStyleTitle || RelatedArticleNum || { id: 0 }).id}
+                >
+                    {SupplProvisionAppdxStyleTitle && <RunComponent els={SupplProvisionAppdxStyleTitle.children} />}
+                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} />}
+                </SupplProvisionAppdxStyleTitleDiv>
+            );
+        }
+
+        for (let i = 0; i < ChildItems.length; i++) {
+            const child = ChildItems[i];
+            if (child.tag === "StyleStruct") {
+                blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            } else if (child.tag === "Item") {
+                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            } else if (child.tag === "Remarks") {
+                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            }
+            else { assertNever(child); }
+        }
+
+        return (
+            <SupplProvisionAppdxStyleDiv
+                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: SupplProvisionAppdxStyleTitle && SupplProvisionAppdxStyleTitle.text })}
+            >
+                {blocks}
+            </SupplProvisionAppdxStyleDiv>
+        );
+    }
+}
+
+
 
 interface SupplProvisionComponentProps extends ELComponentProps { el: std.SupplProvision, indent: number };
 
@@ -756,10 +902,10 @@ class SupplProvisionComponent extends BaseLawComponent<SupplProvisionComponentPr
                 blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "SupplProvisionAppdxTable") {
-                throw new NotImplementedError(child.tag);
+                blocks.push(<SupplProvisionAppdxTableComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "SupplProvisionAppdxStyle") {
-                throw new NotImplementedError(child.tag);
+                blocks.push(<SupplProvisionAppdxStyleComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "SupplProvisionAppdx") {
                 throw new NotImplementedError(child.tag);
