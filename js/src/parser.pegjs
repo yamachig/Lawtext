@@ -349,6 +349,7 @@ article "article" =
         }
 
         let paragraph = new EL("Paragraph");
+        paragraph.attr.Num = "1";
         paragraph.attr.OldStyle = "false";
         paragraph.attr.Delete = "false";
         article.append(paragraph);

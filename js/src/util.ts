@@ -30,7 +30,7 @@ export function isJsonEL(object: any): object is JsonEL {
 
 
 let _currentID = 0;
-export class EL {
+export class EL implements JsonEL {
     tag: string
     attr: { [key: string]: string | undefined }
     children: (EL | string)[]
