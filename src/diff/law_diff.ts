@@ -12,6 +12,8 @@ export enum TagType {
 export interface LawDiffResult<T> {
     mostSeriousStatus: ProblemStatus;
     items: LawDiffResultItem<T>[];
+    oldRoot: ComparableEL,
+    newRoot: ComparableEL,
     oldELs: [ComparableEL, TagType][];
     newELs: [ComparableEL, TagType][];
 }
@@ -25,6 +27,7 @@ export enum LawDiffType {
 
 export interface LawDiffElementMismatch<T> {
     type: LawDiffType.ElementMismatch;
+    mostSeriousStatus: ProblemStatus;
     diffTable: DiffTable<T>;
 }
 
@@ -42,6 +45,7 @@ export interface LawDiffElementChange<T> {
 
 export interface LawDiffNoDiff<T> {
     type: LawDiffType.NoDiff;
+    mostSeriousStatus: ProblemStatus.NoProblem;
     diffTable: DiffTable<T>;
 }
 
@@ -58,29 +62,29 @@ export enum DiffStatus {
     NoChange = "NoChange",
 }
 
-type DiffTable<T> = DiffTableRow<T>[];
-type DiffTableRow<T> = DiffAddRow<T> | DiffRemoveRow<T> | DiffChangeRow<T> | DiffNoChangeRow<T>;
-interface DiffAddRow<T> {
+export type DiffTable<T> = DiffTableRow<T>[];
+export type DiffTableRow<T> = DiffAddRow<T> | DiffRemoveRow<T> | DiffChangeRow<T> | DiffNoChangeRow<T>;
+export interface DiffAddRow<T> {
     status: DiffStatus.Add,
     oldItem: null,
     newItem: DiffTableItem<T>,
 };
-interface DiffRemoveRow<T> {
+export interface DiffRemoveRow<T> {
     status: DiffStatus.Remove,
     oldItem: DiffTableItem<T>,
     newItem: null,
 };
-interface DiffChangeRow<T> {
+export interface DiffChangeRow<T> {
     status: DiffStatus.Change,
     oldItem: DiffTableItem<T>,
     newItem: DiffTableItem<T>,
 };
-interface DiffNoChangeRow<T> {
+export interface DiffNoChangeRow<T> {
     status: DiffStatus.NoChange,
     oldItem: DiffTableItem<T>,
     newItem: DiffTableItem<T>,
 };
-type DiffTableItem<T> = {
+export type DiffTableItem<T> = {
     index: number,
     value: T,
 };
@@ -162,18 +166,22 @@ export class ComparableEL implements util.JsonEL {
         }
     }
 
-    getXPath() {
+    getXPath(): string {
         if (this.parent) {
-            let sameTagCount = 0;
-            let position = 0;
-            for (const child of this.parent.children) {
-                if (child.tag === this.tag) sameTagCount++;
-                if (child === this) position = sameTagCount;
-            }
-            if (sameTagCount === 1) {
-                return `${this.parent.getXPath()}/${this.tag}`;
+            if (this.tag === "") {
+                return `${this.parent.getXPath()}/text()`;
             } else {
-                return `${this.parent.getXPath()}/${this.tag}[${position}]`;
+                let sameTagCount = 0;
+                let position = 0;
+                for (const child of this.parent.children) {
+                    if (child.tag === this.tag) sameTagCount++;
+                    if (child === this) position = sameTagCount;
+                }
+                if (sameTagCount === 1) {
+                    return `${this.parent.getXPath()}/${this.tag}`;
+                } else {
+                    return `${this.parent.getXPath()}/${this.tag}[${position}]`;
+                }
             }
         } else {
             return `/${this.tag}`;
@@ -183,17 +191,19 @@ export class ComparableEL implements util.JsonEL {
 
 export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsNoDiff: boolean = false) {
 
-    const oldEL = new ComparableEL(oldJson);
-    const oldELs = [...oldEL.allList()];
+    const oldRoot = new ComparableEL(oldJson);
+    const oldELs = [...oldRoot.allList()];
     if (!oldELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
 
-    const newEL = new ComparableEL(newJson);
-    const newELs = [...newEL.allList()];
+    const newRoot = new ComparableEL(newJson);
+    const newELs = [...newRoot.allList()];
     if (!newELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
 
     const ret: LawDiffResult<string> = {
         mostSeriousStatus: ProblemStatus.NoProblem,
         items: [],
+        oldRoot: oldRoot,
+        newRoot: newRoot,
         oldELs: oldELs,
         newELs: newELs,
     };
@@ -222,142 +232,93 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsN
 
     let noDiffTable: DiffTable<string> = [];
 
-    for (const [di, dRow] of diff.entries()) {
-        if (dRow.status === DiffStatus.NoChange) {
-            const oldIndex = dRow.oldItem.index;
-            const newIndex = dRow.newItem.index;
+    const emitNoDiff = () => {
+        if (noDiffTable.length) {
+            ret.items.push({
+                type: LawDiffType.NoDiff,
+                mostSeriousStatus: ProblemStatus.NoProblem,
+                diffTable: noDiffTable,
+            });
+            noDiffTable = [];
+        }
+    };
 
-            const [oldEL, oldTT] = oldELs[oldIndex];
-            const [newEL, newTT] = newELs[newIndex];
+    const fragmentELsList: FragmentElements[] = [];
 
-            if (oldTT === TagType.Open && newTT === TagType.Open) {
+    for (let di = 0; di < diff.length; di++) {
+        const dRow = diff[di];
+        const oldIndex = dRow.oldItem && dRow.oldItem.index;
+        const newIndex = dRow.newItem && dRow.newItem.index;
 
-                const oldKeys = Object.keys(oldEL.attr);
-                const newKeys = Object.keys(newEL.attr);
+        const [oldEL, oldTT] = oldIndex ? oldELs[oldIndex] : [null, null];
+        const [newEL, newTT] = newIndex ? newELs[newIndex] : [null, null];
 
-                const nochangeKeys: string[] = [];
-                const changedKeys: [string, ProblemStatus][] = [];
-                for (const key of oldKeys.filter(x => newKeys.includes(x))) {
-                    let oldVal;
-                    let newVal;
+        const isFragment = fragmentELsList.some(({ oldELs, newELs }) => {
+            const oldIsFragment = !oldEL || 0 <= oldELs.indexOf(oldEL);
+            const newIsFragment = !newEL || 0 <= newELs.indexOf(newEL);
+            return oldIsFragment && newIsFragment;
+        });
 
-                    if (key === "Year") {
-                        oldVal = Number(oldEL.attr[key]);
-                        newVal = Number(newEL.attr[key]);
+        if (dRow.status !== DiffStatus.NoChange && isFragment) {
+            emitNoDiff();
+            ret.items.push({
+                type: LawDiffType.ElementMismatch,
+                mostSeriousStatus: ProblemStatus.Warning,
+                diffTable: [dRow],
+            });
+            ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
 
-                    } else {
-                        oldVal = oldEL.attr[key];
-                        newVal = newEL.attr[key];
-                    }
-
-                    if (oldVal !== newVal) {
-                        changedKeys.push([key, ProblemStatus.Error]);
-                    } else {
-                        nochangeKeys.push(key);
-                    }
-                }
-
-                const removedKeys: [string, ProblemStatus][] = [];
-                for (const key of oldKeys.filter(x => !newKeys.includes(x))) {
-                    if (defaultAttr.get(key) === oldEL.attr[key]) {
-                        removedKeys.push([key, ProblemStatus.NoProblem]);
-                    } else {
-                        removedKeys.push([key, ProblemStatus.Error]);
-                    }
-                }
-
-                const addedKeys: [string, ProblemStatus][] = [];
-                for (const key of newKeys.filter(x => !oldKeys.includes(x))) {
-                    if (defaultAttr.get(key) === newEL.attr[key]) {
-                        addedKeys.push([key, ProblemStatus.NoProblem]);
-                    } else {
-                        addedKeys.push([key, ProblemStatus.Error]);
-                    }
-                }
-
-                let elementMostSeriousStatus: ProblemStatus = ProblemStatus.NoProblem;
-                for (const [/**/, status] of [...changedKeys, ...removedKeys, ...addedKeys]) {
-                    if (elementMostSeriousStatus === ProblemStatus.Error) break;
-                    if (elementMostSeriousStatus < status) elementMostSeriousStatus = status;
-                }
-
-                if (
-                    !(noProblemAsNoDiff && elementMostSeriousStatus === ProblemStatus.NoProblem)
-                    && (changedKeys.length || removedKeys.length || addedKeys.length)
-                ) {
-
-                    if (noDiffTable.length) {
-                        ret.items.push({
-                            type: LawDiffType.NoDiff,
-                            diffTable: noDiffTable,
-                        });
-                        noDiffTable = [];
-                    }
-
-                    ret.items.push({
-                        type: LawDiffType.ElementChange,
-                        mostSeriousStatus: elementMostSeriousStatus,
-                        diffTable: [dRow],
-                        nochangeKeys: nochangeKeys,
-                        changedKeys: changedKeys,
-                        removedKeys: removedKeys,
-                        addedKeys: addedKeys,
-                        oldIndex: oldIndex,
-                        newIndex: newIndex,
-                    });
-                    ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, elementMostSeriousStatus);
-                } else {
-                    noDiffTable.push(dRow);
-                }
-
+        } else if (dRow.status === DiffStatus.NoChange) {
+            const r = processNoChange(dRow, oldELs, newELs, noProblemAsNoDiff);
+            if (r) {
+                emitNoDiff();
+                ret.items.push(r);
+                ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, r.mostSeriousStatus);
             } else {
                 noDiffTable.push(dRow);
             }
 
         } else if (dRow.status === DiffStatus.Change) {
+            const r = detectFragments(dRow, oldELs, newELs);
 
-            if (noDiffTable.length) {
+            emitNoDiff();
+            if (r) {
+                fragmentELsList.push(r);
                 ret.items.push({
-                    type: LawDiffType.NoDiff,
-                    diffTable: noDiffTable,
+                    type: LawDiffType.ElementMismatch,
+                    mostSeriousStatus: ProblemStatus.Warning,
+                    diffTable: [dRow],
                 });
-                noDiffTable = [];
-            }
+                ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
 
-            ret.items.push({
-                type: LawDiffType.ElementMismatch,
-                diffTable: [dRow],
-            });
-            ret.mostSeriousStatus = ProblemStatus.Error;
+            } else {
+                ret.items.push({
+                    type: LawDiffType.ElementMismatch,
+                    mostSeriousStatus: ProblemStatus.Error,
+                    diffTable: [dRow],
+                });
+                ret.mostSeriousStatus = ProblemStatus.Error;
+
+            }
 
         } else if (dRow.status === DiffStatus.Add) {
 
-            if (noDiffTable.length) {
-                ret.items.push({
-                    type: LawDiffType.NoDiff,
-                    diffTable: noDiffTable,
-                });
-                noDiffTable = [];
-            }
+            emitNoDiff();
 
             ret.items.push({
                 type: LawDiffType.ElementMismatch,
+                mostSeriousStatus: ProblemStatus.Error,
                 diffTable: [dRow],
             });
             ret.mostSeriousStatus = ProblemStatus.Error;
 
         } else if (dRow.status === DiffStatus.Remove) {
 
-            if (noDiffTable.length) {
-                ret.items.push({
-                    type: LawDiffType.NoDiff,
-                    diffTable: noDiffTable,
-                });
-                noDiffTable = [];
-            }
+            emitNoDiff();
 
             ret.items.push({
                 type: LawDiffType.ElementMismatch,
+                mostSeriousStatus: ProblemStatus.Error,
                 diffTable: [dRow],
             });
             ret.mostSeriousStatus = ProblemStatus.Error;
@@ -365,8 +326,134 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsN
         } else { throw util.assertNever(dRow) };
     }
 
+    emitNoDiff();
+
     return ret;
 
+}
+
+function processNoChange(dRow: DiffNoChangeRow<string>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][], noProblemAsNoDiff: boolean): LawDiffElementChange<string> | null {
+    const oldIndex = dRow.oldItem.index;
+    const newIndex = dRow.newItem.index;
+
+    const [oldEL, oldTT] = oldELs[oldIndex];
+    const [newEL, newTT] = newELs[newIndex];
+
+    if (
+        (oldTT === TagType.Open || oldTT === TagType.Empty) &&
+        (newTT === TagType.Open || newTT === TagType.Empty)
+    ) {
+
+        const oldKeys = Object.keys(oldEL.attr);
+        const newKeys = Object.keys(newEL.attr);
+
+        const nochangeKeys: string[] = [];
+        const changedKeys: [string, ProblemStatus][] = [];
+        for (const key of oldKeys.filter(x => newKeys.includes(x))) {
+            let oldVal;
+            let newVal;
+
+            if (key === "Year") {
+                oldVal = Number(oldEL.attr[key]);
+                newVal = Number(newEL.attr[key]);
+
+            } else {
+                oldVal = oldEL.attr[key];
+                newVal = newEL.attr[key];
+            }
+
+            if (oldVal !== newVal) {
+                changedKeys.push([key, ProblemStatus.Error]);
+            } else {
+                nochangeKeys.push(key);
+            }
+        }
+
+        const removedKeys: [string, ProblemStatus][] = [];
+        for (const key of oldKeys.filter(x => !newKeys.includes(x))) {
+            if (defaultAttr.get(key) === oldEL.attr[key]) {
+                removedKeys.push([key, ProblemStatus.NoProblem]);
+            } else {
+                removedKeys.push([key, ProblemStatus.Error]);
+            }
+        }
+
+        const addedKeys: [string, ProblemStatus][] = [];
+        for (const key of newKeys.filter(x => !oldKeys.includes(x))) {
+            if (defaultAttr.get(key) === newEL.attr[key]) {
+                addedKeys.push([key, ProblemStatus.NoProblem]);
+            } else {
+                addedKeys.push([key, ProblemStatus.Error]);
+            }
+        }
+
+        let elementMostSeriousStatus: ProblemStatus = ProblemStatus.NoProblem;
+        for (const [/**/, status] of [...changedKeys, ...removedKeys, ...addedKeys]) {
+            if (elementMostSeriousStatus === ProblemStatus.Error) break;
+            if (elementMostSeriousStatus < status) elementMostSeriousStatus = status;
+        }
+
+        if (
+            !(noProblemAsNoDiff && elementMostSeriousStatus === ProblemStatus.NoProblem)
+            && (changedKeys.length || removedKeys.length || addedKeys.length)
+        ) {
+
+            return {
+                type: LawDiffType.ElementChange,
+                mostSeriousStatus: elementMostSeriousStatus,
+                diffTable: [dRow],
+                nochangeKeys: nochangeKeys,
+                changedKeys: changedKeys,
+                removedKeys: removedKeys,
+                addedKeys: addedKeys,
+                oldIndex: oldIndex,
+                newIndex: newIndex,
+            };
+        }
+    }
+
+    return null;
+}
+
+interface FragmentElements {
+    oldELs: ComparableEL[];
+    newELs: ComparableEL[];
+}
+
+function detectFragments(dRow: DiffChangeRow<string>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][]): FragmentElements | null {
+    const oldIndex = dRow.oldItem.index;
+    const newIndex = dRow.newItem.index;
+
+    const [oldEL, oldTT] = oldELs[oldIndex];
+    const [newEL, newTT] = newELs[newIndex];
+
+    if (oldTT === TagType.Text && oldEL.parent && newTT === TagType.Text && newEL.parent) {
+        const oldP = oldEL.parent;
+        const newP = newEL.parent;
+        if (oldP.tag === "Sentence" && newP.tag === "Sentence") {
+            const [oldSentences, newSentences] = [oldP, newP].map(el => {
+                const p = el.parent;
+                if (!p) return [el];
+                const ret: ComparableEL[] = [];
+                for (let i = p.children.indexOf(el); i < p.children.length; i++) {
+                    if (p.children[i].tag === el.tag) ret.push(p.children[i]);
+                    else break;
+                }
+                return ret;
+            });
+            const oldJoinText = oldSentences.map(el => el.text).join("");
+            const newJoinText = newSentences.map(el => el.text).join("");
+            if (oldJoinText === newJoinText) {
+                return {
+                    oldELs: ([] as ComparableEL[])
+                        .concat(...oldSentences.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                    newELs: ([] as ComparableEL[])
+                        .concat(...newSentences.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                };
+            }
+        }
+    }
+    return null;
 }
 
 function tuneEditTable<T>(table: EditTable<T>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][]) {
@@ -498,43 +585,6 @@ function collapseChange<T>(diff: EditTable<T>) {
                 oldItem: { index: oldItem[0], value: oldItem[1] },
                 newItem: { index: newItem[0], value: newItem[1] },
             });
-        }
-    }
-    return ret;
-}
-
-export function collapseNoChange(diff: EditTable<string>) {
-    const ret: EditTable<string> = [];
-    let startPos: number | null = null;
-    let endPos: number | null = null;
-    for (const [pos, [oldItem, newItem]] of diff.entries()) {
-        if (startPos === null) {
-            if (!oldItem || !newItem) {
-                ret.push(diff[pos]);
-                continue;
-            }
-            startPos = pos;
-        }
-
-        if (!oldItem || !newItem) {
-            endPos = pos - 1;
-        } else if (pos === diff.length - 1) {
-            endPos = pos;
-        }
-
-        if (endPos !== null && startPos !== null) {
-            for (let pos = startPos; pos <= endPos; pos++) {
-                if (pos <= startPos + 1 || endPos - 1 <= pos) {
-                    ret.push(diff[pos]);
-                } else if (pos == startPos + 2 && pos <= endPos - 2) {
-                    ret.push([[-1, "："], [-1, "："]]);
-                }
-            }
-            startPos = null;
-            endPos = null;
-        }
-        if (!oldItem || !newItem) {
-            ret.push(diff[pos]);
         }
     }
     return ret;
