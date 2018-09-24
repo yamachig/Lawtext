@@ -102,6 +102,11 @@ const defaultAttr = new Map([
     ["Style", "solid"],
 ]);
 
+const warningAttrKey = new Set([
+    "Num",
+    "Type",
+]);
+
 export class ComparableEL implements util.JsonEL {
     tag: string = "";
     attr: { [key: string]: string | undefined } = {};
@@ -363,7 +368,7 @@ function processNoChange(dRow: DiffNoChangeRow<string>, oldELs: [ComparableEL, T
             }
 
             if (oldVal !== newVal) {
-                changedKeys.push([key, ProblemStatus.Error]);
+                changedKeys.push([key, warningAttrKey.has(key) ? ProblemStatus.Warning : ProblemStatus.Error]);
             } else {
                 nochangeKeys.push(key);
             }
@@ -374,7 +379,7 @@ function processNoChange(dRow: DiffNoChangeRow<string>, oldELs: [ComparableEL, T
             if (defaultAttr.get(key) === oldEL.attr[key]) {
                 removedKeys.push([key, ProblemStatus.NoProblem]);
             } else {
-                removedKeys.push([key, ProblemStatus.Error]);
+                removedKeys.push([key, warningAttrKey.has(key) ? ProblemStatus.Warning : ProblemStatus.Error]);
             }
         }
 
@@ -383,7 +388,7 @@ function processNoChange(dRow: DiffNoChangeRow<string>, oldELs: [ComparableEL, T
             if (defaultAttr.get(key) === newEL.attr[key]) {
                 addedKeys.push([key, ProblemStatus.NoProblem]);
             } else {
-                addedKeys.push([key, ProblemStatus.Error]);
+                addedKeys.push([key, warningAttrKey.has(key) ? ProblemStatus.Warning : ProblemStatus.Error]);
             }
         }
 
@@ -427,10 +432,17 @@ function detectFragments(dRow: DiffChangeRow<string>, oldELs: [ComparableEL, Tag
     const [oldEL, oldTT] = oldELs[oldIndex];
     const [newEL, newTT] = newELs[newIndex];
 
-    if (oldTT === TagType.Text && oldEL.parent && newTT === TagType.Text && newEL.parent) {
-        const oldP = oldEL.parent;
-        const newP = newEL.parent;
-        if (oldP.tag === "Sentence" && newP.tag === "Sentence") {
+    if (oldTT === TagType.Text && newTT === TagType.Text) {
+        let oldP: ComparableEL | null = null;
+        let newP: ComparableEL | null = null;
+
+        if (
+            oldEL.parent && newEL.parent &&
+            oldEL.parent.tag === "Sentence" && newEL.parent.tag === "Sentence"
+        ) {
+            const oldP = oldEL.parent;
+            const newP = newEL.parent;
+
             const [oldSentences, newSentences] = [oldP, newP].map(el => {
                 const p = el.parent;
                 if (!p) return [el];
@@ -449,6 +461,66 @@ function detectFragments(dRow: DiffChangeRow<string>, oldELs: [ComparableEL, Tag
                         .concat(...oldSentences.map(el => Array.from(el.allList()).map(([el,]) => el))),
                     newELs: ([] as ComparableEL[])
                         .concat(...newSentences.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                };
+            }
+
+            if (
+                oldEL.parent.parent && newEL.parent.parent &&
+                oldEL.parent.parent.tag === "Column" && newEL.parent.parent.tag === "Column" &&
+                oldEL.parent.parent.children.every(el => el.tag === "Sentence") &&
+                newEL.parent.parent.children.every(el => el.tag === "Sentence")
+            ) {
+                const oldPP = oldEL.parent.parent;
+                const newPP = newEL.parent.parent;
+
+                const [oldColumns, newColumns] = [oldPP, newPP].map(el => {
+                    const p = el.parent;
+                    if (!p) return [el];
+                    const ret: ComparableEL[] = [];
+                    for (let i = p.children.indexOf(el); i < p.children.length; i++) {
+                        if (p.children[i].tag === el.tag) ret.push(p.children[i]);
+                        else break;
+                    }
+                    return ret;
+                });
+                const oldJoinText = oldColumns.map(el => el.children.map(ch => ch.text).join("")).join("　");
+                const newJoinText = newColumns.map(el => el.children.map(ch => ch.text).join("")).join("　");
+                if (oldJoinText === newJoinText) {
+                    return {
+                        oldELs: ([] as ComparableEL[])
+                            .concat(...oldColumns.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                        newELs: ([] as ComparableEL[])
+                            .concat(...newColumns.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                    };
+                }
+            }
+        }
+
+        if (
+            oldEL.parent && newEL.parent &&
+            oldEL.parent.tag === "AppdxTableTitle" && newEL.parent.tag === "AppdxTableTitle"
+        ) {
+            const oldP = oldEL.parent;
+            const newP = newEL.parent;
+
+            const [oldTitles, newTitles] = [oldP, newP].map(el => {
+                const p = el.parent;
+                if (!p) return [el];
+                const ret: ComparableEL[] = [];
+                for (let i = p.children.indexOf(el); i < p.children.length; i++) {
+                    if (p.children[i].tag === "AppdxTableTitle" || p.children[i].tag === "RelatedArticleNum") ret.push(p.children[i]);
+                    else break;
+                }
+                return ret;
+            });
+            const oldJoinText = oldTitles.map(el => el.text).join("");
+            const newJoinText = newTitles.map(el => el.text).join("");
+            if (oldJoinText === newJoinText) {
+                return {
+                    oldELs: ([] as ComparableEL[])
+                        .concat(...oldTitles.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                    newELs: ([] as ComparableEL[])
+                        .concat(...newTitles.map(el => Array.from(el.allList()).map(([el,]) => el))),
                 };
             }
         }

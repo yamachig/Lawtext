@@ -72,6 +72,7 @@
     "webpack-cli": "",
     "webpack-node-externals": "",
     "xmldom": "",
+    "prettify-xml": "",
     "xpath": ""
   }
 }
