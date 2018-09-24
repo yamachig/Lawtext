@@ -4,7 +4,8 @@ import { render as renderLawtext } from "../src/renderers/lawtext"
 import { parse, analyze } from "../src/parser_wrapper"
 import * as util from "../src/util"
 import { prepare, ensureList, getLawXml } from "./prepare_test";
-import { lawDiff, LawDiffResult, LawDiffType, toTableText, ProblemStatus, withEllipsis, LawDiffElementChange, widthWOColor, DiffStatus, LawDiffElementMismatch, LawDiffNoDiff, TagType, TERMC } from "./util";
+import { lawDiff, LawDiffResult, LawDiffType, ProblemStatus, LawDiffElementChange, DiffStatus, LawDiffElementMismatch, LawDiffNoDiff, TagType } from "../src/diff/law_diff";
+import { toTableText, withEllipsis, TERMC } from "../src/term_util";
 import * as os from "os";
 import * as fs from "fs";
 import * as fsExtra from "fs-extra";
@@ -159,7 +160,7 @@ function makeElementChangeTable(ditem: LawDiffElementChange<string>, d: LawDiffR
 
 function makeElementNoDiffTable(ditem: LawDiffNoDiff<string>, d: LawDiffResult<string>, tempOrig: string) {
     const table: [string, string, string, string][] = [];
-    for (const [i, { oldItem, newItem, status }] of ditem.diffTable.entries()) {
+    for (const [i, { oldItem, newItem, /**/ }] of ditem.diffTable.entries()) {
         if (i < 2 || ditem.diffTable.length - 2 <= i) {
             if (!oldItem || !newItem) throw new Error("never");
 
