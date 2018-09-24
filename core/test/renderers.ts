@@ -4,85 +4,178 @@ import { render as renderLawtext } from "../src/renderers/lawtext"
 import { parse, analyze } from "../src/parser_wrapper"
 import * as util from "../src/util"
 import { prepare, ensureList, getLawXml } from "./prepare_test";
-import { lawDiff, LawDiffResult, LawDiffType, ProblemStatus, LawDiffElementChange, DiffStatus, LawDiffElementMismatch, LawDiffNoDiff, TagType } from "../src/diff/law_diff";
+import { lawDiff, LawDiffResult, LawDiffType, ProblemStatus, LawDiffElementChange, DiffStatus, LawDiffElementMismatch, LawDiffNoDiff, TagType, DiffTableItem, ComparableEL } from "../src/diff/law_diff";
 import { toTableText, withEllipsis, TERMC } from "../src/term_util";
 import * as os from "os";
 import * as fs from "fs";
 import * as fsExtra from "fs-extra";
 import * as path from "path";
 import { promisify } from "util";
+import * as xmldom from "xmldom";
+import * as xpath from "xpath";
+
+const domParser = new xmldom.DOMParser();
 
 before(() => {
     prepare();
     ensureList();
 });
 
-const LIMIT_WIDTH = 30;
+const LIMIT_WIDTH = 34;
 
 const tempDir = path.join(os.tmpdir(), `lawtext_core_test`);
 
-function makeElementMismatchTable(ditem: LawDiffElementMismatch<string>, d: LawDiffResult<string>, tempOrig: string) {
+function* zipLongest(lists: any[][], defaultValues: any[]) {
+    if (lists.length !== defaultValues.length) throw new Error("Length mismatch");
+    const maxLength = Math.max(...lists.map(list => list.length));
+    for (let i = 0; i < maxLength; i++) {
+        yield lists.map((list, li) => i < list.length ? list[i] : defaultValues[li]);
+    }
+}
+
+function elToString([el, tt]: [ComparableEL, TagType]) {
+    if (tt === TagType.Open) {
+        if (Object.keys(el.attr).length) {
+            return [
+                `<${el.tag}`,
+                ...Object.keys(el.attr).map(key => `  ${key}="${el.attr[key]}"`),
+                ">"
+            ];
+        } else {
+            return [`<${el.tag}>`];
+        }
+
+    } else if (tt === TagType.Empty) {
+        if (Object.keys(el.attr).length) {
+            return [
+                `<${el.tag}`,
+                ...Object.keys(el.attr).map(key => `  ${key}="${el.attr[key]}"`),
+                "/>"
+            ];
+        } else {
+            return [`<${el.tag} />`];
+        }
+
+    } else if (tt === TagType.Close) {
+        return [`</${el.tag}>`];
+
+    } else if (tt === TagType.Text) {
+        return [el.text];
+
+    } else { throw util.assertNever(tt); }
+}
+
+function getPosition([el, tt]: [ComparableEL, TagType], dom: Node) {
+    let xPathString: string | null = null;
+    if (tt === TagType.Open) {
+        xPathString = el.getXPath();
+
+    } else if (tt === TagType.Empty) {
+        xPathString = el.getXPath();
+
+    } else if (tt === TagType.Close) {
+        xPathString = el.getXPath();
+
+    } else if (tt === TagType.Text) {
+        if (el.parent) {
+            xPathString = el.parent.getXPath();
+        }
+
+    } else { throw util.assertNever(tt); }
+
+    if (xPathString) {
+        try {
+            const r = xpath.evaluate(
+                xPathString,
+                dom,
+                (xpath as any).createNSResolver(dom),
+                (xpath as any).XPathResult.ANY_TYPE,
+                null as any,
+            ) as any;
+            const el = r.nodes[0];
+            return { line: el.lineNumber, col: el.columnNumber, str: `${el.lineNumber}:${el.columnNumber}` };
+        } catch (e) {
+            console.error(e);
+            console.error(xPathString);
+            return null;
+        }
+    } else {
+        return null;
+    }
+}
+
+function makeElementMismatchTable(ditem: LawDiffElementMismatch<string>, d: LawDiffResult<string>, origDOM: Node) {
     const table: string[][] = [];
-    for (const { oldItem, newItem, status } of ditem.diffTable) {
-        if (status === DiffStatus.NoChange) {
-            if (!oldItem || !newItem) throw new Error("never");
-            table.push([
-                0 <= oldItem.index ? `  ${oldItem.index.toString()}` : "",
-                withEllipsis(`${oldItem.value}`, LIMIT_WIDTH),
-                0 <= newItem.index ? `  ${newItem.index.toString()}` : "",
-                withEllipsis(`${newItem.value}`, LIMIT_WIDTH),
-            ]);
-        } else if (status === DiffStatus.Change) {
-            if (!oldItem || !newItem) throw new Error("never");
-            table.push([
-                `${TERMC.YELLOW}* ${oldItem.index.toString()}${TERMC.DEFAULT}`,
-                `${TERMC.YELLOW}${oldItem.value}${TERMC.DEFAULT}`,
-                `${TERMC.YELLOW}* ${newItem.index.toString()}${TERMC.DEFAULT}`,
-                `${TERMC.YELLOW}${newItem.value}${TERMC.DEFAULT}`,
-            ]);
-        } else if (status === DiffStatus.Add) {
-            if (!newItem) throw new Error("never");
-            table.push([
-                "",
-                "",
-                `${TERMC.GREEN}+ ${newItem.index.toString()}${TERMC.DEFAULT}`,
-                `${TERMC.GREEN}${newItem.value}${TERMC.DEFAULT}`,
-            ]);
-        } else if (status === DiffStatus.Remove) {
-            if (!oldItem) throw new Error("never");
-            table.push([
-                `${TERMC.RED}- ${oldItem.index.toString()}${TERMC.DEFAULT}`,
-                `${TERMC.RED}${oldItem.value}${TERMC.DEFAULT}`,
-                "",
-                "",
-            ]);
-        } else { util.assertNever(status); }
+    for (const drow of ditem.diffTable) {
+        if (drow.status === DiffStatus.NoChange) {
+            const oldItem = d.oldELs[drow.oldItem.index];
+            const newItem = d.newELs[drow.newItem.index];
+            const oldPos = getPosition(oldItem, origDOM);
+            table.push(...zipLongest([
+                [0 <= drow.oldItem.index ? `  ${oldPos ? oldPos.str : ""}` : ""],
+                elToString(oldItem),
+                [0 <= drow.newItem.index ? `  ${drow.newItem.index.toString()}` : ""],
+                elToString(newItem),
+            ], ["", "", "", ""]));
+        } else if (drow.status === DiffStatus.Change) {
+            const oldEL = d.oldELs[drow.oldItem.index];
+            const newEL = d.newELs[drow.newItem.index];
+            const oldPos = getPosition(oldEL, origDOM);
+            const color = ditem.mostSeriousStatus === ProblemStatus.Error ? TERMC.YELLOW : TERMC.BLUE;
+            table.push(...zipLongest([
+                [`${color}* ${oldPos ? oldPos.str : ""}${TERMC.DEFAULT}`],
+                elToString(oldEL).map(s => `${color}${s}${TERMC.DEFAULT}`),
+                [`${color}* ${drow.newItem.index.toString()}${TERMC.DEFAULT}`],
+                elToString(newEL).map(s => `${color}${s}${TERMC.DEFAULT}`),
+            ], ["", "", "", ""]));
+        } else if (drow.status === DiffStatus.Add) {
+            const newEL = d.newELs[drow.newItem.index];
+            const color = ditem.mostSeriousStatus === ProblemStatus.Error ? TERMC.GREEN : TERMC.BLUE;
+            table.push(...zipLongest([
+                [""],
+                [""],
+                [`${color}+ ${drow.newItem.index.toString()}${TERMC.DEFAULT}`],
+                elToString(newEL).map(s => `${color}${s}${TERMC.DEFAULT}`),
+            ], ["", "", "", ""]));
+        } else if (drow.status === DiffStatus.Remove) {
+            const oldEL = d.oldELs[drow.oldItem.index];
+            const oldPos = getPosition(oldEL, origDOM);
+            const color = ditem.mostSeriousStatus === ProblemStatus.Error ? TERMC.MAGENTA : TERMC.BLUE;
+            table.push(...zipLongest([
+                [`${color}- ${oldPos ? oldPos.str : ""}${TERMC.DEFAULT}`],
+                elToString(oldEL).map(s => `${color}${s}${TERMC.DEFAULT}`),
+                [""],
+                [""],
+            ], ["", "", "", ""]));
+        } else { util.assertNever(drow); }
     }
 
     return table;
 }
 
-function makeElementChangeTable(ditem: LawDiffElementChange<string>, d: LawDiffResult<string>, tempOrig: string) {
+function makeElementChangeTable(ditem: LawDiffElementChange<string>, d: LawDiffResult<string>, origDOM: Node) {
     const table: string[][] = [];
-    const [[oldEL, /**/], [newEL, /**/]] = [d.oldELs[ditem.oldIndex], d.newELs[ditem.newIndex]];
+    const [oldItem, newItem] = [d.oldELs[ditem.oldIndex], d.newELs[ditem.newIndex]];
+    const [[oldEL, /**/], [newEL, /**/]] = [oldItem, newItem];
+    const oldPos = getPosition(oldItem, origDOM);
 
     if (ditem.mostSeriousStatus === ProblemStatus.Error) {
         table.push([
-            `${TERMC.YELLOW}* ${ditem.oldIndex}${TERMC.DEFAULT}`,
+            `${TERMC.YELLOW}* ${oldPos ? oldPos.str : ""}${TERMC.DEFAULT}`,
             `<${oldEL.tag}`,
             `${TERMC.YELLOW}* ${ditem.newIndex}${TERMC.DEFAULT}`,
             `<${newEL.tag}`,
         ]);
     } else if (ditem.mostSeriousStatus === ProblemStatus.Warning) {
         table.push([
-            `${TERMC.CYAN}* ${ditem.oldIndex}${TERMC.DEFAULT}`,
+            `${TERMC.CYAN}* ${oldPos ? oldPos.str : ""}${TERMC.DEFAULT}`,
             `<${oldEL.tag}`,
             `${TERMC.CYAN}* ${ditem.newIndex}${TERMC.DEFAULT}`,
             `<${newEL.tag}`,
         ]);
     } else if (ditem.mostSeriousStatus === ProblemStatus.NoProblem) {
         table.push([
-            `${TERMC.BLUE}* ${ditem.oldIndex}${TERMC.DEFAULT}`,
+            `${TERMC.BLUE}* ${oldPos ? oldPos.str : ""}${TERMC.DEFAULT}`,
             `<${oldEL.tag}`,
             `${TERMC.BLUE}* ${ditem.newIndex}${TERMC.DEFAULT}`,
             `<${newEL.tag}`,
@@ -118,7 +211,7 @@ function makeElementChangeTable(ditem: LawDiffElementChange<string>, d: LawDiffR
     for (let [key, status] of ditem.removedKeys) {
         if (status === ProblemStatus.Error) {
             table.push([
-                "", `  ${TERMC.YELLOW}${key}="${oldEL.attr[key]}"${TERMC.DEFAULT}`,
+                "", `  ${TERMC.MAGENTA}${key}="${oldEL.attr[key]}"${TERMC.DEFAULT}`,
                 "", "",
             ]);
         } else if (status === ProblemStatus.Warning) {
@@ -138,7 +231,7 @@ function makeElementChangeTable(ditem: LawDiffElementChange<string>, d: LawDiffR
         if (status === ProblemStatus.Error) {
             table.push([
                 "", "",
-                "", `  ${TERMC.YELLOW}${key}="${newEL.attr[key]}"${TERMC.DEFAULT}`,
+                "", `  ${TERMC.GREEN}${key}="${newEL.attr[key]}"${TERMC.DEFAULT}`,
             ]);
         } else if (status === ProblemStatus.Warning) {
             table.push([
@@ -158,35 +251,24 @@ function makeElementChangeTable(ditem: LawDiffElementChange<string>, d: LawDiffR
     return table;
 }
 
-function makeElementNoDiffTable(ditem: LawDiffNoDiff<string>, d: LawDiffResult<string>, tempOrig: string) {
-    const table: [string, string, string, string][] = [];
-    for (const [i, { oldItem, newItem, /**/ }] of ditem.diffTable.entries()) {
+function makeElementNoDiffTable(ditem: LawDiffNoDiff<string>, d: LawDiffResult<string>, origDOM: Node) {
+    const table: string[][] = [];
+    for (const [i, drow] of ditem.diffTable.entries()) {
         if (i < 2 || ditem.diffTable.length - 2 <= i) {
-            if (!oldItem || !newItem) throw new Error("never");
+            if (drow.status !== DiffStatus.NoChange) throw new Error("never");
+            const oldItem = d.oldELs[drow.oldItem.index];
+            const newItem = d.newELs[drow.newItem.index];
+            const oldPos = getPosition(oldItem, origDOM);
 
-            const [oldText, newText] = [d.oldELs[oldItem.index], d.newELs[newItem.index]].map(([el, tt]) => {
-                if (tt === TagType.Open) {
-                    return `<${el.tag} ...>`;
-
-                } else if (tt === TagType.Close) {
-                    return `</${el.tag}>`;
-
-                } else if (tt === TagType.Empty) {
-                    return `<${el.tag} ... />`;
-
-                } else if (tt === TagType.Text) {
-                    return withEllipsis(`${el.text}`, LIMIT_WIDTH);
-
-                } else { throw util.assertNever(tt) };
-            });
-            table.push([
-                0 <= oldItem.index ? `  ${oldItem.index.toString()}` : "",
-                oldText,
-                0 <= newItem.index ? `  ${newItem.index.toString()}` : "",
-                newText,
-            ]);
+            table.push(...zipLongest([
+                [0 <= drow.oldItem.index ? `  ${oldPos ? oldPos.str : ""}` : ""],
+                elToString(oldItem),
+                [0 <= drow.newItem.index ? `  ${drow.newItem.index.toString()}` : ""],
+                elToString(newItem),
+            ], ["", "", "", ""]));
         } else if (i == 2 && i < ditem.diffTable.length - 2) {
-            table.push(["  ：", "：", "  ：", "："]);
+            table.push(["  ～～～", "～～～～～", "  ～～～", "～～～～～"]);
+            table.push(["  ～～～", "～～～～～", "  ～～～", "～～～～～"]);
         }
     }
 
@@ -199,9 +281,12 @@ it("Render and Parse Lawtext", async () => {
     const lawNum = "昭和二十五年法律第百三十一号";
 
     const xml = await getLawXml(lawNum);
+    const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
+
+    const origDOM = domParser.parseFromString(xml);
+
     await promisify(fsExtra.ensureDir)(tempDir);
-    const tempOrig = path.join(tempDir, `${lawNum}.orig.xml`);
-    await promisify(fs.writeFile)(tempOrig, xml, { encoding: "utf-8" });
+    await promisify(fs.writeFile)(tempOrigXml, xml, { encoding: "utf-8" });
 
     const origEL = util.xml_to_json(xml);
     const lawtext = renderLawtext(origEL);
@@ -213,22 +298,22 @@ it("Render and Parse Lawtext", async () => {
 
     for (const ditem of d.items) {
         if (ditem.type === LawDiffType.ElementMismatch) {
-            table.push(...makeElementMismatchTable(ditem, d, tempOrig));
+            table.push(...makeElementMismatchTable(ditem, d, origDOM));
 
         } else if (ditem.type === LawDiffType.ElementChange) {
-            table.push(...makeElementChangeTable(ditem, d, tempOrig));
+            table.push(...makeElementChangeTable(ditem, d, origDOM));
 
         } else if (ditem.type === LawDiffType.NoDiff) {
-            table.push(...makeElementNoDiffTable(ditem, d, tempOrig));
+            table.push(...makeElementNoDiffTable(ditem, d, origDOM));
 
         } else { util.assertNever(ditem); }
     }
 
     if (d.mostSeriousStatus !== ProblemStatus.NoProblem) {
         const msg = [
-            `View XML: "${tempOrig}"`,
+            `View XML: "${tempOrigXml}"`,
             toTableText(table, LIMIT_WIDTH),
-            `View XML: "${tempOrig}"`,
+            `View XML: "${tempOrigXml}"`,
             "",
         ].join("\r\n");
 

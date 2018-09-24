@@ -71,6 +71,7 @@
     "webpack": "",
     "webpack-cli": "",
     "webpack-node-externals": "",
-    "xmldom": ""
+    "xmldom": "",
+    "xpath": ""
   }
 }
