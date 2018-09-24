@@ -7,12 +7,12 @@ import { isString } from "util";
 import * as $ from "jquery"
 import { LawtextAppPageActions } from '../actions';
 import { openFile as origOpenFile, showErrorModal, tobeDownloadedRange, scrollToLawAnchor } from '../components/LawtextAppPage'
-import * as std from "../../../js/src/std_law"
-import * as util from "../../../js/src/util"
-import { parse } from "../../../js/src/parser_wrapper";
-import * as analyzer from "../../../js/src/analyzer";
-import * as renderer from "../../../js/src/renderer";
-import render_lawtext from "../../../js/src/renderers/lawtext";
+import * as std from "../../../core/src/std_law"
+import * as util from "../../../core/src/util"
+import { parse } from "../../../core/src/parser_wrapper";
+import * as analyzer from "../../../core/src/analyzer";
+import * as renderer from "../../../core/src/renderer";
+import render_lawtext from "../../../core/src/renderers/lawtext";
 import { store } from '../store';
 import * as lawdata from "./lawdata";
 import { saveAs } from "file-saver";

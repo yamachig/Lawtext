@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as FileSaver from "file-saver";
-import { download } from "../../../js/src/downloader";
+import { download } from "../../../core/src/downloader";
 
 export class LawDownloader extends React.Component<
     {

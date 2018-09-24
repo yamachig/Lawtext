@@ -4,9 +4,9 @@ import { injectGlobal, default as styled } from 'styled-components';
 import AnimateHeight from 'react-animate-height';
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
 import { LawtextAppPageState, RouteState } from '../states';
-import * as std from "../../../js/src/std_law"
-import { EL, assertNever, NotImplementedError } from "../../../js/src/util"
-import * as analyzer from "../../../js/src/analyzer";
+import * as std from "../../../core/src/std_law"
+import { EL, assertNever, NotImplementedError } from "../../../core/src/util"
+import * as analyzer from "../../../core/src/analyzer";
 import EventListener from 'react-event-listener';
 import { isString } from "util";
 import { store } from "../store";

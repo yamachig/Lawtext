@@ -2,8 +2,8 @@ import * as React from "react";
 import styled from 'styled-components';
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
 import { LawtextAppPageState, RouteState } from '../states';
-import * as std from "../../../js/src/std_law"
-import { assertNever } from "../../../js/src/util"
+import * as std from "../../../core/src/std_law"
+import { assertNever } from "../../../core/src/util"
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;

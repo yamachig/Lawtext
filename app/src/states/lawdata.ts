@@ -1,5 +1,5 @@
 import * as JSZip from "jszip";
-import * as util from "../../../js/src/util";
+import * as util from "../../../core/src/util";
 const levenshtein = require("js-levenshtein");
 
 interface LawListInfo {
