@@ -28,6 +28,32 @@ export function isJsonEL(object: any): object is JsonEL {
     return 'tag' in object && 'attr' in object && 'children' in object;
 }
 
+export function wrapXML(el: JsonEL, inner: string): string {
+    let attr = Object.keys(el.attr).map(key => ` ${key}="${el.attr[key]}"`).join("");
+    if (inner) {
+        return `<${el.tag}${attr}>${inner}</${el.tag}>`;
+    } else {
+        return `<${el.tag}${attr}/>`;
+    }
+}
+
+export function outerXML(el: JsonEL, with_control_el: boolean = false): string {
+    let inner = innerXML(el, with_control_el);
+    if (with_control_el || el.tag[0] !== "_") {
+        return wrapXML(el, inner);
+    } else {
+        return inner;
+    }
+}
+
+export function innerXML(el: JsonEL, with_control_el: boolean = false): string {
+    return el.children.map(child =>
+        (child instanceof String || (typeof child === "string"))
+            ? child
+            : outerXML(child, with_control_el)
+    ).join("");
+}
+
 
 let _currentID = 0;
 export class EL implements JsonEL {
@@ -117,30 +143,16 @@ export class EL implements JsonEL {
         this._text = null;
     }
 
-    wrapXML(innerXML: string): string {
-        let attr = Object.keys(this.attr).map(key => ` ${key}="${this.attr[key]}"`).join("");
-        if (innerXML) {
-            return `<${this.tag}${attr}>${innerXML}</${this.tag}>`;
-        } else {
-            return `<${this.tag}${attr}/>`;
-        }
+    wrapXML(inner: string) {
+        return wrapXML(this, inner);
     }
 
-    outerXML(with_control_el: boolean = false): string {
-        let innerXML = this.innerXML(with_control_el);
-        if (with_control_el || this.tag[0] !== "_") {
-            return this.wrapXML(innerXML);
-        } else {
-            return innerXML;
-        }
+    outerXML(with_control_el: boolean = false) {
+        return outerXML(this, with_control_el);
     }
 
-    innerXML(with_control_el: boolean = false): string {
-        return this.children.map(el =>
-            (el instanceof String || (typeof el === "string"))
-                ? el
-                : el.outerXML(with_control_el)
-        ).join("");
+    innerXML(with_control_el: boolean = false) {
+        return innerXML(this, with_control_el);
     }
 
     replace_span(start: number, end: number/* half open */, repl_children: (EL | string)[] | EL | string) {
