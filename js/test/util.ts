@@ -371,7 +371,7 @@ const defaultAttr = new Map([
     ["Style", "solid"],
 ]);
 
-export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL) {
+export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsNoDiff: boolean = false) {
 
     const oldEL = new ComparableEL(oldJson);
     const oldELs = [...oldEL.allList()];
@@ -471,7 +471,10 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL) {
                     if (elementMostSeriousStatus < status) elementMostSeriousStatus = status;
                 }
 
-                if (changedKeys.length || removedKeys.length || addedKeys.length) {
+                if (
+                    !(noProblemAsNoDiff && elementMostSeriousStatus === ProblemStatus.NoProblem)
+                    && (changedKeys.length || removedKeys.length || addedKeys.length)
+                ) {
 
                     if (noDiffTable.length) {
                         ret.items.push({
@@ -556,14 +559,77 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL) {
 
 }
 
-function widthWOColor(text: string) {
+export enum TERMC {
+    DEFAULT = "\x1b[39m",
+    RED = "\x1b[31m",
+    GREEN = "\x1b[32m",
+    YELLOW = "\x1b[33m",
+    BLUE = "\x1b[34m",
+    MAGENTA = "\x1b[35m",
+    CYAN = "\x1b[36m",
+}
+
+function sliceWOColor(s: string, start, length) {
+    const maxLen = s.length - start;
+    let ret = "";
+    for (let len = 1; len <= maxLen; len++) {
+        const m = s.slice(start + len - 1).match(/^\x1b\[\d+?m/);
+        if (m) len += m[0].length - 1;
+        const subs = s.slice(start, start + len);
+        if (widthWOColor(subs) <= length) {
+            ret = subs;
+        } else {
+            break;
+        }
+    }
+    return ret;
+}
+
+function* wrapSingle(s: string, width: number): IterableIterator<string> {
+    let pos = 0;
+    let lastFlag = "";
+    while (pos < s.length) {
+        const sliced = sliceWOColor(s, pos, width);
+        pos += sliced.length;
+
+        const flags = sliced.match(/\x1b\[\d+?m/g) || [];
+        let retSubs = `${lastFlag}${sliced}`;
+        if (flags.length) {
+            const flag = flags[flags.length - 1];
+            if (flag === TERMC.DEFAULT) {
+                lastFlag = "";
+            } else {
+                lastFlag = flag;
+                retSubs = `${retSubs}${TERMC.DEFAULT}`;
+            }
+        } else {
+            retSubs = `${retSubs}${TERMC.DEFAULT}`;
+        }
+        yield retSubs;
+    }
+}
+
+function* wrap(row: string[], width: number): IterableIterator<string[]> {
+    let iters = row.map(s => wrapSingle(s, width));
+    while (true) {
+        const nexts = iters.map(iter => iter.next());
+        if (nexts.every(({ done }) => done)) break;
+        yield nexts.map(({ value }) => value || "");
+    }
+}
+
+export function widthWOColor(text: string) {
     return text.replace(/\x1b\[\d+?m/g, "").replace(/[^\x01-\x7E\uFF61-\uFF9F]/g, "  ").length;
 }
 
-export function toTableText(table: string[][]) {
+export function toTableText(table: string[][], width: number) {
     if (!table) return "";
-    const lengths = table[0].map(() => 0);
+    const wrapTable: string[][] = [];
     for (const row of table) {
+        wrapTable.push(...wrap(row, width));
+    }
+    const lengths = wrapTable[0].map(() => 0);
+    for (const row of wrapTable) {
         row.forEach((text, i) => {
             lengths[i] = Math.max(lengths[i], widthWOColor(text));
         });
@@ -571,7 +637,7 @@ export function toTableText(table: string[][]) {
 
     let ret = [
         "┌" + lengths.map(l => "─".repeat(l + 2)).join("┬") + "┐",
-        ...table.map(row =>
+        ...wrapTable.map(row =>
             "│"
             + row.map((text, i) =>
                 " "
@@ -588,8 +654,8 @@ export function toTableText(table: string[][]) {
 }
 
 export function withEllipsis(text: string, maxLength: number) {
-    if (maxLength < text.length) {
-        return `${text.slice(0, maxLength - 2)} ...`;
+    if (maxLength < widthWOColor(text)) {
+        return `${sliceWOColor(text, 0, maxLength - 4)} ...`;
     } else {
         return text;
     }
