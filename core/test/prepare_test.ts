@@ -91,7 +91,7 @@ export async function getLawList(): Promise<[LawListInfo[], { [index: string]: L
 }
 
 export async function getLawXml(lawNum: string) {
-    const [list, listByLawnum] = await getLawList();
+    const [/**/, listByLawnum] = await getLawList();
     const lawInfo = listByLawnum[lawNum];
     const zipFilename = path.join(lawdataPath, lawInfo.Path, lawInfo.XmlZipName);
     const file = await promisify(fs.readFile)(zipFilename);
