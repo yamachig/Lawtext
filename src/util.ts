@@ -106,28 +106,36 @@ export class EL implements JsonEL {
     }
 
     json(with_control_el: boolean = false): JsonEL {
-        let children: (JsonEL | string)[] = [];
-        for (let el of this.children) {
+        const children: (JsonEL | string)[] = [];
+        for (const el of this.children) {
             if (!(el instanceof EL || isString(el))) {
                 console.error("[EL.json]", JSON.stringify(this));
                 throw JSON.stringify(this);
             }
-            if (el instanceof EL && (with_control_el || el.tag[0] !== "_")) {
-                children.push(el.json(with_control_el));
+            if (isString(el)) {
+                children.push(el);
             } else {
-                let text = (el instanceof String || (typeof el === "string")) ? el : el.text;
-                let last = children[children.length - 1];
-                if (isString(last)) {
-                    children[children.length - 1] = last + text;
+                const js = el.json(with_control_el);
+                if (with_control_el || el.tag[0] !== "_") {
+                    children.push(js);
                 } else {
-                    children.push(text);
+                    children.push(...js.children);
                 }
+            }
+        }
+        const joinedChildren: (JsonEL | string)[] = [];
+        for (const child of children) {
+            const last = joinedChildren[joinedChildren.length - 1];
+            if (isString(last)) {
+                joinedChildren[joinedChildren.length - 1] = last + child;
+            } else {
+                joinedChildren.push(child);
             }
         }
         return {
             tag: this.tag,
             attr: this.attr,
-            children: children,
+            children: joinedChildren,
         };
     }
 

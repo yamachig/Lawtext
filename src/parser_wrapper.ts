@@ -87,7 +87,7 @@ export function parse(text: string, options: {} = {}): util.EL {
     // console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
     // let t0 = (new Date()).getTime();
 
-    let [lexed, indent_memo, lines_count] = lex(text);
+    let [lexed, indent_memo, /**/] = lex(text);
     // console.error(lexed);
     try {
         options = (<any>Object).assign({ indent_memo: indent_memo, startRule: "start" }, options);

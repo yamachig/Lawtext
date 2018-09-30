@@ -4,8 +4,8 @@ import { render as renderLawtext } from "../src/renderers/lawtext"
 import { parse, analyze } from "../src/parser_wrapper"
 import * as util from "../src/util"
 import { prepare, ensureList, getLawXml } from "./prepare_test";
-import { lawDiff, LawDiffResult, LawDiffType, ProblemStatus, LawDiffElementChange, DiffStatus, LawDiffElementMismatch, LawDiffNoDiff, TagType, DiffTableItem, ComparableEL } from "../src/diff/law_diff";
-import { toTableText, withEllipsis, TERMC } from "../src/term_util";
+import { lawDiff, LawDiffResult, LawDiffType, ProblemStatus, LawDiffElementChange, DiffStatus, LawDiffElementMismatch, LawDiffNoDiff, TagType, ComparableEL } from "../src/diff/law_diff";
+import { toTableText, TERMC } from "../src/term_util";
 import * as os from "os";
 import * as fs from "fs";
 import * as fsExtra from "fs-extra";
@@ -121,16 +121,16 @@ function makeElementMismatchTable(ditem: LawDiffElementMismatch<string>, d: LawD
                 elToString(newItem),
             ], ["", "", "", ""]));
         } else if (drow.status === DiffStatus.Change) {
-            const oldItem = d.oldELs[drow.oldItem.index];
-            const newItem = d.newELs[drow.newItem.index];
-            const oldPos = getPosition(oldItem, origDOM);
-            const newPos = getPosition(newItem, parsedDOM);
+            const oldItem = drow.oldItem && d.oldELs[drow.oldItem.index];
+            const newItem = drow.newItem && d.newELs[drow.newItem.index];
+            const oldPos = oldItem && getPosition(oldItem, origDOM);
+            const newPos = newItem && getPosition(newItem, parsedDOM);
             const color = ditem.mostSeriousStatus === ProblemStatus.Error ? TERMC.YELLOW : TERMC.CYAN;
             table.push(...zipLongest([
-                [`${color}* ${oldPos ? oldPos.str : ""}${TERMC.DEFAULT}`],
-                elToString(oldItem).map(s => `${color}${s}${TERMC.DEFAULT}`),
-                [`${color}* ${newPos ? newPos.str : ""}${TERMC.DEFAULT}`],
-                elToString(newItem).map(s => `${color}${s}${TERMC.DEFAULT}`),
+                oldPos ? [`${color}* ${oldPos ? oldPos.str : ""}${TERMC.DEFAULT}`] : [],
+                oldItem ? elToString(oldItem).map(s => `${color}${s}${TERMC.DEFAULT}`) : [],
+                newPos ? [`${color}* ${newPos ? newPos.str : ""}${TERMC.DEFAULT}`] : [],
+                newItem ? elToString(newItem).map(s => `${color}${s}${TERMC.DEFAULT}`) : [],
             ], ["", "", "", ""]));
         } else if (drow.status === DiffStatus.Add) {
             const newItem = d.newELs[drow.newItem.index];
@@ -257,10 +257,12 @@ function makeElementChangeTable(ditem: LawDiffElementChange<string>, d: LawDiffR
     return table;
 }
 
+const NO_DIFF_SHOW_LINES = 3;
+
 function makeElementNoDiffTable(ditem: LawDiffNoDiff<string>, d: LawDiffResult<string>, origDOM: Node, parsedDOM: Node) {
     const table: string[][] = [];
     for (const [i, drow] of ditem.diffTable.entries()) {
-        if (i < 2 || ditem.diffTable.length - 2 <= i) {
+        if (i < NO_DIFF_SHOW_LINES || ditem.diffTable.length - NO_DIFF_SHOW_LINES <= i) {
             if (drow.status !== DiffStatus.NoChange) throw new Error("never");
             const oldItem = d.oldELs[drow.oldItem.index];
             const newItem = d.newELs[drow.newItem.index];
@@ -273,7 +275,7 @@ function makeElementNoDiffTable(ditem: LawDiffNoDiff<string>, d: LawDiffResult<s
                 [0 <= drow.newItem.index ? `  ${newPos ? newPos.str : ""}` : ""],
                 elToString(newItem),
             ], ["", "", "", ""]));
-        } else if (i == 2 && i < ditem.diffTable.length - 2) {
+        } else if (i == NO_DIFF_SHOW_LINES && i < ditem.diffTable.length - NO_DIFF_SHOW_LINES) {
             table.push(["  ～～～", "～～～～～", "  ～～～", "～～～～～"]);
             table.push(["  ～～～", "～～～～～", "  ～～～", "～～～～～"]);
         }
@@ -285,9 +287,10 @@ function makeElementNoDiffTable(ditem: LawDiffNoDiff<string>, d: LawDiffResult<s
 it("Render and Parse Lawtext", async () => {
     // const [list, listByLawnum] = await getLawList();
 
-    const lawNum = "昭和二十五年法律第百三十一号";
+    const lawNum = "平成十五年内閣府令第五十五号";
 
     const origXML = await getLawXml(lawNum);
+    console.log(`Temporary directory: "${tempDir}"`);
     const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
     const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);
     const tempParsedXml = path.join(tempDir, `${lawNum}.parsed.xml`);

@@ -76,8 +76,8 @@ export interface DiffRemoveRow<T> {
 };
 export interface DiffChangeRow<T> {
     status: DiffStatus.Change,
-    oldItem: DiffTableItem<T>,
-    newItem: DiffTableItem<T>,
+    oldItem: DiffTableItem<T> | null,
+    newItem: DiffTableItem<T> | null,
 };
 export interface DiffNoChangeRow<T> {
     status: DiffStatus.NoChange,
@@ -100,11 +100,15 @@ const defaultAttr = new Map([
     ["BorderLeft", "solid"],
     ["BorderRight", "solid"],
     ["Style", "solid"],
+
+    ["Extract", "false"],
 ]);
 
 const warningAttrKey = new Set([
     "Num",
     "Type",
+    "Function",
+    "DataInfo",
 ]);
 
 export class ComparableEL implements util.JsonEL {
@@ -147,16 +151,6 @@ export class ComparableEL implements util.JsonEL {
             this._text = this.children.map(child => child instanceof ComparableEL ? child.text : child).join("／");
         }
         return this._text;
-    }
-
-    *textList(): IterableIterator<[number, string, ComparableEL]> {
-        if (this.tag === "") {
-            yield [this.index, this.text, this];
-        } else {
-            for (const child of this.children) {
-                yield* child.textList();
-            }
-        }
     }
 
     *allList(): IterableIterator<[ComparableEL, TagType]> {
@@ -337,7 +331,8 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsN
 
 }
 
-function processNoChange(dRow: DiffNoChangeRow<string>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][], noProblemAsNoDiff: boolean): LawDiffElementChange<string> | null {
+function processNoChange(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][], noProblemAsNoDiff: boolean): LawDiffElementChange<string> | null {
+    if (!dRow.oldItem || !dRow.newItem) return null;
     const oldIndex = dRow.oldItem.index;
     const newIndex = dRow.newItem.index;
 
@@ -425,7 +420,8 @@ interface FragmentElements {
     newELs: ComparableEL[];
 }
 
-function detectFragments(dRow: DiffChangeRow<string>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][]): FragmentElements | null {
+function detectFragments(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][]): FragmentElements | null {
+    if (!dRow.oldItem || !dRow.newItem) return null;
     const oldIndex = dRow.oldItem.index;
     const newIndex = dRow.newItem.index;
 
