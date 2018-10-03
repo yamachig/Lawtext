@@ -20,7 +20,7 @@ MANIFEST
 dist
 dist-dev
 dist-prod
-js/dist/*
-js/src/parser.ts
-js/src/templates.js
-js/src/lawnum_table.ts
+core/src/parser.ts
+core/src/templates.js
+core/src/lawnum_table.ts
+core/test/lawdata

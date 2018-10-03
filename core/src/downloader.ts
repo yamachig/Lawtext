@@ -81,7 +81,7 @@ export async function download(
                 if (full || (withoutPict && !isPict)) {
                     const innerZip = new JSZip();
                     const innerData = await file.async("arraybuffer");
-                    innerZip.file(file.name, innerData);
+                    innerZip.file(path.basename(file.name), innerData);
                     const innerZipData = await innerZip.generateAsync({
                         type: "arraybuffer",
                         compression: "DEFLATE",

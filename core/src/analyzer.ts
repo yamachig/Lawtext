@@ -662,7 +662,7 @@ export function stdxml_to_ext(el: EL) {
         let is_mixed = el.children.some(child => typeof child === 'string' || child instanceof String);
         if (is_mixed) {
             try {
-                el.children = parser.parse(el.innerXML(), { startRule: "INLINE" });
+                el.children = parser.parse(el.innerXML().replace(/\r|\n/, ""), { startRule: "INLINE" });
             } catch (e) {
                 console.log("stdxml_to_ext: Error", el.innerXML());
                 throw e;

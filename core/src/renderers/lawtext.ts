@@ -197,6 +197,9 @@ function renderAppdxTable(el: std.AppdxTable, indent: number): string {
 
         if (child.tag === "AppdxTableTitle") {
             AppdxTableTitle = renderRun(child.children);
+            if (child.attr.WritingMode === "horizontal") {
+                AppdxTableTitle = `[WritingMode="horizontal"]` + AppdxTableTitle;
+            }
 
         } else if (child.tag === "RelatedArticleNum") {
             RelatedArticleNum = renderRun(child.children);
@@ -215,9 +218,10 @@ ${BLANK}
 `/* ========================= */);
     }
 
-    for (let child of ChildItems) {
+    for (const [i, child] of ChildItems.entries()) {
         if (child.tag === "TableStruct") {
-            blocks.push(renderTableStruct(child, indent + 1)); /* >>>> INDENT >>>> */
+            const isFirstTableStruct = !(0 < i && ChildItems[i - 1].tag === "TableStruct");
+            blocks.push(renderTableStruct(child, indent + 1, isFirstTableStruct)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "Item") {
             blocks.push(renderParagraphItem(child, indent + 1)); /* >>>> INDENT >>>> */
@@ -485,12 +489,13 @@ ${_____}${INDENT}${ParagraphCaption}
     let SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
     blocks.push(renderBlockSentence(SentenceChildren, indent, Title));
 
-    for (let child of Children) {
+    for (const [i, child] of Children.entries()) {
         if (child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
             blocks.push(renderParagraphItem(child, indent + 1)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "TableStruct") {
-            blocks.push(renderTableStruct(child, indent + 1)); /* >>>> INDENT >>>> */
+            const isFirstTableStruct = !(0 < i && Children[i - 1].tag === "TableStruct");
+            blocks.push(renderTableStruct(child, indent + 1, isFirstTableStruct)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "FigStruct") {
             blocks.push(renderFigStruct(child, indent + 1)); /* >>>> INDENT >>>> */
@@ -533,9 +538,16 @@ function renderList(el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, i
 
 
 
-function renderTableStruct(el: std.TableStruct, indent: number): string {
+function renderTableStruct(el: std.TableStruct, indent: number, isFirstTableStruct = true): string {
     let _____ = INDENT.repeat(indent);
     let blocks: string[] = [];
+
+    if (!isFirstTableStruct) {
+        blocks.push(
+ /* ========================= */`\
+${_____}:table-struct:
+`/* ========================= */);
+    }
 
     for (let child of el.children) {
 
@@ -566,7 +578,15 @@ ${BLANK}
 
 
 function renderTable(el: std.Table, indent: number): string {
+    let _____ = INDENT.repeat(indent);
     let blocks: string[] = [];
+
+    if (el.attr.WritingMode === "horizontal") {
+        blocks.push(
+ /* ========================= */`\
+${_____}[WritingMode="horizontal"]
+`/* ========================= */);
+    }
 
     for (let child of el.children) {
 
@@ -806,6 +826,7 @@ function renderBlockSentence(els: (std.Sentence | std.Column | std.Table)[], ind
         let el = els[i];
 
         if (el.tag === "Sentence") {
+            if (el.attr.WritingMode === "horizontal") runs.push(`[WritingMode="horizontal"]`);
             runs.push(renderRun(el.children));
 
         } else if (el.tag === "Column") {
@@ -813,6 +834,7 @@ function renderBlockSentence(els: (std.Sentence | std.Column | std.Table)[], ind
                 runs.push(/* $$$$$$ */MARGIN/* $$$$$$ */);
             }
             for (let subel of el.children) {
+                if (el.attr.LineBreak === "true") runs.push(`[LineBreak="true"]`);
                 runs.push(renderRun(subel.children));
             }
 

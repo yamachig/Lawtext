@@ -7,15 +7,15 @@
         "target": "es5",
         "downlevelIteration": true,
         "moduleResolution": "node",
-        "lib": ["es2015", "dom", "es5", "scripthost"],
+        "lib": ["es2017", "dom", "es5", "scripthost"],
         "rootDir": "./src",
         "composite": true,
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "strictNullChecks": true,
-        "suppressImplicitAnyIndexErrors": true
+        // "suppressImplicitAnyIndexErrors": true
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules"],
 }

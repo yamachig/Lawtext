@@ -1,5 +1,5 @@
 import * as JSZip from "jszip";
-import * as util from "../../../js/src/util";
+import * as util from "../../../core/src/util";
 const levenshtein = require("js-levenshtein");
 
 interface LawListInfo {
@@ -23,31 +23,34 @@ async function ensureList() {
 (async () => {
     try {
         let response = await fetch(`lawdata/list.json`);
-        let json = await response.json();
-        list = json.map(
-            ([
-                LawNum,
-                ReferencingLawNums,
-                ReferencedLawNums,
-                LawTitle,
-                Path,
-                XmlZipName,
-            ]: [string, string[], string[], string, string, string]) => {
-                let obj = {
-                    LawNum: LawNum,
-                    ReferencingLawNums: ReferencingLawNums,
-                    ReferencedLawNums: ReferencedLawNums,
-                    LawTitle: LawTitle,
-                    Path: Path,
-                    XmlZipName: XmlZipName,
-                } as LawListInfo;
-                listByLawnum[obj.LawNum] = obj;
-                return obj;
-            }
-        );
+        if (response.ok) {
+            let json = await response.json();
+            list = json.map(
+                ([
+                    LawNum,
+                    ReferencingLawNums,
+                    ReferencedLawNums,
+                    LawTitle,
+                    Path,
+                    XmlZipName,
+                ]: [string, string[], string[], string, string, string]) => {
+                    let obj = {
+                        LawNum: LawNum,
+                        ReferencingLawNums: ReferencingLawNums,
+                        ReferencedLawNums: ReferencedLawNums,
+                        LawTitle: LawTitle,
+                        Path: Path,
+                        XmlZipName: XmlZipName,
+                    } as LawListInfo;
+                    listByLawnum[obj.LawNum] = obj;
+                    return obj;
+                }
+            );
+        }
     } finally {
         _listReady = true;
     }
+    return [];
 })();
 
 

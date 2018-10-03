@@ -5,6 +5,7 @@ import { LawtextAppPageState, SelectionRange, RouteState } from '../states';
 import { Sidebar } from './Sidebar'
 import { Viewer } from './Viewer'
 import * as $ from "jquery"
+import { UnregisterCallback } from "history";
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
@@ -83,21 +84,37 @@ export function tobeDownloadedRange(): SelectionRange | null {
 }
 
 
-export function scrollToLawAnchor(tag: string, name: string) {
-    for (let el of $(".law-anchor")) {
-        let obj = $(el);
-        if (obj.data("tag") === tag && obj.data("name") === name) {
-            let offset = obj.offset();
+export function scrollToLawAnchor(id: string) {
+    for (let el of Array.from(document.getElementsByClassName("law-anchor"))) {
+        if ((el as HTMLElement).dataset.el_id === id) {
+            let offset = $(el).offset();
             if (offset) $("html,body").animate({ scrollTop: offset.top }, "normal");
         }
     }
 }
 
 export class LawtextAppPage extends React.Component<Props> {
+    unsubscribeFromHistory?: UnregisterCallback;
+    componentWillMount() {
+        this.onNavigate();
+        this.unsubscribeFromHistory = this.props.history.listen(() => this.onNavigate());
+    }
+
+    componentWillUnmount() {
+        if (this.unsubscribeFromHistory) this.unsubscribeFromHistory();
+    }
+
+    onNavigate() {
+        console.log(`onNavigate: before timer:`, this.props.lawSearchKey);
+        setTimeout(() => {
+            console.log(`onNavigate: after timer:`, this.props.lawSearchKey);
+            if (this.props.lawSearchKey) {
+                this.props.searchLaw(this.props.lawSearchKey);
+            }
+        }, 30);
+    }
+
     render() {
-        if (this.props.lawSearchKey && (this.props.lawSearchKey !== this.props.lawSearchedKey)) {
-            this.props.searchLaw(this.props.lawSearchKey, this.props.history);
-        }
         return (
             <div>
                 <HiddenInput

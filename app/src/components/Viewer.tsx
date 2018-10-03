@@ -25,8 +25,8 @@ class ViewerLoading extends React.Component<Props> {
     render() {
         return (
             <ViewerLoadingDiv>
-                <div className="container-fluid">
-                    <p>ファイルを読み込み中です...</p>
+                <div className="container-fluid" style={{ textAlign: "right" }}>
+                    <span className="badge badge-secondary">{this.props.loadingLawMessage}</span>
                 </div>
             </ViewerLoadingDiv >
         );
@@ -60,7 +60,7 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
 
     handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        this.props.searchLaw(this.state.lawSearchKey, this.props.history);
+        this.props.history.push(`/${this.state.lawSearchKey}`);
     }
 
     render() {

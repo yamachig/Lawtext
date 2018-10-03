@@ -302,7 +302,7 @@ article "article" =
         { return target; }
         /
         _
-        { return [new EL("Sentence", {WritingMode: 'vertical'})]; }
+        { return [new EL("Sentence")]; }
     )
     NEWLINE+
     lists:(
@@ -349,6 +349,7 @@ article "article" =
         }
 
         let paragraph = new EL("Paragraph");
+        paragraph.attr.Num = "1";
         paragraph.attr.OldStyle = "false";
         paragraph.attr.Delete = "false";
         article.append(paragraph);
@@ -528,6 +529,7 @@ list "list" =
 
 table_struct "table_struct" =
     !INDENT !DEDENT !NEWLINE
+    (":table-struct:" NEWLINE)?
     table_struct_title:table_struct_title?
     remarkses1:remarks*
     table:table
@@ -558,6 +560,18 @@ table_struct_title "table_struct_title" =
     }
 
 table "table" =
+    attr:(
+        target:(
+            "["
+            name:$[^ 　\t\r\n\]=]+
+            "=\""
+            value:$[^ 　\t\r\n\]"]+
+            "\"]"
+            { return [name, value]; }
+        )+
+        NEWLINE
+        { return target; }
+    )?
     table_row_columns:(
         "*" __
         first:table_column
@@ -569,7 +583,13 @@ table "table" =
         {return [first].concat(rest);}
     )+
     {
-        let table = new EL("Table", {WritingMode: "vertical"});
+        let table = new EL("Table");
+        if(attr) {
+            for(let i = 0; i < attr.length; i++) {
+                let [name, value] = attr[i];
+                table.attr[name] = value;
+            }
+        }
         for(let i = 0; i < table_row_columns.length; i++) {
             let table_row = new EL("TableRow", {}, table_row_columns[i]);
             table.append(table_row);
@@ -596,8 +616,8 @@ table_column "table_column" =
         {
             return new EL(
                 "Sentence",
-                {WritingMode: "vertical"},
-                inline || [new __Text("")],
+                {},
+                inline || [],
             )
         }
     )
@@ -612,7 +632,7 @@ table_column "table_column" =
                     {
                         return new EL(
                             "Sentence",
-                            {WritingMode: "vertical"},
+                            {},
                             inline,
                         )
                     }
@@ -648,8 +668,8 @@ table_column "table_column" =
                 BorderBottom: "solid",
                 BorderLeft: "solid",
             },
-            [new EL("Sentence", {WritingMode: "vertical"}),
-        ]);
+            [new EL("Sentence")],
+        );
     }
 
 
@@ -720,7 +740,7 @@ remarks "remarks" =
         {
             return new EL(
                 "Sentence",
-                {WritingMode: "vertical"},
+                {},
                 _target,
             );
         }
@@ -729,6 +749,7 @@ remarks "remarks" =
     rest:(
         INDENT INDENT
             target:(
+                &{ return !first; }
                 &("" &{ base_indent_stack.push([indent_memo[location().start.line] - 1, false, location().start.line]); return true; })
                 _target:(paragraph_item / no_name_paragraph_item)
                 &("" &{ base_indent_stack.pop(); return true; })
@@ -741,10 +762,10 @@ remarks "remarks" =
                 {
                     return new EL(
                         "Sentence",
-                        {WritingMode: "vertical"},
+                        {},
                         _target,
-                        );
-                    }
+                    );
+                }
             )+
             NEWLINE*
         DEDENT DEDENT
@@ -810,15 +831,40 @@ appdx_item "appdx_item" =
 
 appdx_table_title "appdx_table_title" =
     title_struct:(
-        title:$("別表" [^\r\n(（]*)
-        related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
-        table_struct_title:$[^\r\n(（]*
+        attr:(
+            target:(
+                "["
+                name:$[^ 　\t\r\n\]=]+
+                "=\""
+                value:$[^ 　\t\r\n\]"]+
+                "\"]"
+                { return [name, value]; }
+            )*
+            {
+                const ret = {};
+                for(const [name, value] of target) {
+                    ret[name] = value;
+                }
+                return ret;
+            }
+        )
+        target:(
+            title:$("別表" [^\r\n(（]*)
+            related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
+            table_struct_title:$[^\r\n(（]*
+            {
+                return {
+                    text: text(),
+                    title: title,
+                    related_article_num: related_article_num,
+                    table_struct_title: table_struct_title,
+                };
+            }
+        )
         {
             return {
-                text: text(),
-                title: title,
-                related_article_num: related_article_num,
-                table_struct_title: table_struct_title,
+                attr: attr,
+                ...target,
             };
         }
     )
@@ -832,7 +878,7 @@ appdx_table "appdx_table" =
     NEWLINE+
     children:(
         INDENT
-            target:appdx_table_children
+            target:appdx_table_children+
             remarkses:remarks*
             NEWLINE*
         DEDENT
@@ -842,9 +888,9 @@ appdx_table "appdx_table" =
         let appdx_table = new EL("AppdxTable");
         if(title_struct.table_struct_title !== "") {
             console.error(`### line ${location().start.line}: Maybe irregular AppdxTableTitle!`);
-            appdx_table.append(new EL("AppdxTableTitle", {WritingMode: "vertical"}, [new __Text( title_struct.text)]));
+            appdx_table.append(new EL("AppdxTableTitle", title_struct.attr, [new __Text( title_struct.text)]));
         } else {
-            appdx_table.append(new EL("AppdxTableTitle", {WritingMode: "vertical"}, [new __Text(title_struct.title)]));
+            appdx_table.append(new EL("AppdxTableTitle", title_struct.attr, [new __Text(title_struct.title)]));
             if(title_struct.related_article_num) {
                 appdx_table.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
             }
@@ -855,9 +901,9 @@ appdx_table "appdx_table" =
     }
 
 appdx_table_children "appdx_table_children" =
-    table_struct:table_struct { return [table_struct]; }
+    table_struct
     /
-    paragraph_item+
+    paragraph_item
 
 
 
@@ -912,13 +958,6 @@ appdx_style "appdx_style" =
 
         return appdx_style;
     }
-
-appdx_style_children "appdx_style_children" =
-    table_struct:table_struct { return [table_struct]; }
-    /
-    fig:fig { return [fig]; }
-    /
-    paragraph_item+
 
 
 
@@ -983,7 +1022,7 @@ columns_or_sentences "columns_or_sentences" =
         // console.error(`### line ${location().start.line}: Maybe mismatched parenthesis!`);
         let sentence = new EL(
             "Sentence",
-            {WritingMode: "vertical"},
+            {},
             inline,
         );
         return [sentence];
@@ -998,7 +1037,7 @@ period_sentences "period_sentences" =
             let sentence_content = fragments[i];
             let sentence = new EL(
                 "Sentence",
-                {WritingMode: "vertical"},
+                {},
                 sentence_content,
             );
             if(fragments.length >= 2) sentence.attr.Num = "" + (i + 1);
@@ -1021,23 +1060,39 @@ period_sentences "period_sentences" =
     }
 
 columns "columns" =
-    first:period_sentences
-    rest:(__ target:period_sentences { return target; })+
+    first:column
+    rest:(__ target:column { return target; })+
     {
-        let column_inner_sets = [first].concat(rest);
-        let columns:Array<util.EL> = [];
-        for(let i = 0; i < column_inner_sets.length; i++) {
-            let column = new EL(
-                "Column",
-                {},
-                column_inner_sets[i],
-            );
-            if(column_inner_sets.length >= 2) {
+        const columns = [first].concat(rest);
+        if(columns.length >= 2) {
+            for(const [i, column] of columns.entries()) {
                 column.attr.Num = "" + (i + 1);
             }
-            columns.push(column);
         }
         return columns;
+    }
+
+column "column" =
+    attr:(
+        target:(
+            "["
+            name:$[^ 　\t\r\n\]=]+
+            "=\""
+            value:$[^ 　\t\r\n\]"]+
+            "\"]"
+            { return [name, value]; }
+        )*
+        {
+            const ret = {};
+            for(const [name, value] of target) {
+                ret[name] = value;
+            }
+            return ret;
+        }
+    )
+    content:period_sentences
+    {
+        return new EL("Column", attr, content);
     }
 
 INLINE "INLINE" =
@@ -1216,14 +1271,21 @@ CURLY_BRACKETS_INLINE "CURLY_BRACKETS_INLINE" =
 
 SQUARE_PARENTHESES_INLINE "SQUARE_PARENTHESES_INLINE" =
     start:[「]
-    content:$(
-        [^\r\n「」]+
+    content:(
+        xml_element
         /
-        SQUARE_PARENTHESES_INLINE
+        (
+            text:$(
+                [^\r\n<>「」]+
+                /
+                SQUARE_PARENTHESES_INLINE
+            )
+            {return new __Text(text)}
+        )
     )*
     end:[」]
     {
-        return new __Parentheses("square", parentheses_depth, start, end, [new __Text(content)], text());
+        return new __Parentheses("square", parentheses_depth, start, end, content, text());
     }
 
 xml "xml" =
@@ -1236,11 +1298,11 @@ xml "xml" =
 
 xml_element "xml_element" =
     !INDENT !DEDENT
-    "<"
-    tag:$[^> \t\r\n]+
-    _
+    "<" !"/"
+    tag:$[^/<> ="\t\r\n]+
     attr:(
-        name:$[^> =\t\r\n]+
+        _
+        name:$[^/<> ="\t\r\n]+
         _ "=" _ '"' value:$[^"]+ '"'
         {
             let ret = {};
@@ -1253,7 +1315,9 @@ xml_element "xml_element" =
     children:xml
     (
         "</"
-        end_tag:$[^> ]+
+        _
+        end_tag:$[^/<> ="\t\r\n]+
+        _
         ">"
         &{
             return end_tag === tag;
@@ -1264,11 +1328,11 @@ xml_element "xml_element" =
     }
     /
     !INDENT !DEDENT
-    "<"
-    tag:$[^> \t\r\n]+
-    _
+    "<" !"/"
+    tag:$[^/<> ="\t\r\n]+
     attr:(
-        name:$[^> =\t\r\n]+
+        _
+        name:$[^/<> ="\t\r\n]+
         _ "=" _ '"' value:$[^"]+ '"'
         {
             let ret = {};

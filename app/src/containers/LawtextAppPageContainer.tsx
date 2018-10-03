@@ -20,11 +20,11 @@ export interface Dispatchers {
     openFileInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
     invokeError: (title: string, bodyEl: string) => void,
     loadLawText: (text: string, analyzeXml: boolean) => void,
-    searchLaw: (lawSearchKey: string, history: History) => void,
+    searchLaw: (lawSearchKey: string) => void,
     downloadDocx: (downloadSelection?: boolean) => void,
     downloadLawtext: () => void,
     downloadXml: () => void,
-    scrollLaw: (tag: string, name: string) => void,
+    scrollLaw: (id: string) => void,
     downloadSampleLawtext: () => void,
 }
 
@@ -46,8 +46,8 @@ function mapDispatchToProps(dispatch: Dispatch<Action<any>>) {
         loadLawText: (text: string, analyzeXml: boolean) =>
             states.loadLawText(dispatch, text, analyzeXml),
 
-        searchLaw: (lawSearchKey: string, history: History) =>
-            states.searchLaw(dispatch, lawSearchKey, history),
+        searchLaw: (lawSearchKey: string) =>
+            states.searchLaw(dispatch, lawSearchKey),
 
         downloadDocx: (downloadSelection: boolean = false) =>
             states.downloadDocx(dispatch, downloadSelection),
@@ -58,8 +58,8 @@ function mapDispatchToProps(dispatch: Dispatch<Action<any>>) {
         downloadXml: () =>
             states.downloadXml(dispatch),
 
-        scrollLaw: (tag: string, name: string) =>
-            states.scrollLaw(dispatch, tag, name),
+        scrollLaw: (id: string) =>
+            states.scrollLaw(dispatch, id),
 
         downloadSampleLawtext: () =>
             states.downloadSampleLawtext(dispatch),

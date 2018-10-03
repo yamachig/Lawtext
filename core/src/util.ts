@@ -28,12 +28,40 @@ export function isJsonEL(object: any): object is JsonEL {
     return 'tag' in object && 'attr' in object && 'children' in object;
 }
 
+export function wrapXML(el: JsonEL, inner: string): string {
+    let attr = Object.keys(el.attr).map(key => ` ${key}="${el.attr[key]}"`).join("");
+    if (inner) {
+        return `<${el.tag}${attr}>${inner}</${el.tag}>`;
+    } else {
+        return `<${el.tag}${attr}/>`;
+    }
+}
 
-export class EL {
+export function outerXML(el: JsonEL, with_control_el: boolean = false): string {
+    let inner = innerXML(el, with_control_el);
+    if (with_control_el || el.tag[0] !== "_") {
+        return wrapXML(el, inner);
+    } else {
+        return inner;
+    }
+}
+
+export function innerXML(el: JsonEL, with_control_el: boolean = false): string {
+    return el.children.map(child =>
+        (child instanceof String || (typeof child === "string"))
+            ? child
+            : outerXML(child, with_control_el)
+    ).join("");
+}
+
+
+let _currentID = 0;
+export class EL implements JsonEL {
     tag: string
     attr: { [key: string]: string | undefined }
     children: (EL | string)[]
     _text: string | null
+    id: number
 
     constructor(tag: string, attr: { [key: string]: string | undefined } = {}, children: (EL | string)[] = []) {
         // if(!tag) {
@@ -44,6 +72,7 @@ export class EL {
         this.children = children;
 
         this._text = null;
+        this.id = ++_currentID;
     }
 
     get isControl(): boolean {
@@ -77,28 +106,36 @@ export class EL {
     }
 
     json(with_control_el: boolean = false): JsonEL {
-        let children: (JsonEL | string)[] = [];
-        for (let el of this.children) {
+        const children: (JsonEL | string)[] = [];
+        for (const el of this.children) {
             if (!(el instanceof EL || isString(el))) {
                 console.error("[EL.json]", JSON.stringify(this));
                 throw JSON.stringify(this);
             }
-            if (el instanceof EL && (with_control_el || el.tag[0] !== "_")) {
-                children.push(el.json(with_control_el));
+            if (isString(el)) {
+                children.push(el);
             } else {
-                let text = (el instanceof String || (typeof el === "string")) ? el : el.text;
-                let last = children[children.length - 1];
-                if (isString(last)) {
-                    children[children.length - 1] = last + text;
+                const js = el.json(with_control_el);
+                if (with_control_el || el.tag[0] !== "_") {
+                    children.push(js);
                 } else {
-                    children.push(text);
+                    children.push(...js.children);
                 }
+            }
+        }
+        const joinedChildren: (JsonEL | string)[] = [];
+        for (const child of children) {
+            const last = joinedChildren[joinedChildren.length - 1];
+            if (isString(last)) {
+                joinedChildren[joinedChildren.length - 1] = last + child;
+            } else {
+                joinedChildren.push(child);
             }
         }
         return {
             tag: this.tag,
             attr: this.attr,
-            children: children,
+            children: joinedChildren,
         };
     }
 
@@ -114,30 +151,16 @@ export class EL {
         this._text = null;
     }
 
-    wrapXML(innerXML: string): string {
-        let attr = Object.keys(this.attr).map(key => ` ${key}="${this.attr[key]}"`).join("");
-        if (innerXML) {
-            return `<${this.tag}${attr}>${innerXML}</${this.tag}>`;
-        } else {
-            return `<${this.tag}${attr}/>`;
-        }
+    wrapXML(inner: string) {
+        return wrapXML(this, inner);
     }
 
-    outerXML(with_control_el: boolean = false): string {
-        let innerXML = this.innerXML(with_control_el);
-        if (with_control_el || this.tag[0] !== "_") {
-            return this.wrapXML(innerXML);
-        } else {
-            return innerXML;
-        }
+    outerXML(with_control_el: boolean = false) {
+        return outerXML(this, with_control_el);
     }
 
-    innerXML(with_control_el: boolean = false): string {
-        return this.children.map(el =>
-            (el instanceof String || (typeof el === "string"))
-                ? el
-                : el.outerXML(with_control_el)
-        ).join("");
+    innerXML(with_control_el: boolean = false) {
+        return innerXML(this, with_control_el);
     }
 
     replace_span(start: number, end: number/* half open */, repl_children: (EL | string)[] | EL | string) {
@@ -726,9 +749,13 @@ export type Range = [Pointer, Pointer]; // closed
 export type Ranges = Range[];
 
 
-export class NotImplementedError extends Error { }
+export class NotImplementedError extends Error {
+    constructor(message: string) {
+        super(`NotImplemented: ${message}`)
+    }
+}
 
-export const throwError = () => {
+export const throwError = (): never => {
     throw new Error();
 }
 

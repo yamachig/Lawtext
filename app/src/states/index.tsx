@@ -7,12 +7,12 @@ import { isString } from "util";
 import * as $ from "jquery"
 import { LawtextAppPageActions } from '../actions';
 import { openFile as origOpenFile, showErrorModal, tobeDownloadedRange, scrollToLawAnchor } from '../components/LawtextAppPage'
-import * as std from "../../../js/src/std_law"
-import * as util from "../../../js/src/util"
-import { parse } from "../../../js/src/parser_wrapper";
-import * as analyzer from "../../../js/src/analyzer";
-import * as renderer from "../../../js/src/renderer";
-import render_lawtext from "../../../js/src/renderers/lawtext";
+import * as std from "../../../core/src/std_law"
+import * as util from "../../../core/src/util"
+import { parse } from "../../../core/src/parser_wrapper";
+import * as analyzer from "../../../core/src/analyzer";
+import * as renderer from "../../../core/src/renderer";
+import render_lawtext from "../../../core/src/renderers/lawtext";
 import { store } from '../store';
 import * as lawdata from "./lawdata";
 import { saveAs } from "file-saver";
@@ -22,17 +22,23 @@ export type RouteState = RouteComponentProps<{ lawSearchKey: string | undefined 
 export interface LawtextAppPageState {
     law: std.Law | null;
     loadingLaw: boolean;
+    loadingLawMessage: string;
     lawSearchKey: string | null;
     lawSearchedKey: string | null;
     analysis: analyzer.Analysis | null;
+    hasError: boolean;
+    errors: Error[];
 }
 
 const initialState: LawtextAppPageState = {
     law: null,
     loadingLaw: false,
+    loadingLawMessage: "",
     lawSearchKey: null,
     lawSearchedKey: null,
     analysis: null,
+    hasError: false,
+    errors: [],
 };
 
 export const LawtextAppPageReducer = reducerWithInitialState(initialState);
@@ -68,12 +74,14 @@ export async function openFileInputChange(
     const file = openFileInput.files ? openFileInput.files[0] : null;
     if (!file) return;
 
-    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true }));
+    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true, loadingLawMessage: "ファイルを読み込んでいます..." }));
+    console.log("openFileInputChange: Loading file");
+    await util.wait(30);
 
     const text = await readFileAsText(file);
     openFileInput.value = "";
     await loadLawText(dispatch, text, true);
-    dispatch(LawtextAppPageActions.modifyState({ lawSearchKey: null, loadingLaw: false }));
+    dispatch(LawtextAppPageActions.modifyState({ lawSearchKey: null, loadingLaw: false, loadingLawMessage: "" }));
 }
 
 LawtextAppPageReducer.case(LawtextAppPageActions.modifyState, (state, newState) => {
@@ -93,14 +101,18 @@ export async function loadLawText(
     let analysis: analyzer.Analysis | null = null;
     try {
         if (/^(?:<\?xml|<Law)/.test(text.trim())) {
+            dispatch(LawtextAppPageActions.modifyState({ loadingLawMessage: "法令XMLをパースしています..." }));
             console.log("loadLawText: Parse as XML");
+            await util.wait(30);
             law = util.xml_to_json(text) as std.Law;
             if (analyzeXml) {
                 analyzer.stdxml_to_ext(law);
             }
             analysis = analyzer.analyze(law);
         } else {
+            dispatch(LawtextAppPageActions.modifyState({ loadingLawMessage: "Lawtextをパースしています..." }));
             console.log("loadLawText: Parse as Lawtext");
+            await util.wait(30);
             law = parse(text, { startRule: "start" }) as std.Law;
             analysis = analyzer.analyze(law);
 
@@ -124,21 +136,28 @@ export async function loadLawText(
     if (law) {
         newState.law = law;
         newState.analysis = analysis;
+        const lawBody = law.children.find(el => el.tag === "LawBody") as std.LawBody | undefined;
+        const lawTitle = lawBody && lawBody.children.find(el => el.tag === "LawTitle") as std.LawTitle | undefined;
+        document.title = lawTitle ? `${lawTitle.text} | Lawtext` : "Lawtext";
+    } else {
+        document.title = "Lawtext";
     }
+    dispatch(LawtextAppPageActions.modifyState({ loadingLawMessage: "レンダリングしています..." }));
+    console.log("loadLawText: Setting Law into State");
+    await util.wait(30);
     dispatch(LawtextAppPageActions.modifyState(newState));
 }
 
 export async function searchLaw(
     dispatch: Dispatch<Action<any>>,
     lawSearchKey: string,
-    history: History,
 ) {
     console.log(`searchLaw(${lawSearchKey})`);
-    if (history) {
-        history.push(`/${lawSearchKey}`);
-    }
-    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true, lawSearchedKey: lawSearchKey }));
-    await util.wait(300);
+    const state = store.getState().lawtextAppPage;
+    if (lawSearchKey === state.lawSearchedKey) return;
+    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true, lawSearchedKey: lawSearchKey, loadingLawMessage: "法令を検索しています..." }));
+    console.log("searchLaw: Searching Law");
+    await util.wait(30);
     try {
         let text = await lawdata.loadLaw(lawSearchKey);
         await loadLawText(dispatch, text, true);
@@ -150,7 +169,7 @@ export async function searchLaw(
             err[1] || err.toString(),
         );
     }
-    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false }));
+    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false, loadingLawMessage: "" }));
 }
 
 export interface SelectionRange {
@@ -364,8 +383,8 @@ export async function downloadXml(
 }
 
 export const scrollLaw =
-    (dispatch: Dispatch<Action<any>>, tag: string, name: string) =>
-        scrollToLawAnchor(tag, name);
+    (dispatch: Dispatch<Action<any>>, id: string) =>
+        scrollToLawAnchor(id);
 
 const sampleSampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml");
 
