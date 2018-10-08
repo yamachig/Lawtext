@@ -341,8 +341,7 @@ function locate_ranges(orig_ranges: util.Ranges, current_span: Span) {
                 if (!parent_container) break;
                 // let fragment_rank = container_tags.indexOf(fragment.tag);
                 // if (fragment_rank < 0) fragment_rank = Number.POSITIVE_INFINITY;
-                parent_container =
-                    fragment.located_container =
+                fragment.located_container =
                     parent_container.find(
                         c =>
                             (
@@ -358,6 +357,7 @@ function locate_ranges(orig_ranges: util.Ranges, current_span: Span) {
                             c.el.attr.Function === "proviso",
                         // c => fragment_rank < container_tags.indexOf(c.el.tag),
                     );
+                parent_container = fragment.located_container as any;
             }
         }
 

@@ -4,7 +4,7 @@ import { render as renderLawtext } from "../src/renderers/lawtext"
 import { parse, analyze } from "../src/parser_wrapper"
 import * as util from "../src/util"
 import { prepare, ensureList, getLawXml } from "./prepare_test";
-import { lawDiff, LawDiffResult, LawDiffType, ProblemStatus, LawDiffElementChange, DiffStatus, LawDiffElementMismatch, LawDiffNoDiff, TagType, ComparableEL } from "../src/diff/law_diff";
+import { lawDiff, LawDiffMode, LawDiffResult, LawDiffType, ProblemStatus, LawDiffElementChange, DiffStatus, LawDiffElementMismatch, LawDiffNoDiff, TagType, ComparableEL } from "../src/diff/law_diff";
 import { toTableText, TERMC } from "../src/term_util";
 import * as os from "os";
 import * as fs from "fs";
@@ -287,7 +287,7 @@ function makeElementNoDiffTable(ditem: LawDiffNoDiff<string>, d: LawDiffResult<s
 it("Render and Parse Lawtext", async () => {
     // const [list, listByLawnum] = await getLawList();
 
-    const lawNum = "平成十五年内閣府令第五十五号";
+    const lawNum = "昭和二十五年電波監理委員会規則第十八号";
 
     const origXML = await getLawXml(lawNum);
     console.log(`Temporary directory: "${tempDir}"`);
@@ -300,16 +300,41 @@ it("Render and Parse Lawtext", async () => {
     await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
 
     const origEL = util.xml_to_json(origXML);
-    const lawtext = renderLawtext(origEL);
+
+    let lawtext;
+    try {
+        lawtext = renderLawtext(origEL);
+    } catch (e) {
+        const msg = [
+            `Original XML: "${tempOrigXml}"`,
+            "",
+        ].join("\r\n");
+        console.error(msg);
+        throw e;
+    }
+
     await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });
-    const parsedEL = parse(lawtext);
+
+    let parsedEL;
+    try {
+        parsedEL = parse(lawtext);
+    } catch (e) {
+        const msg = [
+            `Original XML: "${tempOrigXml}"`,
+            `Rendered Lawtext: "${tempRenderedLawtext}"`,
+            "",
+        ].join("\r\n");
+        console.error(msg);
+        throw e;
+    }
+
     analyze(parsedEL);
 
     const parsedXML = prettifyXml(util.outerXML(parsedEL)) as string;
     const parsedDOM = domParser.parseFromString(parsedXML);
     await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });
 
-    const d = lawDiff(origEL.json(false), (parsedEL.json(false)), true);
+    const d = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.WarningAsNoDiff);
     const table: string[][] = [];
 
     for (const ditem of d.items) {

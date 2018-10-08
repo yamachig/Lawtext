@@ -59,20 +59,20 @@
     "js-levenshtein": "",
     "jszip": "",
     "lodash": "",
-    "nunjucks": "",
     "node-fetch": "",
+    "nunjucks": "",
     "pegjs": "",
     "pre-build-webpack": "",
+    "prettify-xml": "",
     "source-map-loader": "",
     "ts-loader": "",
     "ts-node": "",
     "ts-pegjs": "",
-    "typescript": "",
+    "typescript": "^3.1.1",
     "webpack": "",
     "webpack-cli": "",
     "webpack-node-externals": "",
     "xmldom": "",
-    "prettify-xml": "",
     "xpath": ""
   }
 }

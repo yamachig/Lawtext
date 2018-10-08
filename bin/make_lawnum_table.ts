@@ -25,9 +25,11 @@ async function main() {
 
     const tree = parser.parseFromString(xml);
     const laws = Array.from(tree.getElementsByTagName("LawNameListInfo")).map(law => {
-        const rawLawName = law.getElementsByTagName("LawName").item(0).textContent || "";
+        const LawNameEL = law.getElementsByTagName("LawName").item(0);
+        const rawLawName = (LawNameEL && LawNameEL.textContent) || "";
         const lawName = rawLawName.replace(/　抄$/, "");
-        const lawNo = law.getElementsByTagName("LawNo").item(0).textContent || "";
+        const LawNoEL = law.getElementsByTagName("LawNo").item(0);
+        const lawNo = (LawNoEL && LawNoEL.textContent) || "";
         return {
             name: lawName,
             num: lawNo,
