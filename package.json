@@ -2,7 +2,7 @@
   "name": "lawtext",
   "version": "0.0.1",
   "description": "Plain text format for Japanese law",
-  "main": "lib/lawtext.js",
+  "main": "src/lawtext.ts",
   "directories": {
     "test": "test"
   },
@@ -13,7 +13,7 @@
     "build:prod": "webpack --colors --config ./webpack.config.prod.ts",
     "test": "node --max_old_space_size=2048 -r ts-node/register ./test/prepare_test.ts && mocha -r ts-node/register test/**/*.ts"
   },
-  "bin": "lib/lawtext.js",
+  "bin": "src/lawtext.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yamachig/lawtext.git"
@@ -68,7 +68,7 @@
     "ts-loader": "",
     "ts-node": "",
     "ts-pegjs": "",
-    "typescript": "^3.1.1",
+    "typescript": "",
     "webpack": "",
     "webpack-cli": "",
     "webpack-node-externals": "",
