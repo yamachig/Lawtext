@@ -52,15 +52,24 @@ const ViewerWelcomeDiv = styled.div`
 class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
 
     state = { lawSearchKey: "" };
+    lawSearchKeyInput: React.RefObject<HTMLInputElement>;
 
     constructor(props: Props) {
         super(props);
         this.state = { lawSearchKey: props.lawSearchKey || "" };
+        this.lawSearchKeyInput = React.createRef<HTMLInputElement>();
     }
 
     handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         this.props.history.push(`/${this.state.lawSearchKey}`);
+    }
+
+    componentDidMount() {
+        const input = this.lawSearchKeyInput.current;
+        if (input) {
+            input.focus();
+        }
     }
 
     render() {
@@ -79,6 +88,7 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
                         <form onSubmit={(e) => this.handleSearchSubmit(e)}>
                             <div className="input-group">
                                 <input
+                                    ref={this.lawSearchKeyInput}
                                     name="lawSearchKey"
                                     onChange={(event) => this.setState({ lawSearchKey: event.target.value })}
                                     className="form-control search-law-textbox"
