@@ -81,6 +81,7 @@ export async function ensureList() {
             list.push(obj);
             listByLawnum[obj.LawNum] = obj;
         }
+        console.error(`### loaded ${list.length} laws`);
         _listReady = true;
     }
 }
