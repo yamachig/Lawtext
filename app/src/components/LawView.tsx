@@ -1398,7 +1398,7 @@ class RemarksComponent extends BaseLawComponent<RemarksComponentProps> {
         }
 
         return (
-            <div>
+            <div style={{ marginLeft: `${indent}em` }}>
                 {blocks}
             </div>
         );
