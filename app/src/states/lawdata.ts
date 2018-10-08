@@ -15,9 +15,11 @@ var list: LawListInfo[] = [];
 var listByLawnum: { [index: string]: LawListInfo } = {};
 var _listReady = false;
 async function ensureList() {
+    let waitTime = 30;
     while (true) {
         if (_listReady) return;
-        util.wait(30);
+        util.wait(waitTime);
+        if (waitTime < 1000) waitTime += 300;
     }
 }
 (async () => {
