@@ -188,7 +188,13 @@ export class ComparableEL implements util.JsonEL {
     }
 }
 
-export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsNoDiff: boolean = false) {
+export enum LawDiffMode {
+    DiffAll = "DiffAll",
+    NoProblemAsNoDiff = "NoProblemAsNoDiff",
+    WarningAsNoDiff = "WarningAsNoDiff",
+}
+
+export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll) {
 
     const oldRoot = new ComparableEL(oldJson);
     const oldELs = [...oldRoot.allList()];
@@ -220,7 +226,7 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsN
                 return `<${el.tag} />`;
 
             } else if (tt === TagType.Text) {
-                return `${el.text}`;
+                return `${el.text.replace(/\r|\n/, "")}`;
 
             } else { throw util.assertNever(tt) };
         });
@@ -249,8 +255,8 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsN
         const oldIndex = dRow.oldItem && dRow.oldItem.index;
         const newIndex = dRow.newItem && dRow.newItem.index;
 
-        const [oldEL, oldTT] = oldIndex ? oldELs[oldIndex] : [null, null];
-        const [newEL, newTT] = newIndex ? newELs[newIndex] : [null, null];
+        const [oldEL, /**/] = oldIndex ? oldELs[oldIndex] : [null, null];
+        const [newEL, /**/] = newIndex ? newELs[newIndex] : [null, null];
 
         const isFragment = fragmentELsList.some(({ oldELs, newELs }) => {
             const oldIsFragment = !oldEL || 0 <= oldELs.indexOf(oldEL);
@@ -259,17 +265,28 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsN
         });
 
         if (dRow.status !== DiffStatus.NoChange && isFragment) {
-            emitNoDiff();
-            ret.items.push({
-                type: LawDiffType.ElementMismatch,
-                mostSeriousStatus: ProblemStatus.Warning,
-                diffTable: [dRow],
-            });
+            if (lawDiffMode === LawDiffMode.WarningAsNoDiff) {
+                noDiffTable.push(dRow);
+
+            } else {
+                emitNoDiff();
+                ret.items.push({
+                    type: LawDiffType.ElementMismatch,
+                    mostSeriousStatus: ProblemStatus.Warning,
+                    diffTable: [dRow],
+                });
+            }
             ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
 
         } else if (dRow.status === DiffStatus.NoChange) {
-            const r = processNoChange(dRow, oldELs, newELs, noProblemAsNoDiff);
-            if (r) {
+            const r = processNoChange(dRow, oldELs, newELs, lawDiffMode === LawDiffMode.NoProblemAsNoDiff || lawDiffMode === LawDiffMode.WarningAsNoDiff);
+            if (r && (
+                (lawDiffMode === LawDiffMode.NoProblemAsNoDiff
+                    && ProblemStatus.NoProblem < r.mostSeriousStatus) ||
+                (lawDiffMode === LawDiffMode.WarningAsNoDiff
+                    && ProblemStatus.Warning < r.mostSeriousStatus) ||
+                (lawDiffMode === LawDiffMode.DiffAll)
+            )) {
                 emitNoDiff();
                 ret.items.push(r);
                 ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, r.mostSeriousStatus);
@@ -280,17 +297,23 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, noProblemAsN
         } else if (dRow.status === DiffStatus.Change) {
             const r = detectFragments(dRow, oldELs, newELs);
 
-            emitNoDiff();
             if (r) {
                 fragmentELsList.push(r);
-                ret.items.push({
-                    type: LawDiffType.ElementMismatch,
-                    mostSeriousStatus: ProblemStatus.Warning,
-                    diffTable: [dRow],
-                });
+
+                if (lawDiffMode === LawDiffMode.WarningAsNoDiff) {
+                    noDiffTable.push(dRow);
+                } else {
+                    emitNoDiff();
+                    ret.items.push({
+                        type: LawDiffType.ElementMismatch,
+                        mostSeriousStatus: ProblemStatus.Warning,
+                        diffTable: [dRow],
+                    });
+                }
                 ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
 
             } else {
+                emitNoDiff();
                 ret.items.push({
                     type: LawDiffType.ElementMismatch,
                     mostSeriousStatus: ProblemStatus.Error,

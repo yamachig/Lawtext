@@ -2,6 +2,7 @@
 
 import { DOMParser } from "xmldom";
 import { isString } from "util";
+import * as std from "./std_law";
 
 export function wait(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -47,6 +48,7 @@ export function outerXML(el: JsonEL, with_control_el: boolean = false): string {
 }
 
 export function innerXML(el: JsonEL, with_control_el: boolean = false): string {
+    if (!el.children) console.error(el);
     return el.children.map(child =>
         (child instanceof String || (typeof child === "string"))
             ? child
@@ -521,6 +523,7 @@ export function element_to_json(el: Element): EL {
 export function xml_to_json(xml: string): EL {
     let parser = new DOMParser();
     let dom = parser.parseFromString(xml, "text/xml");
+    if (!dom.documentElement) throw new Error("never");
     return element_to_json(dom.documentElement);
 };
 
@@ -612,6 +615,8 @@ export const kanji_digits = {
 export const re_named_num = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
 export const iroha_chars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
 export const re_iroha_char = /[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]/;
+export const aiu_chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨララリルレロワヲン";
+export const re_aiu_char = /[アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨララリルレロワヲン]/;
 export const re_item_num = /^\D*(\d+)\D*$/;
 
 export function parse_roman_num(text: string): number {
@@ -645,7 +650,12 @@ export function replace_wide_num(text: string): string {
     return ret;
 }
 
-export function parse_named_num(text: string): string {
+export enum KanaMode {
+    Iroha = "Iroha",
+    Aiu = "Aiu",
+}
+
+export function parse_named_num(text: string, kanaMode: KanaMode = KanaMode.Iroha): string {
     let nums_group: string[] = [];
 
     let subtexts = text
@@ -674,11 +684,21 @@ export function parse_named_num(text: string): string {
             continue;
         }
 
-        m = subtext.match(re_iroha_char);
-        if (m) {
-            nums_group.push(String(iroha_chars.indexOf(m[0]) + 1));
-            continue;
-        }
+        if (kanaMode === KanaMode.Iroha) {
+            m = subtext.match(re_iroha_char);
+            if (m) {
+                nums_group.push(String(iroha_chars.indexOf(m[0]) + 1));
+                continue;
+            }
+
+        } else if (kanaMode === KanaMode.Aiu) {
+            m = subtext.match(re_aiu_char);
+            if (m) {
+                nums_group.push(String(aiu_chars.indexOf(m[0]) + 1));
+                continue;
+            }
+
+        } else { throw assertNever(kanaMode); }
 
         subtext = replace_wide_num(subtext);
         m = subtext.match(re_item_num);
@@ -694,6 +714,47 @@ export function parse_named_num(text: string): string {
     }
 
     return nums_group.join(':');
+}
+
+export function setItemNum(els: EL[]) {
+    const items: (std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10)[] = [];
+
+    for (const el of els) {
+        if (std.isItem(el) || std.isSubitem1(el) || std.isSubitem2(el) || std.isSubitem3(el) || std.isSubitem4(el) || std.isSubitem5(el) || std.isSubitem6(el) || std.isSubitem7(el) || std.isSubitem8(el) || std.isSubitem9(el) || std.isSubitem10(el)) {
+            items.push(el);
+        }
+    }
+
+    if (items.length) {
+        let kanaMode = KanaMode.Iroha;
+        for (const child of items[0].children) {
+            if (child.tag === "ItemTitle" || child.tag ===
+                "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
+                "Subitem5Title" || child.tag === "Subitem6Title" || child.tag === "Subitem7Title" || child.tag === "Subitem8Title" || child.tag ===
+                "Subitem9Title" || child.tag === "Subitem10Title") {
+                if (child.text.match(/ア/)) {
+                    kanaMode = KanaMode.Aiu;
+                    break;
+                }
+            }
+        }
+        for (const item of items) {
+            let paragraph_item_title = "";
+            for (const child of item.children) {
+                if (child.tag === "ItemTitle" || child.tag ===
+                    "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
+                    "Subitem5Title" || child.tag === "Subitem6Title" || child.tag === "Subitem7Title" || child.tag === "Subitem8Title" || child.tag ===
+                    "Subitem9Title" || child.tag === "Subitem10Title") {
+                    paragraph_item_title = child.text;
+                    break;
+                }
+            }
+            let num = parse_named_num(paragraph_item_title, kanaMode);
+            if (num) {
+                item.attr.Num = num;
+            }
+        }
+    }
 }
 
 export enum RelPos {

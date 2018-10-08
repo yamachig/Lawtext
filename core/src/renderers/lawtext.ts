@@ -50,6 +50,9 @@ function renderLawBody(el: std.LawBody, indent: number, LawNum: string): string 
         } else if (child.tag === "AppdxStyle") {
             blocks.push(renderAppdxStyle(child, indent));
 
+        } else if (child.tag === "AppdxFig") {
+            blocks.push(renderAppdxFig(child, indent));
+
         } else if (child.tag === "EnactStatement") {
             blocks.push(renderEnactStatement(child, indent));
 
@@ -57,7 +60,6 @@ function renderLawBody(el: std.LawBody, indent: number, LawNum: string): string 
         else if (child.tag === "Preamble") { throw new NotImplementedError(child.tag); }
         else if (child.tag === "AppdxNote") { throw new NotImplementedError(child.tag); }
         else if (child.tag === "Appdx") { throw new NotImplementedError(child.tag); }
-        else if (child.tag === "AppdxFig") { throw new NotImplementedError(child.tag); }
         else if (child.tag === "AppdxFormat") { throw new NotImplementedError(child.tag); }
         else { assertNever(child); }
     }
@@ -276,6 +278,51 @@ ${BLANK}
 
         } else if (child.tag === "Remarks") {
             blocks.push(renderRemarks(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return blocks.join("");
+}
+
+
+
+function renderAppdxFig(el: std.AppdxFig, indent: number): string {
+    let _____ = INDENT.repeat(indent);
+    let blocks: string[] = [];
+
+    let AppdxFigTitle = "";
+    let RelatedArticleNum = "";
+    let ChildItems: (std.FigStruct | std.TableStruct)[] = [];
+    for (let child of el.children) {
+
+        if (child.tag === "AppdxFigTitle") {
+            AppdxFigTitle = renderRun(child.children);
+
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = renderRun(child.children);
+
+        } else {
+            ChildItems.push(child);
+        }
+    }
+
+    if (AppdxFigTitle || RelatedArticleNum) {
+        blocks.push(
+ /* ========================= */`\
+${BLANK}
+${_____}${AppdxFigTitle}${RelatedArticleNum}
+${BLANK}
+`/* ========================= */);
+    }
+
+    for (let child of ChildItems) {
+        if (child.tag === "FigStruct") {
+            blocks.push(renderFigStruct(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "TableStruct") {
+            blocks.push(renderTableStruct(child, indent + 1)); /* >>>> INDENT >>>> */
 
         }
         else { assertNever(child); }
@@ -612,6 +659,7 @@ function renderRemarks(el: std.Remarks, indent: number): string {
 
         if (child.tag === "RemarksLabel") {
             RemarksLabel = renderRun(child.children);
+            if (child.attr.LineBreak === "true") RemarksLabel = /* $$$$$$ */`[LineBreak="true"]`/* $$$$$$ */ + RemarksLabel;
 
         } else {
             ChildItems.push(child);
@@ -700,7 +748,15 @@ ${_____}${bullet}${attr}${renderFigStruct(child, indent + 2).trim()}
 `/* ========================= */
                     : renderFigStruct(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
-            } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division" || child.tag === "Article" || child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10" || child.tag === "Remarks") {
+            } else if (child.tag === "Remarks") {
+                blocks.push((i == 0)
+                    ?
+ /* ========================= */`\
+${_____}${bullet}${attr}${renderRemarks(child, indent + 2).trim()}
+`/* ========================= */
+                    : renderRemarks(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
+
+            } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division" || child.tag === "Article" || child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
                 throw new NotImplementedError(child.tag);
             }
             else { assertNever(child); }
@@ -826,15 +882,15 @@ function renderBlockSentence(els: (std.Sentence | std.Column | std.Table)[], ind
         let el = els[i];
 
         if (el.tag === "Sentence") {
-            if (el.attr.WritingMode === "horizontal") runs.push(`[WritingMode="horizontal"]`);
+            if (el.attr.WritingMode === "horizontal") runs.push(/* $$$$$$ */`[WritingMode="horizontal"]`/* $$$$$$ */);
             runs.push(renderRun(el.children));
 
         } else if (el.tag === "Column") {
             if (i != 0) {
                 runs.push(/* $$$$$$ */MARGIN/* $$$$$$ */);
             }
+            if (el.attr.LineBreak === "true") runs.push(/* $$$$$$ */`[LineBreak="true"]`/* $$$$$$ */);
             for (let subel of el.children) {
-                if (el.attr.LineBreak === "true") runs.push(`[LineBreak="true"]`);
                 runs.push(renderRun(subel.children));
             }
 
@@ -858,9 +914,9 @@ function renderRun(els: (string | std.Line | std.QuoteStruct | std.ArithFormula 
 
     for (let el of els) {
         if (isString(el)) {
-            runs.push(/* $$$$$$ */el/* $$$$$$ */);
+            runs.push(/* $$$$$$ */el.replace(/\r|\n/, "")/* $$$$$$ */);
         } else if (el.isControl) {
-            runs.push(/* $$$$$$ */el.text/* $$$$$$ */);
+            runs.push(/* $$$$$$ */el.text.replace(/\r|\n/, "")/* $$$$$$ */);
 
         } else if (el.tag === "Ruby" || el.tag === "Sub" || el.tag === "Sup" || el.tag === "QuoteStruct") {
             runs.push(/* $$$$$$ */el.outerXML()/* $$$$$$ */);

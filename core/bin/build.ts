@@ -28,7 +28,7 @@ export async function main() {
         ...options,
         "tspegjs": {
             "noTslint": false,
-            "customHeader": `import * as util from "./util";`
+            "customHeader": `import * as util from "./util"; import * as std from "./std_law";`
         },
     } as peg.OutputFormatAmdCommonjs);
 
