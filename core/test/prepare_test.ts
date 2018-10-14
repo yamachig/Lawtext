@@ -22,7 +22,7 @@ export async function prepare() {
         format: "[{bar}] {percentage}% | {message}"
     }, Presets.rect);
     bar.start(1, 0);
-    const data = (await download({ withoutPict: true }, (ratio, message) => {
+    const data = (await download({ withoutPict: true }, undefined, (ratio, message) => {
         bar.update(
             ratio,
             { message: message.length > 30 ? message.slice(0, 30) + " ..." : message },
