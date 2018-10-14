@@ -14,8 +14,9 @@
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "strictNullChecks": true,
+        "declaration": true,
         // "suppressImplicitAnyIndexErrors": true
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules"],
+    "exclude": ["node_modules", "dist"],
 }
