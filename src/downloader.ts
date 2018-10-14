@@ -4,12 +4,22 @@ import { DOMParser } from "xmldom"
 import { range } from "./util"
 const fetch = (global["window"] && window.fetch) || require("node-fetch");
 
+
+export const FILENAMES = [
+    ...range(104, 145 + 1),
+    ...range(201, 215 + 1),
+    ...range(301, 364 + 1),
+    ...range(401, 430 + 1),
+    // ...range(430, 430 + 1),
+].map((v) => `${v}.zip`);
+
 export async function download<
     S extends boolean=false,
     T extends boolean=false,
     U extends boolean=false,
     >(
         options: Partial<{ full: S, withoutPict: T, list: U }>,
+        filenames?: string[],
         onProgress?: (ratio: number, message: string) => void,
 ):
     Promise<(
@@ -20,6 +30,7 @@ export async function download<
 
 export async function download(
     { full = false, withoutPict = false, list = false },
+    filenames = FILENAMES,
     onProgress: (ratio: number, message: string) => void = () => { },
 ) {
 
@@ -34,14 +45,6 @@ export async function download(
     })();
 
     progress(0, "開始しました");
-
-    const filenames = [
-        ...range(104, 145 + 1),
-        ...range(201, 215 + 1),
-        ...range(301, 364 + 1),
-        ...range(401, 430 + 1),
-        // ...range(430, 430 + 1),
-    ].map((v) => `${v}.zip`);
 
     const progressTotal = filenames.length + 3;
     let progressNow = 0;
