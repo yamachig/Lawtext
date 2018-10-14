@@ -20,7 +20,7 @@ MANIFEST
 dist
 dist-dev
 dist-prod
-./src/parser.ts
-./src/templates.js
-./src/lawnum_table.ts
-./test/lawdata
+src/parser.ts
+src/templates.js
+src/lawnum_table.ts
+test/lawdata
