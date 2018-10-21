@@ -1,6 +1,7 @@
 import * as util from "../util"
-import { isString } from "util";
-import { EditTable, compare } from "./edit_table";
+import { isString } from "util"
+import { EditTable, compare } from "./edit_table"
+import * as xpath from "xpath"
 
 export enum TagType {
     Open = "Open",
@@ -113,7 +114,7 @@ const warningAttrKey = new Set([
 
 export class ComparableEL implements util.JsonEL {
     tag: string = "";
-    attr: { [key: string]: string | undefined } = {};
+    attr: { [key: string]: string } = {};
     children: ComparableEL[] = [];
     index: number;
     closeIndex: number;
@@ -678,5 +679,191 @@ function collapseChange<T>(diff: EditTable<T>) {
             });
         }
     }
+    return ret;
+}
+
+export interface LawPosition {
+    line: number,
+    col: number,
+    str: string,
+}
+
+function getPosition([el, tt]: [ComparableEL, TagType], dom: Node): LawPosition | null {
+    let xPathString: string | null = null;
+    if (tt === TagType.Open) {
+        xPathString = el.getXPath();
+
+    } else if (tt === TagType.Empty) {
+        xPathString = el.getXPath();
+
+    } else if (tt === TagType.Close) {
+        xPathString = el.getXPath();
+
+    } else if (tt === TagType.Text) {
+        if (el.parent) {
+            xPathString = el.parent.getXPath();
+        }
+
+    } else { throw util.assertNever(tt); }
+
+    if (xPathString) {
+        try {
+            const r = xpath.evaluate(
+                xPathString,
+                dom,
+                (xpath as any).createNSResolver(dom),
+                (xpath as any).XPathResult.ANY_TYPE,
+                null as any,
+            ) as any;
+            const el = r.nodes[0];
+            return { line: el.lineNumber, col: el.columnNumber, str: `${el.lineNumber}:${el.columnNumber}` };
+        } catch (e) {
+            console.error(e);
+            console.error(xPathString);
+            return null;
+        }
+    } else {
+        return null;
+    }
+}
+
+
+export type LawDiffResultItemData = LawDiffElementMismatchData | LawDiffElementChangeData | LawDiffNoDiffData;
+
+export interface LawDiffElementMismatchData {
+    type: LawDiffType.ElementMismatch;
+    mostSeriousStatus: ProblemStatus;
+    diffTable: DiffTableData;
+}
+
+export interface LawDiffElementChangeData {
+    type: LawDiffType.ElementChange;
+    mostSeriousStatus: ProblemStatus;
+    nochangeKeys: string[];
+    changedKeys: [string, ProblemStatus][];
+    removedKeys: [string, ProblemStatus][];
+    addedKeys: [string, ProblemStatus][];
+    oldItem: DiffTableItemData;
+    newItem: DiffTableItemData;
+}
+
+export interface LawDiffNoDiffData {
+    type: LawDiffType.NoDiff;
+    mostSeriousStatus: ProblemStatus.NoProblem;
+    diffTable: DiffTableData;
+}
+
+export type DiffTableData = DiffTableRowData[];
+export type DiffTableRowData = DiffAddRowData | DiffRemoveRowData | DiffChangeRowData | DiffNoChangeRowData;
+export interface DiffAddRowData {
+    status: DiffStatus.Add,
+    oldItem: null,
+    newItem: DiffTableItemData,
+};
+export interface DiffRemoveRowData {
+    status: DiffStatus.Remove,
+    oldItem: DiffTableItemData,
+    newItem: null,
+};
+export interface DiffChangeRowData {
+    status: DiffStatus.Change,
+    oldItem: DiffTableItemData | null,
+    newItem: DiffTableItemData | null,
+};
+export interface DiffNoChangeRowData {
+    status: DiffStatus.NoChange,
+    oldItem: DiffTableItemData,
+    newItem: DiffTableItemData,
+};
+export type DiffTableItemData = {
+    tag: string,
+    attr: { [key: string]: string },
+    text: string,
+    type: TagType,
+    pos: LawPosition | null,
+};
+
+export function makeDiffData(d: LawDiffResult<string>, origDOM: Node, parsedDOM: Node) {
+
+    const ret: LawDiffResultItemData[] = [];
+
+    for (const ditem of d.items) {
+        if (ditem.type === LawDiffType.ElementMismatch || ditem.type === LawDiffType.NoDiff) {
+            const table: DiffTableData = [];
+            for (const drow of ditem.diffTable) {
+                let oldItem: DiffTableItemData | null = null;
+                let newItem: DiffTableItemData | null = null;
+                if (drow.oldItem) {
+                    const [oldEL, oldTT] = d.oldELs[drow.oldItem.index];
+                    const oldPos = ditem.type === LawDiffType.ElementMismatch ? getPosition([oldEL, oldTT], origDOM) : null;
+                    oldItem = {
+                        tag: oldEL.tag,
+                        attr: oldEL.attr,
+                        text: (oldTT === TagType.Text ? oldEL.text : ""),
+                        type: oldTT,
+                        pos: oldPos,
+                    };
+                }
+                if (drow.newItem) {
+                    const [newEL, newTT] = d.newELs[drow.newItem.index];
+                    const newPos = ditem.type === LawDiffType.ElementMismatch ? getPosition([newEL, newTT], parsedDOM) : null;
+                    newItem = {
+                        tag: newEL.tag,
+                        attr: newEL.attr,
+                        text: (newTT === TagType.Text ? newEL.text : ""),
+                        type: newTT,
+                        pos: newPos,
+                    };
+                }
+                table.push({
+                    status: drow.status,
+                    oldItem: oldItem,
+                    newItem: newItem,
+                } as any);
+            }
+            ret.push({
+                type: ditem.type,
+                mostSeriousStatus: ditem.mostSeriousStatus,
+                diffTable: table,
+            } as any);
+
+        } else if (ditem.type === LawDiffType.ElementChange) {
+            let oldItem: DiffTableItemData | null = null;
+            let newItem: DiffTableItemData | null = null;
+
+            const [oldEL, oldTT] = d.oldELs[ditem.oldIndex];
+            const oldPos = getPosition([oldEL, oldTT], origDOM);
+            oldItem = {
+                tag: oldEL.tag,
+                attr: oldEL.attr,
+                text: (oldTT === TagType.Text ? oldEL.text : ""),
+                type: oldTT,
+                pos: oldPos,
+            };
+
+            const [newEL, newTT] = d.newELs[ditem.newIndex];
+            const newPos = getPosition([newEL, newTT], parsedDOM);
+            newItem = {
+                tag: newEL.tag,
+                attr: newEL.attr,
+                text: (newTT === TagType.Text ? newEL.text : ""),
+                type: newTT,
+                pos: newPos,
+            };
+
+            ret.push({
+                type: ditem.type,
+                mostSeriousStatus: ditem.mostSeriousStatus,
+                nochangeKeys: ditem.nochangeKeys,
+                changedKeys: ditem.changedKeys,
+                removedKeys: ditem.removedKeys,
+                addedKeys: ditem.addedKeys,
+                oldItem: oldItem,
+                newItem: newItem,
+            });
+
+        } else { util.assertNever(ditem); }
+    }
+
     return ret;
 }
