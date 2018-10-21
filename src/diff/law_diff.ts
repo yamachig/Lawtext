@@ -114,7 +114,7 @@ const warningAttrKey = new Set([
 
 export class ComparableEL implements util.JsonEL {
     tag: string = "";
-    attr: { [key: string]: string } = {};
+    attr: { [key: string]: string | undefined } = {};
     children: ComparableEL[] = [];
     index: number;
     closeIndex: number;
@@ -777,7 +777,7 @@ export interface DiffNoChangeRowData {
 };
 export type DiffTableItemData = {
     tag: string,
-    attr: { [key: string]: string },
+    attr: { [key: string]: string | undefined },
     text: string,
     type: TagType,
     pos: LawPosition | null,

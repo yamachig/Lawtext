@@ -21,7 +21,7 @@ const NodeType = {
 
 export interface JsonEL {
     tag: string
-    attr: { [key: string]: string }
+    attr: { [key: string]: string | undefined }
     children: (JsonEL | string)[]
 }
 
@@ -60,12 +60,12 @@ export function innerXML(el: JsonEL, with_control_el: boolean = false): string {
 let _currentID = 0;
 export class EL implements JsonEL {
     tag: string
-    attr: { [key: string]: string }
+    attr: { [key: string]: string | undefined }
     children: (EL | string)[]
     _text: string | null
     id: number
 
-    constructor(tag: string, attr: { [key: string]: string } = {}, children: (EL | string)[] = []) {
+    constructor(tag: string, attr: { [key: string]: string | undefined } = {}, children: (EL | string)[] = []) {
         // if(!tag) {
         //     error(`${JSON.stringify(tag)} is invalid tag.`);
         // }
