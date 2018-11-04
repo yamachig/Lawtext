@@ -565,7 +565,8 @@ export const list_tags = [
 
 
 export function get_lawtype(text: string): string | null {
-    if (text.match(/^法律/)) return "Act";
+    if (text.match(/^憲法/)) return "Constitution";
+    else if (text.match(/^法律/)) return "Act";
     else if (text.match(/^政令/)) return "CabinetOrder";
     else if (text.match(/^勅令/)) return "ImperialOrder";
     else if (text.match(/^^\S*[^政勅]令/)) return "MinisterialOrdinance";

@@ -287,11 +287,7 @@ it("Render and Parse Lawtext", async () => {
     const d = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.WarningAsNoDiff);
     const table: string[][] = [];
 
-    console.log("here1");
-
     const diffData = makeDiffData(d, origDOM, parsedDOM);
-
-    console.log("here2");
 
     for (const ditem of diffData) {
         if (ditem.type === LawDiffType.ElementMismatch) {

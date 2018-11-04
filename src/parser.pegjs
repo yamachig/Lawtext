@@ -63,7 +63,7 @@ law =
             if(law_title.law_num) {
                 law.append(new EL("LawNum", {}, [law_title.law_num]));
 
-                let m = law_title.law_num.match(/(明治|大正|昭和|平成)([一二三四五六七八九十]+)年(\S+?)第([一二三四五六七八九十百千]+)号/);
+                let m = law_title.law_num.match(/^(明治|大正|昭和|平成)([一二三四五六七八九十]+)年(\S+?)(?:第([一二三四五六七八九十百千]+)号)?$/);
                 if(m) {
                     let [era, year, law_type, num] = m.slice(1);
 
@@ -76,8 +76,13 @@ law =
                     let law_type_val = util.get_lawtype(law_type);
                     if(law_type_val !== null) law.attr.LawType = law_type_val;
 
-                    let num_val = util.parse_kanji_num(num);
-                    if(num_val !== null) law.attr.Num = num_val;
+                    if(num) {
+                        let num_val = util.parse_kanji_num(num);
+                        if(num_val !== null) law.attr.Num = num_val;
+                        else law.attr.Num = "";
+                    } else {
+                        law.attr.Num = "";
+                    }
                 }
             }
 
