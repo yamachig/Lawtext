@@ -577,7 +577,10 @@ ${_____}${INDENT}${ParagraphCaption}
         } else if (child.tag === "List") {
             blocks.push(renderList(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
-        } else if (child.tag === "AmendProvision" || child.tag === "Class") {
+        } else if (child.tag === "AmendProvision") {
+            blocks.push(renderAmendProvision(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Class") {
             throw new NotImplementedError(child.tag);
 
         }
@@ -603,6 +606,41 @@ function renderList(el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, i
         }
         else { assertNever(child); }
     }
+
+    return blocks.join("");
+}
+
+
+
+function renderAmendProvision(el: std.AmendProvision, indent: number): string {
+    let _____ = INDENT.repeat(indent);
+    let blocks: string[] = [];
+
+    blocks.push(
+ /* ========================= */`\
+${BLANK}
+${_____}:AmendProvision:
+`/* ========================= */);
+
+    for (let child of el.children) {
+
+        if (child.tag === "AmendProvisionSentence") {
+            blocks.push(renderBlockSentence(child.children, indent));
+
+        } else if (child.tag === "NewProvision") {
+            blocks.push(
+ /* ========================= */`\
+${_____}${child.outerXML()}
+`/* ========================= */);
+
+        }
+        else { assertNever(child); }
+    }
+
+    blocks.push(
+ /* ========================= */`\
+${BLANK}
+`/* ========================= */);
 
     return blocks.join("");
 }

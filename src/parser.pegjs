@@ -557,6 +557,8 @@ no_name_paragraph_item "no_name_paragraph_item" =
     }
 
 paragraph_item_child "paragraph_item_child" =
+    amend_provision
+    /
     table_struct
     /
     paragraph_item
@@ -593,6 +595,24 @@ list "list" =
     }
 
 
+
+
+amend_provision "amend_provision" =
+    ":AmendProvision:" NEWLINE
+    target:(
+        inline:(
+            xml_element
+            /
+            _inline: INLINE
+            {
+                return new EL("AmendProvisionSentence", {}, [
+                    new EL("Sentence", {}, _inline),
+                ]);
+            }
+        ) NEWLINE
+        { return inline; }
+    )+
+    { return new EL("AmendProvision", {}, target); }
 
 
 

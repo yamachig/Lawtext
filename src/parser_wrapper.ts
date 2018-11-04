@@ -11,7 +11,7 @@ function lex(text: string): [string, { [key: number]: number }, number] {
     let replaced_lines: string[] = [];
     let indent_depth = 0;
     let indent_memo: { [key: number]: number } = {};
-    let re_indent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章]|[附付]\s+則|別表))/;
+    let re_indent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章][^。]*$|[附付]\s+則[^。]*$|別表[^。]*$))/;
     let re_force_dedent_parentheses = /^(?:  |　|\t)[(（][^)）]*[)）][ 　\t]*$/
     let re_indent_in_toc = /^(?:  |　|\t)/;
     let in_toc = false;
