@@ -30,6 +30,22 @@ start =
 
 law =
     law_title:law_title?
+    preambles:(
+        (":前文:" / ":Preamble:") NEWLINE
+        target:(
+            inline:INLINE NEWLINE
+            {
+                return new EL("Paragraph", {}, [
+                    new EL("ParagraphNum"),
+                    new EL("ParagraphSentence", {}, [
+                        new EL("Sentence", {}, inline),
+                    ]),
+                ]);
+            }
+        )+
+        NEWLINE+
+        { return new EL("Preamble", {}, target); }
+    )*
     enact_statements:(
         INDENT INDENT
             target:enact_statement+
@@ -72,6 +88,7 @@ law =
 
         law.append(law_body);
 
+        law_body.extend(preambles || []);
         law_body.extend(enact_statements || []);
         law_body.append(toc);
         law_body.append(main_provision);

@@ -56,8 +56,10 @@ function renderLawBody(el: std.LawBody, indent: number, LawNum: string): string 
         } else if (child.tag === "EnactStatement") {
             blocks.push(renderEnactStatement(child, indent));
 
+        } else if (child.tag === "Preamble") {
+            blocks.push(renderPreamble(child, indent));
+
         }
-        else if (child.tag === "Preamble") { throw new NotImplementedError(child.tag); }
         else if (child.tag === "AppdxNote") { throw new NotImplementedError(child.tag); }
         else if (child.tag === "Appdx") { throw new NotImplementedError(child.tag); }
         else if (child.tag === "AppdxFormat") { throw new NotImplementedError(child.tag); }
@@ -94,6 +96,24 @@ function renderEnactStatement(el: std.EnactStatement, indent: number): string {
     return (
  /* ========================= */`
 ${_____}${INDENT}${INDENT}${el.text}
+${BLANK}
+`/* ========================= */);
+}
+
+
+
+function renderPreamble(el: std.Preamble, indent: number): string {
+    let _____ = INDENT.repeat(indent);
+    let blocks: string[] = [];
+
+    for (const paragraph of el.children) {
+        blocks.push(renderParagraphItem(paragraph, indent));
+    }
+
+    return (
+ /* ========================= */`
+${_____}:前文:
+${blocks.join("")}
 ${BLANK}
 `/* ========================= */);
 }
@@ -485,6 +505,10 @@ ${_____}${INDENT}${ArticleCaption}
         let Paragraph = Paragraphs[i];
         blocks.push(renderParagraphItem(Paragraph, indent, (i == 0 && ArticleTitle) ? ArticleTitle : undefined));
     }
+    blocks.push(
+ /* ========================= */`\
+${BLANK}
+`/* ========================= */);
 
     return blocks.join("");
 }
