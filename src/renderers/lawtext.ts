@@ -818,8 +818,30 @@ ${_____}${bullet}${attr}${renderRemarks(child, indent + 2).trim()}
 `/* ========================= */
                     : renderRemarks(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
-            } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division" || child.tag === "Article" || child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
-                throw new NotImplementedError(child.tag);
+            } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
+                blocks.push((i == 0)
+                    ?
+ /* ========================= */`\
+${_____}${bullet}${attr}${renderArticleGroup(child, indent + 2).trim()}
+`/* ========================= */
+                    : renderArticleGroup(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
+
+            } else if (child.tag === "Article") {
+                blocks.push((i == 0)
+                    ?
+ /* ========================= */`\
+${_____}${bullet}${attr}${renderArticle(child, indent + 2).trim()}
+`/* ========================= */
+                    : renderArticle(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
+
+            } else if (child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
+                blocks.push((i == 0)
+                    ?
+ /* ========================= */`\
+${_____}${bullet}${attr}${renderParagraphItem(child, indent + 2).trim()}
+`/* ========================= */
+                    : renderParagraphItem(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
+
             }
             else { assertNever(child); }
         }
