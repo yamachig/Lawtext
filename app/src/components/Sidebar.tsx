@@ -1,9 +1,9 @@
 import * as React from "react";
 import styled from 'styled-components';
-import { Dispatchers } from '../containers/LawtextAppPageContainer';
-import { LawtextAppPageState, RouteState } from '../states';
 import * as std from "../../../core/src/std_law"
 import { assertNever } from "../../../core/src/util"
+import { Dispatchers } from '../containers/LawtextAppPageContainer';
+import { LawtextAppPageState, RouteState } from '../states';
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
@@ -23,19 +23,36 @@ const SidebarHeadDiv = styled.div`
 
 class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
 
-    state = { lawSearchKey: "" };
+    public state = { lawSearchKey: "" };
 
     constructor(props: Props) {
         super(props);
         this.state = { lawSearchKey: props.lawSearchKey || "" };
     }
 
-    handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
+    public handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         this.props.history.push(`/${this.state.lawSearchKey}`);
     }
 
-    render() {
+    public render() {
+
+        const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+            this.handleSearchSubmit(e);
+        }
+
+        const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            this.setState({ lawSearchKey: e.target.value });
+        }
+
+        const downloadDocxAll = () => {
+            this.props.downloadDocx();
+        }
+
+        const downloadDocxSelection = () => {
+            this.props.downloadDocx(true);
+        }
+
         return (
             <SidebarHeadDiv>
                 <div className="container-fluid">
@@ -58,12 +75,12 @@ class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
                             <form
                                 className="list-group-item list-group-item-sm"
                                 style={{ fontSize: "0.8em", padding: 0 }}
-                                onSubmit={(e) => this.handleSearchSubmit(e)}
+                                onSubmit={formOnSubmit}
                             >
                                 <div className="input-group">
                                     <input
                                         name="lawSearchKey"
-                                        onChange={(event) => this.setState({ lawSearchKey: event.target.value })}
+                                        onChange={lawSearchKeyOnChange}
                                         className="form-control form-control-sm search-law-textbox"
                                         style={{
                                             border: "none",
@@ -104,7 +121,7 @@ class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
                             <div>
                                 <span className="btn-group btn-group-sm">
                                     <button
-                                        onClick={() => this.props.downloadDocx()}
+                                        onClick={downloadDocxAll}
                                         className="btn btn-outline-primary"
                                     >
                                         Word
@@ -124,7 +141,7 @@ class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
                                 </span>
                                 <span className="btn-group btn-group-sm" style={{ marginTop: "0.2rem" }}>
                                     <button
-                                        onClick={() => this.props.downloadDocx(true)}
+                                        onClick={downloadDocxSelection}
                                         className="btn btn-outline-primary"
                                         style={{ padding: "0 8px" }}
                                     >
@@ -173,7 +190,7 @@ const LawNavDiv = styled.div`
 
 class SidebarBody extends React.Component<Props> {
 
-    render() {
+    public render() {
         return (
             <SidebarBodyDiv>
                 {this.renderNavBlock()}
@@ -181,10 +198,10 @@ class SidebarBody extends React.Component<Props> {
         );
     }
 
-    processLawBody(law_body: std.LawBody) {
+    protected processLawBody(lawBody: std.LawBody) {
         const list: JSX.Element[] = [];
 
-        for (const el of law_body.children) {
+        for (const el of lawBody.children) {
             if (el.tag === "TOC") {
                 list.push(...this.processTOC(el, 0));
             } else if (el.tag === "MainProvision") {
@@ -198,6 +215,7 @@ class SidebarBody extends React.Component<Props> {
             } else if (el.tag === "AppdxFig") {
                 list.push(...this.processAppdxFig(el, 0));
             } else if (el.tag === "LawTitle" || el.tag === "EnactStatement" || el.tag === "Preamble" || el.tag === "AppdxNote" || el.tag === "Appdx" || el.tag === "AppdxFormat") {
+                console.error("processLawBody", el);
             } else {
                 assertNever(el);
             }
@@ -210,10 +228,14 @@ class SidebarBody extends React.Component<Props> {
         )
     }
 
-    processTOC(toc: std.TOC, indent: number) {
+    protected processTOC(toc: std.TOC, indent: number) {
         const list: JSX.Element[] = [];
 
         const tocLabel = toc.children.find((el) => el.tag === "TOCLabel") as std.TOCLabel | undefined;
+
+        const onClick = () => {
+            this.props.scrollLaw(toc.id.toString());
+        }
 
         if (tocLabel) {
             list.push(
@@ -222,7 +244,7 @@ class SidebarBody extends React.Component<Props> {
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(toc.id.toString())}
+                    onClick={onClick}
                 >
                     {tocLabel.text}
                 </TOCItemDiv >
@@ -232,21 +254,26 @@ class SidebarBody extends React.Component<Props> {
         return list;
     }
 
-    processArticleGroup(
-        article_group: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division,
+    protected processArticleGroup(
+        articleGroup: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division,
         indent: number,
     ) {
         const list: JSX.Element[] = [];
 
-        for (const el of article_group.children) {
+        for (const el of articleGroup.children) {
             if (el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
+
+                const onClick = () => {
+                    this.props.scrollLaw(articleGroup.id.toString());
+                }
+
                 list.push(
                     <TOCItemDiv
                         key={el.id}
                         style={{
                             paddingLeft: (indent + 2) + "em",
                         }}
-                        onClick={() => this.props.scrollLaw(article_group.id.toString())}
+                        onClick={onClick}
                         title={el.text}
                     >
                         {el.text}
@@ -254,20 +281,21 @@ class SidebarBody extends React.Component<Props> {
                 );
 
             } else if (el.tag === "Part" || el.tag === "Chapter" || el.tag === "Section" || el.tag === "Subsection" || el.tag === "Division" || el.tag === "Article" || el.tag === "Paragraph") {
+                //
             } else {
                 assertNever(el);
             }
         }
 
-        for (const el of article_group.children) {
+        for (const el of articleGroup.children) {
             if (el.tag === "Part" || el.tag === "Chapter" || el.tag === "Section" || el.tag === "Subsection" || el.tag === "Division") {
-                list.push(...this.processArticleGroup(el, article_group.tag === "MainProvision" ? indent : indent + 1));
+                list.push(...this.processArticleGroup(el, articleGroup.tag === "MainProvision" ? indent : indent + 1));
 
             } else if (el.tag === "Article") {
-                list.push(...this.processArticle(el, article_group.tag == "MainProvision" ? indent : indent + 1));
+                list.push(...this.processArticle(el, articleGroup.tag === "MainProvision" ? indent : indent + 1));
 
-            } else if (el.tag === "Paragraph") {
-            } else if (el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
+            } else if (el.tag === "Paragraph" || el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
+                //
             } else {
                 assertNever(el);
             }
@@ -276,7 +304,7 @@ class SidebarBody extends React.Component<Props> {
         return list;
     }
 
-    processArticle(article: std.Article, indent: number) {
+    protected processArticle(article: std.Article, indent: number) {
         const list: JSX.Element[] = [];
 
         const articleCaption = article.children.find((el) => el.tag === "ArticleCaption") as std.ArticleCaption | undefined;
@@ -286,8 +314,12 @@ class SidebarBody extends React.Component<Props> {
             const name = articleTitle.text;
             let text = name;
             if (articleCaption) {
-                let append_text = articleCaption.text;
-                text += (append_text[0] == "（" ? "" : "　") + append_text;
+                const appendText = articleCaption.text;
+                text += (appendText[0] === "（" ? "" : "　") + appendText;
+            }
+
+            const onClick = () => {
+                this.props.scrollLaw(article.id.toString());
             }
 
             list.push(
@@ -296,7 +328,7 @@ class SidebarBody extends React.Component<Props> {
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(article.id.toString())}
+                    onClick={onClick}
                     title={text}
                 >
                     {text}
@@ -307,22 +339,27 @@ class SidebarBody extends React.Component<Props> {
         return list;
     }
 
-    processSupplProvision(supplProvision: std.SupplProvision, indent: number) {
+    protected processSupplProvision(supplProvision: std.SupplProvision, indent: number) {
         const list: JSX.Element[] = [];
 
         const supplProvisionLabel = supplProvision.children.find((el) => el.tag === "SupplProvisionLabel") as std.SupplProvisionLabel | undefined;
 
         if (supplProvisionLabel) {
             const name = supplProvisionLabel.text;
-            const amendLawNum = supplProvision.attr["AmendLawNum"] || "";
-            let text = (name + (amendLawNum ? ("（" + amendLawNum + "）") : "")).replace(/[\s　]+/, "");
+            const amendLawNum = supplProvision.attr.AmendLawNum || "";
+            const text = (name + (amendLawNum ? ("（" + amendLawNum + "）") : "")).replace(/[\s　]+/, "");
+
+            const onClick = () => {
+                this.props.scrollLaw(supplProvision.id.toString());
+            }
+
             list.push(
                 <TOCItemDiv
                     key={supplProvision.id}
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(supplProvision.id.toString())}
+                    onClick={onClick}
                     title={text}
                 >
                     {text}
@@ -333,19 +370,23 @@ class SidebarBody extends React.Component<Props> {
         return list;
     }
 
-    processAppdxTable(appdxTable: std.AppdxTable, indent: number) {
+    protected processAppdxTable(appdxTable: std.AppdxTable, indent: number) {
         const list: JSX.Element[] = [];
 
         const appdxTableTitle = appdxTable.children.find((el) => el.tag === "AppdxTableTitle") as std.AppdxTableTitle | undefined;
 
         if (appdxTableTitle) {
+            const onClick = () => {
+                this.props.scrollLaw(appdxTable.id.toString());
+            }
+
             list.push(
                 <TOCItemDiv
                     key={appdxTable.id}
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(appdxTable.id.toString())}
+                    onClick={onClick}
                     title={appdxTableTitle.text}
                 >
                     {appdxTableTitle.text}
@@ -356,19 +397,22 @@ class SidebarBody extends React.Component<Props> {
         return list;
     }
 
-    processAppdxStyle(appdxStyle: std.AppdxStyle, indent: number) {
+    protected processAppdxStyle(appdxStyle: std.AppdxStyle, indent: number) {
         const list: JSX.Element[] = [];
 
         const appdxStyleTitle = appdxStyle.children.find((el) => el.tag === "AppdxStyleTitle") as std.AppdxStyleTitle | undefined;
 
         if (appdxStyleTitle) {
+            const onClick = () => {
+                this.props.scrollLaw(appdxStyle.id.toString());
+            }
             list.push(
                 <TOCItemDiv
                     key={appdxStyle.id}
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(appdxStyle.id.toString())}
+                    onClick={onClick}
                     title={appdxStyleTitle.text}
                 >
                     {appdxStyleTitle.text}
@@ -379,19 +423,22 @@ class SidebarBody extends React.Component<Props> {
         return list;
     }
 
-    processAppdxFig(appdxStyle: std.AppdxFig, indent: number) {
+    protected processAppdxFig(appdxFig: std.AppdxFig, indent: number) {
         const list: JSX.Element[] = [];
 
-        const appdxStyleTitle = appdxStyle.children.find((el) => el.tag === "AppdxFigTitle") as std.AppdxFigTitle | undefined;
+        const appdxStyleTitle = appdxFig.children.find((el) => el.tag === "AppdxFigTitle") as std.AppdxFigTitle | undefined;
 
         if (appdxStyleTitle) {
+            const onClick = () => {
+                this.props.scrollLaw(appdxFig.id.toString());
+            }
             list.push(
                 <TOCItemDiv
-                    key={appdxStyle.id}
+                    key={appdxFig.id}
                     style={{
                         paddingLeft: (indent + 2) + "em",
                     }}
-                    onClick={() => this.props.scrollLaw(appdxStyle.id.toString())}
+                    onClick={onClick}
                     title={appdxStyleTitle.text}
                 >
                     {appdxStyleTitle.text}
@@ -402,7 +449,7 @@ class SidebarBody extends React.Component<Props> {
         return list;
     }
 
-    renderNavBlock() {
+    protected renderNavBlock() {
         if (this.props.law) {
             const lawBody = this.props.law.children.find((el) => el.tag === "LawBody") as std.LawBody;
             return (
@@ -423,7 +470,7 @@ const SidebarFooterDiv = styled.div`
 `;
 
 class SidebarFooter extends React.Component<Props> {
-    render() {
+    public render() {
         return (
             <SidebarFooterDiv>
                 <div style={{ fontSize: "0.8em", textAlign: "center", padding: "0.3em 0", color: "rgb(192, 192, 192)" }}>
@@ -446,7 +493,7 @@ const SidebarDiv = styled.div`
 `;
 
 export class Sidebar extends React.Component<Props> {
-    render() {
+    public render() {
         return (
             <SidebarDiv>
                 <SidebarHead {...this.props} />

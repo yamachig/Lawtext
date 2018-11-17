@@ -1,23 +1,25 @@
-import * as React from "react";
 import * as $ from "jquery";
-import { injectGlobal, default as styled } from 'styled-components';
+import * as React from "react";
 import AnimateHeight from 'react-animate-height';
+import EventListener from 'react-event-listener';
+import { default as styled, injectGlobal } from 'styled-components';
+import { isString } from "util";
+import * as analyzer from "../../../core/src/analyzer";
+import * as std from "../../../core/src/std_law"
+import { assertNever, EL, NotImplementedError } from "../../../core/src/util"
+import { LawtextAppPageActions } from "../actions/index";
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
 import { LawtextAppPageState, RouteState } from '../states';
-import * as std from "../../../core/src/std_law"
-import { EL, assertNever, NotImplementedError } from "../../../core/src/util"
-import * as analyzer from "../../../core/src/analyzer";
-import EventListener from 'react-event-listener';
-import { isString } from "util";
 import { store } from "../store";
-import { LawtextAppPageActions } from "../actions/index";
+
+let injectGlobalOutput: void;
 
 const MARGIN = "　";
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
 
-function em(input) {
-    var emSize = parseFloat($("body").css("font-size"));
+const em = (input) => {
+    const emSize = parseFloat($("body").css("font-size"));
     return (emSize * input);
 }
 
@@ -27,12 +29,12 @@ const LawViewDiv = styled.div`
 `;
 
 export class LawView extends React.Component<Props> {
-    render() {
+    public render() {
         return (
             <LawViewDiv>
                 {this.props.hasError && <LawViewError {...this.props} />}
                 {this.props.law && <LawComponent el={this.props.law} indent={0} />}
-            </LawViewDiv >
+            </LawViewDiv>
         );
     }
 }
@@ -41,7 +43,7 @@ const LawViewErrorDiv = styled.div`
 `;
 
 class LawViewError extends React.Component<Props> {
-    render() {
+    public render() {
         return (
             <LawViewErrorDiv className="alert alert-danger">
                 レンダリング時に{this.props.errors.length}個のエラーが発生しました
@@ -61,13 +63,13 @@ class BaseLawComponent<P = {}, S = {}, SS = any> extends React.Component<P, S & 
         this.state = Object.assign({}, state, { hasError: false, error: null });
     }
 
-    componentDidCatch(error, info) {
-        this.setState({ hasError: true, error: error });
+    public componentDidCatch(error, info) {
+        this.setState(Object.assign({}, this.state, { hasError: true, error }));
         const currentState = store.getState().lawtextAppPage;
         store.dispatch(LawtextAppPageActions.modifyState({ hasError: true, errors: [...currentState.errors, error] }));
     }
 
-    render(): JSX.Element | JSX.Element[] | null | undefined {
+    public render(): JSX.Element | JSX.Element[] | null | undefined {
         if (this.state.hasError) {
             return this.renderError();
         } else {
@@ -75,11 +77,11 @@ class BaseLawComponent<P = {}, S = {}, SS = any> extends React.Component<P, S & 
         }
     }
 
-    renderNormal(): JSX.Element | JSX.Element[] | null | undefined {
+    protected renderNormal(): JSX.Element | JSX.Element[] | null | undefined {
         return undefined;
     }
 
-    renderError(): JSX.Element | JSX.Element[] | null | undefined {
+    protected renderError(): JSX.Element | JSX.Element[] | null | undefined {
         return (
             <ErrorComponentDiv className="alert alert-danger">
                 レンダリング時にエラーが発生しました：
@@ -131,7 +133,7 @@ type AnyLawComponentProps = (
 );
 
 class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         if (isLawComponentProps(this.props)) { return <LawComponent {...this.props} /> }
         else if (isLawBodyComponentProps(this.props)) { return <LawBodyComponent {...this.props} /> }
         else if (isLawTitleComponentProps(this.props)) { return <LawTitleComponent {...this.props} /> }
@@ -173,28 +175,28 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
 
 
 interface PreambleComponentProps extends ELComponentProps { el: std.Preamble, indent: number };
-function isPreambleComponentProps(props: ELComponentProps): props is PreambleComponentProps { return props.el.tag === "Preamble"; }
+const isPreambleComponentProps = (props: ELComponentProps): props is PreambleComponentProps => props.el.tag === "Preamble"
 
 interface AppdxNoteComponentProps extends ELComponentProps { el: std.AppdxNote, indent: number };
-function isAppdxNoteComponentProps(props: ELComponentProps): props is AppdxNoteComponentProps { return props.el.tag === "AppdxNote"; }
+const isAppdxNoteComponentProps = (props: ELComponentProps): props is AppdxNoteComponentProps => props.el.tag === "AppdxNote"
 
 interface AppdxComponentProps extends ELComponentProps { el: std.Appdx, indent: number };
-function isAppdxComponentProps(props: ELComponentProps): props is AppdxComponentProps { return props.el.tag === "Appdx"; }
+const isAppdxComponentProps = (props: ELComponentProps): props is AppdxComponentProps => props.el.tag === "Appdx"
 
 interface AppdxFormatComponentProps extends ELComponentProps { el: std.AppdxFormat, indent: number };
-function isAppdxFormatComponentProps(props: ELComponentProps): props is AppdxFormatComponentProps { return props.el.tag === "AppdxFormat"; }
+const isAppdxFormatComponentProps = (props: ELComponentProps): props is AppdxFormatComponentProps => props.el.tag === "AppdxFormat"
 
 interface SupplNoteComponentProps extends ELComponentProps { el: std.SupplNote, indent: number };
-function isSupplNoteComponentProps(props: ELComponentProps): props is SupplNoteComponentProps { return props.el.tag === "SupplNote"; }
+const isSupplNoteComponentProps = (props: ELComponentProps): props is SupplNoteComponentProps => props.el.tag === "SupplNote"
 
 interface SupplProvisionAppdxComponentProps extends ELComponentProps { el: std.SupplProvisionAppdx, indent: number };
-function isSupplProvisionAppdxComponentProps(props: ELComponentProps): props is SupplProvisionAppdxComponentProps { return props.el.tag === "SupplProvisionAppdx"; }
+const isSupplProvisionAppdxComponentProps = (props: ELComponentProps): props is SupplProvisionAppdxComponentProps => props.el.tag === "SupplProvisionAppdx"
 
 interface NoteStructComponentProps extends ELComponentProps { el: std.NoteStruct, indent: number };
-function isNoteStructComponentProps(props: ELComponentProps): props is NoteStructComponentProps { return props.el.tag === "NoteStruct"; }
+const isNoteStructComponentProps = (props: ELComponentProps): props is NoteStructComponentProps => props.el.tag === "NoteStruct"
 
 interface FormatStructComponentProps extends ELComponentProps { el: std.FormatStruct, indent: number };
-function isFormatStructComponentProps(props: ELComponentProps): props is FormatStructComponentProps { return props.el.tag === "FormatStruct"; }
+const isFormatStructComponentProps = (props: ELComponentProps): props is FormatStructComponentProps => props.el.tag === "FormatStruct"
 
 
 
@@ -211,15 +213,15 @@ function isFormatStructComponentProps(props: ELComponentProps): props is FormatS
 
 interface LawComponentProps extends ELComponentProps { el: std.Law, indent: number };
 
-function isLawComponentProps(props: ELComponentProps): props is LawComponentProps { return props.el.tag === "Law"; }
+const isLawComponentProps = (props: ELComponentProps): props is LawComponentProps => props.el.tag === "Law"
 
 class LawComponent extends BaseLawComponent<LawComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
         let LawNum = "";
-        let LawBody: std.LawBody | undefined = undefined;
-        for (let child of el.children) {
+        let LawBody: std.LawBody | undefined;
+        for (const child of el.children) {
             if (child.tag === "LawNum") {
                 LawNum = child.text;
             } else if (child.tag === "LawBody") {
@@ -237,17 +239,16 @@ class LawComponent extends BaseLawComponent<LawComponentProps> {
 
 interface LawBodyComponentProps extends ELComponentProps { el: std.LawBody, indent: number, LawNum: string };
 
-function isLawBodyComponentProps(props: ELComponentProps): props is LawBodyComponentProps { return props.el.tag === "LawBody"; }
+const isLawBodyComponentProps = (props: ELComponentProps): props is LawBodyComponentProps => props.el.tag === "LawBody"
 
 class LawBodyComponent extends BaseLawComponent<LawBodyComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
         const LawNum = this.props.LawNum;
 
-        let blocks: JSX.Element[] = [];
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        const blocks: JSX.Element[] = [];
+        for (const child of el.children) {
 
             if (child.tag === "LawTitle") {
                 blocks.push(<LawTitleComponent el={child} indent={indent} LawNum={LawNum} key={child.id} />);
@@ -295,10 +296,10 @@ const LawNumDiv = styled.div`
 
 interface LawTitleComponentProps extends ELComponentProps { el: std.LawTitle, indent: number, LawNum: string };
 
-function isLawTitleComponentProps(props: ELComponentProps): props is LawTitleComponentProps { return props.el.tag === "LawTitle"; }
+const isLawTitleComponentProps = (props: ELComponentProps): props is LawTitleComponentProps => props.el.tag === "LawTitle"
 
 class LawTitleComponent extends BaseLawComponent<LawTitleComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
         const LawNum = this.props.LawNum;
@@ -328,10 +329,10 @@ const EnactStatementDiv = styled.div`
 
 interface EnactStatementComponentProps extends ELComponentProps { el: std.EnactStatement, indent: number };
 
-function isEnactStatementComponentProps(props: ELComponentProps): props is EnactStatementComponentProps { return props.el.tag === "EnactStatement"; }
+const isEnactStatementComponentProps = (props: ELComponentProps): props is EnactStatementComponentProps => props.el.tag === "EnactStatement"
 
 class EnactStatementComponent extends BaseLawComponent<EnactStatementComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
@@ -352,17 +353,16 @@ const TOCDiv = styled.div`
 
 interface TOCComponentProps extends ELComponentProps { el: std.TOC, indent: number };
 
-function isTOCComponentProps(props: ELComponentProps): props is TOCComponentProps { return props.el.tag === "TOC"; }
+const isTOCComponentProps = (props: ELComponentProps): props is TOCComponentProps => props.el.tag === "TOC"
 
 class TOCComponent extends BaseLawComponent<TOCComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
         let tocLabelText: string = "";
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        for (const child of el.children) {
 
             if (child.tag === "TOCLabel") {
 
@@ -400,20 +400,20 @@ class TOCComponent extends BaseLawComponent<TOCComponentProps> {
 
 interface TOCItemComponentProps extends ELComponentProps { el: std.TOCPart | std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCSupplProvision | std.TOCArticle | std.TOCAppdxTableLabel, indent: number };
 
-function isTOCItemComponentProps(props: ELComponentProps): props is TOCItemComponentProps {
+const isTOCItemComponentProps = (props: ELComponentProps): props is TOCItemComponentProps => {
     return props.el.tag === "TOCPart" || props.el.tag === "TOCPart" || props.el.tag === "TOCChapter" || props.el.tag === "TOCSection" || props.el.tag === "TOCSubsection" || props.el.tag === "TOCDivision" || props.el.tag === "TOCSupplProvision" || props.el.tag === "TOCArticle" || props.el.tag === "TOCAppdxTableLabel";
 }
 
 class TOCItemComponent extends BaseLawComponent<TOCItemComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
         if (el.tag === "TOCArticle") {
             let ArticleTitle: std.ArticleTitle | null = null;
             let ArticleCaption: std.ArticleCaption | null = null;
-            for (let child of el.children) {
+            for (const child of el.children) {
                 if (child.tag === "ArticleTitle") {
                     ArticleTitle = child;
                 } else if (child.tag === "ArticleCaption") {
@@ -439,9 +439,8 @@ class TOCItemComponent extends BaseLawComponent<TOCItemComponentProps> {
         } else {
             let TocItemTitle: std.PartTitle | std.ChapterTitle | std.SectionTitle | std.SubsectionTitle | std.DivisionTitle | std.SupplProvisionLabel | null = null;
             let ArticleRange: std.ArticleRange | null = null;
-            let TOCItems: (std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCArticle)[] = [];
-            for (let i = 0; i < el.children.length; i++) {
-                const child = el.children[i];
+            const TOCItems: Array<std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCArticle> = [];
+            for (const child of el.children) {
 
                 if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle" || child.tag === "SupplProvisionLabel") {
                     TocItemTitle = child;
@@ -466,8 +465,7 @@ class TOCItemComponent extends BaseLawComponent<TOCItemComponentProps> {
                     </div>
                 );
             }
-            for (let i = 0; i < TOCItems.length; i++) {
-                const TOCItem = TOCItems[i];
+            for (const TOCItem of TOCItems) {
                 blocks.push(<TOCItemComponent el={TOCItem} indent={indent + 1} key={TOCItem.id} />); /* >>>> INDENT >>>> */
             }
 
@@ -488,19 +486,19 @@ const AppdxTableTitleDiv = styled.div`
 
 interface AppdxTableComponentProps extends ELComponentProps { el: std.AppdxTable, indent: number };
 
-function isAppdxTableComponentProps(props: ELComponentProps): props is AppdxTableComponentProps { return props.el.tag === "AppdxTable"; }
+const isAppdxTableComponentProps = (props: ELComponentProps): props is AppdxTableComponentProps => props.el.tag === "AppdxTable"
 
 class AppdxTableComponent extends BaseLawComponent<AppdxTableComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let AppdxTableTitle: std.AppdxTableTitle | null = null;
         let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        let ChildItems: (std.TableStruct | std.Item | std.Remarks)[] = [];
-        for (let child of el.children) {
+        const ChildItems: Array<std.TableStruct | std.Item | std.Remarks> = [];
+        for (const child of el.children) {
 
             if (child.tag === "AppdxTableTitle") {
                 AppdxTableTitle = child;
@@ -526,8 +524,7 @@ class AppdxTableComponent extends BaseLawComponent<AppdxTableComponentProps> {
             );
         }
 
-        for (let i = 0; i < ChildItems.length; i++) {
-            const child = ChildItems[i];
+        for (const child of ChildItems) {
             if (child.tag === "TableStruct") {
                 blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
@@ -565,19 +562,19 @@ const AppdxStyleTitleDiv = styled.div`
 
 interface AppdxStyleComponentProps extends ELComponentProps { el: std.AppdxStyle, indent: number };
 
-function isAppdxStyleComponentProps(props: ELComponentProps): props is AppdxStyleComponentProps { return props.el.tag === "AppdxStyle"; }
+const isAppdxStyleComponentProps = (props: ELComponentProps): props is AppdxStyleComponentProps => props.el.tag === "AppdxStyle"
 
 class AppdxStyleComponent extends BaseLawComponent<AppdxStyleComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let AppdxStyleTitle: std.AppdxStyleTitle | null = null;
         let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        let ChildItems: (std.StyleStruct | std.Item | std.Remarks)[] = [];
-        for (let child of el.children) {
+        const ChildItems: Array<std.StyleStruct | std.Item | std.Remarks> = [];
+        for (const child of el.children) {
 
             if (child.tag === "AppdxStyleTitle") {
                 AppdxStyleTitle = child;
@@ -603,8 +600,7 @@ class AppdxStyleComponent extends BaseLawComponent<AppdxStyleComponentProps> {
             );
         }
 
-        for (let i = 0; i < ChildItems.length; i++) {
-            const child = ChildItems[i];
+        for (const child of ChildItems) {
             if (child.tag === "StyleStruct") {
                 blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
@@ -640,19 +636,19 @@ const AppdxFigTitleDiv = styled.div`
 
 interface AppdxFigComponentProps extends ELComponentProps { el: std.AppdxFig, indent: number };
 
-function isAppdxFigComponentProps(props: ELComponentProps): props is AppdxFigComponentProps { return props.el.tag === "AppdxFig"; }
+const isAppdxFigComponentProps = (props: ELComponentProps): props is AppdxFigComponentProps => props.el.tag === "AppdxFig"
 
 class AppdxFigComponent extends BaseLawComponent<AppdxFigComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let AppdxFigTitle: std.AppdxFigTitle | null = null;
         let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        let ChildItems: (std.TableStruct | std.FigStruct)[] = [];
-        for (let child of el.children) {
+        const ChildItems: Array<std.TableStruct | std.FigStruct> = [];
+        for (const child of el.children) {
 
             if (child.tag === "AppdxFigTitle") {
                 AppdxFigTitle = child;
@@ -678,8 +674,7 @@ class AppdxFigComponent extends BaseLawComponent<AppdxFigComponentProps> {
             );
         }
 
-        for (let i = 0; i < ChildItems.length; i++) {
-            const child = ChildItems[i];
+        for (const child of ChildItems) {
             if (child.tag === "TableStruct") {
                 blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
@@ -712,19 +707,19 @@ const SupplProvisionAppdxTableTitleDiv = styled.div`
 
 interface SupplProvisionAppdxTableComponentProps extends ELComponentProps { el: std.SupplProvisionAppdxTable, indent: number };
 
-function isSupplProvisionAppdxTableComponentProps(props: ELComponentProps): props is SupplProvisionAppdxTableComponentProps { return props.el.tag === "SupplProvisionAppdxTable"; }
+const isSupplProvisionAppdxTableComponentProps = (props: ELComponentProps): props is SupplProvisionAppdxTableComponentProps => props.el.tag === "SupplProvisionAppdxTable"
 
 class SupplProvisionAppdxTableComponent extends BaseLawComponent<SupplProvisionAppdxTableComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let SupplProvisionAppdxTableTitle: std.SupplProvisionAppdxTableTitle | null = null;
         let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        let ChildItems: (std.TableStruct | std.Item | std.Remarks)[] = [];
-        for (let child of el.children) {
+        const ChildItems: Array<std.TableStruct | std.Item | std.Remarks> = [];
+        for (const child of el.children) {
 
             if (child.tag === "SupplProvisionAppdxTableTitle") {
                 SupplProvisionAppdxTableTitle = child;
@@ -750,8 +745,7 @@ class SupplProvisionAppdxTableComponent extends BaseLawComponent<SupplProvisionA
             );
         }
 
-        for (let i = 0; i < ChildItems.length; i++) {
-            const child = ChildItems[i];
+        for (const child of ChildItems) {
             if (child.tag === "TableStruct") {
                 blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
@@ -789,19 +783,19 @@ const SupplProvisionAppdxStyleTitleDiv = styled.div`
 
 interface SupplProvisionAppdxStyleComponentProps extends ELComponentProps { el: std.SupplProvisionAppdxStyle, indent: number };
 
-function isSupplProvisionAppdxStyleComponentProps(props: ELComponentProps): props is SupplProvisionAppdxStyleComponentProps { return props.el.tag === "SupplProvisionAppdxStyle"; }
+const isSupplProvisionAppdxStyleComponentProps = (props: ELComponentProps): props is SupplProvisionAppdxStyleComponentProps => props.el.tag === "SupplProvisionAppdxStyle"
 
 class SupplProvisionAppdxStyleComponent extends BaseLawComponent<SupplProvisionAppdxStyleComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let SupplProvisionAppdxStyleTitle: std.SupplProvisionAppdxStyleTitle | null = null;
         let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        let ChildItems: (std.StyleStruct | std.Item | std.Remarks)[] = [];
-        for (let child of el.children) {
+        const ChildItems: Array<std.StyleStruct | std.Item | std.Remarks> = [];
+        for (const child of el.children) {
 
             if (child.tag === "SupplProvisionAppdxStyleTitle") {
                 SupplProvisionAppdxStyleTitle = child;
@@ -827,8 +821,7 @@ class SupplProvisionAppdxStyleComponent extends BaseLawComponent<SupplProvisionA
             );
         }
 
-        for (let i = 0; i < ChildItems.length; i++) {
-            const child = ChildItems[i];
+        for (const child of ChildItems) {
             if (child.tag === "StyleStruct") {
                 blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
@@ -856,18 +849,18 @@ class SupplProvisionAppdxStyleComponent extends BaseLawComponent<SupplProvisionA
 
 interface SupplProvisionComponentProps extends ELComponentProps { el: std.SupplProvision, indent: number };
 
-function isSupplProvisionComponentProps(props: ELComponentProps): props is SupplProvisionComponentProps { return props.el.tag === "SupplProvision"; }
+const isSupplProvisionComponentProps = (props: ELComponentProps): props is SupplProvisionComponentProps => props.el.tag === "SupplProvision"
 
 class SupplProvisionComponent extends BaseLawComponent<SupplProvisionComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let SupplProvisionLabel: std.SupplProvisionLabel | null = null;
-        let ChildItems: (std.Chapter | std.Article | std.Paragraph | std.SupplProvisionAppdxTable | std.SupplProvisionAppdxStyle | std.SupplProvisionAppdx)[] = [];
-        for (let child of el.children) {
+        const ChildItems: Array<std.Chapter | std.Article | std.Paragraph | std.SupplProvisionAppdxTable | std.SupplProvisionAppdxStyle | std.SupplProvisionAppdx> = [];
+        for (const child of el.children) {
 
             if (child.tag === "SupplProvisionLabel") {
                 SupplProvisionLabel = child;
@@ -878,8 +871,8 @@ class SupplProvisionComponent extends BaseLawComponent<SupplProvisionComponentPr
         }
 
         if (SupplProvisionLabel) {
-            let Extract = el.attr.Extract == "true" ? `${MARGIN}抄` : "";
-            let AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
+            const Extract = el.attr.Extract === "true" ? `${MARGIN}抄` : "";
+            const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
             blocks.push(
                 <ArticleGroupTitleDiv
                     style={{ marginLeft: `${indent + 3}em` }}
@@ -890,8 +883,7 @@ class SupplProvisionComponent extends BaseLawComponent<SupplProvisionComponentPr
             );
         }
 
-        for (let i = 0; i < ChildItems.length; i++) {
-            const child = ChildItems[i];
+        for (const child of ChildItems) {
             if (child.tag === "Article") {
                 blocks.push(<ArticleComponent el={child} indent={indent} key={child.id} />);
 
@@ -928,18 +920,18 @@ class SupplProvisionComponent extends BaseLawComponent<SupplProvisionComponentPr
 
 interface ArticleGroupComponentProps extends ELComponentProps { el: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division, indent: number };
 
-function isArticleGroupComponentProps(props: ELComponentProps): props is ArticleGroupComponentProps { return props.el.tag === "MainProvision" || props.el.tag === "Part" || props.el.tag === "Chapter" || props.el.tag === "Section" || props.el.tag === "Subsection" || props.el.tag === "Division"; }
+const isArticleGroupComponentProps = (props: ELComponentProps): props is ArticleGroupComponentProps => props.el.tag === "MainProvision" || props.el.tag === "Part" || props.el.tag === "Chapter" || props.el.tag === "Section" || props.el.tag === "Subsection" || props.el.tag === "Division"
 
 class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let ArticleGroupTitle: std.PartTitle | std.ChapterTitle | std.SectionTitle | std.SubsectionTitle | std.DivisionTitle | null = null;
-        let ChildItems: (std.Part | std.Chapter | std.Section | std.Subsection | std.Division | std.Article | std.Paragraph)[] = [];
-        for (let child of el.children) {
+        const ChildItems: Array<std.Part | std.Chapter | std.Section | std.Subsection | std.Division | std.Article | std.Paragraph> = [];
+        for (const child of el.children) {
 
             if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle") {
                 ArticleGroupTitle = child;
@@ -953,8 +945,7 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
             blocks.push(<ArticleGroupTitleComponent el={ArticleGroupTitle} indent={indent} key={ArticleGroupTitle.id} />);
         }
 
-        for (let i = 0; i < ChildItems.length; i++) {
-            const child = ChildItems[i];
+        for (const child of ChildItems) {
             if (child.tag === "Article") {
                 blocks.push(<ArticleComponent el={child} indent={indent} key={child.id} />);
 
@@ -994,14 +985,14 @@ const ArticleGroupTitleDiv = styled.div`
 
 interface ArticleGroupTitleComponentProps extends ELComponentProps { el: std.PartTitle | std.ChapterTitle | std.SectionTitle | std.SubsectionTitle | std.DivisionTitle, indent: number };
 
-function isArticleGroupTitleComponentProps(props: ELComponentProps): props is ArticleGroupTitleComponentProps { return props.el.tag === "PartTitle" || props.el.tag === "ChapterTitle" || props.el.tag === "SectionTitle" || props.el.tag === "SubsectionTitle" || props.el.tag === "DivisionTitle"; }
+const isArticleGroupTitleComponentProps = (props: ELComponentProps): props is ArticleGroupTitleComponentProps => props.el.tag === "PartTitle" || props.el.tag === "ChapterTitle" || props.el.tag === "SectionTitle" || props.el.tag === "SubsectionTitle" || props.el.tag === "DivisionTitle"
 
 class ArticleGroupTitleComponent extends BaseLawComponent<ArticleGroupTitleComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let titleIndent =
+        const titleIndent =
             el.tag === "PartTitle"
                 ? 2
                 : el.tag === "ChapterTitle"
@@ -1035,19 +1026,19 @@ const ArticleCaptionDiv = styled.div`
 
 interface ArticleComponentProps extends ELComponentProps { el: std.Article, indent: number };
 
-function isArticleComponentProps(props: ELComponentProps): props is ArticleComponentProps { return props.el.tag === "Article"; }
+const isArticleComponentProps = (props: ELComponentProps): props is ArticleComponentProps => props.el.tag === "Article"
 
 class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let ArticleCaption: std.ArticleCaption | null = null;
         let ArticleTitle: std.ArticleTitle | null = null;
-        let Paragraphs: std.Paragraph[] = [];
-        for (let child of el.children) {
+        const Paragraphs: std.Paragraph[] = [];
+        for (const child of el.children) {
 
             if (child.tag === "ArticleCaption") {
                 ArticleCaption = child;
@@ -1077,7 +1068,7 @@ class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
         }
 
         for (let i = 0; i < Paragraphs.length; i++) {
-            let Paragraph = Paragraphs[i];
+            const Paragraph = Paragraphs[i];
             blocks.push(
                 <ParagraphItemComponent
                     el={Paragraph}
@@ -1125,21 +1116,21 @@ const ItemDiv = styled.div`
 
 interface ParagraphItemComponentProps extends ELComponentProps { el: std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, indent: number, ArticleTitle?: std.ArticleTitle };
 
-function isParagraphItemComponentProps(props: ELComponentProps): props is ParagraphItemComponentProps { return props.el.tag === "Paragraph" || props.el.tag === "Item" || props.el.tag === "Subitem1" || props.el.tag === "Subitem2" || props.el.tag === "Subitem3" || props.el.tag === "Subitem4" || props.el.tag === "Subitem5" || props.el.tag === "Subitem6" || props.el.tag === "Subitem7" || props.el.tag === "Subitem8" || props.el.tag === "Subitem9" || props.el.tag === "Subitem10"; }
+const isParagraphItemComponentProps = (props: ELComponentProps): props is ParagraphItemComponentProps => props.el.tag === "Paragraph" || props.el.tag === "Item" || props.el.tag === "Subitem1" || props.el.tag === "Subitem2" || props.el.tag === "Subitem3" || props.el.tag === "Subitem4" || props.el.tag === "Subitem5" || props.el.tag === "Subitem6" || props.el.tag === "Subitem7" || props.el.tag === "Subitem8" || props.el.tag === "Subitem9" || props.el.tag === "Subitem10"
 
 class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
         const ArticleTitle = this.props.ArticleTitle;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let ParagraphCaption: std.ParagraphCaption | null = null;
         let ParagraphItemTitle: std.ParagraphNum | std.ItemTitle | std.Subitem1Title | std.Subitem2Title | std.Subitem3Title | std.Subitem4Title | std.Subitem5Title | std.Subitem6Title | std.Subitem7Title | std.Subitem8Title | std.Subitem9Title | std.Subitem10Title | null = null;
-        let ParagraphItemSentence: std.ParagraphSentence | std.ItemSentence | std.Subitem1Sentence | std.Subitem2Sentence | std.Subitem3Sentence | std.Subitem4Sentence | std.Subitem5Sentence | std.Subitem6Sentence | std.Subitem7Sentence | std.Subitem8Sentence | std.Subitem9Sentence | std.Subitem10Sentence | undefined = undefined;
-        let Children: (std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10 | std.AmendProvision | std.Class | std.TableStruct | std.FigStruct | std.StyleStruct | std.List)[] = [];
-        for (let child of el.children) {
+        let ParagraphItemSentence: std.ParagraphSentence | std.ItemSentence | std.Subitem1Sentence | std.Subitem2Sentence | std.Subitem3Sentence | std.Subitem4Sentence | std.Subitem5Sentence | std.Subitem6Sentence | std.Subitem7Sentence | std.Subitem8Sentence | std.Subitem9Sentence | std.Subitem10Sentence | undefined;
+        const Children: Array<std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10 | std.AmendProvision | std.Class | std.TableStruct | std.FigStruct | std.StyleStruct | std.List> = [];
+        for (const child of el.children) {
 
             if (child.tag === "ParagraphCaption") {
                 ParagraphCaption = child;
@@ -1171,13 +1162,13 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
             );
         }
 
-        let Title = (
+        const Title = (
             <span style={{ fontWeight: "bold" }}>
                 {ParagraphItemTitle && <RunComponent els={ParagraphItemTitle.children} />}
                 {ArticleTitle && <RunComponent els={ArticleTitle.children} />}
             </span>
         );
-        let SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
+        const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
         blocks.push(
             <BlockSentenceComponent
                 els={SentenceChildren}
@@ -1188,8 +1179,7 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
             />
         );
 
-        for (let i = 0; i < Children.length; i++) {
-            const child = Children[i];
+        for (const child of Children) {
             if (child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
                 blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
@@ -1235,17 +1225,16 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
 
 interface ListComponentProps extends ELComponentProps { el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, indent: number };
 
-function isListComponentProps(props: ELComponentProps): props is ListComponentProps { return props.el.tag === "List" || props.el.tag === "Sublist1" || props.el.tag === "Sublist2" || props.el.tag === "Sublist3"; }
+const isListComponentProps = (props: ELComponentProps): props is ListComponentProps => props.el.tag === "List" || props.el.tag === "Sublist1" || props.el.tag === "Sublist2" || props.el.tag === "Sublist3"
 
 class ListComponent extends BaseLawComponent<ListComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        for (const child of el.children) {
 
             if (child.tag === "ListSentence" || child.tag === "Sublist1Sentence" || child.tag === "Sublist2Sentence" || child.tag === "Sublist3Sentence") {
                 blocks.push(<BlockSentenceComponent els={child.children} indent={indent} key={child.id} />);
@@ -1268,17 +1257,16 @@ class ListComponent extends BaseLawComponent<ListComponentProps> {
 
 interface TableStructComponentProps extends ELComponentProps { el: std.TableStruct, indent: number };
 
-function isTableStructComponentProps(props: ELComponentProps): props is TableStructComponentProps { return props.el.tag === "TableStruct"; }
+const isTableStructComponentProps = (props: ELComponentProps): props is TableStructComponentProps => props.el.tag === "TableStruct"
 
 class TableStructComponent extends BaseLawComponent<TableStructComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        for (const child of el.children) {
 
             if (child.tag === "TableStructTitle") {
                 blocks.push(
@@ -1315,17 +1303,16 @@ const Table = styled.table`
 
 interface TableComponentProps extends ELComponentProps { el: std.Table, indent: number };
 
-function isTableComponentProps(props: ELComponentProps): props is TableComponentProps { return props.el.tag === "Table"; }
+const isTableComponentProps = (props: ELComponentProps): props is TableComponentProps => props.el.tag === "Table"
 
 class TableComponent extends BaseLawComponent<TableComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let rows: JSX.Element[] = [];
+        const rows: JSX.Element[] = [];
 
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        for (const child of el.children) {
 
             if (child.tag === "TableRow" || child.tag === "TableHeaderRow") {
                 rows.push(<TableRowComponent el={child} indent={indent} key={child.id} />);
@@ -1349,18 +1336,18 @@ class TableComponent extends BaseLawComponent<TableComponentProps> {
 
 interface RemarksComponentProps extends ELComponentProps { el: std.Remarks, indent: number };
 
-function isRemarksComponentProps(props: ELComponentProps): props is RemarksComponentProps { return props.el.tag === "Remarks"; }
+const isRemarksComponentProps = (props: ELComponentProps): props is RemarksComponentProps => props.el.tag === "Remarks"
 
 class RemarksComponent extends BaseLawComponent<RemarksComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         let RemarksLabel: std.RemarksLabel | null = null;
-        let ChildItems: (std.Item | std.Sentence)[] = [];
-        for (let child of el.children) {
+        const ChildItems: Array<std.Item | std.Sentence> = [];
+        for (const child of el.children) {
 
             if (child.tag === "RemarksLabel") {
                 RemarksLabel = child;
@@ -1371,7 +1358,7 @@ class RemarksComponent extends BaseLawComponent<RemarksComponentProps> {
         }
 
         for (let i = 0; i < ChildItems.length; i++) {
-            let child = ChildItems[i];
+            const child = ChildItems[i];
 
             if (child.tag === "Sentence") {
                 blocks.push(
@@ -1384,7 +1371,7 @@ class RemarksComponent extends BaseLawComponent<RemarksComponentProps> {
                 );
 
             } else if (child.tag === "Item") {
-                if (i == 0 && RemarksLabel) {
+                if (i === 0 && RemarksLabel) {
                     blocks.push(
                         <div key={RemarksLabel.id}>
                             <RunComponent els={RemarksLabel.children} style={{ fontWeight: "bold" }} />
@@ -1407,17 +1394,16 @@ class RemarksComponent extends BaseLawComponent<RemarksComponentProps> {
 
 interface TableRowComponentProps extends ELComponentProps { el: std.TableRow | std.TableHeaderRow, indent: number };
 
-function isTableRowComponentProps(props: ELComponentProps): props is TableRowComponentProps { return props.el.tag === "TableRow" || props.el.tag === "TableHeaderRow"; }
+const isTableRowComponentProps = (props: ELComponentProps): props is TableRowComponentProps => props.el.tag === "TableRow" || props.el.tag === "TableHeaderRow"
 
 class TableRowComponent extends BaseLawComponent<TableRowComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let columns: JSX.Element[] = [];
+        const columns: JSX.Element[] = [];
 
-        for (let i = 0; i < el.children.length; i++) {
-            let child = el.children[i];
+        for (const child of el.children) {
 
             if (child.tag === "TableColumn" || child.tag === "TableHeaderColumn") {
                 columns.push(<TableColumnComponent el={child} indent={1} key={child.id} />);
@@ -1449,14 +1435,14 @@ const Th = styled.th`
 
 interface TableColumnComponentProps extends ELComponentProps { el: std.TableColumn | std.TableHeaderColumn, indent: number };
 
-function isTableColumnComponentProps(props: ELComponentProps): props is TableColumnComponentProps { return props.el.tag === "TableColumn" || props.el.tag === "TableHeaderColumn"; }
+const isTableColumnComponentProps = (props: ELComponentProps): props is TableColumnComponentProps => props.el.tag === "TableColumn" || props.el.tag === "TableHeaderColumn"
 
 class TableColumnComponent extends BaseLawComponent<TableColumnComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
         if (el.tag === "TableHeaderColumn") {
             blocks.push(
@@ -1466,8 +1452,7 @@ class TableColumnComponent extends BaseLawComponent<TableColumnComponentProps> {
             );
 
         } else if (el.tag === "TableColumn") {
-            for (let i = 0; i < el.children.length; i++) {
-                let child = el.children[i];
+            for (const child of el.children) {
 
                 if (child.tag === "Sentence" || child.tag === "Column") {
                     blocks.push(<BlockSentenceComponent els={[child]} indent={0} key={child.id} />);
@@ -1494,7 +1479,7 @@ class TableColumnComponent extends BaseLawComponent<TableColumnComponentProps> {
         else { assertNever(el); }
 
         if (el.tag === "TableColumn") {
-            let style: React.CSSProperties = {};
+            const style: React.CSSProperties = {};
             if (el.attr.BorderTop) style.borderTopStyle = el.attr.BorderTop;
             if (el.attr.BorderBottom) style.borderBottomStyle = el.attr.BorderBottom;
             if (el.attr.BorderLeft) style.borderLeftStyle = el.attr.BorderLeft;
@@ -1522,17 +1507,16 @@ class TableColumnComponent extends BaseLawComponent<TableColumnComponentProps> {
 
 interface StyleStructComponentProps extends ELComponentProps { el: std.StyleStruct, indent: number };
 
-function isStyleStructComponentProps(props: ELComponentProps): props is StyleStructComponentProps { return props.el.tag === "StyleStruct"; }
+const isStyleStructComponentProps = (props: ELComponentProps): props is StyleStructComponentProps => props.el.tag === "StyleStruct"
 
 class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        for (const child of el.children) {
 
             if (child.tag === "StyleStructTitle") {
                 blocks.push(
@@ -1543,7 +1527,7 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
 
             } else if (child.tag === "Style") {
 
-                for (let subchild of child.children) {
+                for (const subchild of child.children) {
                     if (isString(subchild)) {
                         throw new NotImplementedError("string");
 
@@ -1584,17 +1568,16 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
 
 interface FigStructComponentProps extends ELComponentProps { el: std.FigStruct, indent: number };
 
-function isFigStructComponentProps(props: ELComponentProps): props is FigStructComponentProps { return props.el.tag === "FigStruct"; }
+const isFigStructComponentProps = (props: ELComponentProps): props is FigStructComponentProps => props.el.tag === "FigStruct"
 
 class FigStructComponent extends BaseLawComponent<FigStructComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        for (const child of el.children) {
 
             if (child.tag === "FigStructTitle") {
                 blocks.push(
@@ -1627,10 +1610,10 @@ class FigStructComponent extends BaseLawComponent<FigStructComponentProps> {
 
 interface FigRunComponentProps extends ELComponentProps { el: std.Fig };
 
-function isFigRunComponentProps(props: ELComponentProps): props is FigRunComponentProps { return props.el.tag === "Fig"; }
+const isFigRunComponentProps = (props: ELComponentProps): props is FigRunComponentProps => props.el.tag === "Fig"
 
 class FigRunComponent extends BaseLawComponent<FigRunComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
 
         if (el.children.length > 0) {
@@ -1646,17 +1629,16 @@ class FigRunComponent extends BaseLawComponent<FigRunComponentProps> {
 
 interface AmendProvisionComponentProps extends ELComponentProps { el: std.AmendProvision, indent: number };
 
-function isAmendProvisionComponentProps(props: ELComponentProps): props is AmendProvisionComponentProps { return props.el.tag === "AmendProvision"; }
+const isAmendProvisionComponentProps = (props: ELComponentProps): props is AmendProvisionComponentProps => props.el.tag === "AmendProvision"
 
 class AmendProvisionComponent extends BaseLawComponent<AmendProvisionComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        for (const child of el.children) {
 
             if (child.tag === "AmendProvisionSentence") {
                 blocks.push(<BlockSentenceComponent els={child.children} indent={indent} style={{ textIndent: "1em" }} key={child.id} />);
@@ -1683,23 +1665,23 @@ class AmendProvisionComponent extends BaseLawComponent<AmendProvisionComponentPr
 
 interface SentenceDummyProps extends ELComponentProps { el: std.Sentence, indent: number };
 
-function isSentenceDummyProps(props: ELComponentProps): props is SentenceDummyProps { return props.el.tag === "Sentence"; }
+const isSentenceDummyProps = (props: ELComponentProps): props is SentenceDummyProps => props.el.tag === "Sentence"
 
 
 const FirstColumnSpan = styled.span`
     color: rgb(121, 113, 0);
 `;
 
-interface BlockSentenceComponentProps { els: (std.Sentence | std.Column | std.Table)[], indent: number, Title?: JSX.Element, style?: React.CSSProperties };
+interface BlockSentenceComponentProps { els: Array<std.Sentence | std.Column | std.Table>, indent: number, Title?: JSX.Element, style?: React.CSSProperties };
 
 class BlockSentenceComponent extends BaseLawComponent<BlockSentenceComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const els = this.props.els;
         const indent = this.props.indent;
         const Title = this.props.Title;
         const style = this.props.style;
 
-        let runs: JSX.Element[] = [];
+        const runs: JSX.Element[] = [];
 
         if (Title) {
             runs.push(<span key={-2}>{Title}</span>);
@@ -1707,19 +1689,19 @@ class BlockSentenceComponent extends BaseLawComponent<BlockSentenceComponentProp
         }
 
         for (let i = 0; i < els.length; i++) {
-            let el = els[i];
+            const el = els[i];
 
             if (el.tag === "Sentence") {
                 runs.push(<RunComponent els={el.children} key={i * 2} />);
 
             } else if (el.tag === "Column") {
-                if (i != 0) {
+                if (i !== 0) {
                     runs.push(<span key={i * 2}>{MARGIN}</span>);
                 }
 
-                let subruns: JSX.Element[] = [];
+                const subruns: JSX.Element[] = [];
                 for (let j = 0; j < el.children.length; j++) {
-                    let subel = el.children[j];
+                    const subel = el.children[j];
                     subruns.push(<RunComponent els={subel.children} key={j} />);
                 }
 
@@ -1745,14 +1727,14 @@ class BlockSentenceComponent extends BaseLawComponent<BlockSentenceComponentProp
 }
 
 
-interface RunComponentProps { els: (string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub | std.__EL)[], style?: React.CSSProperties };
+interface RunComponentProps { els: Array<string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub | std.__EL>, style?: React.CSSProperties };
 
 class RunComponent extends BaseLawComponent<RunComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const els = this.props.els;
         const style = this.props.style;
 
-        let runs: JSX.Element[] = [];
+        const runs: JSX.Element[] = [];
 
 
         for (let i = 0; i < els.length; i++) {
@@ -1804,19 +1786,18 @@ class RunComponent extends BaseLawComponent<RunComponentProps> {
 
 
 type InlineEL = string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub;
-function isInlineEL(obj: string | EL): obj is InlineEL {
+const isInlineEL = (obj: string | EL): obj is InlineEL => {
     return isString(obj) || obj.tag === "Line" || obj.tag === "QuoteStruct" || obj.tag === "Ruby" || obj.tag === "Sup" || obj.tag === "Sub";
 }
-function isControl(obj: string | EL): obj is std.__EL {
+const isControl = (obj: string | EL): obj is std.__EL => {
     return !isString(obj) && obj.isControl;
 }
 
-function getInnerRun(el: EL) {
+const getInnerRun = (el: EL) => {
 
-    let ChildItems: (InlineEL | std.__EL)[] = [];
+    const ChildItems: Array<InlineEL | std.__EL> = [];
 
-    for (let i = 0; i < el.children.length; i++) {
-        const child = el.children[i];
+    for (const child of el.children) {
 
         if (isInlineEL(child) || isControl(child)) {
             ChildItems.push(child);
@@ -1831,10 +1812,10 @@ function getInnerRun(el: EL) {
 
 interface ControlRunComponentProps extends ELComponentProps { el: std.__EL };
 
-function isControlRunComponentProps(props: ELComponentProps): props is ControlRunComponentProps { return props.el.isControl; }
+const isControlRunComponentProps = (props: ELComponentProps): props is ControlRunComponentProps => props.el.isControl
 
 class ControlRunComponent extends BaseLawComponent<ControlRunComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
 
         if (el.tag === "____Declaration") {
@@ -1871,28 +1852,28 @@ class ControlRunComponent extends BaseLawComponent<ControlRunComponentProps> {
 }
 
 
-const ____DeclarationSpan = styled.span`
+const DeclarationSpan = styled.span`
     color: rgb(40, 167, 69);
 `;
 
 interface ____DeclarationComponentProps extends ELComponentProps { el: std.__EL };
 
 class ____DeclarationComponent extends BaseLawComponent<____DeclarationComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         return (
-            <____DeclarationSpan
+            <DeclarationSpan
                 data-lawtext_declaration_index={el.attr.declaration_index}
             >
                 {getInnerRun(el)}
-            </____DeclarationSpan>
+            </DeclarationSpan>
         );
     }
 }
 
 
 
-injectGlobal`
+injectGlobalOutput = injectGlobal`
 .lawtext-varref-open .lawtext-varref-text {
     background-color: rgba(127, 127, 127, 0.15);
     border-bottom: 1px solid rgb(40, 167, 69);
@@ -1904,7 +1885,7 @@ injectGlobal`
 }
 `;
 
-const ____VarRefSpan = styled.span`
+const VarRefSpan = styled.span`
 `;
 
 const VarRefTextSpan = styled.span`
@@ -1944,7 +1925,7 @@ const VarRefWindowSpan = styled.span`
 
 interface ____VarRefComponentProps extends ELComponentProps { el: std.__EL };
 
-type ____VarRefComponentState = { state: VarRefFloatState, arrowLeft: string };
+interface ____VarRefComponentState { state: VarRefFloatState, arrowLeft: string }
 
 class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ____VarRefComponentState> {
     private refText = React.createRef<HTMLSpanElement>();
@@ -1953,7 +1934,7 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
         super(props, { state: VarRefFloatState.HIDDEN, arrowLeft: "0" });
     }
 
-    onClick(e: React.MouseEvent<HTMLSpanElement>) {
+    public onClick(e: React.MouseEvent<HTMLSpanElement>) {
         if (this.state.state === VarRefFloatState.OPEN) {
             this.setState({ state: VarRefFloatState.CLOSED });
         } else {
@@ -1964,32 +1945,44 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
         }
     }
 
-    onAnimationEnd() {
+    public onAnimationEnd() {
         if (this.state.state === VarRefFloatState.CLOSED) {
             this.setState({ state: VarRefFloatState.HIDDEN });
         }
     }
 
-    updateSize() {
+    public updateSize() {
         if (!this.refText.current || !this.refWindow.current) return;
 
-        let text_offset = this.refText.current.getBoundingClientRect()
-        let window_offset = this.refWindow.current.getBoundingClientRect()
+        const textOffset = this.refText.current.getBoundingClientRect()
+        const windowOffset = this.refWindow.current.getBoundingClientRect()
 
-        let text_left = text_offset ? text_offset.left : 0;
-        let window_left = window_offset ? window_offset.left : 0;
-        let rel_left = text_left - window_left;
-        let left = Math.max(rel_left, em(0.2));
+        const textLeft = textOffset ? textOffset.left : 0;
+        const windowLeft = windowOffset ? windowOffset.left : 0;
+        const relLeft = textLeft - windowLeft;
+        const left = Math.max(relLeft, em(0.2));
         this.setState({ arrowLeft: `${left}px` });
     }
 
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
 
-        return (
-            <____VarRefSpan>
+        const varRefTextSpanOnClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+            this.onClick(e);
+        }
 
-                <VarRefTextSpan onClick={e => this.onClick(e)} innerRef={this.refText}>
+        const animateHeightOnAnimationEnd = () => {
+            this.onAnimationEnd();
+        }
+
+        const windowOnResize = () => {
+            this.updateSize();
+        }
+
+        return (
+            <VarRefSpan>
+
+                <VarRefTextSpan onClick={varRefTextSpanOnClick} innerRef={this.refText}>
                     {getInnerRun(el)}
                 </VarRefTextSpan>
 
@@ -2007,11 +2000,11 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
                         position: "relative",
                         color: "initial",
                     }}
-                    onAnimationEnd={() => this.onAnimationEnd()}
+                    onAnimationEnd={animateHeightOnAnimationEnd}
                 >
                     {(this.state.state !== VarRefFloatState.HIDDEN) && (
                         <VarRefFloatBlockInnerSpan>
-                            <EventListener target="window" onResize={() => this.updateSize()} />
+                            <EventListener target="window" onResize={windowOnResize} />
                             <VarRefArrowSpan style={{ marginLeft: this.state.arrowLeft }} />
                             <VarRefWindowSpan innerRef={this.refWindow}>
                                 <VarRefView el={el} />
@@ -2020,7 +2013,7 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
                     )}
                 </AnimateHeight>
 
-            </____VarRefSpan>
+            </VarRefSpan>
         );
     }
 }
@@ -2029,20 +2022,20 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
 interface VarRefViewProps extends ELComponentProps { el: std.__EL };
 
 class VarRefView extends BaseLawComponent<VarRefViewProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
 
         const analysis = store.getState().lawtextAppPage.analysis;
         if (!analysis) return null;
 
-        const declaration_index = Number(el.attr.ref_declaration_index);
-        const declaration = analysis.declarations.get(declaration_index);
-        const decl_container = declaration.name_pos.env.container;
-        const container_stack = decl_container.linealAscendant();
+        const declarationIndex = Number(el.attr.ref_declaration_index);
+        const declaration = analysis.declarations.get(declarationIndex);
+        const declContainer = declaration.namePos.env.container;
+        const containerStack = declContainer.linealAscendant();
         const names: string[] = [];
-        let last_container_el = decl_container.el;
+        let lastContainerEl = declContainer.el;
 
-        const title_tags = [
+        const titleTags = [
             "ArticleTitle",
             "ParagraphNum",
             "ItemTitle", "Subitem1Title", "Subitem2Title", "Subitem3Title",
@@ -2051,97 +2044,97 @@ class VarRefView extends BaseLawComponent<VarRefViewProps> {
             "Subitem10Title",
             "TableStructTitle",
         ];
-        const ignore_tags = ["ArticleCaption", "ParagraphCaption", ...title_tags];
+        const ignoreTags = ["ArticleCaption", "ParagraphCaption", ...titleTags];
 
-        for (const container of container_stack) {
+        for (const container of containerStack) {
             if (std.isEnactStatement(container.el)) {
                 names.push("（制定文）");
 
             } else if (std.isArticle(container.el)) {
-                let article_title = container.el.children
+                const articleTitle = container.el.children
                     .find(child => child.tag === "ArticleTitle") as std.ArticleTitle;
-                if (article_title) names.push(article_title.text);
+                if (articleTitle) names.push(articleTitle.text);
 
             } else if (std.isParagraph(container.el)) {
-                let paragraph_num = container.el.children
+                const paragraphNum = container.el.children
                     .find(child => child.tag === "ParagraphNum") as std.ParagraphNum;
-                if (paragraph_num) names.push(paragraph_num.text || "１");
+                if (paragraphNum) names.push(paragraphNum.text || "１");
 
             } else if (std.isItem(container.el) || std.isSubitem1(container.el) || std.isSubitem2(container.el) || std.isSubitem3(container.el) || std.isSubitem4(container.el) || std.isSubitem5(container.el) || std.isSubitem6(container.el) || std.isSubitem7(container.el) || std.isSubitem8(container.el) || std.isSubitem9(container.el) || std.isSubitem10(container.el)) {
-                let item_title = (container.el.children as EL[])
+                const itemTitle = (container.el.children as EL[])
                     .find(child => child.tag === `${container.el.tag}Title`);
-                if (item_title) names.push(item_title.text);
+                if (itemTitle) names.push(itemTitle.text);
 
             } else if (std.isTableStruct(container.el)) {
-                let table_struct_title_el = container.el.children
+                const tableStructTitleEl = container.el.children
                     .find(child => child.tag === "TableStructTitle");
-                let table_struct_title = table_struct_title_el
-                    ? table_struct_title_el.text
+                const tableStructTitle = tableStructTitleEl
+                    ? tableStructTitleEl.text
                     : "表"
-                names.push(table_struct_title + "（抜粋）");
+                names.push(tableStructTitle + "（抜粋）");
 
             } else {
                 continue;
             }
-            last_container_el = container.el;
+            lastContainerEl = container.el;
         }
 
-        const decl_el_title_tag = title_tags
-            .find(s => Boolean(s) && s.startsWith(last_container_el.tag));
+        const declElTitleTag = titleTags
+            .find(s => Boolean(s) && s.startsWith(lastContainerEl.tag));
 
-        if (decl_el_title_tag) {
-            const decl_el = new EL(
-                last_container_el.tag,
+        if (declElTitleTag) {
+            const declEl = new EL(
+                lastContainerEl.tag,
                 {},
                 [
-                    new EL(decl_el_title_tag, {}, [names.join("／")]),
-                    ...(last_container_el.children as EL[])
-                        .filter(child => ignore_tags.indexOf(child.tag) < 0)
+                    new EL(declElTitleTag, {}, [names.join("／")]),
+                    ...(lastContainerEl.children as EL[])
+                        .filter(child => ignoreTags.indexOf(child.tag) < 0)
                 ]
             );
 
-            if (std.isArticle(decl_el)) {
-                return <ArticleComponent el={decl_el} indent={0} />;
+            if (std.isArticle(declEl)) {
+                return <ArticleComponent el={declEl} indent={0} />;
 
-            } else if (std.isParagraph(decl_el) || std.isItem(decl_el) || std.isSubitem1(decl_el) || std.isSubitem2(decl_el) || std.isSubitem3(decl_el) || std.isSubitem4(decl_el) || std.isSubitem5(decl_el) || std.isSubitem6(decl_el) || std.isSubitem7(decl_el) || std.isSubitem8(decl_el) || std.isSubitem9(decl_el) || std.isSubitem10(decl_el)) {
-                return <ParagraphItemComponent el={decl_el} indent={0} />;
+            } else if (std.isParagraph(declEl) || std.isItem(declEl) || std.isSubitem1(declEl) || std.isSubitem2(declEl) || std.isSubitem3(declEl) || std.isSubitem4(declEl) || std.isSubitem5(declEl) || std.isSubitem6(declEl) || std.isSubitem7(declEl) || std.isSubitem8(declEl) || std.isSubitem9(declEl) || std.isSubitem10(declEl)) {
+                return <ParagraphItemComponent el={declEl} indent={0} />;
 
-            } else if (std.isTable(decl_el)) {
-                return <TableComponent el={decl_el} indent={0} />;
+            } else if (std.isTable(declEl)) {
+                return <TableComponent el={declEl} indent={0} />;
 
             } else {
-                throw new NotImplementedError(decl_el.tag);
+                throw new NotImplementedError(declEl.tag);
 
             }
-        } else if (std.isEnactStatement(last_container_el)) {
+        } else if (std.isEnactStatement(lastContainerEl)) {
             return (
                 <div style={{ paddingLeft: "1em", textIndent: "-1em" }}>
                     <span>{names.join("／")}</span>
                     <span>{MARGIN}</span>
-                    <RunComponent els={last_container_el.children} />
+                    <RunComponent els={lastContainerEl.children} />
                 </div>
             );
 
         } else {
-            throw new NotImplementedError(last_container_el.tag);
+            throw new NotImplementedError(lastContainerEl.tag);
 
         }
     }
 }
 
 
-const ____LawNumA = styled.a`
+const LawNumA = styled.a`
 `;
 
 interface ____LawNumComponentProps extends ELComponentProps { el: std.__EL };
 
 class ____LawNumComponent extends BaseLawComponent<____LawNumComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         return (
-            <____LawNumA href={`#${el.text}`} target="_blank">
+            <LawNumA href={`#${el.text}`} target="_blank">
                 {getInnerRun(el)}
-            </____LawNumA>
+            </LawNumA>
         );
     }
 }
@@ -2150,7 +2143,7 @@ class ____LawNumComponent extends BaseLawComponent<____LawNumComponentProps> {
 
 
 
-injectGlobal`
+injectGlobalOutput = injectGlobal`
 .lawtext-analyzed-parentheses
 {
     transition: background-color 0.3s;
@@ -2219,19 +2212,18 @@ injectGlobal`
 }
 `;
 
-const __ParenthesesSpan = styled.span`
+const ParenthesesSpan = styled.span`
 `;
 
 interface __ParenthesesComponentProps extends ELComponentProps { el: std.__EL };
 
 class __ParenthesesComponent extends BaseLawComponent<__ParenthesesComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
 
-        let blocks: JSX.Element[] = [];
+        const blocks: JSX.Element[] = [];
 
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        for (const child of el.children) {
 
             if (isString(child)) {
                 throw new NotImplementedError("string");
@@ -2251,107 +2243,107 @@ class __ParenthesesComponent extends BaseLawComponent<__ParenthesesComponentProp
             }
         }
         return (
-            <__ParenthesesSpan
+            <ParenthesesSpan
                 className="lawtext-analyzed-parentheses"
                 data-lawtext_parentheses_type={el.attr.type}
                 data-lawtext_parentheses_depth={el.attr.depth}
             >
                 {blocks}
-            </__ParenthesesSpan>
+            </ParenthesesSpan>
         );
     }
 }
 
 
-const __PStartSpan = styled.span`
+const PStartSpan = styled.span`
 `;
 
 interface __PStartComponentProps extends ELComponentProps { el: std.__EL };
 
 class __PStartComponent extends BaseLawComponent<__PStartComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         return (
-            <__PStartSpan
+            <PStartSpan
                 className="lawtext-analyzed-start-parenthesis"
                 data-lawtext_parentheses_type={el.attr.type}
             >
                 {getInnerRun(el)}
-            </__PStartSpan>
+            </PStartSpan>
         );
     }
 }
 
 
-const __PContentSpan = styled.span`
+const PContentSpan = styled.span`
 `;
 
 interface __PContentComponentProps extends ELComponentProps { el: std.__EL };
 
 class __PContentComponent extends BaseLawComponent<__PContentComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         return (
-            <__PContentSpan
+            <PContentSpan
                 className="lawtext-analyzed-parentheses-content"
                 data-lawtext_parentheses_type={el.attr.type}
             >
                 {getInnerRun(el)}
-            </__PContentSpan>
+            </PContentSpan>
         );
     }
 }
 
 
-const __PEndSpan = styled.span`
+const PEndSpan = styled.span`
 `;
 
 interface __PEndComponentProps extends ELComponentProps { el: std.__EL };
 
 class __PEndComponent extends BaseLawComponent<__PEndComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         return (
-            <__PEndSpan
+            <PEndSpan
                 className="lawtext-analyzed-end-parenthesis"
                 data-lawtext_parentheses_type={el.attr.type}
             >
                 {getInnerRun(el)}
-            </__PEndSpan>
+            </PEndSpan>
         );
     }
 }
 
 
-const __MismatchStartParenthesisSpan = styled.span`
+const MismatchStartParenthesisSpan = styled.span`
 `;
 
 interface __MismatchStartParenthesisComponentProps extends ELComponentProps { el: std.__EL };
 
 class __MismatchStartParenthesisComponent extends BaseLawComponent<__MismatchStartParenthesisComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         return (
-            <__MismatchStartParenthesisSpan>
+            <MismatchStartParenthesisSpan>
                 {getInnerRun(el)}
-            </__MismatchStartParenthesisSpan>
+            </MismatchStartParenthesisSpan>
         );
     }
 }
 
 
-const __MismatchEndParenthesisSpan = styled.span`
+const MismatchEndParenthesisSpan = styled.span`
 `;
 
 interface __MismatchEndParenthesisComponentProps extends ELComponentProps { el: std.__EL };
 
 class __MismatchEndParenthesisComponent extends BaseLawComponent<__MismatchEndParenthesisComponentProps> {
-    renderNormal() {
+    protected renderNormal() {
         const el = this.props.el;
         return (
-            <__MismatchEndParenthesisSpan>
+            <MismatchEndParenthesisSpan>
                 {getInnerRun(el)}
-            </__MismatchEndParenthesisSpan>
+            </MismatchEndParenthesisSpan>
         );
     }
 }

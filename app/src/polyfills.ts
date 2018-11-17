@@ -1,2 +1,2 @@
-import "whatwg-fetch"
-import "core-js"
+import "core-js";
+import "whatwg-fetch";

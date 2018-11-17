@@ -1,13 +1,13 @@
-import { Action } from 'typescript-fsa';
-import { Dispatch } from 'redux';
+import { History } from 'history';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { History } from 'history';
+import { Dispatch } from 'redux';
+import { Action } from 'typescript-fsa';
 
 import { LawtextAppPageActions } from '../actions';
-import { AppState } from '../store';
 import { LawtextAppPage } from '../components/LawtextAppPage';
 import * as states from '../states';
+import { AppState } from '../store';
 
 
 
@@ -28,7 +28,7 @@ export interface Dispatchers {
     downloadSampleLawtext: () => void,
 }
 
-function mapDispatchToProps(dispatch: Dispatch<Action<any>>) {
+const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
     return {
 
         modifyState: (state: Partial<states.LawtextAppPageState>) =>
@@ -69,8 +69,8 @@ function mapDispatchToProps(dispatch: Dispatch<Action<any>>) {
 
 
 
-function mapStateToProps(appState: AppState, routeState: states.RouteState) {
-    let overwriteState: Partial<states.LawtextAppPageState> = {};
+const mapStateToProps = (appState: AppState, routeState: states.RouteState) => {
+    const overwriteState: Partial<states.LawtextAppPageState> = {};
     if (routeState.match.params.lawSearchKey) {
         overwriteState.lawSearchKey = routeState.match.params.lawSearchKey;
     }

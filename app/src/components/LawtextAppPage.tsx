@@ -1,11 +1,11 @@
+import { UnregisterCallback } from "history";
+import * as $ from "jquery";
 import * as React from "react";
 import styled from 'styled-components';
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
-import { LawtextAppPageState, SelectionRange, RouteState } from '../states';
-import { Sidebar } from './Sidebar'
-import { Viewer } from './Viewer'
-import * as $ from "jquery"
-import { UnregisterCallback } from "history";
+import { LawtextAppPageState, RouteState, SelectionRange } from '../states';
+import { Sidebar } from './Sidebar';
+import { Viewer } from './Viewer';
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
@@ -30,7 +30,7 @@ const HiddenInput = styled.input`
 `;
 
 const OpenFileInputName = "LawtextAppPage.OpenFileInput";
-export function openFile() {
+export const openFile = () => {
     const els = document.getElementsByName(OpenFileInputName);
     if (els) {
         els[0].click();
@@ -38,73 +38,73 @@ export function openFile() {
 }
 
 const ErrorModalID = "LawtextAppPage.ErrorModal";
-export function showErrorModal(title: string, bodyEl: string) {
+export const showErrorModal = (title: string, bodyEl: string) => {
     const modalEl = document.getElementById(ErrorModalID);
     if (!modalEl) return;
-    const modal = $(modalEl) as JQuery<HTMLElement> & { modal: Function };
+    const modal = $(modalEl) as JQuery<HTMLElement> & { modal: (method: string) => any };
     modal.find(".modal-title").html(title);
     modal.find(".modal-body").html(bodyEl);
     modal.modal("show");
 }
 
-export function tobeDownloadedRange(): SelectionRange | null {
-    const get_pos = (node: Node) => {
+export const tobeDownloadedRange = (): SelectionRange | null => {
+    const getPos = (node: Node) => {
         if (!node.parentNode) return null;
         const el = $(node.parentNode as HTMLElement);
 
-        const container_el = el.data("container_info")
+        const containerEl = el.data("container_info")
             ? el
             : el.closest("[data-container_info]");
-        if (!container_el) return null;
-        const container_info = container_el.data("container_info");
+        if (!containerEl) return null;
+        const containerInfo = containerEl.data("container_info");
 
-        const toplevel_container_el = container_el.closest("[data-toplevel_container_info]");
-        if (!toplevel_container_el) return null;
-        const toplevel_container_info = toplevel_container_el.data("toplevel_container_info");
+        const toplevelContainerEl = containerEl.closest("[data-toplevel_container_info]");
+        if (!toplevelContainerEl) return null;
+        const toplevelContainerInfo = toplevelContainerEl.data("toplevel_container_info");
 
         return {
-            container_tag: toplevel_container_info.tag,
-            container_id: toplevel_container_info.id,
-            item_tag: container_info.tag,
-            item_id: container_info.id,
+            container_tag: toplevelContainerInfo.tag,
+            container_id: toplevelContainerInfo.id,
+            item_tag: containerInfo.tag,
+            item_id: containerInfo.id,
         }
     };
 
-    let selection = window.getSelection();
-    let range = selection.getRangeAt(0);
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
 
-    let s_pos = get_pos(range.startContainer);
-    let e_pos = get_pos(range.endContainer);
-    if (!s_pos || !e_pos) return null;
+    const sPos = getPos(range.startContainer);
+    const ePos = getPos(range.endContainer);
+    if (!sPos || !ePos) return null;
 
     return {
-        start: s_pos,
-        end: e_pos,
+        start: sPos,
+        end: ePos,
     };
 }
 
 
-export function scrollToLawAnchor(id: string) {
-    for (let el of Array.from(document.getElementsByClassName("law-anchor"))) {
+export const scrollToLawAnchor = (id: string) => {
+    for (const el of Array.from(document.getElementsByClassName("law-anchor"))) {
         if ((el as HTMLElement).dataset.el_id === id) {
-            let offset = $(el).offset();
+            const offset = $(el).offset();
             if (offset) $("html,body").animate({ scrollTop: offset.top }, "normal");
         }
     }
 }
 
 export class LawtextAppPage extends React.Component<Props> {
-    unsubscribeFromHistory?: UnregisterCallback;
-    componentWillMount() {
+    public unsubscribeFromHistory?: UnregisterCallback;
+    public componentWillMount() {
         this.onNavigate();
         this.unsubscribeFromHistory = this.props.history.listen(() => this.onNavigate());
     }
 
-    componentWillUnmount() {
+    public componentWillUnmount() {
         if (this.unsubscribeFromHistory) this.unsubscribeFromHistory();
     }
 
-    onNavigate() {
+    public onNavigate() {
         console.log(`onNavigate: before timer:`, this.props.lawSearchKey);
         setTimeout(() => {
             console.log(`onNavigate: after timer:`, this.props.lawSearchKey);
@@ -114,7 +114,7 @@ export class LawtextAppPage extends React.Component<Props> {
         }, 30);
     }
 
-    render() {
+    public render() {
         return (
             <div>
                 <HiddenInput
@@ -122,15 +122,14 @@ export class LawtextAppPage extends React.Component<Props> {
                     type="file"
                     accept="text/plain,application/xml"
                     onChange={this.props.openFileInputChange}
-                >
-                </HiddenInput>
+                />
 
                 <SideBarDiv>
-                    <Sidebar {...this.props}></Sidebar>
+                    <Sidebar {...this.props} />
                 </SideBarDiv>
 
                 <ViewerDiv>
-                    <Viewer {...this.props}></Viewer>
+                    <Viewer {...this.props} />
                 </ViewerDiv>
 
                 <div
@@ -143,7 +142,7 @@ export class LawtextAppPage extends React.Component<Props> {
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="errorModalLabel"></h5>
+                                <h5 className="modal-title" id="errorModalLabel" />
                                 <button
                                     type="button"
                                     className="close"
@@ -153,8 +152,7 @@ export class LawtextAppPage extends React.Component<Props> {
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div className="modal-body">
-                            </div>
+                            <div className="modal-body" />
                             <div className="modal-footer">
                                 <button
                                     type="button"

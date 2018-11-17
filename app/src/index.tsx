@@ -1,13 +1,13 @@
 import * as React from "react"
 import * as ReactDOM from "react-dom"
-import { HashRouter, Route } from "react-router-dom"
 import { Provider } from 'react-redux'
+import { HashRouter, Route } from "react-router-dom"
 
 import 'bootstrap';
 import './index.scss';
 
-import store from './store';
 import LawtextAppPageContainer from './containers/LawtextAppPageContainer';
+import store from './store';
 
 
 

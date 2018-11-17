@@ -22,7 +22,7 @@ const ViewerLoadingDiv = styled.div`
 `;
 
 class ViewerLoading extends React.Component<Props> {
-    render() {
+    public render() {
         return (
             <ViewerLoadingDiv>
                 <div className="container-fluid" style={{ textAlign: "right" }}>
@@ -51,8 +51,8 @@ const ViewerWelcomeDiv = styled.div`
 
 class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
 
-    state = { lawSearchKey: "" };
-    lawSearchKeyInput: React.RefObject<HTMLInputElement>;
+    public state = { lawSearchKey: "" };
+    protected lawSearchKeyInput: React.RefObject<HTMLInputElement>;
 
     constructor(props: Props) {
         super(props);
@@ -60,19 +60,32 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
         this.lawSearchKeyInput = React.createRef<HTMLInputElement>();
     }
 
-    handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
+    protected handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         this.props.history.push(`/${this.state.lawSearchKey}`);
     }
 
-    componentDidMount() {
+    public componentDidMount() {
         const input = this.lawSearchKeyInput.current;
         if (input) {
             input.focus();
         }
     }
 
-    render() {
+    public render() {
+
+        const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+            this.handleSearchSubmit(e);
+        }
+
+        const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            this.setState({ lawSearchKey: e.target.value });
+        }
+
+        const downloadSampleLawtextOnClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+            this.props.downloadSampleLawtext(); e.preventDefault();
+        }
+
         return (
             <ViewerWelcomeDiv>
                 <div>
@@ -85,12 +98,12 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
 
                 <div className="row justify-content-center search-law-block" style={{ margin: "1em" }}>
                     <div className="col-md-6" style={{ maxWidth: "500px" }}>
-                        <form onSubmit={(e) => this.handleSearchSubmit(e)}>
+                        <form onSubmit={formOnSubmit}>
                             <div className="input-group">
                                 <input
                                     ref={this.lawSearchKeyInput}
                                     name="lawSearchKey"
-                                    onChange={(event) => this.setState({ lawSearchKey: event.target.value })}
+                                    onChange={lawSearchKeyOnChange}
                                     className="form-control search-law-textbox"
                                     placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
                                     value={this.state.lawSearchKey || ""}
@@ -125,7 +138,7 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
                         </p>
                         <ul>
                             <li><a href="http://elaws.e-gov.go.jp/" target="_blank">e-Gov</a>から法令XMLをダウンロードできます。</li>
-                            <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank">Lawtext</a>ファイルを作れます。<a href="#" onClick={e => { this.props.downloadSampleLawtext(); e.preventDefault(); }}>サンプルをダウンロード</a></li>
+                            <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank">Lawtext</a>ファイルを作れます。<a href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
                         </ul>
                     </div>
                 </div>
@@ -159,7 +172,7 @@ const ViewerDiv = styled.div`
 `;
 
 export class Viewer extends React.Component<Props> {
-    render() {
+    public render() {
         return (
             <ViewerDiv>
                 {this.props.loadingLaw &&

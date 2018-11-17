@@ -1,21 +1,21 @@
-import { Action } from 'typescript-fsa';
-import { Dispatch } from 'redux';
-import { RouteComponentProps } from 'react-router'
+import { saveAs } from "file-saver";
 import { History } from 'history';
+import * as $ from "jquery"
+import { RouteComponentProps } from 'react-router'
+import { Dispatch } from 'redux';
+import { Action } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers/dist';
 import { isString } from "util";
-import * as $ from "jquery"
-import { LawtextAppPageActions } from '../actions';
-import { openFile as origOpenFile, showErrorModal, tobeDownloadedRange, scrollToLawAnchor } from '../components/LawtextAppPage'
-import * as std from "../../../core/src/std_law"
-import * as util from "../../../core/src/util"
-import { parse } from "../../../core/src/parser_wrapper";
 import * as analyzer from "../../../core/src/analyzer";
+import { parse } from "../../../core/src/parser_wrapper";
 import * as renderer from "../../../core/src/renderer";
 import render_lawtext from "../../../core/src/renderers/lawtext";
+import * as std from "../../../core/src/std_law"
+import * as util from "../../../core/src/util"
+import { LawtextAppPageActions } from '../actions';
+import { openFile as origOpenFile, scrollToLawAnchor, showErrorModal, tobeDownloadedRange } from '../components/LawtextAppPage'
 import { store } from '../store';
 import * as lawdata from "./lawdata";
-import { saveAs } from "file-saver";
 
 export type RouteState = RouteComponentProps<{ lawSearchKey: string | undefined }>;
 
@@ -51,7 +51,7 @@ interface FileReaderProgressEvent extends ProgressEvent {
     readonly target: FileReader | null;
 }
 
-function readFileAsText(file): Promise<string> {
+const readFileAsText = (file): Promise<string> => {
     const reader = new FileReader();
 
     return new Promise((resolve, reject) => {
@@ -66,10 +66,10 @@ function readFileAsText(file): Promise<string> {
     });
 }
 
-export async function openFileInputChange(
+export const openFileInputChange = async (
     dispatch: Dispatch<Action<any>>,
     event: React.ChangeEvent<HTMLInputElement>,
-) {
+) => {
     const openFileInput = event.target;
     const file = openFileInput.files ? openFileInput.files[0] : null;
     if (!file) return;
@@ -92,11 +92,11 @@ export const invokeError =
     (dispatch: Dispatch<Action<any>>, title: string, bodyEl: string) =>
         showErrorModal(title, bodyEl);
 
-export async function loadLawText(
+export const loadLawText = async (
     dispatch: Dispatch<Action<any>>,
     text: string,
     analyzeXml: boolean,
-) {
+) => {
     let law: std.Law | null = null;
     let analysis: analyzer.Analysis | null = null;
     try {
@@ -104,9 +104,9 @@ export async function loadLawText(
             dispatch(LawtextAppPageActions.modifyState({ loadingLawMessage: "法令XMLをパースしています..." }));
             console.log("loadLawText: Parse as XML");
             await util.wait(30);
-            law = util.xml_to_json(text) as std.Law;
+            law = util.xmlToJson(text) as std.Law;
             if (analyzeXml) {
-                analyzer.stdxml_to_ext(law);
+                analyzer.stdxmlToExt(law);
             }
             analysis = analyzer.analyze(law);
         } else {
@@ -119,12 +119,12 @@ export async function loadLawText(
         }
     } catch (err) {
         console.log(err);
-        let err_str = err.toString();
-        let pre = $("<pre>")
+        const errStr = err.toString();
+        const pre = $("<pre>")
             .css({ "white-space": "pre-wrap" })
             .css({ "line-height": "1.2em" })
             .css({ "padding": "1em 0" })
-            .html(err_str);
+            .html(errStr);
         invokeError(
             dispatch,
             "読み込んだ法令データにエラーがあります",
@@ -148,10 +148,10 @@ export async function loadLawText(
     dispatch(LawtextAppPageActions.modifyState(newState));
 }
 
-export async function searchLaw(
+export const searchLaw = async (
     dispatch: Dispatch<Action<any>>,
     lawSearchKey: string,
-) {
+) => {
     console.log(`searchLaw(${lawSearchKey})`);
     const state = store.getState().lawtextAppPage;
     if (lawSearchKey === state.lawSearchedKey) return;
@@ -159,7 +159,7 @@ export async function searchLaw(
     console.log("searchLaw: Searching Law");
     await util.wait(30);
     try {
-        let text = await lawdata.loadLaw(lawSearchKey);
+        const text = await lawdata.loadLaw(lawSearchKey);
         await loadLawText(dispatch, text, true);
     } catch (err) {
         console.log(err);
@@ -187,7 +187,7 @@ export interface SelectionRange {
     };
 };
 
-function getLawRange(origLaw: util.EL, range: SelectionRange) {
+const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
     const sPos = range.start;
     const ePos = range.end;
 
@@ -221,13 +221,13 @@ function getLawRange(origLaw: util.EL, range: SelectionRange) {
         if (!(el instanceof util.EL)) return [];
         if (el.tag === tag) return [el];
         let ret: util.EL[] = [];
-        for (let child of el.children) {
+        for (const child of el.children) {
             ret = ret.concat(findEls(child, tag));
         }
         return ret;
     }
 
-    for (let toplevel of origLawBody.children) {
+    for (const toplevel of origLawBody.children) {
         if (isString(toplevel)) continue;
         if (
             !inContainerRange &&
@@ -240,7 +240,7 @@ function getLawRange(origLaw: util.EL, range: SelectionRange) {
             inContainerRange = true;
         }
 
-        let containerChildren: (util.EL | string)[] = [];
+        const containerChildren: Array<util.EL | string> = [];
 
         if (
             inContainerRange &&
@@ -259,7 +259,7 @@ function getLawRange(origLaw: util.EL, range: SelectionRange) {
             let items = findEls(toplevel, "Article");
             if (items.length === 0) items = findEls(toplevel, "Paragraph");
 
-            for (let item of items) {
+            for (const item of items) {
 
                 if (
                     !inItemRange &&
@@ -319,22 +319,22 @@ function getLawRange(origLaw: util.EL, range: SelectionRange) {
     return law;
 }
 
-export function getLawName(law: std.Law): string {
-    let lawNum = law.children.find((el) => el.tag === "LawNum") as std.LawNum;
-    let lawBody = law.children.find((el) => el.tag === "LawBody") as std.LawBody;
-    let lawTitle = lawBody && lawBody.children.find((el) => el.tag === "LawTitle") as std.LawTitle;
+export const getLawName = (law: std.Law): string => {
+    const lawNum = law.children.find((el) => el.tag === "LawNum") as std.LawNum;
+    const lawBody = law.children.find((el) => el.tag === "LawBody") as std.LawBody;
+    const lawTitle = lawBody && lawBody.children.find((el) => el.tag === "LawTitle") as std.LawTitle;
 
     let sLawNum = lawNum ? lawNum.text : "";
-    let sLawTitle = lawTitle ? lawTitle.text : "";
+    const sLawTitle = lawTitle ? lawTitle.text : "";
     sLawNum = (sLawNum && sLawTitle) ? (`（${sLawNum}）`) : sLawNum;
 
     return sLawTitle + sLawNum;
 }
 
-export async function downloadDocx(
+export const downloadDocx = async (
     dispatch: Dispatch<Action<any>>,
     downloadSelection: boolean,
-) {
+) => {
     let law = store.getState().lawtextAppPage.law;
     if (law === null) return;
 
@@ -343,42 +343,42 @@ export async function downloadDocx(
         law = getLawRange(law, range) as std.Law;
     }
 
-    const buffer = await renderer.render_docx_async(law);
-    let blob = new Blob(
+    const buffer = await renderer.renderDocxAsync(law);
+    const blob = new Blob(
         [buffer],
         { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
     );
-    let lawName = getLawName(law) || "lawtext_output";
+    const lawName = getLawName(law) || "lawtext_output";
     saveAs(blob, `${lawName}.docx`);
 }
 
-export async function downloadLawtext(
+export const downloadLawtext = async (
     dispatch: Dispatch<Action<any>>,
-) {
-    let law = store.getState().lawtextAppPage.law;
+) => {
+    const law = store.getState().lawtextAppPage.law;
     if (law === null) return;
 
     const sLawtext = render_lawtext(law);
-    let blob = new Blob(
+    const blob = new Blob(
         [sLawtext],
         { type: "text/plain" },
     );
-    let lawName = getLawName(law) || "lawtext_output";
+    const lawName = getLawName(law) || "lawtext_output";
     saveAs(blob, `${lawName}.law.txt`);
 }
 
-export async function downloadXml(
+export const downloadXml = async (
     dispatch: Dispatch<Action<any>>,
-) {
-    let law = store.getState().lawtextAppPage.law;
+) => {
+    const law = store.getState().lawtextAppPage.law;
     if (law === null) return;
 
-    const xml = renderer.render_xml(law);
-    let blob = new Blob(
+    const xml = renderer.renderXml(law);
+    const blob = new Blob(
         [xml],
         { type: "application/xml" },
     );
-    let lawName = getLawName(law) || "lawtext_output";
+    const lawName = getLawName(law) || "lawtext_output";
     saveAs(blob, `${lawName}.xml`);
 }
 
@@ -388,9 +388,9 @@ export const scrollLaw =
 
 const sampleSampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml");
 
-export async function downloadSampleLawtext(
+export const downloadSampleLawtext = async (
     dispatch: Dispatch<Action<any>>,
-) {
+) => {
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true }));
     await util.wait(30);
     await loadLawText(dispatch, sampleSampleXml, true);

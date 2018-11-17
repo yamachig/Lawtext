@@ -1,6 +1,6 @@
+import levenshtein from "js-levenshtein";
 import * as JSZip from "jszip";
 import * as util from "../../../core/src/util";
-const levenshtein = require("js-levenshtein");
 
 interface LawListInfo {
     LawNum: string;
@@ -11,10 +11,10 @@ interface LawListInfo {
     XmlZipName: string;
 }
 
-var list: LawListInfo[] = [];
-var listByLawnum: { [index: string]: LawListInfo } = {};
-var _listReady = false;
-async function ensureList() {
+let list: LawListInfo[] = [];
+const listByLawnum: { [index: string]: LawListInfo } = {};
+let _listReady = false;
+const ensureList = async () => {
     let waitTime = 30;
     while (true) {
         if (_listReady) return;
@@ -24,9 +24,9 @@ async function ensureList() {
 }
 (async () => {
     try {
-        let response = await fetch(`lawdata/list.json`);
+        const response = await fetch(`lawdata/list.json`);
         if (response.ok) {
-            let json = await response.json();
+            const json = await response.json();
             list = json.map(
                 ([
                     LawNum,
@@ -36,13 +36,13 @@ async function ensureList() {
                     Path,
                     XmlZipName,
                 ]: [string, string[], string[], string, string, string]) => {
-                    let obj = {
-                        LawNum: LawNum,
-                        ReferencingLawNums: ReferencingLawNums,
-                        ReferencedLawNums: ReferencedLawNums,
-                        LawTitle: LawTitle,
-                        Path: Path,
-                        XmlZipName: XmlZipName,
+                    const obj = {
+                        LawNum,
+                        ReferencingLawNums,
+                        ReferencedLawNums,
+                        LawTitle,
+                        Path,
+                        XmlZipName,
                     } as LawListInfo;
                     listByLawnum[obj.LawNum] = obj;
                     return obj;
@@ -58,8 +58,8 @@ async function ensureList() {
 
 
 
-async function getLawXml(lawnum: string): Promise<string> {
-    let xml = (
+const getLawXml = async (lawnum: string): Promise<string> => {
+    const xml = (
         await getLawXmlCache(lawnum) ||
         await getLawXmlLocal(lawnum) ||
         await getLawXmlRemote(lawnum)
@@ -71,7 +71,7 @@ async function getLawXml(lawnum: string): Promise<string> {
                 `law_for:${lawnum}`,
                 JSON.stringify({
                     datetime: new Date().toISOString(),
-                    xml: xml,
+                    xml,
                 }),
             );
         } catch (e) {
@@ -83,42 +83,42 @@ async function getLawXml(lawnum: string): Promise<string> {
     return xml;
 }
 
-async function getLawXmlCache(lawnum: string): Promise<string | null> {
+const getLawXmlCache = async (lawnum: string): Promise<string | null> => {
     console.log(`getLawXmlCache("${lawnum}")`);
 
-    let law_data_str = localStorage ? localStorage.getItem(`law_for:${lawnum}`) : null;
-    if (law_data_str) {
-        let law_data = JSON.parse(law_data_str);
-        let datetime = new Date(law_data.datetime);
-        let now = new Date();
-        let ms = now.getTime() - datetime.getTime();
-        let days = ms / (1000 * 60 * 60 * 24);
+    const lawDataStr = localStorage ? localStorage.getItem(`law_for:${lawnum}`) : null;
+    if (lawDataStr) {
+        const lawData = JSON.parse(lawDataStr);
+        const datetime = new Date(lawData.datetime);
+        const now = new Date();
+        const ms = now.getTime() - datetime.getTime();
+        const days = ms / (1000 * 60 * 60 * 24);
         if (days < 1) {
-            return law_data.xml;
+            return lawData.xml;
         }
     }
     return null;
 }
 
-async function getLawXmlLocal(lawnum: string): Promise<string | null> {
+const getLawXmlLocal = async (lawnum: string): Promise<string | null> => {
     console.log(`getLawXmlLocal("${lawnum}")`);
 
     await ensureList();
     if (lawnum in listByLawnum) {
-        let info = listByLawnum[lawnum];
-        let response = await fetch(`lawdata/${info.Path}/${info.XmlZipName}`);
-        let zip_data = await response.arrayBuffer();
-        let zip = await JSZip.loadAsync(zip_data);
+        const info = listByLawnum[lawnum];
+        const response = await fetch(`lawdata/${info.Path}/${info.XmlZipName}`);
+        const zipData = await response.arrayBuffer();
+        const zip = await JSZip.loadAsync(zipData);
         return await zip.file(/.*\.xml/)[0].async("text");
     }
 
     return null;
 }
 
-async function getLawXmlRemote(lawnum: string): Promise<string> {
+const getLawXmlRemote = async (lawnum: string): Promise<string> => {
     console.log(`getLawXmlRemote("${lawnum}")`);
 
-    let response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=${encodeURI(lawnum)}`, {
+    const response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=${encodeURI(lawnum)}`, {
         mode: "cors",
     });
     let text = await response.text();
@@ -126,7 +126,7 @@ async function getLawXmlRemote(lawnum: string): Promise<string> {
     if (response.ok) {
 
         if (!/^(?:<\?xml|<Law)/.test(text.trim())) {
-            let zip = await JSZip.loadAsync(text, { base64: true });
+            const zip = await JSZip.loadAsync(text, { base64: true });
             text = await zip.file("body.xml").async("text");
         }
         return text;
@@ -141,12 +141,12 @@ async function getLawXmlRemote(lawnum: string): Promise<string> {
 }
 
 
-async function getLawnum(lawSearchKey: string): Promise<string> {
+const getLawnum = async (lawSearchKey: string): Promise<string> => {
 
-    let reLawnum = /^(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[〇一二三四五六七八九―]+|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定)$/;
-    let match = reLawnum.exec(lawSearchKey);
+    const reLawnum = /^(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[〇一二三四五六七八九―]+|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定)$/;
+    const match = reLawnum.exec(lawSearchKey);
 
-    let lawnum = (
+    const lawnum = (
         (match && match[0]) ||
         await getLawnumCache(lawSearchKey) ||
         await getLawnumLocal(lawSearchKey) ||
@@ -160,7 +160,7 @@ async function getLawnum(lawSearchKey: string): Promise<string> {
                     "law_num_for:" + lawSearchKey,
                     JSON.stringify({
                         datetime: new Date().toISOString(),
-                        lawnum: lawnum,
+                        lawnum,
                     }),
                 );
             } catch (e) {
@@ -173,33 +173,33 @@ async function getLawnum(lawSearchKey: string): Promise<string> {
     return lawnum;
 }
 
-async function getLawnumCache(lawSearchKey: string): Promise<string | null> {
+const getLawnumCache = async (lawSearchKey: string): Promise<string | null> => {
     console.log(`getLawnumCache("${lawSearchKey}")`);
 
-    let lawNumDataStr = localStorage ? localStorage.getItem(`law_num_for:${lawSearchKey}`) : null;
+    const lawNumDataStr = localStorage ? localStorage.getItem(`law_num_for:${lawSearchKey}`) : null;
     if (lawNumDataStr) {
-        let lawNumData = JSON.parse(lawNumDataStr);
-        let datetime = new Date(lawNumData.datetime);
-        let now = new Date();
-        let ms = now.getTime() - datetime.getTime();
-        let days = ms / (1000 * 60 * 60 * 24);
+        const lawNumData = JSON.parse(lawNumDataStr);
+        const datetime = new Date(lawNumData.datetime);
+        const now = new Date();
+        const ms = now.getTime() - datetime.getTime();
+        const days = ms / (1000 * 60 * 60 * 24);
         if (days < 1) {
-            lawNumData.lawnum;
+            return lawNumData.lawnum;
         }
     }
 
     return null;
 }
 
-async function getLawnumLocal(lawSearchKey: string): Promise<string | null> {
+const getLawnumLocal = async (lawSearchKey: string): Promise<string | null> => {
     console.log(`getLawnumLocal("${lawSearchKey}")`);
 
     await ensureList();
 
     console.log(`started ${new Date().toISOString()}`);
-    let bestMatch = { score: Infinity, info: <LawListInfo | null>null };
-    for (let info of list) {
-        let score = levenshtein(info.LawTitle, lawSearchKey);
+    const bestMatch = { score: Infinity, info: null as LawListInfo | null };
+    for (const info of list) {
+        const score = levenshtein(info.LawTitle, lawSearchKey);
         if (score < bestMatch.score) {
             bestMatch.score = score;
             bestMatch.info = info;
@@ -210,13 +210,13 @@ async function getLawnumLocal(lawSearchKey: string): Promise<string | null> {
     return bestMatch.info && bestMatch.info.LawNum;
 }
 
-async function getLawnumRemote(lawSearchKey: string): Promise<string> {
+const getLawnumRemote = async (lawSearchKey: string): Promise<string> => {
     console.log(`getLawnumRemote("${lawSearchKey}")`);
 
-    let response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=${encodeURI(lawSearchKey)}`, {
+    const response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=${encodeURI(lawSearchKey)}`, {
         mode: "cors",
     });
-    let data = await response.json() as string[][];
+    const data = await response.json() as string[][];
     if (data.length) {
         data.sort((a, b) => a[0].length - b[0].length);
         return data[0][1];
@@ -233,8 +233,8 @@ async function getLawnumRemote(lawSearchKey: string): Promise<string> {
 
 
 
-export async function loadLaw(lawSearchKey: string): Promise<string> {
-    let lawnum = await getLawnum(lawSearchKey);
-    let xml = await getLawXml(lawnum);
+export const loadLaw = async (lawSearchKey: string): Promise<string> => {
+    const lawnum = await getLawnum(lawSearchKey);
+    const xml = await getLawXml(lawnum);
     return xml;
 }

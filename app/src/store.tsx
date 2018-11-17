@@ -1,9 +1,9 @@
-import { createStore, combineReducers } from 'redux';
+import { combineReducers, createStore } from 'redux';
 import { LawtextAppPageReducer, LawtextAppPageState } from './states';
 
 
 
-export type AppState = {
+export interface AppState {
     lawtextAppPage: LawtextAppPageState,
 };
 
