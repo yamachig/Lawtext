@@ -1,14 +1,12 @@
 {
-    let EL = util.EL;
-    let __Text = util.__Text;
-    let __Parentheses = util.__Parentheses;
+    const EL = util.EL;
+    const __Text = util.__Text;
+    const __Parentheses = util.__Parentheses;
 
-    let xml_tag_stack:Array<string> = [];
-    let indent_memo = options.indent_memo;
-    let indent_depth = 0;
-    let base_indent_stack:Array<[number, boolean, number]> = [];
-    let list_depth = 0;
-    let parentheses_depth = 0;
+    const indentMemo = options.indentMemo;
+    const baseIndentStack:Array<[number, boolean, number]> = [];
+    let listDepth = 0;
+    let parenthesesDepth = 0;
 }
 
 
@@ -70,14 +68,14 @@ law =
                     let era_val = util.eras[era];
                     if(era_val) law.attr.Era = era_val;
 
-                    let year_val = util.parse_kanji_num(year);
+                    let year_val = util.parseKanjiNum(year);
                     if(year_val !== null) law.attr.Year = year_val;
 
-                    let law_type_val = util.get_lawtype(law_type);
+                    let law_type_val = util.getLawtype(law_type);
                     if(law_type_val !== null) law.attr.LawType = law_type_val;
 
                     if(num) {
-                        let num_val = util.parse_kanji_num(num);
+                        let num_val = util.parseKanjiNum(num);
                         if(num_val !== null) law.attr.Num = num_val;
                         else law.attr.Num = "";
                     } else {
@@ -198,18 +196,18 @@ toc_item "toc_item" =
         }
         if(!title_fragments[0].text) console.error(title_fragments);
         let type_char = title_fragments[0].text.match(/[編章節款目章則]/)[0];
-        let toc_item = new EL("TOC" + util.article_group_type[type_char]);
+        let toc_item = new EL("TOC" + util.articleGroupType[type_char]);
 
         if(title_fragments[0].text.match(/[編章節款目章]/)) {
             toc_item.attr.Delete = 'false';
-            let num = util.parse_named_num(title_fragments[0].text);
+            let num = util.parseNamedNum(title_fragments[0].text);
             if(num) {
                 toc_item.attr.Num = num;
             }
         }
 
         toc_item.append(new EL(
-            util.article_group_title_tag[type_char],
+            util.articleGroupTitleTag[type_char],
             {},
             title_fragments,
         ));
@@ -290,8 +288,8 @@ article_group "article_group" =
         /
         (
             &(next_title:article_group_title &{
-                let current_level = util.article_group_type_chars.indexOf(article_group_title.type_char);
-                let next_level = util.article_group_type_chars.indexOf(next_title.type_char);
+                let current_level = util.articleGroupTypeChars.indexOf(article_group_title.type_char);
+                let next_level = util.articleGroupTypeChars.indexOf(next_title.type_char);
                 return current_level < next_level;
             })
             article_group:article_group
@@ -302,17 +300,17 @@ article_group "article_group" =
     )+
     {
         let article_group = new EL(
-            util.article_group_type[article_group_title.type_char],
+            util.articleGroupType[article_group_title.type_char],
             {Delete: "false", Hide: "false"},
         );
 
         article_group.append(new EL(
-            util.article_group_type[article_group_title.type_char] + "Title",
+            util.articleGroupType[article_group_title.type_char] + "Title",
             {},
             article_group_title.content,
         ))
 
-        let num = util.parse_named_num(article_group_title.num);
+        let num = util.parseNamedNum(article_group_title.num);
         if(num) {
             article_group.attr.Num = num;
         }
@@ -390,7 +388,7 @@ article "article" =
         }
         article.append(new EL("ArticleTitle", {}, [article_title]));
 
-        let num = util.parse_named_num(article_title);
+        let num = util.parseNamedNum(article_title);
         if(num) {
             article.attr.Num = num;
         }
@@ -464,17 +462,17 @@ paragraph_item "paragraph_item" =
     // &(here:$(NEXTINLINE) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
     {
         let lineno = location().start.line;
-        let indent = indent_memo[lineno];
+        let indent = indentMemo[lineno];
 
-        if(base_indent_stack.length > 0) {
-            let [base_indent, is_first, base_lineno] = base_indent_stack[base_indent_stack.length - 1];
+        if(baseIndentStack.length > 0) {
+            let [base_indent, is_first, base_lineno] = baseIndentStack[baseIndentStack.length - 1];
             if(!is_first || lineno !== base_lineno) {
                 indent -= base_indent;
             }
         }
 
         let paragraph_item = new EL(
-            util.paragraph_item_tags[indent],
+            util.paragraphItemTags[indent],
             {Hide: "false"},
         );
         if(indent === 0) {
@@ -486,14 +484,14 @@ paragraph_item "paragraph_item" =
             paragraph_item.append(new EL("ParagraphCaption", {}, [paragraph_caption]));
         }
 
-        paragraph_item.append(new EL(util.paragraph_item_title_tags[indent], {}, [paragraph_item_title]));
+        paragraph_item.append(new EL(util.paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
 
-        // let num = util.parse_named_num(paragraph_item_title);
+        // let num = util.parseNamedNum(paragraph_item_title);
         // if(num) {
         //     paragraph_item.attr.Num = num;
         // }
 
-        paragraph_item.append(new EL(util.paragraph_item_sentence_tags[indent], {}, inline_contents));
+        paragraph_item.append(new EL(util.paragraphItemSentenceTags[indent], {}, inline_contents));
 
         if(children) {
             util.setItemNum(children);
@@ -526,17 +524,17 @@ no_name_paragraph_item "no_name_paragraph_item" =
     )?
     {
         let lineno = location().start.line;
-        let indent = indent_memo[lineno];
+        let indent = indentMemo[lineno];
 
-        if(base_indent_stack.length > 0) {
-            let [base_indent, is_first, base_lineno] = base_indent_stack[base_indent_stack.length - 1];
+        if(baseIndentStack.length > 0) {
+            let [base_indent, is_first, base_lineno] = baseIndentStack[baseIndentStack.length - 1];
             if(!is_first || lineno !== base_lineno) {
                 indent -= base_indent;
             }
         }
 
         let paragraph_item = new EL(
-            util.paragraph_item_tags[indent],
+            util.paragraphItemTags[indent],
             {Hide: "false", Num: "1"},
         );
         if(indent === 0) {
@@ -544,8 +542,8 @@ no_name_paragraph_item "no_name_paragraph_item" =
         } else {
             paragraph_item.attr.Delete = "false";
         }
-        paragraph_item.append(new EL(util.paragraph_item_title_tags[indent]));
-        paragraph_item.append(new EL(util.paragraph_item_sentence_tags[indent], {}, inline_contents));
+        paragraph_item.append(new EL(util.paragraphItemTitleTags[indent]));
+        paragraph_item.append(new EL(util.paragraphItemSentenceTags[indent], {}, inline_contents));
         paragraph_item.extend(lists || []);
 
         if(children) {
@@ -572,19 +570,19 @@ list "list" =
     columns_or_sentences:columns_or_sentences
     NEWLINE+
     sublists:(
-        &("" &{ list_depth++; return true; })
+        &("" &{ listDepth++; return true; })
         INDENT INDENT
             target:list+
             NEWLINE*
         DEDENT DEDENT
-        &("" &{ list_depth--; return true; })
+        &("" &{ listDepth--; return true; })
         { return target; }
         /
-        &("" &{ list_depth--; return false; }) "DUMMY"
+        &("" &{ listDepth--; return false; }) "DUMMY"
     )?
     {
-        let list = new EL(util.list_tags[list_depth]);
-        let list_sentence = new EL(util.list_tags[list_depth] + "Sentence");
+        let list = new EL(util.listTags[listDepth]);
+        let list_sentence = new EL(util.listTags[listDepth] + "Sentence");
         list.append(list_sentence);
 
         list_sentence.extend(columns_or_sentences);
@@ -867,12 +865,12 @@ remarks "remarks" =
         INDENT INDENT
             target:(
                 &{ return !first; }
-                &("" &{ base_indent_stack.push([indent_memo[location().start.line] - 1, false, location().start.line]); return true; })
+                &("" &{ baseIndentStack.push([indentMemo[location().start.line] - 1, false, location().start.line]); return true; })
                 _target:(paragraph_item / no_name_paragraph_item)
-                &("" &{ base_indent_stack.pop(); return true; })
+                &("" &{ baseIndentStack.pop(); return true; })
                 { return _target; }
                 /
-                &("" &{ base_indent_stack.pop(); return false; }) "DUMMY"
+                &("" &{ baseIndentStack.pop(); return false; }) "DUMMY"
                 /
                 _target:INLINE
                 NEWLINE
@@ -891,14 +889,14 @@ remarks "remarks" =
         INDENT INDENT INDENT INDENT
             target:(
                 &{ return !first; }
-                &("" &{ base_indent_stack.push([indent_memo[location().start.line] - 1, false, location().start.line]); return true; })
+                &("" &{ baseIndentStack.push([indentMemo[location().start.line] - 1, false, location().start.line]); return true; })
     // &(here:$(INLINE / ............................................................................) &{ console.error(`here1.1 line ${location().start.line}: ${here}`); return true; })
                 _target:(paragraph_item / no_name_paragraph_item)
     // &(here:$(INLINE / ............................................................................) &{ console.error(`here1.2 line ${location().start.line}: ${here}`); return true; })
-                &("" &{ base_indent_stack.pop(); return true; })
+                &("" &{ baseIndentStack.pop(); return true; })
                 { return _target; }
                 /
-                &("" &{ base_indent_stack.pop(); return false; }) "DUMMY"
+                &("" &{ baseIndentStack.pop(); return false; }) "DUMMY"
                 /
                 _target:INLINE
                 NEWLINE
@@ -1444,12 +1442,12 @@ MISMATCH_END_PARENTHESIS "MISMATCH_END_PARENTHESIS" =
 
 
 PARENTHESES_INLINE "PARENTHESES_INLINE" =
-    &("" &{ parentheses_depth++; return true; })
+    &("" &{ parenthesesDepth++; return true; })
     target:PARENTHESES_INLINE_INNER
-    &("" &{ parentheses_depth--; return true; })
+    &("" &{ parenthesesDepth--; return true; })
     { return target; }
     /
-    &("" &{ parentheses_depth--; return false; }) "DUMMY"
+    &("" &{ parenthesesDepth--; return false; }) "DUMMY"
 
 PARENTHESES_INLINE_INNER "PARENTHESES_INLINE_INNER" =
     ROUND_PARENTHESES_INLINE
@@ -1476,7 +1474,7 @@ ROUND_PARENTHESES_INLINE "ROUND_PARENTHESES_INLINE" =
     )*
     end:[)）]
     {
-        return new __Parentheses("round", parentheses_depth, start, end, content, text());
+        return new __Parentheses("round", parenthesesDepth, start, end, content, text());
     }
 
 SQUARE_BRACKETS_INLINE "SQUARE_BRACKETS_INLINE" =
@@ -1491,7 +1489,7 @@ SQUARE_BRACKETS_INLINE "SQUARE_BRACKETS_INLINE" =
     )*
     end:[\]］]
     {
-        return new __Parentheses("squareb", parentheses_depth, start, end, content, text());
+        return new __Parentheses("squareb", parenthesesDepth, start, end, content, text());
     }
 
 CURLY_BRACKETS_INLINE "CURLY_BRACKETS_INLINE" =
@@ -1506,7 +1504,7 @@ CURLY_BRACKETS_INLINE "CURLY_BRACKETS_INLINE" =
     )*
     end:[}｝]
     {
-        return new __Parentheses("curly", parentheses_depth, start, end, content, text());
+        return new __Parentheses("curly", parenthesesDepth, start, end, content, text());
     }
 
 SQUARE_PARENTHESES_INLINE "SQUARE_PARENTHESES_INLINE" =
@@ -1525,7 +1523,7 @@ SQUARE_PARENTHESES_INLINE "SQUARE_PARENTHESES_INLINE" =
     )*
     end:[」]
     {
-        return new __Parentheses("square", parentheses_depth, start, end, content, text());
+        return new __Parentheses("square", parenthesesDepth, start, end, content, text());
     }
 
 xml "xml" =
@@ -1637,9 +1635,9 @@ pointer_fragment "pointer_fragment" =
     {
         return new util.PointerFragment(
             util.RelPos.NAMED,
-            util.article_group_type[type_char],
+            util.articleGroupType[type_char],
             text(),
-            util.parse_named_num(text()),
+            util.parseNamedNum(text()),
         );
     }
     /
@@ -1649,7 +1647,7 @@ pointer_fragment "pointer_fragment" =
             util.RelPos.NEXT,
             (type_char === "表")
                 ? "TableStruct"
-                : util.article_group_type[type_char],
+                : util.articleGroupType[type_char],
             text(),
             null,
         );
@@ -1661,7 +1659,7 @@ pointer_fragment "pointer_fragment" =
             util.RelPos.PREV,
             (type_char === "表")
                 ? "TableStruct"
-                : util.article_group_type[type_char],
+                : util.articleGroupType[type_char],
             text(),
             null,
         );
@@ -1673,7 +1671,7 @@ pointer_fragment "pointer_fragment" =
             util.RelPos.HERE,
             (type_char === "表")
                 ? "TableStruct"
-                : util.article_group_type[type_char],
+                : util.articleGroupType[type_char],
             text(),
             null,
         );
@@ -1685,7 +1683,7 @@ pointer_fragment "pointer_fragment" =
             util.RelPos.SAME,
             (type_char === "表")
                 ? "TableStruct"
-                : util.article_group_type[type_char],
+                : util.articleGroupType[type_char],
             text(),
             null,
         );
@@ -1695,7 +1693,7 @@ pointer_fragment "pointer_fragment" =
     {
         return new util.PointerFragment(
             util.RelPos.NAMED,
-            util.article_group_type[type_char],
+            util.articleGroupType[type_char],
             text(),
             null,
         );
@@ -1707,7 +1705,7 @@ pointer_fragment "pointer_fragment" =
             util.RelPos.NAMED,
             "AppdxTable",
             text(),
-            util.parse_named_num(text()),
+            util.parseNamedNum(text()),
         );
     }
     /
@@ -1747,7 +1745,7 @@ pointer_fragment "pointer_fragment" =
             util.RelPos.NAMED,
             "SUBITEM",
             text(),
-            util.parse_named_num(text()),
+            util.parseNamedNum(text()),
         );
     }
 

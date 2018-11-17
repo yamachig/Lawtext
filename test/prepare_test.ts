@@ -1,16 +1,16 @@
-import * as JSZip from "jszip"
-import * as fs from "fs"
-import { outputFile } from "fs-extra"
-import * as path from "path"
-import { download } from "../src/downloader"
+import { Bar, Presets } from "cli-progress";
+import * as fs from "fs";
+import { outputFile } from "fs-extra";
+import * as JSZip from "jszip";
+import * as path from "path";
 import { promisify } from "util";
-import { Bar, Presets } from "cli-progress"
+import { download } from "../src/downloader";
 
 let called = false;
 
 const lawdataPath = path.join(__dirname, "lawdata");
 
-export async function prepare() {
+export const prepare = async () => {
     if (called) return;
     called = true;
 
@@ -31,14 +31,14 @@ export async function prepare() {
     bar.stop();
 
     const zipFile = await JSZip.loadAsync(data);
-    const items: [string, JSZip.JSZipObject][] = [];
+    const items: Array<[string, JSZip.JSZipObject]> = [];
     zipFile.forEach((relativePath, file) => {
         items.push([relativePath, file]);
     });
     for (const [relativePath, file] of items) {
         if (file.dir) continue;
         const buf = await file.async("arraybuffer");
-        var destPath = path.join(lawdataPath, relativePath);
+        const destPath = path.join(lawdataPath, relativePath);
         await outputFile(destPath, new Buffer(buf));
     }
 
@@ -55,14 +55,14 @@ export interface LawListInfo {
 
 type LawListItem = [string, string[], string[], string, string, string]
 
-const listByLawnum: { [index: string]: LawListInfo } = {};
-const list: LawListInfo[] = [];
-var _listReady = false;
+const lawListByLawnum: { [index: string]: LawListInfo } = {};
+const lawList: LawListInfo[] = [];
+let lawListReady = false;
 
-export async function ensureList() {
-    if (!_listReady) {
+export const ensureList = async () => {
+    if (!lawListReady) {
         const json = require("./lawdata/list.json") as LawListItem[];
-        for (let [
+        for (const [
             LawNum,
             ReferencingLawNums,
             ReferencedLawNums,
@@ -70,28 +70,28 @@ export async function ensureList() {
             Path,
             XmlZipName,
         ] of json) {
-            let obj = {
-                LawNum: LawNum,
-                ReferencingLawNums: ReferencingLawNums,
-                ReferencedLawNums: ReferencedLawNums,
-                LawTitle: LawTitle,
-                Path: Path,
-                XmlZipName: XmlZipName,
+            const obj = {
+                LawNum,
+                ReferencingLawNums,
+                ReferencedLawNums,
+                LawTitle,
+                Path,
+                XmlZipName,
             };
-            list.push(obj);
-            listByLawnum[obj.LawNum] = obj;
+            lawList.push(obj);
+            lawListByLawnum[obj.LawNum] = obj;
         }
-        console.error(`### loaded ${list.length} laws`);
-        _listReady = true;
+        console.error(`### loaded ${lawList.length} laws`);
+        lawListReady = true;
     }
 }
 
-export async function getLawList(): Promise<[LawListInfo[], { [index: string]: LawListInfo }]> {
+export const getLawList = async (): Promise<[LawListInfo[], { [index: string]: LawListInfo }]> => {
     await ensureList();
-    return [list, listByLawnum];
+    return [lawList, lawListByLawnum];
 }
 
-export async function getLawXml(lawNum: string) {
+export const getLawXml = async (lawNum: string) => {
     const [/**/, listByLawnum] = await getLawList();
     const lawInfo = listByLawnum[lawNum];
     const zipFilename = path.join(lawdataPath, lawInfo.Path, lawInfo.XmlZipName);

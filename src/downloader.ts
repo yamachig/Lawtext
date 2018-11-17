@@ -2,7 +2,7 @@ import * as JSZip from "jszip"
 import * as path from "path"
 import { DOMParser } from "xmldom"
 import { range } from "./util"
-const fetch = (global["window"] && window.fetch) || require("node-fetch");
+const fetch = ((global as any).window && window.fetch) || require("node-fetch");
 
 
 export const FILENAMES = [
@@ -13,26 +13,20 @@ export const FILENAMES = [
     // ...range(430, 430 + 1),
 ].map((v) => `${v}.zip`);
 
-export async function download<
+export const download = async <
     S extends boolean=false,
     T extends boolean=false,
     U extends boolean=false,
     >(
-        options: Partial<{ full: S, withoutPict: T, list: U }>,
-        filenames?: string[],
-        onProgress?: (ratio: number, message: string) => void,
+        { full, withoutPict, list }: Partial<{ full: S, withoutPict: T, list: U }>,
+        filenames: string[] = FILENAMES,
+        onProgress: (ratio: number, message: string) => void = () => undefined,
 ):
     Promise<(
         (S extends true ? { full: ArrayBuffer } : {}) &
         (T extends true ? { withoutPict: ArrayBuffer } : {}) &
         (U extends true ? { list: string } : {})
-    )>;
-
-export async function download(
-    { full = false, withoutPict = false, list = false },
-    filenames = FILENAMES,
-    onProgress: (ratio: number, message: string) => void = () => { },
-) {
+    )> => {
 
     const progress = (() => {
         let currentRatio = 0;
@@ -58,7 +52,7 @@ export async function download(
 
     const processDownloadedFile = async (srcZip: JSZip) => {
 
-        const items: [string, JSZip.JSZipObject][] = [];
+        const items: Array<[string, JSZip.JSZipObject]> = [];
         srcZip.forEach((relativePath, file) => {
             items.push([relativePath, file]);
         });
@@ -67,10 +61,12 @@ export async function download(
             const isPict = /^[^/]+\/[^/]+\/pict\/.*$/.test(relativePath);
 
             if (file.dir) {
-                if (full)
+                if (full) {
                     destZipFull.folder(relativePath);
-                if (withoutPict && !isPict)
+                }
+                if (withoutPict && !isPict) {
                     destZipWithoutPict.folder(relativePath);
+                }
 
             } else {
                 if (/^[^/]+\/[^/]+\/[^/]+.xml$/.test(relativePath)) {
@@ -93,10 +89,12 @@ export async function download(
                         }
                     });
 
-                    if (full)
+                    if (full) {
                         destZipFull.file(relativePath + ".zip", innerZipData);
-                    if (withoutPict && !isPict)
+                    }
+                    if (withoutPict && !isPict) {
                         destZipWithoutPict.file(relativePath + ".zip", innerZipData);
+                    }
                 }
             }
         }
@@ -169,31 +167,31 @@ export async function download(
 
     progress(1);
 
-    return ret;
+    return ret as any;
 }
 
 export const reLawnum = /(?:(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年(?:(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[―〇一二三四五六七八九]+)|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)|明治三十二年勅令|大正十二年内務省・鉄道省令|昭和五年逓信省・鉄道省令|昭和九年逓信省・農林省令|人事院規則一〇―一五)/g;
 const domParser = new DOMParser();
 
 class LawInfo {
-    LawNum: string;
-    ReferencingLawNums: Set<string>;
-    ReferencedLawNums: Set<string>;
-    LawTitle: string;
-    Path: string;
-    XmlZipName: string;
+    public LawNum: string;
+    public ReferencingLawNums: Set<string>;
+    public ReferencedLawNums: Set<string>;
+    public LawTitle: string;
+    public Path: string;
+    public XmlZipName: string;
 
-    constructor(xml: string, xml_path: string) {
-        let law = domParser.parseFromString(xml, "text/xml");
-        let elLawNm = law.getElementsByTagName("LawNum")[0];
-        let elLawBody = law.getElementsByTagName("LawBody")[0];
-        let elLawTitle = elLawBody.getElementsByTagName("LawTitle")[0];
+    constructor(xml: string, xmlPath: string) {
+        const law = domParser.parseFromString(xml, "text/xml");
+        const elLawNm = law.getElementsByTagName("LawNum")[0];
+        const elLawBody = law.getElementsByTagName("LawBody")[0];
+        const elLawTitle = elLawBody.getElementsByTagName("LawTitle")[0];
 
         this.LawNum = (elLawNm.textContent || "").trim();
         this.ReferencingLawNums = new Set(xml.match(reLawnum));
         this.ReferencedLawNums = new Set();
         this.LawTitle = (elLawTitle.textContent || "").trim();
-        this.Path = path.dirname(xml_path);
-        this.XmlZipName = `${path.basename(xml_path)}.zip`;
+        this.Path = path.dirname(xmlPath);
+        this.XmlZipName = `${path.basename(xmlPath)}.zip`;
     }
 }

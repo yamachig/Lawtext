@@ -25,8 +25,7 @@ const LIMIT_WIDTH = 34;
 
 const tempDir = path.join(os.tmpdir(), `lawtext_core_test`);
 
-function zipLongest<T>(lists: T[][], defaultValues: T[]): IterableIterator<T[]>;
-function* zipLongest(lists: any[][], defaultValues: any[]) {
+function* zipLongest<T>(lists: T[][], defaultValues: T[]) {
     if (lists.length !== defaultValues.length) throw new Error("Length mismatch");
     const maxLength = Math.max(...lists.map(list => list.length));
     for (let i = 0; i < maxLength; i++) {
@@ -34,7 +33,7 @@ function* zipLongest(lists: any[][], defaultValues: any[]) {
     }
 }
 
-function itemToString(item: DiffTableItemData) {
+const itemToString = (item: DiffTableItemData) => {
     if (item.type === TagType.Open) {
         if (Object.keys(item.attr).length) {
             return [
@@ -66,7 +65,7 @@ function itemToString(item: DiffTableItemData) {
     } else { throw util.assertNever(item.type); }
 }
 
-function makeElementMismatchTable(ditem: LawDiffElementMismatchData) {
+const makeElementMismatchTable = (ditem: LawDiffElementMismatchData) => {
     const table: string[][] = [];
     for (const drow of ditem.diffTable) {
         if (drow.status === DiffStatus.NoChange) {
@@ -112,7 +111,7 @@ function makeElementMismatchTable(ditem: LawDiffElementMismatchData) {
     return table;
 }
 
-function makeElementChangeTable(ditem: LawDiffElementChangeData) {
+const makeElementChangeTable = (ditem: LawDiffElementChangeData) => {
     const table: string[][] = [];
     const oldItem = ditem.oldItem;
     const newItem = ditem.newItem;
@@ -140,14 +139,14 @@ function makeElementChangeTable(ditem: LawDiffElementChangeData) {
         ]);
     } else { util.assertNever(ditem.mostSeriousStatus); }
 
-    for (let key of ditem.nochangeKeys) {
+    for (const key of ditem.nochangeKeys) {
         table.push([
             "", `  ${key}="${oldItem.attr[key]}"`,
             "", `  ${key}="${newItem.attr[key]}"`,
         ]);
     }
 
-    for (let [key, status] of ditem.changedKeys) {
+    for (const [key, status] of ditem.changedKeys) {
         if (status === ProblemStatus.Error) {
             table.push([
                 "", `  ${key}="${TERMC.YELLOW}${oldItem.attr[key]}${TERMC.DEFAULT}"`,
@@ -166,7 +165,7 @@ function makeElementChangeTable(ditem: LawDiffElementChangeData) {
         } else { util.assertNever(status); }
     }
 
-    for (let [key, status] of ditem.removedKeys) {
+    for (const [key, status] of ditem.removedKeys) {
         if (status === ProblemStatus.Error) {
             table.push([
                 "", `  ${TERMC.MAGENTA}${key}="${oldItem.attr[key]}"${TERMC.DEFAULT}`,
@@ -185,7 +184,7 @@ function makeElementChangeTable(ditem: LawDiffElementChangeData) {
         } else { util.assertNever(status); }
     }
 
-    for (let [key, status] of ditem.addedKeys) {
+    for (const [key, status] of ditem.addedKeys) {
         if (status === ProblemStatus.Error) {
             table.push([
                 "", "",
@@ -211,7 +210,7 @@ function makeElementChangeTable(ditem: LawDiffElementChangeData) {
 
 const NO_DIFF_SHOW_LINES = 3;
 
-function makeElementNoDiffTable(ditem: LawDiffNoDiffData) {
+const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
     const table: string[][] = [];
     for (const [i, drow] of ditem.diffTable.entries()) {
         if (i < NO_DIFF_SHOW_LINES || ditem.diffTable.length - NO_DIFF_SHOW_LINES <= i) {
@@ -225,7 +224,7 @@ function makeElementNoDiffTable(ditem: LawDiffNoDiffData) {
                 [newItem ? `  ${newItem.pos ? newItem.pos.str : ""}` : ""],
                 itemToString(newItem),
             ], ["", "", "", ""]));
-        } else if (i == NO_DIFF_SHOW_LINES && i < ditem.diffTable.length - NO_DIFF_SHOW_LINES) {
+        } else if (i === NO_DIFF_SHOW_LINES && i < ditem.diffTable.length - NO_DIFF_SHOW_LINES) {
             table.push(["  ～～～", "～～～～～", "  ～～～", "～～～～～"]);
             table.push(["  ～～～", "～～～～～", "  ～～～", "～～～～～"]);
         }
@@ -237,7 +236,7 @@ function makeElementNoDiffTable(ditem: LawDiffNoDiffData) {
 it("Render and Parse Lawtext", async () => {
     // const [list, listByLawnum] = await getLawList();
 
-    const lawNum = "平成三十年法律第四十号";
+    const lawNum = "昭和五十九年法律第八十六号";
 
     const origXML = await getLawXml(lawNum);
     console.log(`Temporary directory: "${tempDir}"`);
@@ -249,7 +248,7 @@ it("Render and Parse Lawtext", async () => {
     const origDOM = domParser.parseFromString(origXML);
     await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
 
-    const origEL = util.xml_to_json(origXML);
+    const origEL = util.xmlToJson(origXML);
 
     let lawtext;
     try {

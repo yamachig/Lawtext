@@ -1,16 +1,16 @@
-export type EditTable<T> = EditTableRow<T>[];
+export type EditTable<T> = Array<EditTableRow<T>>;
 export type EditTableRow<T> = AddRow<T> | RemoveRow<T> | SameRow<T>;
 export type AddRow<T> = [null, EditTableItem<T>];
 export type RemoveRow<T> = [EditTableItem<T>, null];
 export type SameRow<T> = [EditTableItem<T>, EditTableItem<T>];
 export type EditTableItem<T> = [number, T];
 
-export function compare<T>(A: T[], B: T[]) {
+export const compare = <T>(A: T[], B: T[]) => {
     const M = A.length;
     const N = B.length;
     const V: number[] = new Array(M + N + 1);
     const E: boolean[] = new Array(M + N + 1);
-    const S: [number, number][][] = new Array(M + N + 1);
+    const S: Array<Array<[number, number]>> = new Array(M + N + 1);
     const offset = M;
 
     for (let D = 0; D <= M + N; D++) {
@@ -20,7 +20,7 @@ export function compare<T>(A: T[], B: T[]) {
         for (let k = min; k <= max; k += 2) {
             let i: number;
 
-            let prevS: [number, number][];
+            let prevS: Array<[number, number]>;
 
             // initialize
             if (D === 0) {
@@ -95,14 +95,14 @@ export function compare<T>(A: T[], B: T[]) {
     throw new Error("never");
 }
 
-function generateEditTable<T>(A: T[], B: T[], origEditScript: [number, number][]) {
+const generateEditTable = <T>(A: T[], B: T[], origEditScript: Array<[number, number]>) => {
     const M = A.length;
     const N = B.length;
     let i = 0; // 1 indexed
     let j = 0; // 1 indexed
     const table: EditTable<T> = [];
     const extEditScript = [...origEditScript, [M, N]];
-    const editScript: [number, number][] = [];
+    const editScript: Array<[number, number]> = [];
     for (let p = extEditScript.length - 1; 0 <= p; p--) {
         const [i1, j1] = extEditScript[p];
         editScript.unshift([i1, j1]);
@@ -121,7 +121,7 @@ function generateEditTable<T>(A: T[], B: T[], origEditScript: [number, number][]
         } else if (k1 === k0 - 1) {
             editScript.unshift([i0 + 1, j0]);
         } else {
-            throw new Error(JSON.stringify({ i: i, j: j, M: M, N: N }));
+            throw new Error(JSON.stringify({ i, j, M, N }));
         }
     }
     for (const [ei, ej] of editScript) {
@@ -152,7 +152,7 @@ function generateEditTable<T>(A: T[], B: T[], origEditScript: [number, number][]
             }
 
         } else {
-            throw new Error(JSON.stringify({ i: i, j: j, ei: ei, ej: ej, editScript: editScript }));
+            throw new Error(JSON.stringify({ i, j, ei, ej, editScript }));
         }
         [i, j] = [ei, ej];
     }

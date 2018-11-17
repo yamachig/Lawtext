@@ -1,12 +1,12 @@
 "use strict";
 
-import * as analyzer from "./analyzer";
-import * as renderer from "./renderer";
-import render_lawtext from "./renderers/lawtext";
-import * as util from "./util";
-import * as fs from "fs";
 import * as argparse from "argparse";
-import { parse } from "./parser_wrapper"
+import * as fs from "fs";
+import * as analyzer from "./analyzer";
+import { parse } from "./parser_wrapper";
+import * as renderer from "./renderer";
+import renderLawtext from "./renderers/lawtext";
+import * as util from "./util";
 
 
 interface Args {
@@ -19,14 +19,14 @@ interface Args {
     noanalyze?: boolean,
 }
 
-function main(args: Args) {
-    let infile = args.infile || null;
+const main = (args: Args) => {
+    const infile = args.infile || null;
     let intype = args.intype || null;
-    let outfile = args.outfile || null;
+    const outfile = args.outfile || null;
     let outtype = args.outtype || null;
     // let analysis_file = args.analysis_file || null;
-    let with_control_el = args.with_control_el || false;
-    let noanalyze = args.noanalyze || false;
+    const withControlEl = args.with_control_el || false;
+    const noanalyze = args.noanalyze || false;
 
     // console.error("[lawtext.main]", args);
 
@@ -68,16 +68,16 @@ function main(args: Args) {
     new Promise((resolve, reject) => {
 
         if (infile) {
-            let intext = fs.readFileSync(infile, "utf-8");
+            const intext = fs.readFileSync(infile, "utf-8");
             resolve(intext);
         } else {
-            var intext = '';
+            let intext = '';
             process.stdin.resume();
             process.stdin.setEncoding('utf-8');
-            process.stdin.on('data', function (chunk) {
+            process.stdin.on('data', chunk => {
                 intext += chunk;
             });
-            process.stdin.on('end', function () {
+            process.stdin.on('end', () => {
                 resolve(intext);
             });
         }
@@ -85,14 +85,14 @@ function main(args: Args) {
     }).then((intext: string) => {
 
         if (intype === "xml") {
-            law = util.xml_to_json(intext);
+            law = util.xmlToJson(intext);
             if (!noanalyze) {
-                analyzer.stdxml_to_ext(law);
+                analyzer.stdxmlToExt(law);
             }
         } else if (intype === "json") {
-            let raw_law = JSON.parse(intext);
+            const rawLaw = JSON.parse(intext);
             try {
-                law = <util.EL>util.load_el(raw_law);
+                law = util.loadEl(rawLaw) as util.EL;
             } catch (e) {
                 console.error("[loading json at main]", e);
                 throw e;
@@ -105,7 +105,7 @@ function main(args: Args) {
                 throw e;
             }
             if (noanalyze) {
-                law = <util.EL>util.load_el(law.json());
+                law = util.loadEl(law.json()) as util.EL;
             }
         }
 
@@ -116,26 +116,26 @@ function main(args: Args) {
         // }
 
         if (outtype === "docx") {
-            renderer.render_docx_async(law.json())
+            renderer.renderDocxAsync(law.json())
                 .then(u8 => {
                     if (outfile) {
                         fs.writeFileSync(outfile, u8);
                     } else {
-                        process.stdout.write(<Buffer>u8);
+                        process.stdout.write(u8 as Buffer);
                     }
                 });
         } else {
             let outtext = "";
             if (outtype === "lawtext") {
-                outtext = render_lawtext(law);
+                outtext = renderLawtext(law);
             } else if (outtype === "xml") {
-                outtext = renderer.render_xml(law, { with_control_el: with_control_el });
+                outtext = renderer.renderXml(law, { withControlEl });
             } else if (outtype === "json") {
-                outtext = JSON.stringify(law.json(with_control_el));
+                outtext = JSON.stringify(law.json(withControlEl));
             } else if (outtype === "html") {
-                outtext = renderer.render_html(law);
+                outtext = renderer.renderHtml(law);
             } else if (outtype === "htmlfragment") {
-                outtext = renderer.render_htmlfragment(law);
+                outtext = renderer.renderHtmlfragment(law);
             }
 
             if (outfile) {
@@ -154,7 +154,7 @@ if (typeof require !== "undefined" && require.main === module) {
         throw listener;
     });
 
-    let argparser = new argparse.ArgumentParser();
+    const argparser = new argparse.ArgumentParser();
     argparser.addArgument(["infile"], { nargs: "?" });
     argparser.addArgument(
         ["-it", "--intype"],
@@ -179,7 +179,7 @@ if (typeof require !== "undefined" && require.main === module) {
         { action: "storeTrue" },
     );
 
-    let args = argparser.parseArgs();
+    const args = argparser.parseArgs();
 
     if (!args.intype && !args.infile) {
         argparser.error("INTYPE must be specified when with stdin");

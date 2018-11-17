@@ -1,6 +1,6 @@
-import * as std from "../std_law"
-import { EL, assertNever, NotImplementedError } from "../util"
 import { isString } from "util";
+import * as std from "../std_law";
+import { assertNever, EL, NotImplementedError } from "../util";
 
 const INDENT = "  "
 const MARGIN = "　"
@@ -10,10 +10,10 @@ const BLANK = ""
 
 
 
-function renderLaw(el: std.Law, indent: number): string {
+const renderLaw = (el: std.Law, indent: number): string => {
     let LawNum = "";
-    let LawBody: std.LawBody | undefined = undefined;
-    for (let child of el.children) {
+    let LawBody: std.LawBody | undefined;
+    for (const child of el.children) {
         if (child.tag === "LawNum") {
             LawNum = child.text;
         } else if (child.tag === "LawBody") {
@@ -28,9 +28,9 @@ function renderLaw(el: std.Law, indent: number): string {
 
 
 
-function renderLawBody(el: std.LawBody, indent: number, LawNum: string): string {
-    let blocks: string[] = [];
-    for (let child of el.children) {
+const renderLawBody = (el: std.LawBody, indent: number, LawNum: string): string => {
+    const blocks: string[] = [];
+    for (const child of el.children) {
 
         if (child.tag === "LawTitle") {
             blocks.push(renderLawTitle(child, indent, LawNum));
@@ -70,8 +70,8 @@ function renderLawBody(el: std.LawBody, indent: number, LawNum: string): string 
 
 
 
-function renderLawTitle(el: std.LawTitle, indent: number, LawNum: string): string {
-    let _____ = INDENT.repeat(indent);
+const renderLawTitle = (el: std.LawTitle, indent: number, LawNum: string): string => {
+    const _____ = INDENT.repeat(indent);
 
     return LawNum
         ?
@@ -90,8 +90,8 @@ ${BLANK}
 
 
 
-function renderEnactStatement(el: std.EnactStatement, indent: number): string {
-    let _____ = INDENT.repeat(indent);
+const renderEnactStatement = (el: std.EnactStatement, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
 
     return (
  /* ========================= */`
@@ -102,9 +102,9 @@ ${BLANK}
 
 
 
-function renderPreamble(el: std.Preamble, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderPreamble = (el: std.Preamble, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     for (const paragraph of el.children) {
         blocks.push(renderParagraphItem(paragraph, indent));
@@ -120,10 +120,10 @@ ${BLANK}
 
 
 
-function renderTOC(el: std.TOC, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
-    for (let child of el.children) {
+const renderTOC = (el: std.TOC, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+    for (const child of el.children) {
 
         if (child.tag === "TOCLabel") {
 
@@ -150,13 +150,13 @@ ${BLANK}
 
 
 
-function renderTOCItem(el: std.TOCPart | std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCSupplProvision | std.TOCArticle | std.TOCAppdxTableLabel, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderTOCItem = (el: std.TOCPart | std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCSupplProvision | std.TOCArticle | std.TOCAppdxTableLabel, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
     if (el.tag === "TOCArticle") {
         let ArticleTitle = "";
         let ArticleCaption = "";
-        for (let child of el.children) {
+        for (const child of el.children) {
             if (child.tag === "ArticleTitle") {
                 ArticleTitle = renderRun(child.children);
             } else if (child.tag === "ArticleCaption") {
@@ -177,8 +177,8 @@ ${_____}${ArticleTitle}${ArticleCaption}
     } else {
         let TocItemTitle = "";
         let ArticleRange = "";
-        let TOCItems: (std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCArticle)[] = [];
-        for (let child of el.children) {
+        const TOCItems: Array<std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCArticle> = [];
+        for (const child of el.children) {
 
             if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle" || child.tag === "SupplProvisionLabel") {
                 TocItemTitle = renderRun(child.children);
@@ -198,7 +198,7 @@ ${_____}${ArticleTitle}${ArticleCaption}
 ${_____}${TocItemTitle}${ArticleRange}
 `/* ========================= */);
         }
-        for (let TOCItem of TOCItems) {
+        for (const TOCItem of TOCItems) {
             blocks.push(renderTOCItem(TOCItem, indent + 1)); /* >>>> INDENT >>>> */
         }
 
@@ -208,14 +208,14 @@ ${_____}${TocItemTitle}${ArticleRange}
 
 
 
-function renderAppdxTable(el: std.AppdxTable, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderAppdxTable = (el: std.AppdxTable, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     let AppdxTableTitle = "";
     let RelatedArticleNum = "";
-    let ChildItems: (std.TableStruct | std.Item | std.Remarks)[] = [];
-    for (let child of el.children) {
+    const ChildItems: Array<std.TableStruct | std.Item | std.Remarks> = [];
+    for (const child of el.children) {
 
         if (child.tag === "AppdxTableTitle") {
             AppdxTableTitle = renderRun(child.children);
@@ -260,14 +260,14 @@ ${BLANK}
 
 
 
-function renderAppdxStyle(el: std.AppdxStyle, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderAppdxStyle = (el: std.AppdxStyle, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     let AppdxStyleTitle = "";
     let RelatedArticleNum = "";
-    let ChildItems: (std.StyleStruct | std.Item | std.Remarks)[] = [];
-    for (let child of el.children) {
+    const ChildItems: Array<std.StyleStruct | std.Item | std.Remarks> = [];
+    for (const child of el.children) {
 
         if (child.tag === "AppdxStyleTitle") {
             AppdxStyleTitle = renderRun(child.children);
@@ -289,7 +289,7 @@ ${BLANK}
 `/* ========================= */);
     }
 
-    for (let child of ChildItems) {
+    for (const child of ChildItems) {
         if (child.tag === "StyleStruct") {
             blocks.push(renderStyleStruct(child, indent + 1)); /* >>>> INDENT >>>> */
 
@@ -308,14 +308,14 @@ ${BLANK}
 
 
 
-function renderAppdxFig(el: std.AppdxFig, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderAppdxFig = (el: std.AppdxFig, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     let AppdxFigTitle = "";
     let RelatedArticleNum = "";
-    let ChildItems: (std.FigStruct | std.TableStruct)[] = [];
-    for (let child of el.children) {
+    const ChildItems: Array<std.FigStruct | std.TableStruct> = [];
+    for (const child of el.children) {
 
         if (child.tag === "AppdxFigTitle") {
             AppdxFigTitle = renderRun(child.children);
@@ -337,7 +337,7 @@ ${BLANK}
 `/* ========================= */);
     }
 
-    for (let child of ChildItems) {
+    for (const child of ChildItems) {
         if (child.tag === "FigStruct") {
             blocks.push(renderFigStruct(child, indent + 1)); /* >>>> INDENT >>>> */
 
@@ -353,14 +353,14 @@ ${BLANK}
 
 
 
-function renderSupplProvision(el: std.SupplProvision, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderSupplProvision = (el: std.SupplProvision, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     let SupplProvisionLabel = "";
-    let Extract = el.attr.Extract == "true" ? `${MARGIN}抄` : "";
-    let ChildItems: (std.Chapter | std.Article | std.Paragraph | std.SupplProvisionAppdxTable | std.SupplProvisionAppdxStyle | std.SupplProvisionAppdx)[] = [];
-    for (let child of el.children) {
+    const Extract = el.attr.Extract === "true" ? `${MARGIN}抄` : "";
+    const ChildItems: Array<std.Chapter | std.Article | std.Paragraph | std.SupplProvisionAppdxTable | std.SupplProvisionAppdxStyle | std.SupplProvisionAppdx> = [];
+    for (const child of el.children) {
 
         if (child.tag === "SupplProvisionLabel") {
             SupplProvisionLabel = `${INDENT.repeat(3)}${renderRun(child.children)}`;
@@ -386,7 +386,7 @@ ${BLANK}
 `/* ========================= */);
     }
 
-    for (let child of ChildItems) {
+    for (const child of ChildItems) {
         if (child.tag === "Article") {
             blocks.push(renderArticle(child, indent));
 
@@ -414,16 +414,16 @@ ${BLANK}
 
 
 
-function renderArticleGroup(el: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderArticleGroup = (el: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     let ArticleGroupTitle = "";
-    let ChildItems: (std.Part | std.Chapter | std.Section | std.Subsection | std.Division | std.Article | std.Paragraph)[] = [];
-    for (let child of el.children) {
+    const ChildItems: Array<std.Part | std.Chapter | std.Section | std.Subsection | std.Division | std.Article | std.Paragraph> = [];
+    for (const child of el.children) {
 
         if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle") {
-            let titleIndent =
+            const titleIndent =
                 child.tag === "PartTitle"
                     ? 2
                     : child.tag === "ChapterTitle"
@@ -451,7 +451,7 @@ ${BLANK}
 `/* ========================= */);
     }
 
-    for (let child of ChildItems) {
+    for (const child of ChildItems) {
         if (child.tag === "Article") {
             blocks.push(renderArticle(child, indent));
 
@@ -468,14 +468,14 @@ ${BLANK}
 
 
 
-function renderArticle(el: std.Article, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderArticle = (el: std.Article, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     let ArticleCaption = "";
     let ArticleTitle = "";
-    let Paragraphs: std.Paragraph[] = [];
-    for (let child of el.children) {
+    const Paragraphs: std.Paragraph[] = [];
+    for (const child of el.children) {
 
         if (child.tag === "ArticleCaption") {
             ArticleCaption = renderRun(child.children);
@@ -502,8 +502,8 @@ ${_____}${INDENT}${ArticleCaption}
     }
 
     for (let i = 0; i < Paragraphs.length; i++) {
-        let Paragraph = Paragraphs[i];
-        blocks.push(renderParagraphItem(Paragraph, indent, (i == 0 && ArticleTitle) ? ArticleTitle : undefined));
+        const Paragraph = Paragraphs[i];
+        blocks.push(renderParagraphItem(Paragraph, indent, (i === 0 && ArticleTitle) ? ArticleTitle : undefined));
     }
     blocks.push(
  /* ========================= */`\
@@ -515,15 +515,15 @@ ${BLANK}
 
 
 
-function renderParagraphItem(el: std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, indent: number, ArticleCaption?: string): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderParagraphItem = (el: std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, indent: number, ArticleCaption?: string): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     let ParagraphCaption = "";
     let ParagraphItemTitle = "";
-    let ParagraphItemSentence: std.ParagraphSentence | std.ItemSentence | std.Subitem1Sentence | std.Subitem2Sentence | std.Subitem3Sentence | std.Subitem4Sentence | std.Subitem5Sentence | std.Subitem6Sentence | std.Subitem7Sentence | std.Subitem8Sentence | std.Subitem9Sentence | std.Subitem10Sentence | undefined = undefined;
-    let Children: (std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10 | std.AmendProvision | std.Class | std.TableStruct | std.FigStruct | std.StyleStruct | std.List)[] = [];
-    for (let child of el.children) {
+    let ParagraphItemSentence: std.ParagraphSentence | std.ItemSentence | std.Subitem1Sentence | std.Subitem2Sentence | std.Subitem3Sentence | std.Subitem4Sentence | std.Subitem5Sentence | std.Subitem6Sentence | std.Subitem7Sentence | std.Subitem8Sentence | std.Subitem9Sentence | std.Subitem10Sentence | undefined;
+    const Children: Array<std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10 | std.AmendProvision | std.Class | std.TableStruct | std.FigStruct | std.StyleStruct | std.List> = [];
+    for (const child of el.children) {
 
         if (child.tag === "ParagraphCaption") {
             ParagraphCaption = renderRun(child.children);
@@ -557,7 +557,7 @@ ${_____}${INDENT}${ParagraphCaption}
 
     let Title = ParagraphItemTitle;
     if (ArticleCaption) Title += ArticleCaption;
-    let SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
+    const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
     blocks.push(renderBlockSentence(SentenceChildren, indent, Title));
 
     for (const [i, child] of Children.entries()) {
@@ -592,10 +592,10 @@ ${_____}${INDENT}${ParagraphCaption}
 
 
 
-function renderList(el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, indent: number): string {
-    let blocks: string[] = [];
+const renderList = (el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, indent: number): string => {
+    const blocks: string[] = [];
 
-    for (let child of el.children) {
+    for (const child of el.children) {
 
         if (child.tag === "ListSentence" || child.tag === "Sublist1Sentence" || child.tag === "Sublist2Sentence" || child.tag === "Sublist3Sentence") {
             blocks.push(renderBlockSentence(child.children, indent));
@@ -612,9 +612,9 @@ function renderList(el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, i
 
 
 
-function renderAmendProvision(el: std.AmendProvision, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderAmendProvision = (el: std.AmendProvision, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     blocks.push(
  /* ========================= */`\
@@ -622,7 +622,7 @@ ${BLANK}
 ${_____}:AmendProvision:
 `/* ========================= */);
 
-    for (let child of el.children) {
+    for (const child of el.children) {
 
         if (child.tag === "AmendProvisionSentence") {
             blocks.push(renderBlockSentence(child.children, indent));
@@ -647,9 +647,9 @@ ${BLANK}
 
 
 
-function renderTableStruct(el: std.TableStruct, indent: number, isFirstTableStruct = true): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderTableStruct = (el: std.TableStruct, indent: number, isFirstTableStruct = true): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     if (!isFirstTableStruct) {
         blocks.push(
@@ -658,7 +658,7 @@ ${_____}:table-struct:
 `/* ========================= */);
     }
 
-    for (let child of el.children) {
+    for (const child of el.children) {
 
         if (child.tag === "TableStructTitle") {
             blocks.push(
@@ -686,9 +686,9 @@ ${BLANK}
 
 
 
-function renderTable(el: std.Table, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderTable = (el: std.Table, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     if (el.attr.WritingMode === "horizontal") {
         blocks.push(
@@ -697,7 +697,7 @@ ${_____}[WritingMode="horizontal"]
 `/* ========================= */);
     }
 
-    for (let child of el.children) {
+    for (const child of el.children) {
 
         if (child.tag === "TableRow" || child.tag === "TableHeaderRow") {
             blocks.push(renderTableRow(child, indent));
@@ -711,13 +711,13 @@ ${_____}[WritingMode="horizontal"]
 
 
 
-function renderRemarks(el: std.Remarks, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderRemarks = (el: std.Remarks, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
     let RemarksLabel = "";
-    let ChildItems: (std.Item | std.Sentence)[] = [];
-    for (let child of el.children) {
+    const ChildItems: Array<std.Item | std.Sentence> = [];
+    for (const child of el.children) {
 
         if (child.tag === "RemarksLabel") {
             RemarksLabel = renderRun(child.children);
@@ -729,10 +729,10 @@ function renderRemarks(el: std.Remarks, indent: number): string {
     }
 
     for (let i = 0; i < ChildItems.length; i++) {
-        let child = ChildItems[i];
+        const child = ChildItems[i];
 
         if (child.tag === "Sentence") {
-            blocks.push((i == 0)
+            blocks.push((i === 0)
                 ?
  /* ========================= */`\
 ${_____}${RemarksLabel}${MARGIN}${renderBlockSentence([child], indent + 2).trim()}
@@ -740,7 +740,7 @@ ${_____}${RemarksLabel}${MARGIN}${renderBlockSentence([child], indent + 2).trim(
                 : renderBlockSentence([child], indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
         } else if (child.tag === "Item") {
-            if (i == 0) {
+            if (i === 0) {
                 blocks.push(
  /* ========================= */`\
 ${_____}${RemarksLabel}
@@ -757,11 +757,11 @@ ${_____}${RemarksLabel}
 
 
 
-function renderTableRow(el: std.TableRow | std.TableHeaderRow, indent: number): string {
-    let blocks: string[] = [];
+const renderTableRow = (el: std.TableRow | std.TableHeaderRow, indent: number): string => {
+    const blocks: string[] = [];
 
     for (let i = 0; i < el.children.length; i++) {
-        let child = el.children[i];
+        const child = el.children[i];
 
         if (child.tag === "TableColumn" || child.tag === "TableHeaderColumn") {
             blocks.push(renderTableColumn(child, indent, i === 0));
@@ -775,14 +775,14 @@ function renderTableRow(el: std.TableRow | std.TableHeaderRow, indent: number): 
 
 
 
-function renderTableColumn(el: std.TableColumn | std.TableHeaderColumn, indent: number, first: boolean): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderTableColumn = (el: std.TableColumn | std.TableHeaderColumn, indent: number, first: boolean): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
-    let bullet = first
+    const bullet = first
         ? "* - "
         : "  - ";
-    let attr = Object.keys(el.attr).map(k => `[${k}="${el.attr[k]}"]`).join("");
+    const attr = Object.keys(el.attr).map(k => `[${k}="${el.attr[k]}"]`).join("");
 
     if (el.tag === "TableHeaderColumn") {
         blocks.push(
@@ -792,10 +792,10 @@ ${_____}${bullet}[header]${attr}${renderRun(el.children)}
 
     } else if (el.tag === "TableColumn") {
         for (let i = 0; i < el.children.length; i++) {
-            let child = el.children[i];
+            const child = el.children[i];
 
             if (child.tag === "Sentence" || child.tag === "Column") {
-                blocks.push((i == 0)
+                blocks.push((i === 0)
                     ?
  /* ========================= */`\
 ${_____}${bullet}${attr}${renderBlockSentence([child], indent + 2).trim()}
@@ -803,7 +803,7 @@ ${_____}${bullet}${attr}${renderBlockSentence([child], indent + 2).trim()}
                     : renderBlockSentence([child], indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
             } else if (child.tag === "FigStruct") {
-                blocks.push((i == 0)
+                blocks.push((i === 0)
                     ?
  /* ========================= */`\
 ${_____}${bullet}${attr}${renderFigStruct(child, indent + 2).trim()}
@@ -811,7 +811,7 @@ ${_____}${bullet}${attr}${renderFigStruct(child, indent + 2).trim()}
                     : renderFigStruct(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
             } else if (child.tag === "Remarks") {
-                blocks.push((i == 0)
+                blocks.push((i === 0)
                     ?
  /* ========================= */`\
 ${_____}${bullet}${attr}${renderRemarks(child, indent + 2).trim()}
@@ -819,7 +819,7 @@ ${_____}${bullet}${attr}${renderRemarks(child, indent + 2).trim()}
                     : renderRemarks(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
             } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
-                blocks.push((i == 0)
+                blocks.push((i === 0)
                     ?
  /* ========================= */`\
 ${_____}${bullet}${attr}${renderArticleGroup(child, indent + 2).trim()}
@@ -827,7 +827,7 @@ ${_____}${bullet}${attr}${renderArticleGroup(child, indent + 2).trim()}
                     : renderArticleGroup(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
             } else if (child.tag === "Article") {
-                blocks.push((i == 0)
+                blocks.push((i === 0)
                     ?
  /* ========================= */`\
 ${_____}${bullet}${attr}${renderArticle(child, indent + 2).trim()}
@@ -835,7 +835,7 @@ ${_____}${bullet}${attr}${renderArticle(child, indent + 2).trim()}
                     : renderArticle(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
             } else if (child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
-                blocks.push((i == 0)
+                blocks.push((i === 0)
                     ?
  /* ========================= */`\
 ${_____}${bullet}${attr}${renderParagraphItem(child, indent + 2).trim()}
@@ -854,11 +854,11 @@ ${_____}${bullet}${attr}${renderParagraphItem(child, indent + 2).trim()}
 
 
 
-function renderStyleStruct(el: std.StyleStruct, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderStyleStruct = (el: std.StyleStruct, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
-    for (let child of el.children) {
+    for (const child of el.children) {
 
         if (child.tag === "StyleStructTitle") {
             blocks.push(
@@ -868,7 +868,7 @@ ${_____}:style-struct-title:${renderRun(child.children)}
 
         } else if (child.tag === "Style") {
 
-            for (let subchild of child.children) {
+            for (const subchild of child.children) {
                 if (isString(subchild)) {
                     throw new NotImplementedError("string");
 
@@ -907,11 +907,11 @@ ${BLANK}
 
 
 
-function renderFigStruct(el: std.FigStruct, indent: number): string {
-    let _____ = INDENT.repeat(indent);
-    let blocks: string[] = [];
+const renderFigStruct = (el: std.FigStruct, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
 
-    for (let child of el.children) {
+    for (const child of el.children) {
 
         if (child.tag === "FigStructTitle") {
             blocks.push(
@@ -942,7 +942,7 @@ ${BLANK}
 
 
 
-function renderFigRun(el: std.Fig): string {
+const renderFigRun = (el: std.Fig): string => {
     if (el.children.length > 0) {
         throw new NotImplementedError(el.outerXML());
     }
@@ -952,10 +952,10 @@ function renderFigRun(el: std.Fig): string {
 
 
 
-function renderBlockSentence(els: (std.Sentence | std.Column | std.Table)[], indent: number, Title?: string): string {
-    let _____ = INDENT.repeat(indent);
+const renderBlockSentence = (els: Array<std.Sentence | std.Column | std.Table>, indent: number, Title?: string): string => {
+    const _____ = INDENT.repeat(indent);
     // let blocks: string[] = [];
-    let runs: string[] = [];
+    const runs: string[] = [];
 
     if (Title) {
         runs.push(/* $$$$$$ */Title/* $$$$$$ */);
@@ -963,18 +963,18 @@ function renderBlockSentence(els: (std.Sentence | std.Column | std.Table)[], ind
     }
 
     for (let i = 0; i < els.length; i++) {
-        let el = els[i];
+        const el = els[i];
 
         if (el.tag === "Sentence") {
             if (el.attr.WritingMode === "horizontal") runs.push(/* $$$$$$ */`[WritingMode="horizontal"]`/* $$$$$$ */);
             runs.push(renderRun(el.children));
 
         } else if (el.tag === "Column") {
-            if (i != 0) {
+            if (i !== 0) {
                 runs.push(/* $$$$$$ */MARGIN/* $$$$$$ */);
             }
             if (el.attr.LineBreak === "true") runs.push(/* $$$$$$ */`[LineBreak="true"]`/* $$$$$$ */);
-            for (let subel of el.children) {
+            for (const subel of el.children) {
                 runs.push(renderRun(subel.children));
             }
 
@@ -993,10 +993,10 @@ ${_____}${runs.join("")}
 
 
 
-function renderRun(els: (string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub | std.__EL)[]): string {
-    let runs: string[] = [];
+const renderRun = (els: Array<string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub | std.__EL>): string => {
+    const runs: string[] = [];
 
-    for (let el of els) {
+    for (const el of els) {
         if (isString(el)) {
             runs.push(/* $$$$$$ */el.replace(/\r|\n/, "")/* $$$$$$ */);
         } else if (el.isControl) {
@@ -1021,7 +1021,7 @@ function renderRun(els: (string | std.Line | std.QuoteStruct | std.ArithFormula 
 
 
 
-export function render(el: EL, indent: number = 0): string {
+export const render = (el: EL, indent: number = 0): string => {
     let ret = "";
     if (std.isLaw(el)) {
         ret += renderLaw(el, indent);
@@ -1029,6 +1029,6 @@ export function render(el: EL, indent: number = 0): string {
     ret = ret.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1");
     return ret;
 }
-let render_lawtext = render;
-export default render_lawtext;
+const renderLawtext = render;
+export default renderLawtext;
 

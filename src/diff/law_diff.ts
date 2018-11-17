@@ -1,7 +1,7 @@
-import * as util from "../util"
-import { isString } from "util"
-import { EditTable, compare } from "./edit_table"
-import * as xpath from "xpath"
+import { isString } from "util";
+import * as xpath from "xpath";
+import * as util from "../util";
+import { compare, EditTable } from "./edit_table";
 
 export enum TagType {
     Open = "Open",
@@ -12,11 +12,11 @@ export enum TagType {
 
 export interface LawDiffResult<T> {
     mostSeriousStatus: ProblemStatus;
-    items: LawDiffResultItem<T>[];
+    items: Array<LawDiffResultItem<T>>;
     oldRoot: ComparableEL,
     newRoot: ComparableEL,
-    oldELs: [ComparableEL, TagType][];
-    newELs: [ComparableEL, TagType][];
+    oldELs: Array<[ComparableEL, TagType]>;
+    newELs: Array<[ComparableEL, TagType]>;
 }
 
 export type LawDiffResultItem<T> = LawDiffElementMismatch<T> | LawDiffElementChange<T> | LawDiffNoDiff<T>
@@ -37,9 +37,9 @@ export interface LawDiffElementChange<T> {
     mostSeriousStatus: ProblemStatus;
     diffTable: DiffTable<T>;
     nochangeKeys: string[];
-    changedKeys: [string, ProblemStatus][];
-    removedKeys: [string, ProblemStatus][];
-    addedKeys: [string, ProblemStatus][];
+    changedKeys: Array<[string, ProblemStatus]>;
+    removedKeys: Array<[string, ProblemStatus]>;
+    addedKeys: Array<[string, ProblemStatus]>;
     oldIndex: number;
     newIndex: number;
 }
@@ -63,7 +63,7 @@ export enum DiffStatus {
     NoChange = "NoChange",
 }
 
-export type DiffTable<T> = DiffTableRow<T>[];
+export type DiffTable<T> = Array<DiffTableRow<T>>;
 export type DiffTableRow<T> = DiffAddRow<T> | DiffRemoveRow<T> | DiffChangeRow<T> | DiffNoChangeRow<T>;
 export interface DiffAddRow<T> {
     status: DiffStatus.Add,
@@ -85,10 +85,10 @@ export interface DiffNoChangeRow<T> {
     oldItem: DiffTableItem<T>,
     newItem: DiffTableItem<T>,
 };
-export type DiffTableItem<T> = {
+export interface DiffTableItem<T> {
     index: number,
     value: T,
-};
+}
 
 const defaultAttr = new Map([
     ["Delete", "false"],
@@ -113,14 +113,14 @@ const warningAttrKey = new Set([
 ]);
 
 export class ComparableEL implements util.JsonEL {
-    tag: string = "";
-    attr: { [key: string]: string | undefined } = {};
-    children: ComparableEL[] = [];
-    index: number;
-    closeIndex: number;
-    nextIndex: number;
-    parent?: ComparableEL;
-    _text: string | null = null;
+    public tag: string = "";
+    public attr: { [key: string]: string | undefined } = {};
+    public children: ComparableEL[] = [];
+    public index: number;
+    public closeIndex: number;
+    public nextIndex: number;
+    public parent?: ComparableEL;
+    public textCache: string | null = null;
 
     constructor(el: util.JsonEL | string, parent?: ComparableEL, index = 0) {
         this.index = index;
@@ -129,7 +129,7 @@ export class ComparableEL implements util.JsonEL {
         if (isString(el)) {
             this.tag = "";
             this.attr = {};
-            this._text = el;
+            this.textCache = el;
         } else {
             this.tag = el.tag;
             this.attr = el.attr;
@@ -148,13 +148,13 @@ export class ComparableEL implements util.JsonEL {
     }
 
     get text(): string {
-        if (this._text === null) {
-            this._text = this.children.map(child => child instanceof ComparableEL ? child.text : child).join("／");
+        if (this.textCache === null) {
+            this.textCache = this.children.map(child => child instanceof ComparableEL ? child.text : child).join("／");
         }
-        return this._text;
+        return this.textCache;
     }
 
-    *allList(): IterableIterator<[ComparableEL, TagType]> {
+    public *allList(): IterableIterator<[ComparableEL, TagType]> {
         if (this.children.length) {
             yield [this, TagType.Open];
             for (const child of this.children) {
@@ -166,7 +166,7 @@ export class ComparableEL implements util.JsonEL {
         }
     }
 
-    getXPath(): string {
+    public getXPath(): string {
         if (this.parent) {
             if (this.tag === "") {
                 return `${this.parent.getXPath()}/text()`;
@@ -195,7 +195,7 @@ export enum LawDiffMode {
     WarningAsNoDiff = "WarningAsNoDiff",
 }
 
-export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll) {
+export const lawDiff = (oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll) => {
 
     const oldRoot = new ComparableEL(oldJson);
     const oldELs = [...oldRoot.allList()];
@@ -208,10 +208,10 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode:
     const ret: LawDiffResult<string> = {
         mostSeriousStatus: ProblemStatus.NoProblem,
         items: [],
-        oldRoot: oldRoot,
-        newRoot: newRoot,
-        oldELs: oldELs,
-        newELs: newELs,
+        oldRoot,
+        newRoot,
+        oldELs,
+        newELs,
     };
 
 
@@ -251,17 +251,16 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode:
 
     const fragmentELsList: FragmentElements[] = [];
 
-    for (let di = 0; di < diff.length; di++) {
-        const dRow = diff[di];
+    for (const dRow of diff) {
         const oldIndex = dRow.oldItem && dRow.oldItem.index;
         const newIndex = dRow.newItem && dRow.newItem.index;
 
         const [oldEL, /**/] = oldIndex ? oldELs[oldIndex] : [null, null];
         const [newEL, /**/] = newIndex ? newELs[newIndex] : [null, null];
 
-        const isFragment = fragmentELsList.some(({ oldELs, newELs }) => {
-            const oldIsFragment = !oldEL || 0 <= oldELs.indexOf(oldEL);
-            const newIsFragment = !newEL || 0 <= newELs.indexOf(newEL);
+        const isFragment = fragmentELsList.some(els => {
+            const oldIsFragment = !oldEL || 0 <= els.oldELs.indexOf(oldEL);
+            const newIsFragment = !newEL || 0 <= els.newELs.indexOf(newEL);
             return oldIsFragment && newIsFragment;
         });
 
@@ -355,7 +354,7 @@ export function lawDiff(oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode:
 
 }
 
-function processNoChange(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][], noProblemAsNoDiff: boolean): LawDiffElementChange<string> | null {
+const processNoChange = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>, noProblemAsNoDiff: boolean): LawDiffElementChange<string> | null => {
     if (!dRow.oldItem || !dRow.newItem) return null;
     const oldIndex = dRow.oldItem.index;
     const newIndex = dRow.newItem.index;
@@ -372,7 +371,7 @@ function processNoChange(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagT
         const newKeys = Object.keys(newEL.attr);
 
         const nochangeKeys: string[] = [];
-        const changedKeys: [string, ProblemStatus][] = [];
+        const changedKeys: Array<[string, ProblemStatus]> = [];
         for (const key of oldKeys.filter(x => newKeys.includes(x))) {
             let oldVal;
             let newVal;
@@ -393,7 +392,7 @@ function processNoChange(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagT
             }
         }
 
-        const removedKeys: [string, ProblemStatus][] = [];
+        const removedKeys: Array<[string, ProblemStatus]> = [];
         for (const key of oldKeys.filter(x => !newKeys.includes(x))) {
             if (defaultAttr.get(key) === oldEL.attr[key]) {
                 removedKeys.push([key, ProblemStatus.NoProblem]);
@@ -402,7 +401,7 @@ function processNoChange(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagT
             }
         }
 
-        const addedKeys: [string, ProblemStatus][] = [];
+        const addedKeys: Array<[string, ProblemStatus]> = [];
         for (const key of newKeys.filter(x => !oldKeys.includes(x))) {
             if (defaultAttr.get(key) === newEL.attr[key]) {
                 addedKeys.push([key, ProblemStatus.NoProblem]);
@@ -426,12 +425,12 @@ function processNoChange(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagT
                 type: LawDiffType.ElementChange,
                 mostSeriousStatus: elementMostSeriousStatus,
                 diffTable: [dRow],
-                nochangeKeys: nochangeKeys,
-                changedKeys: changedKeys,
-                removedKeys: removedKeys,
-                addedKeys: addedKeys,
-                oldIndex: oldIndex,
-                newIndex: newIndex,
+                nochangeKeys,
+                changedKeys,
+                removedKeys,
+                addedKeys,
+                oldIndex,
+                newIndex,
             };
         }
     }
@@ -444,7 +443,7 @@ interface FragmentElements {
     newELs: ComparableEL[];
 }
 
-function detectFragments(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][]): FragmentElements | null {
+const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>): FragmentElements | null => {
     if (!dRow.oldItem || !dRow.newItem) return null;
     const oldIndex = dRow.oldItem.index;
     const newIndex = dRow.newItem.index;
@@ -453,8 +452,6 @@ function detectFragments(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagT
     const [newEL, newTT] = newELs[newIndex];
 
     if (oldTT === TagType.Text && newTT === TagType.Text) {
-        let oldP: ComparableEL | null = null;
-        let newP: ComparableEL | null = null;
 
         if (
             oldEL.parent && newEL.parent &&
@@ -473,15 +470,18 @@ function detectFragments(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagT
                 }
                 return ret;
             });
-            const oldJoinText = oldSentences.map(el => el.text).join("");
-            const newJoinText = newSentences.map(el => el.text).join("");
-            if (oldJoinText === newJoinText) {
-                return {
-                    oldELs: ([] as ComparableEL[])
-                        .concat(...oldSentences.map(el => Array.from(el.allList()).map(([el,]) => el))),
-                    newELs: ([] as ComparableEL[])
-                        .concat(...newSentences.map(el => Array.from(el.allList()).map(([el,]) => el))),
-                };
+
+            {
+                const oldJoinText = oldSentences.map(el => el.text).join("");
+                const newJoinText = newSentences.map(el => el.text).join("");
+                if (oldJoinText === newJoinText) {
+                    return {
+                        oldELs: ([] as ComparableEL[])
+                            .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e,]) => e))),
+                        newELs: ([] as ComparableEL[])
+                            .concat(...newSentences.map(el => Array.from(el.allList()).map(([e,]) => e))),
+                    };
+                }
             }
 
             if (
@@ -508,9 +508,9 @@ function detectFragments(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagT
                 if (oldJoinText === newJoinText) {
                     return {
                         oldELs: ([] as ComparableEL[])
-                            .concat(...oldColumns.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                            .concat(...oldColumns.map(el => Array.from(el.allList()).map(([e,]) => e))),
                         newELs: ([] as ComparableEL[])
-                            .concat(...newColumns.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                            .concat(...newColumns.map(el => Array.from(el.allList()).map(([e,]) => e))),
                     };
                 }
             }
@@ -538,9 +538,9 @@ function detectFragments(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagT
             if (oldJoinText === newJoinText) {
                 return {
                     oldELs: ([] as ComparableEL[])
-                        .concat(...oldTitles.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                        .concat(...oldTitles.map(el => Array.from(el.allList()).map(([e,]) => e))),
                     newELs: ([] as ComparableEL[])
-                        .concat(...newTitles.map(el => Array.from(el.allList()).map(([el,]) => el))),
+                        .concat(...newTitles.map(el => Array.from(el.allList()).map(([e,]) => e))),
                 };
             }
         }
@@ -548,7 +548,7 @@ function detectFragments(dRow: DiffTableRow<string>, oldELs: [ComparableEL, TagT
     return null;
 }
 
-function tuneEditTable<T>(table: EditTable<T>, oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][]) {
+const tuneEditTable = <T>(table: EditTable<T>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>) => {
     const ret: EditTable<T> = [];
     let nextEmitPos = 0;
     let startPos: number | null = null;
@@ -573,31 +573,31 @@ function tuneEditTable<T>(table: EditTable<T>, oldELs: [ComparableEL, TagType][]
                 const [moveEL, moveTT] = oldELs[moveIndex];
                 if (moveTT !== TagType.Open) break;
 
-                const [oldItem, newItem] = table[startPos - count];
-                if (!oldItem || !newItem) break;
-                const [newIndex, /**/] = newItem;
+                const [oi, ni] = table[startPos - count];
+                if (!oi || !ni) break;
+                const [newIndex, /**/] = ni;
                 const [newEL, newTT] = newELs[newIndex];
                 if (newTT !== TagType.Open) break;
 
                 if (moveEL.tag !== newEL.tag) break;
                 moveCount = count;
             }
-            for (let pos = nextEmitPos; pos < startPos - moveCount; pos++) {
-                ret.push(table[pos]);
+            for (let p = nextEmitPos; p < startPos - moveCount; p++) {
+                ret.push(table[p]);
             }
-            for (let pos = startPos - moveCount; pos < startPos; pos++) {
-                const [oldItem, /**/] = table[pos];
-                if (!oldItem) throw new Error("never");
-                ret.push([oldItem, null]);
+            for (let p = startPos - moveCount; p < startPos; p++) {
+                const [oi, /**/] = table[p];
+                if (!oi) throw new Error("never");
+                ret.push([oi, null]);
             }
-            for (let pos = startPos; pos < endPos + 1 - moveCount; pos++) {
-                ret.push(table[pos]);
+            for (let p = startPos; p < endPos + 1 - moveCount; p++) {
+                ret.push(table[p]);
             }
-            for (let pos = endPos + 1 - moveCount; pos <= endPos; pos++) {
-                const [oldItem, /**/] = table[pos];
-                const [/**/, newItem] = table[startPos - (endPos + 1 - pos)];
-                if (!oldItem || !newItem) throw new Error("never");
-                ret.push([oldItem, newItem]);
+            for (let p = endPos + 1 - moveCount; p <= endPos; p++) {
+                const [oi, /**/] = table[p];
+                const [/**/, ni] = table[startPos - (endPos + 1 - p)];
+                if (!oi || !ni) throw new Error("never");
+                ret.push([oi, ni]);
             }
             nextEmitPos = endPos + 1;
             startPos = null;
@@ -611,7 +611,7 @@ function tuneEditTable<T>(table: EditTable<T>, oldELs: [ComparableEL, TagType][]
     return ret;
 }
 
-function collapseChange<T>(diff: EditTable<T>) {
+const collapseChange = <T>(diff: EditTable<T>) => {
     const ret: DiffTable<T> = [];
     let startPos: number | null = null;
     let endPos: number | null = null;
@@ -651,12 +651,12 @@ function collapseChange<T>(diff: EditTable<T>) {
         }
 
         if (endPos !== null && startPos !== null) {
-            const oldItems: DiffTableItem<T>[] = [];
-            const newItems: DiffTableItem<T>[] = [];
-            for (let pos = startPos; pos <= endPos; pos++) {
-                const [oldItem, newItem] = diff[pos];
-                if (oldItem) oldItems.push({ index: oldItem[0], value: oldItem[1] });
-                if (newItem) newItems.push({ index: newItem[0], value: newItem[1] });
+            const oldItems: Array<DiffTableItem<T>> = [];
+            const newItems: Array<DiffTableItem<T>> = [];
+            for (let p = startPos; p <= endPos; p++) {
+                const [oi, ni] = diff[p];
+                if (oi) oldItems.push({ index: oi[0], value: oi[1] });
+                if (ni) newItems.push({ index: ni[0], value: ni[1] });
             }
             const maxLength = Math.max(oldItems.length, newItems.length);
             for (let i = 0; i < maxLength; i++) {
@@ -688,7 +688,7 @@ export interface LawPosition {
     str: string,
 }
 
-function getPosition([el, tt]: [ComparableEL, TagType], dom: Node): LawPosition | null {
+const getPosition = ([el, tt]: [ComparableEL, TagType], dom: Node): LawPosition | null => {
     let xPathString: string | null = null;
     if (tt === TagType.Open) {
         xPathString = el.getXPath();
@@ -715,8 +715,8 @@ function getPosition([el, tt]: [ComparableEL, TagType], dom: Node): LawPosition 
                 (xpath as any).XPathResult.ANY_TYPE,
                 null as any,
             ) as any;
-            const el = r.nodes[0];
-            return { line: el.lineNumber, col: el.columnNumber, str: `${el.lineNumber}:${el.columnNumber}` };
+            const rel = r.nodes[0];
+            return { line: rel.lineNumber, col: rel.columnNumber, str: `${rel.lineNumber}:${rel.columnNumber}` };
         } catch (e) {
             console.error(e);
             console.error(xPathString);
@@ -740,9 +740,9 @@ export interface LawDiffElementChangeData {
     type: LawDiffType.ElementChange;
     mostSeriousStatus: ProblemStatus;
     nochangeKeys: string[];
-    changedKeys: [string, ProblemStatus][];
-    removedKeys: [string, ProblemStatus][];
-    addedKeys: [string, ProblemStatus][];
+    changedKeys: Array<[string, ProblemStatus]>;
+    removedKeys: Array<[string, ProblemStatus]>;
+    addedKeys: Array<[string, ProblemStatus]>;
     oldItem: DiffTableItemData;
     newItem: DiffTableItemData;
 }
@@ -775,15 +775,15 @@ export interface DiffNoChangeRowData {
     oldItem: DiffTableItemData,
     newItem: DiffTableItemData,
 };
-export type DiffTableItemData = {
+export interface DiffTableItemData {
     tag: string,
     attr: { [key: string]: string | undefined },
     text: string,
     type: TagType,
     pos: LawPosition | null,
-};
+}
 
-export function makeDiffData(d: LawDiffResult<string>, origDOM: Node, parsedDOM: Node) {
+export const makeDiffData = (d: LawDiffResult<string>, origDOM: Node, parsedDOM: Node) => {
 
     const ret: LawDiffResultItemData[] = [];
 
@@ -817,8 +817,8 @@ export function makeDiffData(d: LawDiffResult<string>, origDOM: Node, parsedDOM:
                 }
                 table.push({
                     status: drow.status,
-                    oldItem: oldItem,
-                    newItem: newItem,
+                    oldItem,
+                    newItem,
                 } as any);
             }
             ret.push({
@@ -858,8 +858,8 @@ export function makeDiffData(d: LawDiffResult<string>, origDOM: Node, parsedDOM:
                 changedKeys: ditem.changedKeys,
                 removedKeys: ditem.removedKeys,
                 addedKeys: ditem.addedKeys,
-                oldItem: oldItem,
-                newItem: newItem,
+                oldItem,
+                newItem,
             });
 
         } else { util.assertNever(ditem); }

@@ -1,101 +1,102 @@
 "use strict";
 
-import * as parser from "./parser";
 import * as analyzer from "./analyzer";
+import * as parser from "./parser";
 import * as util from "./util";
 
-function lex(text: string): [string, { [key: number]: number }, number] {
+const lex = (text: string): [string, { [key: number]: number }, number] => {
 
-    let lines = text.split(/\r?\n/);
-    let lines_count = lines.length;
-    let replaced_lines: string[] = [];
-    let indent_depth = 0;
-    let indent_memo: { [key: number]: number } = {};
-    let re_indent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章][^。]*$|[附付]\s+則[^。]*$|別表[^。]*$))/;
-    let re_force_dedent_parentheses = /^(?:  |　|\t)[(（][^)）]*[)）][ 　\t]*$/
-    let re_indent_in_toc = /^(?:  |　|\t)/;
-    let in_toc = false;
+    const lines = text.split(/\r?\n/);
+    const linesCount = lines.length;
+    const replacedLines: string[] = [];
+    let indentDepth = 0;
+    const indentMemo: { [key: number]: number } = {};
+    const reIndent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章][^。]*$|[附付]\s+則[^。]*$|別表[^。]*$))/;
+    const reForceDedentParentheses = /^(?:  |　|\t)[(（][^)）]*[)）][ 　\t]*$/
+    const reIndentInToc = /^(?:  |　|\t)/;
+    let inToc = false;
 
     for (let i = 0; i < lines.length; i++) {
-        let line = lines[i];
+        const line = lines[i];
 
         if (line.match(/^\s*$/)) {
-            in_toc = false;
-            replaced_lines.push(line);
+            inToc = false;
+            replacedLines.push(line);
             continue;
         }
 
         if (line.match(/^\S*目次$/)) {
-            in_toc = true;
+            inToc = true;
         }
 
-        let force_dedent = false;
-        if (line.match(re_force_dedent_parentheses)) {
-            force_dedent = true;
+        let forceDedent = false;
+        if (line.match(reForceDedentParentheses)) {
+            forceDedent = true;
         }
 
-        let indents: string[] = [];
+        const indents: string[] = [];
         let pos = 0;
 
-        if (!force_dedent) {
+        if (!forceDedent) {
             while (true) {
-                let match = line.slice(pos).match(in_toc ? re_indent_in_toc : re_indent);
+                const match = line.slice(pos).match(inToc ? reIndentInToc : reIndent);
                 if (!match) break;
-                let indent = match[0];
+                const indent = match[0];
                 pos += indent.length;
                 indents.push(indent);
             }
         }
 
-        let replaced_line = ""
-        if (indent_depth <= indents.length) {
-            for (let j = indent_depth; j < indents.length; j++) {
-                let indent = indents[j];
-                replaced_line += `<INDENT str="${indent}">`;
+        let replacedLine = ""
+        if (indentDepth <= indents.length) {
+            for (let j = indentDepth; j < indents.length; j++) {
+                const indent = indents[j];
+                replacedLine += `<INDENT str="${indent}">`;
             }
         } else {
-            for (let j = 0; j < (indent_depth - indents.length); j++) {
-                replaced_line += `<DEDENT>`;
+            for (let j = 0; j < (indentDepth - indents.length); j++) {
+                replacedLine += `<DEDENT>`;
             }
         }
-        replaced_line += line.slice(pos);
+        replacedLine += line.slice(pos);
 
-        replaced_lines.push(replaced_line);
+        replacedLines.push(replacedLine);
 
-        indent_depth = indents.length;
-        indent_memo[i + 1] = indent_depth
+        indentDepth = indents.length;
+        indentMemo[i + 1] = indentDepth
     }
-    if (0 < indent_depth) {
-        let replaced_line = ""
-        for (let j = 0; j < indent_depth; j++) {
-            replaced_line += `<DEDENT>`;
+    if (0 < indentDepth) {
+        let replacedLine = ""
+        for (let j = 0; j < indentDepth; j++) {
+            replacedLine += `<DEDENT>`;
         }
-        replaced_lines.push(replaced_line);
+        replacedLines.push(replacedLine);
     }
 
-    let replaced_text = replaced_lines.join("\n");
+    const replacedText = replacedLines.join("\n");
 
-    return [replaced_text, indent_memo, lines_count];
+    return [replacedText, indentMemo, linesCount];
 }
 
 
 
 
 
-export function parse(text: string, options: {} = {}): util.EL {
+export const parse = (text: string, options: {} = {}): util.EL => {
 
     // console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
     // let t0 = (new Date()).getTime();
 
-    let [lexed, indent_memo, /**/] = lex(text);
+    const [lexed, indentMemo, /**/] = lex(text);
     // console.error(lexed);
     try {
-        options = (<any>Object).assign({ indent_memo: indent_memo, startRule: "start" }, options);
-        var parsed = parser.parse(lexed, options);
+        options = (Object as any).assign({ indentMemo, startRule: "start" }, options);
+        const parsed = parser.parse(lexed, options);
 
         // let t1 = (new Date()).getTime();
         // console.error(`/////  parse end  /////`);
         // console.error(`( ${Math.round((t1 - t0) / lines_count * 1000)} μs/line  =  ${t1 - t0} ms / ${lines_count} lines )`);
+        return parsed;
     } catch (e) {
         console.error("##### parse error #####");
         if (e.location) {
@@ -104,14 +105,13 @@ export function parse(text: string, options: {} = {}): util.EL {
         }
         throw (e);
     }
-    return parsed;
 }
 
-export function analyze(law: util.EL) {
+export const analyze = (law: util.EL) => {
 
     // console.error("\\\\\\\\\\ analyze start \\\\\\\\\\");
     // let t0 = (new Date()).getTime();
-    let analysis = analyzer.analyze(law);
+    const analysis = analyzer.analyze(law);
     // let t1 = (new Date()).getTime();
     // console.error(`/////  analyze end  /////`);
     // console.error(`(${t1 - t0} ms total)`);

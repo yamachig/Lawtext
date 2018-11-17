@@ -1,17 +1,17 @@
-import * as sha512 from "hash.js/lib/hash/sha/512"
-import { DOMParser } from "xmldom"
-import * as fs from "fs"
-import * as path from "path"
-import fetch from "node-fetch"
-import { promisify } from "util"
+import * as fs from "fs";
+import * as sha512 from "hash.js/lib/hash/sha/512";
+import fetch from "node-fetch";
+import * as path from "path";
+import { promisify } from "util";
+import { DOMParser } from "xmldom";
 
-function pad16(number: number, size: number) {
-    var s = number.toString(16);
-    while (s.length < (size || 2)) { s = "0" + s; }
+const pad16 = (num: number, size: number) => {
+    let s = num.toString(16);
+    while (s.length < (size || 2)) s = "0" + s;
     return s;
 }
 
-async function main() {
+const main = async () => {
     const response = await fetch(
         "http://elaws.e-gov.go.jp/api/1/lawlists/1",
         {
@@ -58,8 +58,8 @@ export const LAWNUM_TABLE: { [key: string]: number } = {};
 const LAWNUM_TABLE_RAW =  "${table}";
 
 for(let i = 0; i < LAWNUM_TABLE_RAW.length; i += 9) {
-    let key = parseInt(LAWNUM_TABLE_RAW.slice(i, i + 7), 16);
-    let length = parseInt(LAWNUM_TABLE_RAW.slice(i + 7, i + 9), 16);
+    const key = parseInt(LAWNUM_TABLE_RAW.slice(i, i + 7), 16);
+    const length = parseInt(LAWNUM_TABLE_RAW.slice(i + 7, i + 9), 16);
     LAWNUM_TABLE[key] = length;
 }
 `.trimLeft());

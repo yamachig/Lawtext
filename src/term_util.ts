@@ -8,7 +8,7 @@ export enum TERMC {
     CYAN = "\x1b[36m",
 }
 
-function sliceWOColor(s: string, start, length) {
+const sliceWOColor = (s: string, start, length) => {
     const maxLen = s.length - start;
     let ret = "";
     for (let len = 1; len <= maxLen; len++) {
@@ -49,7 +49,7 @@ function* wrapSingle(s: string, width: number): IterableIterator<string> {
 }
 
 function* wrap(row: string[], width: number): IterableIterator<string[]> {
-    let iters = row.map(s => wrapSingle(s, width));
+    const iters = row.map(s => wrapSingle(s, width));
     while (true) {
         const nexts = iters.map(iter => iter.next());
         if (nexts.every(({ done }) => done)) break;
@@ -57,11 +57,11 @@ function* wrap(row: string[], width: number): IterableIterator<string[]> {
     }
 }
 
-export function widthWOColor(text: string) {
+export const widthWOColor = (text: string) => {
     return text.replace(/\x1b\[\d+?m/g, "").replace(/[^\x01-\x7E\uFF61-\uFF9F]/g, "  ").length;
 }
 
-export function toTableText(table: string[][], width: number) {
+export const toTableText = (table: string[][], width: number) => {
     if (!table) return "";
     const wrapTable: string[][] = [];
     for (const row of table) {
@@ -74,7 +74,7 @@ export function toTableText(table: string[][], width: number) {
         });
     }
 
-    let ret = [
+    const ret = [
         "┌" + lengths.map(l => "─".repeat(l + 2)).join("┬") + "┐",
         ...wrapTable.map(row =>
             "│"
@@ -92,7 +92,7 @@ export function toTableText(table: string[][], width: number) {
     return ret;
 }
 
-export function withEllipsis(text: string, maxLength: number) {
+export const withEllipsis = (text: string, maxLength: number) => {
     if (maxLength < widthWOColor(text)) {
         return `${sliceWOColor(text, 0, maxLength - 4)} ...`;
     } else {

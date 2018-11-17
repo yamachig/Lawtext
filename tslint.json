@@ -1,5 +1,15 @@
 {
   "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "rules": {
+    "interface-name": false,
+    "no-var-requires": false,
+    "only-arrow-functions": true,
+    "class-name": false,
+    "max-classes-per-file": false,
+    "object-literal-sort-keys": false,
+    "no-console": false,
+    "curly": [true, "ignore-same-line"]
+  },
   "linterOptions": {
     "exclude": [
       "config/**/*",

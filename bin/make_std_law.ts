@@ -1,18 +1,18 @@
-import { EL, xml_to_json } from "../src/util";
 import * as fs from "fs";
 import { isString } from "util";
+import { EL, xmlToJson } from "../src/util";
 
-var Node = Node || {
+const Node = {
     TEXT_NODE: 3,
     ELEMENT_NODE: 1,
 };
 
-let schema = xml_to_json(fs.readFileSync(__dirname + "/std_law.xsd", "utf-8"));
+const schema = xmlToJson(fs.readFileSync(__dirname + "/std_law.xsd", "utf-8"));
 
-let element_ifs: string[] = [];
+const elementIfs: string[] = [];
 
 function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
-    for (let child of el.children) {
+    for (const child of el.children) {
         if (isString(child)) continue;
         if (child.tag === tag) {
             yield child;
@@ -22,81 +22,81 @@ function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
     }
 }
 
-element_ifs.push(`\
+elementIfs.push(`\
 import { EL } from "./util"
 `);
-element_ifs.push(`\
+elementIfs.push(`\
 export interface __EL extends EL {
     isControl: true
 }
 `);
-element_ifs.push(`\
+elementIfs.push(`\
 export interface StdEL extends EL {
     isControl: false
 }
 `);
 
-for (let element of schema.children.filter(el => !isString(el) && el.tag === "xs:element")) {
+for (const element of schema.children.filter(el => !isString(el) && el.tag === "xs:element")) {
     if (isString(element)) continue;
 
     if (element.attr.type === "xs:string") {
-        element_ifs.push(`\
+        elementIfs.push(`\
 export interface ${element.attr.name} extends StdEL {
     tag: "${element.attr.name}"
-    children: [__EL | string]
+    children: Array<__EL | string>
 }
 
-export function is${element.attr.name}(obj: EL): obj is ${element.attr.name} {
+export const is${element.attr.name} = (obj: EL): obj is ${element.attr.name} => {
     return obj.tag === "${element.attr.name}";
 }
 `);
 
     } else if (element.attr.type) {
-        let children_type = element.attr.type === "any"
+        const childrenType = element.attr.type === "any"
             ? "EL | string"
             : element.attr.type;
-        element_ifs.push(`\
+        elementIfs.push(`\
 export interface ${element.attr.name} extends StdEL {
     tag: "${element.attr.name}"
-    children: [${children_type}]
+    children: Array<${childrenType}>
 }
 
-export function is${element.attr.name}(obj: EL): obj is ${element.attr.name} {
+export const is${element.attr.name} = (obj: EL): obj is ${element.attr.name} => {
     return obj.tag === "${element.attr.name}";
 }
 `);
 
     } else {
-        let child_tags = new Set([...getByTagName(element, "xs:element")].map(el => el.attr.ref));
+        const childTags = new Set([...getByTagName(element, "xs:element")].map(el => el.attr.ref));
 
-        let is_mixed = [...getByTagName(element, "xs:complexType")].filter(el => el.attr.mixed === "true").length > 0;
-        if (is_mixed) child_tags.add("string").add("__EL")
+        const isMixed = [...getByTagName(element, "xs:complexType")].filter(el => el.attr.mixed === "true").length > 0;
+        if (isMixed) childTags.add("string").add("__EL")
 
-        let attr_lines: string[] = [];
-        for (let attr of getByTagName(element, "xs:attribute")) {
-            let name = attr.attr.name;
-            let optional = attr.attr.use === "required" ? "" : "?";
-            let enums = new Set([...getByTagName(attr, "xs:enumeration")].map(el => el.attr.value));
-            let attr_type = enums.size === 0 ? "string" : [...enums].map(s => `"${s}"`).join(" | ");
-            attr_lines.push(`        ${name}${optional}: ${attr_type},`);
+        const attrLines: string[] = [];
+        for (const attr of getByTagName(element, "xs:attribute")) {
+            const name = attr.attr.name;
+            const optional = attr.attr.use === "required" ? "" : "?";
+            const enums = new Set([...getByTagName(attr, "xs:enumeration")].map(el => el.attr.value));
+            const attrType = enums.size === 0 ? "string" : [...enums].map(s => `"${s}"`).join(" | ");
+            attrLines.push(`        ${name}${optional}: ${attrType},`);
         }
 
-        let attrs_type = attr_lines.length === 0 ? "" : ["", ...attr_lines, "    "].join("\r\n");
-        let children_type = child_tags.size === 0 ? "never[]" : `(${[...child_tags].join(" | ")})[]`;
+        const attrsType = attrLines.length === 0 ? "" : ["", ...attrLines, "    "].join("\r\n");
+        const childrenType = childTags.size === 0 ? "never[]" : `Array<(${[...childTags].join(" | ")})>`;
 
-        element_ifs.push(`\
+        elementIfs.push(`\
 export interface ${element.attr.name} extends StdEL {
     tag: "${element.attr.name}"
-    attr: {${attrs_type}}
-    children: ${children_type}
+    attr: {${attrsType}}
+    children: ${childrenType}
 }
 
-export function is${element.attr.name}(obj: EL): obj is ${element.attr.name} {
+export const is${element.attr.name} = (obj: EL): obj is ${element.attr.name} => {
     return obj.tag === "${element.attr.name}";
 }
 `);
     }
 }
 
-console.log(element_ifs.join(`
+console.log(elementIfs.join(`
 `));
