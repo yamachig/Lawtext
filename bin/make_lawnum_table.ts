@@ -1,9 +1,9 @@
 import * as fs from "fs";
 import * as sha512 from "hash.js/lib/hash/sha/512";
-import fetch from "node-fetch";
 import * as path from "path";
 import { promisify } from "util";
 import { DOMParser } from "xmldom";
+const fetch = require("node-fetch");
 
 const pad16 = (num: number, size: number) => {
     let s = num.toString(16);
