@@ -1163,7 +1163,7 @@ const renderRun = (els: Array<string | std.Line | std.QuoteStruct | std.ArithFor
             runs.push(/* $$$$$$ */el.outerXML()/* $$$$$$ */);
 
         } else if (el.tag === "ArithFormula") {
-            throw new NotImplementedError(el.tag);
+            runs.push(/* $$$$$$ */el.outerXML()/* $$$$$$ */);
 
         } else if (el.tag === "Line") {
             throw new NotImplementedError(el.tag);

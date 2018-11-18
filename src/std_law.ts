@@ -1113,7 +1113,7 @@ export interface ArithFormula extends StdEL {
     attr: {
         Num?: string,
     }
-    children: never[]
+    children: Array<string | EL>
 }
 
 export const isArithFormula = (obj: EL): obj is ArithFormula => {
