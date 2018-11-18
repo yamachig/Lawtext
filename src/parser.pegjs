@@ -455,6 +455,7 @@ paragraph_item "paragraph_item" =
         !appdx_style_title
         !appdx_fig_title
         !appdx_note_title
+        !appdx_title
         !suppl_provision_label
         !":SupplNote:"
         [^ 　\t\r\n条<]+
@@ -549,6 +550,7 @@ in_table_column_paragraph_items "in_table_column_paragraph_items" =
         !appdx_style_title
         !appdx_fig_title
         !appdx_note_title
+        !appdx_title
         !suppl_provision_label
         [^ 　\t\r\n条<]+
     )
@@ -590,7 +592,7 @@ in_table_column_paragraph_items "in_table_column_paragraph_items" =
                 )*
             DEDENT
             { return [...target1, target2, ...target2_rest]; }
-        )
+        )?
         rest:paragraph_item*
     DEDENT DEDENT
     // &(here:$(INLINE / ......) &{ console.error(`leave in_table_column_paragraph_item line ${location().start.line}: ${here}`); return true; })
@@ -639,6 +641,7 @@ in_table_column_paragraph_items "in_table_column_paragraph_items" =
         !appdx_style_title
         !appdx_fig_title
         !appdx_note_title
+        !appdx_title
         !suppl_provision_label
         [^ 　\t\r\n条<]+
     )
@@ -796,12 +799,12 @@ amend_provision "amend_provision" =
 table_struct "table_struct" =
     !INDENT !DEDENT !NEWLINE
     (":table-struct:" NEWLINE)?
-    // &(here:$(INLINE / ..........) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
+    // &(here:$(INLINE / ..........) &{ console.error(`visit table-struct line ${location().start.line}: ${here}`); return true; })
     table_struct_title:table_struct_title?
     remarkses1:remarks*
     table:table
     remarkses2:remarks*
-    // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
+    // &(here:$(INLINE / ..........) &{ console.error(`leave table-struct line ${location().start.line}: ${here}`); return true; })
     {
         let table_struct = new EL("TableStruct");
 
@@ -1225,6 +1228,8 @@ appdx_item =
     /
     appdx_note
     /
+    appdx
+    /
     suppl_provision
 
 
@@ -1594,6 +1599,80 @@ appdx_note_children "appdx_note_children" =
     note_struct
     /
     table_struct
+
+
+
+appdx_title "appdx_title" =
+    title_struct:(
+        attr:(
+            target:(
+                "["
+                name:$[^ 　\t\r\n\]=]+
+                "=\""
+                value:$[^ 　\t\r\n\]"]+
+                "\"]"
+                { return [name, value]; }
+            )*
+            {
+                const ret = {};
+                for(const [name, value] of target) {
+                    ret[name] = value;
+                }
+                return ret;
+            }
+        )
+        target:(
+            title:$("付録" [^\r\n(（]*)
+            related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
+            {
+                return {
+                    text: text(),
+                    title: title,
+                    related_article_num: related_article_num,
+                };
+            }
+        )
+        {
+            return {
+                attr: attr,
+                ...target,
+            };
+        }
+    )
+    {
+        return title_struct;
+    }
+
+appdx "appdx" =
+    // &(here:$(INLINE / ..........) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
+    title_struct:appdx_title
+    NEWLINE+
+    children:(
+        INDENT
+            target:(
+                _target:xml_element NEWLINE+
+                { return _target }
+            )+
+            remarkses:remarks*
+            NEWLINE*
+        DEDENT
+        { return target.concat(remarkses); }
+    )?
+    // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
+    {
+        let appdx = new EL("Appdx");
+        appdx.append(new EL("ArithFormulaNum", title_struct.attr, [new __Text(title_struct.title)]));
+        if(title_struct.related_article_num) {
+            appdx.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+        }
+
+        if(children) {
+            util.setItemNum(children);
+        }
+        appdx.extend(children || []);
+
+        return appdx;
+    }
 
 
 

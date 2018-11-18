@@ -56,6 +56,9 @@ const renderLawBody = (el: std.LawBody, indent: number, LawNum: string): string 
         } else if (child.tag === "AppdxNote") {
             blocks.push(renderAppdxNote(child, indent));
 
+        } else if (child.tag === "Appdx") {
+            blocks.push(renderAppdx(child, indent));
+
         } else if (child.tag === "EnactStatement") {
             blocks.push(renderEnactStatement(child, indent));
 
@@ -63,7 +66,6 @@ const renderLawBody = (el: std.LawBody, indent: number, LawNum: string): string 
             blocks.push(renderPreamble(child, indent));
 
         }
-        else if (child.tag === "Appdx") { throw new NotImplementedError(child.tag); }
         else if (child.tag === "AppdxFormat") { throw new NotImplementedError(child.tag); }
         else { assertNever(child); }
     }
@@ -457,6 +459,54 @@ ${BLANK}
 
 
 
+const renderAppdx = (el: std.Appdx, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+
+    let ArithFormulaNum = "";
+    let RelatedArticleNum = "";
+    const ChildItems: Array<std.ArithFormula | std.Remarks> = [];
+    for (const child of el.children) {
+
+        if (child.tag === "ArithFormulaNum") {
+            ArithFormulaNum = renderRun(child.children);
+
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = renderRun(child.children);
+
+        } else {
+            ChildItems.push(child);
+        }
+    }
+
+    if (ArithFormulaNum || RelatedArticleNum) {
+        blocks.push(
+ /* ========================= */`\
+${BLANK}
+${_____}${ArithFormulaNum}${RelatedArticleNum}
+${BLANK}
+`/* ========================= */);
+    }
+
+    for (const child of ChildItems) {
+        if (child.tag === "ArithFormula") {
+            blocks.push(
+ /* ========================= */`\
+${_____}${INDENT}${renderRun([child])}
+`/* ========================= */); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(renderRemarks(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return blocks.join("");
+}
+
+
+
 const renderSupplProvision = (el: std.SupplProvision, indent: number): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
@@ -708,7 +758,13 @@ const renderList = (el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, i
     for (const child of el.children) {
 
         if (child.tag === "ListSentence" || child.tag === "Sublist1Sentence" || child.tag === "Sublist2Sentence" || child.tag === "Sublist3Sentence") {
-            blocks.push(renderBlockSentence(child.children, indent));
+            if (child.children.every(subchild => subchild.tag === "Sentence")) {
+                for (const Sentence of child.children as std.Sentence[]) {
+                    blocks.push(renderBlockSentence([Sentence], indent));
+                }
+            } else {
+                blocks.push(renderBlockSentence(child.children, indent));
+            }
 
         } else if (child.tag === "Sublist1" || child.tag === "Sublist2" || child.tag === "Sublist3") {
             blocks.push(renderList(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
