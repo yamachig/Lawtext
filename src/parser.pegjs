@@ -402,6 +402,7 @@ article "article" =
         DEDENT
         { return [target].concat(target_rest); }
     )?
+    suppl_notes:suppl_note*
     {
         let article = new EL(
             "Article",
@@ -430,8 +431,18 @@ article "article" =
         paragraph.extend(children2 || []);
 
         article.extend(paragraphs);
+        article.extend(suppl_notes);
 
         return article;
+    }
+
+
+
+
+suppl_note "suppl_note" =
+    ":SupplNote:" _ inline:INLINE NEWLINE+
+    {
+        return new EL("SupplNote", {}, inline);
     }
 
 
@@ -445,6 +456,7 @@ paragraph_item "paragraph_item" =
         !appdx_fig_title
         !appdx_note_title
         !suppl_provision_label
+        !":SupplNote:"
         [^ 　\t\r\n条<]+
     )
     __
@@ -719,9 +731,7 @@ no_name_paragraph_item "no_name_paragraph_item" =
     }
 
 paragraph_item_child "paragraph_item_child" =
-        // &(here:$(INLINE / ......) &{ console.error(`paragraph_item_child here1.1 line ${location().start.line}: ${here}`); return true; })
     fig_struct
-        // &(here:$(INLINE / ......) &{ console.error(`paragraph_item_child here1.2 line ${location().start.line}: ${here}`); return true; })
     /
     amend_provision
     /

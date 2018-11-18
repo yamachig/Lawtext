@@ -579,6 +579,7 @@ const renderArticle = (el: std.Article, indent: number): string => {
     let ArticleCaption = "";
     let ArticleTitle = "";
     const Paragraphs: std.Paragraph[] = [];
+    const SupplNotes: std.SupplNote[] = [];
     for (const child of el.children) {
 
         if (child.tag === "ArticleCaption") {
@@ -591,7 +592,7 @@ const renderArticle = (el: std.Article, indent: number): string => {
             Paragraphs.push(child);
 
         } else if (child.tag === "SupplNote") {
-            throw new NotImplementedError(child.tag);
+            SupplNotes.push(child);
 
         }
         else { assertNever(child); }
@@ -609,6 +610,11 @@ ${_____}${INDENT}${ArticleCaption}
         const Paragraph = Paragraphs[i];
         blocks.push(renderParagraphItem(Paragraph, indent, (i === 0 && ArticleTitle) ? ArticleTitle : undefined));
     }
+
+    for (const SupplNote of SupplNotes) {
+        blocks.push(renderSupplNote(SupplNote, indent));
+    }
+
     blocks.push(
  /* ========================= */`\
 ${BLANK}
@@ -1105,6 +1111,16 @@ ${BLANK}
 `/* ========================= */);
 
     return blocks.join("");
+}
+
+
+
+const renderSupplNote = (el: std.SupplNote, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    return (
+ /* ========================= */`\
+${_____}:SupplNote:${renderRun(el.children)}
+`/* ========================= */);
 }
 
 
