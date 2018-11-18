@@ -236,7 +236,7 @@ const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
 it("Render and Parse Lawtext", async () => {
     // const [list, listByLawnum] = await getLawList();
 
-    const lawNum = "昭和五十九年法律第八十六号";
+    const lawNum = "平成二十八年法律第六十八号";
 
     const origXML = await getLawXml(lawNum);
     console.log(`Temporary directory: "${tempDir}"`);

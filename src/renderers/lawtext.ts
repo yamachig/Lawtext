@@ -132,11 +132,10 @@ const renderTOC = (el: std.TOC, indent: number): string => {
 ${_____}${child.text}
 `/* ========================= */);
 
-        } else if (child.tag === "TOCPart" || child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSupplProvision" || child.tag === "TOCArticle" || child.tag === "TOCAppdxTableLabel") {
+        } else if (child.tag === "TOCPreambleLabel" || child.tag === "TOCPart" || child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSupplProvision" || child.tag === "TOCArticle" || child.tag === "TOCAppdxTableLabel") {
             blocks.push(renderTOCItem(child, indent + 1)); /* >>>> INDENT >>>> */
 
         }
-        else if (child.tag === "TOCPreambleLabel") { throw new NotImplementedError(child.tag); }
         else { assertNever(child); }
     }
     if (blocks.length > 0) {
@@ -150,7 +149,7 @@ ${BLANK}
 
 
 
-const renderTOCItem = (el: std.TOCPart | std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCSupplProvision | std.TOCArticle | std.TOCAppdxTableLabel, indent: number): string => {
+const renderTOCItem = (el: std.TOCPreambleLabel | std.TOCPart | std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCSupplProvision | std.TOCArticle | std.TOCAppdxTableLabel, indent: number): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
     if (el.tag === "TOCArticle") {
@@ -170,6 +169,12 @@ const renderTOCItem = (el: std.TOCPart | std.TOCChapter | std.TOCSection | std.T
 ${_____}${ArticleTitle}${ArticleCaption}
 `/* ========================= */);
         }
+
+    } else if (el.tag === "TOCPreambleLabel") {
+        blocks.push(
+ /* ========================= */`\
+${_____}${el.text}
+`/* ========================= */);
 
     } else if (el.tag === "TOCAppdxTableLabel") {
         throw new NotImplementedError(el.tag);

@@ -28,7 +28,7 @@ start =
 
 law =
     law_title:law_title?
-    preambles:(
+    preambles1:(
         (":前文:" / ":Preamble:") NEWLINE
         target:(
             inline:INLINE NEWLINE
@@ -51,6 +51,22 @@ law =
         { return target; }
     )?
     toc:toc?
+    preambles2:(
+        (":前文:" / ":Preamble:") NEWLINE
+        target:(
+            inline:INLINE NEWLINE
+            {
+                return new EL("Paragraph", {}, [
+                    new EL("ParagraphNum"),
+                    new EL("ParagraphSentence", {}, [
+                        new EL("Sentence", {}, inline),
+                    ]),
+                ]);
+            }
+        )+
+        NEWLINE+
+        { return new EL("Preamble", {}, target); }
+    )*
     main_provision:main_provision
     appdx_items:appdx_item*
     {
@@ -91,9 +107,10 @@ law =
 
         law.append(law_body);
 
-        law_body.extend(preambles || []);
+        law_body.extend(preambles1);
         law_body.extend(enact_statements || []);
         law_body.append(toc);
+        law_body.extend(preambles2);
         law_body.append(main_provision);
         law_body.extend(appdx_items);
 
@@ -195,32 +212,39 @@ toc_item "toc_item" =
             article_range = null;
         }
         if(!title_fragments[0].text) console.error(title_fragments);
-        let type_char = title_fragments[0].text.match(/[編章節款目章則]/)[0];
-        let toc_item = new EL("TOC" + util.articleGroupType[type_char]);
 
-        if(title_fragments[0].text.match(/[編章節款目章]/)) {
-            toc_item.attr.Delete = 'false';
-            let num = util.parseNamedNum(title_fragments[0].text);
-            if(num) {
-                toc_item.attr.Num = num;
+        let toc_item;
+
+        if(title_fragments[0].text.match(/前文/)) {
+            toc_item = new EL("TOCPreambleLabel", {}, title_fragments);
+        } else {
+            let type_char = title_fragments[0].text.match(/[編章節款目章則]/)[0];
+            toc_item = new EL("TOC" + util.articleGroupType[type_char]);
+
+            if(title_fragments[0].text.match(/[編章節款目章]/)) {
+                toc_item.attr.Delete = 'false';
+                let num = util.parseNamedNum(title_fragments[0].text);
+                if(num) {
+                    toc_item.attr.Num = num;
+                }
             }
-        }
 
-        toc_item.append(new EL(
-            util.articleGroupTitleTag[type_char],
-            {},
-            title_fragments,
-        ));
-
-        if(article_range !== null) {
             toc_item.append(new EL(
-                "ArticleRange",
+                util.articleGroupTitleTag[type_char],
                 {},
-                [article_range],
+                title_fragments,
             ));
-        }
 
-        toc_item.extend(children || []);
+            if(article_range !== null) {
+                toc_item.append(new EL(
+                    "ArticleRange",
+                    {},
+                    [article_range],
+                ));
+            }
+
+            toc_item.extend(children || []);
+        }
 
         return toc_item;
     }
