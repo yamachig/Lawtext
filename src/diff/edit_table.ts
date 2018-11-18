@@ -5,7 +5,9 @@ export type RemoveRow<T> = [EditTableItem<T>, null];
 export type SameRow<T> = [EditTableItem<T>, EditTableItem<T>];
 export type EditTableItem<T> = [number, T];
 
-export const compare = <T>(A: T[], B: T[]) => {
+export const MAX_D = 1000;
+
+export const compare = <T>(A: T[], B: T[], maxD = MAX_D) => {
     const M = A.length;
     const N = B.length;
     const V: number[] = new Array(M + N + 1);
@@ -13,7 +15,7 @@ export const compare = <T>(A: T[], B: T[]) => {
     const S: Array<Array<[number, number]>> = new Array(M + N + 1);
     const offset = M;
 
-    for (let D = 0; D <= M + N; D++) {
+    for (let D = 0; D <= Math.min(M + N, maxD); D++) {
         const min = D <= M ? -D : D - 2 * M;
         const max = D <= N ? D : -D + 2 * N;
 
@@ -92,7 +94,7 @@ export const compare = <T>(A: T[], B: T[]) => {
             }
         }
     }
-    throw new Error("never");
+    throw new Error("Too much difference!!!");
 }
 
 const generateEditTable = <T>(A: T[], B: T[], origEditScript: Array<[number, number]>) => {
