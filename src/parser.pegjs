@@ -1084,6 +1084,86 @@ appdx_table_children "appdx_table_children" =
     paragraph_item
 
 
+suppl_provision_appdx_table_title "suppl_provision_appdx_table_title" =
+    title_struct:(
+        attr:(
+            target:(
+                "["
+                name:$[^ 　\t\r\n\]=]+
+                "=\""
+                value:$[^ 　\t\r\n\]"]+
+                "\"]"
+                { return [name, value]; }
+            )*
+            {
+                const ret = {};
+                for(const [name, value] of target) {
+                    ret[name] = value;
+                }
+                return ret;
+            }
+        )
+        target:(
+            title:$([附付] "則別表" [^\r\n(（]*)
+            related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
+            table_struct_title:$[^\r\n(（]*
+            {
+                return {
+                    text: text(),
+                    title: title,
+                    related_article_num: related_article_num,
+                    table_struct_title: table_struct_title,
+                };
+            }
+        )
+        {
+            return {
+                attr: attr,
+                ...target,
+            };
+        }
+    )
+    {
+        return title_struct;
+    }
+
+
+suppl_provision_appdx_table "suppl_provision_appdx_table" =
+    // &(here:$(INLINE / ..........) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
+    title_struct:suppl_provision_appdx_table_title
+    NEWLINE+
+    children:(
+        INDENT
+            target:suppl_provision_appdx_table_children+
+            remarkses:remarks*
+            NEWLINE*
+        DEDENT
+        { return target.concat(remarkses); }
+    )?
+    // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
+    {
+        let suppl_provision_appdx_table = new EL("SupplProvisionAppdxTable");
+        if(title_struct.table_struct_title !== "") {
+            console.error(`### line ${location().start.line}: Maybe irregular SupplProvisionAppdxTableTitle!`);
+            suppl_provision_appdx_table.append(new EL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text( title_struct.text)]));
+        } else {
+            suppl_provision_appdx_table.append(new EL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text(title_struct.title)]));
+            if(title_struct.related_article_num) {
+                suppl_provision_appdx_table.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+            }
+        }
+
+        if(children) {
+            util.setItemNum(children);
+        }
+        suppl_provision_appdx_table.extend(children || []);
+
+        return suppl_provision_appdx_table;
+    }
+
+suppl_provision_appdx_table_children "suppl_provision_appdx_table_children" =
+    table_struct
+
 
 
 
@@ -1231,6 +1311,7 @@ suppl_provision "suppl_provision" =
         rest:paragraph_item*
         { return [first].concat(rest); }
     )
+    suppl_provision_appdx_tables:suppl_provision_appdx_table*
     {
         let suppl_provision = new EL("SupplProvision");
         if(suppl_provision_label.amend_law_num) {
@@ -1245,6 +1326,7 @@ suppl_provision "suppl_provision" =
             util.setItemNum(children);
         }
         suppl_provision.extend(children);
+        suppl_provision.extend(suppl_provision_appdx_tables);
         return suppl_provision;
     }
 

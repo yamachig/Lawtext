@@ -265,6 +265,49 @@ ${BLANK}
 
 
 
+const renderSupplProvisionAppdxTable = (el: std.SupplProvisionAppdxTable, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+
+    let SupplProvisionAppdxTableTitle = "";
+    let RelatedArticleNum = "";
+    const TableStructs: std.TableStruct[] = [];
+    for (const child of el.children) {
+
+        if (child.tag === "SupplProvisionAppdxTableTitle") {
+            SupplProvisionAppdxTableTitle = renderRun(child.children);
+            if (child.attr.WritingMode === "horizontal") {
+                SupplProvisionAppdxTableTitle = `[WritingMode="horizontal"]` + SupplProvisionAppdxTableTitle;
+            }
+
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = renderRun(child.children);
+
+        } else if (child.tag === "TableStruct") {
+            TableStructs.push(child);
+
+        } else { assertNever(child); }
+    }
+
+    if (SupplProvisionAppdxTableTitle || RelatedArticleNum) {
+        blocks.push(
+ /* ========================= */`\
+${BLANK}
+${_____}${SupplProvisionAppdxTableTitle}${RelatedArticleNum}
+${BLANK}
+`/* ========================= */);
+    }
+
+    for (const [i, TableStruct] of TableStructs.entries()) {
+        const isFirstTableStruct = i === 0;
+        blocks.push(renderTableStruct(TableStruct, indent + 1, isFirstTableStruct)); /* >>>> INDENT >>>> */
+    }
+
+    return blocks.join("");
+}
+
+
+
 const renderAppdxStyle = (el: std.AppdxStyle, indent: number): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
@@ -402,7 +445,7 @@ ${BLANK}
             blocks.push(renderArticleGroup(child, indent));
 
         } else if (child.tag === "SupplProvisionAppdxTable") {
-            throw new NotImplementedError(child.tag);
+            blocks.push(renderSupplProvisionAppdxTable(child, indent));
 
         } else if (child.tag === "SupplProvisionAppdxStyle") {
             throw new NotImplementedError(child.tag);
