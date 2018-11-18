@@ -53,6 +53,9 @@ const renderLawBody = (el: std.LawBody, indent: number, LawNum: string): string 
         } else if (child.tag === "AppdxFig") {
             blocks.push(renderAppdxFig(child, indent));
 
+        } else if (child.tag === "AppdxNote") {
+            blocks.push(renderAppdxNote(child, indent));
+
         } else if (child.tag === "EnactStatement") {
             blocks.push(renderEnactStatement(child, indent));
 
@@ -60,7 +63,6 @@ const renderLawBody = (el: std.LawBody, indent: number, LawNum: string): string 
             blocks.push(renderPreamble(child, indent));
 
         }
-        else if (child.tag === "AppdxNote") { throw new NotImplementedError(child.tag); }
         else if (child.tag === "Appdx") { throw new NotImplementedError(child.tag); }
         else if (child.tag === "AppdxFormat") { throw new NotImplementedError(child.tag); }
         else { assertNever(child); }
@@ -391,6 +393,60 @@ ${BLANK}
 
         } else if (child.tag === "TableStruct") {
             blocks.push(renderTableStruct(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return blocks.join("");
+}
+
+
+
+const renderAppdxNote = (el: std.AppdxNote, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+
+    let AppdxNoteTitle = "";
+    let RelatedArticleNum = "";
+    const ChildItems: Array<std.TableStruct | std.Remarks | std.FigStruct | std.NoteStruct> = [];
+    for (const child of el.children) {
+
+        if (child.tag === "AppdxNoteTitle") {
+            AppdxNoteTitle = renderRun(child.children);
+            if (child.attr.WritingMode === "horizontal") {
+                AppdxNoteTitle = `[WritingMode="horizontal"]` + AppdxNoteTitle;
+            }
+
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = renderRun(child.children);
+
+        } else {
+            ChildItems.push(child);
+        }
+    }
+
+    if (AppdxNoteTitle || RelatedArticleNum) {
+        blocks.push(
+ /* ========================= */`\
+${BLANK}
+${_____}${AppdxNoteTitle}${RelatedArticleNum}
+${BLANK}
+`/* ========================= */);
+    }
+
+    for (const [i, child] of ChildItems.entries()) {
+        if (child.tag === "NoteStruct") {
+            blocks.push(renderNoteStruct(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "TableStruct") {
+            const isFirstTableStruct = !(0 < i && ChildItems[i - 1].tag === "TableStruct");
+            blocks.push(renderTableStruct(child, indent + 1, isFirstTableStruct)); /* >>>> INDENT >>>> */
+        } else if (child.tag === "FigStruct") {
+            blocks.push(renderFigStruct(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(renderRemarks(child, indent + 1)); /* >>>> INDENT >>>> */
 
         }
         else { assertNever(child); }
@@ -996,6 +1052,59 @@ const renderFigRun = (el: std.Fig): string => {
     }
 
     return (/* $$$$$$ */`.. figure:: ${el.attr.src}`/* $$$$$$ */);
+}
+
+
+
+const renderNoteStruct = (el: std.NoteStruct, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+
+    for (const child of el.children) {
+
+        if (child.tag === "NoteStructTitle") {
+            blocks.push(
+ /* ========================= */`\
+${_____}:note-struct-title:${renderRun(child.children)}
+`/* ========================= */);
+
+        } else if (child.tag === "Note") {
+
+            for (const subchild of child.children) {
+                if (isString(subchild)) {
+                    throw new NotImplementedError("string");
+
+                } else if (std.isTable(subchild)) {
+                    blocks.push(renderTable(subchild, indent));
+
+                } else if (std.isFig(subchild)) {
+                    blocks.push(
+ /* ========================= */`\
+${_____}${renderFigRun(subchild)}
+`/* ========================= */);
+
+                } else if (std.isList(subchild)) {
+                    blocks.push(renderList(subchild, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
+
+                } else {
+                    throw new NotImplementedError(subchild.tag);
+
+                }
+            }
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(renderRemarks(child, indent));
+
+        }
+        else { assertNever(child); }
+    }
+
+    blocks.push(
+ /* ========================= */`\
+${BLANK}
+`/* ========================= */);
+
+    return blocks.join("");
 }
 
 

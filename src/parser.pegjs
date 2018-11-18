@@ -442,6 +442,8 @@ paragraph_item "paragraph_item" =
         !article_title
         !appdx_table_title
         !appdx_style_title
+        !appdx_fig_title
+        !appdx_note_title
         !suppl_provision_label
         [^ 　\t\r\n条<]+
     )
@@ -526,6 +528,144 @@ paragraph_item "paragraph_item" =
         return paragraph_item;
     }
 
+
+in_table_column_paragraph_items "in_table_column_paragraph_items" =
+    // &(here:$(INLINE / ......) &{ console.error(`visit in_table_column_paragraph_item line ${location().start.line}: ${here}`); return true; })
+    paragraph_item_title:$(
+        !article_title
+        !appdx_table_title
+        !appdx_style_title
+        !appdx_fig_title
+        !appdx_note_title
+        !suppl_provision_label
+        [^ 　\t\r\n条<]+
+    )
+    __
+    inline_contents:columns_or_sentences
+    NEWLINE+
+
+    INDENT INDENT
+        children:(
+            INDENT INDENT
+                target:list+
+                NEWLINE*
+            DEDENT DEDENT
+            { return target; }
+
+            /
+
+            INDENT
+        // &(here:$(INLINE / ......) &{ console.error(`in_table_column_paragraph_item here1.1 line ${location().start.line}: ${here}`); return true; })
+                target:paragraph_item_child NEWLINE*
+        // &(here:$(INLINE / ......) &{ console.error(`in_table_column_paragraph_item here1.2 line ${location().start.line}: ${here}`); return true; })
+                target_rest:(
+                    _target:paragraph_item_child NEWLINE*
+                    { return _target; }
+                )*
+            DEDENT
+            { return [target].concat(target_rest); }
+
+            /
+
+            INDENT INDENT
+                target1:list+
+                NEWLINE*
+            DEDENT
+                target2:paragraph_item_child NEWLINE*
+                target2_rest:(
+                    _target:paragraph_item_child NEWLINE*
+                    { return _target; }
+                )*
+            DEDENT
+            { return [...target1, target2, ...target2_rest]; }
+        )
+        rest:paragraph_item*
+    DEDENT DEDENT
+    // &(here:$(INLINE / ......) &{ console.error(`leave in_table_column_paragraph_item line ${location().start.line}: ${here}`); return true; })
+    {
+        let lineno = location().start.line;
+        let indent = indentMemo[lineno];
+
+        if(baseIndentStack.length > 0) {
+            let [base_indent, is_first, base_lineno] = baseIndentStack[baseIndentStack.length - 1];
+            if(!is_first || lineno !== base_lineno) {
+                indent -= base_indent;
+            }
+        }
+
+        let paragraph_item = new EL(
+            util.paragraphItemTags[indent],
+            {Hide: "false"},
+        );
+        if(indent === 0) {
+            paragraph_item.attr.OldStyle = "false";
+        } else {
+            paragraph_item.attr.Delete = "false";
+        }
+
+        paragraph_item.append(new EL(util.paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
+
+        // let num = util.parseNamedNum(paragraph_item_title);
+        // if(num) {
+        //     paragraph_item.attr.Num = num;
+        // }
+
+        paragraph_item.append(new EL(util.paragraphItemSentenceTags[indent], {}, inline_contents));
+
+        if(children) {
+            util.setItemNum(children);
+        }
+
+        paragraph_item.extend(children || []);
+
+        return [paragraph_item, ...rest];
+    }
+    /
+    paragraph_item_title:$(
+        !article_title
+        !appdx_table_title
+        !appdx_style_title
+        !appdx_fig_title
+        !appdx_note_title
+        !suppl_provision_label
+        [^ 　\t\r\n条<]+
+    )
+    __
+    inline_contents:columns_or_sentences
+    NEWLINE+
+    {
+        let lineno = location().start.line;
+        let indent = indentMemo[lineno];
+
+        if(baseIndentStack.length > 0) {
+            let [base_indent, is_first, base_lineno] = baseIndentStack[baseIndentStack.length - 1];
+            if(!is_first || lineno !== base_lineno) {
+                indent -= base_indent;
+            }
+        }
+
+        let paragraph_item = new EL(
+            util.paragraphItemTags[indent],
+            {Hide: "false"},
+        );
+        if(indent === 0) {
+            paragraph_item.attr.OldStyle = "false";
+        } else {
+            paragraph_item.attr.Delete = "false";
+        }
+
+        paragraph_item.append(new EL(util.paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
+
+        // let num = util.parseNamedNum(paragraph_item_title);
+        // if(num) {
+        //     paragraph_item.attr.Num = num;
+        // }
+
+        paragraph_item.append(new EL(util.paragraphItemSentenceTags[indent], {}, inline_contents));
+
+        return [paragraph_item];
+    }
+
 no_name_paragraph_item "no_name_paragraph_item" =
     inline_contents:columns_or_sentences
     NEWLINE+
@@ -579,6 +719,10 @@ no_name_paragraph_item "no_name_paragraph_item" =
     }
 
 paragraph_item_child "paragraph_item_child" =
+        // &(here:$(INLINE / ......) &{ console.error(`paragraph_item_child here1.1 line ${location().start.line}: ${here}`); return true; })
+    fig_struct
+        // &(here:$(INLINE / ......) &{ console.error(`paragraph_item_child here1.2 line ${location().start.line}: ${here}`); return true; })
+    /
     amend_provision
     /
     table_struct
@@ -726,46 +870,67 @@ table_column "table_column" =
         "\"]"
         { return [name, value]; }
     )*
-    first:(
-    // &(here:$(INLINE / ..........) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
-        remarks
-    // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
+    children:(
+        first:(
+        // &(here:$(INLINE / ..........) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
+            remarks
+        // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
+            /
+            fig_struct
+        )
+        rest:(
+            INDENT INDENT
+                target:(
+        // &(here:$(NEXTINLINE) &{ console.error(`here0 line ${location().start.line}: "${here}"`); return true; })
+                    _target:(
+                        fig_struct
+                    )
+                    { return _target; }
+                )+
+                NEWLINE*
+            DEDENT DEDENT
+            { return target; }
+        )?
+        { return [first, ...(rest || [])]; }
         /
-        fig_struct
+        // &(here:$(NEXTINLINE) &{ console.error(`here001 line ${location().start.line}: "${here}"`); return true; })
+        in_table_column_paragraph_items
+        // &(here:$(NEXTINLINE) &{ console.error(`here003 line ${location().start.line}: "${here}"`); return true; })
         /
-        inline:INLINE? NEWLINE
-        {
-            return new EL(
-                "Sentence",
-                {},
-                inline || [],
-            )
-        }
-    )
-    rest:(
-        INDENT INDENT
-            target:(
-    // &(here:$(NEXTINLINE) &{ console.error(`here0 line ${location().start.line}: "${here}"`); return true; })
-                _target:(
-                    fig_struct
-                    /
-                    inline:INLINE NEWLINE
-                    {
-                        return new EL(
-                            "Sentence",
-                            {},
-                            inline,
-                        )
-                    }
+        first:(
+            inline:INLINE? NEWLINE
+            {
+                return new EL(
+                    "Sentence",
+                    {},
+                    inline || [],
                 )
-                { return _target; }
-            )+
-            NEWLINE*
-        DEDENT DEDENT
-        { return target; }
-    )?
+            }
+        )
+        rest:(
+            INDENT INDENT
+                target:(
+        // &(here:$(NEXTINLINE) &{ console.error(`here0 line ${location().start.line}: "${here}"`); return true; })
+                    _target:(
+                        inline:INLINE NEWLINE
+                        {
+                            return new EL(
+                                "Sentence",
+                                {},
+                                inline,
+                            )
+                        }
+                    )
+                    { return _target; }
+                )+
+                NEWLINE*
+            DEDENT DEDENT
+            { return target; }
+        )?
+        { return [first, ...(rest || [])]; }
+    )
+    // &(here:$(NEXTINLINE) &{ console.error(`here0 line ${location().start.line}: "${here}"`); return true; })
     {
-        let children = [first].concat(rest || []);
 
         let table_column = new EL("TableColumn");
         for(let i = 0; i < attr.length; i++) {
@@ -845,6 +1010,59 @@ style "style" =
     )
     {
         return new EL("Style", {}, children);
+    }
+
+
+
+
+
+note_struct "note_struct" =
+    !INDENT !DEDENT !NEWLINE
+    note_struct_title:note_struct_title?
+    remarkses1:remarks*
+    note:note
+    remarkses2:remarks*
+    {
+        let note_struct = new EL("NoteStruct");
+
+        if(note_struct_title !== null) {
+            note_struct.append(note_struct_title);
+        }
+
+        note_struct.extend(remarkses1);
+
+        note_struct.append(note);
+
+        note_struct.extend(remarkses2);
+
+        return note_struct;
+    }
+
+note_struct_title "note_struct_title" =
+    ":note-struct-title:"
+    _
+    title:$INLINE
+    NEWLINE
+    {
+        return new EL("NoteStructTitle", {}, [new __Text(title)]);
+    }
+
+note "note" =
+    children:(
+        table:table { return [table]; }
+        /
+        fig:fig { return [fig]; }
+        /
+        lists:(
+            INDENT INDENT
+                target:list+
+                NEWLINE*
+            DEDENT DEDENT
+            { return target; }
+        )
+    )
+    {
+        return new EL("Note", {}, children);
     }
 
 
@@ -994,6 +1212,8 @@ appdx_item =
     appdx_style
     /
     appdx_fig
+    /
+    appdx_note
     /
     suppl_provision
 
@@ -1281,6 +1501,89 @@ appdx_fig_children "appdx_fig_children" =
     /
     table_struct
 
+
+
+appdx_note_title "appdx_note_title" =
+    title_struct:(
+        attr:(
+            target:(
+                "["
+                name:$[^ 　\t\r\n\]=]+
+                "=\""
+                value:$[^ 　\t\r\n\]"]+
+                "\"]"
+                { return [name, value]; }
+            )*
+            {
+                const ret = {};
+                for(const [name, value] of target) {
+                    ret[name] = value;
+                }
+                return ret;
+            }
+        )
+        target:(
+            title:$("別記" [^\r\n(（]*)
+            related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
+            table_struct_title:$[^\r\n(（]*
+            {
+                return {
+                    text: text(),
+                    title: title,
+                    related_article_num: related_article_num,
+                    table_struct_title: table_struct_title,
+                };
+            }
+        )
+        {
+            return {
+                attr: attr,
+                ...target,
+            };
+        }
+    )
+    {
+        return title_struct;
+    }
+
+
+appdx_note "appdx_note" =
+    // &(here:$(INLINE / ..........) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
+    title_struct:appdx_note_title
+    NEWLINE+
+    children:(
+        INDENT
+            target:appdx_note_children+
+            remarkses:remarks*
+            NEWLINE*
+        DEDENT
+        { return target.concat(remarkses); }
+    )?
+    // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
+    {
+        let appdx_note = new EL("AppdxNote");
+        if(title_struct.table_struct_title !== "") {
+            console.error(`### line ${location().start.line}: Maybe irregular AppdxNoteTitle!`);
+            appdx_note.append(new EL("AppdxNoteTitle", title_struct.attr, [new __Text( title_struct.text)]));
+        } else {
+            appdx_note.append(new EL("AppdxNoteTitle", title_struct.attr, [new __Text(title_struct.title)]));
+            if(title_struct.related_article_num) {
+                appdx_note.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+            }
+        }
+
+        if(children) {
+            util.setItemNum(children);
+        }
+        appdx_note.extend(children || []);
+
+        return appdx_note;
+    }
+
+appdx_note_children "appdx_note_children" =
+    note_struct
+    /
+    table_struct
 
 
 
