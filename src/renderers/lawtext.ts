@@ -813,11 +813,11 @@ ${BLANK}
 
 
 
-const renderTableStruct = (el: std.TableStruct, indent: number, isFirstTableStruct = true): string => {
+const renderTableStruct = (el: std.TableStruct, indent: number, renderTag = true): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
 
-    if (!isFirstTableStruct) {
+    if (!renderTag) {
         blocks.push(
  /* ========================= */`\
 ${_____}:table-struct:
@@ -1049,6 +1049,9 @@ ${_____}${renderFigRun(subchild)}
 
                 } else if (std.isList(subchild)) {
                     blocks.push(renderList(subchild, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
+
+                } else if (std.isTableStruct(subchild)) {
+                    blocks.push(renderTableStruct(subchild, indent, false)); /* >>>> INDENT ++++ INDENT >>>> */
 
                 } else {
                     throw new NotImplementedError(subchild.tag);
