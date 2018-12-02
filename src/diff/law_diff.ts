@@ -356,8 +356,8 @@ export const lawDiff = (oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode:
 
 const processNoChange = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>, noProblemAsNoDiff: boolean): LawDiffElementChange<string> | null => {
     if (!dRow.oldItem || !dRow.newItem) return null;
-    const oldIndex = dRow.oldItem.index;
-    const newIndex = dRow.newItem.index;
+    const oldIndex = dRow.oldItem!.index;
+    const newIndex = dRow.newItem!.index;
 
     const [oldEL, oldTT] = oldELs[oldIndex];
     const [newEL, newTT] = newELs[newIndex];
@@ -445,8 +445,8 @@ interface FragmentElements {
 
 const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>): FragmentElements | null => {
     if (!dRow.oldItem || !dRow.newItem) return null;
-    const oldIndex = dRow.oldItem.index;
-    const newIndex = dRow.newItem.index;
+    const oldIndex = dRow.oldItem!.index;
+    const newIndex = dRow.newItem!.index;
 
     const [oldEL, oldTT] = oldELs[oldIndex];
     const [newEL, newTT] = newELs[newIndex];
