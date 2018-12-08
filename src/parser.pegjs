@@ -1033,6 +1033,7 @@ style "style" =
 
 note_struct "note_struct" =
     !INDENT !DEDENT !NEWLINE
+    // &(here:$(NEXTINLINE) &{ console.error(`note_struct line ${location().start.line}: "${here}"`); return true; })
     note_struct_title:note_struct_title?
     remarkses1:remarks*
     note:note
@@ -1075,6 +1076,8 @@ note "note" =
             DEDENT DEDENT
             { return target; }
         )
+        /
+        arith_formula:xml_element { return [arith_formula]; }
     )
     {
         return new EL("Note", {}, children);
@@ -1222,6 +1225,8 @@ fig "fig" =
 
 
 appdx_item =
+    appdx
+    /
     appdx_table
     /
     appdx_style
@@ -1229,8 +1234,6 @@ appdx_item =
     appdx_fig
     /
     appdx_note
-    /
-    appdx
     /
     suppl_provision
 
@@ -1442,7 +1445,7 @@ appdx_style "appdx_style" =
             NEWLINE*
         DEDENT
         { return target; }
-    )?
+    )
     {
         let appdx_style = new EL("AppdxStyle");
         appdx_style.append(new EL("AppdxStyleTitle", {}, [new __Text(title_struct.title)]));
@@ -1497,7 +1500,7 @@ appdx_fig "appdx_fig" =
                 NEWLINE*
             DEDENT
             { return target; }
-        )?
+        )
         {
             let appdx_fig = new EL("AppdxFig");
             appdx_fig.append(new EL("AppdxFigTitle", {}, [new __Text(title_struct.title)]));
@@ -1540,7 +1543,7 @@ appdx_note_title "appdx_note_title" =
             }
         )
         target:(
-            title:$("別記" [^\r\n(（]*)
+            title:$(("別記" / "付録") [^\r\n(（]*)
             related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
             table_struct_title:$[^\r\n(（]*
             {
@@ -1570,12 +1573,20 @@ appdx_note "appdx_note" =
     NEWLINE+
     children:(
         INDENT
-            target:appdx_note_children+
+            target:(
+                first:appdx_note_children
+                rest:(
+                    NEWLINE+
+                    _target:appdx_note_children
+                    {return _target;}
+                )*
+                { return [first].concat(rest); }
+            )
             remarkses:remarks*
             NEWLINE*
         DEDENT
         { return target.concat(remarkses); }
-    )?
+    )
     // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
     {
         let appdx_note = new EL("AppdxNote");
@@ -1598,6 +1609,8 @@ appdx_note "appdx_note" =
     }
 
 appdx_note_children "appdx_note_children" =
+    fig_struct
+    /
     note_struct
     /
     table_struct
@@ -1659,7 +1672,7 @@ appdx "appdx" =
             NEWLINE*
         DEDENT
         { return target.concat(remarkses); }
-    )?
+    )
     // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
     {
         let appdx = new EL("Appdx");

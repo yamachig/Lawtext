@@ -1151,6 +1151,12 @@ ${_____}${renderFigRun(subchild)}
                 } else if (std.isList(subchild)) {
                     blocks.push(renderList(subchild, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
+                } else if (std.isArithFormula(subchild)) {
+                    blocks.push(
+ /* ========================= */`\
+${_____}${renderRun([subchild])}
+`/* ========================= */);
+
                 } else {
                     throw new NotImplementedError(subchild.tag);
 
