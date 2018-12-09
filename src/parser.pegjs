@@ -447,7 +447,6 @@ suppl_note "suppl_note" =
 
 
 paragraph_item "paragraph_item" =
-    // &(here:$(NEXTINLINE) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
     paragraph_caption:article_paragraph_caption?
     paragraph_item_title:$(
         !article_title
@@ -461,6 +460,7 @@ paragraph_item "paragraph_item" =
         [^ 　\t\r\n条<]+
     )
     __
+    // &(here:$(NEXTINLINE) &{ console.error(`paragraph_item line ${location().start.line}: ${here}`); return true; })
     inline_contents:columns_or_sentences
     NEWLINE+
     children:(
@@ -1076,6 +1076,9 @@ note "note" =
             DEDENT DEDENT
             { return target; }
         )
+        /
+    // &(here:$(NEXTINLINE) &{ console.error(`note line ${location().start.line}: "${here}"`); return true; })
+        paragraph_items:paragraph_item+ { return paragraph_items; }
         /
         arith_formula:xml_element { return [arith_formula]; }
     )

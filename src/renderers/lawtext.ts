@@ -1139,6 +1139,9 @@ ${_____}:note-struct-title:${renderRun(child.children)}
                 if (isString(subchild)) {
                     throw new NotImplementedError("string");
 
+                } else if (std.isItem(subchild)) {
+                    blocks.push(renderParagraphItem(subchild, indent));
+
                 } else if (std.isTable(subchild)) {
                     blocks.push(renderTable(subchild, indent));
 
