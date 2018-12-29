@@ -2,17 +2,16 @@ import * as $ from "jquery";
 import * as React from "react";
 import AnimateHeight from 'react-animate-height';
 import EventListener from 'react-event-listener';
-import { default as styled, injectGlobal } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import { isString } from "util";
 import * as analyzer from "../../../core/src/analyzer";
 import * as std from "../../../core/src/std_law"
 import { assertNever, EL, NotImplementedError } from "../../../core/src/util"
 import { LawtextAppPageActions } from "../actions/index";
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
-import { LawtextAppPageState, RouteState } from '../states';
+import { containerInfoOf, LawtextAppPageState, RouteState } from '../states';
 import { store } from "../store";
 
-let injectGlobalOutput: void;
 
 const MARGIN = "　";
 
@@ -32,6 +31,7 @@ export class LawView extends React.Component<Props> {
     public render() {
         return (
             <LawViewDiv>
+                <GlobalStyle/>
                 {this.props.hasError && <LawViewError {...this.props} />}
                 {this.props.law && <LawComponent el={this.props.law} indent={0} />}
             </LawViewDiv>
@@ -388,7 +388,7 @@ class TOCComponent extends BaseLawComponent<TOCComponentProps> {
 
         return (
             <TOCDiv
-                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: tocLabelText })}
+                data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
             >
                 {blocks}
             </TOCDiv>
@@ -540,7 +540,7 @@ class AppdxTableComponent extends BaseLawComponent<AppdxTableComponentProps> {
 
         return (
             <AppdxTableDiv
-                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: AppdxTableTitle && AppdxTableTitle.text })}
+                data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
             >
                 {blocks}
             </AppdxTableDiv>
@@ -616,7 +616,7 @@ class AppdxStyleComponent extends BaseLawComponent<AppdxStyleComponentProps> {
 
         return (
             <AppdxStyleDiv
-                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: AppdxStyleTitle && AppdxStyleTitle.text })}
+                data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
             >
                 {blocks}
             </AppdxStyleDiv>
@@ -687,7 +687,7 @@ class AppdxFigComponent extends BaseLawComponent<AppdxFigComponentProps> {
 
         return (
             <AppdxFigDiv
-                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: AppdxFigTitle && AppdxFigTitle.text })}
+                data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
             >
                 {blocks}
             </AppdxFigDiv>
@@ -760,9 +760,7 @@ class SupplProvisionAppdxTableComponent extends BaseLawComponent<SupplProvisionA
         }
 
         return (
-            <SupplProvisionAppdxTableDiv
-                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: SupplProvisionAppdxTableTitle && SupplProvisionAppdxTableTitle.text })}
-            >
+            <SupplProvisionAppdxTableDiv>
                 {blocks}
             </SupplProvisionAppdxTableDiv>
         );
@@ -836,9 +834,7 @@ class SupplProvisionAppdxStyleComponent extends BaseLawComponent<SupplProvisionA
         }
 
         return (
-            <SupplProvisionAppdxStyleDiv
-                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: SupplProvisionAppdxStyleTitle && SupplProvisionAppdxStyleTitle.text })}
-            >
+            <SupplProvisionAppdxStyleDiv>
                 {blocks}
             </SupplProvisionAppdxStyleDiv>
         );
@@ -910,7 +906,7 @@ class SupplProvisionComponent extends BaseLawComponent<SupplProvisionComponentPr
             <div
                 className="law-anchor"
                 data-el_id={el.id.toString()}
-                data-toplevel_container_info={JSON.stringify({ tag: el.tag, id: el.attr.AmendLawNum })}
+                data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
             >
                 {blocks}
             </div>
@@ -959,7 +955,7 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
 
         return (
             el.tag === "MainProvision" ? (
-                <div data-toplevel_container_info={JSON.stringify({ tag: el.tag })}>
+                <div data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}>
                     {blocks}
                 </div>
             ) : (
@@ -1083,7 +1079,7 @@ class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
             <ArticleDiv
                 className="law-anchor"
                 data-el_id={el.id.toString()}
-                data-container_info={JSON.stringify({ tag: el.tag, id: el.attr.Num })}
+                data-container_info={JSON.stringify(containerInfoOf(el))}
             >
                 {blocks}
             </ArticleDiv>
@@ -1211,7 +1207,7 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
             } else {
                 return (
                     <ParagraphDiv
-                        data-container_info={JSON.stringify({ tag: el.tag, id: el.attr.Num })}
+                        data-container_info={JSON.stringify(containerInfoOf(el))}
                     >
                         {blocks}
                     </ParagraphDiv>
@@ -1873,17 +1869,6 @@ class ____DeclarationComponent extends BaseLawComponent<____DeclarationComponent
 
 
 
-injectGlobalOutput = injectGlobal`
-.lawtext-varref-open .lawtext-varref-text {
-    background-color: rgba(127, 127, 127, 0.15);
-    border-bottom: 1px solid rgb(40, 167, 69);
-}
-
-.lawtext-varref-text:hover {
-    background-color: rgb(255, 249, 160);
-    border-bottom: 1px solid rgb(40, 167, 69);
-}
-`;
 
 const VarRefSpan = styled.span`
 `;
@@ -1982,7 +1967,7 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
         return (
             <VarRefSpan>
 
-                <VarRefTextSpan onClick={varRefTextSpanOnClick} innerRef={this.refText}>
+                <VarRefTextSpan onClick={varRefTextSpanOnClick} ref={this.refText}>
                     {getInnerRun(el)}
                 </VarRefTextSpan>
 
@@ -2006,7 +1991,7 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
                         <VarRefFloatBlockInnerSpan>
                             <EventListener target="window" onResize={windowOnResize} />
                             <VarRefArrowSpan style={{ marginLeft: this.state.arrowLeft }} />
-                            <VarRefWindowSpan innerRef={this.refWindow}>
+                            <VarRefWindowSpan ref={this.refWindow}>
                                 <VarRefView el={el} />
                             </VarRefWindowSpan>
                         </VarRefFloatBlockInnerSpan>
@@ -2142,8 +2127,17 @@ class ____LawNumComponent extends BaseLawComponent<____LawNumComponentProps> {
 
 
 
+const GlobalStyle = createGlobalStyle`
+.lawtext-varref-open .lawtext-varref-text {
+    background-color: rgba(127, 127, 127, 0.15);
+    border-bottom: 1px solid rgb(40, 167, 69);
+}
 
-injectGlobalOutput = injectGlobal`
+.lawtext-varref-text:hover {
+    background-color: rgb(255, 249, 160);
+    border-bottom: 1px solid rgb(40, 167, 69);
+}
+
 .lawtext-analyzed-parentheses
 {
     transition: background-color 0.3s;

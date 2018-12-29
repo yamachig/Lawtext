@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { Dispatch } from 'redux';
 import { Action } from 'typescript-fsa';
 
+import * as std from "../../../core/src/std_law"
 import { LawtextAppPageActions } from '../actions';
 import { LawtextAppPage } from '../components/LawtextAppPage';
 import * as states from '../states';
@@ -17,15 +18,15 @@ import { AppState } from '../store';
 export interface Dispatchers {
     modifyState: (state: Partial<states.LawtextAppPageState>) => Action<Partial<states.LawtextAppPageState>>,
     openFile: () => void,
-    openFileInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    openFileInputChange: (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>,
     invokeError: (title: string, bodyEl: string) => void,
-    loadLawText: (text: string, analyzeXml: boolean) => void,
-    searchLaw: (lawSearchKey: string) => void,
-    downloadDocx: (downloadSelection?: boolean) => void,
-    downloadLawtext: () => void,
-    downloadXml: () => void,
+    loadLawText: (text: string, analyzeXml: boolean) => Promise<std.Law | null>,
+    searchLaw: (getState: () => states.LawtextAppPageState, lawSearchKey: string) => Promise<void>,
+    downloadDocx: (law: std.Law, downloadSelection?: boolean) => Promise<void>,
+    downloadLawtext: (law: std.Law) => Promise<void>,
+    downloadXml: (law: std.Law) => Promise<void>,
     scrollLaw: (id: string) => void,
-    downloadSampleLawtext: () => void,
+    downloadSampleLawtext: () => Promise<void>,
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
@@ -46,17 +47,17 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
         loadLawText: (text: string, analyzeXml: boolean) =>
             states.loadLawText(dispatch, text, analyzeXml),
 
-        searchLaw: (lawSearchKey: string) =>
-            states.searchLaw(dispatch, lawSearchKey),
+        searchLaw: (getState: () => states.LawtextAppPageState, lawSearchKey: string) =>
+            states.searchLaw(getState, dispatch, lawSearchKey),
 
-        downloadDocx: (downloadSelection: boolean = false) =>
-            states.downloadDocx(dispatch, downloadSelection),
+        downloadDocx: (law: std.Law, downloadSelection: boolean = false) =>
+            states.downloadDocx(dispatch, law, downloadSelection),
 
-        downloadLawtext: () =>
-            states.downloadLawtext(dispatch),
+        downloadLawtext: (law: std.Law) =>
+            states.downloadLawtext(dispatch, law),
 
-        downloadXml: () =>
-            states.downloadXml(dispatch),
+        downloadXml: (law: std.Law) =>
+            states.downloadXml(dispatch, law),
 
         scrollLaw: (id: string) =>
             states.scrollLaw(dispatch, id),

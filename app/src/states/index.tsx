@@ -13,8 +13,6 @@ import render_lawtext from "../../../core/src/renderers/lawtext";
 import * as std from "../../../core/src/std_law"
 import * as util from "../../../core/src/util"
 import { LawtextAppPageActions } from '../actions';
-import { openFile as origOpenFile, scrollToLawAnchor, showErrorModal, tobeDownloadedRange } from '../components/LawtextAppPage'
-import { store } from '../store';
 import * as lawdata from "./lawdata";
 
 export type RouteState = RouteComponentProps<{ lawSearchKey: string | undefined }>;
@@ -42,6 +40,98 @@ const initialState: LawtextAppPageState = {
 };
 
 export const LawtextAppPageReducer = reducerWithInitialState(initialState);
+
+
+
+
+
+export const OpenFileInputName = "LawtextAppPage.OpenFileInput";
+const origOpenFile = () => {
+    const els = document.getElementsByName(OpenFileInputName);
+    if (els) {
+        els[0].click();
+    }
+}
+
+
+const scrollToLawAnchor = (id: string) => {
+    for (const el of Array.from(document.getElementsByClassName("law-anchor"))) {
+        if ((el as HTMLElement).dataset.el_id === id) {
+            const offset = $(el).offset();
+            if (offset) $("html,body").animate({ scrollTop: offset.top }, "normal");
+        }
+    }
+}
+
+
+export const ErrorModalID = "LawtextAppPage.ErrorModal";
+const showErrorModal = (title: string, bodyEl: string) => {
+    const modalEl = document.getElementById(ErrorModalID);
+    if (!modalEl) return;
+    const modal = $(modalEl) as JQuery<HTMLElement> & { modal: (method: string) => any };
+    modal.find(".modal-title").html(title);
+    modal.find(".modal-body").html(bodyEl);
+    modal.modal("show");
+}
+
+
+interface SelectionRange {
+    start: {
+        container_tag: string;
+        container_id: string | null;
+        item_tag: string;
+        item_id: string | null;
+    };
+    end: {
+        container_tag: string;
+        container_id: string | null;
+        item_tag: string;
+        item_id: string | null;
+    };
+};
+
+
+
+export const tobeDownloadedRange = (): SelectionRange | null => {
+    const getPos = (node: Node) => {
+        if (!node.parentNode) return null;
+        const el = $(node.parentNode as HTMLElement);
+
+        const containerEl = el.data("container_info")
+            ? el
+            : el.parents("[data-container_info]").last();
+        if (!containerEl) return null;
+        const containerInfo = containerEl.data("container_info");
+
+        const toplevelContainerEl = el.closest("[data-toplevel_container_info]");
+        if (!toplevelContainerEl) return null;
+        const toplevelContainerInfo = toplevelContainerEl.data("toplevel_container_info");
+
+        return {
+            container_tag: toplevelContainerInfo.tag,
+            container_id: toplevelContainerInfo.id,
+            item_tag: containerInfo && containerInfo.tag,
+            item_id: containerInfo && containerInfo.id,
+        }
+    };
+
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+
+    const sPos = getPos(range.startContainer);
+    const ePos = getPos(range.endContainer);
+    if (!sPos || !ePos) return null;
+
+    return {
+        start: sPos,
+        end: ePos,
+    };
+}
+
+
+
+
+
 
 export const openFile =
     (dispatch: Dispatch<Action<any>>) =>
@@ -146,14 +236,16 @@ export const loadLawText = async (
     console.log("loadLawText: Setting Law into State");
     await util.wait(30);
     dispatch(LawtextAppPageActions.modifyState(newState));
+    return law;
 }
 
 export const searchLaw = async (
+    getState: () => LawtextAppPageState,
     dispatch: Dispatch<Action<any>>,
     lawSearchKey: string,
 ) => {
     console.log(`searchLaw(${lawSearchKey})`);
-    const state = store.getState().lawtextAppPage;
+    const state = getState();
     if (lawSearchKey === state.lawSearchedKey) return;
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true, lawSearchedKey: lawSearchKey, loadingLawMessage: "法令を検索しています..." }));
     console.log("searchLaw: Searching Law");
@@ -172,20 +264,28 @@ export const searchLaw = async (
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false, loadingLawMessage: "" }));
 }
 
-export interface SelectionRange {
-    start: {
-        container_tag: string;
-        container_id: string | null;
-        item_tag: string;
-        item_id: string | null;
-    };
-    end: {
-        container_tag: string;
-        container_id: string | null;
-        item_tag: string;
-        item_id: string | null;
-    };
-};
+export const containerInfoOf = (el: util.EL | string) => {
+    if (isString(el)) {
+        return { tag: "", id: "" };
+    } else if (std.isTOC(el)) {
+        return { tag: el.tag, id: el.children.find(c => c.tag === "TOCLabel")!.text };
+    } else if (std.isAppdxTable(el)) {
+        return { tag: el.tag, id: el.children.find(c => c.tag === "AppdxTableTitle")!.text };
+    } else if (std.isAppdxStyle(el)) {
+        return { tag: el.tag, id: el.children.find(c => c.tag === "AppdxStyleTitle")!.text };
+    } else if (std.isAppdxFig(el)) {
+        return { tag: el.tag, id: el.children.find(c => c.tag === "AppdxFigTitle")!.text };
+    } else if (std.isSupplProvision(el)) {
+        return { tag: el.tag, id: el.attr.AmendLawNum as string };
+    } else if (std.isMainProvision(el)) {
+        return { tag: el.tag, id: "" };
+    } else if (std.isArticle(el)) {
+        return { tag: el.tag, id: el.children.find(c => c.tag === "ArticleTitle")!.text };
+    } else if (std.isParagraph(el)) {
+        return { tag: el.tag, id: el.children.find(c => c.tag === "ParagraphNum")!.text };
+    }
+    else { return { tag: el.tag, id: "" }; }
+}
 
 const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
     const sPos = range.start;
@@ -228,69 +328,70 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
     }
 
     for (const toplevel of origLawBody.children) {
+        const toplevelInfo = containerInfoOf(toplevel);
         if (isString(toplevel)) continue;
         if (
             !inContainerRange &&
-            toplevel.tag === sPos.container_tag &&
-            (
-                toplevel.tag !== "SupplProvision" ||
-                (toplevel.attr.AmendLawNum || null) === sPos.container_id
-            )
+            toplevelInfo.tag === sPos.container_tag &&
+            toplevelInfo.id === sPos.container_id
         ) {
             inContainerRange = true;
         }
 
         const containerChildren: Array<util.EL | string> = [];
 
-        if (
-            inContainerRange &&
-            ePos.item_tag === "SupplProvisionLabel" &&
-            toplevel.tag === ePos.container_tag &&
-            (
-                toplevel.tag !== "SupplProvision" ||
-                (toplevel.attr.AmendLawNum || null) === ePos.container_id
-            )
-        ) {
-            inContainerRange = false;
-        }
+        // if (
+        //     inContainerRange &&
+        //     ePos.item_tag === "SupplProvisionLabel" &&
+        //     toplevelInfo.tag === ePos.container_tag &&
+        //     toplevelInfo.id === ePos.container_id
+        // ) {
+        //     inContainerRange = false;
+        // }
 
         if (inContainerRange) {
 
-            let items = findEls(toplevel, "Article");
-            if (items.length === 0) items = findEls(toplevel, "Paragraph");
+            if (std.isMainProvision(toplevel) || std.isSupplProvision(toplevel)) {
 
-            for (const item of items) {
+                let items = findEls(toplevel, "Article");
+                if (items.length === 0) items = findEls(toplevel, "Paragraph");
 
-                if (
-                    !inItemRange &&
-                    (
-                        sPos.item_tag === "SupplProvisionLabel" ||
+                for (const item of items) {
+                    const itemInfo = containerInfoOf(item);
+
+                    if (
+                        !inItemRange &&
                         (
-                            item.tag === sPos.item_tag &&
+                            !sPos.item_tag ||
                             (
-                                !sPos.item_id ||
-                                item.attr.Num === sPos.item_id
+                                itemInfo.tag === sPos.item_tag &&
+                                (
+                                    !sPos.item_id ||
+                                    itemInfo.id === sPos.item_id
+                                )
                             )
                         )
-                    )
-                ) {
-                    inItemRange = true;
-                }
+                    ) {
+                        inItemRange = true;
+                    }
 
-                if (inItemRange) {
-                    containerChildren.push(item);
-                }
+                    if (inItemRange) {
+                        containerChildren.push(item);
+                    }
 
-                if (
-                    inItemRange &&
-                    item.tag === ePos.item_tag &&
-                    (
-                        !ePos.item_id ||
-                        item.attr.Num === ePos.item_id
-                    )
-                ) {
-                    inItemRange = false;
+                    if (
+                        inItemRange &&
+                        itemInfo.tag === ePos.item_tag &&
+                        (
+                            !ePos.item_id ||
+                            itemInfo.id === ePos.item_id
+                        )
+                    ) {
+                        inItemRange = false;
+                    }
                 }
+            } else {
+                containerChildren.push(...toplevel.children);
             }
         }
 
@@ -306,11 +407,8 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
 
         if (
             inContainerRange &&
-            toplevel.tag === ePos.container_tag &&
-            (
-                toplevel.tag !== "SupplProvision" ||
-                (toplevel.attr.AmendLawNum || null) === ePos.container_id
-            )
+            toplevelInfo.tag === ePos.container_tag &&
+            toplevelInfo.id === ePos.container_id
         ) {
             inContainerRange = false;
         }
@@ -333,11 +431,9 @@ export const getLawName = (law: std.Law): string => {
 
 export const downloadDocx = async (
     dispatch: Dispatch<Action<any>>,
+    law: std.Law,
     downloadSelection: boolean,
 ) => {
-    let law = store.getState().lawtextAppPage.law;
-    if (law === null) return;
-
     const range = downloadSelection ? tobeDownloadedRange() : null;
     if (range) {
         law = getLawRange(law, range) as std.Law;
@@ -354,10 +450,8 @@ export const downloadDocx = async (
 
 export const downloadLawtext = async (
     dispatch: Dispatch<Action<any>>,
+    law: std.Law,
 ) => {
-    const law = store.getState().lawtextAppPage.law;
-    if (law === null) return;
-
     const sLawtext = render_lawtext(law);
     const blob = new Blob(
         [sLawtext],
@@ -369,10 +463,8 @@ export const downloadLawtext = async (
 
 export const downloadXml = async (
     dispatch: Dispatch<Action<any>>,
+    law: std.Law,
 ) => {
-    const law = store.getState().lawtextAppPage.law;
-    if (law === null) return;
-
     const xml = renderer.renderXml(law);
     const blob = new Blob(
         [xml],
@@ -393,8 +485,9 @@ export const downloadSampleLawtext = async (
 ) => {
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true }));
     await util.wait(30);
-    await loadLawText(dispatch, sampleSampleXml, true);
-    await downloadLawtext(dispatch);
+    const law = await loadLawText(dispatch, sampleSampleXml, true);
+    if (law) {
+        await downloadLawtext(dispatch, law);
+    }
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false }));
 }
-

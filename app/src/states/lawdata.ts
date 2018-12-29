@@ -18,12 +18,14 @@ const ensureList = async () => {
     let waitTime = 30;
     while (true) {
         if (_listReady) return;
-        util.wait(waitTime);
+        console.log("wait fetching lawdata/list.json");
+        await util.wait(waitTime);
         if (waitTime < 1000) waitTime += 300;
     }
 }
 (async () => {
     try {
+        console.log("start fetching lawdata/list.json");
         const response = await fetch(`lawdata/list.json`);
         if (response.ok) {
             const json = await response.json();
@@ -50,6 +52,7 @@ const ensureList = async () => {
             );
         }
     } finally {
+        console.log("finish fetching lawdata/list.json");
         _listReady = true;
     }
     return [];

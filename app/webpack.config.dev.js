@@ -2,6 +2,7 @@
 
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 class WatchMessagePlugin {
     apply(compiler) {
@@ -97,7 +98,12 @@ module.exports = {
         new HtmlWebPackPlugin({
             template: "./src/index.html",
             filename: "index.html"
-        })
+        }),
+        new CircularDependencyPlugin({
+            exclude: /node_modules/,
+            failOnError: true,
+            cwd: process.cwd(),
+        }),
     ],
 
     watchOptions: {

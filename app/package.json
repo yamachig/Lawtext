@@ -59,6 +59,7 @@
         "@types/react-dom": "",
         "@types/react-redux": "",
         "@types/react-router-dom": "",
+        "@types/styled-components": "",
         "@types/xmldom": "",
         "autoprefixer": "",
         "css-loader": "",
@@ -76,6 +77,7 @@
         "typescript-fsa-reducers": "",
         "webpack": "",
         "webpack-cli": "",
+        "circular-dependency-plugin": "",
         "webpack-dev-server": ""
     }
 }

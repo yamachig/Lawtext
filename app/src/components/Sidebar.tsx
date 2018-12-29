@@ -45,12 +45,28 @@ class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
             this.setState({ lawSearchKey: e.target.value });
         }
 
+        const downloadLawtext = () => {
+            if (this.props.law) {
+                this.props.downloadLawtext(this.props.law);
+            }
+        }
+
+        const downloadXml = () => {
+            if (this.props.law) {
+                this.props.downloadXml(this.props.law);
+            }
+        }
+
         const downloadDocxAll = () => {
-            this.props.downloadDocx();
+            if (this.props.law) {
+                this.props.downloadDocx(this.props.law);
+            }
         }
 
         const downloadDocxSelection = () => {
-            this.props.downloadDocx(true);
+            if (this.props.law) {
+                this.props.downloadDocx(this.props.law, true);
+            }
         }
 
         return (
@@ -127,13 +143,13 @@ class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
                                         Word
                                     </button>
                                     <button
-                                        onClick={this.props.downloadLawtext}
+                                        onClick={downloadLawtext}
                                         className="btn btn-outline-primary"
                                     >
                                         Lawtext
                                     </button>
                                     <button
-                                        onClick={this.props.downloadXml}
+                                        onClick={downloadXml}
                                         className="btn btn-outline-primary"
                                     >
                                         法令XML
