@@ -31,7 +31,7 @@ export class LawView extends React.Component<Props> {
     public render() {
         return (
             <LawViewDiv>
-                <GlobalStyle/>
+                <GlobalStyle />
                 {this.props.hasError && <LawViewError {...this.props} />}
                 {this.props.law && <LawComponent el={this.props.law} indent={0} />}
             </LawViewDiv>
@@ -2016,7 +2016,23 @@ class VarRefView extends BaseLawComponent<VarRefViewProps> {
         const declarationIndex = Number(el.attr.ref_declaration_index);
         const declaration = analysis.declarations.get(declarationIndex);
         const declContainer = declaration.namePos.env.container;
-        const containerStack = declContainer.linealAscendant();
+        const containerStack = declContainer.linealAscendant(c => {
+            if (std.isParagraph(c.el)) {
+                const paragraphNum = c.el.children.find(cc => std.isParagraphNum(cc));
+                if (!c.parent) return true;
+                if (
+                    std.isArticle(c.parent.el) &&
+                    c.parent.children.filter(pc => std.isParagraph(pc.el)).length === 1 &&
+                    paragraphNum && paragraphNum.text === ""
+                ) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        });
         const names: string[] = [];
         let lastContainerEl = declContainer.el;
 
