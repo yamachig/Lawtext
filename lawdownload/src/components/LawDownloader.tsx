@@ -1,5 +1,5 @@
-import * as React from "react";
 import * as FileSaver from "file-saver";
+import * as React from "react";
 import { download } from "../../../core/src/downloader";
 
 export class LawDownloader extends React.Component<
@@ -21,22 +21,22 @@ export class LawDownloader extends React.Component<
         };
     }
 
-    async handleDownloadButtonClick(withPict?: boolean) {
+    public async handleDownloadButtonClick(withPict?: boolean) {
         if (this.state.downloading) return;
         this.setState({ downloading: true });
 
         const progress = (ratio: number, message: string) => {
-            this.setState({ ratio: ratio, message: message });
+            this.setState({ ratio, message });
         };
 
         const data = withPict
-            ? (await download({ full: true }, progress)).full
-            : (await download({ withoutPict: true }, progress)).withoutPict;
+            ? (await download({ full: true }, undefined, progress)).full
+            : (await download({ withoutPict: true }, undefined, progress)).withoutPict;
 
         FileSaver.saveAs(new Blob([data]), "lawdata.zip");
     }
 
-    render() {
+    public render() {
         return (
             <div>
                 {this.state.downloading ? (
@@ -71,7 +71,7 @@ class DownloadStateView extends React.Component<
         message: string
     }
     > {
-    render() {
+    public render() {
         return (
             <div>
                 <div style={{
