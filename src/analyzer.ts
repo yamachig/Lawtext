@@ -210,7 +210,8 @@ export class Declarations {
         this.declarations = [];
     }
 
-    public *iterate(spanIndex: number): IterableIterator<____Declaration> {
+    public getInSpan(spanIndex: number): ____Declaration[] {
+        const declarations: ____Declaration[] = [];
         for (const declaration of this.declarations) {
             if (
                 declaration.scope.some(range =>
@@ -218,9 +219,11 @@ export class Declarations {
                     spanIndex < range.endSpanIndex
                 )
             ) {
-                yield declaration;
+                declarations.push(declaration);
             }
         }
+        declarations.sort((a, b) => -(a.name.length - b.name.length));
+        return declarations;
     }
 
     public add(declaration: ____Declaration) {
@@ -600,7 +603,7 @@ const detectVariableReferences = (law: EL, spans: Span[], declarations: Declarat
         const parent = span.env.parents[span.env.parents.length - 1];
         if (parent.tag === "__PContent" && parent.attr.type === "square") return;
         const ret: ____VarRef[] = [];
-        for (const declaration of declarations.iterate(span.index)) {
+        for (const declaration of declarations.getInSpan(span.index)) {
             const textScope = {
                 start: 0,
                 end: Number.POSITIVE_INFINITY,
