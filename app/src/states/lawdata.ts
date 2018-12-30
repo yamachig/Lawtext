@@ -1,4 +1,4 @@
-import levenshtein from "js-levenshtein";
+import * as levenshtein from "js-levenshtein";
 import * as JSZip from "jszip";
 import * as util from "../../../core/src/util";
 

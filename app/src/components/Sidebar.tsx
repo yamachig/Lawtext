@@ -205,6 +205,9 @@ const LawNavDiv = styled.div`
 `;
 
 class SidebarBody extends React.Component<Props> {
+    public shouldComponentUpdate(nextProps: Props) {
+        return this.props.law !== nextProps.law;
+    }
 
     public render() {
         return (

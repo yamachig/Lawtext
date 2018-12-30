@@ -216,6 +216,9 @@ interface LawComponentProps extends ELComponentProps { el: std.Law, indent: numb
 const isLawComponentProps = (props: ELComponentProps): props is LawComponentProps => props.el.tag === "Law"
 
 class LawComponent extends BaseLawComponent<LawComponentProps> {
+    public shouldComponentUpdate(nextProps: LawComponentProps) {
+        return this.props.el !== nextProps.el;
+    }
     protected renderNormal() {
         const el = this.props.el;
         const indent = this.props.indent;
