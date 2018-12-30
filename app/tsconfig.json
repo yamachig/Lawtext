@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "outDir": "dist",
-        "module": "es2015",
+        "module": "commonjs",
         "target": "es5",
         "downlevelIteration": true,
         "lib": ["dom", "es2018"],
@@ -25,5 +25,5 @@
     "include": [
         "src/**/*"
     ],
-    "exclude": ["dist-dev", "node_modules", "**/*.pegjs"]
+    "exclude": ["dist-dev", "dist-prod", "node_modules", "**/*.pegjs"]
 }
