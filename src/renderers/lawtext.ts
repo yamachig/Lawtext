@@ -50,6 +50,9 @@ const renderLawBody = (el: std.LawBody, indent: number, LawNum: string): string 
         } else if (child.tag === "AppdxStyle") {
             blocks.push(renderAppdxStyle(child, indent));
 
+        } else if (child.tag === "AppdxFormat") {
+            blocks.push(renderAppdxFormat(child, indent));
+
         } else if (child.tag === "AppdxFig") {
             blocks.push(renderAppdxFig(child, indent));
 
@@ -66,7 +69,6 @@ const renderLawBody = (el: std.LawBody, indent: number, LawNum: string): string 
             blocks.push(renderPreamble(child, indent));
 
         }
-        else if (child.tag === "AppdxFormat") { throw new NotImplementedError(child.tag); }
         else { assertNever(child); }
     }
     return blocks.join("");
@@ -252,7 +254,7 @@ ${BLANK}
     for (const [i, child] of ChildItems.entries()) {
         if (child.tag === "TableStruct") {
             const isFirstTableStruct = !(0 < i && ChildItems[i - 1].tag === "TableStruct");
-            blocks.push(renderTableStruct(child, indent + 1, isFirstTableStruct)); /* >>>> INDENT >>>> */
+            blocks.push(renderTableStruct(child, indent + 1, !isFirstTableStruct)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "Item") {
             blocks.push(renderParagraphItem(child, indent + 1)); /* >>>> INDENT >>>> */
@@ -304,7 +306,7 @@ ${BLANK}
 
     for (const [i, TableStruct] of TableStructs.entries()) {
         const isFirstTableStruct = i === 0;
-        blocks.push(renderTableStruct(TableStruct, indent + 1, isFirstTableStruct)); /* >>>> INDENT >>>> */
+        blocks.push(renderTableStruct(TableStruct, indent + 1, !isFirstTableStruct)); /* >>>> INDENT >>>> */
     }
 
     return blocks.join("");
@@ -347,6 +349,57 @@ ${BLANK}
 
         } else if (child.tag === "Item") {
             blocks.push(renderParagraphItem(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(renderRemarks(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return blocks.join("");
+}
+
+
+
+const renderAppdxFormat = (el: std.AppdxFormat, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+
+    let AppdxFormatTitle = "";
+    let RelatedArticleNum = "";
+    const ChildItems: Array<std.FormatStruct | std.Remarks> = [];
+    for (const child of el.children) {
+
+        if (child.tag === "AppdxFormatTitle") {
+            AppdxFormatTitle = renderRun(child.children);
+
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = renderRun(child.children);
+
+        } else {
+            ChildItems.push(child);
+        }
+    }
+
+    if (AppdxFormatTitle || RelatedArticleNum) {
+        blocks.push(
+ /* ========================= */`\
+${BLANK}
+${_____}${AppdxFormatTitle}${RelatedArticleNum}
+${BLANK}
+`/* ========================= */);
+    } else {
+        blocks.push(
+ /* ========================= */`\
+${BLANK}
+${_____}:appdx-format:
+`/* ========================= */);
+    }
+
+    for (const child of ChildItems) {
+        if (child.tag === "FormatStruct") {
+            blocks.push(renderFormatStruct(child, indent + 1)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "Remarks") {
             blocks.push(renderRemarks(child, indent + 1)); /* >>>> INDENT >>>> */
@@ -443,7 +496,7 @@ ${BLANK}
 
         } else if (child.tag === "TableStruct") {
             const isFirstTableStruct = !(0 < i && ChildItems[i - 1].tag === "TableStruct");
-            blocks.push(renderTableStruct(child, indent + 1, isFirstTableStruct)); /* >>>> INDENT >>>> */
+            blocks.push(renderTableStruct(child, indent + 1, !isFirstTableStruct)); /* >>>> INDENT >>>> */
         } else if (child.tag === "FigStruct") {
             blocks.push(renderFigStruct(child, indent + 1)); /* >>>> INDENT >>>> */
 
@@ -726,7 +779,7 @@ ${_____}${INDENT}${ParagraphCaption}
 
         } else if (child.tag === "TableStruct") {
             const isFirstTableStruct = !(0 < i && Children[i - 1].tag === "TableStruct");
-            blocks.push(renderTableStruct(child, indent + 1, isFirstTableStruct)); /* >>>> INDENT >>>> */
+            blocks.push(renderTableStruct(child, indent + 1, !isFirstTableStruct)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "FigStruct") {
             blocks.push(renderFigStruct(child, indent + 1)); /* >>>> INDENT >>>> */
@@ -813,11 +866,11 @@ ${BLANK}
 
 
 
-const renderTableStruct = (el: std.TableStruct, indent: number, renderTag = true): string => {
+const renderTableStruct = (el: std.TableStruct, indent: number, renderTag = false): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
 
-    if (!renderTag) {
+    if (renderTag) {
         blocks.push(
  /* ========================= */`\
 ${_____}:table-struct:
@@ -1051,7 +1104,61 @@ ${_____}${renderFigRun(subchild)}
                     blocks.push(renderList(subchild, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
                 } else if (std.isTableStruct(subchild)) {
-                    blocks.push(renderTableStruct(subchild, indent, false)); /* >>>> INDENT ++++ INDENT >>>> */
+                    blocks.push(renderTableStruct(subchild, indent, true)); /* >>>> INDENT ++++ INDENT >>>> */
+
+                } else {
+                    throw new NotImplementedError(subchild.tag);
+
+                }
+            }
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(renderRemarks(child, indent));
+
+        }
+        else { assertNever(child); }
+    }
+
+    blocks.push(
+ /* ========================= */`\
+${BLANK}
+`/* ========================= */);
+
+    return blocks.join("");
+}
+
+
+
+const renderFormatStruct = (el: std.FormatStruct, indent: number, renderTag: boolean = false): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+
+    if (renderTag) {
+        blocks.push(
+ /* ========================= */`\
+${_____}:format-struct:
+`/* ========================= */);
+    }
+
+    for (const child of el.children) {
+
+        if (child.tag === "FormatStructTitle") {
+            blocks.push(
+ /* ========================= */`\
+${_____}:format-struct-title:${renderRun(child.children)}
+`/* ========================= */);
+
+        } else if (child.tag === "Format") {
+
+            for (const subchild of child.children) {
+                if (isString(subchild)) {
+                    throw new NotImplementedError("string");
+
+                } else if (std.isFig(subchild)) {
+                    blocks.push(
+ /* ========================= */`\
+${_____}${renderFigRun(subchild)}
+`/* ========================= */);
 
                 } else {
                     throw new NotImplementedError(subchild.tag);
@@ -1139,7 +1246,7 @@ ${_____}:note-struct-title:${renderRun(child.children)}
                 if (isString(subchild)) {
                     throw new NotImplementedError("string");
 
-                } else if (std.isItem(subchild)) {
+                } else if (std.isParagraph(subchild) || std.isItem(subchild)) {
                     blocks.push(renderParagraphItem(subchild, indent));
 
                 } else if (std.isTable(subchild)) {

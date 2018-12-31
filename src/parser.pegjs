@@ -452,6 +452,7 @@ paragraph_item "paragraph_item" =
         !article_title
         !appdx_table_title
         !appdx_style_title
+        // !appdx_format_title
         !appdx_fig_title
         !appdx_note_title
         !appdx_title
@@ -548,6 +549,7 @@ in_table_column_paragraph_items "in_table_column_paragraph_items" =
         !article_title
         !appdx_table_title
         !appdx_style_title
+        // !appdx_format_title
         !appdx_fig_title
         !appdx_note_title
         !appdx_title
@@ -639,6 +641,7 @@ in_table_column_paragraph_items "in_table_column_paragraph_items" =
         !article_title
         !appdx_table_title
         !appdx_style_title
+        // !appdx_format_title
         !appdx_fig_title
         !appdx_note_title
         !appdx_title
@@ -1031,6 +1034,51 @@ style "style" =
 
 
 
+
+format_struct "format_struct" =
+    !INDENT !DEDENT !NEWLINE
+    // &(here:$(NEXTINLINE) &{ console.error(`format_struct line ${location().start.line}: "${here}"`); return true; })
+    format_struct_title:format_struct_title?
+    remarkses1:remarks*
+    format:format
+    remarkses2:remarks*
+    {
+        let format_struct = new EL("FormatStruct");
+
+        if(format_struct_title !== null) {
+            format_struct.append(format_struct_title);
+        }
+
+        format_struct.extend(remarkses1);
+
+        format_struct.append(format);
+
+        format_struct.extend(remarkses2);
+
+        return format_struct;
+    }
+
+format_struct_title "format_struct_title" =
+    ":format-struct-title:"
+    _
+    title:$INLINE
+    NEWLINE
+    {
+        return new EL("FormatStructTitle", {}, [new __Text(title)]);
+    }
+
+format "format" =
+    children:(
+        fig:fig { return [fig]; }
+    )
+    {
+        return new EL("Format", {}, children);
+    }
+
+
+
+
+
 note_struct "note_struct" =
     !INDENT !DEDENT !NEWLINE
     // &(here:$(NEXTINLINE) &{ console.error(`note_struct line ${location().start.line}: "${here}"`); return true; })
@@ -1233,6 +1281,8 @@ appdx_item =
     appdx_table
     /
     appdx_style
+    /
+    appdx_format
     /
     appdx_fig
     /
@@ -1464,6 +1514,65 @@ appdx_style "appdx_style" =
 
 
 
+// appdx_format_title "appdx_format_title" =
+//     title_struct:(
+//         title:$((!"様式" ![(（] CHAR)* "様式" [^\r\n(（]*)
+//         related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
+//         format_struct_title:[^\r\n(（]*
+//         {
+//             return {
+//                 text: text(),
+//                 title: title,
+//                 related_article_num: related_article_num,
+//                 format_struct_title: format_struct_title,
+//             };
+//         }
+//     )
+//     {
+//         return title_struct;
+//     }
+
+
+appdx_format "appdx_format" =
+    // &(here:$(NEXTINLINE) &{ console.error(`here1 line ${location().start.line}: "${here}"`); return true; })
+    (":appdx-format:" NEWLINE+)?
+    // title_struct:(
+    //     target:appdx_format_title
+    //     NEWLINE+
+    //     { return target; }
+    // )?
+    children:(
+        INDENT
+            target:(
+                first:format_struct
+                rest:(
+                    NEWLINE+
+                    _target:format_struct
+                    {return _target;}
+                )*
+                { return [first].concat(rest); }
+            )
+            NEWLINE*
+        DEDENT
+        { return target; }
+    )
+    {
+        let appdx_format = new EL("AppdxFormat");
+        // if(title_struct) {
+        //     appdx_format.append(new EL("AppdxFormatTitle", {}, [new __Text(title_struct.title)]));
+        //     if(title_struct.related_article_num) {
+        //         appdx_format.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+        //     }
+        // }
+        appdx_format.extend(children || []);
+
+        return appdx_format;
+    }
+
+
+
+
+
 
 appdx_fig_title "appdx_fig_title" =
     title_struct:(
@@ -1546,7 +1655,7 @@ appdx_note_title "appdx_note_title" =
             }
         )
         target:(
-            title:$(("別記" / "付録") [^\r\n(（]*)
+            title:$(("別記" / "付録" / "（別紙）") [^\r\n(（]*)
             related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
             table_struct_title:$[^\r\n(（]*
             {
