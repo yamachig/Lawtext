@@ -1517,7 +1517,7 @@ appdx_style "appdx_style" =
 
 suppl_provision_appdx_style_title "suppl_provision_appdx_style_title" =
     title_struct:(
-        title:$((!"様式" ![(（] CHAR)* "様式" [^\r\n(（]*)
+        title:$([附付] "則" (!"様式" ![(（] CHAR)* "様式" [^\r\n(（]*)
         related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
         style_struct_title:[^\r\n(（]*
         {
@@ -1857,6 +1857,80 @@ appdx "appdx" =
 
 
 
+suppl_provision_appdx_title "suppl_provision_appdx_title" =
+    title_struct:(
+        attr:(
+            target:(
+                "["
+                name:$[^ 　\t\r\n\]=]+
+                "=\""
+                value:$[^ 　\t\r\n\]"]+
+                "\"]"
+                { return [name, value]; }
+            )*
+            {
+                const ret = {};
+                for(const [name, value] of target) {
+                    ret[name] = value;
+                }
+                return ret;
+            }
+        )
+        target:(
+            title:$([附付] "則付録" [^\r\n(（]*)
+            related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
+            {
+                return {
+                    text: text(),
+                    title: title,
+                    related_article_num: related_article_num,
+                };
+            }
+        )
+        {
+            return {
+                attr: attr,
+                ...target,
+            };
+        }
+    )
+    {
+        return title_struct;
+    }
+
+suppl_provision_appdx "suppl_provision_appdx" =
+    // &(here:$(INLINE / ..........) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
+    title_struct:suppl_provision_appdx_title
+    NEWLINE+
+    children:(
+        INDENT
+            target:(
+                _target:xml_element NEWLINE+
+                { return _target }
+            )+
+            remarkses:remarks*
+            NEWLINE*
+        DEDENT
+        { return target.concat(remarkses); }
+    )
+    // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
+    {
+        let suppl_provision_appdx = new EL("SupplProvisionAppdx");
+        suppl_provision_appdx.append(new EL("ArithFormulaNum", title_struct.attr, [new __Text(title_struct.title)]));
+        if(title_struct.related_article_num) {
+            suppl_provision_appdx.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+        }
+
+        if(children) {
+            util.setItemNum(children);
+        }
+        suppl_provision_appdx.extend(children || []);
+
+        return suppl_provision_appdx;
+    }
+
+
+
 
 suppl_provision_label "suppl_provision_label" =
     __
@@ -1884,7 +1958,13 @@ suppl_provision "suppl_provision" =
         rest:paragraph_item*
         { return [first].concat(rest); }
     )
-    suppl_provision_appdx_tables:suppl_provision_appdx_table*
+    suppl_provision_appdx_items:(
+        suppl_provision_appdx_table
+        /
+        suppl_provision_appdx_style
+        /
+        suppl_provision_appdx
+    )*
     {
         let suppl_provision = new EL("SupplProvision");
         if(suppl_provision_label.amend_law_num) {
@@ -1899,7 +1979,7 @@ suppl_provision "suppl_provision" =
             util.setItemNum(children);
         }
         suppl_provision.extend(children);
-        suppl_provision.extend(suppl_provision_appdx_tables);
+        suppl_provision.extend(suppl_provision_appdx_items);
         return suppl_provision;
     }
 

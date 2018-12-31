@@ -602,6 +602,51 @@ ${_____}${INDENT}${renderRun([child])}
 
 
 
+const renderSupplProvisionAppdx = (el: std.SupplProvisionAppdx, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+
+    let ArithFormulaNum = "";
+    let RelatedArticleNum = "";
+    const ChildItems: std.ArithFormula[] = [];
+    for (const child of el.children) {
+
+        if (child.tag === "ArithFormulaNum") {
+            ArithFormulaNum = renderRun(child.children);
+
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = renderRun(child.children);
+
+        } else {
+            ChildItems.push(child);
+        }
+    }
+
+    if (ArithFormulaNum || RelatedArticleNum) {
+        blocks.push(
+ /* ========================= */`\
+${BLANK}
+${_____}${ArithFormulaNum}${RelatedArticleNum}
+${BLANK}
+`/* ========================= */);
+    }
+
+    for (const child of ChildItems) {
+        if (child.tag === "ArithFormula") {
+            blocks.push(
+ /* ========================= */`\
+${_____}${INDENT}${renderRun([child])}
+`/* ========================= */); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child.tag); }
+    }
+
+    return blocks.join("");
+}
+
+
+
 const renderSupplProvision = (el: std.SupplProvision, indent: number): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
@@ -652,7 +697,7 @@ ${BLANK}
             blocks.push(renderSupplProvisionAppdxStyle(child, indent));
 
         } else if (child.tag === "SupplProvisionAppdx") {
-            throw new NotImplementedError(child.tag);
+            blocks.push(renderSupplProvisionAppdx(child, indent));
 
         }
         else { assertNever(child); }
