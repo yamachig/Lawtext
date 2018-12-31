@@ -58,6 +58,10 @@ export const nunjucksPrecompiled = window.nunjucksPrecompiled;
 }
 
 if (typeof require !== "undefined" && require.main === module) {
+    process.on('unhandledRejection', e => {
+        console.dir(e);
+        process.exit(1);
+    });
     main();
 }
 

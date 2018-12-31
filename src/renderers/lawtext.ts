@@ -362,6 +362,48 @@ ${BLANK}
 
 
 
+const renderSupplProvisionAppdxStyle = (el: std.SupplProvisionAppdxStyle, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+
+    let SupplProvisionAppdxStyleTitle = "";
+    let RelatedArticleNum = "";
+    const ChildItems: std.StyleStruct[] = [];
+    for (const child of el.children) {
+
+        if (child.tag === "SupplProvisionAppdxStyleTitle") {
+            SupplProvisionAppdxStyleTitle = renderRun(child.children);
+
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = renderRun(child.children);
+
+        } else {
+            ChildItems.push(child);
+        }
+    }
+
+    if (SupplProvisionAppdxStyleTitle || RelatedArticleNum) {
+        blocks.push(
+ /* ========================= */`\
+${BLANK}
+${_____}${SupplProvisionAppdxStyleTitle}${RelatedArticleNum}
+${BLANK}
+`/* ========================= */);
+    }
+
+    for (const child of ChildItems) {
+        if (child.tag === "StyleStruct") {
+            blocks.push(renderStyleStruct(child, indent + 1)); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child.tag); }
+    }
+
+    return blocks.join("");
+}
+
+
+
 const renderAppdxFormat = (el: std.AppdxFormat, indent: number): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
@@ -607,7 +649,7 @@ ${BLANK}
             blocks.push(renderSupplProvisionAppdxTable(child, indent));
 
         } else if (child.tag === "SupplProvisionAppdxStyle") {
-            throw new NotImplementedError(child.tag);
+            blocks.push(renderSupplProvisionAppdxStyle(child, indent));
 
         } else if (child.tag === "SupplProvisionAppdx") {
             throw new NotImplementedError(child.tag);
@@ -1104,7 +1146,10 @@ ${_____}${renderFigRun(subchild)}
                     blocks.push(renderList(subchild, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
                 } else if (std.isTableStruct(subchild)) {
-                    blocks.push(renderTableStruct(subchild, indent, true)); /* >>>> INDENT ++++ INDENT >>>> */
+                    blocks.push(renderTableStruct(subchild, indent, true));
+
+                } else if (std.isItem(subchild)) {
+                    blocks.push(renderParagraphItem(subchild, indent));
 
                 } else {
                     throw new NotImplementedError(subchild.tag);

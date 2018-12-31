@@ -1011,23 +1011,24 @@ style_struct_title "style_struct_title" =
     }
 
 style "style" =
+    lists:(
+        INDENT INDENT
+            target:list+
+            NEWLINE*
+        DEDENT DEDENT
+        { return target; }
+    )?
     children:(
-        table:table { return [table]; }
+        table
         /
-        table_struct:table_struct { return [table_struct]; }
+        table_struct
         /
-        fig:fig { return [fig]; }
+        fig
         /
-        lists:(
-            INDENT INDENT
-                target:list+
-                NEWLINE*
-            DEDENT DEDENT
-            { return target; }
-        )
-    )
+        paragraph_item
+    )+
     {
-        return new EL("Style", {}, children);
+        return new EL("Style", {}, [...(lists || []), ...children]);
     }
 
 
@@ -1508,6 +1509,59 @@ appdx_style "appdx_style" =
         appdx_style.extend(children || []);
 
         return appdx_style;
+    }
+
+
+
+
+
+suppl_provision_appdx_style_title "suppl_provision_appdx_style_title" =
+    title_struct:(
+        title:$((!"様式" ![(（] CHAR)* "様式" [^\r\n(（]*)
+        related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
+        style_struct_title:[^\r\n(（]*
+        {
+            return {
+                text: text(),
+                title: title,
+                related_article_num: related_article_num,
+                style_struct_title: style_struct_title,
+            };
+        }
+    )
+    {
+        return title_struct;
+    }
+
+
+suppl_provision_appdx_style "suppl_provision_appdx_style" =
+    // &(here:$(NEXTINLINE) &{ console.error(`here1 line ${location().start.line}: "${here}"`); return true; })
+    title_struct:suppl_provision_appdx_style_title
+    NEWLINE+
+    children:(
+        INDENT
+            target:(
+                first:style_struct
+                rest:(
+                    NEWLINE+
+                    _target:style_struct
+                    {return _target;}
+                )*
+                { return [first].concat(rest); }
+            )
+            NEWLINE*
+        DEDENT
+        { return target; }
+    )
+    {
+        let suppl_provision_appdx_style = new EL("SupplProvisionAppdxStyle");
+        suppl_provision_appdx_style.append(new EL("SupplProvisionAppdxStyleTitle", {}, [new __Text(title_struct.title)]));
+        if(title_struct.related_article_num) {
+            suppl_provision_appdx_style.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+        }
+        suppl_provision_appdx_style.extend(children || []);
+
+        return suppl_provision_appdx_style;
     }
 
 
