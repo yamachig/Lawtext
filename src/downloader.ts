@@ -168,11 +168,11 @@ export class LawInfo {
 
     constructor(
         public LawNum: string = "",
-        public ReferencingLawNums: Set<string> = new Set(),
-        public ReferencedLawNums: Set<string> = new Set(),
         public LawTitle: string = "",
         public Path: string = "",
         public XmlZipName: string = "",
+        public ReferencingLawNums: Set<string> = new Set(),
+        public ReferencedLawNums: Set<string> = new Set(),
     ) { }
 
     public static fromXml(xml: string, xmlPath: string) {
