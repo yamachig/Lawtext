@@ -45,8 +45,7 @@ export const download = async <
 
     const destZipFull = new JSZip();
     const destZipWithoutPict = new JSZip();
-    const lawinfos: LawInfo[] = [];
-    const lawinfoDict: { [lawnum: string]: LawInfo } = {};
+    const lawInfos = new LawInfos();
 
     let processingDownloadedFile: Promise<void> | null = null;
 
@@ -71,9 +70,7 @@ export const download = async <
             } else {
                 if (/^[^/]+\/[^/]+\/[^/]+.xml$/.test(relativePath)) {
                     const xml = await file.async("text");
-                    const lawinfo = new LawInfo(xml, relativePath);
-                    lawinfoDict[lawinfo.LawNum] = lawinfo;
-                    lawinfos.push(lawinfo);
+                    const lawinfo = lawInfos.addFromXml(xml, relativePath);
                     progress(undefined, `${lawinfo.LawNum}：${lawinfo.LawTitle}`);
                 }
 
@@ -103,45 +100,33 @@ export const download = async <
         progress(progressNow / progressTotal);
     };
 
-    for (const filename of filenames) {
-        const response = await fetch(`http://elaws.e-gov.go.jp/download/${filename}`, {
-            mode: "cors",
-        });
-        const zipData = await response.arrayBuffer();
-        const srcZip = await JSZip.loadAsync(zipData);
+    const errorFilenames: Array<[string, string]> = [];
 
-        await processingDownloadedFile;
-        processingDownloadedFile = processDownloadedFile(srcZip);
+    for (const filename of filenames) {
+        try {
+            const response = await fetch(`http://elaws.e-gov.go.jp/download/${filename}`, {
+                mode: "cors",
+            });
+            const zipData = await response.arrayBuffer();
+            const srcZip = await JSZip.loadAsync(zipData);
+            await processingDownloadedFile;
+            processingDownloadedFile = processDownloadedFile(srcZip);
+        } catch (e) {
+            errorFilenames.push([filename, e.message]);
+            console.dir(e);
+        }
     }
 
     await processingDownloadedFile;
 
     progress(undefined, `相互参照を分析しています`);
-    const allLawnums = new Set(lawinfos.map(lawinfo => lawinfo.LawNum));
-    for (const lawinfo of lawinfos) {
-        for (const lawnum of Array.from(lawinfo.ReferencingLawNums)) {
-            if (allLawnums.has(lawnum)) {
-                lawinfoDict[lawnum].ReferencedLawNums.add(lawinfo.LawNum);
-            } else {
-                lawinfo.ReferencingLawNums.delete(lawnum);
-            }
-        }
-    }
+    lawInfos.setReferences();
 
     progressNow++;
     progress(progressNow / progressTotal);
 
     progress(undefined, `リストを出力しています`);
-    const lawlist = lawinfos.map((lawinfo) => {
-        return [
-            lawinfo.LawNum,
-            Array.from(lawinfo.ReferencingLawNums),
-            Array.from(lawinfo.ReferencedLawNums),
-            lawinfo.LawTitle,
-            lawinfo.Path,
-            lawinfo.XmlZipName,
-        ];
-    });
+    const lawlist = lawInfos.getList;
     const listJson = JSON.stringify(lawlist);
     if (full) destZipFull.file("list.json", listJson);
     if (withoutPict) destZipWithoutPict.file("list.json", listJson);
@@ -165,6 +150,12 @@ export const download = async <
         ...(list ? { list: listJson, } : {}),
     };
 
+    for (const [filename, message] of errorFilenames) {
+        console.error(`読み込めませんでした：`);
+        console.error(`  ${filename}`);
+        console.error(`  ${message}`);
+    }
+
     progress(1);
 
     return ret as any;
@@ -173,25 +164,69 @@ export const download = async <
 export const reLawnum = /(?:(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年(?:(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[―〇一二三四五六七八九]+)|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)|明治三十二年勅令|大正十二年内務省・鉄道省令|昭和五年逓信省・鉄道省令|昭和九年逓信省・農林省令|人事院規則一〇―一五)/g;
 const domParser = new DOMParser();
 
-class LawInfo {
-    public LawNum: string;
-    public ReferencingLawNums: Set<string>;
-    public ReferencedLawNums: Set<string>;
-    public LawTitle: string;
-    public Path: string;
-    public XmlZipName: string;
+export class LawInfo {
 
-    constructor(xml: string, xmlPath: string) {
+    constructor(
+        public LawNum: string = "",
+        public ReferencingLawNums: Set<string> = new Set(),
+        public ReferencedLawNums: Set<string> = new Set(),
+        public LawTitle: string = "",
+        public Path: string = "",
+        public XmlZipName: string = "",
+    ) { }
+
+    public static fromXml(xml: string, xmlPath: string) {
+        const lawInfo = new LawInfo();
+
         const law = domParser.parseFromString(xml, "text/xml");
         const elLawNm = law.getElementsByTagName("LawNum")[0];
         const elLawBody = law.getElementsByTagName("LawBody")[0];
         const elLawTitle = elLawBody.getElementsByTagName("LawTitle")[0];
 
-        this.LawNum = (elLawNm.textContent || "").trim();
-        this.ReferencingLawNums = new Set(xml.match(reLawnum));
-        this.ReferencedLawNums = new Set();
-        this.LawTitle = (elLawTitle.textContent || "").trim();
-        this.Path = path.dirname(xmlPath);
-        this.XmlZipName = `${path.basename(xmlPath)}.zip`;
+        lawInfo.LawNum = (elLawNm.textContent || "").trim();
+        for (const m of xml.match(reLawnum) || []) lawInfo.ReferencingLawNums.add(m);
+        lawInfo.LawTitle = (elLawTitle.textContent || "").trim();
+        lawInfo.Path = path.dirname(xmlPath);
+        lawInfo.XmlZipName = `${path.basename(xmlPath)}.zip`;
+
+        return lawInfo;
+    }
+}
+
+export class LawInfos {
+    constructor(
+        protected lawInfos: LawInfo[] = [],
+        protected lawInfoMap: Map<string, LawInfo> = new Map(),
+    ) { }
+
+    public addFromXml(xml: string, xmlPath: string) {
+        const lawInfo = LawInfo.fromXml(xml, xmlPath)
+        this.lawInfos.push(lawInfo);
+        this.lawInfoMap.set(lawInfo.LawNum, lawInfo);
+        return lawInfo;
+    }
+
+    public setReferences() {
+        for (const referencingLawInfo of this.lawInfos) {
+            for (const lawnum of Array.from(referencingLawInfo.ReferencingLawNums)) {
+                const referencedLawInfo = this.lawInfoMap.get(lawnum);
+                if (referencedLawInfo) {
+                    referencedLawInfo.ReferencedLawNums.add(referencingLawInfo.LawNum);
+                } else {
+                    referencingLawInfo.ReferencingLawNums.delete(lawnum);
+                }
+            }
+        }
+    }
+
+    public getList() {
+        return this.lawInfos.map(lawinfo => [
+            lawinfo.LawNum,
+            Array.from(lawinfo.ReferencingLawNums),
+            Array.from(lawinfo.ReferencedLawNums),
+            lawinfo.LawTitle,
+            lawinfo.Path,
+            lawinfo.XmlZipName,
+        ]);
     }
 }
