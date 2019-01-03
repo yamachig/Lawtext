@@ -199,10 +199,14 @@ export class LawInfos {
         protected lawInfoMap: Map<string, LawInfo> = new Map(),
     ) { }
 
-    public addFromXml(xml: string, xmlPath: string) {
-        const lawInfo = LawInfo.fromXml(xml, xmlPath)
+    public add(lawInfo: LawInfo) {
         this.lawInfos.push(lawInfo);
         this.lawInfoMap.set(lawInfo.LawNum, lawInfo);
+    }
+
+    public addFromXml(xml: string, xmlPath: string) {
+        const lawInfo = LawInfo.fromXml(xml, xmlPath)
+        this.add(lawInfo);
         return lawInfo;
     }
 
