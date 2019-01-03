@@ -70,8 +70,11 @@ export const download = async <
             } else {
                 if (/^[^/]+\/[^/]+\/[^/]+.xml$/.test(relativePath)) {
                     const xml = await file.async("text");
-                    const lawinfo = lawInfos.addFromXml(xml, relativePath);
-                    progress(undefined, `${lawinfo.LawNum}：${lawinfo.LawTitle}`);
+                    const lawInfo = LawInfo.fromXml(xml)
+                    lawInfo.Path = path.dirname(relativePath);
+                    lawInfo.XmlZipName = `${path.basename(relativePath)}.zip`;
+                    lawInfos.add(lawInfo);
+                    progress(undefined, `${lawInfo.LawNum}：${lawInfo.LawTitle}`);
                 }
 
                 if (full || (withoutPict && !isPict)) {
@@ -175,7 +178,7 @@ export class LawInfo {
         public ReferencedLawNums: Set<string> = new Set(),
     ) { }
 
-    public static fromXml(xml: string, xmlPath: string) {
+    public static fromXml(xml: string) {
         const lawInfo = new LawInfo();
 
         const law = domParser.parseFromString(xml, "text/xml");
@@ -186,8 +189,6 @@ export class LawInfo {
         lawInfo.LawNum = (elLawNm.textContent || "").trim();
         for (const m of xml.match(reLawnum) || []) lawInfo.ReferencingLawNums.add(m);
         lawInfo.LawTitle = (elLawTitle.textContent || "").trim();
-        lawInfo.Path = path.dirname(xmlPath);
-        lawInfo.XmlZipName = `${path.basename(xmlPath)}.zip`;
 
         return lawInfo;
     }
@@ -202,12 +203,6 @@ export class LawInfos {
     public add(lawInfo: LawInfo) {
         this.lawInfos.push(lawInfo);
         this.lawInfoMap.set(lawInfo.LawNum, lawInfo);
-    }
-
-    public addFromXml(xml: string, xmlPath: string) {
-        const lawInfo = LawInfo.fromXml(xml, xmlPath)
-        this.add(lawInfo);
-        return lawInfo;
     }
 
     public setReferences() {
