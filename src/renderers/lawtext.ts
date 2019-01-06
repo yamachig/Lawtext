@@ -752,9 +752,15 @@ ${BLANK}
         } else if (child.tag === "Paragraph") {
             blocks.push(renderParagraphItem(child, indent));
 
-        } else {
+        } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
             blocks.push(renderArticleGroup(child, indent));
+
+        } else if (std.isAppdxStyle(child)) {
+            console.error("Unexpected AppdxStyle in MainProvision!");
+            blocks.push(renderAppdxStyle(child, indent));
+
         }
+        else { assertNever(child); }
     }
 
     return blocks.join("");

@@ -1,6 +1,6 @@
 "use strict";
 
-import { isString } from "util";
+import { isString, inspect } from "util";
 import { DOMParser } from "xmldom";
 import * as std from "./std_law";
 
@@ -820,5 +820,5 @@ export const throwError = (): never => {
 }
 
 export const assertNever = (x: never): never => {
-    throw new Error("Unexpected object: " + x);
+    throw new Error(`Unexpected object: \r\n${inspect(x)}`);
 }
