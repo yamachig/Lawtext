@@ -102,5 +102,9 @@ export const getLawXml = async (lawNum: string) => {
 }
 
 if (typeof require !== "undefined" && require.main === module) {
+    process.on('unhandledRejection', e => {
+        console.dir(e);
+        process.exit(1);
+    });
     prepare();
 }

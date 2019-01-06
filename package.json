@@ -2,6 +2,16 @@
   "name": "lawtext",
   "version": "0.0.1",
   "description": "Plain text format for Japanese law",
+  "homepage": "https://github.com/yamachig/lawtext#readme",
+  "bugs": {
+    "url": "https://github.com/yamachig/lawtext/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yamachig/lawtext.git"
+  },
+  "license": "MIT",
+  "author": "yamachi",
   "main": "dist/lawtext.js",
   "types": "dist/lawtext.d.ts",
   "bin": "dist/lawtext.js",
@@ -13,36 +23,9 @@
     "prepare": "npm run build",
     "test": "node --max_old_space_size=2048 -r ts-node/register ./test/prepare_test.ts && mocha --timeout 10000 -r ts-node/register test/**/*.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yamachig/lawtext.git"
-  },
-  "author": "yamachi",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/yamachig/lawtext/issues"
-  },
-  "homepage": "https://github.com/yamachig/lawtext#readme",
-  "devDependencies": {
-    "@types/argparse": "",
-    "@types/fs-extra": "",
-    "@types/jszip": "",
-    "@types/lodash": "",
-    "@types/node": "",
-    "@types/nunjucks": "",
-    "@types/node-fetch": "",
-    "@types/pegjs": "",
-    "@types/webpack": "",
-    "@types/xmldom": "",
-    "@types/chai": "",
-    "@types/mocha": "",
-    "@types/cli-progress": "",
-    "chai": "",
-    "mocha": "",
-    "cli-progress": ""
-  },
   "dependencies": {
     "argparse": "",
+    "browserfs": "",
     "cli-progress": "",
     "fs-extra": "",
     "hash.js": "",
@@ -64,5 +47,23 @@
     "webpack-node-externals": "",
     "xmldom": "",
     "xpath": ""
+  },
+  "devDependencies": {
+    "@types/argparse": "",
+    "@types/chai": "",
+    "@types/cli-progress": "",
+    "@types/fs-extra": "",
+    "@types/jszip": "",
+    "@types/lodash": "",
+    "@types/mocha": "",
+    "@types/node": "",
+    "@types/node-fetch": "",
+    "@types/nunjucks": "",
+    "@types/pegjs": "",
+    "@types/webpack": "",
+    "@types/xmldom": "",
+    "chai": "",
+    "cli-progress": "",
+    "mocha": ""
   }
 }

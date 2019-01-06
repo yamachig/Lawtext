@@ -1025,6 +1025,8 @@ style "style" =
         /
         fig
         /
+        fig_struct
+        /
         paragraph_item
     )+
     {
@@ -1257,6 +1259,7 @@ remarks "remarks" =
 
 fig_struct "fig_struct" =
     // &(here:$(NEXTINLINE) &{ console.error(`fig 0 line ${location().start.line}: "${here}"`); return true; })
+    (":fig-struct:" NEWLINE)?
     fig:fig
     {
         return new EL("FigStruct", {}, [fig]);

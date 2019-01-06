@@ -1181,6 +1181,9 @@ ${_____}:style-struct-title:${renderRun(child.children)}
                 } else if (std.isTable(subchild)) {
                     blocks.push(renderTable(subchild, indent));
 
+                } else if (std.isFigStruct(subchild)) {
+                    blocks.push(renderFigStruct(subchild, indent, true));
+
                 } else if (std.isFig(subchild)) {
                     blocks.push(
  /* ========================= */`\
@@ -1273,9 +1276,16 @@ ${BLANK}
 
 
 
-const renderFigStruct = (el: std.FigStruct, indent: number): string => {
+const renderFigStruct = (el: std.FigStruct, indent: number, renderTag: boolean = false): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
+
+    if (renderTag) {
+        blocks.push(
+ /* ========================= */`\
+${_____}:fig-struct:
+`/* ========================= */);
+    }
 
     for (const child of el.children) {
 
