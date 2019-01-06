@@ -452,7 +452,7 @@ paragraph_item "paragraph_item" =
         !article_title
         !appdx_table_title
         !appdx_style_title
-        // !appdx_format_title
+        !appdx_format_title
         !appdx_fig_title
         !appdx_note_title
         !appdx_title
@@ -549,7 +549,7 @@ in_table_column_paragraph_items "in_table_column_paragraph_items" =
         !article_title
         !appdx_table_title
         !appdx_style_title
-        // !appdx_format_title
+        !appdx_format_title
         !appdx_fig_title
         !appdx_note_title
         !appdx_title
@@ -641,7 +641,7 @@ in_table_column_paragraph_items "in_table_column_paragraph_items" =
         !article_title
         !appdx_table_title
         !appdx_style_title
-        // !appdx_format_title
+        !appdx_format_title
         !appdx_fig_title
         !appdx_note_title
         !appdx_title
@@ -1074,6 +1074,8 @@ format_struct_title "format_struct_title" =
 format "format" =
     children:(
         fig:fig { return [fig]; }
+        /
+        columns_or_sentences
     )
     {
         return new EL("Format", {}, children);
@@ -1586,33 +1588,33 @@ suppl_provision_appdx_style "suppl_provision_appdx_style" =
 
 
 
-// appdx_format_title "appdx_format_title" =
-//     title_struct:(
-//         title:$((!"様式" ![(（] CHAR)* "様式" [^\r\n(（]*)
-//         related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
-//         format_struct_title:[^\r\n(（]*
-//         {
-//             return {
-//                 text: text(),
-//                 title: title,
-//                 related_article_num: related_article_num,
-//                 format_struct_title: format_struct_title,
-//             };
-//         }
-//     )
-//     {
-//         return title_struct;
-//     }
+appdx_format_title "appdx_format_title" =
+    title_struct:(
+        title:$((!("様式" / "書式") ![(（] CHAR)* ("様式" / "書式") [^\r\n(（]*)
+        related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
+        format_struct_title:[^\r\n(（]*
+        {
+            return {
+                text: text(),
+                title: title,
+                related_article_num: related_article_num,
+                format_struct_title: format_struct_title,
+            };
+        }
+    )
+    {
+        return title_struct;
+    }
 
 
 appdx_format "appdx_format" =
     // &(here:$(NEXTINLINE) &{ console.error(`here1 line ${location().start.line}: "${here}"`); return true; })
     (":appdx-format:" NEWLINE+)?
-    // title_struct:(
-    //     target:appdx_format_title
-    //     NEWLINE+
-    //     { return target; }
-    // )?
+    title_struct:(
+        target:appdx_format_title
+        NEWLINE+
+        { return target; }
+    )?
     children:(
         INDENT
             target:(
@@ -1630,12 +1632,12 @@ appdx_format "appdx_format" =
     )
     {
         let appdx_format = new EL("AppdxFormat");
-        // if(title_struct) {
-        //     appdx_format.append(new EL("AppdxFormatTitle", {}, [new __Text(title_struct.title)]));
-        //     if(title_struct.related_article_num) {
-        //         appdx_format.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
-        //     }
-        // }
+        if(title_struct) {
+            appdx_format.append(new EL("AppdxFormatTitle", {}, [new __Text(title_struct.title)]));
+            if(title_struct.related_article_num) {
+                appdx_format.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+            }
+        }
         appdx_format.extend(children || []);
 
         return appdx_format;

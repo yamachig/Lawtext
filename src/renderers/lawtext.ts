@@ -1292,6 +1292,9 @@ ${_____}:format-struct-title:${renderRun(child.children)}
 ${_____}${renderFigRun(subchild)}
 `/* ========================= */);
 
+                } else if (std.isSentence(subchild)) {
+                    blocks.push(renderBlockSentence([subchild], indent));
+
                 } else {
                     throw new NotImplementedError(subchild.tag);
 
