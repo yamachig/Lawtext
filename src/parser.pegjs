@@ -1770,7 +1770,7 @@ appdx_note "appdx_note" =
             NEWLINE*
         DEDENT
         { return target.concat(remarkses); }
-    )
+    )?
     // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
     {
         let appdx_note = new EL("AppdxNote");

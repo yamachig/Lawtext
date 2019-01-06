@@ -1204,7 +1204,10 @@ const renderStyle = (el: std.Style, indent: number): string => {
 
     for (const child of el.children) {
         if (isString(child)) {
-            throw new NotImplementedError("string");
+            blocks.push(
+ /* ========================= */`\
+${_____}${renderRun([child])}
+`/* ========================= */);
 
         } else if (std.isTable(child)) {
             blocks.push(renderTable(child, indent));
@@ -1224,8 +1227,23 @@ ${_____}${renderFigRun(child)}
         } else if (std.isTableStruct(child)) {
             blocks.push(renderTableStruct(child, indent, true));
 
+        } else if (std.isParagraph(child)) {
+            blocks.push(renderParagraphItem(child, indent));
+
         } else if (std.isItem(child)) {
             blocks.push(renderParagraphItem(child, indent));
+
+        } else if (std.isRemarks(child)) {
+            blocks.push(renderRemarks(child, indent));
+
+        } else if (std.isSentence(child)) {
+            blocks.push(renderBlockSentence([child], indent));
+
+        } else if (std.isArithFormula(child)) {
+            blocks.push(
+ /* ========================= */`\
+${_____}${renderRun([child])}
+`/* ========================= */);
 
         } else {
             throw new NotImplementedError(child.tag);
