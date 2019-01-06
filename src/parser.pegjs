@@ -651,6 +651,7 @@ in_table_column_paragraph_items "in_table_column_paragraph_items" =
     __
     inline_contents:columns_or_sentences
     NEWLINE+
+    !INDENT
     {
         let lineno = location().start.line;
         let indent = indentMemo[lineno];
@@ -1321,12 +1322,25 @@ appdx_table_title "appdx_table_title" =
             title:$("別表" [^\r\n(（]*)
             related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
             table_struct_title:$[^\r\n(（]*
+            &NEWLINE
             {
                 return {
                     text: text(),
                     title: title,
                     related_article_num: related_article_num,
                     table_struct_title: table_struct_title,
+                };
+            }
+            /
+            title:$("別表" [^\r\n(（]* ROUND_PARENTHESES_INLINE)
+            related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })
+            &NEWLINE
+            {
+                return {
+                    text: text(),
+                    title: title,
+                    related_article_num: related_article_num,
+                    table_struct_title: "",
                 };
             }
         )
@@ -1343,9 +1357,10 @@ appdx_table_title "appdx_table_title" =
 
 
 appdx_table "appdx_table" =
-    // &(here:$(INLINE / ..........) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
+    // &(here:$(INLINE / ..........) &{ console.error(`appdx_table 1 line ${location().start.line}: ${here}`); return true; })
     title_struct:appdx_table_title
     NEWLINE+
+    // &(here:$(INLINE / ..........) &{ console.error(`appdx_table 2 line ${location().start.line}: ${here}`); return true; })
     children:(
         INDENT
             target:appdx_table_children+

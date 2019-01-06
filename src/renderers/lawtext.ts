@@ -1179,43 +1179,58 @@ ${_____}:style-struct-title:${renderRun(child.children)}
 `/* ========================= */);
 
         } else if (child.tag === "Style") {
-
-            for (const subchild of child.children) {
-                if (isString(subchild)) {
-                    throw new NotImplementedError("string");
-
-                } else if (std.isTable(subchild)) {
-                    blocks.push(renderTable(subchild, indent));
-
-                } else if (std.isFigStruct(subchild)) {
-                    blocks.push(renderFigStruct(subchild, indent, true));
-
-                } else if (std.isFig(subchild)) {
-                    blocks.push(
- /* ========================= */`\
-${_____}${renderFigRun(subchild)}
-`/* ========================= */);
-
-                } else if (std.isList(subchild)) {
-                    blocks.push(renderList(subchild, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
-
-                } else if (std.isTableStruct(subchild)) {
-                    blocks.push(renderTableStruct(subchild, indent, true));
-
-                } else if (std.isItem(subchild)) {
-                    blocks.push(renderParagraphItem(subchild, indent));
-
-                } else {
-                    throw new NotImplementedError(subchild.tag);
-
-                }
-            }
+            blocks.push(renderStyle(child, indent));
 
         } else if (child.tag === "Remarks") {
             blocks.push(renderRemarks(child, indent));
 
         }
         else { assertNever(child); }
+    }
+
+    blocks.push(
+ /* ========================= */`\
+${BLANK}
+`/* ========================= */);
+
+    return blocks.join("");
+}
+
+
+
+const renderStyle = (el: std.Style, indent: number): string => {
+    const _____ = INDENT.repeat(indent);
+    const blocks: string[] = [];
+
+    for (const child of el.children) {
+        if (isString(child)) {
+            throw new NotImplementedError("string");
+
+        } else if (std.isTable(child)) {
+            blocks.push(renderTable(child, indent));
+
+        } else if (std.isFigStruct(child)) {
+            blocks.push(renderFigStruct(child, indent, true));
+
+        } else if (std.isFig(child)) {
+            blocks.push(
+ /* ========================= */`\
+${_____}${renderFigRun(child)}
+`/* ========================= */);
+
+        } else if (std.isList(child)) {
+            blocks.push(renderList(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
+
+        } else if (std.isTableStruct(child)) {
+            blocks.push(renderTableStruct(child, indent, true));
+
+        } else if (std.isItem(child)) {
+            blocks.push(renderParagraphItem(child, indent));
+
+        } else {
+            throw new NotImplementedError(child.tag);
+
+        }
     }
 
     blocks.push(
@@ -1357,6 +1372,9 @@ ${_____}:note-struct-title:${renderRun(child.children)}
 
                 } else if (std.isTable(subchild)) {
                     blocks.push(renderTable(subchild, indent));
+
+                } else if (std.isStyle(subchild)) {
+                    blocks.push(renderStyle(subchild, indent));
 
                 } else if (std.isFig(subchild)) {
                     blocks.push(
