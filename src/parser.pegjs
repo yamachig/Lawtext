@@ -1418,7 +1418,11 @@ suppl_provision_appdx_table_title "suppl_provision_appdx_table_title" =
             }
         )
         target:(
-            title:$([附付] "則別表" [^\r\n(（]*)
+            title:$(
+                [附付] "則別表" [^\r\n(（]*
+                /
+                [附付] "則" [^\r\n(（様]* "様式" [^\r\n(（]*
+            )
             related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
             table_struct_title:$[^\r\n(（]*
             {
@@ -1519,7 +1523,7 @@ appdx_style "appdx_style" =
             NEWLINE*
         DEDENT
         { return target; }
-    )
+    )?
     {
         let appdx_style = new EL("AppdxStyle");
         appdx_style.append(new EL("AppdxStyleTitle", {}, [new __Text(title_struct.title)]));
