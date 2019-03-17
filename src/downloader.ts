@@ -129,7 +129,7 @@ export const download = async <
     progress(progressNow / progressTotal);
 
     progress(undefined, `リストを出力しています`);
-    const lawlist = lawInfos.getList;
+    const lawlist = lawInfos.getList();
     const listJson = JSON.stringify(lawlist);
     if (full) destZipFull.file("list.json", listJson);
     if (withoutPict) destZipWithoutPict.file("list.json", listJson);

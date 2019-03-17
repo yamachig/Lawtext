@@ -39,7 +39,7 @@ export const prepare = async () => {
         if (file.dir) continue;
         const buf = await file.async("arraybuffer");
         const destPath = path.join(lawdataPath, relativePath);
-        await outputFile(destPath, new Buffer(buf));
+        await outputFile(destPath, Buffer.from(buf));
     }
 
 }
@@ -106,5 +106,5 @@ if (typeof require !== "undefined" && require.main === module) {
         console.dir(e);
         process.exit(1);
     });
-    prepare();
+    prepare().catch(e => { throw e });
 }
