@@ -820,5 +820,5 @@ export const throwError = (): never => {
 }
 
 export const assertNever = (x: never): never => {
-    throw new Error(`Unexpected object: \r\n${inspect(x)}`);
+    throw new Error(`Unexpected ${typeof x} object: \r\n${inspect(x)}`);
 }
