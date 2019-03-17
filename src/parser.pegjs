@@ -1499,7 +1499,12 @@ suppl_provision_appdx_table_children "suppl_provision_appdx_table_children" =
 
 appdx_style_title "appdx_style_title" =
     title_struct:(
-        title:$((!"様式" !"書式" ![(（] CHAR)* ("様式" / "書式") [^\r\n(（]*)
+        title:$(
+    // &(here:$(NEXTINLINE) &{ console.error(`appdx_style_title 1 line ${location().start.line}: "${here}"`); return true; })
+            (!"様式" !"書式" ![(（] CHAR)* ("様式" / "書式") [^\r\n(（]* ROUND_PARENTHESES_INLINE [^\r\n(（]* &ROUND_PARENTHESES_INLINE
+            /
+            (!"様式" !"書式" ![(（] CHAR)* ("様式" / "書式") [^\r\n(（]*
+        )
         related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
         style_struct_title:[^\r\n(（]*
         {
