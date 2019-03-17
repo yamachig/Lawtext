@@ -1499,7 +1499,7 @@ suppl_provision_appdx_table_children "suppl_provision_appdx_table_children" =
 
 appdx_style_title "appdx_style_title" =
     title_struct:(
-        title:$((!"様式" ![(（] CHAR)* "様式" [^\r\n(（]*)
+        title:$((!"様式" !"書式" ![(（] CHAR)* ("様式" / "書式") [^\r\n(（]*)
         related_article_num:(_ target:ROUND_PARENTHESES_INLINE { return target; })?
         style_struct_title:[^\r\n(（]*
         {
