@@ -11,7 +11,7 @@ const lex = (text: string): [string, { [key: number]: number }, number] => {
     const replacedLines: string[] = [];
     let indentDepth = 0;
     const indentMemo: { [key: number]: number } = {};
-    const reIndent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章][^。]*$|[附付]\s+則[^。]*$|別表[^。]*$))/;
+    const reIndent = /^(?:  |　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章]([^。]|。[^。])*$|[附付]\s+則[^。]*$|別表[^。]*$))/;
     const reForceDedentParentheses = /^(?:  |　|\t)[(（][^)）]*[)）][ 　\t]*$/
     const reIndentInToc = /^(?:  |　|\t)/;
     let inToc = false;

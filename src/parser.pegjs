@@ -360,7 +360,7 @@ article_title "article_title" =
     "第"
     [^ 　\t\r\n条]+
     "条"
-    ([のノ] [^ 　\t\r\n]+)?
+    (([のノ] / "及び") [^ 　\t\r\n]+)?
 
 article "article" =
     article_caption:article_paragraph_caption?
