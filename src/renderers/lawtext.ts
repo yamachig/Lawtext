@@ -1040,6 +1040,10 @@ const renderRemarks = (el: std.Remarks, indent: number): string => {
         }
     }
 
+    if (RemarksLabel === "") {
+        RemarksLabel = /* $$$$$$ */":remarks:"/* $$$$$$ */;
+    }
+
     for (let i = 0; i < ChildItems.length; i++) {
         const child = ChildItems[i];
 

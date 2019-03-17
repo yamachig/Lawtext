@@ -1164,8 +1164,14 @@ remarks "remarks" =
             return ret;
         }
     )
-    label:$(("備考" / "注" / "※") [^ 　\t\r\n]*)
-    // &(here:$(INLINE / ............................................................................) &{ console.error(`here1 line ${location().start.line}: ${here}`); return true; })
+    // &(here:$(INLINE / ..........) &{ console.error(`remarks 1 line ${location().start.line}: ${here}`); return true; })
+    label:(
+        ":remarks:"  [^ 　\t\r\n]*
+        { return "" }
+        /
+        $(("備考" / "注" / "※") [^ 　\t\r\n]*)
+    )
+    // &(here:$(INLINE / ..........) &{ console.error(`remarks 2 line ${location().start.line}: ${here}`); return true; })
     first:(
         __
         _target:INLINE
@@ -1771,11 +1777,11 @@ appdx_note "appdx_note" =
                     {return _target;}
                 )*
                 { return [first].concat(rest); }
-            )
+            )?
             remarkses:remarks*
             NEWLINE*
         DEDENT
-        { return target.concat(remarkses); }
+        { return (target || []).concat(remarkses); }
     )?
     // &(here:$(INLINE / ..........) &{ console.error(`here2 line ${location().start.line}: ${here}`); return true; })
     {
