@@ -1270,8 +1270,9 @@ fig_struct "fig_struct" =
     // &(here:$(NEXTINLINE) &{ console.error(`fig 0 line ${location().start.line}: "${here}"`); return true; })
     (":fig-struct:" NEWLINE)?
     fig:fig
+    remarks:remarks*
     {
-        return new EL("FigStruct", {}, [fig]);
+        return new EL("FigStruct", {}, [fig].concat(remarks));
     }
 
 fig "fig" =
@@ -1685,6 +1686,7 @@ appdx_fig "appdx_fig" =
         children:(
             INDENT
                 target:(
+    // &(here:$(INLINE / ..........) &{ console.error(`@appdx_fig_children 1 line ${location().start.line}: ${here}`); return true; })
                     first:appdx_fig_children
                     rest:(
                         NEWLINE+
@@ -1708,7 +1710,7 @@ appdx_fig "appdx_fig" =
             return appdx_fig;
         }
         /
-        & { throw new Error("Detected AppdxFig but found error inside it."); }
+        & { throw new Error(`Line ${location().start.line}: Detected AppdxFig but found error inside it.`); }
     )
     { return success; }
 
