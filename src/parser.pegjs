@@ -686,6 +686,7 @@ in_table_column_paragraph_items "in_table_column_paragraph_items" =
     }
 
 no_name_paragraph_item "no_name_paragraph_item" =
+    paragraph_caption:article_paragraph_caption?
     inline_contents:columns_or_sentences
     NEWLINE+
     lists:(
@@ -724,6 +725,9 @@ no_name_paragraph_item "no_name_paragraph_item" =
             paragraph_item.attr.OldStyle = "false";
         } else {
             paragraph_item.attr.Delete = "false";
+        }
+        if(paragraph_caption !== null) {
+            paragraph_item.append(new EL("ParagraphCaption", {}, [paragraph_caption]));
         }
         paragraph_item.append(new EL(util.paragraphItemTitleTags[indent]));
         paragraph_item.append(new EL(util.paragraphItemSentenceTags[indent], {}, inline_contents));
