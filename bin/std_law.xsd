@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     XMLSchema for Japanese Law
-    Version: 1.0
-    Date: Feb 3, 2017
+    Version: 2.0
+    Date: Apr 1, 2019
     Contact: Ministry of Internal Affairs and Communications, Government of JAPAN
 -->
 <!--  Law =================================================================== -->
@@ -20,6 +20,7 @@
             <xs:enumeration value="Taisho"/>
             <xs:enumeration value="Showa"/>
             <xs:enumeration value="Heisei"/>
+            <xs:enumeration value="Reiwa"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>

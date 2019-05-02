@@ -421,7 +421,7 @@ const detectLawname = (spans: Span[], spanIndex: number) => {
         startSpan.el.attr.type === "round"
     )) return null;
 
-    const match = lawnumSpan.text.match(/^(?:明治|大正|昭和|平成)[元〇一二三四五六七八九十]+年\S+?第[〇一二三四五六七八九十百千]+号/);
+    const match = lawnumSpan.text.match(/^(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年\S+?第[〇一二三四五六七八九十百千]+号/);
     if (!match) return null;
 
     const lawNum = match[0];

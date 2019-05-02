@@ -11,7 +11,7 @@ export interface StdEL extends EL {
 export interface Law extends StdEL {
     tag: "Law"
     attr: {
-        Era: "Meiji" | "Taisho" | "Showa" | "Heisei",
+        Era: "Meiji" | "Taisho" | "Showa" | "Heisei" | "Reiwa",
         Year: string,
         Num: string,
         PromulgateMonth?: string,

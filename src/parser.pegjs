@@ -77,7 +77,7 @@ law =
             if(law_title.law_num) {
                 law.append(new EL("LawNum", {}, [law_title.law_num]));
 
-                let m = law_title.law_num.match(/^(明治|大正|昭和|平成)([一二三四五六七八九十]+)年(\S+?)(?:第([一二三四五六七八九十百千]+)号)?$/);
+                let m = law_title.law_num.match(/^(明治|大正|昭和|平成|令和)([一二三四五六七八九十]+)年(\S+?)(?:第([一二三四五六七八九十百千]+)号)?$/);
                 if(m) {
                     let [era, year, law_type, num] = m.slice(1);
 

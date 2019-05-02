@@ -1,6 +1,6 @@
 "use strict";
 
-import { isString, inspect } from "util";
+import { inspect, isString } from "util";
 import { DOMParser } from "xmldom";
 import * as std from "./std_law";
 
@@ -577,6 +577,7 @@ export const getLawtype = (text: string): string | null => {
 export const eras = {
     '明治': 'Meiji', '大正': 'Taisho',
     '昭和': 'Showa', '平成': 'Heisei',
+    '令和': 'Reiwa',
 };
 
 
