@@ -28,7 +28,7 @@ class ViewerLoading extends React.Component<Props> {
                 <div className="container-fluid" style={{ textAlign: "right" }}>
                     <span className="badge badge-secondary">{this.props.loadingLawMessage}</span>
                 </div>
-            </ViewerLoadingDiv >
+            </ViewerLoadingDiv>
         );
     }
 }
@@ -158,7 +158,7 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
                             </div>
                         </div>
                     )}
-            </ViewerWelcomeDiv >
+            </ViewerWelcomeDiv>
         );
     }
 }
@@ -184,7 +184,7 @@ export class Viewer extends React.Component<Props> {
                 {this.props.law &&
                     <LawView {...this.props} />
                 }
-            </ViewerDiv >
+            </ViewerDiv>
         );
     }
 }
