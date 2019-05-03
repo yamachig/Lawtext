@@ -174,9 +174,6 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
 }
 
 
-interface PreambleComponentProps extends ELComponentProps { el: std.Preamble, indent: number };
-const isPreambleComponentProps = (props: ELComponentProps): props is PreambleComponentProps => props.el.tag === "Preamble"
-
 interface AppdxNoteComponentProps extends ELComponentProps { el: std.AppdxNote, indent: number };
 const isAppdxNoteComponentProps = (props: ELComponentProps): props is AppdxNoteComponentProps => props.el.tag === "AppdxNote"
 
@@ -277,8 +274,10 @@ class LawBodyComponent extends BaseLawComponent<LawBodyComponentProps> {
             } else if (child.tag === "EnactStatement") {
                 blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} />);
 
+            } else if (child.tag === "Preamble") {
+                blocks.push(<PreambleComponent el={child} indent={indent} key={child.id} />);
+
             }
-            else if (child.tag === "Preamble") { throw new NotImplementedError(child.tag); }
             else if (child.tag === "AppdxNote") { throw new NotImplementedError(child.tag); }
             else if (child.tag === "Appdx") { throw new NotImplementedError(child.tag); }
             else if (child.tag === "AppdxFormat") { throw new NotImplementedError(child.tag); }
@@ -308,7 +307,10 @@ class LawTitleComponent extends BaseLawComponent<LawTitleComponentProps> {
         const LawNum = this.props.LawNum;
 
         return (
-            <div>
+            <div
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+            >
                 <LawTitleDiv style={{ marginLeft: `${indent}em` }}>
                     {el.text}
                 </LawTitleDiv>
@@ -319,6 +321,38 @@ class LawTitleComponent extends BaseLawComponent<LawTitleComponentProps> {
                 }
             </div>
         )
+    }
+}
+
+
+
+const PreambleDiv = styled.div`
+    clear: both;
+    padding-top: 1em;
+`;
+
+interface PreambleComponentProps extends ELComponentProps { el: std.Preamble, indent: number };
+
+const isPreambleComponentProps = (props: ELComponentProps): props is PreambleComponentProps => props.el.tag === "Preamble"
+
+class PreambleComponent extends BaseLawComponent<PreambleComponentProps> {
+    protected renderNormal() {
+        const el = this.props.el;
+        const indent = this.props.indent;
+        const blocks: JSX.Element[] = [];
+
+        for (const paragraph of el.children) {
+            blocks.push(<ParagraphItemComponent el={paragraph} indent={indent} key={paragraph.id} />);
+        }
+
+        return (
+            <PreambleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+            >
+                {blocks}
+            </PreambleDiv>
+        );
     }
 }
 

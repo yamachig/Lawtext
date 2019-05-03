@@ -221,8 +221,12 @@ class SidebarBody extends React.Component<Props> {
         const list: JSX.Element[] = [];
 
         for (const el of lawBody.children) {
-            if (el.tag === "TOC") {
+            if (el.tag === "LawTitle") {
+                list.push(...this.processLawTitle(el, 0));
+            } else if (el.tag === "TOC") {
                 list.push(...this.processTOC(el, 0));
+            } else if (el.tag === "Preamble") {
+                list.push(...this.processPreamble(el, 0));
             } else if (el.tag === "MainProvision") {
                 list.push(...this.processArticleGroup(el, 0));
             } else if (el.tag === "SupplProvision") {
@@ -233,7 +237,7 @@ class SidebarBody extends React.Component<Props> {
                 list.push(...this.processAppdxStyle(el, 0));
             } else if (el.tag === "AppdxFig") {
                 list.push(...this.processAppdxFig(el, 0));
-            } else if (el.tag === "LawTitle" || el.tag === "EnactStatement" || el.tag === "Preamble" || el.tag === "AppdxNote" || el.tag === "Appdx" || el.tag === "AppdxFormat") {
+            } else if (el.tag === "EnactStatement" || el.tag === "AppdxNote" || el.tag === "Appdx" || el.tag === "AppdxFormat") {
                 console.error("processLawBody", el);
             } else {
                 assertNever(el);
@@ -245,6 +249,50 @@ class SidebarBody extends React.Component<Props> {
                 {list}
             </div>
         )
+    }
+
+    protected processLawTitle(lawTitle: std.LawTitle, indent: number) {
+        const list: JSX.Element[] = [];
+
+        const onClick = () => {
+            this.props.scrollLaw(lawTitle.id.toString());
+        }
+
+        list.push(
+            <TOCItemDiv
+                key={lawTitle.id}
+                style={{
+                    paddingLeft: (indent + 2) + "em",
+                }}
+                onClick={onClick}
+            >
+                {lawTitle.text}
+            </TOCItemDiv>
+        );
+
+        return list;
+    }
+
+    protected processPreamble(preamble: std.Preamble, indent: number) {
+        const list: JSX.Element[] = [];
+
+        const onClick = () => {
+            this.props.scrollLaw(preamble.id.toString());
+        }
+
+        list.push(
+            <TOCItemDiv
+                key={preamble.id}
+                style={{
+                    paddingLeft: (indent + 2) + "em",
+                }}
+                onClick={onClick}
+            >
+                前文
+            </TOCItemDiv>
+        );
+
+        return list;
     }
 
     protected processTOC(toc: std.TOC, indent: number) {
@@ -266,7 +314,7 @@ class SidebarBody extends React.Component<Props> {
                     onClick={onClick}
                 >
                     {tocLabel.text}
-                </TOCItemDiv >
+                </TOCItemDiv>
             );
         }
 
