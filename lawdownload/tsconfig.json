@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "outDir": "dist",
-        "module": "es2015",
+        "module": "commonjs",
         "target": "es5",
         "downlevelIteration": true,
         "lib": ["dom", "es2018"],
@@ -17,13 +17,13 @@
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "strictNullChecks": true,
         "suppressImplicitAnyIndexErrors": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": false
     },
     "include": [
-        "./src/**/*"
+        "src/**/*"
     ],
-    "exclude": ["node_modules"]
+    "exclude": ["dist-dev", "dist-prod", "node_modules"]
 }
