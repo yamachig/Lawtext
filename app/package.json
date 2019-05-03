@@ -13,11 +13,11 @@
     "license": "MIT",
     "author": "yamachi",
     "scripts": {
-        "build": "webpack --mode development --colors --config ./webpack.config.ts",
-        "build:prod": "webpack --mode production --colors --config ./webpack.config.ts",
-        "server": "http-server dist-dev -o",
-        "server:prod": "http-server dist-prod -o",
-        "watch": "webpack --mode development -w --colors --info-verbosity verbose --config ./webpack.config.ts"
+        "build": "npx webpack --mode development --colors --config ./webpack.config.ts",
+        "build:prod": "npx webpack --mode production --colors --config ./webpack.config.ts",
+        "serve": "npx serve dist-dev -n",
+        "serve:prod": "npx serve dist-prod -n",
+        "watch": "npx webpack --mode development -w --colors --info-verbosity verbose --config ./webpack.config.ts"
     },
     "dependencies": {
         "@types/file-saver": "",
@@ -43,7 +43,6 @@
         "hash.js": "",
         "html-loader": "",
         "html-webpack-plugin": "",
-        "http-server": "",
         "jquery": "",
         "js-levenshtein": "",
         "jszip": "",
@@ -60,6 +59,7 @@
         "react-redux": "",
         "react-router-dom": "",
         "sass-loader": "",
+        "serve": "",
         "style-loader": "",
         "styled-components": "",
         "ts-loader": "",

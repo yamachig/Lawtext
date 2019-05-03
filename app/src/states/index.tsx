@@ -116,6 +116,7 @@ export const tobeDownloadedRange = (): SelectionRange | null => {
     };
 
     const selection = window.getSelection();
+    if (!selection) return null;
     const range = selection.getRangeAt(0);
 
     const sPos = getPos(range.startContainer);
