@@ -15,6 +15,7 @@ debug.log
 out*
 node_modules
 package-lock.json
+tsconfig.tsbuildinfo
 cache.sqlite
 MANIFEST
 dist
