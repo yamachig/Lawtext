@@ -1,24 +1,34 @@
 {
     "name": "lawtext-lawdownload",
     "version": "0.0.1",
-    "author": "yamachi",
-    "license": "MIT",
     "description": "",
+    "homepage": "https://github.com/yamachig/lawtext#readme",
+    "bugs": {
+        "url": "https://github.com/yamachig/lawtext/issues"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/yamachig/lawtext.git"
     },
-    "bugs": {
-        "url": "https://github.com/yamachig/lawtext/issues"
-    },
-    "homepage": "https://github.com/yamachig/lawtext#readme",
+    "license": "MIT",
+    "author": "yamachi",
     "scripts": {
-        "watch": "webpack -w --colors --config ./webpack.config.dev.js",
-        "watch:prod": "webpack -w --colors --config ./webpack.config.prod.js",
-        "build": "webpack --colors --config ./webpack.config.dev.js",
-        "build:prod": "webpack --config ./webpack.config.prod.js",
-        "server": "http-server dist-dev --cors -o",
-        "server:prod": "http-server dist-prod --cors -o"
+        "build": "npx webpack --colors --config ./webpack.config.dev.js",
+        "build:prod": "npx webpack --config ./webpack.config.prod.js",
+        "serve": "npx serve dist-dev -n",
+        "serve:prod": "npx serve dist-prod -n",
+        "watch": "npx webpack -w --colors --config ./webpack.config.dev.js",
+        "watch:prod": "npx webpack -w --colors --config ./webpack.config.prod.js"
+    },
+    "dependencies": {
+        "bootstrap": "",
+        "file-saver": "",
+        "jquery": "",
+        "jszip": "",
+        "popper.js": "",
+        "react": "",
+        "react-dom": "",
+        "xmldom": ""
     },
     "devDependencies": {
         "@types/file-saver": "",
@@ -32,24 +42,14 @@
         "extract-text-webpack-plugin": "next",
         "html-loader": "",
         "html-webpack-plugin": "",
-        "http-server": "",
         "node-sass": "",
         "postcss-loader": "",
         "sass-loader": "",
+        "serve": "",
         "style-loader": "",
         "ts-loader": "",
         "typescript": "",
         "webpack": "",
         "webpack-cli": ""
-    },
-    "dependencies": {
-        "bootstrap": "",
-        "file-saver": "",
-        "jquery": "",
-        "jszip": "",
-        "popper.js": "",
-        "react": "",
-        "react-dom": "",
-        "xmldom": ""
     }
 }
