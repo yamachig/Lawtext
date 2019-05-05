@@ -9,7 +9,7 @@ import make_lawnum_table from "./make_lawnum_table";
 export const main = async () => {
     const basePath = path.join(__dirname, "..");
     const srcPath = path.join(basePath, "src");
-    // let dest_path = path.join(base_path, "dest");
+    const distPath = path.join(basePath, "dist");
 
     // if(!fs.existsSync(dest_path)) fs.mkdirSync(dest_path);
 
@@ -50,6 +50,11 @@ export const nunjucksPrecompiled = window.nunjucksPrecompiled;
 `;
     await promisify(fs.writeFile)(
         path.join(srcPath, "templates.js"),
+        templates,
+        { encoding: "utf-8" },
+    );
+    await promisify(fs.writeFile)(
+        path.join(distPath, "templates.js"),
         templates,
         { encoding: "utf-8" },
     );

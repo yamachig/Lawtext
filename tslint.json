@@ -16,7 +16,8 @@
     "exclude": [
       "config/**/*",
       "node_modules/**/*",
-      "src/parser.ts"
+      "src/parser.ts",
+      "src/templates.ts"
     ]
   }
 }
