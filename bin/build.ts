@@ -46,7 +46,7 @@ export const main = async () => {
     );
     templates = `if(!("window" in global)) global.window = {};
 ${templates}
-export const nunjucksPrecompiled = window.nunjucksPrecompiled;
+if(exports) exports.nunjucksPrecompiled = window.nunjucksPrecompiled;
 `;
     await promisify(fs.writeFile)(
         path.join(srcPath, "templates.js"),
