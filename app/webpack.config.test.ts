@@ -4,8 +4,8 @@ import * as HtmlWebPackPlugin from "html-webpack-plugin"
 import * as MiniCssExtractPlugin from "mini-css-extract-plugin"
 import * as OptimizeCSSAssetsPlugin from "optimize-css-assets-webpack-plugin"
 import * as path from 'path';
-import * as TerserPlugin from "terser-webpack-plugin"
 import * as webpack from 'webpack';
+import * as nodeExternals from "webpack-node-externals"
 
 class WatchMessagePlugin {
     public apply(compiler) {
@@ -21,13 +21,18 @@ class WatchMessagePlugin {
 }
 
 export default (env, argv) => ({
-    entry: ["./src/polyfills.ts", "./src/index.tsx"],
+    target: "node",
+    entry: ["./test/setup.ts", "./test/components.ts"],
     output: {
         filename: "bundle.js",
-        path: path.resolve(__dirname, "dist-" + (argv.mode === "production" ? "prod" : "dev")),
+        path: path.resolve(__dirname, "dist-test"),
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],
+    },
+    externals: [nodeExternals()],
+    node: {
+        __dirname: false,
     },
 
     optimization: {

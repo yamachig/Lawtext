@@ -29,7 +29,7 @@ export interface Dispatchers {
     downloadSampleLawtext: () => Promise<void>,
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
+export const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
     return {
 
         modifyState: (state: Partial<states.LawtextAppPageState>) =>

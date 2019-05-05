@@ -23,40 +23,42 @@ const ensureList = async () => {
         if (waitTime < 1000) waitTime += 300;
     }
 }
-(async () => {
-    try {
-        console.log("start fetching lawdata/list.json");
-        const response = await fetch(`lawdata/list.json`);
-        if (response.ok) {
-            const json = await response.json();
-            list = json.map(
-                ([
-                    LawNum,
-                    ReferencingLawNums,
-                    ReferencedLawNums,
-                    LawTitle,
-                    Path,
-                    XmlZipName,
-                ]: [string, string[], string[], string, string, string]) => {
-                    const obj = {
+if (!(typeof module !== 'undefined' && module.exports)) {
+    (async () => {
+        try {
+            console.log("start fetching lawdata/list.json");
+            const response = await fetch(`lawdata/list.json`);
+            if (response.ok) {
+                const json = await response.json();
+                list = json.map(
+                    ([
                         LawNum,
                         ReferencingLawNums,
                         ReferencedLawNums,
                         LawTitle,
                         Path,
                         XmlZipName,
-                    } as LawListInfo;
-                    listByLawnum[obj.LawNum] = obj;
-                    return obj;
-                }
-            );
+                    ]: [string, string[], string[], string, string, string]) => {
+                        const obj = {
+                            LawNum,
+                            ReferencingLawNums,
+                            ReferencedLawNums,
+                            LawTitle,
+                            Path,
+                            XmlZipName,
+                        } as LawListInfo;
+                        listByLawnum[obj.LawNum] = obj;
+                        return obj;
+                    }
+                );
+            }
+        } finally {
+            console.log("finish fetching lawdata/list.json");
+            _listReady = true;
         }
-    } finally {
-        console.log("finish fetching lawdata/list.json");
-        _listReady = true;
-    }
-    return [];
-})();
+        return [];
+    })();
+}
 
 
 

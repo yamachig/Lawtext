@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "outDir": "dist",
+        "sourceMap": true,
+        "module": "commonjs",
+        "target": "es5",
+        "jsx": "react",
+        "downlevelIteration": true,
+        "moduleResolution": "node",
+        "lib": ["es2017", "dom", "es5", "scripthost"],
+        // "rootDir": "./src",
+        "composite": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true,
+        "declaration": true,
+        // "suppressImplicitAnyIndexErrors": true
+    },
+    "include": ["**/*", "../src/**/*", "../../core/src/**/*"],
+    "exclude": ["node_modules", "dist", "lawdata"],
+}
