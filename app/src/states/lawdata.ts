@@ -15,6 +15,7 @@ let list: LawListInfo[] = [];
 const listByLawnum: { [index: string]: LawListInfo } = {};
 let _listReady = false;
 const ensureList = async () => {
+    await fetchList();
     let waitTime = 30;
     while (true) {
         if (_listReady) return;
@@ -23,41 +24,46 @@ const ensureList = async () => {
         if (waitTime < 1000) waitTime += 300;
     }
 }
-if (!(typeof module !== 'undefined' && module.exports)) {
-    (async () => {
-        try {
-            console.log("start fetching lawdata/list.json");
-            const response = await fetch(`lawdata/list.json`);
-            if (response.ok) {
-                const json = await response.json();
-                list = json.map(
-                    ([
+
+let _fetchListInvoked = false;
+const fetchList = async () => {
+    if (_fetchListInvoked) return;
+    _fetchListInvoked = true;
+    try {
+        console.log("start fetching lawdata/list.json");
+        const response = await fetch(`lawdata/list.json`);
+        if (response.ok) {
+            const json = await response.json();
+            list = json.map(
+                ([
+                    LawNum,
+                    ReferencingLawNums,
+                    ReferencedLawNums,
+                    LawTitle,
+                    Path,
+                    XmlZipName,
+                ]: [string, string[], string[], string, string, string]) => {
+                    const obj = {
                         LawNum,
                         ReferencingLawNums,
                         ReferencedLawNums,
                         LawTitle,
                         Path,
                         XmlZipName,
-                    ]: [string, string[], string[], string, string, string]) => {
-                        const obj = {
-                            LawNum,
-                            ReferencingLawNums,
-                            ReferencedLawNums,
-                            LawTitle,
-                            Path,
-                            XmlZipName,
-                        } as LawListInfo;
-                        listByLawnum[obj.LawNum] = obj;
-                        return obj;
-                    }
-                );
-            }
-        } finally {
-            console.log("finish fetching lawdata/list.json");
-            _listReady = true;
+                    } as LawListInfo;
+                    listByLawnum[obj.LawNum] = obj;
+                    return obj;
+                }
+            );
         }
-        return [];
-    })();
+    } finally {
+        console.log("finish fetching lawdata/list.json");
+        _listReady = true;
+    }
+    return [];
+};
+if (!(typeof module !== 'undefined' && module.exports)) {
+    fetchList();
 }
 
 
