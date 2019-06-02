@@ -161,13 +161,13 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
         else if (isPreambleComponentProps(this.props)) { return <PreambleComponent {...this.props} /> }
         else if (isAppdxNoteComponentProps(this.props)) { return <AppdxNoteComponent {...this.props} /> }
         else if (isAppdxComponentProps(this.props)) { throw new NotImplementedError("Appdx"); }
-        else if (isAppdxFormatComponentProps(this.props)) { throw new NotImplementedError("AppdxFormat"); }
+        else if (isAppdxFormatComponentProps(this.props)) { return <AppdxFormatComponent {...this.props} /> }
         else if (isSupplNoteComponentProps(this.props)) { throw new NotImplementedError("SupplNote"); }
         else if (isSupplProvisionAppdxTableComponentProps(this.props)) { return <SupplProvisionAppdxTableComponent {...this.props} /> }
         else if (isSupplProvisionAppdxStyleComponentProps(this.props)) { return <SupplProvisionAppdxStyleComponent {...this.props} /> }
         else if (isSupplProvisionAppdxComponentProps(this.props)) { throw new NotImplementedError("SupplProvisionAppdx"); }
         else if (isNoteStructComponentProps(this.props)) { return <NoteStructComponent {...this.props} /> }
-        else if (isFormatStructComponentProps(this.props)) { throw new NotImplementedError("FormatStruct"); }
+        else if (isFormatStructComponentProps(this.props)) { return <FormatStructComponent {...this.props} /> }
         else if (isSentenceDummyProps(this.props)) { return <BlockSentenceComponent els={[this.props.el]} indent={this.props.indent} /> }
         else { return assertNever(this.props); }
     }
@@ -177,17 +177,11 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
 interface AppdxComponentProps extends ELComponentProps { el: std.Appdx, indent: number };
 const isAppdxComponentProps = (props: ELComponentProps): props is AppdxComponentProps => props.el.tag === "Appdx"
 
-interface AppdxFormatComponentProps extends ELComponentProps { el: std.AppdxFormat, indent: number };
-const isAppdxFormatComponentProps = (props: ELComponentProps): props is AppdxFormatComponentProps => props.el.tag === "AppdxFormat"
-
 interface SupplNoteComponentProps extends ELComponentProps { el: std.SupplNote, indent: number };
 const isSupplNoteComponentProps = (props: ELComponentProps): props is SupplNoteComponentProps => props.el.tag === "SupplNote"
 
 interface SupplProvisionAppdxComponentProps extends ELComponentProps { el: std.SupplProvisionAppdx, indent: number };
 const isSupplProvisionAppdxComponentProps = (props: ELComponentProps): props is SupplProvisionAppdxComponentProps => props.el.tag === "SupplProvisionAppdx"
-
-interface FormatStructComponentProps extends ELComponentProps { el: std.FormatStruct, indent: number };
-const isFormatStructComponentProps = (props: ELComponentProps): props is FormatStructComponentProps => props.el.tag === "FormatStruct"
 
 
 
@@ -268,6 +262,9 @@ class LawBodyComponent extends BaseLawComponent<LawBodyComponentProps> {
             } else if (child.tag === "AppdxNote") {
                 blocks.push(<AppdxNoteComponent el={child} indent={indent} key={child.id} />);
 
+            } else if (child.tag === "AppdxFormat") {
+                blocks.push(<AppdxFormatComponent el={child} indent={indent} key={child.id} />);
+
             } else if (child.tag === "EnactStatement") {
                 blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} />);
 
@@ -276,7 +273,6 @@ class LawBodyComponent extends BaseLawComponent<LawBodyComponentProps> {
 
             }
             else if (child.tag === "Appdx") { throw new NotImplementedError(child.tag); }
-            else if (child.tag === "AppdxFormat") { throw new NotImplementedError(child.tag); }
             else { assertNever(child); }
         }
         return blocks;
@@ -653,6 +649,79 @@ class AppdxStyleComponent extends BaseLawComponent<AppdxStyleComponentProps> {
             >
                 {blocks}
             </AppdxStyleDiv>
+        );
+    }
+}
+
+
+
+
+const AppdxFormatDiv = styled.div`
+    clear: both;
+    padding-top: 1em;
+`;
+
+const AppdxFormatTitleDiv = styled.div`
+    font-weight: bold;
+`;
+
+interface AppdxFormatComponentProps extends ELComponentProps { el: std.AppdxFormat, indent: number };
+
+const isAppdxFormatComponentProps = (props: ELComponentProps): props is AppdxFormatComponentProps => props.el.tag === "AppdxFormat"
+
+class AppdxFormatComponent extends BaseLawComponent<AppdxFormatComponentProps> {
+    protected renderNormal() {
+        const el = this.props.el;
+        const indent = this.props.indent;
+
+        const blocks: JSX.Element[] = [];
+
+        let AppdxFormatTitle: std.AppdxFormatTitle | null = null;
+        let RelatedArticleNum: std.RelatedArticleNum | null = null;
+        const ChildItems: Array<std.FormatStruct | std.Remarks> = [];
+        for (const child of el.children) {
+
+            if (child.tag === "AppdxFormatTitle") {
+                AppdxFormatTitle = child;
+
+            } else if (child.tag === "RelatedArticleNum") {
+                RelatedArticleNum = child;
+
+            } else {
+                ChildItems.push(child);
+            }
+        }
+
+        if (AppdxFormatTitle || RelatedArticleNum) {
+            blocks.push(
+                <AppdxFormatTitleDiv
+                    className="law-anchor"
+                    data-el_id={el.id.toString()}
+                    key={(AppdxFormatTitle || RelatedArticleNum || { id: 0 }).id}
+                >
+                    {AppdxFormatTitle && <RunComponent els={AppdxFormatTitle.children} />}
+                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} />}
+                </AppdxFormatTitleDiv>
+            );
+        }
+
+        for (const child of ChildItems) {
+            if (child.tag === "FormatStruct") {
+                blocks.push(<FormatStructComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            } else if (child.tag === "Remarks") {
+                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            }
+            else { assertNever(child); }
+        }
+
+        return (
+            <AppdxFormatDiv
+                data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
+            >
+                {blocks}
+            </AppdxFormatDiv>
         );
     }
 }
@@ -1634,6 +1703,68 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
                 );
 
             } else if (child.tag === "Style") {
+
+                for (const subchild of child.children) {
+                    if (isString(subchild)) {
+                        throw new NotImplementedError("string");
+
+                    } else if (std.isTable(subchild)) {
+                        blocks.push(<TableComponent el={subchild} indent={indent} key={subchild.id} />);
+
+                    } else if (std.isFig(subchild)) {
+                        blocks.push(
+                            <div key={subchild.id}>
+                                <FigRunComponent el={subchild} />
+                            </div>
+                        );
+
+                    } else if (std.isList(subchild)) {
+                        blocks.push(<ListComponent el={subchild} indent={indent + 2} key={subchild.id} />); /* >>>> INDENT ++++ INDENT >>>> */
+
+                    } else {
+                        throw new NotImplementedError(subchild.tag);
+
+                    }
+                }
+
+            } else if (child.tag === "Remarks") {
+                blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} />);
+
+            }
+            else { assertNever(child); }
+        }
+
+        return (
+            <div>
+                {blocks}
+            </div>
+        );
+    }
+}
+
+
+
+interface FormatStructComponentProps extends ELComponentProps { el: std.FormatStruct, indent: number };
+
+const isFormatStructComponentProps = (props: ELComponentProps): props is FormatStructComponentProps => props.el.tag === "FormatStruct"
+
+class FormatStructComponent extends BaseLawComponent<FormatStructComponentProps> {
+    protected renderNormal() {
+        const el = this.props.el;
+        const indent = this.props.indent;
+
+        const blocks: JSX.Element[] = [];
+
+        for (const child of el.children) {
+
+            if (child.tag === "FormatStructTitle") {
+                blocks.push(
+                    <div key={child.id}>
+                        <RunComponent els={child.children} />
+                    </div>
+                );
+
+            } else if (child.tag === "Format") {
 
                 for (const subchild of child.children) {
                     if (isString(subchild)) {
