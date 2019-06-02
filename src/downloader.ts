@@ -10,13 +10,14 @@ export const FILENAMES = [
     ...range(201, 215 + 1),
     ...range(301, 364 + 1),
     ...range(401, 431 + 1),
+    ...range(501, 501 + 1),
     // ...range(430, 430 + 1),
 ].map((v) => `${v}.zip`);
 
 export const download = async <
-    S extends boolean=false,
-    T extends boolean=false,
-    U extends boolean=false,
+    S extends boolean = false,
+    T extends boolean = false,
+    U extends boolean = false,
     >(
         { full, withoutPict, list }: Partial<{ full: S, withoutPict: T, list: U }>,
         filenames: string[] = FILENAMES,
