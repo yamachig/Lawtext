@@ -1,1 +1,0 @@
-recursive-include lawtext *.txt *.j2 *.xml *.py *.html *.css *.js *.map
