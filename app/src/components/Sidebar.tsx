@@ -223,6 +223,8 @@ class SidebarBody extends React.Component<Props> {
         for (const el of lawBody.children) {
             if (el.tag === "LawTitle") {
                 list.push(...this.processLawTitle(el, 0));
+            } else if (el.tag === "EnactStatement") {
+                list.push(...this.processEnactStatement(el, 0));
             } else if (el.tag === "TOC") {
                 list.push(...this.processTOC(el, 0));
             } else if (el.tag === "Preamble") {
@@ -237,8 +239,12 @@ class SidebarBody extends React.Component<Props> {
                 list.push(...this.processAppdxStyle(el, 0));
             } else if (el.tag === "AppdxFig") {
                 list.push(...this.processAppdxFig(el, 0));
-            } else if (el.tag === "EnactStatement" || el.tag === "AppdxNote" || el.tag === "Appdx" || el.tag === "AppdxFormat") {
-                console.error("processLawBody", el);
+            } else if (el.tag === "AppdxNote") {
+                list.push(...this.processAppdxNote(el, 0));
+            } else if (el.tag === "AppdxFormat") {
+                list.push(...this.processAppdxFormat(el, 0));
+            } else if (el.tag === "Appdx") {
+                list.push(...this.processAppdx(el, 0));
             } else {
                 assertNever(el);
             }
@@ -267,6 +273,28 @@ class SidebarBody extends React.Component<Props> {
                 onClick={onClick}
             >
                 {lawTitle.text}
+            </TOCItemDiv>
+        );
+
+        return list;
+    }
+
+    protected processEnactStatement(preamble: std.EnactStatement, indent: number) {
+        const list: JSX.Element[] = [];
+
+        const onClick = () => {
+            this.props.scrollLaw(preamble.id.toString());
+        }
+
+        list.push(
+            <TOCItemDiv
+                key={preamble.id}
+                style={{
+                    paddingLeft: (indent + 2) + "em",
+                }}
+                onClick={onClick}
+            >
+                制定文
             </TOCItemDiv>
         );
 
@@ -493,9 +521,9 @@ class SidebarBody extends React.Component<Props> {
     protected processAppdxFig(appdxFig: std.AppdxFig, indent: number) {
         const list: JSX.Element[] = [];
 
-        const appdxStyleTitle = appdxFig.children.find((el) => el.tag === "AppdxFigTitle") as std.AppdxFigTitle | undefined;
+        const AppdxFigTitle = appdxFig.children.find((el) => el.tag === "AppdxFigTitle") as std.AppdxFigTitle | undefined;
 
-        if (appdxStyleTitle) {
+        if (AppdxFigTitle) {
             const onClick = () => {
                 this.props.scrollLaw(appdxFig.id.toString());
             }
@@ -506,9 +534,88 @@ class SidebarBody extends React.Component<Props> {
                         paddingLeft: (indent + 2) + "em",
                     }}
                     onClick={onClick}
-                    title={appdxStyleTitle.text}
+                    title={AppdxFigTitle.text}
                 >
-                    {appdxStyleTitle.text}
+                    {AppdxFigTitle.text}
+                </TOCItemDiv>
+            );
+        }
+
+        return list;
+    }
+
+    protected processAppdxFormat(appdxFig: std.AppdxFormat, indent: number) {
+        const list: JSX.Element[] = [];
+
+        const appdxFormatTitle = appdxFig.children.find((el) => el.tag === "AppdxFormatTitle") as std.AppdxFormatTitle | undefined;
+
+        if (appdxFormatTitle) {
+            const onClick = () => {
+                this.props.scrollLaw(appdxFig.id.toString());
+            }
+            list.push(
+                <TOCItemDiv
+                    key={appdxFig.id}
+                    style={{
+                        paddingLeft: (indent + 2) + "em",
+                    }}
+                    onClick={onClick}
+                    title={appdxFormatTitle.text}
+                >
+                    {appdxFormatTitle.text}
+                </TOCItemDiv>
+            );
+        }
+
+        return list;
+    }
+
+    protected processAppdxNote(appdxFig: std.AppdxNote, indent: number) {
+        const list: JSX.Element[] = [];
+
+        const appdxNoteTitle = appdxFig.children.find((el) => el.tag === "AppdxNoteTitle") as std.AppdxNoteTitle | undefined;
+
+        if (appdxNoteTitle) {
+            const onClick = () => {
+                this.props.scrollLaw(appdxFig.id.toString());
+            }
+            list.push(
+                <TOCItemDiv
+                    key={appdxFig.id}
+                    style={{
+                        paddingLeft: (indent + 2) + "em",
+                    }}
+                    onClick={onClick}
+                    title={appdxNoteTitle.text}
+                >
+                    {appdxNoteTitle.text}
+                </TOCItemDiv>
+            );
+        }
+
+        return list;
+    }
+
+
+    protected processAppdx(appdxFig: std.Appdx, indent: number) {
+        const list: JSX.Element[] = [];
+
+        const ArithFormulaNum = appdxFig.children.find((el) => el.tag === "ArithFormulaNum") as std.ArithFormulaNum | undefined;
+
+        if (ArithFormulaNum) {
+            const onClick = () => {
+                this.props.scrollLaw(appdxFig.id.toString());
+            }
+            list.push(
+                <TOCItemDiv
+                    key={appdxFig.id}
+                    style={{
+                        paddingLeft: (indent + 2) + "em",
+                    }}
+                    onClick={onClick}
+                    title={ArithFormulaNum.text}
+                >
+                    {ArithFormulaNum.text}
                 </TOCItemDiv>
             );
         }
