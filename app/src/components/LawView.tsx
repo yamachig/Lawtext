@@ -22,6 +22,12 @@ const em = (input) => {
     return (emSize * input);
 }
 
+const NoMarginDiv = styled.div`
+    margin-left: 0;
+    padding-left: 0;
+    text-indent: 0;
+`;
+
 
 const LawViewDiv = styled.div`
     padding: 2rem 3rem 10rem 3rem;
@@ -118,6 +124,7 @@ type AnyLawComponentProps = (
     StyleStructComponentProps |
     FigStructComponentProps |
     FigRunComponentProps |
+    ArithFormulaRunComponentProps |
     AmendProvisionComponentProps |
     PreambleComponentProps |
     AppdxNoteComponentProps |
@@ -157,10 +164,11 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
         else if (isStyleStructComponentProps(this.props)) { return <StyleStructComponent {...this.props} /> }
         else if (isFigStructComponentProps(this.props)) { return <FigStructComponent {...this.props} /> }
         else if (isFigRunComponentProps(this.props)) { return <FigRunComponent {...this.props} /> }
+        else if (isArithFormulaRunComponentProps(this.props)) { return <ArithFormulaRunComponent {...this.props} /> }
         else if (isAmendProvisionComponentProps(this.props)) { return <AmendProvisionComponent {...this.props} /> }
         else if (isPreambleComponentProps(this.props)) { return <PreambleComponent {...this.props} /> }
         else if (isAppdxNoteComponentProps(this.props)) { return <AppdxNoteComponent {...this.props} /> }
-        else if (isAppdxComponentProps(this.props)) { throw new NotImplementedError("Appdx"); }
+        else if (isAppdxComponentProps(this.props)) { return <AppdxComponent {...this.props} /> }
         else if (isAppdxFormatComponentProps(this.props)) { return <AppdxFormatComponent {...this.props} /> }
         else if (isSupplNoteComponentProps(this.props)) { throw new NotImplementedError("SupplNote"); }
         else if (isSupplProvisionAppdxTableComponentProps(this.props)) { return <SupplProvisionAppdxTableComponent {...this.props} /> }
@@ -172,10 +180,6 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
         else { return assertNever(this.props); }
     }
 }
-
-
-interface AppdxComponentProps extends ELComponentProps { el: std.Appdx, indent: number };
-const isAppdxComponentProps = (props: ELComponentProps): props is AppdxComponentProps => props.el.tag === "Appdx"
 
 interface SupplNoteComponentProps extends ELComponentProps { el: std.SupplNote, indent: number };
 const isSupplNoteComponentProps = (props: ELComponentProps): props is SupplNoteComponentProps => props.el.tag === "SupplNote"
@@ -265,6 +269,9 @@ class LawBodyComponent extends BaseLawComponent<LawBodyComponentProps> {
             } else if (child.tag === "AppdxFormat") {
                 blocks.push(<AppdxFormatComponent el={child} indent={indent} key={child.id} />);
 
+            } else if (child.tag === "Appdx") {
+                blocks.push(<AppdxComponent el={child} indent={indent} key={child.id} />);
+
             } else if (child.tag === "EnactStatement") {
                 blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} />);
 
@@ -272,7 +279,6 @@ class LawBodyComponent extends BaseLawComponent<LawBodyComponentProps> {
                 blocks.push(<PreambleComponent el={child} indent={indent} key={child.id} />);
 
             }
-            else if (child.tag === "Appdx") { throw new NotImplementedError(child.tag); }
             else { assertNever(child); }
         }
         return blocks;
@@ -875,6 +881,83 @@ class AppdxNoteComponent extends BaseLawComponent<AppdxNoteComponentProps> {
 }
 
 
+
+
+const AppdxDiv = styled.div`
+    clear: both;
+    padding-top: 1em;
+`;
+
+const AppdxTitleDiv = styled.div`
+    font-weight: bold;
+`;
+
+interface AppdxComponentProps extends ELComponentProps { el: std.Appdx, indent: number };
+
+const isAppdxComponentProps = (props: ELComponentProps): props is AppdxComponentProps => props.el.tag === "Appdx"
+
+class AppdxComponent extends BaseLawComponent<AppdxComponentProps> {
+    protected renderNormal() {
+        const el = this.props.el;
+        const indent = this.props.indent;
+
+        const blocks: JSX.Element[] = [];
+
+        let ArithFormulaNum: std.ArithFormulaNum | null = null;
+        let RelatedArticleNum: std.RelatedArticleNum | null = null;
+        const ChildItems: Array<std.ArithFormula | std.Remarks> = [];
+        for (const child of el.children) {
+
+            if (child.tag === "ArithFormulaNum") {
+                ArithFormulaNum = child;
+
+            } else if (child.tag === "RelatedArticleNum") {
+                RelatedArticleNum = child;
+
+            } else {
+                ChildItems.push(child);
+            }
+        }
+
+        if (ArithFormulaNum || RelatedArticleNum) {
+            blocks.push(
+                <AppdxTitleDiv
+                    className="law-anchor"
+                    data-el_id={el.id.toString()}
+                    key={(ArithFormulaNum || RelatedArticleNum || { id: 0 }).id}
+                >
+                    {ArithFormulaNum && <RunComponent els={ArithFormulaNum.children} />}
+                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} />}
+                </AppdxTitleDiv>
+            );
+        }
+
+        for (const child of ChildItems) {
+            if (child.tag === "ArithFormula") {
+                blocks.push(
+                    <div style={{ marginLeft: `${indent + 1}em` }}>
+                        <ArithFormulaRunComponent el={child} />
+                    </div>
+                ); /* >>>> INDENT >>>> */
+
+            } else if (child.tag === "Remarks") {
+                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
+
+            }
+            else { assertNever(child); }
+        }
+
+        return (
+            <AppdxDiv
+                data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
+            >
+                {blocks}
+            </AppdxDiv>
+        );
+    }
+}
+
+
 const SupplProvisionAppdxTableDiv = styled.div`
     clear: both;
     padding-top: 1em;
@@ -1422,9 +1505,9 @@ class ListComponent extends BaseLawComponent<ListComponentProps> {
         }
 
         return (
-            <div>
+            <NoMarginDiv>
                 {blocks}
-            </div>
+            </NoMarginDiv>
         );
     }
 }
@@ -1445,9 +1528,9 @@ class TableStructComponent extends BaseLawComponent<TableStructComponentProps> {
 
             if (child.tag === "TableStructTitle") {
                 blocks.push(
-                    <div key={child.id}>
+                    <NoMarginDiv key={child.id}>
                         <RunComponent els={child.children} />
-                    </div>
+                    </NoMarginDiv>
                 );
 
             } else if (child.tag === "Table") {
@@ -1461,9 +1544,9 @@ class TableStructComponent extends BaseLawComponent<TableStructComponentProps> {
         }
 
         return (
-            <div>
+            <NoMarginDiv>
                 {blocks}
-            </div>
+            </NoMarginDiv>
         );
     }
 }
@@ -1497,13 +1580,13 @@ class TableComponent extends BaseLawComponent<TableComponentProps> {
         }
 
         return (
-            <div style={{ marginLeft: `${indent}em` }}>
+            <NoMarginDiv style={{ marginLeft: `${indent}em` }}>
                 <Table>
                     <tbody>
                         {rows}
                     </tbody>
                 </Table>
-            </div>
+            </NoMarginDiv>
         );
     }
 }
@@ -1548,9 +1631,9 @@ class RemarksComponent extends BaseLawComponent<RemarksComponentProps> {
             } else if (child.tag === "Item") {
                 if (i === 0 && RemarksLabel) {
                     blocks.push(
-                        <div key={RemarksLabel.id}>
+                        <NoMarginDiv key={RemarksLabel.id}>
                             <RunComponent els={RemarksLabel.children} style={{ fontWeight: "bold" }} />
-                        </div>
+                        </NoMarginDiv>
                     );
                 }
                 blocks.push(<ParagraphItemComponent el={child} indent={1} key={child.id} />);
@@ -1621,9 +1704,9 @@ class TableColumnComponent extends BaseLawComponent<TableColumnComponentProps> {
 
         if (el.tag === "TableHeaderColumn") {
             blocks.push(
-                <div key={el.id}>
+                <NoMarginDiv key={el.id}>
                     <RunComponent els={el.children} />
-                </div>
+                </NoMarginDiv>
             );
 
         } else if (el.tag === "TableColumn") {
@@ -1697,9 +1780,9 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
 
             if (child.tag === "StyleStructTitle") {
                 blocks.push(
-                    <div key={child.id}>
+                    <NoMarginDiv key={child.id}>
                         <RunComponent els={child.children} />
-                    </div>
+                    </NoMarginDiv>
                 );
 
             } else if (child.tag === "Style") {
@@ -1713,9 +1796,9 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
 
                     } else if (std.isFig(subchild)) {
                         blocks.push(
-                            <div key={subchild.id}>
+                            <NoMarginDiv key={subchild.id}>
                                 <FigRunComponent el={subchild} />
-                            </div>
+                            </NoMarginDiv>
                         );
 
                     } else if (std.isList(subchild)) {
@@ -1735,9 +1818,9 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
         }
 
         return (
-            <div>
+            <NoMarginDiv>
                 {blocks}
-            </div>
+            </NoMarginDiv>
         );
     }
 }
@@ -1759,9 +1842,9 @@ class FormatStructComponent extends BaseLawComponent<FormatStructComponentProps>
 
             if (child.tag === "FormatStructTitle") {
                 blocks.push(
-                    <div key={child.id}>
+                    <NoMarginDiv key={child.id}>
                         <RunComponent els={child.children} />
-                    </div>
+                    </NoMarginDiv>
                 );
 
             } else if (child.tag === "Format") {
@@ -1775,9 +1858,9 @@ class FormatStructComponent extends BaseLawComponent<FormatStructComponentProps>
 
                     } else if (std.isFig(subchild)) {
                         blocks.push(
-                            <div key={subchild.id}>
+                            <NoMarginDiv key={subchild.id}>
                                 <FigRunComponent el={subchild} />
-                            </div>
+                            </NoMarginDiv>
                         );
 
                     } else if (std.isList(subchild)) {
@@ -1797,9 +1880,9 @@ class FormatStructComponent extends BaseLawComponent<FormatStructComponentProps>
         }
 
         return (
-            <div>
+            <NoMarginDiv>
                 {blocks}
-            </div>
+            </NoMarginDiv>
         );
     }
 }
@@ -1821,9 +1904,9 @@ class NoteStructComponent extends BaseLawComponent<NoteStructComponentProps> {
 
             if (child.tag === "NoteStructTitle") {
                 blocks.push(
-                    <div key={child.id}>
+                    <NoMarginDiv key={child.id}>
                         <RunComponent els={child.children} />
-                    </div>
+                    </NoMarginDiv>
                 );
 
             } else if (child.tag === "Note") {
@@ -1837,9 +1920,9 @@ class NoteStructComponent extends BaseLawComponent<NoteStructComponentProps> {
 
                     } else if (std.isFig(subchild)) {
                         blocks.push(
-                            <div key={subchild.id}>
+                            <NoMarginDiv key={subchild.id}>
                                 <FigRunComponent el={subchild} />
-                            </div>
+                            </NoMarginDiv>
                         );
 
                     } else if (std.isList(subchild)) {
@@ -1859,9 +1942,64 @@ class NoteStructComponent extends BaseLawComponent<NoteStructComponentProps> {
         }
 
         return (
-            <div>
+            <NoMarginDiv>
                 {blocks}
-            </div>
+            </NoMarginDiv>
+        );
+    }
+}
+
+interface ArithFormulaRunComponentProps extends ELComponentProps { el: std.ArithFormula };
+
+const isArithFormulaRunComponentProps = (props: ELComponentProps): props is ArithFormulaRunComponentProps => props.el.tag === "ArithFormula"
+
+class ArithFormulaRunComponent extends BaseLawComponent<ArithFormulaRunComponentProps> {
+    protected renderNormal() {
+        const el = this.props.el;
+
+        const blocks: JSX.Element[] = [];
+
+        for (const [i, child] of el.children.entries()) {
+            if (isString(child)) {
+                blocks.push(
+                    <NoMarginDiv key={i}>
+                        {child}
+                    </NoMarginDiv>
+                );
+
+            } else if (std.isFigStruct(child)) {
+                blocks.push(<FigStructComponent el={child} indent={0} key={child.id} />);
+
+            } else if (std.isFig(child)) {
+                blocks.push(
+                    <NoMarginDiv key={child.id}>
+                        <FigRunComponent el={child} />
+                    </NoMarginDiv>
+                );
+
+            } else if (std.isList(child)) {
+                blocks.push(<ListComponent el={child} indent={0} key={child.id} />);
+
+            } else if (std.isSentence(child)) {
+                blocks.push(
+                    <NoMarginDiv key={child.id}>
+                        <RunComponent els={child.children} />
+                    </NoMarginDiv>
+                );
+
+            } else if (std.isRemarks(child)) {
+                blocks.push(<RemarksComponent el={child} indent={0} key={child.id} />);
+
+            } else {
+                throw new NotImplementedError(child.tag);
+
+            }
+        }
+
+        return (
+            <span style={{ display: "inline-block" }}>
+                {blocks}
+            </span>
         );
     }
 }
@@ -1882,16 +2020,16 @@ class FigStructComponent extends BaseLawComponent<FigStructComponentProps> {
 
             if (child.tag === "FigStructTitle") {
                 blocks.push(
-                    <div key={child.id}>
+                    <NoMarginDiv key={child.id}>
                         <RunComponent els={child.children} />
-                    </div>
+                    </NoMarginDiv>
                 );
 
             } else if (child.tag === "Fig") {
                 blocks.push(
-                    <div key={child.id}>
+                    <NoMarginDiv key={child.id}>
                         <FigRunComponent el={child} />
-                    </div>
+                    </NoMarginDiv>
                 );
 
             } else if (child.tag === "Remarks") {
@@ -1902,9 +2040,9 @@ class FigStructComponent extends BaseLawComponent<FigStructComponentProps> {
         }
 
         return (
-            <div>
+            <NoMarginDiv>
                 {blocks}
-            </div>
+            </NoMarginDiv>
         );
     }
 }
@@ -1954,9 +2092,9 @@ class AmendProvisionComponent extends BaseLawComponent<AmendProvisionComponentPr
         }
 
         return (
-            <div>
+            <NoMarginDiv>
                 {blocks}
-            </div>
+            </NoMarginDiv>
         );
     }
 }
@@ -2062,23 +2200,23 @@ class RunComponent extends BaseLawComponent<RunComponentProps> {
                     .join("");
                 runs.push(<ruby key={i}>{rb}<rt>{rt}</rt></ruby>);
 
-            } else if (el.tag === "Sub") {
+            } else if (std.isSub(el)) {
                 runs.push(<sub key={i}>{el.text}</sub>);
 
-            } else if (el.tag === "Sup") {
+            } else if (std.isSup(el)) {
                 runs.push(<sup key={i}>{el.text}</sup>);
 
-            } else if (el.tag === "QuoteStruct") {
+            } else if (std.isQuoteStruct(el)) {
                 runs.push(<span key={i}>{el.outerXML()}</span>);
 
-            } else if (el.tag === "ArithFormula") {
-                throw new NotImplementedError(el.tag);
+            } else if (std.isArithFormula(el)) {
+                runs.push(<ArithFormulaRunComponent el={el} />);
 
-            } else if (el.tag === "Line") {
+            } else if (std.isLine(el)) {
                 throw new NotImplementedError(el.tag);
 
             }
-            else { assertNever(el.tag); }
+            else { assertNever(el); }
         }
 
         return <span style={style}>{runs}</span>;
