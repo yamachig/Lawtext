@@ -173,7 +173,7 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
         else if (isSupplNoteComponentProps(this.props)) { throw new NotImplementedError("SupplNote"); }
         else if (isSupplProvisionAppdxTableComponentProps(this.props)) { return <SupplProvisionAppdxTableComponent {...this.props} /> }
         else if (isSupplProvisionAppdxStyleComponentProps(this.props)) { return <SupplProvisionAppdxStyleComponent {...this.props} /> }
-        else if (isSupplProvisionAppdxComponentProps(this.props)) { throw new NotImplementedError("SupplProvisionAppdx"); }
+        else if (isSupplProvisionAppdxComponentProps(this.props)) { return <SupplProvisionAppdxComponent {...this.props} /> }
         else if (isNoteStructComponentProps(this.props)) { return <NoteStructComponent {...this.props} /> }
         else if (isFormatStructComponentProps(this.props)) { return <FormatStructComponent {...this.props} /> }
         else if (isSentenceDummyProps(this.props)) { return <BlockSentenceComponent els={[this.props.el]} indent={this.props.indent} /> }
@@ -183,9 +183,6 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
 
 interface SupplNoteComponentProps extends ELComponentProps { el: std.SupplNote, indent: number };
 const isSupplNoteComponentProps = (props: ELComponentProps): props is SupplNoteComponentProps => props.el.tag === "SupplNote"
-
-interface SupplProvisionAppdxComponentProps extends ELComponentProps { el: std.SupplProvisionAppdx, indent: number };
-const isSupplProvisionAppdxComponentProps = (props: ELComponentProps): props is SupplProvisionAppdxComponentProps => props.el.tag === "SupplProvisionAppdx"
 
 
 
@@ -1111,6 +1108,74 @@ class SupplProvisionAppdxStyleComponent extends BaseLawComponent<SupplProvisionA
 
 
 
+
+const SupplProvisionAppdxDiv = styled.div`
+    clear: both;
+    padding-top: 1em;
+`;
+
+const SupplProvisionAppdxTitleDiv = styled.div`
+    font-weight: bold;
+`;
+
+interface SupplProvisionAppdxComponentProps extends ELComponentProps { el: std.SupplProvisionAppdx, indent: number };
+
+const isSupplProvisionAppdxComponentProps = (props: ELComponentProps): props is SupplProvisionAppdxComponentProps => props.el.tag === "SupplProvisionAppdx"
+
+class SupplProvisionAppdxComponent extends BaseLawComponent<SupplProvisionAppdxComponentProps> {
+    protected renderNormal() {
+        const el = this.props.el;
+        const indent = this.props.indent;
+
+        const blocks: JSX.Element[] = [];
+
+        let ArithFormulaNum: std.ArithFormulaNum | null = null;
+        let RelatedArticleNum: std.RelatedArticleNum | null = null;
+        const ChildItems: std.ArithFormula[] = [];
+        for (const child of el.children) {
+
+            if (child.tag === "ArithFormulaNum") {
+                ArithFormulaNum = child;
+
+            } else if (child.tag === "RelatedArticleNum") {
+                RelatedArticleNum = child;
+
+            } else {
+                ChildItems.push(child);
+            }
+        }
+
+        if (ArithFormulaNum || RelatedArticleNum) {
+            blocks.push(
+                <SupplProvisionAppdxTitleDiv
+                    className="law-anchor"
+                    data-el_id={el.id.toString()}
+                    key={(ArithFormulaNum || RelatedArticleNum || { id: 0 }).id}
+                >
+                    {ArithFormulaNum && <RunComponent els={ArithFormulaNum.children} />}
+                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} />}
+                </SupplProvisionAppdxTitleDiv>
+            );
+        }
+
+        for (const child of ChildItems) {
+            blocks.push(
+                <div style={{ marginLeft: `${indent + 1}em` }} key={child.id}>
+                    <ArithFormulaRunComponent el={child} />
+                </div>
+            ); /* >>>> INDENT >>>> */
+        }
+
+        return (
+            <SupplProvisionAppdxDiv>
+                {blocks}
+            </SupplProvisionAppdxDiv>
+        );
+    }
+}
+
+
+
 interface SupplProvisionComponentProps extends ELComponentProps { el: std.SupplProvision, indent: number };
 
 const isSupplProvisionComponentProps = (props: ELComponentProps): props is SupplProvisionComponentProps => props.el.tag === "SupplProvision"
@@ -1164,7 +1229,7 @@ class SupplProvisionComponent extends BaseLawComponent<SupplProvisionComponentPr
                 blocks.push(<SupplProvisionAppdxStyleComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "SupplProvisionAppdx") {
-                throw new NotImplementedError(child.tag);
+                blocks.push(<SupplProvisionAppdxComponent el={child} indent={indent} key={child.id} />);
 
             }
             else { assertNever(child); }
@@ -1796,6 +1861,9 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
                 for (const subchild of child.children) {
                     if (isString(subchild)) {
                         throw new NotImplementedError("string");
+
+                    } else if (std.isItem(subchild)) {
+                        blocks.push(<ParagraphItemComponent el={subchild} indent={indent} key={subchild.id} />);
 
                     } else if (std.isTable(subchild)) {
                         blocks.push(<TableComponent el={subchild} indent={indent} key={subchild.id} />);
