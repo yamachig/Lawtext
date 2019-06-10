@@ -130,7 +130,6 @@ type AnyLawComponentProps = (
     AppdxNoteComponentProps |
     AppdxComponentProps |
     AppdxFormatComponentProps |
-    SupplNoteComponentProps |
     SupplProvisionAppdxTableComponentProps |
     SupplProvisionAppdxStyleComponentProps |
     SupplProvisionAppdxComponentProps |
@@ -170,7 +169,6 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
         else if (isAppdxNoteComponentProps(this.props)) { return <AppdxNoteComponent {...this.props} /> }
         else if (isAppdxComponentProps(this.props)) { return <AppdxComponent {...this.props} /> }
         else if (isAppdxFormatComponentProps(this.props)) { return <AppdxFormatComponent {...this.props} /> }
-        else if (isSupplNoteComponentProps(this.props)) { throw new NotImplementedError("SupplNote"); }
         else if (isSupplProvisionAppdxTableComponentProps(this.props)) { return <SupplProvisionAppdxTableComponent {...this.props} /> }
         else if (isSupplProvisionAppdxStyleComponentProps(this.props)) { return <SupplProvisionAppdxStyleComponent {...this.props} /> }
         else if (isSupplProvisionAppdxComponentProps(this.props)) { return <SupplProvisionAppdxComponent {...this.props} /> }
@@ -180,9 +178,6 @@ class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
         else { return assertNever(this.props); }
     }
 }
-
-interface SupplNoteComponentProps extends ELComponentProps { el: std.SupplNote, indent: number };
-const isSupplNoteComponentProps = (props: ELComponentProps): props is SupplNoteComponentProps => props.el.tag === "SupplNote"
 
 
 
@@ -1348,11 +1343,6 @@ const ArticleDiv = styled.div`
     padding-top: 1em;
 `;
 
-const ArticleCaptionDiv = styled.div`
-    padding-left: 1em;
-    text-indent: -1em;
-`;
-
 interface ArticleComponentProps extends ELComponentProps { el: std.Article, indent: number };
 
 const isArticleComponentProps = (props: ELComponentProps): props is ArticleComponentProps => props.el.tag === "Article"
@@ -1367,6 +1357,7 @@ class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
         let ArticleCaption: std.ArticleCaption | null = null;
         let ArticleTitle: std.ArticleTitle | null = null;
         const Paragraphs: std.Paragraph[] = [];
+        const SupplNotes: std.SupplNote[] = [];
         for (const child of el.children) {
 
             if (child.tag === "ArticleCaption") {
@@ -1379,7 +1370,7 @@ class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
                 Paragraphs.push(child);
 
             } else if (child.tag === "SupplNote") {
-                throw new NotImplementedError(child.tag);
+                SupplNotes.push(child);
 
             }
             else { assertNever(child); }
@@ -1387,13 +1378,10 @@ class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
 
         if (ArticleCaption) {
             blocks.push(
-                <ArticleCaptionDiv
-                    style={{ marginLeft: `${indent + 1}em` }}
-                    key={ArticleCaption.id}
-                >
+                <div style={{ marginLeft: `${indent + 1}em` }} key={ArticleCaption.id}>
                     <RunComponent els={ArticleCaption.children} />
-                </ArticleCaptionDiv>
-            );
+                </div>
+            ); /* >>>> INDENT >>>> */
         }
 
         for (let i = 0; i < Paragraphs.length; i++) {
@@ -1406,6 +1394,14 @@ class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
                     key={Paragraph.id}
                 />
             );
+        }
+
+        for (const SupplNote of SupplNotes) {
+            blocks.push(
+                <div style={{ marginLeft: `${indent + 2}em` }} key={SupplNote.id}>
+                    <RunComponent els={SupplNote.children} />
+                </div>
+            ); /* >>>> INDENT ++++ INDENT >>>> */
         }
 
         return (
@@ -1423,10 +1419,6 @@ class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
 
 
 
-const ParagraphCaptionDiv = styled.div`
-    padding-left: 1em;
-    text-indent: -1em;
-`;
 
 const ParagraphDiv = styled.div`
     clear: both;
@@ -1485,10 +1477,10 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
 
         if (ParagraphCaption) {
             blocks.push(
-                <ParagraphCaptionDiv style={{ marginLeft: `${indent + 1}em` }} key={ParagraphCaption.id}>
+                <div style={{ marginLeft: `${indent + 1}em` }} key={ParagraphCaption.id}>
                     <RunComponent els={ParagraphCaption.children} />
-                </ParagraphCaptionDiv>
-            );
+                </div>
+            ); /* >>>> INDENT >>>> */
         }
 
         const Title = (
@@ -1842,6 +1834,16 @@ class NoteStyleFormatComponent extends BaseLawComponent<NoteStyleFormatComponent
         for (const child of el.children) {
             if (isString(child)) {
                 throw new NotImplementedError("string");
+
+            } else if (std.isSentence(child)) {
+                blocks.push(
+                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                        <RunComponent els={child.children} />
+                    </div>
+                );
+
+            } else if (std.isParagraph(child)) {
+                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} />);
 
             } else if (std.isItem(child)) {
                 blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} />);
