@@ -1868,6 +1868,9 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
                     } else if (std.isTable(subchild)) {
                         blocks.push(<TableComponent el={subchild} indent={indent} key={subchild.id} />);
 
+                    } else if (std.isFigStruct(subchild)) {
+                        blocks.push(<FigStructComponent el={subchild} indent={indent} key={subchild.id} />);
+
                     } else if (std.isFig(subchild)) {
                         blocks.push(
                             <NoMarginDiv key={subchild.id}>
