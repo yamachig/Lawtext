@@ -1836,6 +1836,59 @@ class TableColumnComponent extends BaseLawComponent<TableColumnComponentProps> {
 
 
 
+interface NoteStyleFormatComponentProps extends ELComponentProps { el: std.Note | std.Style | std.Format, indent: number };
+
+const isNoteStyleFormatComponentProps = (props: ELComponentProps): props is NoteStyleFormatComponentProps => props.el.tag === "Note" || props.el.tag === "Style" || props.el.tag === "Format";
+
+class NoteStyleFormatComponent extends BaseLawComponent<NoteStyleFormatComponentProps> {
+    protected renderNormal() {
+        const el = this.props.el;
+        const indent = this.props.indent;
+
+        const blocks: JSX.Element[] = [];
+
+        for (const child of el.children) {
+            if (isString(child)) {
+                throw new NotImplementedError("string");
+
+            } else if (std.isItem(child)) {
+                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} />);
+
+            } else if (std.isTable(child)) {
+                blocks.push(<TableComponent el={child} indent={indent} key={child.id} />);
+
+            } else if (std.isFigStruct(child)) {
+                blocks.push(<FigStructComponent el={child} indent={indent} key={child.id} />);
+
+            } else if (std.isFig(child)) {
+                blocks.push(
+                    <NoMarginDiv key={child.id}>
+                        <FigRunComponent el={child} />
+                    </NoMarginDiv>
+                );
+
+            } else if (std.isList(child)) {
+                blocks.push(<ListComponent el={child} indent={indent + 2} key={child.id} />); /* >>>> INDENT ++++ INDENT >>>> */
+
+            } else if (std.isStyle(child)) {
+                blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} />);
+
+            } else {
+                throw new NotImplementedError(child.tag);
+
+            }
+        }
+
+        return (
+            <NoMarginDiv>
+                {blocks}
+            </NoMarginDiv>
+        );
+    }
+}
+
+
+
 interface StyleStructComponentProps extends ELComponentProps { el: std.StyleStruct, indent: number };
 
 const isStyleStructComponentProps = (props: ELComponentProps): props is StyleStructComponentProps => props.el.tag === "StyleStruct"
@@ -1857,35 +1910,7 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
                 );
 
             } else if (child.tag === "Style") {
-
-                for (const subchild of child.children) {
-                    if (isString(subchild)) {
-                        throw new NotImplementedError("string");
-
-                    } else if (std.isItem(subchild)) {
-                        blocks.push(<ParagraphItemComponent el={subchild} indent={indent} key={subchild.id} />);
-
-                    } else if (std.isTable(subchild)) {
-                        blocks.push(<TableComponent el={subchild} indent={indent} key={subchild.id} />);
-
-                    } else if (std.isFigStruct(subchild)) {
-                        blocks.push(<FigStructComponent el={subchild} indent={indent} key={subchild.id} />);
-
-                    } else if (std.isFig(subchild)) {
-                        blocks.push(
-                            <NoMarginDiv key={subchild.id}>
-                                <FigRunComponent el={subchild} />
-                            </NoMarginDiv>
-                        );
-
-                    } else if (std.isList(subchild)) {
-                        blocks.push(<ListComponent el={subchild} indent={indent + 2} key={subchild.id} />); /* >>>> INDENT ++++ INDENT >>>> */
-
-                    } else {
-                        throw new NotImplementedError(subchild.tag);
-
-                    }
-                }
+                blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "Remarks") {
                 blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} />);
@@ -1925,29 +1950,7 @@ class FormatStructComponent extends BaseLawComponent<FormatStructComponentProps>
                 );
 
             } else if (child.tag === "Format") {
-
-                for (const subchild of child.children) {
-                    if (isString(subchild)) {
-                        throw new NotImplementedError("string");
-
-                    } else if (std.isTable(subchild)) {
-                        blocks.push(<TableComponent el={subchild} indent={indent} key={subchild.id} />);
-
-                    } else if (std.isFig(subchild)) {
-                        blocks.push(
-                            <NoMarginDiv key={subchild.id}>
-                                <FigRunComponent el={subchild} />
-                            </NoMarginDiv>
-                        );
-
-                    } else if (std.isList(subchild)) {
-                        blocks.push(<ListComponent el={subchild} indent={indent + 2} key={subchild.id} />); /* >>>> INDENT ++++ INDENT >>>> */
-
-                    } else {
-                        throw new NotImplementedError(subchild.tag);
-
-                    }
-                }
+                blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "Remarks") {
                 blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} />);
@@ -1987,29 +1990,7 @@ class NoteStructComponent extends BaseLawComponent<NoteStructComponentProps> {
                 );
 
             } else if (child.tag === "Note") {
-
-                for (const subchild of child.children) {
-                    if (isString(subchild)) {
-                        throw new NotImplementedError("string");
-
-                    } else if (std.isTable(subchild)) {
-                        blocks.push(<TableComponent el={subchild} indent={indent} key={subchild.id} />);
-
-                    } else if (std.isFig(subchild)) {
-                        blocks.push(
-                            <NoMarginDiv key={subchild.id}>
-                                <FigRunComponent el={subchild} />
-                            </NoMarginDiv>
-                        );
-
-                    } else if (std.isList(subchild)) {
-                        blocks.push(<ListComponent el={subchild} indent={indent + 2} key={subchild.id} />); /* >>>> INDENT ++++ INDENT >>>> */
-
-                    } else {
-                        throw new NotImplementedError(subchild.tag);
-
-                    }
-                }
+                blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} />);
 
             } else if (child.tag === "Remarks") {
                 blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} />);
