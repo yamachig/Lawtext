@@ -413,11 +413,10 @@ class TOCComponent extends BaseLawComponent<TOCComponentProps> {
                     </div>
                 );
 
-            } else if (child.tag === "TOCPart" || child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSupplProvision" || child.tag === "TOCArticle" || child.tag === "TOCAppdxTableLabel") {
+            } else if (child.tag === "TOCPart" || child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSupplProvision" || child.tag === "TOCArticle" || child.tag === "TOCAppdxTableLabel" || child.tag === "TOCPreambleLabel") {
                 blocks.push(<TOCItemComponent el={child} indent={indent + 1} key={child.id} />); /* >>>> INDENT >>>> */
 
             }
-            else if (child.tag === "TOCPreambleLabel") { throw new NotImplementedError(child.tag); }
             else { assertNever(child); }
         }
 
@@ -433,10 +432,10 @@ class TOCComponent extends BaseLawComponent<TOCComponentProps> {
 
 
 
-interface TOCItemComponentProps extends ELComponentProps { el: std.TOCPart | std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCSupplProvision | std.TOCArticle | std.TOCAppdxTableLabel, indent: number };
+interface TOCItemComponentProps extends ELComponentProps { el: std.TOCPart | std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCSupplProvision | std.TOCArticle | std.TOCAppdxTableLabel | std.TOCPreambleLabel, indent: number };
 
 const isTOCItemComponentProps = (props: ELComponentProps): props is TOCItemComponentProps => {
-    return props.el.tag === "TOCPart" || props.el.tag === "TOCPart" || props.el.tag === "TOCChapter" || props.el.tag === "TOCSection" || props.el.tag === "TOCSubsection" || props.el.tag === "TOCDivision" || props.el.tag === "TOCSupplProvision" || props.el.tag === "TOCArticle" || props.el.tag === "TOCAppdxTableLabel";
+    return props.el.tag === "TOCPart" || props.el.tag === "TOCPart" || props.el.tag === "TOCChapter" || props.el.tag === "TOCSection" || props.el.tag === "TOCSubsection" || props.el.tag === "TOCDivision" || props.el.tag === "TOCSupplProvision" || props.el.tag === "TOCArticle" || props.el.tag === "TOCAppdxTableLabel" || props.el.tag === "TOCPreambleLabel";
 }
 
 class TOCItemComponent extends BaseLawComponent<TOCItemComponentProps> {
@@ -468,8 +467,15 @@ class TOCItemComponent extends BaseLawComponent<TOCItemComponentProps> {
                 );
             }
 
-        } else if (el.tag === "TOCAppdxTableLabel") {
-            throw new NotImplementedError(el.tag);
+        } else if (el.tag === "TOCPreambleLabel" || el.tag === "TOCAppdxTableLabel") {
+            blocks.push(
+                <div
+                    style={{ marginLeft: `${indent}em` }}
+                    key={el.id}
+                >
+                    <RunComponent els={el.children} />
+                </div>
+            );
 
         } else {
             let TocItemTitle: std.PartTitle | std.ChapterTitle | std.SectionTitle | std.SubsectionTitle | std.DivisionTitle | std.SupplProvisionLabel | null = null;
@@ -935,7 +941,7 @@ class AppdxComponent extends BaseLawComponent<AppdxComponentProps> {
         for (const child of ChildItems) {
             if (child.tag === "ArithFormula") {
                 blocks.push(
-                    <div style={{ marginLeft: `${indent + 1}em` }}>
+                    <div style={{ marginLeft: `${indent + 1}em` }} key={child.id}>
                         <ArithFormulaRunComponent el={child} />
                     </div>
                 ); /* >>>> INDENT >>>> */
