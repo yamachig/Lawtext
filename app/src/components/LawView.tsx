@@ -1575,11 +1575,7 @@ class ListComponent extends BaseLawComponent<ListComponentProps> {
             else { assertNever(child); }
         }
 
-        return (
-            <NoMarginDiv>
-                {blocks}
-            </NoMarginDiv>
-        );
+        return <>{blocks}</>;
     }
 }
 
@@ -1599,9 +1595,9 @@ class TableStructComponent extends BaseLawComponent<TableStructComponentProps> {
 
             if (child.tag === "TableStructTitle") {
                 blocks.push(
-                    <NoMarginDiv key={child.id}>
+                    <div style={{ marginLeft: `${indent}em` }}>
                         <RunComponent els={child.children} />
-                    </NoMarginDiv>
+                    </div>
                 );
 
             } else if (child.tag === "Table") {
@@ -1614,11 +1610,7 @@ class TableStructComponent extends BaseLawComponent<TableStructComponentProps> {
             else { assertNever(child); }
         }
 
-        return (
-            <NoMarginDiv>
-                {blocks}
-            </NoMarginDiv>
-        );
+        return <>{blocks}</>;
     }
 }
 
@@ -1651,13 +1643,13 @@ class TableComponent extends BaseLawComponent<TableComponentProps> {
         }
 
         return (
-            <NoMarginDiv style={{ marginLeft: `${indent}em` }}>
+            <div style={{ marginLeft: `${indent}em` }}>
                 <Table>
                     <tbody>
                         {rows}
                     </tbody>
                 </Table>
-            </NoMarginDiv>
+            </div>
         );
     }
 }
@@ -1857,14 +1849,24 @@ class NoteStyleFormatComponent extends BaseLawComponent<NoteStyleFormatComponent
             } else if (std.isTable(child)) {
                 blocks.push(<TableComponent el={child} indent={indent} key={child.id} />);
 
+            } else if (std.isTableStruct(child)) {
+                blocks.push(<TableStructComponent el={child} indent={indent} key={child.id} />);
+
             } else if (std.isFigStruct(child)) {
                 blocks.push(<FigStructComponent el={child} indent={indent} key={child.id} />);
 
             } else if (std.isFig(child)) {
                 blocks.push(
-                    <NoMarginDiv key={child.id}>
+                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
                         <FigRunComponent el={child} />
-                    </NoMarginDiv>
+                    </div>
+                );
+
+            } else if (std.isArithFormula(child)) {
+                blocks.push(
+                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                        <ArithFormulaRunComponent el={child} />
+                    </div>
                 );
 
             } else if (std.isList(child)) {
@@ -1879,11 +1881,7 @@ class NoteStyleFormatComponent extends BaseLawComponent<NoteStyleFormatComponent
             }
         }
 
-        return (
-            <NoMarginDiv>
-                {blocks}
-            </NoMarginDiv>
-        );
+        return <>{blocks}</>;
     }
 }
 
@@ -1904,9 +1902,9 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
 
             if (child.tag === "StyleStructTitle") {
                 blocks.push(
-                    <NoMarginDiv key={child.id}>
+                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
                         <RunComponent els={child.children} />
-                    </NoMarginDiv>
+                    </div>
                 );
 
             } else if (child.tag === "Style") {
@@ -1919,11 +1917,7 @@ class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
             else { assertNever(child); }
         }
 
-        return (
-            <NoMarginDiv>
-                {blocks}
-            </NoMarginDiv>
-        );
+        return <>{blocks}</>;
     }
 }
 
@@ -1944,9 +1938,9 @@ class FormatStructComponent extends BaseLawComponent<FormatStructComponentProps>
 
             if (child.tag === "FormatStructTitle") {
                 blocks.push(
-                    <NoMarginDiv key={child.id}>
+                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
                         <RunComponent els={child.children} />
-                    </NoMarginDiv>
+                    </div>
                 );
 
             } else if (child.tag === "Format") {
@@ -1959,11 +1953,7 @@ class FormatStructComponent extends BaseLawComponent<FormatStructComponentProps>
             else { assertNever(child); }
         }
 
-        return (
-            <NoMarginDiv>
-                {blocks}
-            </NoMarginDiv>
-        );
+        return <>{blocks}</>;
     }
 }
 
@@ -1984,9 +1974,9 @@ class NoteStructComponent extends BaseLawComponent<NoteStructComponentProps> {
 
             if (child.tag === "NoteStructTitle") {
                 blocks.push(
-                    <NoMarginDiv key={child.id}>
+                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
                         <RunComponent els={child.children} />
-                    </NoMarginDiv>
+                    </div>
                 );
 
             } else if (child.tag === "Note") {
@@ -1999,11 +1989,7 @@ class NoteStructComponent extends BaseLawComponent<NoteStructComponentProps> {
             else { assertNever(child); }
         }
 
-        return (
-            <NoMarginDiv>
-                {blocks}
-            </NoMarginDiv>
-        );
+        return <>{blocks}</>;
     }
 }
 
@@ -2078,16 +2064,16 @@ class FigStructComponent extends BaseLawComponent<FigStructComponentProps> {
 
             if (child.tag === "FigStructTitle") {
                 blocks.push(
-                    <NoMarginDiv key={child.id}>
+                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
                         <RunComponent els={child.children} />
-                    </NoMarginDiv>
+                    </div>
                 );
 
             } else if (child.tag === "Fig") {
                 blocks.push(
-                    <NoMarginDiv key={child.id}>
+                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
                         <FigRunComponent el={child} />
-                    </NoMarginDiv>
+                    </div>
                 );
 
             } else if (child.tag === "Remarks") {
@@ -2097,11 +2083,7 @@ class FigStructComponent extends BaseLawComponent<FigStructComponentProps> {
             else { assertNever(child); }
         }
 
-        return (
-            <NoMarginDiv>
-                {blocks}
-            </NoMarginDiv>
-        );
+        return <>{blocks}</>;
     }
 }
 
@@ -2149,11 +2131,7 @@ class AmendProvisionComponent extends BaseLawComponent<AmendProvisionComponentPr
             else { assertNever(child); }
         }
 
-        return (
-            <NoMarginDiv>
-                {blocks}
-            </NoMarginDiv>
-        );
+        return <>{blocks}</>;
     }
 }
 
