@@ -539,9 +539,11 @@ class AppdxTableComponent extends BaseLawComponent<AppdxTableComponentProps> {
             } else if (child.tag === "RelatedArticleNum") {
                 RelatedArticleNum = child;
 
-            } else {
+            } else if (child.tag === "TableStruct" || child.tag === "Item" || child.tag === "Remarks") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (AppdxTableTitle || RelatedArticleNum) {
@@ -615,9 +617,11 @@ class AppdxStyleComponent extends BaseLawComponent<AppdxStyleComponentProps> {
             } else if (child.tag === "RelatedArticleNum") {
                 RelatedArticleNum = child;
 
-            } else {
+            } else if (child.tag === "StyleStruct" || child.tag === "Remarks") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (AppdxStyleTitle || RelatedArticleNum) {
@@ -691,9 +695,11 @@ class AppdxFormatComponent extends BaseLawComponent<AppdxFormatComponentProps> {
             } else if (child.tag === "RelatedArticleNum") {
                 RelatedArticleNum = child;
 
-            } else {
+            } else if (child.tag === "FormatStruct" || child.tag === "Remarks") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (AppdxFormatTitle || RelatedArticleNum) {
@@ -762,9 +768,11 @@ class AppdxFigComponent extends BaseLawComponent<AppdxFigComponentProps> {
             } else if (child.tag === "RelatedArticleNum") {
                 RelatedArticleNum = child;
 
-            } else {
+            } else if (child.tag === "FigStruct" || child.tag === "TableStruct") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (AppdxFigTitle || RelatedArticleNum) {
@@ -833,9 +841,11 @@ class AppdxNoteComponent extends BaseLawComponent<AppdxNoteComponentProps> {
             } else if (child.tag === "RelatedArticleNum") {
                 RelatedArticleNum = child;
 
-            } else {
+            } else if (child.tag === "NoteStruct" || child.tag === "FigStruct" || child.tag === "TableStruct" || child.tag === "Remarks") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (AppdxNoteTitle || RelatedArticleNum) {
@@ -912,9 +922,11 @@ class AppdxComponent extends BaseLawComponent<AppdxComponentProps> {
             } else if (child.tag === "RelatedArticleNum") {
                 RelatedArticleNum = child;
 
-            } else {
+            } else if (child.tag === "ArithFormula" || child.tag === "Remarks") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (ArithFormulaNum || RelatedArticleNum) {
@@ -987,9 +999,11 @@ class SupplProvisionAppdxTableComponent extends BaseLawComponent<SupplProvisionA
             } else if (child.tag === "RelatedArticleNum") {
                 RelatedArticleNum = child;
 
-            } else {
+            } else if (child.tag === "TableStruct") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (SupplProvisionAppdxTableTitle || RelatedArticleNum) {
@@ -1061,9 +1075,11 @@ class SupplProvisionAppdxStyleComponent extends BaseLawComponent<SupplProvisionA
             } else if (child.tag === "RelatedArticleNum") {
                 RelatedArticleNum = child;
 
-            } else {
+            } else if (child.tag === "StyleStruct") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (SupplProvisionAppdxStyleTitle || RelatedArticleNum) {
@@ -1135,9 +1151,11 @@ class SupplProvisionAppdxComponent extends BaseLawComponent<SupplProvisionAppdxC
             } else if (child.tag === "RelatedArticleNum") {
                 RelatedArticleNum = child;
 
-            } else {
+            } else if (child.tag === "ArithFormula") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (ArithFormulaNum || RelatedArticleNum) {
@@ -1189,9 +1207,11 @@ class SupplProvisionComponent extends BaseLawComponent<SupplProvisionComponentPr
             if (child.tag === "SupplProvisionLabel") {
                 SupplProvisionLabel = child;
 
-            } else {
+            } else if (child.tag === "Chapter" || child.tag === "Article" || child.tag === "Paragraph" || child.tag === "SupplProvisionAppdxTable" || child.tag === "SupplProvisionAppdxStyle" || child.tag === "SupplProvisionAppdx") {
                 ChildItems.push(child);
+
             }
+            else { assertNever(child); }
         }
 
         if (SupplProvisionLabel) {
@@ -1260,9 +1280,10 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
             if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle") {
                 ArticleGroupTitle = child;
 
-            } else {
+            } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division" || child.tag === "Article" || child.tag === "Paragraph") {
                 ChildItems.push(child);
             }
+            else { assertNever(child); }
         }
 
         if (ArticleGroupTitle) {
@@ -1276,9 +1297,11 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
             } else if (child.tag === "Paragraph") {
                 blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} />);
 
-            } else {
+            } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
                 blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} />);
+
             }
+            else { assertNever(child); }
         }
 
         return (
@@ -1665,9 +1688,10 @@ class RemarksComponent extends BaseLawComponent<RemarksComponentProps> {
             if (child.tag === "RemarksLabel") {
                 RemarksLabel = child;
 
-            } else {
+            } else if (child.tag === "Item" || child.tag === "Sentence") {
                 ChildItems.push(child);
-            }
+
+            } else { assertNever(child); }
         }
 
         for (let i = 0; i < ChildItems.length; i++) {
