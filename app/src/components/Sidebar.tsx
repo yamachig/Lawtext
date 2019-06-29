@@ -4,6 +4,7 @@ import * as std from "../../../core/src/std_law"
 import { assertNever } from "../../../core/src/util"
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
 import { LawtextAppPageState, RouteState } from '../states';
+import { inspect } from "util";
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
@@ -356,7 +357,7 @@ class SidebarBody extends React.Component<Props> {
         const list: JSX.Element[] = [];
 
         for (const el of articleGroup.children) {
-            if (el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
+            if (el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle" || el.tag as any === "AppdxStyleTitle") {
 
                 const onClick = () => {
                     this.props.scrollLaw(articleGroup.id.toString());
@@ -377,6 +378,10 @@ class SidebarBody extends React.Component<Props> {
 
             } else if (el.tag === "Part" || el.tag === "Chapter" || el.tag === "Section" || el.tag === "Subsection" || el.tag === "Division" || el.tag === "Article" || el.tag === "Paragraph") {
                 //
+
+            } else if (std.isAppdxStyle(el)) {
+                console.error(`unexpected AppdxStyle! ${inspect(el)}`);
+
             } else {
                 assertNever(el);
             }
@@ -391,6 +396,11 @@ class SidebarBody extends React.Component<Props> {
 
             } else if (el.tag === "Paragraph" || el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
                 //
+
+            } else if (std.isAppdxStyle(el)) {
+                console.error(`unexpected AppdxStyle! ${inspect(el)}`);
+                list.push(...this.processAppdxStyle(el, indent));
+
             } else {
                 assertNever(el);
             }

@@ -3,7 +3,7 @@ import * as React from "react";
 import AnimateHeight from 'react-animate-height';
 import EventListener from 'react-event-listener';
 import styled, { createGlobalStyle } from 'styled-components';
-import { isString } from "util";
+import { isString, inspect } from "util";
 import * as analyzer from "../../../core/src/analyzer";
 import * as std from "../../../core/src/std_law"
 import { assertNever, EL, NotImplementedError } from "../../../core/src/util"
@@ -1282,8 +1282,12 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
 
             } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division" || child.tag === "Article" || child.tag === "Paragraph") {
                 ChildItems.push(child);
-            }
-            else { assertNever(child); }
+
+            } else if (std.isAppdxStyle(child)) {
+                console.error(`unexpected AppdxStyle! ${inspect(child)}`);
+                ChildItems.push(child);
+
+            } else { assertNever(child); }
         }
 
         if (ArticleGroupTitle) {
@@ -1300,8 +1304,11 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
             } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
                 blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} />);
 
-            }
-            else { assertNever(child); }
+            } else if (std.isAppdxStyle(child)) {
+                console.error(`unexpected AppdxStyle! ${inspect(child)}`);
+                blocks.push(<AppdxStyleComponent el={child} indent={indent} key={(child as any).id} />);
+
+            } else { assertNever(child); }
         }
 
         return (

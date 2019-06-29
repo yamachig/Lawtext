@@ -268,24 +268,9 @@ export const searchLaw = async (
 export const containerInfoOf = (el: util.EL | string) => {
     if (isString(el)) {
         return { tag: "", id: "" };
-    } else if (std.isTOC(el)) {
-        return { tag: el.tag, id: el.children.find(c => c.tag === "TOCLabel")!.text };
-    } else if (std.isAppdxTable(el)) {
-        return { tag: el.tag, id: el.children.find(c => c.tag === "AppdxTableTitle")!.text };
-    } else if (std.isAppdxStyle(el)) {
-        return { tag: el.tag, id: el.children.find(c => c.tag === "AppdxStyleTitle")!.text };
-    } else if (std.isAppdxFig(el)) {
-        return { tag: el.tag, id: el.children.find(c => c.tag === "AppdxFigTitle")!.text };
-    } else if (std.isSupplProvision(el)) {
-        return { tag: el.tag, id: el.attr.AmendLawNum as string };
-    } else if (std.isMainProvision(el)) {
-        return { tag: el.tag, id: "" };
-    } else if (std.isArticle(el)) {
-        return { tag: el.tag, id: el.children.find(c => c.tag === "ArticleTitle")!.text };
-    } else if (std.isParagraph(el)) {
-        return { tag: el.tag, id: el.children.find(c => c.tag === "ParagraphNum")!.text };
+    } else {
+        return { tag: el.tag, id: el.id };
     }
-    else { return { tag: el.tag, id: "" }; }
 }
 
 const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
