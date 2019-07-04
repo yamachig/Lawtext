@@ -1,10 +1,10 @@
 import * as React from "react";
 import styled from 'styled-components';
 import * as std from "../../../core/src/std_law"
-import { assertNever } from "../../../core/src/util"
+import { assertNever, EL } from "../../../core/src/util"
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
 import { LawtextAppPageState, RouteState } from '../states';
-import { inspect } from "util";
+import { inspect, isString } from "util";
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
@@ -376,14 +376,6 @@ class SidebarBody extends React.Component<Props> {
                     </TOCItemDiv>
                 );
 
-            } else if (el.tag === "Part" || el.tag === "Chapter" || el.tag === "Section" || el.tag === "Subsection" || el.tag === "Division" || el.tag === "Article" || el.tag === "Paragraph") {
-                //
-
-            } else if (std.isAppdxStyle(el)) {
-                console.error(`unexpected AppdxStyle! ${inspect(el)}`);
-
-            } else {
-                assertNever(el);
             }
         }
 
@@ -397,12 +389,10 @@ class SidebarBody extends React.Component<Props> {
             } else if (el.tag === "Paragraph" || el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
                 //
 
-            } else if (std.isAppdxStyle(el)) {
-                console.error(`unexpected AppdxStyle! ${inspect(el)}`);
-                list.push(...this.processAppdxStyle(el, indent));
-
             } else {
-                assertNever(el);
+                console.error(`unexpected element! ${inspect(el)}`);
+                list.push(...this.processAnyLaw(el, indent));
+
             }
         }
 
@@ -643,6 +633,32 @@ class SidebarBody extends React.Component<Props> {
             );
         }
         return null;
+    }
+
+    protected processAnyLaw(el: EL, indent: number) {
+        const list: JSX.Element[] = [];
+
+        const titleEL = el.children.find(c => !isString(c) && c.tag.includes("Title")) as EL | undefined || el;
+
+        if (titleEL) {
+            const onClick = () => {
+                this.props.scrollLaw(el.id.toString());
+            }
+            list.push(
+                <TOCItemDiv
+                    key={el.id}
+                    style={{
+                        paddingLeft: (indent + 2) + "em",
+                    }}
+                    onClick={onClick}
+                    title={titleEL.text}
+                >
+                    {titleEL.text}
+                </TOCItemDiv>
+            );
+        }
+
+        return list;
     }
 }
 

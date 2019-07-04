@@ -1280,14 +1280,10 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
             if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle") {
                 ArticleGroupTitle = child;
 
-            } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division" || child.tag === "Article" || child.tag === "Paragraph") {
+            } else  {
                 ChildItems.push(child);
 
-            } else if (std.isAppdxStyle(child)) {
-                console.error(`unexpected AppdxStyle! ${inspect(child)}`);
-                ChildItems.push(child);
-
-            } else { assertNever(child); }
+            }
         }
 
         if (ArticleGroupTitle) {
@@ -1304,11 +1300,11 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
             } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
                 blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} />);
 
-            } else if (std.isAppdxStyle(child)) {
-                console.error(`unexpected AppdxStyle! ${inspect(child)}`);
-                blocks.push(<AppdxStyleComponent el={child} indent={indent} key={(child as any).id} />);
+            } else {
+                console.error(`unexpected element! ${inspect(child)}`);
+                blocks.push(<AnyLawComponent el={child} indent={indent} key={(child as any).id} />);
 
-            } else { assertNever(child); }
+            }
         }
 
         return (
