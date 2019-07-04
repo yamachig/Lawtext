@@ -1280,7 +1280,7 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
             if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle") {
                 ArticleGroupTitle = child;
 
-            } else  {
+            } else {
                 ChildItems.push(child);
 
             }
@@ -1481,6 +1481,10 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
 
             if (child.tag === "ParagraphCaption") {
                 ParagraphCaption = child;
+
+            } else if (std.isArticleCaption(child)) {
+                console.error(`unexpected element! ${inspect(child)}`);
+                ParagraphCaption = child as any;
 
             } else if (child.tag === "ParagraphNum" || child.tag === "ItemTitle" || child.tag ===
                 "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
