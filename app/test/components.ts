@@ -8,6 +8,7 @@ import { Dispatchers, mapDispatchToProps } from '../src/containers/LawtextAppPag
 import * as states from '../src/states';
 import store from '../src/store';
 import { getLawList, getLawXml } from "./prepare_test";
+import { analyze } from "../../core/src/analyzer";
 
 
 
@@ -47,6 +48,7 @@ export const makeDummyProps = (lawtextAppPageState: Partial<states.LawtextAppPag
             const origXML = await getLawXml(lawNum);
 
             const origEL = util.xmlToJson(origXML);
+            analyze(origEL);
 
             const lawView = new LawView(makeDummyProps({ law: origEL as std.Law }));
 

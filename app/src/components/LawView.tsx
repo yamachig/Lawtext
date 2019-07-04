@@ -1502,11 +1502,10 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
                 "Subitem9Sentence" || child.tag === "Subitem10Sentence") {
                 ParagraphItemSentence = child;
 
-            } else if (child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10" || child.tag === "AmendProvision" || child.tag === "Class" || child.tag === "TableStruct" || child.tag === "FigStruct" || child.tag === "StyleStruct" || child.tag === "List") {
+            } else {
                 Children.push(child);
 
             }
-            else { assertNever(child); }
         }
 
         if (ParagraphCaption) {
@@ -1556,8 +1555,10 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
             } else if (child.tag === "Class") {
                 throw new NotImplementedError(child.tag);
 
+            } else {
+                blocks.push(<AnyLawComponent el={child} indent={indent} key={(child as any).id} />);
+
             }
-            else { assertNever(child); }
         }
 
         if (el.tag === "Paragraph") {
@@ -1622,7 +1623,7 @@ class TableStructComponent extends BaseLawComponent<TableStructComponentProps> {
             if (child.tag === "TableStructTitle") {
                 blocks.push(
                     <div style={{ marginLeft: `${indent}em` }}>
-                        <RunComponent els={child.children} />
+                        <RunComponent els={child.children} key={child.id} />
                     </div>
                 );
 
@@ -1866,9 +1867,9 @@ class NoteStyleFormatComponent extends BaseLawComponent<NoteStyleFormatComponent
 
         const blocks: JSX.Element[] = [];
 
-        for (const child of el.children) {
-            if (isString(child)) {
-                throw new NotImplementedError("string");
+        for (const [i, child] of el.children.entries()) {
+            if (isString(child) || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
+                blocks.push(<RunComponent els={[child]} key={isString(child) ? i : child.id} />);
 
             } else if (std.isSentence(child)) {
                 blocks.push(
