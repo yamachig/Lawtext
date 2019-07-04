@@ -2069,7 +2069,7 @@ class ArithFormulaRunComponent extends BaseLawComponent<ArithFormulaRunComponent
                 blocks.push(<RemarksComponent el={child} indent={0} key={child.id} />);
 
             } else {
-                throw new NotImplementedError(child.tag);
+                blocks.push(<AnyLawComponent el={child as any} indent={0} key={child.id} />);
 
             }
         }
