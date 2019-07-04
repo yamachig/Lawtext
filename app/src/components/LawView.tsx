@@ -1395,6 +1395,10 @@ class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
             } else if (child.tag === "Paragraph") {
                 Paragraphs.push(child);
 
+            } else if (std.isItem(child)) {
+                console.error(`unexpected element! ${inspect(child)}`);
+                Paragraphs.push(child as any);
+
             } else if (child.tag === "SupplNote") {
                 SupplNotes.push(child);
 
