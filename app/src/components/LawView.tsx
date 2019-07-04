@@ -2037,12 +2037,8 @@ class ArithFormulaRunComponent extends BaseLawComponent<ArithFormulaRunComponent
         const blocks: JSX.Element[] = [];
 
         for (const [i, child] of el.children.entries()) {
-            if (isString(child)) {
-                blocks.push(
-                    <NoMarginDiv key={i}>
-                        {child}
-                    </NoMarginDiv>
-                );
+            if (isString(child) || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
+                blocks.push(<RunComponent els={[child]} key={isString(child) ? i : child.id} />);
 
             } else if (std.isFigStruct(child)) {
                 blocks.push(<FigStructComponent el={child} indent={0} key={child.id} />);
@@ -2279,7 +2275,7 @@ class RunComponent extends BaseLawComponent<RunComponentProps> {
                 runs.push(<span key={i}>{el.outerXML()}</span>);
 
             } else if (std.isArithFormula(el)) {
-                runs.push(<ArithFormulaRunComponent el={el} />);
+                runs.push(<ArithFormulaRunComponent el={el} key={i} />);
 
             } else if (std.isLine(el)) {
                 throw new NotImplementedError(el.tag);
