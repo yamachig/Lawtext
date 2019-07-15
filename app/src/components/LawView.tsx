@@ -1563,18 +1563,19 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
 
         if (el.tag === "Paragraph") {
             if (ArticleTitle) {
-                return <ParagraphDiv>{blocks}</ParagraphDiv>;
+                return <ParagraphDiv className={`paragraph-item-${el.tag}`}>{blocks}</ParagraphDiv>;
             } else {
                 return (
                     <ParagraphDiv
                         data-container_info={JSON.stringify(containerInfoOf(el))}
+                        className={`paragraph-item-${el.tag}`}
                     >
                         {blocks}
                     </ParagraphDiv>
                 );
             }
         } else {
-            return <ItemDiv>{blocks}</ItemDiv>;
+            return <ItemDiv className={`paragraph-item-${el.tag}`}>{blocks}</ItemDiv>;
         }
     }
 }
