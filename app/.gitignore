@@ -22,5 +22,6 @@ dist
 dist-dev
 dist-prod
 dist-test
+dist-bin
 test/lawdata
 mochawesome-report

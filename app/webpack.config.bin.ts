@@ -22,10 +22,10 @@ class WatchMessagePlugin {
 
 export default (env, argv) => ({
     target: "node",
-    entry: ["./test/setup.ts", "./test/components.ts"],
+    entry: ["./bin/index.ts"],
     output: {
-        filename: "bundle.js",
-        path: path.resolve(__dirname, "dist-test"),
+        filename: "index.js",
+        path: path.resolve(__dirname, "dist-bin"),
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],
@@ -80,10 +80,10 @@ export default (env, argv) => ({
             filename: "[name].css",
             chunkFilename: "[id].css",
         }),
-        new HtmlWebPackPlugin({
-            template: "./src/index.html",
-            filename: "index.html",
-        }),
+        // new HtmlWebPackPlugin({
+        //     template: "./src/index.html",
+        //     filename: "index.html",
+        // }),
         new CircularDependencyPlugin({
             exclude: /node_modules/,
             failOnError: true,

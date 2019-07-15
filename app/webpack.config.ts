@@ -92,6 +92,7 @@ export default (env, argv) => ({
             /dist-dev/,
             /dist-prod/,
             /dist-test/,
+            /dist-bin/,
         ],
     },
 

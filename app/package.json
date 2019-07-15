@@ -19,6 +19,7 @@
         "build": "npx webpack --mode development --colors --config ./webpack.config.ts",
         "build:prod": "npx webpack --mode production --colors --config ./webpack.config.ts",
         "build:test": "npx webpack --mode development --colors --config ./webpack.config.test.ts",
+        "build:bin": "npx webpack --mode development --colors --config ./webpack.config.bin.ts",
         "serve": "npx serve dist-dev -n -S",
         "serve:prod": "npx serve dist-prod -n -S",
         "test": "npm run build:test && mocha --delay --timeout 60000 --reporter mochawesome ./dist-test/bundle.js & start ./mochawesome-report/mochawesome.html",
@@ -42,6 +43,7 @@
         "@types/styled-components": "",
         "@types/webpack": "",
         "@types/xmldom": "",
+        "@types/yargs": "",
         "autoprefixer": "",
         "bootstrap": "",
         "chai": "",
@@ -89,6 +91,7 @@
         "webpack-dev-server": "",
         "webpack-node-externals": "",
         "whatwg-fetch": "",
-        "xmldom": ""
+        "xmldom": "",
+        "yargs": ""
     }
 }

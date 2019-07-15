@@ -3,7 +3,7 @@ import * as React from "react";
 import AnimateHeight from 'react-animate-height';
 import EventListener from 'react-event-listener';
 import styled, { createGlobalStyle } from 'styled-components';
-import { isString, inspect } from "util";
+import { inspect, isString } from "util";
 import * as analyzer from "../../../core/src/analyzer";
 import * as std from "../../../core/src/std_law"
 import { assertNever, EL, NotImplementedError } from "../../../core/src/util"
@@ -2248,46 +2248,49 @@ class RunComponent extends BaseLawComponent<RunComponentProps> {
 
 
         for (let i = 0; i < els.length; i++) {
-            const el = els[i];
+            const _el = els[i];
 
-            if (isString(el)) {
-                runs.push(<span key={i}>{el}</span>);
+            if (typeof _el === "string" || _el instanceof String) {
+                runs.push(<span key={i}>{_el}</span>);
 
-            } else if (el.isControl) {
-                runs.push(<ControlRunComponent el={el} key={i} />);
+            } else if (_el.isControl) {
+                runs.push(<ControlRunComponent el={_el} key={i} />);
 
-            } else if (std.isRuby(el)) {
-                const rb = el.children
-                    .map(c =>
-                        isString(c)
-                            ? c
-                            : !std.isRt(c)
-                                ? c.text
-                                : ""
-                    ).join("");
-                const rt = (el.children
-                    .filter(c => !isString(c) && std.isRt(c)) as std.Rt[])
-                    .map(c => c.text)
-                    .join("");
-                runs.push(<ruby key={i}>{rb}<rt>{rt}</rt></ruby>);
+            } else {
+                const el: std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub = _el;
+                if (el.tag === "Ruby") {
+                    const rb = el.children
+                        .map(c =>
+                            isString(c)
+                                ? c
+                                : !std.isRt(c)
+                                    ? c.text
+                                    : ""
+                        ).join("");
+                    const rt = (el.children
+                        .filter(c => !isString(c) && std.isRt(c)) as std.Rt[])
+                        .map(c => c.text)
+                        .join("");
+                    runs.push(<ruby key={i}>{rb}<rt>{rt}</rt></ruby>);
 
-            } else if (std.isSub(el)) {
-                runs.push(<sub key={i}>{el.text}</sub>);
+                } else if (el.tag === "Sub") {
+                    runs.push(<sub key={i}>{el.text}</sub>);
 
-            } else if (std.isSup(el)) {
-                runs.push(<sup key={i}>{el.text}</sup>);
+                } else if (el.tag === "Sup") {
+                    runs.push(<sup key={i}>{el.text}</sup>);
 
-            } else if (std.isQuoteStruct(el)) {
-                runs.push(<span key={i}>{el.outerXML()}</span>);
+                } else if (el.tag === "QuoteStruct") {
+                    runs.push(<span key={i}>{el.outerXML()}</span>);
 
-            } else if (std.isArithFormula(el)) {
-                runs.push(<ArithFormulaRunComponent el={el} key={i} />);
+                } else if (el.tag === "ArithFormula") {
+                    runs.push(<ArithFormulaRunComponent el={el} key={i} />);
 
-            } else if (std.isLine(el)) {
-                throw new NotImplementedError(el.tag);
+                } else if (el.tag === "Line") {
+                    throw new NotImplementedError(el.tag);
 
+                }
+                else { assertNever(el); }
             }
-            else { assertNever(el); }
         }
 
         return <span style={style}>{runs}</span>;
@@ -2297,10 +2300,10 @@ class RunComponent extends BaseLawComponent<RunComponentProps> {
 
 type InlineEL = string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub;
 const isInlineEL = (obj: string | EL): obj is InlineEL => {
-    return isString(obj) || obj.tag === "Line" || obj.tag === "QuoteStruct" || obj.tag === "Ruby" || obj.tag === "Sup" || obj.tag === "Sub";
+    return (typeof obj === "string" || obj instanceof String) || obj.tag === "Line" || obj.tag === "QuoteStruct" || obj.tag === "Ruby" || obj.tag === "Sup" || obj.tag === "Sub";
 }
 const isControl = (obj: string | EL): obj is std.__EL => {
-    return !isString(obj) && obj.isControl;
+    return !(typeof obj === "string" || obj instanceof String) && obj.isControl;
 }
 
 const getInnerRun = (el: EL) => {
@@ -2749,7 +2752,7 @@ class __ParenthesesComponent extends BaseLawComponent<__ParenthesesComponentProp
 
         for (const child of el.children) {
 
-            if (isString(child)) {
+            if (typeof child === "string" || child instanceof String) {
                 throw new NotImplementedError("string");
 
             } else if (child.tag === "__PStart") {
@@ -2840,6 +2843,7 @@ class __PEndComponent extends BaseLawComponent<__PEndComponentProps> {
 
 
 const MismatchStartParenthesisSpan = styled.span`
+    color: red;
 `;
 
 interface __MismatchStartParenthesisComponentProps extends ELComponentProps { el: std.__EL };
@@ -2857,6 +2861,7 @@ class __MismatchStartParenthesisComponent extends BaseLawComponent<__MismatchSta
 
 
 const MismatchEndParenthesisSpan = styled.span`
+    color: red;
 `;
 
 interface __MismatchEndParenthesisComponentProps extends ELComponentProps { el: std.__EL };

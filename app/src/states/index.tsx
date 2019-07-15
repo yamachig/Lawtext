@@ -190,6 +190,9 @@ export const loadLawText = async (
 ) => {
     let law: std.Law | null = null;
     let analysis: analyzer.Analysis | null = null;
+    let begin: number;
+
+    begin = Date.now();
     try {
         if (/^(?:<\?xml|<Law)/.test(text.trim())) {
             dispatch(LawtextAppPageActions.modifyState({ loadingLawMessage: "法令XMLをパースしています..." }));
@@ -223,6 +226,8 @@ export const loadLawText = async (
         );
         law = null;
     }
+    console.log(`loadLawText: Parse end: ${Date.now() - begin}ms`);
+
     const newState: Partial<LawtextAppPageState> = {};
     if (law) {
         newState.law = law;
@@ -236,7 +241,9 @@ export const loadLawText = async (
     dispatch(LawtextAppPageActions.modifyState({ loadingLawMessage: "レンダリングしています..." }));
     console.log("loadLawText: Setting Law into State");
     await util.wait(30);
+    begin = Date.now();
     dispatch(LawtextAppPageActions.modifyState(newState));
+    console.log(`loadLawText: Render end: ${Date.now() - begin}ms`);
     return law;
 }
 
