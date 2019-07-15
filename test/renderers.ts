@@ -243,7 +243,7 @@ it("Render and Parse Lawtext", async () => {
     const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
     const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);
     const tempParsedXml = path.join(tempDir, `${lawNum}.parsed.xml`);
-    await promisify(fsExtra.ensureDir)(tempDir);
+    await promisify(fsExtra.ensureDir)(tempDir, undefined);
 
     const origDOM = domParser.parseFromString(origXML);
     await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });

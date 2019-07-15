@@ -108,7 +108,7 @@ export const download = async <
 
     for (const filename of filenames) {
         try {
-            const response = await fetch(`http://elaws.e-gov.go.jp/download/${filename}`, {
+            const response = await fetch(`https://elaws.e-gov.go.jp/download/${filename}`, {
                 mode: "cors",
             });
             const zipData = await response.arrayBuffer();
