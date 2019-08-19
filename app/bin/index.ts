@@ -72,9 +72,7 @@ const argv = yargs
         ),
 
         _argv => {
-            for (const i of util.range(0, 50)) {
-                render(_argv.lawnum);
-            }
+            render(_argv.lawnum);
         },
 
     )
