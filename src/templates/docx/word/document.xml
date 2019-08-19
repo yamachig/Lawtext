@@ -207,7 +207,7 @@
   {%- if el.tag == 'ArticleCaption' %}
 <w:p>
   <w:pPr>
-    <w:pStyle w:val="IndentHanging{{ 1 }}"/>
+    <w:pStyle w:val="Indent{{ 1 }}"/>
   </w:pPr>
   {{- m_run(el) -}}
 </w:p>
@@ -295,7 +295,7 @@
         {%- endfor -%}
       {%- endif -%}
       {%- if el.children | length -%}
-        {{- m_run(el, 1) -}}
+        {{- m_run(el, 0) -}}
       {%- endif %}
       {%- if not context.get('no_title') -%}
       <w:r>

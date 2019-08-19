@@ -41,7 +41,7 @@
     <w:qFormat/>
     <w:pPr>
       <w:widowControl w:val="0"/>
-      <w:jc w:val="start"/>
+      <w:jc w:val="both"/>
       <w:autoSpaceDE w:val="0"/>
       <w:autoSpaceDN w:val="0"/>
     </w:pPr>
