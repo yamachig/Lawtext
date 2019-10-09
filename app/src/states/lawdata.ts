@@ -208,8 +208,18 @@ const getLawnumLocal = async (lawSearchKey: string): Promise<string | null> => {
     await ensureList();
 
     console.log(`started ${new Date().toISOString()}`);
+    let partMatchMode = false;
     const bestMatch = { score: Infinity, info: null as LawListInfo | null };
     for (const info of list) {
+        if (info.LawTitle.includes(lawSearchKey)) {
+            if (!partMatchMode) {
+                partMatchMode = true;
+                bestMatch.score = Infinity;
+                bestMatch.info = null;
+            }
+        } else {
+            if (partMatchMode) continue;
+        }
         const score = levenshtein(info.LawTitle.replace(/　抄$/, ""), lawSearchKey);
         if (score < bestMatch.score) {
             bestMatch.score = score;
