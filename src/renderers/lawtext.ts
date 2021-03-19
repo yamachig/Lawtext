@@ -1,4 +1,3 @@
-import { isString } from "util";
 import * as std from "../std_law";
 import { assertNever, EL, NotImplementedError } from "../util";
 
@@ -1207,7 +1206,7 @@ const renderStyle = (el: std.Style, indent: number): string => {
     const blocks: string[] = [];
 
     for (const child of el.children) {
-        if (isString(child)) {
+        if (typeof child === "string") {
             blocks.push(
  /* ========================= */`\
 ${_____}${renderRun([child])}
@@ -1287,7 +1286,7 @@ ${_____}:format-struct-title:${renderRun(child.children)}
         } else if (child.tag === "Format") {
 
             for (const subchild of child.children) {
-                if (isString(subchild)) {
+                if (typeof subchild === "string") {
                     throw new NotImplementedError("string");
 
                 } else if (std.isFig(subchild)) {
@@ -1389,7 +1388,7 @@ ${_____}:note-struct-title:${renderRun(child.children)}
         } else if (child.tag === "Note") {
 
             for (const subchild of child.children) {
-                if (isString(subchild)) {
+                if (typeof subchild === "string") {
                     throw new NotImplementedError("string");
 
                 } else if (std.isParagraph(subchild) || std.isItem(subchild)) {

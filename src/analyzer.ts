@@ -1,7 +1,6 @@
 "use strict";
 
 import * as sha512 from "hash.js/lib/hash/sha/512";
-import { isString } from "util";
 import { LAWNUM_TABLE } from "./lawnum_table";
 import * as parser from "./parser";
 import * as util from "./util";
@@ -109,7 +108,7 @@ const extractSpans = (law: EL): [Span[], Container[], Container] => {
 
             const startSpanIndex = spans.length;
             for (const subel of el.children) {
-                if (isString(subel)) continue;
+                if (typeof subel === "string") continue;
                 extract(subel, env);
             }
             const endSpanIndex = spans.length; // half open

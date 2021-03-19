@@ -8,7 +8,10 @@ import { getLawData, getLawNameList, LawInfo, LawInfos, LawNameListInfo, LawData
 
 let called = false;
 
-const lawdataPath = path.join(__dirname, "lawdata");
+let lawdataPath = path.join(__dirname, "lawdata");
+export const setLawdataPath = (p: string) => {
+    lawdataPath = p;
+}
 
 export const prepare = async () => {
     if (called) return;

@@ -2,7 +2,6 @@
 
 import * as JSZip from "jszip";
 import * as nunjucks from "nunjucks";
-import { isString } from "util";
 import { nunjucksPrecompiled } from "./templates";
 import { JsonEL } from "./util";
 
@@ -14,7 +13,7 @@ const restructureTable = (table: JsonEL): JsonEL => {
     const rowspanState = {};
     const colspanValue = {};
     for (const row of table.children) {
-        if (isString(row)) continue;
+        if (typeof row === "string") continue;
         if (row.tag !== "TableRow") {
             newTableChildren.push(row);
             continue;
