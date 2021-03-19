@@ -4,7 +4,6 @@ import * as std from "../../../core/src/std_law"
 import { assertNever, EL } from "../../../core/src/util"
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
 import { LawtextAppPageState, RouteState } from '../states';
-import { inspect, isString } from "util";
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
@@ -390,7 +389,7 @@ class SidebarBody extends React.Component<Props> {
                 //
 
             } else {
-                console.error(`unexpected element! ${inspect(el)}`);
+                console.error(`unexpected element! ${JSON.stringify(el, undefined, 2)}`);
                 list.push(...this.processAnyLaw(el, indent));
 
             }
@@ -638,7 +637,7 @@ class SidebarBody extends React.Component<Props> {
     protected processAnyLaw(el: EL, indent: number) {
         const list: JSX.Element[] = [];
 
-        const titleEL = el.children.find(c => !isString(c) && c.tag.includes("Title")) as EL | undefined || el;
+        const titleEL = el.children.find(c => typeof c !== "string" && c.tag.includes("Title")) as EL | undefined || el;
 
         if (titleEL) {
             const onClick = () => {

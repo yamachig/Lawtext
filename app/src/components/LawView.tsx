@@ -1,9 +1,7 @@
 import * as $ from "jquery";
 import * as React from "react";
 import AnimateHeight from 'react-animate-height';
-import EventListener from 'react-event-listener';
 import styled, { createGlobalStyle } from 'styled-components';
-import { inspect, isString } from "util";
 import * as analyzer from "../../../core/src/analyzer";
 import * as std from "../../../core/src/std_law"
 import { assertNever, EL, NotImplementedError } from "../../../core/src/util"
@@ -1301,7 +1299,7 @@ class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps>
                 blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} />);
 
             } else {
-                console.error(`unexpected element! ${inspect(child)}`);
+                console.error(`unexpected element! ${JSON.stringify(child, undefined, 2)}`);
                 blocks.push(<AnyLawComponent el={child} indent={indent} key={(child as any).id} />);
 
             }
@@ -1396,7 +1394,7 @@ class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
                 Paragraphs.push(child);
 
             } else if (std.isItem(child)) {
-                console.error(`unexpected element! ${inspect(child)}`);
+                console.error(`unexpected element! ${JSON.stringify(child, undefined, 2)}`);
                 Paragraphs.push(child as any);
 
             } else if (child.tag === "SupplNote") {
@@ -1487,7 +1485,7 @@ class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProp
                 ParagraphCaption = child;
 
             } else if (std.isArticleCaption(child)) {
-                console.error(`unexpected element! ${inspect(child)}`);
+                console.error(`unexpected element! ${JSON.stringify(child, undefined, 2)}`);
                 ParagraphCaption = child as any;
 
             } else if (child.tag === "ParagraphNum" || child.tag === "ItemTitle" || child.tag ===
@@ -1869,8 +1867,8 @@ class NoteStyleFormatComponent extends BaseLawComponent<NoteStyleFormatComponent
         const blocks: JSX.Element[] = [];
 
         for (const [i, child] of el.children.entries()) {
-            if (isString(child) || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
-                blocks.push(<RunComponent els={[child]} key={isString(child) ? i : child.id} />);
+            if ((typeof child === "string") || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
+                blocks.push(<RunComponent els={[child]} key={(typeof child === "string") ? i : child.id} />);
 
             } else if (std.isSentence(child)) {
                 blocks.push(
@@ -2043,8 +2041,8 @@ class ArithFormulaRunComponent extends BaseLawComponent<ArithFormulaRunComponent
         const blocks: JSX.Element[] = [];
 
         for (const [i, child] of el.children.entries()) {
-            if (isString(child) || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
-                blocks.push(<RunComponent els={[child]} key={isString(child) ? i : child.id} />);
+            if ((typeof child === "string") || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
+                blocks.push(<RunComponent els={[child]} key={(typeof child === "string") ? i : child.id} />);
 
             } else if (std.isFigStruct(child)) {
                 blocks.push(<FigStructComponent el={child} indent={0} key={child.id} />);
@@ -2261,14 +2259,14 @@ class RunComponent extends BaseLawComponent<RunComponentProps> {
                 if (el.tag === "Ruby") {
                     const rb = el.children
                         .map(c =>
-                            isString(c)
+                            (typeof c === "string")
                                 ? c
                                 : !std.isRt(c)
                                     ? c.text
                                     : ""
                         ).join("");
                     const rt = (el.children
-                        .filter(c => !isString(c) && std.isRt(c)) as std.Rt[])
+                        .filter(c => !(typeof c === "string") && std.isRt(c)) as std.Rt[])
                         .map(c => c.text)
                         .join("");
                     runs.push(<ruby key={i}>{rb}<rt>{rt}</rt></ruby>);
@@ -2434,6 +2432,12 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
     private refWindow = React.createRef<HTMLSpanElement>();
     constructor(props) {
         super(props, { state: VarRefFloatState.HIDDEN, arrowLeft: "0" });
+        this.updateSize = this.updateSize.bind(this);
+        window.addEventListener("resize", this.updateSize);
+    }
+
+    public componentWillUnmount() {
+        window.removeEventListener("resize", this.updateSize);
     }
 
     public onClick(e: React.MouseEvent<HTMLSpanElement>) {
@@ -2477,10 +2481,6 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
             this.onAnimationEnd();
         }
 
-        const windowOnResize = () => {
-            this.updateSize();
-        }
-
         return (
             <VarRefSpan>
 
@@ -2506,7 +2506,6 @@ class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ___
                 >
                     {(this.state.state !== VarRefFloatState.HIDDEN) && (
                         <VarRefFloatBlockInnerSpan>
-                            <EventListener target="window" onResize={windowOnResize} />
                             <VarRefArrowSpan style={{ marginLeft: this.state.arrowLeft }} />
                             <VarRefWindowSpan ref={this.refWindow}>
                                 <VarRefView el={el} />

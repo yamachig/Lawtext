@@ -8,7 +8,7 @@ import { LawView } from "../src/components/LawView";
 import { Dispatchers, mapDispatchToProps } from '../src/containers/LawtextAppPageContainer';
 import * as states from '../src/states';
 import store from '../src/store';
-import { getLawList, getLawXml } from "./prepare_test";
+import { getLawList, getLawXml } from "../../core/test/prepare_test";
 
 
 
@@ -41,7 +41,7 @@ const renderAllLaws = async () => {
 
     const [list, listByLawnum] = await getLawList();
 
-    for (const { LawNum: lawNum, LawTitle: lawTitle } of list) {
+    for (const { LawNum: lawNum, LawTitle: lawTitle } of list.slice(0, 10)) {
 
         it(`${lawTitle}（${lawNum}）`, async () => {
 

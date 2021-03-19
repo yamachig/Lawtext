@@ -138,7 +138,7 @@ const getLawXmlRemote = async (lawnum: string): Promise<string> => {
 
         if (!/^(?:<\?xml|<Law)/.test(text.trim())) {
             const zip = await JSZip.loadAsync(text, { base64: true });
-            text = await zip.file("body.xml").async("text");
+            text = await zip.file("body.xml")?.async("text") ?? "";
         }
         return text;
 

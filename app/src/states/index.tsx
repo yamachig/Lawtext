@@ -5,7 +5,6 @@ import { RouteComponentProps } from 'react-router'
 import { Dispatch } from 'redux';
 import { Action } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers/dist';
-import { isString } from "util";
 import * as analyzer from "../../../core/src/analyzer";
 import { parse } from "../../../core/src/parser_wrapper";
 import * as renderer from "../../../core/src/renderer";
@@ -273,7 +272,7 @@ export const searchLaw = async (
 }
 
 export const containerInfoOf = (el: util.EL | string) => {
-    if (isString(el)) {
+    if (typeof el === "string") {
         return { tag: "", id: "" };
     } else {
         return { tag: el.tag, id: el.id };
@@ -289,19 +288,19 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
         origLaw.attr,
     );
 
-    const origLawNum = origLaw.children.find((el) => !isString(el) && el.tag === "LawNum") as util.EL;
+    const origLawNum = origLaw.children.find((el) => typeof el !== "string" && el.tag === "LawNum") as util.EL;
     if (origLawNum) {
         law.append(origLawNum);
     }
 
-    const origLawBody = origLaw.children.find((el) => !isString(el) && el.tag === "LawBody") as util.EL;
+    const origLawBody = origLaw.children.find((el) => typeof el !== "string" && el.tag === "LawBody") as util.EL;
     const lawBody = new util.EL(
         origLawBody.tag,
         origLawBody.attr,
     );
     law.append(lawBody);
 
-    const origLawTitle = origLawBody.children.find((el) => !isString(el) && el.tag === "LawTitle");
+    const origLawTitle = origLawBody.children.find((el) => typeof el !== "string" && el.tag === "LawTitle");
     if (origLawTitle) {
         lawBody.append(origLawTitle);
     }
@@ -322,7 +321,7 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
 
     for (const toplevel of origLawBody.children) {
         const toplevelInfo = containerInfoOf(toplevel);
-        if (isString(toplevel)) continue;
+        if (typeof toplevel === "string") continue;
         if (
             !inContainerRange &&
             toplevelInfo.tag === sPos.container_tag &&
@@ -389,7 +388,7 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
         }
 
         if (containerChildren.length > 0) {
-            const supplProvisionLabel = toplevel.children.find((el) => !isString(el) && el.tag === "SupplProvisionLabel");
+            const supplProvisionLabel = toplevel.children.find((el) => typeof el !== "string" && el.tag === "SupplProvisionLabel");
             if (supplProvisionLabel) containerChildren.unshift(supplProvisionLabel);
             lawBody.append(new util.EL(
                 toplevel.tag,

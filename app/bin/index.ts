@@ -9,7 +9,7 @@ import { LawView } from "../src/components/LawView";
 import { Dispatchers, mapDispatchToProps } from '../src/containers/LawtextAppPageContainer';
 import * as states from '../src/states';
 import store from '../src/store';
-import { getLawList, getLawXml } from "../test/prepare_test";
+import { getLawList, getLawXml } from "../../core/test/prepare_test";
 
 
 
