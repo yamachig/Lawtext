@@ -155,31 +155,31 @@ if (typeof require !== "undefined" && require.main === module) {
     });
 
     const argparser = new argparse.ArgumentParser();
-    argparser.addArgument(["infile"], { nargs: "?" });
-    argparser.addArgument(
-        ["-it", "--intype"],
+    argparser.add_argument("infile", { nargs: "?" });
+    argparser.add_argument(
+        "-it", "--intype",
         { choices: ["lawtext", "xml", "json"] },
     );
-    argparser.addArgument(
-        ["-na", "--noanalyze"],
+    argparser.add_argument(
+        "-na", "--noanalyze",
         { action: "storeTrue" },
     );
-    argparser.addArgument(["-o", "-of", "--outfile"]);
-    argparser.addArgument(
-        ["-ot", "--outtype"],
+    argparser.add_argument("-of", "--outfile");
+    argparser.add_argument(
+        "-ot", "--outtype",
         {
             choices: ["lawtext", "xml", "json", "html", "htmlfragment", "docx"],
         },
     );
-    argparser.addArgument(
-        ["-af", "--analysis-file"],
+    argparser.add_argument(
+        "-af", "--analysis-file",
     );
-    argparser.addArgument(
-        ["-wc", "--with-control-el"],
+    argparser.add_argument(
+        "-wc", "--with-control-el",
         { action: "storeTrue" },
     );
 
-    const args = argparser.parseArgs();
+    const args = argparser.parse_args();
 
     if (!args.intype && !args.infile) {
         argparser.error("INTYPE must be specified when with stdin");

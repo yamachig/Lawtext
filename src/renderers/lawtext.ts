@@ -1494,7 +1494,7 @@ const renderRun = (els: Array<string | std.Line | std.QuoteStruct | std.ArithFor
     const runs: string[] = [];
 
     for (const el of els) {
-        if (isString(el)) {
+        if (typeof el === "string") {
             runs.push(/* $$$$$$ */el.replace(/\r|\n/, "")/* $$$$$$ */);
         } else if (el.isControl) {
             runs.push(/* $$$$$$ */el.text.replace(/\r|\n/, "")/* $$$$$$ */);
@@ -1509,7 +1509,7 @@ const renderRun = (els: Array<string | std.Line | std.QuoteStruct | std.ArithFor
             throw new NotImplementedError(el.tag);
 
         }
-        else { assertNever(el.tag); }
+        else { assertNever(el); }
     }
 
     return /* $$$$$$ */`${runs.join("")}`/* $$$$$$ */;

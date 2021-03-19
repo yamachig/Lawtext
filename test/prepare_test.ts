@@ -4,7 +4,7 @@ import { outputFile } from "fs-extra";
 import * as JSZip from "jszip";
 import * as path from "path";
 import { promisify } from "util";
-import { download } from "../src/downloader";
+import { getLawData, getLawNameList, LawInfo, LawInfos, LawNameListInfo, LawData } from "../src/downloader";
 
 let called = false;
 
@@ -14,34 +14,81 @@ export const prepare = async () => {
     if (called) return;
     called = true;
 
-    if (await promisify(fs.exists)(lawdataPath)) return;
+    const listJsonPath = path.join(lawdataPath, "list.json");
+    if (await promisify(fs.exists)(listJsonPath)) return;
 
-    console.log(`Preparing lawdata into ${lawdataPath}...`);
+    console.log(`Preparing lawdata into ${lawdataPath}...`);    
+    
+    console.log(`Loading laws list...`);   
+
+    const lawNameList = await getLawNameList();
+    
+    console.log(`Preparing ${lawNameList.length} law data...`);
 
     const bar = new Bar({
         format: "[{bar}] {percentage}% | {message}"
     }, Presets.rect);
+    const progress = (ratio?: number, message?: string) => {
+        const payload = message ? { message: message.length > 30 ? message.slice(0, 30) + " ..." : message } : undefined;
+        if (ratio) {
+            bar.update(ratio, payload);
+        } else if(payload) {
+            bar.update(payload);
+        }
+    };
     bar.start(1, 0);
-    const data = (await download({ withoutPict: true }, undefined, (ratio, message) => {
-        bar.update(
-            ratio,
-            { message: message.length > 30 ? message.slice(0, 30) + " ..." : message },
-        );
-    })).withoutPict;
+
+    const lawInfos = new LawInfos();
+
+    const processLawData = async (lawData: LawData, xmlZipPath: string) => {
+        const lawInfo = LawInfo.fromLawData(lawData);
+        lawInfos.add(lawInfo);
+
+        const xmlZip = new JSZip();
+        xmlZip.file(lawInfo.XmlName, lawData.xml);
+        const xmlZipData = await xmlZip.generateAsync({
+            type: "uint8array",
+            compression: "DEFLATE",
+            compressionOptions: {
+                level: 9
+            }
+        });
+        await outputFile(xmlZipPath, xmlZipData);
+    };
+
+    const processExistingLawData = async (lawNameListInfo: LawNameListInfo, xmlZipPath: string) => {
+        const file = await promisify(fs.readFile)(xmlZipPath);
+        const xmlZip = await JSZip.loadAsync(file);
+        const xml = await xmlZip.file(/.*\.xml/)[0].async("text");
+        const lawInfo = LawInfo.fromXml(lawNameListInfo.LawId, xml);
+        lawInfos.add(lawInfo);
+    };
+
+    let processingDownloadedFile: Promise<void> | null = null;
+    for (const [i, lawNameListInfo] of lawNameList.entries()) {
+        progress(i / lawNameList.length);
+        progress(undefined, `${lawNameListInfo.LawNo}：${lawNameListInfo.LawName}`);
+        const xmlZipPath = path.join(lawdataPath, lawNameListInfo.Path, lawNameListInfo.XmlZipName);
+        if (await promisify(fs.exists)(xmlZipPath)) {
+            await processingDownloadedFile;
+            processingDownloadedFile = processExistingLawData(lawNameListInfo, xmlZipPath);
+        } else {
+            const lawData = await getLawData(lawNameListInfo.LawId);
+            await processingDownloadedFile;
+            processingDownloadedFile = processLawData(lawData, xmlZipPath);
+        }
+    }
+    await processingDownloadedFile;
+    progress(1);
     bar.stop();
 
-    const zipFile = await JSZip.loadAsync(data);
-    const items: Array<[string, JSZip.JSZipObject]> = [];
-    zipFile.forEach((relativePath, file) => {
-        items.push([relativePath, file]);
-    });
-    for (const [relativePath, file] of items) {
-        if (file.dir) continue;
-        const buf = await file.async("arraybuffer");
-        const destPath = path.join(lawdataPath, relativePath);
-        await outputFile(destPath, Buffer.from(buf));
-    }
+    console.log(`Analyzing references...`);
+    lawInfos.setReferences();
 
+    console.log(`Emitting list...`);
+    const lawlist = lawInfos.getList();
+    const listJson = JSON.stringify(lawlist);
+    await outputFile(listJsonPath, listJson);
 }
 
 export interface LawListInfo {

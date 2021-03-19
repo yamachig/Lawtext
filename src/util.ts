@@ -1,6 +1,6 @@
 "use strict";
 
-import { inspect, isString } from "util";
+import { inspect } from "util";
 import { DOMParser } from "xmldom";
 import * as std from "./std_law";
 
@@ -12,6 +12,17 @@ export function* range(start: number, end: number) {
     for (let i = start; i < end; i++) {
         yield i;
     }
+}
+
+export type ResolvedType<T> = T extends PromiseLike<infer U> ? U : T;
+
+export const decodeBase64 = (base64: string) => {
+    const binary = atob(base64);
+    var buf = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        buf[i] = binary.charCodeAt(i);
+    }
+    return buf;
 }
 
 const NodeType = {
@@ -110,11 +121,11 @@ export class EL implements JsonEL {
     public json(withControlEl: boolean = false): JsonEL {
         const children: Array<JsonEL | string> = [];
         for (const el of this.children) {
-            if (!(el instanceof EL || isString(el))) {
+            if (!(el instanceof EL || typeof el === "string")) {
                 console.error("[EL.json]", JSON.stringify(this));
                 throw JSON.stringify(this);
             }
-            if (isString(el)) {
+            if (typeof el === "string") {
                 children.push(el);
             } else {
                 const js = el.json(withControlEl);
@@ -128,7 +139,7 @@ export class EL implements JsonEL {
         const joinedChildren: Array<JsonEL | string> = [];
         for (const child of children) {
             const last = joinedChildren[joinedChildren.length - 1];
-            if (isString(last)) {
+            if (typeof last === "string") {
                 joinedChildren[joinedChildren.length - 1] = last + child;
             } else {
                 joinedChildren.push(child);
@@ -455,7 +466,7 @@ export class Span {
 }
 
 export const loadEl = (rawLaw: JsonEL | string): EL | string => {
-    if (isString(rawLaw)) {
+    if (typeof rawLaw === "string") {
         return rawLaw;
     } else {
         if (!rawLaw.children) {

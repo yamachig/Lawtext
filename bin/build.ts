@@ -53,6 +53,7 @@ if(exports) exports.nunjucksPrecompiled = window.nunjucksPrecompiled;
         templates,
         { encoding: "utf-8" },
     );
+    await promisify(fs.mkdir)(distPath, { recursive: true });
     await promisify(fs.writeFile)(
         path.join(distPath, "templates.js"),
         templates,
