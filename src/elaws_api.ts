@@ -8,7 +8,7 @@ const xmlSerializer = new XMLSerializer();
 const lawlistsURL = "https://elaws.e-gov.go.jp/api/1/lawlists/1";
 const lawdataURL = "https://elaws.e-gov.go.jp/api/1/lawdata/";
 
-export const fetchElaws = async (url: string, retry=3): Promise<Element> => {
+export const fetchElaws = async (url: string, retry=5): Promise<Element> => {
     if (retry <= 0) {
         throw Error("fetchElaws(): Failed after retries");
     }
@@ -22,6 +22,7 @@ export const fetchElaws = async (url: string, retry=3): Promise<Element> => {
     const elCode = elResult?.getElementsByTagName("Code").item(0);
     if(!elCode) {
         console.log("remaining retries: " + (retry - 1));
+        await new Promise(r => setTimeout(r, 1000));
         return await fetchElaws(url, retry - 1);
     }
     if (elCode.textContent !== "0") {
