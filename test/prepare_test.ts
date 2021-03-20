@@ -4,7 +4,8 @@ import { outputFile } from "fs-extra";
 import * as JSZip from "jszip";
 import * as path from "path";
 import { promisify } from "util";
-import { getLawData, getLawNameList, LawInfo, LawInfos, LawNameListInfo, LawData } from "../src/downloader";
+import { fetchLawData, fetchLawNameList, LawData, LawNameListInfo } from "../src/elaws_api";
+import { LawInfos, LawInfo } from "../src/lawlist";
 
 let called = false;
 
@@ -24,7 +25,7 @@ export const prepare = async () => {
     
     console.log(`Loading laws list...`);   
 
-    const lawNameList = await getLawNameList();
+    const lawNameList = await fetchLawNameList();
     
     console.log(`Preparing ${lawNameList.length} law data...`);
 
@@ -76,7 +77,7 @@ export const prepare = async () => {
             await processingDownloadedFile;
             processingDownloadedFile = processExistingLawData(lawNameListInfo, xmlZipPath);
         } else {
-            const lawData = await getLawData(lawNameListInfo.LawId);
+            const lawData = await fetchLawData(lawNameListInfo.LawId);
             await processingDownloadedFile;
             processingDownloadedFile = processLawData(lawData, xmlZipPath);
         }
