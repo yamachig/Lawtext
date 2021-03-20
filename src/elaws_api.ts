@@ -21,6 +21,7 @@ export const fetchElaws = async (url: string, retry=5): Promise<Element> => {
     const elResult = doc.getElementsByTagName("DataRoot").item(0)?.getElementsByTagName("Result").item(0);
     const elCode = elResult?.getElementsByTagName("Code").item(0);
     if(!elCode) {
+        console.log("request URL: " + url)
         console.log("remaining retries: " + (retry - 1));
         await new Promise(r => setTimeout(r, 1000));
         return await fetchElaws(url, retry - 1);
