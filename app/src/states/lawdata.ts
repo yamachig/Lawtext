@@ -1,6 +1,7 @@
 import * as levenshtein from "js-levenshtein";
 import * as JSZip from "jszip";
 import * as util from "../../../core/src/util";
+import {fetchLawData} from "../../../core/src/elaws_api";
 
 interface LawListInfo {
     LawNum: string;
@@ -129,24 +130,17 @@ const getLawXmlLocal = async (lawnum: string): Promise<string | null> => {
 const getLawXmlRemote = async (lawnum: string): Promise<string> => {
     console.log(`getLawXmlRemote("${lawnum}")`);
 
-    const response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=${encodeURI(lawnum)}`, {
-        mode: "cors",
-    });
-    let text = await response.text();
-
-    if (response.ok) {
-
-        if (!/^(?:<\?xml|<Law)/.test(text.trim())) {
-            const zip = await JSZip.loadAsync(text, { base64: true });
-            text = await zip.file("body.xml")?.async("text") ?? "";
-        }
-        return text;
-
-    } else {
-        console.log(response);
+    // const response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=${encodeURI(lawnum)}`, {
+    //     mode: "cors",
+    // });
+    try {
+        const lawData = await fetchLawData(lawnum);
+        return lawData.xml;
+    } catch (e) {
+        console.error(e);
         throw [
             "法令の読み込み中にエラーが発生しました",
-            text,
+            e.message,
         ];
     }
 }

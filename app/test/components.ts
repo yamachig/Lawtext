@@ -41,7 +41,7 @@ const renderAllLaws = async () => {
 
     const [list, listByLawnum] = await getLawList();
 
-    for (const { LawNum: lawNum, LawTitle: lawTitle } of list.slice(0, 10)) {
+    for (const { LawNum: lawNum, LawTitle: lawTitle } of list) {
 
         it(`${lawTitle}（${lawNum}）`, async () => {
 
