@@ -2,7 +2,7 @@ import * as Autoprefixer from "autoprefixer"
 import * as CircularDependencyPlugin from "circular-dependency-plugin"
 import * as HtmlWebPackPlugin from "html-webpack-plugin"
 import * as MiniCssExtractPlugin from "mini-css-extract-plugin"
-import * as OptimizeCSSAssetsPlugin from "optimize-css-assets-webpack-plugin"
+import * as CssMinimizerPlugin  from "css-minimizer-webpack-plugin"
 import * as path from 'path';
 import * as TerserPlugin from "terser-webpack-plugin"
 import * as webpack from 'webpack';
@@ -28,11 +28,14 @@ export default (env, argv) => ({
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],
+        fallback: {
+            path: require.resolve("path-browserify"),
+        },
     },
 
     optimization: {
         minimizer: [
-            new OptimizeCSSAssetsPlugin({}),
+            new CssMinimizerPlugin({}),
             // new TerserPlugin(),
         ],
     },
@@ -56,7 +59,11 @@ export default (env, argv) => ({
                     {
                         loader: "postcss-loader",
                         options: {
-                            plugins: () => [Autoprefixer]
+                            postcssOptions: {
+                                plugins: [
+                                    "autoprefixer",
+                                ],
+                            },
                         },
                     },
                     "sass-loader",
@@ -88,9 +95,9 @@ export default (env, argv) => ({
 
     watchOptions: {
         ignored: [
-            /node_modules/,
-            /dist-dev/,
-            /dist-prod/,
+            "node_modules",
+            "dist-dev",
+            "dist-prod",
         ],
     },
 

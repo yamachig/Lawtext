@@ -30,8 +30,8 @@ export class LawDownloader extends React.Component<
         };
 
         const data = withPict
-            ? (await download({ full: true }, undefined, progress)).full
-            : (await download({ withoutPict: true }, undefined, progress)).withoutPict;
+            ? (await download({ full: true }, progress)).full
+            : (await download({ withoutPict: true }, progress)).withoutPict;
 
         FileSaver.saveAs(new Blob([data]), "lawdata.zip");
     }
