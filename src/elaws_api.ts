@@ -105,7 +105,7 @@ export const fetchLawData = async (lawIDOrLawNum: string) => {
 
     return new LawData(
         elApplData.getElementsByTagName("LawId").item(0)?.textContent ?? "",
-        elApplData.getElementsByTagName("LawNum").item(0)?.textContent ?? elApplData.getElementsByTagName("LawFullText").item(0)?.getElementsByTagName("Law").item(0)?.getElementsByTagName("LawNum").item(0)?.textContent ?? "",
+        elApplData.getElementsByTagName("LawNum").item(0)?.textContent || elApplData.getElementsByTagName("LawFullText").item(0)?.getElementsByTagName("Law").item(0)?.getElementsByTagName("LawNum").item(0)?.textContent || "",
         law,
         imageData,
     );
