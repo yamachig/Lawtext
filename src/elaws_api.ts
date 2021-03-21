@@ -5,8 +5,9 @@ const XMLSerializer: typeof window.XMLSerializer = ((global as any).window && wi
 const domParser = new DOMParser();
 const xmlSerializer = new XMLSerializer();
 
-const lawlistsURL = "https://elaws.e-gov.go.jp/api/1/lawlists/1";
-const lawdataURL = "https://elaws.e-gov.go.jp/api/1/lawdata/";
+export const lawlistsURL = "https://elaws.e-gov.go.jp/api/1/lawlists/1";
+export const lawdataURL = "https://elaws.e-gov.go.jp/api/1/lawdata/";
+export const allXMLZipURL = "https://elaws.e-gov.go.jp/download?file_section=1&only_xml_flag=true";
 
 export const fetchElaws = async (url: string, retry=5): Promise<Element> => {
     if (retry <= 0) {
@@ -111,4 +112,12 @@ export const fetchLawData = async (lawIDOrLawNum: string) => {
         law,
         imageData,
     );
+}
+
+export const fetchAllXMLZip = async () => {
+    const response = await fetch(allXMLZipURL, {
+        mode: "cors",
+    });
+    if (!response.ok) throw Error(response.statusText);
+    return await response.arrayBuffer();
 }

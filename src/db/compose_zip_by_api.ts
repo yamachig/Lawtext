@@ -3,7 +3,7 @@ import * as path from "path"
 import { fetchLawData, fetchLawNameList, LawData } from "../elaws_api";
 import { LawInfo, LawInfos } from "./lawlist";
 
-export const downloadZipByApi = async <
+export const composeZipByApi = async <
     S extends boolean = false,
     T extends boolean = false,
     U extends boolean = false,
