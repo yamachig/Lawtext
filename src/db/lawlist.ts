@@ -1,4 +1,4 @@
-import { LawData, LawNameListInfo } from "./elaws_api";
+import { LawData, LawNameListInfo } from "../elaws_api";
 const DOMParser: typeof window.DOMParser = ((global as any).window && window.DOMParser) || require("xmldom").DOMParser;
 const domParser = new DOMParser();
 

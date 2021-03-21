@@ -1,9 +1,9 @@
 import * as JSZip from "jszip"
 import * as path from "path"
-import { fetchLawData, fetchLawNameList, LawData } from "./elaws_api";
+import { fetchLawData, fetchLawNameList, LawData } from "../elaws_api";
 import { LawInfo, LawInfos } from "./lawlist";
 
-export const download = async <
+export const downloadZipByApi = async <
     S extends boolean = false,
     T extends boolean = false,
     U extends boolean = false,

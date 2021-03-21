@@ -5,7 +5,7 @@ import * as JSZip from "jszip";
 import * as path from "path";
 import { promisify } from "util";
 import { fetchLawData, fetchLawNameList, LawData, LawNameListInfo } from "../src/elaws_api";
-import { LawInfos, LawInfo } from "../src/lawlist";
+import { LawInfos, LawInfo } from "../src/db/lawlist";
 
 let called = false;
 
