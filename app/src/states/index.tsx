@@ -1,6 +1,6 @@
 import { saveAs } from "file-saver";
 import { History } from 'history';
-import * as $ from "jquery"
+import $ from "jquery"
 import { RouteComponentProps } from 'react-router'
 import { Dispatch } from 'redux';
 import { Action } from 'typescript-fsa';

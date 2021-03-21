@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { LawDownloader } from "./LawDownloader";
 
 export class LawDownloadPage extends React.Component {

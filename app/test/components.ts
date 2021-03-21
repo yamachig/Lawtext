@@ -1,4 +1,4 @@
-import * as chai from "chai";
+import chai from "chai";
 import { it } from "mocha";
 import { renderToString } from "react-dom/server";
 import { analyze } from "../../core/src/analyzer";

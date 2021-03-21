@@ -1,5 +1,5 @@
-import * as $ from "jquery";
-import * as React from "react";
+import $ from "jquery";
+import React from "react";
 import AnimateHeight from 'react-animate-height';
 import styled, { createGlobalStyle } from 'styled-components';
 import * as analyzer from "../../../core/src/analyzer";

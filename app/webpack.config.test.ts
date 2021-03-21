@@ -1,11 +1,11 @@
-import * as Autoprefixer from "autoprefixer"
-import * as CircularDependencyPlugin from "circular-dependency-plugin"
-import * as HtmlWebPackPlugin from "html-webpack-plugin"
-import * as MiniCssExtractPlugin from "mini-css-extract-plugin"
-import * as CssMinimizerPlugin  from "css-minimizer-webpack-plugin"
-import * as path from 'path';
-import * as webpack from 'webpack';
-import * as nodeExternals from "webpack-node-externals"
+import Autoprefixer from "autoprefixer"
+import CircularDependencyPlugin from "circular-dependency-plugin"
+import HtmlWebPackPlugin from "html-webpack-plugin"
+import MiniCssExtractPlugin from "mini-css-extract-plugin"
+import CssMinimizerPlugin  from "css-minimizer-webpack-plugin"
+import path from 'path';
+import webpack from 'webpack';
+import nodeExternals from "webpack-node-externals"
 
 class WatchMessagePlugin {
     public apply(compiler) {

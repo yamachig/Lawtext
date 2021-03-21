@@ -10,6 +10,7 @@
         "allowJs": true,
         "jsx": "react",
         "moduleResolution": "node",
+        "esModuleInterop": true,
         "rootDirs": [
             "src",
             "../core/src"

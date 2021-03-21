@@ -1,6 +1,6 @@
 import { UnregisterCallback } from "history";
-import * as $ from "jquery";
-import * as React from "react";
+import $ from "jquery";
+import React from "react";
 import styled from 'styled-components';
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
 import { ErrorModalID, LawtextAppPageState, OpenFileInputName, RouteState } from '../states';

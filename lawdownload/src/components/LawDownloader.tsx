@@ -1,5 +1,5 @@
-import * as FileSaver from "file-saver";
-import * as React from "react";
+import FileSaver from "file-saver";
+import React from "react";
 import { composeZipByApi } from "../../../core/src/db/compose_zip_by_api";
 
 export class LawDownloader extends React.Component<

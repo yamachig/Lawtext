@@ -5,7 +5,7 @@ require('source-map-support').install();
 
 import { after, before } from "mocha";
 import { setLawdataPath } from "../../core/test/prepare_test";
-import * as path from "path";
+import path from "path";
 
 const notify = async (title: string, message: string) => {
 

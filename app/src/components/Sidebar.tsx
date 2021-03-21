@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import styled from 'styled-components';
 import * as std from "../../../core/src/std_law"
 import { assertNever, EL } from "../../../core/src/util"
