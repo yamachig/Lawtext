@@ -1,6 +1,6 @@
 import * as FileSaver from "file-saver";
 import * as React from "react";
-import { download } from "../../../core/src/downloader";
+import { downloadZipByApi } from "../../../core/src/db/downloader";
 
 export class LawDownloader extends React.Component<
     {
@@ -30,8 +30,8 @@ export class LawDownloader extends React.Component<
         };
 
         const data = withPict
-            ? (await download({ full: true }, progress)).full
-            : (await download({ withoutPict: true }, progress)).withoutPict;
+            ? (await downloadZipByApi({ full: true }, progress)).full
+            : (await downloadZipByApi({ withoutPict: true }, progress)).withoutPict;
 
         FileSaver.saveAs(new Blob([data]), "lawdata.zip");
     }
