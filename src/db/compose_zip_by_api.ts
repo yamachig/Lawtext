@@ -1,5 +1,5 @@
-import * as JSZip from "jszip"
-import * as path from "path"
+import JSZip from "jszip";
+import * as path from "path";
 import { fetchLawData, fetchLawNameList, LawData } from "../elaws_api";
 import { LawInfo, LawInfos } from "./lawlist";
 
@@ -7,14 +7,14 @@ export const composeZipByApi = async <
     S extends boolean = false,
     T extends boolean = false,
     U extends boolean = false,
-    >(
-        { full, withoutPict, list }: Partial<{ full: S, withoutPict: T, list: U }>,
-        onProgress: (ratio: number, message: string) => void = () => undefined,
+>(
+    { full, withoutPict, list }: Partial<{ full: S, withoutPict: T, list: U }>,
+    onProgress: (ratio: number, message: string) => void = () => undefined,
 ):
     Promise<(
-        (S extends true ? { full: ArrayBuffer } : {}) &
-        (T extends true ? { withoutPict: ArrayBuffer } : {}) &
-        (U extends true ? { list: string } : {})
+        (S extends true ? { full: ArrayBuffer } : Record<string, never>) &
+        (T extends true ? { withoutPict: ArrayBuffer } : Record<string, never>) &
+        (U extends true ? { list: string } : Record<string, never>)
     )> => {
 
     const progress = (() => {
@@ -44,8 +44,8 @@ export const composeZipByApi = async <
             type: "arraybuffer",
             compression: "DEFLATE",
             compressionOptions: {
-                level: 9
-            }
+                level: 9,
+            },
         });
         if (full) {
             destZipFull.file(path.join(lawInfo.Path, lawInfo.XmlZipName), xmlZipData);
@@ -59,12 +59,12 @@ export const composeZipByApi = async <
         }
     };
     
-    progress(undefined, `法令の一覧を取得しています`);
+    progress(undefined, "法令の一覧を取得しています");
 
     const lawNameList = await fetchLawNameList();
     
-    progress(undefined, `法令データをダウンロードしています`);
-    let progressTotal = lawNameList.length + 3;
+    progress(undefined, "法令データをダウンロードしています");
+    const progressTotal = lawNameList.length + 3;
     let progressNow = 0;
     let processingDownloadedFile: Promise<void> | null = null;
     for (const lawNameListInfo of lawNameList) {
@@ -77,13 +77,13 @@ export const composeZipByApi = async <
     }
     await processingDownloadedFile;
 
-    progress(undefined, `相互参照を分析しています`);
+    progress(undefined, "相互参照を分析しています");
     lawInfos.setReferences();
 
     progressNow++;
     progress(progressNow / progressTotal);
 
-    progress(undefined, `リストを出力しています`);
+    progress(undefined, "リストを出力しています");
     const lawlist = lawInfos.getList();
     const listJson = JSON.stringify(lawlist);
     if (full) destZipFull.file("list.json", listJson);
@@ -92,24 +92,28 @@ export const composeZipByApi = async <
     progressNow++;
     progress(progressNow / progressTotal);
 
-    progress(undefined, `Zipファイルを出力しています`);
+    progress(undefined, "Zipファイルを出力しています");
 
     const zipOptions: JSZip.JSZipGeneratorOptions<"arraybuffer"> = {
         type: "arraybuffer",
         compression: "DEFLATE",
         compressionOptions: {
-            level: 9
+            level: 9,
         },
     };
 
-    const ret: Partial<{ full: ArrayBuffer, withoutPict: ArrayBuffer, list: string }> = {
+    const ret = {
         ...(full ? { full: await destZipFull.generateAsync(zipOptions) } : {}),
         ...(withoutPict ? { withoutPict: await destZipWithoutPict.generateAsync(zipOptions) } : {}),
-        ...(list ? { list: listJson, } : {}),
-    };
+        ...(list ? { list: listJson } : {}),
+    } as (
+        (S extends true ? { full: ArrayBuffer } : Record<string, never>) &
+        (T extends true ? { withoutPict: ArrayBuffer } : Record<string, never>) &
+        (U extends true ? { list: string } : Record<string, never>)
+    );
 
     progress(1);
 
-    return ret as any;
-}
+    return ret;
+};
 

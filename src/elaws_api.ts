@@ -1,7 +1,9 @@
-import { decodeBase64 } from "./util"
-const fetch: typeof window.fetch = ((global as any).window && window.fetch) || require("node-fetch");
-const DOMParser: typeof window.DOMParser = ((global as any).window && window.DOMParser) || require("xmldom").DOMParser;
-const XMLSerializer: typeof window.XMLSerializer = ((global as any).window && window.XMLSerializer) || require("xmldom").XMLSerializer;
+import { decodeBase64 } from "./util";
+const fetch: typeof window.fetch = (global["window"] && window.fetch) || require("node-fetch");
+// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;
+// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+const XMLSerializer: typeof window.XMLSerializer = (global["window"] && window.XMLSerializer) || require("xmldom").XMLSerializer;
 const domParser = new DOMParser();
 const xmlSerializer = new XMLSerializer();
 
@@ -22,23 +24,23 @@ export const fetchElaws = async (url: string, retry=5): Promise<Element> => {
     const elResult = doc.getElementsByTagName("DataRoot").item(0)?.getElementsByTagName("Result").item(0);
     const elCode = elResult?.getElementsByTagName("Code").item(0);
     if(!elCode) {
-        console.log("request URL: " + url)
-        console.log("remaining retries: " + (retry - 1));
+        console.log("request URL: " + url);
+        console.log(`remaining retries: ${retry - 1}`);
         await new Promise(r => setTimeout(r, 1000));
         return await fetchElaws(url, retry - 1);
     }
     if (elCode.textContent !== "0") {
         const msg = elResult?.getElementsByTagName("Message").item(0)?.textContent;
-        console.log("request URL: " + url)
+        console.log("request URL: " + url);
         throw Error(msg ?? "fetchElaws(): Unknown Error in XML\nrequest URL");
     }
     const ret = doc.getElementsByTagName("DataRoot").item(0)?.getElementsByTagName("ApplData").item(0);
     if (!ret) {
-        console.log("request URL: " + url)
+        console.log("request URL: " + url);
         throw Error("fetchElaws(): ApplData element not exist");
     }
     return ret;
-}
+};
 
 export class LawNameListInfo {
     constructor(
@@ -47,18 +49,18 @@ export class LawNameListInfo {
         public LawNo: string,
         public PromulgationDate: string,
     ) { }
-    public get Path() {
+    public get Path(): string {
         return this.LawId;
     }
-    public get XmlZipName() {
+    public get XmlZipName(): string {
         return `${this.LawId}.xml.zip`;
     }
-    public get XmlName() {
+    public get XmlName(): string {
         return `${this.LawId}.xml`;
     }
 }
 
-export const fetchLawNameList = async () => {
+export const fetchLawNameList = async (): Promise<LawNameListInfo[]> => {
     const elApplData = await fetchElaws(lawlistsURL);
     const lawNameList:LawNameListInfo[] = [];
     for (const el of Array.from(elApplData.getElementsByTagName("LawNameListInfo"))) {
@@ -70,7 +72,7 @@ export const fetchLawNameList = async () => {
         ));
     }
     return lawNameList;
-}
+};
 
 export class LawData {
     constructor(
@@ -82,7 +84,7 @@ export class LawData {
     ) { }
     private getXml() {
         const doc = this.law.ownerDocument.implementation.createDocument("", "", null);
-        doc.appendChild(doc.createProcessingInstruction('xml', 'version="1.0" encoding="UTF-8"'));
+        doc.appendChild(doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\""));
         doc.appendChild(this.law);
         return xmlSerializer.serializeToString(doc);
     }
@@ -92,7 +94,7 @@ export class LawData {
     }
 }
 
-export const fetchLawData = async (lawIDOrLawNum: string) => {
+export const fetchLawData = async (lawIDOrLawNum: string): Promise<LawData> => {
     const elApplData = await fetchElaws(lawdataURL + lawIDOrLawNum);
     if (!elApplData) {
         throw Error("getLawData(): fetchElaws failed");
@@ -112,12 +114,12 @@ export const fetchLawData = async (lawIDOrLawNum: string) => {
         law,
         imageData,
     );
-}
+};
 
-export const fetchAllXMLZip = async () => {
+export const fetchAllXMLZip = async (): Promise<ArrayBuffer> => {
     const response = await fetch(allXMLZipURL, {
         mode: "cors",
     });
     if (!response.ok) throw Error(response.statusText);
     return await response.arrayBuffer();
-}
+};

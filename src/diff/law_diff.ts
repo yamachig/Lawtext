@@ -4,9 +4,13 @@ import * as util from "../util";
 import { compare, EditTable } from "./edit_table";
 
 export enum TagType {
+    // eslint-disable-next-line no-unused-vars
     Open = "Open",
+    // eslint-disable-next-line no-unused-vars
     Close = "Close",
+    // eslint-disable-next-line no-unused-vars
     Empty = "Empty",
+    // eslint-disable-next-line no-unused-vars
     Text = "Text",
 }
 
@@ -21,8 +25,11 @@ export interface LawDiffResult<T> {
 
 export type LawDiffResultItem<T> = LawDiffElementMismatch<T> | LawDiffElementChange<T> | LawDiffNoDiff<T>
 export enum LawDiffType {
+    // eslint-disable-next-line no-unused-vars
     ElementMismatch,
+    // eslint-disable-next-line no-unused-vars
     ElementChange,
+    // eslint-disable-next-line no-unused-vars
     NoDiff,
 }
 
@@ -51,15 +58,22 @@ export interface LawDiffNoDiff<T> {
 }
 
 export enum ProblemStatus {
+    // eslint-disable-next-line no-unused-vars
     Error = 2,
+    // eslint-disable-next-line no-unused-vars
     Warning = 1,
+    // eslint-disable-next-line no-unused-vars
     NoProblem = 0,
 }
 
 export enum DiffStatus {
+    // eslint-disable-next-line no-unused-vars
     Add = "Add",
+    // eslint-disable-next-line no-unused-vars
     Remove = "Remove",
+    // eslint-disable-next-line no-unused-vars
     Change = "Change",
+    // eslint-disable-next-line no-unused-vars
     NoChange = "NoChange",
 }
 
@@ -69,22 +83,22 @@ export interface DiffAddRow<T> {
     status: DiffStatus.Add,
     oldItem: null,
     newItem: DiffTableItem<T>,
-};
+}
 export interface DiffRemoveRow<T> {
     status: DiffStatus.Remove,
     oldItem: DiffTableItem<T>,
     newItem: null,
-};
+}
 export interface DiffChangeRow<T> {
     status: DiffStatus.Change,
     oldItem: DiffTableItem<T> | null,
     newItem: DiffTableItem<T> | null,
-};
+}
 export interface DiffNoChangeRow<T> {
     status: DiffStatus.NoChange,
     oldItem: DiffTableItem<T>,
     newItem: DiffTableItem<T>,
-};
+}
 export interface DiffTableItem<T> {
     index: number,
     value: T,
@@ -113,7 +127,7 @@ const warningAttrKey = new Set([
 ]);
 
 export class ComparableEL implements util.JsonEL {
-    public tag: string = "";
+    public tag = "";
     public attr: { [key: string]: string | undefined } = {};
     public children: ComparableEL[] = [];
     public index: number;
@@ -190,12 +204,15 @@ export class ComparableEL implements util.JsonEL {
 }
 
 export enum LawDiffMode {
+    // eslint-disable-next-line no-unused-vars
     DiffAll = "DiffAll",
+    // eslint-disable-next-line no-unused-vars
     NoProblemAsNoDiff = "NoProblemAsNoDiff",
+    // eslint-disable-next-line no-unused-vars
     WarningAsNoDiff = "WarningAsNoDiff",
 }
 
-export const lawDiff = (oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll) => {
+export const lawDiff = (oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll): LawDiffResult<string> => {
 
     const oldRoot = new ComparableEL(oldJson);
     const oldELs = [...oldRoot.allList()];
@@ -229,7 +246,7 @@ export const lawDiff = (oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode:
             } else if (tt === TagType.Text) {
                 return `${el.text.replace(/\r|\n/, "")}`;
 
-            } else { throw util.assertNever(tt) };
+            } else { throw util.assertNever(tt); }
         });
     });
 
@@ -255,8 +272,8 @@ export const lawDiff = (oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode:
         const oldIndex = dRow.oldItem && dRow.oldItem.index;
         const newIndex = dRow.newItem && dRow.newItem.index;
 
-        const [oldEL, /**/] = oldIndex ? oldELs[oldIndex] : [null, null];
-        const [newEL, /**/] = newIndex ? newELs[newIndex] : [null, null];
+        const [oldEL /**/] = oldIndex ? oldELs[oldIndex] : [null, null];
+        const [newEL /**/] = newIndex ? newELs[newIndex] : [null, null];
 
         const isFragment = fragmentELsList.some(els => {
             const oldIsFragment = !oldEL || 0 <= els.oldELs.indexOf(oldEL);
@@ -345,19 +362,19 @@ export const lawDiff = (oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode:
             });
             ret.mostSeriousStatus = ProblemStatus.Error;
 
-        } else { throw util.assertNever(dRow) };
+        } else { throw util.assertNever(dRow); }
     }
 
     emitNoDiff();
 
     return ret;
 
-}
+};
 
 const processNoChange = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>, noProblemAsNoDiff: boolean): LawDiffElementChange<string> | null => {
     if (!dRow.oldItem || !dRow.newItem) return null;
-    const oldIndex = dRow.oldItem!.index;
-    const newIndex = dRow.newItem!.index;
+    const oldIndex = dRow.oldItem.index;
+    const newIndex = dRow.newItem.index;
 
     const [oldEL, oldTT] = oldELs[oldIndex];
     const [newEL, newTT] = newELs[newIndex];
@@ -436,7 +453,7 @@ const processNoChange = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
     }
 
     return null;
-}
+};
 
 interface FragmentElements {
     oldELs: ComparableEL[];
@@ -445,8 +462,8 @@ interface FragmentElements {
 
 const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>): FragmentElements | null => {
     if (!dRow.oldItem || !dRow.newItem) return null;
-    const oldIndex = dRow.oldItem!.index;
-    const newIndex = dRow.newItem!.index;
+    const oldIndex = dRow.oldItem.index;
+    const newIndex = dRow.newItem.index;
 
     const [oldEL, oldTT] = oldELs[oldIndex];
     const [newEL, newTT] = newELs[newIndex];
@@ -477,9 +494,9 @@ const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
                 if (oldJoinText === newJoinText) {
                     return {
                         oldELs: ([] as ComparableEL[])
-                            .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e,]) => e))),
+                            .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e ]) => e))),
                         newELs: ([] as ComparableEL[])
-                            .concat(...newSentences.map(el => Array.from(el.allList()).map(([e,]) => e))),
+                            .concat(...newSentences.map(el => Array.from(el.allList()).map(([e ]) => e))),
                     };
                 }
             }
@@ -508,9 +525,9 @@ const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
                 if (oldJoinText === newJoinText) {
                     return {
                         oldELs: ([] as ComparableEL[])
-                            .concat(...oldColumns.map(el => Array.from(el.allList()).map(([e,]) => e))),
+                            .concat(...oldColumns.map(el => Array.from(el.allList()).map(([e ]) => e))),
                         newELs: ([] as ComparableEL[])
-                            .concat(...newColumns.map(el => Array.from(el.allList()).map(([e,]) => e))),
+                            .concat(...newColumns.map(el => Array.from(el.allList()).map(([e ]) => e))),
                     };
                 }
             }
@@ -538,15 +555,15 @@ const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
             if (oldJoinText === newJoinText) {
                 return {
                     oldELs: ([] as ComparableEL[])
-                        .concat(...oldTitles.map(el => Array.from(el.allList()).map(([e,]) => e))),
+                        .concat(...oldTitles.map(el => Array.from(el.allList()).map(([e ]) => e))),
                     newELs: ([] as ComparableEL[])
-                        .concat(...newTitles.map(el => Array.from(el.allList()).map(([e,]) => e))),
+                        .concat(...newTitles.map(el => Array.from(el.allList()).map(([e ]) => e))),
                 };
             }
         }
     }
     return null;
-}
+};
 
 const tuneEditTable = <T>(table: EditTable<T>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>) => {
     const ret: EditTable<T> = [];
@@ -567,15 +584,15 @@ const tuneEditTable = <T>(table: EditTable<T>, oldELs: Array<[ComparableEL, TagT
         if (startPos !== null && endPos !== null) {
             let moveCount = 0;
             for (let count = 1; count < endPos - startPos; count++) {
-                const [moveItem, /**/] = table[endPos + 1 - count];
+                const [moveItem /**/] = table[endPos + 1 - count];
                 if (!moveItem) break;
-                const [moveIndex, /**/] = moveItem;
+                const [moveIndex /**/] = moveItem;
                 const [moveEL, moveTT] = oldELs[moveIndex];
                 if (moveTT !== TagType.Open) break;
 
                 const [oi, ni] = table[startPos - count];
                 if (!oi || !ni) break;
-                const [newIndex, /**/] = ni;
+                const [newIndex /**/] = ni;
                 const [newEL, newTT] = newELs[newIndex];
                 if (newTT !== TagType.Open) break;
 
@@ -586,7 +603,7 @@ const tuneEditTable = <T>(table: EditTable<T>, oldELs: Array<[ComparableEL, TagT
                 ret.push(table[p]);
             }
             for (let p = startPos - moveCount; p < startPos; p++) {
-                const [oi, /**/] = table[p];
+                const [oi /**/] = table[p];
                 if (!oi) throw new Error("never");
                 ret.push([oi, null]);
             }
@@ -594,7 +611,7 @@ const tuneEditTable = <T>(table: EditTable<T>, oldELs: Array<[ComparableEL, TagT
                 ret.push(table[p]);
             }
             for (let p = endPos + 1 - moveCount; p <= endPos; p++) {
-                const [oi, /**/] = table[p];
+                const [oi /**/] = table[p];
                 const [/**/, ni] = table[startPos - (endPos + 1 - p)];
                 if (!oi || !ni) throw new Error("never");
                 ret.push([oi, ni]);
@@ -609,7 +626,7 @@ const tuneEditTable = <T>(table: EditTable<T>, oldELs: Array<[ComparableEL, TagT
     }
 
     return ret;
-}
+};
 
 const collapseChange = <T>(diff: EditTable<T>) => {
     const ret: DiffTable<T> = [];
@@ -632,13 +649,13 @@ const collapseChange = <T>(diff: EditTable<T>) => {
 
         if (!oldItem && newItem) {
             if (status === DiffStatus.Remove || status === DiffStatus.Change) {
-                status = DiffStatus.Change
+                status = DiffStatus.Change;
             } else {
                 status = DiffStatus.Add;
             }
         } else if (oldItem && !newItem) {
             if (status === DiffStatus.Add || status === DiffStatus.Change) {
-                status = DiffStatus.Change
+                status = DiffStatus.Change;
             } else {
                 status = DiffStatus.Remove;
             }
@@ -661,6 +678,7 @@ const collapseChange = <T>(diff: EditTable<T>) => {
             const maxLength = Math.max(oldItems.length, newItems.length);
             for (let i = 0; i < maxLength; i++) {
                 ret.push({
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
                     status: status as any,
                     oldItem: oldItems[i] || null,
                     newItem: newItems[i] || null,
@@ -680,7 +698,7 @@ const collapseChange = <T>(diff: EditTable<T>) => {
         }
     }
     return ret;
-}
+};
 
 export interface LawPosition {
     line: number,
@@ -708,14 +726,21 @@ const getPosition = ([el, tt]: [ComparableEL, TagType], dom: Node): LawPosition 
 
     if (xPathString) {
         try {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const r = xpath.evaluate(
                 xPathString,
                 dom,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
                 (xpath as any).createNSResolver(dom),
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
                 (xpath as any).XPathResult.ANY_TYPE,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 null as any,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ) as any;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
             const rel = r.nodes[0];
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
             return { line: rel.lineNumber, col: rel.columnNumber, str: `${rel.lineNumber}:${rel.columnNumber}` };
         } catch (e) {
             console.error(e);
@@ -725,7 +750,7 @@ const getPosition = ([el, tt]: [ComparableEL, TagType], dom: Node): LawPosition 
     } else {
         return null;
     }
-}
+};
 
 
 export type LawDiffResultItemData = LawDiffElementMismatchData | LawDiffElementChangeData | LawDiffNoDiffData;
@@ -759,22 +784,22 @@ export interface DiffAddRowData {
     status: DiffStatus.Add,
     oldItem: null,
     newItem: DiffTableItemData,
-};
+}
 export interface DiffRemoveRowData {
     status: DiffStatus.Remove,
     oldItem: DiffTableItemData,
     newItem: null,
-};
+}
 export interface DiffChangeRowData {
     status: DiffStatus.Change,
     oldItem: DiffTableItemData | null,
     newItem: DiffTableItemData | null,
-};
+}
 export interface DiffNoChangeRowData {
     status: DiffStatus.NoChange,
     oldItem: DiffTableItemData,
     newItem: DiffTableItemData,
-};
+}
 export interface DiffTableItemData {
     tag: string,
     attr: { [key: string]: string | undefined },
@@ -783,7 +808,7 @@ export interface DiffTableItemData {
     pos: LawPosition | null,
 }
 
-export const makeDiffData = (d: LawDiffResult<string>, origDOM: Node, parsedDOM: Node) => {
+export const makeDiffData = (d: LawDiffResult<string>, origDOM: Node, parsedDOM: Node): LawDiffResultItemData[] => {
 
     const ret: LawDiffResultItemData[] = [];
 
@@ -819,12 +844,14 @@ export const makeDiffData = (d: LawDiffResult<string>, origDOM: Node, parsedDOM:
                     status: drow.status,
                     oldItem,
                     newItem,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 } as any);
             }
             ret.push({
                 type: ditem.type,
                 mostSeriousStatus: ditem.mostSeriousStatus,
                 diffTable: table,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
 
         } else if (ditem.type === LawDiffType.ElementChange) {
@@ -866,4 +893,4 @@ export const makeDiffData = (d: LawDiffResult<string>, origDOM: Node, parsedDOM:
     }
 
     return ret;
-}
+};

@@ -2,11 +2,13 @@ import * as fs from "fs";
 import * as nunjucks from "nunjucks";
 import * as path from "path";
 import * as peg from "pegjs";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import * as tspegjs from "ts-pegjs";
 import { promisify } from "util";
 import make_lawnum_table from "./make_lawnum_table";
 
-export const main = async () => {
+export const main = async (): Promise<void> => {
     const basePath = path.join(__dirname, "..");
     const srcPath = path.join(basePath, "src");
     const distPath = path.join(basePath, "dist");
@@ -28,7 +30,11 @@ export const main = async () => {
         ...options,
         "tspegjs": {
             "noTslint": false,
-            "customHeader": `import * as util from "./util"; import * as std from "./std_law";`
+            "customHeader": `
+// @ts-nocheck
+import * as util from "./util";
+import * as std from "./std_law";
+`.trimLeft(),
         },
     } as peg.OutputFormatAmdCommonjs);
 
@@ -61,13 +67,13 @@ if(exports) exports.nunjucksPrecompiled = window.nunjucksPrecompiled;
     );
 
     await make_lawnum_table();
-}
+};
 
 if (typeof require !== "undefined" && require.main === module) {
-    process.on('unhandledRejection', e => {
+    process.on("unhandledRejection", e => {
         console.dir(e);
         process.exit(1);
     });
-    main();
+    main().catch(e => { throw e; });
 }
 

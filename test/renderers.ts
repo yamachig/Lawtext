@@ -4,7 +4,9 @@ import * as fsExtra from "fs-extra";
 import { before, it } from "mocha";
 import * as os from "os";
 import * as path from "path";
-import * as prettifyXml from "prettify-xml";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import prettifyXml from "prettify-xml";
 import { promisify } from "util";
 import * as xmldom from "xmldom";
 import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
@@ -16,14 +18,14 @@ import { ensureList, getLawXml, prepare } from "./prepare_test";
 
 const domParser = new xmldom.DOMParser();
 
-before(() => {
-    prepare();
-    ensureList();
+before(async () => {
+    await prepare();
+    await ensureList();
 });
 
 const LIMIT_WIDTH = 34;
 
-const tempDir = path.join(os.tmpdir(), `lawtext_core_test`);
+const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 function* zipLongest<T>(lists: T[][], defaultValues: T[]) {
     if (lists.length !== defaultValues.length) throw new Error("Length mismatch");
@@ -38,8 +40,8 @@ const itemToString = (item: DiffTableItemData) => {
         if (Object.keys(item.attr).length) {
             return [
                 `<${item.tag}`,
-                ...Object.keys(item.attr).map(key => `  ${key}="${item.attr[key]}"`),
-                ">"
+                ...Object.keys(item.attr).map(key => `  ${key}="${item.attr[key] ?? ""}"`),
+                ">",
             ];
         } else {
             return [`<${item.tag}>`];
@@ -49,8 +51,8 @@ const itemToString = (item: DiffTableItemData) => {
         if (Object.keys(item.attr).length) {
             return [
                 `<${item.tag}`,
-                ...Object.keys(item.attr).map(key => `  ${key}="${item.attr[key]}"`),
-                "/>"
+                ...Object.keys(item.attr).map(key => `  ${key}="${item.attr[key] ?? ""}"`),
+                "/>",
             ];
         } else {
             return [`<${item.tag} />`];
@@ -63,7 +65,7 @@ const itemToString = (item: DiffTableItemData) => {
         return [item.text];
 
     } else { throw util.assertNever(item.type); }
-}
+};
 
 const makeElementMismatchTable = (ditem: LawDiffElementMismatchData) => {
     const table: string[][] = [];
@@ -109,7 +111,7 @@ const makeElementMismatchTable = (ditem: LawDiffElementMismatchData) => {
     }
 
     return table;
-}
+};
 
 const makeElementChangeTable = (ditem: LawDiffElementChangeData) => {
     const table: string[][] = [];
@@ -141,26 +143,34 @@ const makeElementChangeTable = (ditem: LawDiffElementChangeData) => {
 
     for (const key of ditem.nochangeKeys) {
         table.push([
-            "", `  ${key}="${oldItem.attr[key]}"`,
-            "", `  ${key}="${newItem.attr[key]}"`,
+            "",
+            `  ${key}="${oldItem.attr[key] ?? ""}"`,
+            "",
+            `  ${key}="${newItem.attr[key] ?? ""}"`,
         ]);
     }
 
     for (const [key, status] of ditem.changedKeys) {
         if (status === ProblemStatus.Error) {
             table.push([
-                "", `  ${key}="${TERMC.YELLOW}${oldItem.attr[key]}${TERMC.DEFAULT}"`,
-                "", `  ${key}="${TERMC.YELLOW}${newItem.attr[key]}${TERMC.DEFAULT}"`,
+                "",
+                `  ${key}="${TERMC.YELLOW}${oldItem.attr[key] ?? ""}${TERMC.DEFAULT}"`,
+                "",
+                `  ${key}="${TERMC.YELLOW}${newItem.attr[key] ?? ""}${TERMC.DEFAULT}"`,
             ]);
         } else if (status === ProblemStatus.Warning) {
             table.push([
-                "", `  ${key}="${TERMC.CYAN}${oldItem.attr[key]}${TERMC.DEFAULT}"`,
-                "", `  ${key}="${TERMC.CYAN}${newItem.attr[key]}${TERMC.DEFAULT}"`,
+                "",
+                `  ${key}="${TERMC.CYAN}${oldItem.attr[key] ?? ""}${TERMC.DEFAULT}"`,
+                "",
+                `  ${key}="${TERMC.CYAN}${newItem.attr[key] ?? ""}${TERMC.DEFAULT}"`,
             ]);
         } else if (status === ProblemStatus.NoProblem) {
             table.push([
-                "", `  ${key}="${TERMC.BLUE}${oldItem.attr[key]}${TERMC.DEFAULT}"`,
-                "", `  ${key}="${TERMC.BLUE}${newItem.attr[key]}${TERMC.DEFAULT}"`,
+                "",
+                `  ${key}="${TERMC.BLUE}${oldItem.attr[key] ?? ""}${TERMC.DEFAULT}"`,
+                "",
+                `  ${key}="${TERMC.BLUE}${newItem.attr[key] ?? ""}${TERMC.DEFAULT}"`,
             ]);
         } else { util.assertNever(status); }
     }
@@ -168,18 +178,24 @@ const makeElementChangeTable = (ditem: LawDiffElementChangeData) => {
     for (const [key, status] of ditem.removedKeys) {
         if (status === ProblemStatus.Error) {
             table.push([
-                "", `  ${TERMC.MAGENTA}${key}="${oldItem.attr[key]}"${TERMC.DEFAULT}`,
-                "", "",
+                "",
+                `  ${TERMC.MAGENTA}${key}="${oldItem.attr[key] ?? ""}"${TERMC.DEFAULT}`,
+                "",
+                "",
             ]);
         } else if (status === ProblemStatus.Warning) {
             table.push([
-                "", `  ${TERMC.CYAN}${key}="${oldItem.attr[key]}"${TERMC.DEFAULT}`,
-                "", "",
+                "",
+                `  ${TERMC.CYAN}${key}="${oldItem.attr[key] ?? ""}"${TERMC.DEFAULT}`,
+                "",
+                "",
             ]);
         } else if (status === ProblemStatus.NoProblem) {
             table.push([
-                "", `  ${TERMC.BLUE}${key}="${oldItem.attr[key]}"${TERMC.DEFAULT}`,
-                "", "",
+                "",
+                `  ${TERMC.BLUE}${key}="${oldItem.attr[key] ?? ""}"${TERMC.DEFAULT}`,
+                "",
+                "",
             ]);
         } else { util.assertNever(status); }
     }
@@ -187,26 +203,32 @@ const makeElementChangeTable = (ditem: LawDiffElementChangeData) => {
     for (const [key, status] of ditem.addedKeys) {
         if (status === ProblemStatus.Error) {
             table.push([
-                "", "",
-                "", `  ${TERMC.GREEN}${key}="${newItem.attr[key]}"${TERMC.DEFAULT}`,
+                "",
+                "",
+                "",
+                `  ${TERMC.GREEN}${key}="${newItem.attr[key] ?? ""}"${TERMC.DEFAULT}`,
             ]);
         } else if (status === ProblemStatus.Warning) {
             table.push([
-                "", "",
-                "", `  ${TERMC.CYAN}${key}="${newItem.attr[key]}"${TERMC.DEFAULT}`,
+                "",
+                "",
+                "",
+                `  ${TERMC.CYAN}${key}="${newItem.attr[key] ?? ""}"${TERMC.DEFAULT}`,
             ]);
         } else if (status === ProblemStatus.NoProblem) {
             table.push([
-                "", "",
-                "", `  ${TERMC.BLUE}${key}="${newItem.attr[key]}"${TERMC.DEFAULT}`,
+                "",
+                "",
+                "",
+                `  ${TERMC.BLUE}${key}="${newItem.attr[key] ?? ""}"${TERMC.DEFAULT}`,
             ]);
         } else { util.assertNever(status); }
     }
 
-    table.push(["", `>`, "", `>`]);
+    table.push(["", ">", "", ">"]);
 
     return table;
-}
+};
 
 const NO_DIFF_SHOW_LINES = 3;
 
@@ -231,7 +253,7 @@ const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
     }
 
     return table;
-}
+};
 
 it("Render and Parse Lawtext", async () => {
     // const [list, listByLawnum] = await getLawList();
@@ -279,6 +301,7 @@ it("Render and Parse Lawtext", async () => {
 
     analyze(parsedEL);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const parsedXML = prettifyXml(util.outerXML(parsedEL)) as string;
     const parsedDOM = domParser.parseFromString(parsedXML);
     await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });

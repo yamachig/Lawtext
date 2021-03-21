@@ -19,9 +19,10 @@
     "test": "test"
   },
   "scripts": {
-    "build": "node -r ts-node/register bin/build.ts && tsc",
+    "ts-node": "node -r ts-node/register -r tsconfig-paths/register",
+    "build": "npm run ts-node bin/build.ts && tsc",
     "prepare": "npm run build",
-    "test": "node --max_old_space_size=2048 -r ts-node/register ./test/prepare_test.ts && mocha --timeout 10000 -r ts-node/register test/**/*.ts"
+    "test": "node --max_old_space_size=2048 -r ts-node/register -r tsconfig-paths/register ./test/prepare_test.ts && mocha --timeout 10000 -r ts-node/register test/**/*.ts"
   },
   "dependencies": {
     "argparse": "^2.0.1",
@@ -61,8 +62,14 @@
     "@types/nunjucks": "^3.1.4",
     "@types/pegjs": "^0.10.2",
     "@types/webpack": "^4.41.26",
+    "@types/webpack-node-externals": "^2.5.0",
     "@types/xmldom": "^0.1.30",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.18.0",
     "chai": "^4.3.4",
-    "mocha": "^8.3.2"
+    "eslint": "^7.22.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "mocha": "^8.3.2",
+    "tsconfig-paths": "^3.9.0"
   }
 }

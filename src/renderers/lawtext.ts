@@ -1,12 +1,11 @@
 import * as std from "../std_law";
 import { assertNever, EL, NotImplementedError } from "../util";
 
-const INDENT = "  "
-const MARGIN = "　"
-const BLANK = ""
+const INDENT = "  ";
+const MARGIN = "　";
+const BLANK = "";
 // const NEWLINE = `
 // `;
-
 
 
 const renderLaw = (el: std.Law, indent: number): string => {
@@ -23,8 +22,7 @@ const renderLaw = (el: std.Law, indent: number): string => {
     }
 
     return LawBody ? renderLawBody(LawBody, indent, LawNum) : "";
-}
-
+};
 
 
 const renderLawBody = (el: std.LawBody, indent: number, LawNum: string): string => {
@@ -71,8 +69,7 @@ const renderLawBody = (el: std.LawBody, indent: number, LawNum: string): string 
         else { assertNever(child); }
     }
     return blocks.join("");
-}
-
+};
 
 
 const renderLawTitle = (el: std.LawTitle, indent: number, LawNum: string): string => {
@@ -80,31 +77,29 @@ const renderLawTitle = (el: std.LawTitle, indent: number, LawNum: string): strin
 
     return LawNum
         ?
- /* ========================= */`\
+    /* ========================= */`\
 ${_____}${el.text}
 ${_____}（${LawNum}）
 ${BLANK}
 `/* ========================= */
         :
-/* ========================= */`\
+    /* ========================= */`\
 ${_____}${el.text}
 ${BLANK}
 `/* ========================= */;
 
-}
-
+};
 
 
 const renderEnactStatement = (el: std.EnactStatement, indent: number): string => {
     const _____ = INDENT.repeat(indent);
 
     return (
- /* ========================= */`
+    /* ========================= */`
 ${_____}${INDENT}${INDENT}${el.text}
 ${BLANK}
 `/* ========================= */);
-}
-
+};
 
 
 const renderPreamble = (el: std.Preamble, indent: number): string => {
@@ -116,13 +111,12 @@ const renderPreamble = (el: std.Preamble, indent: number): string => {
     }
 
     return (
- /* ========================= */`
+    /* ========================= */`
 ${_____}:前文:
 ${blocks.join("")}
 ${BLANK}
 `/* ========================= */);
-}
-
+};
 
 
 const renderTOC = (el: std.TOC, indent: number): string => {
@@ -133,7 +127,7 @@ const renderTOC = (el: std.TOC, indent: number): string => {
         if (child.tag === "TOCLabel") {
 
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${child.text}
 `/* ========================= */);
 
@@ -145,13 +139,12 @@ ${_____}${child.text}
     }
     if (blocks.length > 0) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 `/* ========================= */);
     }
     return blocks.join("");
-}
-
+};
 
 
 const renderTOCItem = (el: std.TOCPreambleLabel | std.TOCPart | std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCSupplProvision | std.TOCArticle | std.TOCAppdxTableLabel, indent: number): string => {
@@ -170,14 +163,14 @@ const renderTOCItem = (el: std.TOCPreambleLabel | std.TOCPart | std.TOCChapter |
         }
         if (ArticleTitle || ArticleCaption) {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${ArticleTitle}${ArticleCaption}
 `/* ========================= */);
         }
 
     } else if (el.tag === "TOCPreambleLabel") {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${_____}${el.text}
 `/* ========================= */);
 
@@ -204,7 +197,7 @@ ${_____}${el.text}
         }
         if (TocItemTitle || ArticleRange) {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${TocItemTitle}${ArticleRange}
 `/* ========================= */);
         }
@@ -214,8 +207,7 @@ ${_____}${TocItemTitle}${ArticleRange}
 
     }
     return blocks.join("");
-}
-
+};
 
 
 const renderAppdxTable = (el: std.AppdxTable, indent: number): string => {
@@ -230,7 +222,7 @@ const renderAppdxTable = (el: std.AppdxTable, indent: number): string => {
         if (child.tag === "AppdxTableTitle") {
             AppdxTableTitle = renderRun(child.children);
             if (child.attr.WritingMode === "horizontal") {
-                AppdxTableTitle = `[WritingMode="horizontal"]` + AppdxTableTitle;
+                AppdxTableTitle = "[WritingMode=\"horizontal\"]" + AppdxTableTitle;
             }
 
         } else if (child.tag === "RelatedArticleNum") {
@@ -243,7 +235,7 @@ const renderAppdxTable = (el: std.AppdxTable, indent: number): string => {
 
     if (AppdxTableTitle || RelatedArticleNum) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${AppdxTableTitle}${RelatedArticleNum}
 ${BLANK}
@@ -266,8 +258,7 @@ ${BLANK}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderSupplProvisionAppdxTable = (el: std.SupplProvisionAppdxTable, indent: number): string => {
@@ -282,7 +273,7 @@ const renderSupplProvisionAppdxTable = (el: std.SupplProvisionAppdxTable, indent
         if (child.tag === "SupplProvisionAppdxTableTitle") {
             SupplProvisionAppdxTableTitle = renderRun(child.children);
             if (child.attr.WritingMode === "horizontal") {
-                SupplProvisionAppdxTableTitle = `[WritingMode="horizontal"]` + SupplProvisionAppdxTableTitle;
+                SupplProvisionAppdxTableTitle = "[WritingMode=\"horizontal\"]" + SupplProvisionAppdxTableTitle;
             }
 
         } else if (child.tag === "RelatedArticleNum") {
@@ -296,7 +287,7 @@ const renderSupplProvisionAppdxTable = (el: std.SupplProvisionAppdxTable, indent
 
     if (SupplProvisionAppdxTableTitle || RelatedArticleNum) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${SupplProvisionAppdxTableTitle}${RelatedArticleNum}
 ${BLANK}
@@ -309,8 +300,7 @@ ${BLANK}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderAppdxStyle = (el: std.AppdxStyle, indent: number): string => {
@@ -335,7 +325,7 @@ const renderAppdxStyle = (el: std.AppdxStyle, indent: number): string => {
 
     if (AppdxStyleTitle || RelatedArticleNum) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${AppdxStyleTitle}${RelatedArticleNum}
 ${BLANK}
@@ -357,8 +347,7 @@ ${BLANK}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderSupplProvisionAppdxStyle = (el: std.SupplProvisionAppdxStyle, indent: number): string => {
@@ -383,7 +372,7 @@ const renderSupplProvisionAppdxStyle = (el: std.SupplProvisionAppdxStyle, indent
 
     if (SupplProvisionAppdxStyleTitle || RelatedArticleNum) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${SupplProvisionAppdxStyleTitle}${RelatedArticleNum}
 ${BLANK}
@@ -399,8 +388,7 @@ ${BLANK}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderAppdxFormat = (el: std.AppdxFormat, indent: number): string => {
@@ -425,14 +413,14 @@ const renderAppdxFormat = (el: std.AppdxFormat, indent: number): string => {
 
     if (AppdxFormatTitle || RelatedArticleNum) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${AppdxFormatTitle}${RelatedArticleNum}
 ${BLANK}
 `/* ========================= */);
     } else {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}:appdx-format:
 `/* ========================= */);
@@ -450,8 +438,7 @@ ${_____}:appdx-format:
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderAppdxFig = (el: std.AppdxFig, indent: number): string => {
@@ -476,7 +463,7 @@ const renderAppdxFig = (el: std.AppdxFig, indent: number): string => {
 
     if (AppdxFigTitle || RelatedArticleNum) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${AppdxFigTitle}${RelatedArticleNum}
 ${BLANK}
@@ -495,8 +482,7 @@ ${BLANK}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderAppdxNote = (el: std.AppdxNote, indent: number): string => {
@@ -511,7 +497,7 @@ const renderAppdxNote = (el: std.AppdxNote, indent: number): string => {
         if (child.tag === "AppdxNoteTitle") {
             AppdxNoteTitle = renderRun(child.children);
             if (child.attr.WritingMode === "horizontal") {
-                AppdxNoteTitle = `[WritingMode="horizontal"]` + AppdxNoteTitle;
+                AppdxNoteTitle = "[WritingMode=\"horizontal\"]" + AppdxNoteTitle;
             }
 
         } else if (child.tag === "RelatedArticleNum") {
@@ -524,7 +510,7 @@ const renderAppdxNote = (el: std.AppdxNote, indent: number): string => {
 
     if (AppdxNoteTitle || RelatedArticleNum) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${AppdxNoteTitle}${RelatedArticleNum}
 ${BLANK}
@@ -549,8 +535,7 @@ ${BLANK}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderAppdx = (el: std.Appdx, indent: number): string => {
@@ -575,7 +560,7 @@ const renderAppdx = (el: std.Appdx, indent: number): string => {
 
     if (ArithFormulaNum || RelatedArticleNum) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${ArithFormulaNum}${RelatedArticleNum}
 ${BLANK}
@@ -585,7 +570,7 @@ ${BLANK}
     for (const child of ChildItems) {
         if (child.tag === "ArithFormula") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${INDENT}${renderRun([child])}
 `/* ========================= */); /* >>>> INDENT >>>> */
 
@@ -597,8 +582,7 @@ ${_____}${INDENT}${renderRun([child])}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderSupplProvisionAppdx = (el: std.SupplProvisionAppdx, indent: number): string => {
@@ -623,7 +607,7 @@ const renderSupplProvisionAppdx = (el: std.SupplProvisionAppdx, indent: number):
 
     if (ArithFormulaNum || RelatedArticleNum) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${ArithFormulaNum}${RelatedArticleNum}
 ${BLANK}
@@ -633,7 +617,7 @@ ${BLANK}
     for (const child of ChildItems) {
         if (child.tag === "ArithFormula") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${INDENT}${renderRun([child])}
 `/* ========================= */); /* >>>> INDENT >>>> */
 
@@ -642,8 +626,7 @@ ${_____}${INDENT}${renderRun([child])}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderSupplProvision = (el: std.SupplProvision, indent: number): string => {
@@ -666,13 +649,13 @@ const renderSupplProvision = (el: std.SupplProvision, indent: number): string =>
     if (SupplProvisionLabel) {
         blocks.push(el.attr.AmendLawNum
             ?
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 ${_____}${SupplProvisionLabel}（${el.attr.AmendLawNum}）${Extract}
 ${BLANK}
 `/* ========================= */
             :
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 ${_____}${SupplProvisionLabel}${Extract}
 ${BLANK}
@@ -703,8 +686,7 @@ ${BLANK}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderArticleGroup = (el: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division, indent: number): string => {
@@ -737,7 +719,7 @@ const renderArticleGroup = (el: std.MainProvision | std.Part | std.Chapter | std
 
     if (ArticleGroupTitle) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${ArticleGroupTitle}
 ${BLANK}
@@ -763,8 +745,7 @@ ${BLANK}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderArticle = (el: std.Article, indent: number): string => {
@@ -795,7 +776,7 @@ const renderArticle = (el: std.Article, indent: number): string => {
 
     if (ArticleCaption) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${INDENT}${ArticleCaption}
 `/* ========================= */);
@@ -811,13 +792,12 @@ ${_____}${INDENT}${ArticleCaption}
     }
 
     blocks.push(
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 `/* ========================= */);
 
     return blocks.join("");
-}
-
+};
 
 
 const renderParagraphItem = (el: std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, indent: number, ArticleCaption?: string): string => {
@@ -854,7 +834,7 @@ const renderParagraphItem = (el: std.Paragraph | std.Item | std.Subitem1 | std.S
 
     if (ParagraphCaption) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${BLANK}
 ${_____}${INDENT}${ParagraphCaption}
 `/* ========================= */);
@@ -893,8 +873,7 @@ ${_____}${INDENT}${ParagraphCaption}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderList = (el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, indent: number): string => {
@@ -919,8 +898,7 @@ const renderList = (el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, i
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderAmendProvision = (el: std.AmendProvision, indent: number): string => {
@@ -928,7 +906,7 @@ const renderAmendProvision = (el: std.AmendProvision, indent: number): string =>
     const blocks: string[] = [];
 
     blocks.push(
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 ${_____}:AmendProvision:
 `/* ========================= */);
@@ -940,7 +918,7 @@ ${_____}:AmendProvision:
 
         } else if (child.tag === "NewProvision") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${child.outerXML()}
 `/* ========================= */);
 
@@ -949,13 +927,12 @@ ${_____}${child.outerXML()}
     }
 
     blocks.push(
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 `/* ========================= */);
 
     return blocks.join("");
-}
-
+};
 
 
 const renderTableStruct = (el: std.TableStruct, indent: number, renderTag = false): string => {
@@ -964,7 +941,7 @@ const renderTableStruct = (el: std.TableStruct, indent: number, renderTag = fals
 
     if (renderTag) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${_____}:table-struct:
 `/* ========================= */);
     }
@@ -973,7 +950,7 @@ ${_____}:table-struct:
 
         if (child.tag === "TableStructTitle") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}:table-struct-title:${renderRun(child.children)}
 `/* ========================= */);
 
@@ -988,13 +965,12 @@ ${_____}:table-struct-title:${renderRun(child.children)}
     }
 
     blocks.push(
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 `/* ========================= */);
 
     return blocks.join("");
-}
-
+};
 
 
 const renderTable = (el: std.Table, indent: number): string => {
@@ -1003,7 +979,7 @@ const renderTable = (el: std.Table, indent: number): string => {
 
     if (el.attr.WritingMode === "horizontal") {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${_____}[WritingMode="horizontal"]
 `/* ========================= */);
     }
@@ -1018,8 +994,7 @@ ${_____}[WritingMode="horizontal"]
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderRemarks = (el: std.Remarks, indent: number): string => {
@@ -1032,7 +1007,7 @@ const renderRemarks = (el: std.Remarks, indent: number): string => {
 
         if (child.tag === "RemarksLabel") {
             RemarksLabel = renderRun(child.children);
-            if (child.attr.LineBreak === "true") RemarksLabel = /* $$$$$$ */`[LineBreak="true"]`/* $$$$$$ */ + RemarksLabel;
+            if (child.attr.LineBreak === "true") RemarksLabel = /* $$$$$$ */"[LineBreak=\"true\"]"/* $$$$$$ */ + RemarksLabel;
 
         } else {
             ChildItems.push(child);
@@ -1049,7 +1024,7 @@ const renderRemarks = (el: std.Remarks, indent: number): string => {
         if (child.tag === "Sentence") {
             blocks.push((i === 0)
                 ?
- /* ========================= */`\
+            /* ========================= */`\
 ${_____}${RemarksLabel}${MARGIN}${renderBlockSentence([child], indent + 2).trim()}
 `/* ========================= */
                 : renderBlockSentence([child], indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
@@ -1057,7 +1032,7 @@ ${_____}${RemarksLabel}${MARGIN}${renderBlockSentence([child], indent + 2).trim(
         } else if (child.tag === "Item") {
             if (i === 0) {
                 blocks.push(
- /* ========================= */`\
+                    /* ========================= */`\
 ${_____}${RemarksLabel}
 `/* ========================= */);
             }
@@ -1068,8 +1043,7 @@ ${_____}${RemarksLabel}
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderTableRow = (el: std.TableRow | std.TableHeaderRow, indent: number): string => {
@@ -1086,8 +1060,7 @@ const renderTableRow = (el: std.TableRow | std.TableHeaderRow, indent: number): 
     }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderTableColumn = (el: std.TableColumn | std.TableHeaderColumn, indent: number, first: boolean): string => {
@@ -1097,11 +1070,11 @@ const renderTableColumn = (el: std.TableColumn | std.TableHeaderColumn, indent: 
     const bullet = first
         ? "* - "
         : "  - ";
-    const attr = Object.keys(el.attr).map(k => `[${k}="${el.attr[k]}"]`).join("");
+    const attr = Object.keys(el.attr).map(k => `[${k}="${el.attr[k as keyof typeof el.attr] ?? ""}"]`).join("");
 
     if (el.tag === "TableHeaderColumn") {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${_____}${bullet}[header]${attr}${renderRun(el.children)}
 `/* ========================= */);
 
@@ -1112,7 +1085,7 @@ ${_____}${bullet}[header]${attr}${renderRun(el.children)}
             if (child.tag === "Sentence" || child.tag === "Column") {
                 blocks.push((i === 0)
                     ?
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${bullet}${attr}${renderBlockSentence([child], indent + 2).trim()}
 `/* ========================= */
                     : renderBlockSentence([child], indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
@@ -1120,7 +1093,7 @@ ${_____}${bullet}${attr}${renderBlockSentence([child], indent + 2).trim()}
             } else if (child.tag === "FigStruct") {
                 blocks.push((i === 0)
                     ?
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${bullet}${attr}${renderFigStruct(child, indent + 2).trim()}
 `/* ========================= */
                     : renderFigStruct(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
@@ -1128,7 +1101,7 @@ ${_____}${bullet}${attr}${renderFigStruct(child, indent + 2).trim()}
             } else if (child.tag === "Remarks") {
                 blocks.push((i === 0)
                     ?
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${bullet}${attr}${renderRemarks(child, indent + 2).trim()}
 `/* ========================= */
                     : renderRemarks(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
@@ -1136,7 +1109,7 @@ ${_____}${bullet}${attr}${renderRemarks(child, indent + 2).trim()}
             } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
                 blocks.push((i === 0)
                     ?
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${bullet}${attr}${renderArticleGroup(child, indent + 2).trim()}
 `/* ========================= */
                     : renderArticleGroup(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
@@ -1144,7 +1117,7 @@ ${_____}${bullet}${attr}${renderArticleGroup(child, indent + 2).trim()}
             } else if (child.tag === "Article") {
                 blocks.push((i === 0)
                     ?
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${bullet}${attr}${renderArticle(child, indent + 2).trim()}
 `/* ========================= */
                     : renderArticle(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
@@ -1152,7 +1125,7 @@ ${_____}${bullet}${attr}${renderArticle(child, indent + 2).trim()}
             } else if (child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
                 blocks.push((i === 0)
                     ?
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${bullet}${attr}${renderParagraphItem(child, indent + 2).trim()}
 `/* ========================= */
                     : renderParagraphItem(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
@@ -1165,8 +1138,7 @@ ${_____}${bullet}${attr}${renderParagraphItem(child, indent + 2).trim()}
     else { assertNever(el); }
 
     return blocks.join("");
-}
-
+};
 
 
 const renderStyleStruct = (el: std.StyleStruct, indent: number): string => {
@@ -1177,7 +1149,7 @@ const renderStyleStruct = (el: std.StyleStruct, indent: number): string => {
 
         if (child.tag === "StyleStructTitle") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}:style-struct-title:${renderRun(child.children)}
 `/* ========================= */);
 
@@ -1192,13 +1164,12 @@ ${_____}:style-struct-title:${renderRun(child.children)}
     }
 
     blocks.push(
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 `/* ========================= */);
 
     return blocks.join("");
-}
-
+};
 
 
 const renderStyle = (el: std.Style, indent: number): string => {
@@ -1208,7 +1179,7 @@ const renderStyle = (el: std.Style, indent: number): string => {
     for (const child of el.children) {
         if (typeof child === "string") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${renderRun([child])}
 `/* ========================= */);
 
@@ -1220,7 +1191,7 @@ ${_____}${renderRun([child])}
 
         } else if (std.isFig(child)) {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${renderFigRun(child)}
 `/* ========================= */);
 
@@ -1244,7 +1215,7 @@ ${_____}${renderFigRun(child)}
 
         } else if (std.isArithFormula(child)) {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${renderRun([child])}
 `/* ========================= */);
 
@@ -1255,22 +1226,21 @@ ${_____}${renderRun([child])}
     }
 
     blocks.push(
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 `/* ========================= */);
 
     return blocks.join("");
-}
+};
 
 
-
-const renderFormatStruct = (el: std.FormatStruct, indent: number, renderTag: boolean = false): string => {
+const renderFormatStruct = (el: std.FormatStruct, indent: number, renderTag = false): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
 
     if (renderTag) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${_____}:format-struct:
 `/* ========================= */);
     }
@@ -1279,7 +1249,7 @@ ${_____}:format-struct:
 
         if (child.tag === "FormatStructTitle") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}:format-struct-title:${renderRun(child.children)}
 `/* ========================= */);
 
@@ -1291,7 +1261,7 @@ ${_____}:format-struct-title:${renderRun(child.children)}
 
                 } else if (std.isFig(subchild)) {
                     blocks.push(
- /* ========================= */`\
+                        /* ========================= */`\
 ${_____}${renderFigRun(subchild)}
 `/* ========================= */);
 
@@ -1312,22 +1282,21 @@ ${_____}${renderFigRun(subchild)}
     }
 
     blocks.push(
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 `/* ========================= */);
 
     return blocks.join("");
-}
+};
 
 
-
-const renderFigStruct = (el: std.FigStruct, indent: number, renderTag: boolean = false): string => {
+const renderFigStruct = (el: std.FigStruct, indent: number, renderTag = false): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
 
     if (renderTag) {
         blocks.push(
- /* ========================= */`\
+            /* ========================= */`\
 ${_____}:fig-struct:
 `/* ========================= */);
     }
@@ -1336,13 +1305,13 @@ ${_____}:fig-struct:
 
         if (child.tag === "FigStructTitle") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}:fig-struct-title:${renderRun(child.children)}
 `/* ========================= */);
 
         } else if (child.tag === "Fig") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}${renderFigRun(child)}
 `/* ========================= */);
 
@@ -1354,13 +1323,12 @@ ${_____}${renderFigRun(child)}
     }
 
     blocks.push(
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 `/* ========================= */);
 
     return blocks.join("");
-}
-
+};
 
 
 const renderFigRun = (el: std.Fig): string => {
@@ -1369,8 +1337,7 @@ const renderFigRun = (el: std.Fig): string => {
     }
 
     return (/* $$$$$$ */`.. figure:: ${el.attr.src}`/* $$$$$$ */);
-}
-
+};
 
 
 const renderNoteStruct = (el: std.NoteStruct, indent: number): string => {
@@ -1381,7 +1348,7 @@ const renderNoteStruct = (el: std.NoteStruct, indent: number): string => {
 
         if (child.tag === "NoteStructTitle") {
             blocks.push(
- /* ========================= */`\
+                /* ========================= */`\
 ${_____}:note-struct-title:${renderRun(child.children)}
 `/* ========================= */);
 
@@ -1402,7 +1369,7 @@ ${_____}:note-struct-title:${renderRun(child.children)}
 
                 } else if (std.isFig(subchild)) {
                     blocks.push(
- /* ========================= */`\
+                        /* ========================= */`\
 ${_____}${renderFigRun(subchild)}
 `/* ========================= */);
 
@@ -1411,7 +1378,7 @@ ${_____}${renderFigRun(subchild)}
 
                 } else if (std.isArithFormula(subchild)) {
                     blocks.push(
- /* ========================= */`\
+                        /* ========================= */`\
 ${_____}${renderRun([subchild])}
 `/* ========================= */);
 
@@ -1429,23 +1396,21 @@ ${_____}${renderRun([subchild])}
     }
 
     blocks.push(
- /* ========================= */`\
+        /* ========================= */`\
 ${BLANK}
 `/* ========================= */);
 
     return blocks.join("");
-}
-
+};
 
 
 const renderSupplNote = (el: std.SupplNote, indent: number): string => {
     const _____ = INDENT.repeat(indent);
     return (
- /* ========================= */`\
+    /* ========================= */`\
 ${_____}:SupplNote:${renderRun(el.children)}
 `/* ========================= */);
-}
-
+};
 
 
 const renderBlockSentence = (els: Array<std.Sentence | std.Column | std.Table>, indent: number, Title?: string): string => {
@@ -1462,14 +1427,14 @@ const renderBlockSentence = (els: Array<std.Sentence | std.Column | std.Table>, 
         const el = els[i];
 
         if (el.tag === "Sentence") {
-            if (el.attr.WritingMode === "horizontal") runs.push(/* $$$$$$ */`[WritingMode="horizontal"]`/* $$$$$$ */);
+            if (el.attr.WritingMode === "horizontal") runs.push(/* $$$$$$ */"[WritingMode=\"horizontal\"]"/* $$$$$$ */);
             runs.push(renderRun(el.children));
 
         } else if (el.tag === "Column") {
             if (i !== 0) {
                 runs.push(/* $$$$$$ */MARGIN/* $$$$$$ */);
             }
-            if (el.attr.LineBreak === "true") runs.push(/* $$$$$$ */`[LineBreak="true"]`/* $$$$$$ */);
+            if (el.attr.LineBreak === "true") runs.push(/* $$$$$$ */"[LineBreak=\"true\"]"/* $$$$$$ */);
             for (const subel of el.children) {
                 runs.push(renderRun(subel.children));
             }
@@ -1482,11 +1447,10 @@ const renderBlockSentence = (els: Array<std.Sentence | std.Column | std.Table>, 
     }
 
     return (
- /* ========================= */`\
+    /* ========================= */`\
 ${_____}${runs.join("")}
 `/* ========================= */);
-}
-
+};
 
 
 const renderRun = (els: Array<string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub | std.__EL>): string => {
@@ -1512,19 +1476,17 @@ const renderRun = (els: Array<string | std.Line | std.QuoteStruct | std.ArithFor
     }
 
     return /* $$$$$$ */`${runs.join("")}`/* $$$$$$ */;
-}
+};
 
 
-
-
-export const render = (el: EL, indent: number = 0): string => {
+export const render = (el: EL, indent = 0): string => {
     let ret = "";
     if (std.isLaw(el)) {
         ret += renderLaw(el, indent);
     }
     ret = ret.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1");
     return ret;
-}
+};
 const renderLawtext = render;
 export default renderLawtext;
 

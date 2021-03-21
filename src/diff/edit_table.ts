@@ -7,12 +7,12 @@ export type EditTableItem<T> = [number, T];
 
 export const MAX_D = 300;
 
-export const compare = <T>(A: T[], B: T[], maxD = MAX_D) => {
+export const compare = <T>(A: T[], B: T[], maxD = MAX_D): EditTable<T> => {
     const M = A.length;
     const N = B.length;
-    const V: number[] = new Array(M + N + 1);
-    const E: boolean[] = new Array(M + N + 1);
-    const S: Array<Array<[number, number]>> = new Array(M + N + 1);
+    const V = new Array(M + N + 1) as number[];
+    const E = new Array(M + N + 1) as boolean[];
+    const S = new Array(M + N + 1) as  Array<Array<[number, number]>>;
     const offset = M;
 
     for (let D = 0; D <= Math.min(M + N, maxD); D++) {
@@ -95,7 +95,7 @@ export const compare = <T>(A: T[], B: T[], maxD = MAX_D) => {
         }
     }
     throw new Error("Too much difference!!!");
-}
+};
 
 const generateEditTable = <T>(A: T[], B: T[], origEditScript: Array<[number, number]>) => {
     const M = A.length;
@@ -130,7 +130,7 @@ const generateEditTable = <T>(A: T[], B: T[], origEditScript: Array<[number, num
         if (ei === i && ej === j) continue;
 
         if (ei - i === ej - j) {
-            for (let [ci, cj] = [i + 1, j + 1]; ci <= ei; ci++ , cj++) {
+            for (let [ci, cj] = [i + 1, j + 1]; ci <= ei; ci++, cj++) {
                 table.push([
                     [ci - 1, A[ci - 1]],
                     [cj - 1, B[cj - 1]],
@@ -160,4 +160,4 @@ const generateEditTable = <T>(A: T[], B: T[], origEditScript: Array<[number, num
     }
 
     return table;
-}
+};

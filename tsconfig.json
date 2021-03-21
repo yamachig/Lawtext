@@ -1,22 +1,38 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
-        "outDir": "dist",
-        "sourceMap": true,
         "module": "commonjs",
         "target": "es5",
         "downlevelIteration": true,
         "moduleResolution": "node",
-        "lib": ["es2017", "dom", "es5", "scripthost"],
-        "rootDir": "./src",
         "composite": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "lib": ["es2017", "dom", "scripthost"],
+
+        "baseUrl": "./",
+        "outDir": "dist",
+        "paths": {"@src/*": ["src/*"]},
+        "rootDirs": ["src", "bin", "test"],
+
+        "skipLibCheck": true,
+
+        "alwaysStrict": true,
+        "declaration": true,
         "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
         "strictNullChecks": true,
-        "declaration": true,
-        // "suppressImplicitAnyIndexErrors": true
+        "strictPropertyInitialization": true,
+
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"],
 }

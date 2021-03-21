@@ -1,7 +1,7 @@
 import { Bar, Presets } from "cli-progress";
 import * as fs from "fs";
 import { outputFile } from "fs-extra";
-import * as JSZip from "jszip";
+import JSZip from "jszip";
 import * as path from "path";
 import { promisify } from "util";
 import { fetchLawData, fetchLawNameList, LawData, LawNameListInfo } from "../src/elaws_api";
@@ -10,11 +10,11 @@ import { LawInfos, LawInfo } from "../src/db/lawlist";
 let called = false;
 
 let lawdataPath = path.join(__dirname, "lawdata");
-export const setLawdataPath = (p: string) => {
+export const setLawdataPath = (p: string): void => {
     lawdataPath = p;
-}
+};
 
-export const prepare = async () => {
+export const prepare = async (): Promise<void> => {
     if (called) return;
     called = true;
 
@@ -23,14 +23,14 @@ export const prepare = async () => {
 
     console.log(`Preparing lawdata into ${lawdataPath}...`);    
     
-    console.log(`Loading laws list...`);   
+    console.log("Loading laws list...");   
 
     const lawNameList = await fetchLawNameList();
     
     console.log(`Preparing ${lawNameList.length} law data...`);
 
     const bar = new Bar({
-        format: "[{bar}] {percentage}% | {message}"
+        format: "[{bar}] {percentage}% | {message}",
     }, Presets.rect);
     const progress = (ratio?: number, message?: string) => {
         const payload = message ? { message: message.length > 30 ? message.slice(0, 30) + " ..." : message } : undefined;
@@ -54,8 +54,8 @@ export const prepare = async () => {
             type: "uint8array",
             compression: "DEFLATE",
             compressionOptions: {
-                level: 9
-            }
+                level: 9,
+            },
         });
         await outputFile(xmlZipPath, xmlZipData);
     };
@@ -86,14 +86,14 @@ export const prepare = async () => {
     progress(1);
     bar.stop();
 
-    console.log(`Analyzing references...`);
+    console.log("Analyzing references...");
     lawInfos.setReferences();
 
-    console.log(`Emitting list...`);
+    console.log("Emitting list...");
     const lawlist = lawInfos.getList();
     const listJson = JSON.stringify(lawlist);
     await outputFile(listJsonPath, listJson);
-}
+};
 
 export interface LawListInfo {
     LawNum: string;
@@ -110,9 +110,9 @@ const lawListByLawnum: { [index: string]: LawListInfo } = {};
 const lawList: LawListInfo[] = [];
 let lawListReady = false;
 
-export const ensureList = async () => {
+export const ensureList = async (): Promise<void> => {
     if (!lawListReady) {
-        const json = require("./lawdata/list.json") as LawListItem[];
+        const json = (await require("./lawdata/list.json")) as LawListItem[];
         for (const [
             LawNum,
             ReferencingLawNums,
@@ -135,14 +135,14 @@ export const ensureList = async () => {
         console.error(`### loaded ${lawList.length} laws`);
         lawListReady = true;
     }
-}
+};
 
 export const getLawList = async (): Promise<[LawListInfo[], { [index: string]: LawListInfo }]> => {
     await ensureList();
     return [lawList, lawListByLawnum];
-}
+};
 
-export const getLawXml = async (lawNum: string) => {
+export const getLawXml = async (lawNum: string): Promise<string> => {
     const [/**/, listByLawnum] = await getLawList();
     const lawInfo = listByLawnum[lawNum];
     const zipFilename = path.join(lawdataPath, lawInfo.Path, lawInfo.XmlZipName);
@@ -150,12 +150,12 @@ export const getLawXml = async (lawNum: string) => {
     const xmlZip = await JSZip.loadAsync(file);
     const xml = await xmlZip.file(/.*\.xml/)[0].async("text");
     return xml;
-}
+};
 
 if (typeof require !== "undefined" && require.main === module) {
-    process.on('unhandledRejection', e => {
+    process.on("unhandledRejection", e => {
         console.dir(e);
         process.exit(1);
     });
-    prepare().catch(e => { throw e });
+    prepare().catch(e => { throw e; });
 }

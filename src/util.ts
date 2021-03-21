@@ -3,11 +3,11 @@
 import { DOMParser } from "xmldom";
 import * as std from "./std_law";
 
-export const wait = (ms: number) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+export const wait = (ms: number): Promise<void> => {
+    return new Promise<void>(resolve => setTimeout(resolve, ms));
+};
 
-export function* range(start: number, end: number) {
+export function* range(start: number, end: number): Generator<number, void, unknown> {
     for (let i = start; i < end; i++) {
         yield i;
     }
@@ -15,14 +15,14 @@ export function* range(start: number, end: number) {
 
 export type ResolvedType<T> = T extends PromiseLike<infer U> ? U : T;
 
-export const decodeBase64 = (base64: string) => {
+export const decodeBase64 = (base64: string): Uint8Array => {
     const binary = atob(base64);
-    var buf = new Uint8Array(binary.length);
+    const buf = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
         buf[i] = binary.charCodeAt(i);
     }
     return buf;
-}
+};
 
 const NodeType = {
     TEXT_NODE: 3,
@@ -35,36 +35,37 @@ export interface JsonEL {
     children: Array<JsonEL | string>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export const isJsonEL = (object: any): object is JsonEL => {
-    return 'tag' in object && 'attr' in object && 'children' in object;
-}
+    return "tag" in object && "attr" in object && "children" in object;
+};
 
 export const wrapXML = (el: JsonEL, inner: string): string => {
-    const attr = Object.keys(el.attr).map(key => ` ${key}="${el.attr[key]}"`).join("");
+    const attr = Object.keys(el.attr).map(key => ` ${key}="${el.attr[key] ?? ""}"`).join("");
     if (inner) {
         return `<${el.tag}${attr}>${inner}</${el.tag}>`;
     } else {
         return `<${el.tag}${attr}/>`;
     }
-}
+};
 
-export const outerXML = (el: JsonEL, withControlEl: boolean = false): string => {
+export const outerXML = (el: JsonEL, withControlEl = false): string => {
     const inner = innerXML(el, withControlEl);
     if (withControlEl || el.tag[0] !== "_") {
         return wrapXML(el, inner);
     } else {
         return inner;
     }
-}
+};
 
-export const innerXML = (el: JsonEL, withControlEl: boolean = false): string => {
+export const innerXML = (el: JsonEL, withControlEl = false): string => {
     if (!el.children) console.error(el);
     return el.children.map(child =>
         (child instanceof String || (typeof child === "string"))
             ? child
-            : outerXML(child, withControlEl)
+            : outerXML(child, withControlEl),
     ).join("");
-}
+};
 
 
 let currentID = 0;
@@ -117,7 +118,7 @@ export class EL implements JsonEL {
         return this;
     }
 
-    public json(withControlEl: boolean = false): JsonEL {
+    public json(withControlEl = false): JsonEL {
         const children: Array<JsonEL | string> = [];
         for (const el of this.children) {
             if (!(el instanceof EL || typeof el === "string")) {
@@ -138,7 +139,7 @@ export class EL implements JsonEL {
         const joinedChildren: Array<JsonEL | string> = [];
         for (const child of children) {
             const last = joinedChildren[joinedChildren.length - 1];
-            if (typeof last === "string") {
+            if (typeof last === "string" && typeof child === "string") {
                 joinedChildren[joinedChildren.length - 1] = last + child;
             } else {
                 joinedChildren.push(child);
@@ -163,19 +164,19 @@ export class EL implements JsonEL {
         this.textCache = null;
     }
 
-    public wrapXML(inner: string) {
+    public wrapXML(inner: string): string {
         return wrapXML(this, inner);
     }
 
-    public outerXML(withControlEl: boolean = false) {
+    public outerXML(withControlEl = false): string {
         return outerXML(this, withControlEl);
     }
 
-    public innerXML(withControlEl: boolean = false) {
+    public innerXML(withControlEl = false): string {
         return innerXML(this, withControlEl);
     }
 
-    public replaceSpan(start: number, end: number/* half open */, replChildren: Array<EL | string> | EL | string) {
+    public replaceSpan(start: number, end: number/* half open */, replChildren: Array<EL | string> | EL | string): void {
         if (!Array.isArray(replChildren)) {
             replChildren = [replChildren];
         }
@@ -216,12 +217,20 @@ export class EL implements JsonEL {
 }
 
 export enum ContainerType {
+    // eslint-disable-next-line no-unused-vars
     ROOT,
+    // eslint-disable-next-line no-unused-vars
     TOPLEVEL,
+    // eslint-disable-next-line no-unused-vars
     ARTICLES,
+    // eslint-disable-next-line no-unused-vars
     SPANS,
 }
 
+
+interface IterableIterator<T> extends Iterator<T, void, undefined> {
+    [Symbol.iterator](): IterableIterator<T>;
+}
 export class Container {
     public el: EL
     public type: ContainerType
@@ -434,14 +443,14 @@ export class Env {
         this.containerCache = container;
     }
 
-    public addContainer(container: Container) {
+    public addContainer(container: Container): void {
         if (this.containerCache) {
             this.containerCache.addChild(container);
         }
         this.containerCache = container;
     }
 
-    public copy() {
+    public copy(): Env {
         return new Env(
             this.lawType,
             this.containerCache,
@@ -477,7 +486,7 @@ export const loadEl = (rawLaw: JsonEL | string): EL | string => {
             rawLaw.children.map(loadEl),
         );
     }
-}
+};
 
 
 export class __Parentheses extends EL {
@@ -495,7 +504,7 @@ export class __Parentheses extends EL {
 
         this.content = text.slice(start.length, text.length - end.length);
     }
-};
+}
 
 
 export class __Text extends EL {
@@ -503,7 +512,7 @@ export class __Text extends EL {
     constructor(text: string) {
         super("__Text", {}, [text]);
     }
-};
+}
 
 export const elementToJson = (el: Element): EL => {
     const children: Array<EL | string> = [];
@@ -519,7 +528,7 @@ export const elementToJson = (el: Element): EL => {
             // console.log(node);
         }
     }
-    const attr = {};
+    const attr: Record<string, string> = {};
     for (const at of Array.from(el.attributes)) {
         attr[at.name] = at.value;
     }
@@ -538,90 +547,103 @@ export const xmlToJson = (xml: string): EL => {
 };
 
 
-
 export const paragraphItemTags = [
-    'Paragraph', 'Item',
-    'Subitem1', 'Subitem2', 'Subitem3',
-    'Subitem4', 'Subitem5', 'Subitem6',
-    'Subitem7', 'Subitem8', 'Subitem9',
-    'Subitem10',
+    "Paragraph",
+    "Item",
+    "Subitem1",
+    "Subitem2",
+    "Subitem3",
+    "Subitem4",
+    "Subitem5",
+    "Subitem6",
+    "Subitem7",
+    "Subitem8",
+    "Subitem9",
+    "Subitem10",
 ];
 
 export const paragraphItemTitleTags = [
-    'ParagraphNum', 'ItemTitle',
-    'Subitem1Title', 'Subitem2Title', 'Subitem3Title',
-    'Subitem4Title', 'Subitem5Title', 'Subitem6Title',
-    'Subitem7Title', 'Subitem8Title', 'Subitem9Title',
-    'Subitem10Title',
+    "ParagraphNum",
+    "ItemTitle",
+    "Subitem1Title",
+    "Subitem2Title",
+    "Subitem3Title",
+    "Subitem4Title",
+    "Subitem5Title",
+    "Subitem6Title",
+    "Subitem7Title",
+    "Subitem8Title",
+    "Subitem9Title",
+    "Subitem10Title",
 ];
 
 export const paragraphItemSentenceTags = [
-    'ParagraphSentence', 'ItemSentence',
-    'Subitem1Sentence', 'Subitem2Sentence', 'Subitem3Sentence',
-    'Subitem4Sentence', 'Subitem5Sentence', 'Subitem6Sentence',
-    'Subitem7Sentence', 'Subitem8Sentence', 'Subitem9Sentence',
-    'Subitem10Sentence',
+    "ParagraphSentence",
+    "ItemSentence",
+    "Subitem1Sentence",
+    "Subitem2Sentence",
+    "Subitem3Sentence",
+    "Subitem4Sentence",
+    "Subitem5Sentence",
+    "Subitem6Sentence",
+    "Subitem7Sentence",
+    "Subitem8Sentence",
+    "Subitem9Sentence",
+    "Subitem10Sentence",
 ];
 
 
-
-
-
-export const listTags = [
-    'List', 'Sublist1', 'Sublist2', 'Sublist3',
-];
-
-
+export const listTags = ["List", "Sublist1", "Sublist2", "Sublist3"];
 
 
 export const getLawtype = (text: string): string | null => {
-    if (text.match(/^憲法/)) return "Constitution";
-    else if (text.match(/^法律/)) return "Act";
-    else if (text.match(/^政令/)) return "CabinetOrder";
-    else if (text.match(/^勅令/)) return "ImperialOrder";
-    else if (text.match(/^^\S*[^政勅]令/)) return "MinisterialOrdinance";
-    else if (text.match(/^\S*規則/)) return "Rule";
+    if (/^憲法/.exec(text)) return "Constitution";
+    else if (/^法律/.exec(text)) return "Act";
+    else if (/^政令/.exec(text)) return "CabinetOrder";
+    else if (/^勅令/.exec(text)) return "ImperialOrder";
+    else if (/^^\S*[^政勅]令/.exec(text)) return "MinisterialOrdinance";
+    else if (/^\S*規則/.exec(text)) return "Rule";
     else return null;
-}
+};
 
 export const eras = {
-    '明治': 'Meiji', '大正': 'Taisho',
-    '昭和': 'Showa', '平成': 'Heisei',
-    '令和': 'Reiwa',
+    "明治": "Meiji", "大正": "Taisho",
+    "昭和": "Showa", "平成": "Heisei",
+    "令和": "Reiwa",
 };
 
 
 export const articleGroupTypeChars = "編章節款目";
 
 export const articleGroupType = {
-    '編': 'Part', '章': 'Chapter', '節': 'Section',
-    '款': 'Subsection', '目': 'Division',
-    '条': 'Article', '項': 'Paragraph', '号': 'Item', '則': 'SupplProvision',
+    "編": "Part", "章": "Chapter", "節": "Section",
+    "款": "Subsection", "目": "Division",
+    "条": "Article", "項": "Paragraph", "号": "Item", "則": "SupplProvision",
 };
 
 export const articleGroupTitleTag = {
-    '編': 'PartTitle', '章': 'ChapterTitle', '節': 'SectionTitle',
-    '款': 'SubsectionTitle', '目': 'DivisionTitle', '条': 'ArticleTitle',
-    '則': 'SupplProvisionLabel'
+    "編": "PartTitle", "章": "ChapterTitle", "節": "SectionTitle",
+    "款": "SubsectionTitle", "目": "DivisionTitle", "条": "ArticleTitle",
+    "則": "SupplProvisionLabel",
 };
 
 export const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 
 export const parseKanjiNum = (text: string): string | null => {
-    const m = text.match(reKanjiNum);
+    const m = reKanjiNum.exec(text);
     if (m) {
-        const d1000 = m[1] ? kanjiDigits[m[2]] || 1 : 0;
-        const d100 = m[3] ? kanjiDigits[m[4]] || 1 : 0;
-        const d10 = m[5] ? kanjiDigits[m[6]] || 1 : 0;
-        const d1 = kanjiDigits[m[7]] || 0;
-        return "" + (d1000 * 1000 + d100 * 100 + d10 * 10 + d1);
+        const d1000 = m[1] ? kanjiDigits[m[2] as keyof typeof kanjiDigits] || 1 : 0;
+        const d100 = m[3] ? kanjiDigits[m[4] as keyof typeof kanjiDigits] || 1 : 0;
+        const d10 = m[5] ? kanjiDigits[m[6] as keyof typeof kanjiDigits] || 1 : 0;
+        const d1 = kanjiDigits[m[7] as keyof typeof kanjiDigits] || 0;
+        return `${d1000 * 1000 + d100 * 100 + d10 * 10 + d1}`;
     }
     return null;
-}
+};
 
 export const kanjiDigits = {
-    '〇': 0, '一': 1, '二': 2, '三': 3, '四': 4,
-    '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
+    "〇": 0, "一": 1, "二": 2, "三": 3, "四": 4,
+    "五": 5, "六": 6, "七": 7, "八": 8, "九": 9,
 };
 
 export const reNamedNum = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
@@ -636,20 +658,28 @@ export const parseRomanNum = (text: string): number => {
     for (let i = 0; i < text.length; i++) {
         const char = text[i];
         const nextChar = text[i + 1] || "";
-        if (char.match(/[iIｉＩ]/)) {
-            if (nextChar.match(/[xXｘＸ]/)) num -= 1;
+        if (/[iIｉＩ]/.exec(char)) {
+            if (/[xXｘＸ]/.exec(nextChar)) num -= 1;
             else num += 1;
         }
-        if (char.match(/[xXｘＸ]/)) {
+        if (/[xXｘＸ]/.exec(char)) {
             num += 10;
         }
     }
     return num;
-}
+};
 
 export const reWideDigits: Array<[RegExp, string]> = [
-    [/０/g, '0'], [/１/g, '1'], [/２/g, '2'], [/３/g, '3'], [/４/g, '4'],
-    [/５/g, '5'], [/６/g, '6'], [/７/g, '7'], [/８/g, '8'], [/９/g, '9'],
+    [/０/g, "0"],
+    [/１/g, "1"],
+    [/２/g, "2"],
+    [/３/g, "3"],
+    [/４/g, "4"],
+    [/５/g, "5"],
+    [/６/g, "6"],
+    [/７/g, "7"],
+    [/８/g, "8"],
+    [/９/g, "9"],
 ];
 
 export const replaceWideNum = (text: string): string => {
@@ -659,10 +689,12 @@ export const replaceWideNum = (text: string): string => {
         ret = ret.replace(reWide, narrow);
     }
     return ret;
-}
+};
 
 export enum KanaMode {
+    // eslint-disable-next-line no-unused-vars
     Iroha = "Iroha",
+    // eslint-disable-next-line no-unused-vars
     Aiu = "Aiu",
 }
 
@@ -680,7 +712,7 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
 
     for (const subtext of subtexts) {
 
-        let m = subtext.match(reNamedNum);
+        let m = reNamedNum.exec(subtext);
         if (m) {
             const nums = [parseKanjiNum(m[2])];
             if (m[3]) {
@@ -690,19 +722,19 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
                     nums.push(parseKanjiNum(b));
                 }
             }
-            numsGroup.push(nums.join('_'));
+            numsGroup.push(nums.join("_"));
             continue;
         }
 
         if (kanaMode === KanaMode.Iroha) {
-            m = subtext.match(reIrohaChar);
+            m = reIrohaChar.exec(subtext);
             if (m) {
                 numsGroup.push(String(irohaChars.indexOf(m[0]) + 1));
                 continue;
             }
 
         } else if (kanaMode === KanaMode.Aiu) {
-            m = subtext.match(reAiuChar);
+            m = reAiuChar.exec(subtext);
             if (m) {
                 numsGroup.push(String(aiuChars.indexOf(m[0]) + 1));
                 continue;
@@ -711,7 +743,7 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
         } else { throw assertNever(kanaMode); }
 
         const replacedSubtext = replaceWideNum(subtext);
-        m = replacedSubtext.match(reItemNum);
+        m = reItemNum.exec(replacedSubtext);
         if (m) {
             numsGroup.push(m[1]);
             continue;
@@ -723,10 +755,10 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
         }
     }
 
-    return numsGroup.join(':');
-}
+    return numsGroup.join(":");
+};
 
-export const setItemNum = (els: EL[]) => {
+export const setItemNum = (els: EL[]): void => {
     const items: Array<std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10> = [];
 
     for (const el of els) {
@@ -742,7 +774,7 @@ export const setItemNum = (els: EL[]) => {
                 "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
                 "Subitem5Title" || child.tag === "Subitem6Title" || child.tag === "Subitem7Title" || child.tag === "Subitem8Title" || child.tag ===
                 "Subitem9Title" || child.tag === "Subitem10Title") {
-                if (child.text.match(/ア/)) {
+                if (/ア/.exec(child.text)) {
                     kanaMode = KanaMode.Aiu;
                     break;
                 }
@@ -765,23 +797,28 @@ export const setItemNum = (els: EL[]) => {
             }
         }
     }
-}
+};
 
 export enum RelPos {
+    // eslint-disable-next-line no-unused-vars
     PREV,
+    // eslint-disable-next-line no-unused-vars
     HERE,
+    // eslint-disable-next-line no-unused-vars
     NEXT,
+    // eslint-disable-next-line no-unused-vars
     SAME,
+    // eslint-disable-next-line no-unused-vars
     NAMED,
 }
-export const isRelPos = (object: any): object is RelPos => {
+export const isRelPos = (object: unknown): object is RelPos => {
     return (
         object === RelPos.PREV ||
         object === RelPos.HERE ||
         object === RelPos.NEXT ||
         object === RelPos.NAMED
     );
-}
+};
 
 export class PointerFragment {
     public relPos: RelPos
@@ -804,7 +841,7 @@ export class PointerFragment {
         this.locatedContainer = locatedContainer;
     }
 
-    public copy() {
+    public copy(): PointerFragment {
         return new PointerFragment(
             this.relPos,
             this.tag,
@@ -822,14 +859,14 @@ export type Ranges = Range[];
 
 export class NotImplementedError extends Error {
     constructor(message: string) {
-        super(`NotImplemented: ${message}`)
+        super(`NotImplemented: ${message}`);
     }
 }
 
 export const throwError = (): never => {
     throw new Error();
-}
+};
 
 export const assertNever = (x: never): never => {
     throw new Error(`Unexpected ${typeof x} object: \r\n${JSON.stringify(x, undefined, 2)}`);
-}
+};

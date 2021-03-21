@@ -1,36 +1,43 @@
 "use strict";
 
-import * as sha512 from "hash.js/lib/hash/sha/512";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import sha512 from "hash.js/lib/hash/sha/512";
 import { LAWNUM_TABLE } from "./lawnum_table";
 import * as parser from "./parser";
 import * as util from "./util";
 import { Container, ContainerType, EL, Env, RelPos, Span, throwError } from "./util";
 
-export const getLawNameLength = (lawNum: string) => {
-    const digest = sha512().update(lawNum).digest("hex");
+export const getLawNameLength = (lawNum: string): number => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const digest = sha512().update(lawNum).digest("hex") as string;
     const key = parseInt(digest.slice(0, 7), 16);
     return LAWNUM_TABLE[key];
 };
 
-const rootContainerTags = [
-    "Law",
-];
+const rootContainerTags = ["Law"];
 
-const toplevelContainerTags = [
-    "EnactStatement", "MainProvision", "AppdxTable", "AppdxStyle",
-];
+const toplevelContainerTags = ["EnactStatement", "MainProvision", "AppdxTable", "AppdxStyle"];
 
-const articleContainerTags = [
-    "Part", "Chapter", "Section", "Subsection", "Division",
-];
+const articleContainerTags = ["Part", "Chapter", "Section", "Subsection", "Division"];
 
 const spanContainerTags = [
-    "Article", "Paragraph",
-    "Item", "Subitem1", "Subitem2", "Subitem3",
-    "Subitem4", "Subitem5", "Subitem6",
-    "Subitem7", "Subitem8", "Subitem9",
+    "Article",
+    "Paragraph",
+    "Item",
+    "Subitem1",
+    "Subitem2",
+    "Subitem3",
+    "Subitem4",
+    "Subitem5",
+    "Subitem6",
+    "Subitem7",
+    "Subitem8",
+    "Subitem9",
     "Subitem10",
-    "Table", "TableRow", "TableColumn",
+    "Table",
+    "TableRow",
+    "TableColumn",
     "Sentence",
 ];
 
@@ -50,12 +57,21 @@ const getContainerType = (tag: string): ContainerType => {
 };
 
 const ignoreSpanTag = [
-    "LawNum", "LawTitle",
+    "LawNum",
+    "LawTitle",
     "TOC",
-    "ArticleTitle", "ParagraphNum", "ItemTitle",
-    "Subitem1Title", "Subitem2Title", "Subitem3Title",
-    "Subitem4Title", "Subitem5Title", "Subitem6Title",
-    "Subitem7Title", "Subitem8Title", "Subitem9Title",
+    "ArticleTitle",
+    "ParagraphNum",
+    "ItemTitle",
+    "Subitem1Title",
+    "Subitem2Title",
+    "Subitem3Title",
+    "Subitem4Title",
+    "Subitem5Title",
+    "Subitem6Title",
+    "Subitem7Title",
+    "Subitem8Title",
+    "Subitem9Title",
     "Subitem10Title",
     "SupplProvision",
 ];
@@ -131,11 +147,11 @@ class Pos {
     public length: number
     public env: Env
     constructor(span: Span, spanIndex: number, textIndex: number, length: number, env: Env) {
-        this.span = span
-        this.spanIndex = spanIndex
-        this.textIndex = textIndex
-        this.length = length
-        this.env = env
+        this.span = span;
+        this.spanIndex = spanIndex;
+        this.textIndex = textIndex;
+        this.length = length;
+        this.env = env;
     }
 }
 
@@ -215,7 +231,7 @@ export class Declarations {
             if (
                 declaration.scope.some(range =>
                     range.startSpanIndex <= spanIndex &&
-                    spanIndex < range.endSpanIndex
+                    spanIndex < range.endSpanIndex,
                 )
             ) {
                 declarations.push(declaration);
@@ -225,7 +241,7 @@ export class Declarations {
         return declarations;
     }
 
-    public add(declaration: ____Declaration) {
+    public add(declaration: ____Declaration): void {
         this.declarations.push(declaration);
     }
 
@@ -241,6 +257,7 @@ export class Declarations {
 const parseRanges = (text: string): util.Ranges => { // closed
     if (text === "") return [];
     try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return parser.parse(text, { startRule: "ranges" });
     } catch (e) {
         console.error(text, e);
@@ -315,7 +332,7 @@ const locatePointer = (
                 if (c.el.tag !== head.tag) return false;
                 const titleEl = c.el.children.find(el =>
                     el instanceof EL && el.tag === `${c.el.tag}Title`) as EL;
-                return titleEl.text.match(new RegExp(`^${head.name}(?:[(（]|\s|$)`)) !== null;
+                return (new RegExp(`^${head.name}(?:[(（]|\\s|$)`)).exec(titleEl.text) !== null;
             });
 
             locatedPointer = origPointer;
@@ -324,7 +341,7 @@ const locatePointer = (
             const func = (c: Container) =>
                 (
                     c.el.tag === head.tag ||
-                    head.tag === "SUBITEM" && c.el.tag.match(/^Subitem\d+$/) !== null
+                    head.tag === "SUBITEM" && /^Subitem\d+$/.exec(c.el.tag) !== null
                 ) &&
                 (c.el.attr.Num || null) === head.num;
             head.locatedContainer =
@@ -349,7 +366,7 @@ const locatePointer = (
                             (
                                 c.el.tag === fragment.tag ||
                                 fragment.tag === "SUBITEM" &&
-                                c.el.tag.match(/^Subitem\d+$/) !== null
+                                /^Subitem\d+$/.exec(c.el.tag) !== null
                             ) &&
                             (c.el.attr.Num || null) === fragment.num
                         ) ||
@@ -358,12 +375,13 @@ const locatePointer = (
                         c.el.attr.Function === "proviso",
                     // c => fragment_rank < container_tags.indexOf(c.el.tag),
                 );
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             parentContainer = fragment.locatedContainer!;
         }
     }
 
     return locatedPointer;
-}
+};
 
 const locateRanges = (origRanges: util.Ranges, currentSpan: Span) => {
     const ranges: util.Ranges = [];
@@ -406,7 +424,6 @@ const getScope = (currentSpan: Span, scopeText: string, following: boolean, foll
 };
 
 
-
 const detectLawname = (spans: Span[], spanIndex: number) => {
     if (spans.length <= spanIndex + 3) return null;
     const [
@@ -420,7 +437,7 @@ const detectLawname = (spans: Span[], spanIndex: number) => {
         startSpan.el.attr.type === "round"
     )) return null;
 
-    const match = lawnumSpan.text.match(/^(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年\S+?第[〇一二三四五六七八九十百千]+号/);
+    const match = /^(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年\S+?第[〇一二三四五六七八九十百千]+号/.exec(lawnumSpan.text);
     if (!match) return null;
 
     const lawNum = match[0];
@@ -484,8 +501,8 @@ const detectLawname = (spans: Span[], spanIndex: number) => {
             nameAfterSpan,
         ] = spans.slice(lawnumSpan.index + 1, lawnumSpan.index + 5);
 
-        const scopeMatch = lawnumSpan.text.slice(lawNum.length + 1).match(/^(以下)?(?:([^。]+?)において)?(?:単に)?$/);
-        const nameAfterMatch = nameAfterSpan.text.match(/^という。/);
+        const scopeMatch = /^(以下)?(?:([^。]+?)において)?(?:単に)?$/.exec(lawnumSpan.text.slice(lawNum.length + 1));
+        const nameAfterMatch = /^という。/.exec(nameAfterSpan.text);
         if (
             scopeMatch &&
             nameStartSpan.el.tag === "__PStart" &&
@@ -537,8 +554,8 @@ const detectName = (spans: Span[], spanIndex: number) => {
         nameAfterSpan,
     ] = spans.slice(spanIndex, spanIndex + 5);
 
-    const scopeMatch = nameBeforeSpan.text.match(/(以下)?(?:([^。]+?)において)?(?:単に)?$/);
-    const nameAfterMatch = nameAfterSpan.text.match(/^という。/);
+    const scopeMatch = /(以下)?(?:([^。]+?)において)?(?:単に)?$/.exec(nameBeforeSpan.text);
+    const nameAfterMatch = /^という。/.exec(nameAfterSpan.text);
     if (
         scopeMatch &&
         nameStartSpan.el.tag === "__PStart" &&
@@ -577,7 +594,8 @@ const detectName = (spans: Span[], spanIndex: number) => {
     return null;
 };
 
-const detectDeclarations = (law: EL, spans: Span[], containers: Container[]) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const detectDeclarations = (_law: EL, spans: Span[], _containers: Container[]) => {
 
     const declarations = new Declarations();
 
@@ -594,7 +612,7 @@ const detectDeclarations = (law: EL, spans: Span[], containers: Container[]) => 
     return declarations;
 };
 
-const detectVariableReferences = (law: EL, spans: Span[], declarations: Declarations) => {
+const detectVariableReferences = (_law: EL, spans: Span[], declarations: Declarations) => {
 
     let variableReferences: ____VarRef[] = [];
 
@@ -665,18 +683,19 @@ export const analyze = (law: EL): Analysis => {
     };
 };
 
-export const stdxmlToExt = (el: EL) => {
+export const stdxmlToExt = (el: EL): EL => {
     if (["LawNum", "QuoteStruct"].indexOf(el.tag) < 0) {
-        const isMixed = el.children.some(child => typeof child === 'string' || child instanceof String);
+        const isMixed = el.children.some(child => typeof child === "string" || child instanceof String);
         if (isMixed) {
             try {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 el.children = parser.parse(el.innerXML().replace(/\r|\n/, ""), { startRule: "INLINE" });
             } catch (e) {
                 console.log("stdxml_to_ext: Error", el.innerXML());
                 throw e;
             }
         } else {
-            el.children = el.children.map(stdxmlToExt)
+            el.children = (el.children as EL[]).map(stdxmlToExt);
         }
     }
     return el;

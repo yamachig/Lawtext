@@ -19,7 +19,7 @@ interface Args {
     noanalyze?: boolean,
 }
 
-const main = (args: Args) => {
+export const main = (args: Args): void => {
     const infile = args.infile || null;
     let intype = args.intype || null;
     const outfile = args.outfile || null;
@@ -31,11 +31,11 @@ const main = (args: Args) => {
     // console.error("[lawtext.main]", args);
 
     if (!intype && infile) {
-        if (infile.match(/\.xml$/)) {
+        if (/\.xml$/.exec(infile)) {
             intype = "xml";
-        } else if (infile.match(/\.law\.txt$/)) {
+        } else if (/\.law\.txt$/.exec(infile)) {
             intype = "lawtext";
-        } else if (infile.match(/\.json$/)) {
+        } else if (/\.json$/.exec(infile)) {
             intype = "json";
         } else {
             intype = "lawtext";
@@ -43,15 +43,15 @@ const main = (args: Args) => {
     }
 
     if (!outtype && outfile) {
-        if (outfile.match(/\.xml$/)) {
+        if (/\.xml$/.exec(outfile)) {
             outtype = "xml";
-        } else if (outfile.match(/\.json$/)) {
+        } else if (/\.json$/.exec(outfile)) {
             outtype = "json";
-        } else if (outfile.match(/\.html$/)) {
+        } else if (/\.html$/.exec(outfile)) {
             outtype = "html";
-        } else if (outfile.match(/\.law\.txt$/)) {
+        } else if (/\.law\.txt$/.exec(outfile)) {
             outtype = "lawtext";
-        } else if (outfile.match(/\.docx$/)) {
+        } else if (/\.docx$/.exec(outfile)) {
             outtype = "docx";
         } else if (intype === "xml") {
             outtype = "lawtext";
@@ -65,19 +65,19 @@ const main = (args: Args) => {
     let law: util.EL | null = null;
     // let analysis: {} | null = null;
 
-    new Promise((resolve, reject) => {
+    void new Promise<string>((resolve /**/) => {
 
         if (infile) {
             const intext = fs.readFileSync(infile, "utf-8");
             resolve(intext);
         } else {
-            let intext = '';
+            let intext = "";
             process.stdin.resume();
-            process.stdin.setEncoding('utf-8');
-            process.stdin.on('data', chunk => {
+            process.stdin.setEncoding("utf-8");
+            process.stdin.on("data", chunk => {
                 intext += chunk;
             });
-            process.stdin.on('end', () => {
+            process.stdin.on("end", () => {
                 resolve(intext);
             });
         }
@@ -90,7 +90,7 @@ const main = (args: Args) => {
                 analyzer.stdxmlToExt(law);
             }
         } else if (intype === "json") {
-            const rawLaw = JSON.parse(intext);
+            const rawLaw = JSON.parse(intext) as util.JsonEL;
             try {
                 law = util.loadEl(rawLaw) as util.EL;
             } catch (e) {
@@ -116,7 +116,7 @@ const main = (args: Args) => {
         // }
 
         if (outtype === "docx") {
-            renderer.renderDocxAsync(law.json())
+            void renderer.renderDocxAsync(law.json())
                 .then(u8 => {
                     if (outfile) {
                         fs.writeFileSync(outfile, u8);
@@ -146,11 +146,10 @@ const main = (args: Args) => {
         }
 
     });
-}
-exports.main = main;
+};
 
 if (typeof require !== "undefined" && require.main === module) {
-    process.on('unhandledRejection', (listener) => {
+    process.on("unhandledRejection", (listener) => {
         throw listener;
     });
 
@@ -179,8 +178,10 @@ if (typeof require !== "undefined" && require.main === module) {
         { action: "storeTrue" },
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const args = argparser.parse_args();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (!args.intype && !args.infile) {
         argparser.error("INTYPE must be specified when with stdin");
     }
