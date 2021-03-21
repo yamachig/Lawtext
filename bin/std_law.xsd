@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     XMLSchema for Japanese Law
-    Version: 2.0
-    Date: Apr 1, 2019
+    Version: 3.0
+    Date: Nov 24, 2020
     Contact: Ministry of Internal Affairs and Communications, Government of JAPAN
 -->
 <!--  Law =================================================================== -->
@@ -475,6 +475,7 @@
       </xs:sequence>
       <xs:attribute name="Num" use="required" type="xs:positiveInteger"/>
       <xs:attribute name="OldStyle" type="xs:boolean" default="false"/>
+      <xs:attribute name="OldNum" type="xs:boolean" default="false"/>
       <xs:attribute name="Hide" type="xs:boolean" default="false"/>
     </xs:complexType>
   </xs:element>
