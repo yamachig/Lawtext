@@ -5,12 +5,12 @@ import { RouteComponentProps } from 'react-router'
 import { Dispatch } from 'redux';
 import { Action } from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers/dist';
-import * as analyzer from "../../../core/src/analyzer";
-import { parse } from "../../../core/src/parser_wrapper";
-import * as renderer from "../../../core/src/renderer";
-import render_lawtext from "../../../core/src/renderers/lawtext";
-import * as std from "../../../core/src/std_law"
-import * as util from "../../../core/src/util"
+import * as analyzer from "@coresrc/analyzer";
+import { parse } from "@coresrc/parser_wrapper";
+import * as renderer from "@coresrc/renderer";
+import render_lawtext from "@coresrc/renderers/lawtext";
+import * as std from "@coresrc/std_law"
+import * as util from "@coresrc/util"
 import { LawtextAppPageActions } from '../actions';
 import * as lawdata from "./lawdata";
 

@@ -29,6 +29,13 @@ export default (env, argv) => ({
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],
+        alias: {
+            "@appsrc": path.resolve(__dirname, "./src"),
+            "@coresrc": path.resolve(__dirname, "../core/src"),
+        },
+        fallback: { 
+            "path": require.resolve("path-browserify"),
+        },
     },
     externals: [nodeExternals()],
     node: {

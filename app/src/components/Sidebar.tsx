@@ -1,7 +1,7 @@
 import React from "react";
 import styled from 'styled-components';
-import * as std from "../../../core/src/std_law"
-import { assertNever, EL } from "../../../core/src/util"
+import * as std from "@coresrc/std_law"
+import { assertNever, EL } from "@coresrc/util"
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
 import { LawtextAppPageState, RouteState } from '../states';
 

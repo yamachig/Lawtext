@@ -1,7 +1,12 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
+        "baseUrl": "./",
         "outDir": "dist",
+        "paths": {
+            "@appsrc/*": ["src/*"],
+            "@coresrc/*": ["../core/src/*"]
+        },
+        "rootDirs": ["src", "../core/src", "bin", "test"],
         "module": "commonjs",
         "target": "es5",
         "downlevelIteration": true,
@@ -11,10 +16,6 @@
         "jsx": "react",
         "moduleResolution": "node",
         "esModuleInterop": true,
-        "rootDirs": [
-            "src",
-            "../core/src"
-        ],
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,

@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { Dispatch } from 'redux';
 import { Action } from 'typescript-fsa';
 
-import * as std from "../../../core/src/std_law"
+import * as std from "@coresrc/std_law"
 import { LawtextAppPageActions } from '../actions';
 import { LawtextAppPage } from '../components/LawtextAppPage';
 import * as states from '../states';

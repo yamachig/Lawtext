@@ -1,74 +1,30 @@
 import levenshtein from "js-levenshtein";
-import JSZip from "jszip";
-import * as util from "../../../core/src/util";
-import {fetchLawData} from "../../../core/src/elaws_api";
+import {fetchLawData} from "@coresrc/elaws_api";
+import { ensureList, getLawList, LawInfo, LawInfoListItem, TextFetcher, getLawXml as core_getLawXml } from "@coresrc/db/lawlist";
+import * as dataPaths from "@coresrc/db/data_paths";
+import path from "path";
 
-interface LawListInfo {
-    LawNum: string;
-    ReferencingLawNums: string[];
-    ReferencedLawNums: string[];
-    LawTitle: string;
-    Path: string;
-    XmlZipName: string;
-}
-
-let list: LawListInfo[] = [];
-const listByLawnum: { [index: string]: LawListInfo } = {};
-let _listReady = false;
-const ensureList = async () => {
-    await fetchList();
-    let waitTime = 30;
-    while (true) {
-        if (_listReady) return;
-        console.log("wait fetching lawdata/list.json");
-        await util.wait(waitTime);
-        if (waitTime < 1000) waitTime += 300;
-    }
-}
-
-let _fetchListInvoked = false;
-const fetchList = async () => {
-    if (_fetchListInvoked) return;
-    _fetchListInvoked = true;
-    try {
-        console.log("start fetching lawdata/list.json");
-        const response = await fetch(`lawdata/list.json`);
-        if (response.ok) {
-            const json = await response.json();
-            list = json.map(
-                ([
-                    LawNum,
-                    ReferencingLawNums,
-                    ReferencedLawNums,
-                    LawTitle,
-                    Path,
-                    XmlZipName,
-                ]: [string, string[], string[], string, string, string]) => {
-                    const obj = {
-                        LawNum,
-                        ReferencingLawNums,
-                        ReferencedLawNums,
-                        LawTitle,
-                        Path,
-                        XmlZipName,
-                    } as LawListInfo;
-                    listByLawnum[obj.LawNum] = obj;
-                    return obj;
-                }
-            );
-        }
-    } finally {
-        console.log("finish fetching lawdata/list.json");
-        _listReady = true;
-    }
-    return [];
+let dataPath = "./data";
+export const setDataPath = (p: string): void => {
+    dataPath = p;
 };
-if (!(typeof module !== 'undefined' && module.exports)) {
-    fetchList();
-}
+export const getDataPath = (): string => {
+    return dataPath;
+};
 
-
-
+export const textFetcher: TextFetcher = async (textPath: string) => {
+    try {
+        const res = await fetch(textPath);
+        if (!res.ok) {
+            console.log(res.statusText);
+            return null;
+        }
+        return await res.text();
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+};
 
 const getLawXml = async (lawnum: string): Promise<string> => {
     const xml = (
@@ -115,16 +71,7 @@ const getLawXmlCache = async (lawnum: string): Promise<string | null> => {
 const getLawXmlLocal = async (lawnum: string): Promise<string | null> => {
     console.log(`getLawXmlLocal("${lawnum}")`);
 
-    await ensureList();
-    if (lawnum in listByLawnum) {
-        const info = listByLawnum[lawnum];
-        const response = await fetch(`lawdata/${info.Path}/${info.XmlZipName}`);
-        const zipData = await response.arrayBuffer();
-        const zip = await JSZip.loadAsync(zipData);
-        return await zip.file(/.*\.xml/)[0].async("text");
-    }
-
-    return null;
+    return core_getLawXml(dataPath, lawnum, textFetcher);
 }
 
 const getLawXmlRemote = async (lawnum: string): Promise<string> => {
@@ -199,12 +146,12 @@ const getLawnumCache = async (lawSearchKey: string): Promise<string | null> => {
 const getLawnumLocal = async (lawSearchKey: string): Promise<string | null> => {
     console.log(`getLawnumLocal("${lawSearchKey}")`);
 
-    await ensureList();
+    const [lawList, /**/] = await getLawList(dataPath, textFetcher);
 
     console.log(`started ${new Date().toISOString()}`);
     let partMatchMode = false;
-    const bestMatch = { score: Infinity, info: null as LawListInfo | null };
-    for (const info of list) {
+    const bestMatch = { score: Infinity, info: null as LawInfo | null };
+    for (const info of lawList) {
         if (info.LawTitle.includes(lawSearchKey)) {
             if (!partMatchMode) {
                 partMatchMode = true;

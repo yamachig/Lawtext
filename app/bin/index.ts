@@ -2,10 +2,10 @@ import chai from "chai";
 import { it } from "mocha";
 import { renderToString } from "react-dom/server";
 import yargs from "yargs";
-import { analyze } from "../../core/src/analyzer";
-import * as std from "../../core/src/std_law";
-import * as util from "../../core/src/util"
-import { LawView } from "../src/components/LawView";
+import { analyze } from "@coresrc/analyzer";
+import * as std from "@coresrc/std_law";
+import * as util from "@coresrc/util"
+import { LawView } from "@appsrc/components/LawView";
 import { Dispatchers, mapDispatchToProps } from '../src/containers/LawtextAppPageContainer';
 import * as states from '../src/states';
 import store from '../src/store';

@@ -4,7 +4,6 @@ require('source-map-support').install();
 (global as any).fetch = require("node-fetch");
 
 import { after, before } from "mocha";
-import { setLawdataPath } from "../../core/test/prepare_test";
 import path from "path";
 
 const notify = async (title: string, message: string) => {
@@ -28,7 +27,6 @@ const notify = async (title: string, message: string) => {
 
 
 before(async () => {
-    setLawdataPath(path.join(__dirname, "../../core/test/lawdata"));
     if (process.env.NOTIFICATION_ENDPOINT) {
         console.log("It will notify your ifttt when it finished.");
     }

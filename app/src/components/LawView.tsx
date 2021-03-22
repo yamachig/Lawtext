@@ -2,9 +2,9 @@ import $ from "jquery";
 import React from "react";
 import AnimateHeight from 'react-animate-height';
 import styled, { createGlobalStyle } from 'styled-components';
-import * as analyzer from "../../../core/src/analyzer";
-import * as std from "../../../core/src/std_law"
-import { assertNever, EL, NotImplementedError } from "../../../core/src/util"
+import * as analyzer from "@coresrc/analyzer";
+import * as std from "@coresrc/std_law"
+import { assertNever, EL, NotImplementedError } from "@coresrc/util"
 import { LawtextAppPageActions } from "../actions/index";
 import { Dispatchers } from '../containers/LawtextAppPageContainer';
 import { containerInfoOf, LawtextAppPageState, RouteState } from '../states';
