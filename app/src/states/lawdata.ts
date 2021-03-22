@@ -1,8 +1,9 @@
 import levenshtein from "js-levenshtein";
 import {fetchLawData} from "@coresrc/elaws_api";
-import { ensureList, getLawList, LawInfo, LawInfoListItem, TextFetcher, getLawXml as core_getLawXml } from "@coresrc/db/lawlist";
+import { getLawList, LawInfo, BaseLawInfo, TextFetcher, getLawXml as core_getLawXml, getLawXmlByInfo, getLawCSVList, makeList } from "@coresrc/db/lawlist";
 import * as dataPaths from "@coresrc/db/data_paths";
 import path from "path";
+import { saveAs } from "file-saver";
 
 let dataPath = "./data";
 export const setDataPath = (p: string): void => {
@@ -24,6 +25,45 @@ export const textFetcher: TextFetcher = async (textPath: string) => {
         console.log(e);
         return null;
     }
+};
+
+export const saveListJson = async (
+    onProgress: (ratio: number, message: string) => void = () => undefined,
+): Promise<void> => {
+
+    const progress = (() => {
+        let currentRatio = 0;
+        let currentMessage = "";
+        return (ratio?: number, message?: string) => {
+            currentRatio = ratio || currentRatio;
+            currentMessage = message || currentMessage;
+            onProgress(currentRatio, currentMessage);
+        };
+    })();
+
+    console.log("\nListing up XMLs...");
+    const infos = await getLawCSVList(dataPath, textFetcher);
+
+    if (infos === null) {
+        console.error("CSV list cannot be fetched.");
+        return;
+    }
+
+    console.log(`Processing ${infos.length} XMLs...`);
+
+    async function* lawIdXmls(list: BaseLawInfo[]) {
+        for (const info of list) {
+            const xml = await getLawXmlByInfo(dataPath, info, textFetcher);
+            if(xml === null) {
+                console.error("XML cannot fetched", info);
+                continue;
+            }
+            yield { lawID: info.LawID, xml, Path: info.Path, XmlName: info.XmlName };
+        }
+    }
+
+    const list = await makeList(lawIdXmls(infos), infos.length, progress);
+    saveAs(JSON.stringify(list), "list.json");
 };
 
 const getLawXml = async (lawnum: string): Promise<string> => {
