@@ -1,3 +1,5 @@
+import { Bar, Presets } from "cli-progress";
+
 export enum TERMC {
     // eslint-disable-next-line no-unused-vars
     DEFAULT = "\x1b[39m",
@@ -113,3 +115,27 @@ export const withEllipsis = (text: string, maxLength: number): string => {
         return text;
     }
 };
+export class ProgressBar {
+    public bar: Bar;
+    public constructor() {
+        this.bar = new Bar(
+            {
+                format: "[{bar}] {percentage}% | {message}",
+            }, Presets.rect,
+        );
+    }
+    public progress(ratio?: number, message?: string): void {
+        const payload = { message: (typeof message !== "string") ? "" : message.length > 30 ? message.slice(0, 30) + " ..." : message };
+        if (ratio) {
+            this.bar.update(ratio, payload);
+        } else if(payload) {
+            this.bar.update(payload);
+        }
+    }
+    public start(total: number, startValue: number): void {
+        this.bar.start(total, startValue, { message: "" });
+    }
+    public stop(): void {
+        this.bar.stop();
+    }
+}

@@ -1,26 +1,27 @@
-import * as chai from "chai";
-import * as fs from "fs";
-import * as fsExtra from "fs-extra";
+import chai from "chai";
+import fs from "fs";
+import fsExtra from "fs-extra";
 import { before, it } from "mocha";
-import * as os from "os";
-import * as path from "path";
+import os from "os";
+import path from "path";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import prettifyXml from "prettify-xml";
 import { promisify } from "util";
-import * as xmldom from "xmldom";
-import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
-import { analyze, parse } from "../src/parser_wrapper";
-import { render as renderLawtext } from "../src/renderers/lawtext";
-import { TERMC, toTableText } from "../src/term_util";
-import * as util from "../src/util";
-import { ensureList, getLawXml, prepare } from "./prepare_test";
+import xmldom from "xmldom";
+import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "@src/diff/law_diff";
+import { analyze, parse } from "@src/parser_wrapper";
+import { render as renderLawtext } from "@src/renderers/lawtext";
+import { TERMC, toTableText } from "@src/term_util";
+import * as util from "@src/util";
+import { prepare, getDataPath } from "./prepare_test";
+import { getLawXml, ensureList } from "@src/db/lawlist";
 
 const domParser = new xmldom.DOMParser();
 
 before(async () => {
     await prepare();
-    await ensureList();
+    await ensureList(getDataPath());
 });
 
 const LIMIT_WIDTH = 34;
@@ -260,7 +261,7 @@ it("Render and Parse Lawtext", async () => {
 
     const lawNum = "平成二十六年政令第三百九十四号";
 
-    const origXML = await getLawXml(lawNum);
+    const origXML = await getLawXml(getDataPath(), lawNum);
     console.log(`Temporary directory: "${tempDir}"`);
     const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
     const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);

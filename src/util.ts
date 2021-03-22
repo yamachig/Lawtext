@@ -595,6 +595,8 @@ export const paragraphItemSentenceTags = [
 
 export const listTags = ["List", "Sublist1", "Sublist2", "Sublist3"];
 
+export const reLawnum = /(?:(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年(?:(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[―〇一二三四五六七八九]+)|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)|明治三十二年勅令|大正十二年内務省・鉄道省令|昭和五年逓信省・鉄道省令|昭和九年逓信省・農林省令|人事院規則一〇―一五)/;
+
 
 export const getLawtype = (text: string): string | null => {
     if (/^憲法/.exec(text)) return "Constitution";

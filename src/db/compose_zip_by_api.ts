@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 import * as path from "path";
-import { fetchLawData, fetchLawNameList, LawData } from "../elaws_api";
+import { fetchLawData, fetchLawNameList } from "../elaws_api";
 import { LawInfo, LawInfos } from "./lawlist";
 
 export const composeZipByApi = async <
@@ -34,48 +34,34 @@ export const composeZipByApi = async <
     const destZipWithoutPict = new JSZip();
     const lawInfos = new LawInfos();
 
-    const processLawData = async (lawData: LawData) => {
-        const lawInfo = LawInfo.fromLawData(lawData);
+    progress(undefined, "法令の一覧を取得しています");
+
+    const lawNameList = await fetchLawNameList();
+
+    progress(undefined, "法令データをダウンロードしています");
+    const progressTotal = lawNameList.length + 3;
+    let progressNow = 0;
+    for (const lawNameListInfo of lawNameList) {
+        progress(undefined, `${lawNameListInfo.LawNo}：${lawNameListInfo.LawName}`);
+        const lawData = await fetchLawData(lawNameListInfo.LawId);
+
+        const lawInfo = LawInfo.fromLawData(lawData, lawData.lawID, `${lawData.lawID}.xml`);
         lawInfos.add(lawInfo);
 
-        const xmlZip = new JSZip();
-        xmlZip.file(lawInfo.XmlName, lawData.xml);
-        const xmlZipData = await xmlZip.generateAsync({
-            type: "arraybuffer",
-            compression: "DEFLATE",
-            compressionOptions: {
-                level: 9,
-            },
-        });
         if (full) {
-            destZipFull.file(path.join(lawInfo.Path, lawInfo.XmlZipName), xmlZipData);
+            destZipFull.file(path.join(lawInfo.Path, lawInfo.XmlName), lawData.xml);
         }
         if (withoutPict) {
-            destZipWithoutPict.file(path.join(lawInfo.Path, lawInfo.XmlZipName), xmlZipData);
+            destZipWithoutPict.file(path.join(lawInfo.Path, lawInfo.XmlName), lawData.xml);
         }
 
         if (full && lawData.imageData) {
             destZipFull.file(path.join(lawInfo.Path, `${lawData.lawID}_pict.zip`), lawData.imageData);
         }
-    };
-    
-    progress(undefined, "法令の一覧を取得しています");
 
-    const lawNameList = await fetchLawNameList();
-    
-    progress(undefined, "法令データをダウンロードしています");
-    const progressTotal = lawNameList.length + 3;
-    let progressNow = 0;
-    let processingDownloadedFile: Promise<void> | null = null;
-    for (const lawNameListInfo of lawNameList) {
-        progress(undefined, `${lawNameListInfo.LawNo}：${lawNameListInfo.LawName}`);
-        const lawData = await fetchLawData(lawNameListInfo.LawId);
-        await processingDownloadedFile;
-        processingDownloadedFile = processLawData(lawData);
         progressNow++;
         progress(progressNow / progressTotal);
     }
-    await processingDownloadedFile;
 
     progress(undefined, "相互参照を分析しています");
     lawInfos.setReferences();

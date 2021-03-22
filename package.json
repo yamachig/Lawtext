@@ -19,10 +19,10 @@
     "test": "test"
   },
   "scripts": {
-    "ts-node": "node -r ts-node/register -r tsconfig-paths/register",
+    "ts-node": "node -r ts-node/register -r tsconfig-paths/register --trace-warnings",
     "build": "npm run ts-node bin/build.ts && tsc",
     "prepare": "npm run build",
-    "test": "node --max_old_space_size=2048 -r ts-node/register -r tsconfig-paths/register ./test/prepare_test.ts && mocha --timeout 10000 -r ts-node/register test/**/*.ts"
+    "test": "node --max_old_space_size=2048 -r ts-node/register -r tsconfig-paths/register ./test/prepare_test.ts && mocha --timeout 10000 -r ts-node/register -r tsconfig-paths/register test/**/*.ts"
   },
   "dependencies": {
     "argparse": "^2.0.1",
@@ -34,6 +34,7 @@
     "jszip": "^3.6.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
+    "node-stream-zip": "^1.13.2",
     "nunjucks": "^3.2.3",
     "pegjs": "^0.10.0",
     "pre-build-webpack": "^0.1.0",
@@ -47,7 +48,8 @@
     "webpack-cli": "^4.5.0",
     "webpack-node-externals": "^2.5.2",
     "xmldom": "^0.5.0",
-    "xpath": "^0.0.32"
+    "xpath": "^0.0.32",
+    "yargs": "^16.2.0"
   },
   "devDependencies": {
     "@types/argparse": "^2.0.5",
@@ -64,6 +66,7 @@
     "@types/webpack": "^4.41.26",
     "@types/webpack-node-externals": "^2.5.0",
     "@types/xmldom": "^0.1.30",
+    "@types/yargs": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "chai": "^4.3.4",

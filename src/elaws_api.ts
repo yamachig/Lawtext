@@ -11,7 +11,7 @@ export const lawlistsURL = "https://elaws.e-gov.go.jp/api/1/lawlists/1";
 export const lawdataURL = "https://elaws.e-gov.go.jp/api/1/lawdata/";
 export const allXMLZipURL = "https://elaws.e-gov.go.jp/download?file_section=1&only_xml_flag=true";
 
-export const fetchElaws = async (url: string, retry=5): Promise<Element> => {
+export const fetchElaws = async (url: string, retry = 5): Promise<Element> => {
     if (retry <= 0) {
         throw Error("fetchElaws(): Failed after retries");
     }
@@ -19,7 +19,7 @@ export const fetchElaws = async (url: string, retry=5): Promise<Element> => {
         mode: "cors",
     });
     if (!response.ok) throw Error(response.statusText);
-    const text = await response.text();    
+    const text = await response.text();
     const doc = domParser.parseFromString(text, "text/xml") as XMLDocument;
     const elResult = doc.getElementsByTagName("DataRoot").item(0)?.getElementsByTagName("Result").item(0);
     const elCode = elResult?.getElementsByTagName("Code").item(0);
@@ -49,20 +49,11 @@ export class LawNameListInfo {
         public LawNo: string,
         public PromulgationDate: string,
     ) { }
-    public get Path(): string {
-        return this.LawId;
-    }
-    public get XmlZipName(): string {
-        return `${this.LawId}.xml.zip`;
-    }
-    public get XmlName(): string {
-        return `${this.LawId}.xml`;
-    }
 }
 
 export const fetchLawNameList = async (): Promise<LawNameListInfo[]> => {
     const elApplData = await fetchElaws(lawlistsURL);
-    const lawNameList:LawNameListInfo[] = [];
+    const lawNameList: LawNameListInfo[] = [];
     for (const el of Array.from(elApplData.getElementsByTagName("LawNameListInfo"))) {
         lawNameList.push(new LawNameListInfo(
             el.getElementsByTagName("LawId").item(0)?.textContent ?? "",
@@ -77,7 +68,6 @@ export const fetchLawNameList = async (): Promise<LawNameListInfo[]> => {
 export class LawData {
     constructor(
         public lawID: string,
-        public lawNum: string,
         public law: Element,
         public imageData: Uint8Array | null,
         private _xml: string | null = null,
@@ -110,7 +100,6 @@ export const fetchLawData = async (lawIDOrLawNum: string): Promise<LawData> => {
 
     return new LawData(
         elApplData.getElementsByTagName("LawId").item(0)?.textContent ?? "",
-        elApplData.getElementsByTagName("LawNum").item(0)?.textContent || elApplData.getElementsByTagName("LawFullText").item(0)?.getElementsByTagName("Law").item(0)?.getElementsByTagName("LawNum").item(0)?.textContent || "",
         law,
         imageData,
     );
