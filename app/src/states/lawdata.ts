@@ -1,7 +1,7 @@
 import levenshtein from "js-levenshtein";
 import {fetchLawData} from "@coresrc/elaws_api";
-import { getLawList, LawInfo, BaseLawInfo, TextFetcher, getLawXml as core_getLawXml, getLawXmlByInfo, getLawCSVList, makeList } from "@coresrc/db/lawlist";
-import * as dataPaths from "@coresrc/db/data_paths";
+import { getLawList, LawInfo, BaseLawInfo, TextFetcher, getLawXml as core_getLawXml, getLawXmlByInfo, getLawCSVList, makeList } from "@coresrc/data/lawlist";
+import * as dataPaths from "@coresrc/data/paths";
 import path from "path";
 import { saveAs } from "file-saver";
 

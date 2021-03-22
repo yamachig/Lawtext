@@ -9,7 +9,7 @@ import { Dispatchers, mapDispatchToProps } from '../src/containers/LawtextAppPag
 import * as states from '../src/states';
 import {getDataPath} from '../src/states/lawdata';
 import store from '../src/store';
-import { getLawList, getLawXml, TextFetcher } from "@coresrc/db/lawlist";
+import { getLawList, getLawXml, TextFetcher } from "@coresrc/data/lawlist";
 import {promisify} from "util";
 import fs from "fs";
 import path from "path";
