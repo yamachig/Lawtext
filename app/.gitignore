@@ -18,10 +18,10 @@ package-lock.json
 tsconfig.tsbuildinfo
 cache.sqlite
 MANIFEST
-dist
-dist-dev
-dist-prod
-dist-test
-dist-bin
-test/lawdata
+/dist
+/dist-dev
+/dist-prod
+/dist-test
+/dist-bin
+/test/lawdata
 mochawesome-report

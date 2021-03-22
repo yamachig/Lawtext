@@ -1,17 +1,16 @@
 import { saveAs } from "file-saver";
-import { History } from 'history';
-import $ from "jquery"
-import { RouteComponentProps } from 'react-router'
-import { Dispatch } from 'redux';
-import { Action } from 'typescript-fsa';
-import { reducerWithInitialState } from 'typescript-fsa-reducers/dist';
+import $ from "jquery";
+import { RouteComponentProps } from "react-router";
+import { Dispatch } from "redux";
+import { Action } from "typescript-fsa";
+import { reducerWithInitialState } from "typescript-fsa-reducers/dist";
 import * as analyzer from "@coresrc/analyzer";
 import { parse } from "@coresrc/parser_wrapper";
 import * as renderer from "@coresrc/renderer";
 import render_lawtext from "@coresrc/renderers/lawtext";
-import * as std from "@coresrc/std_law"
-import * as util from "@coresrc/util"
-import { LawtextAppPageActions } from '../actions';
+import * as std from "@coresrc/std_law";
+import * as util from "@coresrc/util";
+import { LawtextAppPageActions } from "../actions";
 import * as lawdata from "./lawdata";
 
 export type RouteState = RouteComponentProps<{ lawSearchKey: string | undefined }>;
@@ -41,16 +40,13 @@ const initialState: LawtextAppPageState = {
 export const LawtextAppPageReducer = reducerWithInitialState(initialState);
 
 
-
-
-
 export const OpenFileInputName = "LawtextAppPage.OpenFileInput";
 const origOpenFile = () => {
     const els = document.getElementsByName(OpenFileInputName);
     if (els) {
         els[0].click();
     }
-}
+};
 
 
 const scrollToLawAnchor = (id: string) => {
@@ -60,18 +56,19 @@ const scrollToLawAnchor = (id: string) => {
             if (offset) $("html,body").animate({ scrollTop: offset.top }, "normal");
         }
     }
-}
+};
 
 
 export const ErrorModalID = "LawtextAppPage.ErrorModal";
 const showErrorModal = (title: string, bodyEl: string) => {
     const modalEl = document.getElementById(ErrorModalID);
     if (!modalEl) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const modal = $(modalEl) as JQuery<HTMLElement> & { modal: (method: string) => any };
     modal.find(".modal-title").html(title);
     modal.find(".modal-body").html(bodyEl);
     modal.modal("show");
-}
+};
 
 
 interface SelectionRange {
@@ -87,8 +84,7 @@ interface SelectionRange {
         item_tag: string;
         item_id: string | null;
     };
-};
-
+}
 
 
 export const tobeDownloadedRange = (): SelectionRange | null => {
@@ -111,7 +107,7 @@ export const tobeDownloadedRange = (): SelectionRange | null => {
             container_id: toplevelContainerInfo.id,
             item_tag: containerInfo && containerInfo.tag,
             item_id: containerInfo && containerInfo.id,
-        }
+        };
     };
 
     const selection = window.getSelection();
@@ -126,22 +122,19 @@ export const tobeDownloadedRange = (): SelectionRange | null => {
         start: sPos,
         end: ePos,
     };
-}
-
-
-
-
+};
 
 
 export const openFile =
-    (dispatch: Dispatch<Action<any>>) =>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+    (dispatch: Dispatch<Action<any>>): void =>
         origOpenFile();
 
-interface FileReaderProgressEvent extends ProgressEvent {
-    readonly target: FileReader | null;
-}
+// interface FileReaderProgressEvent extends ProgressEvent {
+//     readonly target: FileReader | null;
+// }
 
-const readFileAsText = (file): Promise<string> => {
+const readFileAsText = (file: Blob): Promise<string> => {
     const reader = new FileReader();
 
     return new Promise((resolve, reject) => {
@@ -154,12 +147,13 @@ const readFileAsText = (file): Promise<string> => {
         };
         reader.readAsText(file);
     });
-}
+};
 
 export const openFileInputChange = async (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch: Dispatch<Action<any>>,
     event: React.ChangeEvent<HTMLInputElement>,
-) => {
+): Promise<void> => {
     const openFileInput = event.target;
     const file = openFileInput.files ? openFileInput.files[0] : null;
     if (!file) return;
@@ -172,21 +166,23 @@ export const openFileInputChange = async (
     openFileInput.value = "";
     await loadLawText(dispatch, text, true);
     dispatch(LawtextAppPageActions.modifyState({ lawSearchKey: null, loadingLaw: false, loadingLawMessage: "" }));
-}
+};
 
 LawtextAppPageReducer.case(LawtextAppPageActions.modifyState, (state, newState) => {
     return Object.assign({}, state, newState);
 });
 
 export const invokeError =
-    (dispatch: Dispatch<Action<any>>, title: string, bodyEl: string) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (dispatch: Dispatch<Action<any>>, title: string, bodyEl: string): void =>
         showErrorModal(title, bodyEl);
 
 export const loadLawText = async (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch: Dispatch<Action<any>>,
     text: string,
     analyzeXml: boolean,
-) => {
+): Promise<std.Law | null> => {
     let law: std.Law | null = null;
     let analysis: analyzer.Analysis | null = null;
     let begin: number;
@@ -221,7 +217,7 @@ export const loadLawText = async (
         invokeError(
             dispatch,
             "読み込んだ法令データにエラーがあります",
-            (pre[0] as HTMLElement).outerHTML,
+            (pre[0] ).outerHTML,
         );
         law = null;
     }
@@ -244,13 +240,14 @@ export const loadLawText = async (
     dispatch(LawtextAppPageActions.modifyState(newState));
     console.log(`loadLawText: Render end: ${Date.now() - begin}ms`);
     return law;
-}
+};
 
 export const searchLaw = async (
     getState: () => LawtextAppPageState,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch: Dispatch<Action<any>>,
     lawSearchKey: string,
-) => {
+): Promise<void> => {
     console.log(`searchLaw(${lawSearchKey})`);
     const state = getState();
     if (lawSearchKey === state.lawSearchedKey) return;
@@ -269,15 +266,15 @@ export const searchLaw = async (
         );
     }
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false, loadingLawMessage: "" }));
-}
+};
 
-export const containerInfoOf = (el: util.EL | string) => {
+export const containerInfoOf = (el: util.EL | string): {tag: string, id: string | number} => {
     if (typeof el === "string") {
         return { tag: "", id: "" };
     } else {
         return { tag: el.tag, id: el.id };
     }
-}
+};
 
 const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
     const sPos = range.start;
@@ -317,7 +314,7 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
             ret = ret.concat(findEls(child, tag));
         }
         return ret;
-    }
+    };
 
     for (const toplevel of origLawBody.children) {
         const toplevelInfo = containerInfoOf(toplevel);
@@ -407,7 +404,7 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
     }
 
     return law;
-}
+};
 
 export const getLawName = (law: std.Law): string => {
     const lawNum = law.children.find((el) => el.tag === "LawNum") as std.LawNum;
@@ -419,13 +416,14 @@ export const getLawName = (law: std.Law): string => {
     sLawNum = (sLawNum && sLawTitle) ? (`（${sLawNum}）`) : sLawNum;
 
     return sLawTitle + sLawNum;
-}
+};
 
 export const downloadDocx = async (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch: Dispatch<Action<any>>,
     law: std.Law,
     downloadSelection: boolean,
-) => {
+): Promise<void> => {
     const range = downloadSelection ? tobeDownloadedRange() : null;
     if (range) {
         law = getLawRange(law, range) as std.Law;
@@ -438,12 +436,13 @@ export const downloadDocx = async (
     );
     const lawName = getLawName(law) || "lawtext_output";
     saveAs(blob, `${lawName}.docx`);
-}
+};
 
 export const downloadLawtext = async (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch: Dispatch<Action<any>>,
     law: std.Law,
-) => {
+): Promise<void> => {
     const sLawtext = render_lawtext(law);
     const blob = new Blob(
         [sLawtext],
@@ -451,12 +450,13 @@ export const downloadLawtext = async (
     );
     const lawName = getLawName(law) || "lawtext_output";
     saveAs(blob, `${lawName}.law.txt`);
-}
+};
 
 export const downloadXml = async (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch: Dispatch<Action<any>>,
     law: std.Law,
-) => {
+): Promise<void> => {
     const xml = renderer.renderXml(law);
     const blob = new Blob(
         [xml],
@@ -464,17 +464,20 @@ export const downloadXml = async (
     );
     const lawName = getLawName(law) || "lawtext_output";
     saveAs(blob, `${lawName}.xml`);
-}
+};
 
 export const scrollLaw =
-    (dispatch: Dispatch<Action<any>>, id: string) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (dispatch: Dispatch<Action<any>>, id: string): void =>
         scrollToLawAnchor(id);
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sampleSampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml").default;
 
 export const downloadSampleLawtext = async (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch: Dispatch<Action<any>>,
-) => {
+): Promise<void> => {
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true }));
     await util.wait(30);
     const law = await loadLawText(dispatch, sampleSampleXml, true);
@@ -482,4 +485,4 @@ export const downloadSampleLawtext = async (
         await downloadLawtext(dispatch, law);
     }
     dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false }));
-}
+};

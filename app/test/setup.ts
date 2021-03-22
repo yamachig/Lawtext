@@ -1,10 +1,12 @@
-require('dotenv').config();
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require("dotenv").config();
 
-require('source-map-support').install();
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require("source-map-support").install();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global as any).fetch = require("node-fetch");
 
 import { after, before } from "mocha";
-import path from "path";
 
 const notify = async (title: string, message: string) => {
 
@@ -18,7 +20,7 @@ const notify = async (title: string, message: string) => {
             method: "POST",
             body: JSON.stringify({ value1: title, value2: message }),
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
         },
     );

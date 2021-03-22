@@ -1,0 +1,54 @@
+{
+    "root": true,
+    "env": {
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        // "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:react/recommended"
+    ],
+    "plugins": [
+        "@typescript-eslint",
+        "prefer-arrow",
+        "react",
+        "react-hooks"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": "./tsconfig.json",
+        "ecmaVersion": 12
+    },
+    "rules": {
+        "indent": ["error", 4],
+        "quotes": ["error", "double"],
+        "semi": ["error", "always"],
+        "no-multiple-empty-lines": ["error", { "max": 2 }],
+        "comma-dangle": ["error", "always-multiline"],
+        "object-curly-spacing": ["error", "always"],
+        "array-element-newline": ["error", "consistent"],
+        "array-bracket-newline": ["error", { "multiline": true }],
+        "no-unused-vars": ["error", { "args": "none" }],
+        "comma-spacing": ["error", { "before": false, "after": true }],
+        "arrow-spacing": "error",
+        "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
+        "no-constant-condition": ["error", { "checkLoops": false }],
+        "key-spacing": ["error", { "beforeColon": false }],
+        "space-unary-ops": ["error", {"words": true, "nonwords": false}],
+        "space-infix-ops": ["error", { "int32Hint": false }],
+        "block-spacing": "error",
+        "@typescript-eslint/type-annotation-spacing": "error",
+        "nonblock-statement-body-position": ["error", "beside"],
+        "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
+        "no-trailing-spaces": "error",
+        "eol-last": ["error", "always"],
+        "keyword-spacing": "error",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "react/jsx-no-target-blank": ["error", { "enforceDynamicLinks": "always" }],
+        "react/prop-types": ["error", { "ignore": ["children"], "skipUndeclared": true }]
+    },
+    "ignorePatterns": ["/dist/*"]
+}

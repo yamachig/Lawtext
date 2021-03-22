@@ -1,11 +1,10 @@
 import { UnregisterCallback } from "history";
-import $ from "jquery";
 import React from "react";
-import styled from 'styled-components';
-import { Dispatchers } from '../containers/LawtextAppPageContainer';
-import { ErrorModalID, LawtextAppPageState, OpenFileInputName, RouteState } from '../states';
-import { Sidebar } from './Sidebar';
-import { Viewer } from './Viewer';
+import styled from "styled-components";
+import { Dispatchers } from "../containers/LawtextAppPageContainer";
+import { ErrorModalID, LawtextAppPageState, OpenFileInputName, RouteState } from "../states";
+import { Sidebar } from "./Sidebar";
+import { Viewer } from "./Viewer";
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
@@ -32,26 +31,26 @@ const HiddenInput = styled.input`
 
 export class LawtextAppPage extends React.Component<Props> {
     public unsubscribeFromHistory?: UnregisterCallback;
-    public componentWillMount() {
+    public componentDidMount(): void {
         this.onNavigate();
         this.unsubscribeFromHistory = this.props.history.listen(() => this.onNavigate());
     }
 
-    public componentWillUnmount() {
+    public componentWillUnmount(): void {
         if (this.unsubscribeFromHistory) this.unsubscribeFromHistory();
     }
 
-    public onNavigate() {
-        console.log(`onNavigate: before timer:`, this.props.lawSearchKey);
+    public onNavigate(): void {
+        console.log("onNavigate: before timer:", this.props.lawSearchKey);
         setTimeout(() => {
-            console.log(`onNavigate: after timer:`, this.props.lawSearchKey);
+            console.log("onNavigate: after timer:", this.props.lawSearchKey);
             if (this.props.lawSearchKey) {
                 this.props.searchLaw(() => this.props, this.props.lawSearchKey);
             }
         }, 30);
     }
 
-    public render() {
+    public render(): JSX.Element {
         return (
             <div>
                 <HiddenInput

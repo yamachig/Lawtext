@@ -1,8 +1,6 @@
 import levenshtein from "js-levenshtein";
-import {fetchLawData} from "@coresrc/elaws_api";
+import { fetchLawData } from "@coresrc/elaws_api";
 import { getLawList, LawInfo, BaseLawInfo, TextFetcher, getLawXml as core_getLawXml, getLawXmlByInfo, getLawCSVList, makeList } from "@coresrc/data/lawlist";
-import * as dataPaths from "@coresrc/data/paths";
-import path from "path";
 import { saveAs } from "file-saver";
 
 let dataPath = "./data";
@@ -54,7 +52,7 @@ export const saveListJson = async (
     async function* lawIdXmls(list: BaseLawInfo[]) {
         for (const info of list) {
             const xml = await getLawXmlByInfo(dataPath, info, textFetcher);
-            if(xml === null) {
+            if (xml === null) {
                 console.error("XML cannot fetched", info);
                 continue;
             }
@@ -89,7 +87,7 @@ const getLawXml = async (lawnum: string): Promise<string> => {
     }
 
     return xml;
-}
+};
 
 const getLawXmlCache = async (lawnum: string): Promise<string | null> => {
     console.log(`getLawXmlCache("${lawnum}")`);
@@ -106,13 +104,13 @@ const getLawXmlCache = async (lawnum: string): Promise<string | null> => {
         }
     }
     return null;
-}
+};
 
 const getLawXmlLocal = async (lawnum: string): Promise<string | null> => {
     console.log(`getLawXmlLocal("${lawnum}")`);
 
     return core_getLawXml(dataPath, lawnum, textFetcher);
-}
+};
 
 const getLawXmlRemote = async (lawnum: string): Promise<string> => {
     console.log(`getLawXmlRemote("${lawnum}")`);
@@ -130,7 +128,7 @@ const getLawXmlRemote = async (lawnum: string): Promise<string> => {
             e.message,
         ];
     }
-}
+};
 
 
 const getLawnum = async (lawSearchKey: string): Promise<string> => {
@@ -163,7 +161,7 @@ const getLawnum = async (lawSearchKey: string): Promise<string> => {
     }
 
     return lawnum;
-}
+};
 
 const getLawnumCache = async (lawSearchKey: string): Promise<string | null> => {
     console.log(`getLawnumCache("${lawSearchKey}")`);
@@ -181,12 +179,12 @@ const getLawnumCache = async (lawSearchKey: string): Promise<string | null> => {
     }
 
     return null;
-}
+};
 
 const getLawnumLocal = async (lawSearchKey: string): Promise<string | null> => {
     console.log(`getLawnumLocal("${lawSearchKey}")`);
 
-    const [lawList, /**/] = await getLawList(dataPath, textFetcher);
+    const [lawList /**/] = await getLawList(dataPath, textFetcher);
 
     console.log(`started ${new Date().toISOString()}`);
     let partMatchMode = false;
@@ -201,6 +199,7 @@ const getLawnumLocal = async (lawSearchKey: string): Promise<string | null> => {
         } else {
             if (partMatchMode) continue;
         }
+        // eslint-disable-next-line no-irregular-whitespace
         const score = levenshtein(info.LawTitle.replace(/　抄$/, ""), lawSearchKey);
         if (score < bestMatch.score) {
             bestMatch.score = score;
@@ -210,7 +209,7 @@ const getLawnumLocal = async (lawSearchKey: string): Promise<string | null> => {
     console.log(`finished ${new Date().toISOString()}`);
 
     return bestMatch.info && bestMatch.info.LawNum;
-}
+};
 
 const getLawnumRemote = async (lawSearchKey: string): Promise<string> => {
     console.log(`getLawnumRemote("${lawSearchKey}")`);
@@ -228,15 +227,11 @@ const getLawnumRemote = async (lawSearchKey: string): Promise<string> => {
             `「${lawSearchKey}」を検索しましたが、見つかりませんでした。`,
         ];
     }
-}
-
-
-
-
+};
 
 
 export const loadLaw = async (lawSearchKey: string): Promise<string> => {
     const lawnum = await getLawnum(lawSearchKey);
     const xml = await getLawXml(lawnum);
     return xml;
-}
+};

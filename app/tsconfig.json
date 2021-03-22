@@ -1,31 +1,47 @@
 {
     "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "downlevelIteration": true,
+        "moduleResolution": "node",
+        "composite": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "lib": ["es2017", "dom", "scripthost"],
+
+        "jsx": "react",
+
         "baseUrl": "./",
         "outDir": "dist",
         "paths": {
             "@appsrc/*": ["src/*"],
             "@coresrc/*": ["../core/src/*"]
         },
+        "rootDir": "../",
         "rootDirs": ["src", "../core/src", "bin", "test"],
-        "module": "commonjs",
-        "target": "es5",
-        "downlevelIteration": true,
-        "lib": ["dom", "es2018"],
-        "sourceMap": true,
-        "allowJs": true,
-        "jsx": "react",
-        "moduleResolution": "node",
-        "esModuleInterop": true,
+
+        "skipLibCheck": true,
+
+        "alwaysStrict": true,
+        "declaration": true,
         "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
-        "noImplicitAny": false,
+        "noUnusedLocals": true,
+        // "noUnusedParameters": true,
+        "strict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
         "strictNullChecks": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "noUnusedLocals": false
+        "strictPropertyInitialization": true,
+
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
     ],
-    "exclude": ["dist-dev", "dist-prod", "node_modules", "**/*.pegjs"]
 }

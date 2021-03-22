@@ -1,13 +1,12 @@
 import React from "react";
-import styled from 'styled-components';
-import * as std from "@coresrc/std_law"
-import { assertNever, EL } from "@coresrc/util"
-import { Dispatchers } from '../containers/LawtextAppPageContainer';
-import { LawtextAppPageState, RouteState } from '../states';
+import styled from "styled-components";
+import * as std from "@coresrc/std_law";
+import { assertNever, EL } from "@coresrc/util";
+import { Dispatchers } from "../containers/LawtextAppPageContainer";
+import { LawtextAppPageState, RouteState } from "../states";
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
-
 
 
 const SidebarH1 = styled.h1`
@@ -39,41 +38,41 @@ class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
 
         const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             this.handleSearchSubmit(e);
-        }
+        };
 
         const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             this.setState({ lawSearchKey: e.target.value });
-        }
+        };
 
         const downloadLawtext = () => {
             if (this.props.law) {
                 this.props.downloadLawtext(this.props.law);
             }
-        }
+        };
 
         const downloadXml = () => {
             if (this.props.law) {
                 this.props.downloadXml(this.props.law);
             }
-        }
+        };
 
         const downloadDocxAll = () => {
             if (this.props.law) {
                 this.props.downloadDocx(this.props.law);
             }
-        }
+        };
 
         const downloadDocxSelection = () => {
             if (this.props.law) {
                 this.props.downloadDocx(this.props.law, true);
             }
-        }
+        };
 
         return (
             <SidebarHeadDiv>
                 <div className="container-fluid">
                     <SidebarH1>
-                        <a href={location.protocol + '//' + location.host + location.pathname + location.search}
+                        <a href={location.protocol + "//" + location.host + location.pathname + location.search}
                             style={{ color: "inherit" }}>Lawtext</a>
                     </SidebarH1>
 
@@ -175,7 +174,6 @@ class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
 }
 
 
-
 const SidebarBodyDiv = styled.div`
     flex-grow: 1;
     display: flex;
@@ -248,13 +246,13 @@ class SidebarBody extends React.Component<Props> {
             } else {
                 assertNever(el);
             }
-        };
+        }
 
         return (
             <div>
                 {list}
             </div>
-        )
+        );
     }
 
     protected processLawTitle(lawTitle: std.LawTitle, indent: number) {
@@ -262,7 +260,7 @@ class SidebarBody extends React.Component<Props> {
 
         const onClick = () => {
             this.props.scrollLaw(lawTitle.id.toString());
-        }
+        };
 
         list.push(
             <TOCItemDiv
@@ -273,7 +271,7 @@ class SidebarBody extends React.Component<Props> {
                 onClick={onClick}
             >
                 {lawTitle.text}
-            </TOCItemDiv>
+            </TOCItemDiv>,
         );
 
         return list;
@@ -284,7 +282,7 @@ class SidebarBody extends React.Component<Props> {
 
         const onClick = () => {
             this.props.scrollLaw(preamble.id.toString());
-        }
+        };
 
         list.push(
             <TOCItemDiv
@@ -295,7 +293,7 @@ class SidebarBody extends React.Component<Props> {
                 onClick={onClick}
             >
                 制定文
-            </TOCItemDiv>
+            </TOCItemDiv>,
         );
 
         return list;
@@ -306,7 +304,7 @@ class SidebarBody extends React.Component<Props> {
 
         const onClick = () => {
             this.props.scrollLaw(preamble.id.toString());
-        }
+        };
 
         list.push(
             <TOCItemDiv
@@ -317,7 +315,7 @@ class SidebarBody extends React.Component<Props> {
                 onClick={onClick}
             >
                 前文
-            </TOCItemDiv>
+            </TOCItemDiv>,
         );
 
         return list;
@@ -330,7 +328,7 @@ class SidebarBody extends React.Component<Props> {
 
         const onClick = () => {
             this.props.scrollLaw(toc.id.toString());
-        }
+        };
 
         if (tocLabel) {
             list.push(
@@ -342,7 +340,7 @@ class SidebarBody extends React.Component<Props> {
                     onClick={onClick}
                 >
                     {tocLabel.text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -356,11 +354,12 @@ class SidebarBody extends React.Component<Props> {
         const list: JSX.Element[] = [];
 
         for (const el of articleGroup.children) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             if (el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle" || el.tag as any === "AppdxStyleTitle") {
 
                 const onClick = () => {
                     this.props.scrollLaw(articleGroup.id.toString());
-                }
+                };
 
                 list.push(
                     <TOCItemDiv
@@ -372,7 +371,7 @@ class SidebarBody extends React.Component<Props> {
                         title={el.text}
                     >
                         {el.text}
-                    </TOCItemDiv>
+                    </TOCItemDiv>,
                 );
 
             }
@@ -414,7 +413,7 @@ class SidebarBody extends React.Component<Props> {
 
             const onClick = () => {
                 this.props.scrollLaw(article.id.toString());
-            }
+            };
 
             list.push(
                 <TOCItemDiv
@@ -426,7 +425,7 @@ class SidebarBody extends React.Component<Props> {
                     title={text}
                 >
                     {text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -441,11 +440,12 @@ class SidebarBody extends React.Component<Props> {
         if (supplProvisionLabel) {
             const name = supplProvisionLabel.text;
             const amendLawNum = supplProvision.attr.AmendLawNum || "";
+            // eslint-disable-next-line no-irregular-whitespace
             const text = (name + (amendLawNum ? ("（" + amendLawNum + "）") : "")).replace(/[\s　]+/, "");
 
             const onClick = () => {
                 this.props.scrollLaw(supplProvision.id.toString());
-            }
+            };
 
             list.push(
                 <TOCItemDiv
@@ -457,7 +457,7 @@ class SidebarBody extends React.Component<Props> {
                     title={text}
                 >
                     {text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -472,7 +472,7 @@ class SidebarBody extends React.Component<Props> {
         if (appdxTableTitle) {
             const onClick = () => {
                 this.props.scrollLaw(appdxTable.id.toString());
-            }
+            };
 
             list.push(
                 <TOCItemDiv
@@ -484,7 +484,7 @@ class SidebarBody extends React.Component<Props> {
                     title={appdxTableTitle.text}
                 >
                     {appdxTableTitle.text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -499,7 +499,7 @@ class SidebarBody extends React.Component<Props> {
         if (appdxStyleTitle) {
             const onClick = () => {
                 this.props.scrollLaw(appdxStyle.id.toString());
-            }
+            };
             list.push(
                 <TOCItemDiv
                     key={appdxStyle.id}
@@ -510,7 +510,7 @@ class SidebarBody extends React.Component<Props> {
                     title={appdxStyleTitle.text}
                 >
                     {appdxStyleTitle.text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -525,7 +525,7 @@ class SidebarBody extends React.Component<Props> {
         if (AppdxFigTitle) {
             const onClick = () => {
                 this.props.scrollLaw(appdxFig.id.toString());
-            }
+            };
             list.push(
                 <TOCItemDiv
                     key={appdxFig.id}
@@ -536,7 +536,7 @@ class SidebarBody extends React.Component<Props> {
                     title={AppdxFigTitle.text}
                 >
                     {AppdxFigTitle.text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -551,7 +551,7 @@ class SidebarBody extends React.Component<Props> {
         if (appdxFormatTitle) {
             const onClick = () => {
                 this.props.scrollLaw(appdxFig.id.toString());
-            }
+            };
             list.push(
                 <TOCItemDiv
                     key={appdxFig.id}
@@ -562,7 +562,7 @@ class SidebarBody extends React.Component<Props> {
                     title={appdxFormatTitle.text}
                 >
                     {appdxFormatTitle.text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -577,7 +577,7 @@ class SidebarBody extends React.Component<Props> {
         if (appdxNoteTitle) {
             const onClick = () => {
                 this.props.scrollLaw(appdxFig.id.toString());
-            }
+            };
             list.push(
                 <TOCItemDiv
                     key={appdxFig.id}
@@ -588,7 +588,7 @@ class SidebarBody extends React.Component<Props> {
                     title={appdxNoteTitle.text}
                 >
                     {appdxNoteTitle.text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -604,7 +604,7 @@ class SidebarBody extends React.Component<Props> {
         if (ArithFormulaNum) {
             const onClick = () => {
                 this.props.scrollLaw(appdxFig.id.toString());
-            }
+            };
             list.push(
                 <TOCItemDiv
                     key={appdxFig.id}
@@ -615,7 +615,7 @@ class SidebarBody extends React.Component<Props> {
                     title={ArithFormulaNum.text}
                 >
                     {ArithFormulaNum.text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -642,7 +642,7 @@ class SidebarBody extends React.Component<Props> {
         if (titleEL) {
             const onClick = () => {
                 this.props.scrollLaw(el.id.toString());
-            }
+            };
             list.push(
                 <TOCItemDiv
                     key={el.id}
@@ -653,7 +653,7 @@ class SidebarBody extends React.Component<Props> {
                     title={titleEL.text}
                 >
                     {titleEL.text}
-                </TOCItemDiv>
+                </TOCItemDiv>,
             );
         }
 
@@ -673,7 +673,7 @@ class SidebarFooter extends React.Component<Props> {
         return (
             <SidebarFooterDiv>
                 <div style={{ fontSize: "0.8em", textAlign: "center", padding: "0.3em 0", color: "rgb(192, 192, 192)" }}>
-                    <a href="https://github.com/yamachig/lawtext" target="_blank" style={{ marginRight: "2em" }}>
+                    <a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer" style={{ marginRight: "2em" }}>
                         GitHub
                     </a>
                     &copy; 2017-{new Date().getFullYear()} yamachi
@@ -692,7 +692,7 @@ const SidebarDiv = styled.div`
 `;
 
 export class Sidebar extends React.Component<Props> {
-    public render() {
+    public render(): JSX.Element {
         return (
             <SidebarDiv>
                 <SidebarHead {...this.props} />

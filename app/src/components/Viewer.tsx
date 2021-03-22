@@ -1,12 +1,11 @@
 import React from "react";
-import styled from 'styled-components';
-import { Dispatchers } from '../containers/LawtextAppPageContainer';
-import { LawtextAppPageState, RouteState } from '../states';
-import { LawView } from './LawView';
+import styled from "styled-components";
+import { Dispatchers } from "../containers/LawtextAppPageContainer";
+import { LawtextAppPageState, RouteState } from "../states";
+import { LawView } from "./LawView";
 
 
 type Props = LawtextAppPageState & Dispatchers & RouteState;
-
 
 
 const ViewerLoadingDiv = styled.div`
@@ -32,7 +31,6 @@ class ViewerLoading extends React.Component<Props> {
         );
     }
 }
-
 
 
 const ViewerWelcomeDiv = styled.div`
@@ -76,15 +74,15 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
 
         const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             this.handleSearchSubmit(e);
-        }
+        };
 
         const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             this.setState({ lawSearchKey: e.target.value });
-        }
+        };
 
         const downloadSampleLawtextOnClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
             this.props.downloadSampleLawtext(); e.preventDefault();
-        }
+        };
 
         return (
             <ViewerWelcomeDiv>
@@ -137,8 +135,8 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
                             法令ファイルがありませんか？
                         </p>
                         <ul>
-                            <li><a href="https://elaws.e-gov.go.jp/" target="_blank">e-Gov</a>から法令XMLをダウンロードできます。</li>
-                            <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank">Lawtext</a>ファイルを作れます。<a href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
+                            <li><a href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
+                            <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>ファイルを作れます。<a href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
                         </ul>
                     </div>
                 </div>
@@ -146,18 +144,18 @@ class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
                 {location.href.startsWith("file:") ? (
                     <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "4em" }}>
                         このページはファイルから直接表示されているため、法令名・番号検索機能など、一部の機能が動作しない場合があります。
-                        <a href="https://yamachig.github.io/lawtext-app/" target="_blank" style={{ whiteSpace: "nowrap" }}>Web版Lawtext</a>
+                        <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer" style={{ whiteSpace: "nowrap" }}>Web版Lawtext</a>
                     </div>
                 ) : (
-                        <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "1em" }}>
-                            <div className="container-fluid">
-                                <hr />
-                                <p style={{ textAlign: "center" }}>
-                                    <a href="https://yamachig.github.io/lawtext-app/download.html" target="_blank">ダウンロード版Lawtext</a>
-                                </p>
-                            </div>
+                    <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "1em" }}>
+                        <div className="container-fluid">
+                            <hr />
+                            <p style={{ textAlign: "center" }}>
+                                <a href="https://yamachig.github.io/lawtext-app/download.html" target="_blank" rel="noreferrer">ダウンロード版Lawtext</a>
+                            </p>
                         </div>
-                    )}
+                    </div>
+                )}
             </ViewerWelcomeDiv>
         );
     }
@@ -172,7 +170,7 @@ const ViewerDiv = styled.div`
 `;
 
 export class Viewer extends React.Component<Props> {
-    public render() {
+    public render(): JSX.Element {
         return (
             <ViewerDiv>
                 {this.props.loadingLaw &&

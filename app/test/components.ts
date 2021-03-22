@@ -3,14 +3,13 @@ import { it } from "mocha";
 import { renderToString } from "react-dom/server";
 import { analyze } from "@coresrc/analyzer";
 import * as std from "@coresrc/std_law";
-import * as util from "@coresrc/util"
-import { LawView } from "../src/components/LawView";
-import { Dispatchers, mapDispatchToProps } from '../src/containers/LawtextAppPageContainer';
-import * as states from '../src/states';
-import {getDataPath} from '../src/states/lawdata';
-import store from '../src/store';
+import * as util from "@coresrc/util";
+import { LawView } from "@appsrc/components/LawView";
+import { Dispatchers, mapDispatchToProps } from "@appsrc/containers/LawtextAppPageContainer";
+import * as states from "@appsrc/states";
+import store from "@appsrc/store";
 import { getLawList, getLawXml, TextFetcher } from "@coresrc/data/lawlist";
-import {promisify} from "util";
+import { promisify } from "util";
 import fs from "fs";
 import path from "path";
 
@@ -25,6 +24,7 @@ const textFetcher: TextFetcher = async (textPath: string) => {
     }
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const makeDummyProps = (lawtextAppPageState: Partial<states.LawtextAppPageState> = {}) => {
     const props: states.LawtextAppPageState & Dispatchers = Object.assign(
         {},
@@ -47,13 +47,13 @@ export const makeDummyProps = (lawtextAppPageState: Partial<states.LawtextAppPag
 
     return props as states.LawtextAppPageState & Dispatchers & states.RouteState;
 
-}
+};
 
 const dataPath = path.join(__dirname, "../../core/data");
 
 const renderAllLaws = async () => {
 
-    const [list, listByLawnum] = await getLawList(dataPath, textFetcher);
+    const [list /**/] = await getLawList(dataPath, textFetcher);
 
     for (const { LawNum: lawNum, LawTitle: lawTitle } of list) {
 
@@ -61,6 +61,7 @@ const renderAllLaws = async () => {
 
             const origXML = await getLawXml(dataPath, lawNum, textFetcher);
 
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const origEL = util.xmlToJson(origXML!);
             analyze(origEL);
 
@@ -68,7 +69,7 @@ const renderAllLaws = async () => {
 
             const renderedElement = lawView.render();
 
-            const renderedString = renderToString(renderedElement);
+            void renderToString(renderedElement);
 
             chai.assert(
                 !lawView.props.hasError,
@@ -81,10 +82,10 @@ const renderAllLaws = async () => {
         });
 
     }
-}
+};
 
 
-(async () => {
+void (async () => {
 
     await renderAllLaws();
 

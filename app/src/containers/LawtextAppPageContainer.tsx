@@ -1,18 +1,13 @@
-import { History } from 'history';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { Dispatch } from 'redux';
-import { Action } from 'typescript-fsa';
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import { Dispatch } from "redux";
+import { Action } from "typescript-fsa";
 
-import * as std from "@coresrc/std_law"
-import { LawtextAppPageActions } from '../actions';
-import { LawtextAppPage } from '../components/LawtextAppPage';
-import * as states from '../states';
-import { AppState } from '../store';
-
-
-
-
+import * as std from "@coresrc/std_law";
+import { LawtextAppPageActions } from "../actions";
+import { LawtextAppPage } from "../components/LawtextAppPage";
+import * as states from "../states";
+import { AppState } from "../store";
 
 
 export interface Dispatchers {
@@ -29,6 +24,7 @@ export interface Dispatchers {
     downloadSampleLawtext: () => Promise<void>,
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
 export const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
     return {
 
@@ -50,7 +46,7 @@ export const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
         searchLaw: (getState: () => states.LawtextAppPageState, lawSearchKey: string) =>
             states.searchLaw(getState, dispatch, lawSearchKey),
 
-        downloadDocx: (law: std.Law, downloadSelection: boolean = false) =>
+        downloadDocx: (law: std.Law, downloadSelection = false) =>
             states.downloadDocx(dispatch, law, downloadSelection),
 
         downloadLawtext: (law: std.Law) =>
@@ -66,8 +62,7 @@ export const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
             states.downloadSampleLawtext(dispatch),
 
     };
-}
-
+};
 
 
 const mapStateToProps = (appState: AppState, routeState: states.RouteState) => {
@@ -76,7 +71,7 @@ const mapStateToProps = (appState: AppState, routeState: states.RouteState) => {
         overwriteState.lawSearchKey = routeState.match.params.lawSearchKey;
     }
     return Object.assign({}, appState.lawtextAppPage, overwriteState);
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LawtextAppPage));
 
