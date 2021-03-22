@@ -2,9 +2,8 @@
 import fs from "fs";
 import path from "path";
 import { promisify } from "util";
-import { saveList } from "@coresrc/db/save_lawlist";
-import * as data_paths from "@coresrc/db/data_paths";
-import { download } from "@coresrc/db/download";
+import * as data_paths from "@coresrc/data/paths";
+import { download, saveList } from "@coresrc/data/save_fs";
 import { ProgressBar } from "@coresrc/term_util";
 
 let called = false;

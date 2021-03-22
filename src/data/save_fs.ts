@@ -6,6 +6,7 @@ import fs from "fs";
 import fetch from "node-fetch";
 import fsExtra from "fs-extra";
 import { promisify } from "util";
+import { makeList } from "@coresrc/data/lawlist";
 
 export const download = async (
     lawdataPath: string,
@@ -65,4 +66,42 @@ export const download = async (
     await zip.extract(null, lawdataPath);
     await zip.close();
     progress(1);
+};
+
+export const saveList = async (
+    lawdataDir: string, listJsonPath: string,
+    onProgress: (ratio: number, message: string) => void = () => undefined,
+): Promise<void> => {
+
+    const progress = (() => {
+        let currentRatio = 0;
+        let currentMessage = "";
+        return (ratio?: number, message?: string) => {
+            currentRatio = ratio || currentRatio;
+            currentMessage = message || currentMessage;
+            onProgress(currentRatio, currentMessage);
+        };
+    })();
+
+    console.log("\nListing up XMLs...");
+    const dirs = (await promisify(fs.readdir)(lawdataDir, { withFileTypes: true })).filter(p => p.isDirectory()).map(p => path.join(lawdataDir, p.name));
+    const files: string[] = [];
+    for (const dir of dirs) {
+        files.push(...(await promisify(fs.readdir)(dir, { withFileTypes: true })).filter(p => p.isFile() && /\.xml$/.exec(p.name)).map(p => path.join(dir, p.name)));
+    }
+
+    console.log(`Processing ${files.length} XMLs...`);
+
+    async function* lawIdXmls(files: string[]) {
+        for (const file of files) {
+            const lawID = /^[A-Za-z0-9]+/.exec(path.basename(file))?.[0] ?? "";
+            const xml = await promisify(fs.readFile)(file, { encoding: "utf-8" });
+            const Path = path.basename(path.dirname(file));
+            const XmlName = path.basename(file);
+            yield { lawID, xml, Path, XmlName };
+        }
+    }
+
+    const list = await makeList(lawIdXmls(files), files.length, progress);
+    await promisify(fs.writeFile)(listJsonPath, JSON.stringify(list), { encoding: "utf-8" });
 };

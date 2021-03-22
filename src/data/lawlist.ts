@@ -1,6 +1,6 @@
 import { LawData } from "../elaws_api";
 import { reLawnum } from "../util";
-import * as data_paths from "./data_paths";
+import * as data_paths from "./paths";
 import path from "path";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;

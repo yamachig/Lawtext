@@ -15,7 +15,7 @@ import { render as renderLawtext } from "@coresrc/renderers/lawtext";
 import { TERMC, toTableText } from "@coresrc/term_util";
 import * as util from "@coresrc/util";
 import { prepare, getDataPath } from "./prepare_test";
-import { ensureList, getLawXml, TextFetcher } from "@coresrc/db/lawlist";
+import { ensureList, getLawXml, TextFetcher } from "@coresrc/data/lawlist";
 
 const domParser = new xmldom.DOMParser();
 
