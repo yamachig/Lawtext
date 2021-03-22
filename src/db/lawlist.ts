@@ -1,6 +1,6 @@
 import { LawData } from "../elaws_api";
 import { reLawnum } from "../util";
-import data_paths from "./data_paths";
+import * as data_paths from "./data_paths";
 import path from "path";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;
@@ -16,7 +16,15 @@ export type LawInfoListItem = [
     ReferencingLawNums: string[],
     ReferencedLawNums: string[],
 ]
-export class LawInfo {
+
+export interface BaseLawInfo {
+    LawID: string,
+    LawNum: string,
+    LawTitle: string,
+    Path: string,
+    XmlName: string,
+}
+export class LawInfo implements BaseLawInfo {
     public ReferencingLawNums: Set<string> = new Set();
     public ReferencedLawNums: Set<string> = new Set();
     public constructor(
@@ -37,6 +45,26 @@ export class LawInfo {
             Array.from(this.ReferencingLawNums),
             Array.from(this.ReferencedLawNums),
         ];
+    }
+
+    public static fromBaseLawInfo(baseLawInfo: BaseLawInfo): LawInfo {
+        const {
+            LawID,
+            LawNum,
+            LawTitle,
+            Path,
+            XmlName,
+        } = baseLawInfo;
+
+        const lawInfo = new LawInfo(
+            LawID,
+            LawNum,
+            LawTitle,
+            Path,
+            XmlName,
+        );
+
+        return lawInfo;
     }
 
     public static fromTuple(tuple: LawInfoListItem): LawInfo {
@@ -177,12 +205,52 @@ export const getLawList = async (dataPath: string, textFetcher: TextFetcher): Pr
     return [lawList, lawListByLawnum];
 };
 
-export const getLawXml = async (dataPath: string, lawNum: string, textFetcher: TextFetcher): Promise<string | null> => {
-    const [/**/, listByLawnum] = await getLawList(dataPath, textFetcher);
-    if (!(lawNum in listByLawnum)) return null;
-    const lawInfo = listByLawnum[lawNum];
+export const getLawXmlByInfo = async (dataPath: string, lawInfo: BaseLawInfo, textFetcher: TextFetcher): Promise<string | null> => {
     const lawdataPath = data_paths.getLawdataPath(dataPath);
     const filepath = path.join(lawdataPath, lawInfo.Path, lawInfo.XmlName);
     const xml = await textFetcher(filepath);
     return xml;
+};
+
+export const getLawXml = async (dataPath: string, lawNum: string, textFetcher: TextFetcher): Promise<string | null> => {
+    const [/**/, listByLawnum] = await getLawList(dataPath, textFetcher);
+    if (!(lawNum in listByLawnum)) return null;
+    const lawInfo = listByLawnum[lawNum];
+    return getLawXmlByInfo(dataPath, lawInfo, textFetcher);
+};
+
+export const getLawCSVList = async (dataPath: string, textFetcher: TextFetcher): Promise<BaseLawInfo[] | null> => {
+    const listCSVPath = data_paths.getListCSVPath(dataPath);
+    const csv = await getCSVList(listCSVPath, textFetcher);
+    if (csv === null) return null;
+    return csv.map(row => {
+        const longID = /lawid=(\w+)/.exec(row["本文URL"])?.[1] ?? "";
+        const lawInfo: BaseLawInfo = {
+            LawID: row["法令ID"],
+            LawNum: row["法令番号"],
+            LawTitle: row["法令名"],
+            Path: longID,
+            XmlName: `${longID}.xml`,
+        };
+        return lawInfo;
+    });
+};
+
+export const getCSVList = async (csvPath: string, textFetcher: TextFetcher): Promise<Record<string, string>[] | null> => {
+    const text = await textFetcher(csvPath);
+    if (text === null) return null;
+    const [headerStr, ...rowStrs] = text.split(/\r?\n/);
+    const header = headerStr.split(",");
+    const rows = rowStrs.map((rowStr, rowI) => {
+        const row = rowStr.split(",");
+        if (row.length !== header.length) {
+            console.error(`Column mismatch: row ${rowI + 1}`);
+        }
+        const ret: Record<string, string> = {};
+        for (const [i, h] of header.entries()) {
+            ret[h] = i < row.length ? row[i] : "";
+        }
+        return ret;
+    });
+    return rows;
 };

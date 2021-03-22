@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { promisify } from "util";
 import { saveList } from "@coresrc/db/save_lawlist";
-import data_paths from "@coresrc/db/data_paths";
+import * as data_paths from "@coresrc/db/data_paths";
 import { download } from "@coresrc/db/download";
 import { ProgressBar } from "@coresrc/term_util";
 
