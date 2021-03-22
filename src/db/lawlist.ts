@@ -1,8 +1,7 @@
-import { promisify } from "util";
-import path from "path";
 import { LawData } from "../elaws_api";
 import { reLawnum } from "../util";
-import * as dataPaths from "./data_paths";
+import data_paths from "./data_paths";
+import path from "path";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;
 const domParser = new DOMParser();
@@ -146,104 +145,44 @@ export const makeList = async (
     return lawInfos.getList();
 };
 
-export const saveList = async (
-    lawdataDir: string, listJsonPath: string,
-    onProgress: (ratio: number, message: string) => void = () => undefined,
-): Promise<void> => {
-    const fs = await import("fs");
-
-    const progress = (() => {
-        let currentRatio = 0;
-        let currentMessage = "";
-        return (ratio?: number, message?: string) => {
-            currentRatio = ratio || currentRatio;
-            currentMessage = message || currentMessage;
-            onProgress(currentRatio, currentMessage);
-        };
-    })();
-
-    console.log("\nListing up XMLs...");
-    const dirs = (await promisify(fs.readdir)(lawdataDir, { withFileTypes: true })).filter(p => p.isDirectory()).map(p => path.join(lawdataDir, p.name));
-    const files: string[] = [];
-    for (const dir of dirs) {
-        files.push(...(await promisify(fs.readdir)(dir, { withFileTypes: true })).filter(p => p.isFile() && /\.xml$/.exec(p.name)).map(p => path.join(dir, p.name)));
-    }
-
-    console.log(`Processing ${files.length} XMLs...`);
-
-    async function* lawIdXmls(files: string[]) {
-        for (const file of files) {
-            const lawID = /^[A-Za-z0-9]+/.exec(path.basename(file))?.[0] ?? "";
-            const xml = await promisify(fs.readFile)(file, { encoding: "utf-8" });
-            const Path = path.basename(path.dirname(file));
-            const XmlName = path.basename(file);
-            yield { lawID, xml, Path, XmlName };
-        }
-    }
-
-    const list = await makeList(lawIdXmls(files), files.length, progress);
-    await promisify(fs.writeFile)(listJsonPath, JSON.stringify(list), { encoding: "utf-8" });
-};
-
 const lawListByLawnum: { [index: string]: LawInfo } = {};
 const lawList: LawInfo[] = [];
 let lawListReady = false;
 
-export const ensureList = async (dataPath: string): Promise<void> => {
-    const listJsonPath = dataPaths.getListJsonPath(dataPath);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type TextFetcher = (textPath: string) => Promise<string | null>;
+
+export const ensureList = async (dataPath: string, textFetcher: TextFetcher): Promise<void> => {
     if (!lawListReady) {
-        const json = (await require(listJsonPath)) as LawInfoListItem[];
-        for (const item of json) {
-            const lawInfo = LawInfo.fromTuple(item);
-            lawList.push(lawInfo);
-            lawListByLawnum[lawInfo.LawNum] = lawInfo;
+        const listJsonPath = data_paths.getListJsonPath(dataPath);
+        const text = await textFetcher(listJsonPath);
+        if (text === null) return;
+        try {
+            const json = JSON.parse(text);
+            for (const item of json) {
+                const lawInfo = LawInfo.fromTuple(item);
+                lawList.push(lawInfo);
+                lawListByLawnum[lawInfo.LawNum] = lawInfo;
+            }
+            console.log(`### loaded ${lawList.length} laws`);
+            lawListReady = true;
+        } catch (e) {
+            console.log(e);
         }
-        console.error(`### loaded ${lawList.length} laws`);
-        lawListReady = true;
     }
 };
 
-export const getLawList = async (dataPath: string): Promise<[LawInfo[], { [index: string]: LawInfo }]> => {
-    await ensureList(dataPath);
+export const getLawList = async (dataPath: string, textFetcher: TextFetcher): Promise<[LawInfo[], { [index: string]: LawInfo }]> => {
+    await ensureList(dataPath, textFetcher);
     return [lawList, lawListByLawnum];
 };
 
-export const getLawXml = async (dataPath: string, lawNum: string): Promise<string> => {
-    const fs = await import("fs");
-    const [/**/, listByLawnum] = await getLawList(dataPath);
+export const getLawXml = async (dataPath: string, lawNum: string, textFetcher: TextFetcher): Promise<string | null> => {
+    const [/**/, listByLawnum] = await getLawList(dataPath, textFetcher);
+    if (!(lawNum in listByLawnum)) return null;
     const lawInfo = listByLawnum[lawNum];
-    const lawdataPath = dataPaths.getLawdataPath(dataPath);
-    const filename = path.join(lawdataPath, lawInfo.Path, lawInfo.XmlName);
-    const xml = await promisify(fs.readFile)(filename, { encoding: "utf-8" });
+    const lawdataPath = data_paths.getLawdataPath(dataPath);
+    const filepath = path.join(lawdataPath, lawInfo.Path, lawInfo.XmlName);
+    const xml = await textFetcher(filepath);
     return xml;
 };
-
-const main = async (): Promise<void> => {
-    const yargs = await import("yargs");
-    const { ProgressBar } = await import("../term_util");
-
-    const args = yargs.options({
-        "data-dir": { type: "string", demandOption: true, alias: "d" },
-    }).argv;
-
-    const lawdataDir = dataPaths.getLawdataPath(args["data-dir"]);
-    const listJsonPath = dataPaths.getListJsonPath(args["data-dir"]);
-
-    const bar = new ProgressBar();
-    const progress = bar.progress.bind(bar);
-
-    bar.start(1, 0);
-    await saveList(lawdataDir, listJsonPath, progress);
-    bar.stop();
-};
-
-if (typeof require !== "undefined" && require.main === module) {
-    process.on("unhandledRejection", (e: Error) => {
-        console.error(e);
-        console.error(e.stack);
-        process.exit(1);
-    });
-    main().catch(e => { throw e; });
-}
-
-

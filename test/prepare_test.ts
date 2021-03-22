@@ -2,10 +2,10 @@
 import fs from "fs";
 import path from "path";
 import { promisify } from "util";
-import { saveList } from "@src/db/lawlist";
-import * as dataPaths from "@src/db/data_paths";
-import { download } from "@src/db/download";
-import { ProgressBar } from "@src/term_util";
+import { saveList } from "@coresrc/db/save_lawlist";
+import data_paths from "@coresrc/db/data_paths";
+import { download } from "@coresrc/db/download";
+import { ProgressBar } from "@coresrc/term_util";
 
 let called = false;
 
@@ -21,8 +21,8 @@ export const prepare = async (): Promise<void> => {
     if (called) return;
     called = true;
 
-    const listJsonPath = dataPaths.getListJsonPath(dataPath);
-    const lawdataPath = dataPaths.getLawdataPath(dataPath);
+    const listJsonPath = data_paths.getListJsonPath(dataPath);
+    const lawdataPath = data_paths.getLawdataPath(dataPath);
 
     const bar = new ProgressBar();
     const progress = bar.progress.bind(bar);

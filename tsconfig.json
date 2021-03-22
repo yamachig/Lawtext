@@ -12,7 +12,7 @@
 
         "baseUrl": "./",
         "outDir": "dist",
-        "paths": {"@src/*": ["src/*"]},
+        "paths": {"@coresrc/*": ["src/*"]},
         "rootDirs": ["src", "bin", "test"],
 
         "skipLibCheck": true,

@@ -6,7 +6,6 @@ import fs from "fs";
 import fetch from "node-fetch";
 import fsExtra from "fs-extra";
 import { promisify } from "util";
-import * as dataPaths from "./data_paths";
 
 export const download = async (
     lawdataPath: string,
@@ -43,7 +42,7 @@ export const download = async (
 
     let currentLength = 0;
     for await (const chunk of res.body) {
-        if(!chunk) break;
+        if (!chunk) break;
         tempZipStream.write(chunk);
         currentLength += chunk.length;
         const currentBytesStr = currentLength.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -67,28 +66,3 @@ export const download = async (
     await zip.close();
     progress(1);
 };
-
-const main = async (): Promise<void> => {
-    const yargs = await import("yargs");
-    const { ProgressBar } = await import("../term_util");
-
-    const bar = new ProgressBar();
-    const progress = bar.progress.bind(bar);
-
-    const args = yargs.options({
-        "data-dir": { type: "string", demandOption: true, alias: "d" },
-    }).argv;
-
-    bar.start(1, 0);
-    await download(dataPaths.getLawdataPath(args["data-dir"]), progress);
-    bar.stop();
-};
-
-if (typeof require !== "undefined" && require.main === module) {
-    process.on("unhandledRejection", e => {
-        console.dir(e);
-        process.exit(1);
-    });
-    main().catch(e => { throw e; });
-}
-

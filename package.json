@@ -43,6 +43,7 @@
     "ts-loader": "^8.0.18",
     "ts-node": "^9.1.1",
     "ts-pegjs": "^0.3.1",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^4.2.3",
     "webpack": "^5.26.3",
     "webpack-cli": "^4.5.0",
@@ -72,7 +73,6 @@
     "chai": "^4.3.4",
     "eslint": "^7.22.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
-    "mocha": "^8.3.2",
-    "tsconfig-paths": "^3.9.0"
+    "mocha": "^8.3.2"
   }
 }

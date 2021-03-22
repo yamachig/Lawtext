@@ -36,7 +36,8 @@
         "nonblock-statement-body-position": ["error", "beside"],
         "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
         "no-trailing-spaces": "error",
-        "eol-last": ["error", "always"]
+        "eol-last": ["error", "always"],
+        "keyword-spacing": "error"
     },
     "ignorePatterns": ["/dist/*"]
 }
