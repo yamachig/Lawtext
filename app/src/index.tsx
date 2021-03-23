@@ -1,21 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
 import { HashRouter, Route } from "react-router-dom";
 
 import "bootstrap";
 import "./index.scss";
 
-import LawtextAppPageContainer from "./containers/LawtextAppPageContainer";
-import store from "./store";
+import { LawtextAppPage } from "./components/LawtextAppPage";
 
 
 ReactDOM.render(
-    <Provider store={store}>
-        <HashRouter hashType="noslash">
-            <Route path="/:lawSearchKey?" component={LawtextAppPageContainer} />
-        </HashRouter>
-    </Provider>
+    <HashRouter hashType="noslash">
+        <Route path="/:lawSearchKey?" component={LawtextAppPage} />
+    </HashRouter>
     ,
     document.getElementById("root"),
 );

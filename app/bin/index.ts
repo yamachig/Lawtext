@@ -4,13 +4,11 @@ import { analyze } from "@coresrc/analyzer";
 import * as std from "@coresrc/std_law";
 import * as util from "@coresrc/util";
 import { LawView } from "@appsrc/components/LawView";
-import { Dispatchers, mapDispatchToProps } from "@appsrc/containers/LawtextAppPageContainer";
-import * as states from "@appsrc/states";
-import store from "@appsrc/store";
 import { getLawXml, TextFetcher } from "@coresrc/data/lawlist";
 import { promisify } from "util";
 import fs from "fs";
 import path from "path";
+import { LawtextAppPageState } from "./components/LawtextAppPageState";
 
 
 const textFetcher: TextFetcher = async (textPath: string) => {
@@ -23,32 +21,6 @@ const textFetcher: TextFetcher = async (textPath: string) => {
     }
 };
 
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const makeDummyProps = (lawtextAppPageState: Partial<states.LawtextAppPageState> = {}) => {
-    const props: states.LawtextAppPageState & Dispatchers = Object.assign(
-        {},
-
-        {
-            law: null,
-            loadingLaw: false,
-            loadingLawMessage: "",
-            lawSearchKey: null,
-            lawSearchedKey: null,
-            analysis: null,
-            hasError: false,
-            errors: [],
-        },
-        lawtextAppPageState,
-
-        mapDispatchToProps(store.dispatch),
-
-    );
-
-    return props as states.LawtextAppPageState & Dispatchers & states.RouteState;
-
-};
-
 const dataPath = path.join(__dirname, "../../core/data");
 
 const render = async (lawNum: string) => {
@@ -59,9 +31,29 @@ const render = async (lawNum: string) => {
     const origEL = util.xmlToJson(origXML!);
     analyze(origEL);
 
-    const lawView = new LawView(makeDummyProps({ law: origEL as std.Law }));
+    let currentState: LawtextAppPageState = {
+        law: origEL as std.Law,
+        loadingLaw: false,
+        loadingLawMessage: "",
+        lawSearchKey: "",
+        lawSearchedKey: "",
+        analysis: null,
+        hasError: false,
+        errors: [],
+    };
 
-    const renderedElement = lawView.render();
+    const origSetState: React.Dispatch<React.SetStateAction<LawtextAppPageState>> = (newState: LawtextAppPageState | ((prevState: LawtextAppPageState) => LawtextAppPageState)) => {
+        currentState = typeof newState === "function" ? newState(currentState) : newState;
+    };
+
+    const setState = (newState: Partial<LawtextAppPageState>) => {
+        origSetState({ ...currentState, ...newState });
+    };
+    const renderedElement = LawView({
+        origState: currentState,
+        setState,
+        origSetState,
+    }) as JSX.Element;
 
     void renderToString(renderedElement);
 };

@@ -1,13 +1,15 @@
-import { UnregisterCallback } from "history";
 import React from "react";
 import styled from "styled-components";
-import { Dispatchers } from "../containers/LawtextAppPageContainer";
-import { ErrorModalID, LawtextAppPageState, OpenFileInputName, RouteState } from "../states";
 import { Sidebar } from "./Sidebar";
+import { useLawtextAppPageState } from "./LawtextAppPageState";
 import { Viewer } from "./Viewer";
+import { ErrorModalID, openFileInputChange, OpenFileInputName, displayLaw } from "./actions";
+import { RouteComponentProps, useParams } from "react-router";
 
-
-type Props = LawtextAppPageState & Dispatchers & RouteState;
+interface RouteParams {
+    lawSearchKey: string | undefined,
+}
+export type RouteState = RouteComponentProps<RouteParams>;
 
 const SideBarDiv = styled.div`
     position: fixed;
@@ -28,81 +30,68 @@ const HiddenInput = styled.input`
     display: none;
 `;
 
+export const LawtextAppPage: React.FC = () => {
 
-export class LawtextAppPage extends React.Component<Props> {
-    public unsubscribeFromHistory?: UnregisterCallback;
-    public componentDidMount(): void {
-        this.onNavigate();
-        this.unsubscribeFromHistory = this.props.history.listen(() => this.onNavigate());
-    }
+    const { lawSearchKey } = useParams<RouteParams>();
 
-    public componentWillUnmount(): void {
-        if (this.unsubscribeFromHistory) this.unsubscribeFromHistory();
-    }
+    const stateStruct = useLawtextAppPageState(lawSearchKey ?? "");
+    const { origState, setState } = stateStruct;
 
-    public onNavigate(): void {
-        console.log("onNavigate: before timer:", this.props.lawSearchKey);
-        setTimeout(() => {
-            console.log("onNavigate: after timer:", this.props.lawSearchKey);
-            if (this.props.lawSearchKey) {
-                this.props.searchLaw(() => this.props, this.props.lawSearchKey);
-            }
-        }, 30);
-    }
+    React.useEffect(() => {
+        displayLaw(origState, setState);
+    }, [origState, setState]);
 
-    public render(): JSX.Element {
-        return (
-            <div>
-                <HiddenInput
-                    name={OpenFileInputName}
-                    type="file"
-                    accept="text/plain,application/xml"
-                    onChange={this.props.openFileInputChange}
-                />
+    return (
+        <div>
+            <HiddenInput
+                name={OpenFileInputName}
+                type="file"
+                accept="text/plain,application/xml"
+                onChange={e => openFileInputChange(setState, e)}
+            />
 
-                <SideBarDiv>
-                    <Sidebar {...this.props} />
-                </SideBarDiv>
+            <SideBarDiv>
+                <Sidebar {...stateStruct} />
+            </SideBarDiv>
 
-                <ViewerDiv>
-                    <Viewer {...this.props} />
-                </ViewerDiv>
+            <ViewerDiv>
+                <Viewer {...stateStruct} />
+            </ViewerDiv>
 
-                <div
-                    className="modal fade"
-                    id={ErrorModalID}
-                    role="dialog"
-                    aria-labelledby="errorModalLabel"
-                    aria-hidden="true"
-                >
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="errorModalLabel" />
-                                <button
-                                    type="button"
-                                    className="close"
-                                    data-dismiss="modal"
-                                    aria-label="Close"
-                                >
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body" />
-                            <div className="modal-footer">
-                                <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    data-dismiss="modal"
-                                >
+            <div
+                className="modal fade"
+                id={ErrorModalID}
+                role="dialog"
+                aria-labelledby="errorModalLabel"
+                aria-hidden="true"
+            >
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="errorModalLabel" />
+                            <button
+                                type="button"
+                                className="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body" />
+                        <div className="modal-footer">
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                data-dismiss="modal"
+                            >
                                     閉じる
-                                </button>
-                            </div>
+                            </button>
                         </div>
                     </div>
                 </div>
-
             </div>
-        );
-    }
-}
+
+        </div>
+    );
+};

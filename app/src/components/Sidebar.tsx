@@ -2,11 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import * as std from "@coresrc/std_law";
 import { assertNever, EL } from "@coresrc/util";
-import { Dispatchers } from "../containers/LawtextAppPageContainer";
-import { LawtextAppPageState, RouteState } from "../states";
-
-
-type Props = LawtextAppPageState & Dispatchers & RouteState;
+import { LawtextAppPageStateStruct, OrigStateProps } from "./LawtextAppPageState";
+import { useHistory } from "react-router";
+import * as actions from "./actions";
 
 
 const SidebarH1 = styled.h1`
@@ -20,158 +18,149 @@ const SidebarHeadDiv = styled.div`
     margin-bottom: 1rem;
 `;
 
-class SidebarHead extends React.Component<Props, { lawSearchKey: string }> {
+const SidebarHead: React.FC<OrigStateProps> = props => {
+    const { origState } = props;
 
-    public state = { lawSearchKey: "" };
+    const [editingKey, setEditingKey] = React.useState(origState.lawSearchKey ?? "");
 
-    constructor(props: Props) {
-        super(props);
-        this.state = { lawSearchKey: props.lawSearchKey || "" };
-    }
+    const history = useHistory();
 
-    public handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        this.props.history.push(`/${this.state.lawSearchKey}`);
-    }
+        history.push(`/${editingKey}`);
+    };
 
-    public render() {
+    const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEditingKey(e.target.value);
+    };
 
-        const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-            this.handleSearchSubmit(e);
-        };
+    const downloadLawtext = () => {
+        if (origState.law) {
+            actions.downloadLawtext(origState.law);
+        }
+    };
 
-        const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            this.setState({ lawSearchKey: e.target.value });
-        };
+    const downloadXml = () => {
+        if (origState.law) {
+            actions.downloadXml(origState.law);
+        }
+    };
 
-        const downloadLawtext = () => {
-            if (this.props.law) {
-                this.props.downloadLawtext(this.props.law);
-            }
-        };
+    const downloadDocxAll = () => {
+        if (origState.law) {
+            actions.downloadDocx(origState.law, false);
+        }
+    };
 
-        const downloadXml = () => {
-            if (this.props.law) {
-                this.props.downloadXml(this.props.law);
-            }
-        };
+    const downloadDocxSelection = () => {
+        if (origState.law) {
+            actions.downloadDocx(origState.law, true);
+        }
+    };
 
-        const downloadDocxAll = () => {
-            if (this.props.law) {
-                this.props.downloadDocx(this.props.law);
-            }
-        };
+    return (
+        <SidebarHeadDiv>
+            <div className="container-fluid">
+                <SidebarH1>
+                    <a href={location.protocol + "//" + location.host + location.pathname + location.search}
+                        style={{ color: "inherit" }}>Lawtext</a>
+                </SidebarH1>
 
-        const downloadDocxSelection = () => {
-            if (this.props.law) {
-                this.props.downloadDocx(this.props.law, true);
-            }
-        };
+                {!origState.loadingLaw &&
 
-        return (
-            <SidebarHeadDiv>
-                <div className="container-fluid">
-                    <SidebarH1>
-                        <a href={location.protocol + "//" + location.host + location.pathname + location.search}
-                            style={{ color: "inherit" }}>Lawtext</a>
-                    </SidebarH1>
+                    <div className="list-group" style={{ textAlign: "center" }}>
+                        <button
+                            onClick={actions.openFile}
+                            className="list-group-item list-group-item-sm list-group-item-action"
+                            style={{ fontSize: "0.8em", padding: "0.5em" }}
+                        >
+                            法令ファイルを開く
+                        </button>
 
-                    {!this.props.loadingLaw &&
+                        <form
+                            className="list-group-item list-group-item-sm"
+                            style={{ fontSize: "0.8em", padding: 0 }}
+                            onSubmit={handleSearchSubmit}
+                        >
+                            <div className="input-group">
+                                <input
+                                    name="lawSearchKey"
+                                    onChange={lawSearchKeyOnChange}
+                                    className="form-control form-control-sm search-law-textbox"
+                                    style={{
+                                        border: "none",
+                                        padding: "0.45em",
+                                        borderRadius: 0,
+                                        borderBottomLeftRadius: ".25rem",
+                                    }}
+                                    placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
+                                    value={editingKey}
+                                />
+                                <span className="input-group-btn">
+                                    <button
+                                        className="btn btn-sm btn-secondary"
+                                        type="submit"
+                                        style={{ borderRadius: 0, borderBottomRightRadius: ".25rem" }}
+                                    >
+                                        検索
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
 
-                        <div className="list-group" style={{ textAlign: "center" }}>
-                            <button
-                                onClick={this.props.openFile}
-                                className="list-group-item list-group-item-sm list-group-item-action"
-                                style={{ fontSize: "0.8em", padding: "0.5em" }}
-                            >
-                                法令ファイルを開く
-                            </button>
+                    </div>
 
-                            <form
-                                className="list-group-item list-group-item-sm"
-                                style={{ fontSize: "0.8em", padding: 0 }}
-                                onSubmit={formOnSubmit}
-                            >
-                                <div className="input-group">
-                                    <input
-                                        name="lawSearchKey"
-                                        onChange={lawSearchKeyOnChange}
-                                        className="form-control form-control-sm search-law-textbox"
-                                        style={{
-                                            border: "none",
-                                            padding: "0.45em",
-                                            borderRadius: 0,
-                                            borderBottomLeftRadius: ".25rem",
-                                        }}
-                                        placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
-                                        value={this.state.lawSearchKey || ""}
-                                    />
-                                    <span className="input-group-btn">
-                                        <button
-                                            className="btn btn-sm btn-secondary"
-                                            type="submit"
-                                            style={{ borderRadius: 0, borderBottomRightRadius: ".25rem" }}
-                                        >
-                                            検索
-                                        </button>
-                                    </span>
-                                </div>
-                            </form>
+                }
 
-                        </div>
-
-                    }
-
-                    {this.props.law &&
-                        <div style={{ marginTop: "0.5rem", display: "flex" }}>
-                            <span
-                                style={{
-                                    fontSize: ".875rem",
-                                    whiteSpace: "nowrap",
-                                    paddingTop: "5px",
-                                }}
-                            >
-                                保存：
+                {origState.law &&
+                    <div style={{ marginTop: "0.5rem", display: "flex" }}>
+                        <span
+                            style={{
+                                fontSize: ".875rem",
+                                whiteSpace: "nowrap",
+                                paddingTop: "5px",
+                            }}
+                        >
+                            保存：
+                        </span>
+                        <div>
+                            <span className="btn-group btn-group-sm">
+                                <button
+                                    onClick={downloadDocxAll}
+                                    className="btn btn-outline-primary"
+                                >
+                                    Word
+                                </button>
+                                <button
+                                    onClick={downloadLawtext}
+                                    className="btn btn-outline-primary"
+                                >
+                                    Lawtext
+                                </button>
+                                <button
+                                    onClick={downloadXml}
+                                    className="btn btn-outline-primary"
+                                >
+                                    法令XML
+                                </button>
                             </span>
-                            <div>
-                                <span className="btn-group btn-group-sm">
-                                    <button
-                                        onClick={downloadDocxAll}
-                                        className="btn btn-outline-primary"
-                                    >
-                                        Word
-                                    </button>
-                                    <button
-                                        onClick={downloadLawtext}
-                                        className="btn btn-outline-primary"
-                                    >
-                                        Lawtext
-                                    </button>
-                                    <button
-                                        onClick={downloadXml}
-                                        className="btn btn-outline-primary"
-                                    >
-                                        法令XML
-                                    </button>
-                                </span>
-                                <span className="btn-group btn-group-sm" style={{ marginTop: "0.2rem" }}>
-                                    <button
-                                        onClick={downloadDocxSelection}
-                                        className="btn btn-outline-primary"
-                                        style={{ padding: "0 8px" }}
-                                    >
-                                        Word（選択した条のみ）
-                                    </button>
-                                </span>
-                            </div >
+                            <span className="btn-group btn-group-sm" style={{ marginTop: "0.2rem" }}>
+                                <button
+                                    onClick={downloadDocxSelection}
+                                    className="btn btn-outline-primary"
+                                    style={{ padding: "0 8px" }}
+                                >
+                                    Word（選択した条のみ）
+                                </button>
+                            </span>
                         </div >
-                    }
+                    </div >
+                }
 
-                </div >
-            </SidebarHeadDiv >
-        );
-    }
-}
+            </div >
+        </SidebarHeadDiv >
+    );
+};
 
 
 const SidebarBodyDiv = styled.div`
@@ -202,464 +191,422 @@ const LawNavDiv = styled.div`
     font-size: 0.75em;
 `;
 
-class SidebarBody extends React.Component<Props> {
-    public shouldComponentUpdate(nextProps: Props) {
-        return this.props.law !== nextProps.law;
-    }
 
-    public render() {
-        return (
-            <SidebarBodyDiv>
-                {this.renderNavBlock()}
-            </SidebarBodyDiv>
-        );
-    }
+const NavLawTitle: React.FC<{lawTitle: std.LawTitle, indent: number}> = props => {
+    const onClick = () => {
+        actions.scrollLaw(props.lawTitle.id.toString());
+    };
 
-    protected processLawBody(lawBody: std.LawBody) {
-        const list: JSX.Element[] = [];
+    return (
+        <TOCItemDiv
+            key={props.lawTitle.id}
+            style={{
+                paddingLeft: (props.indent + 2) + "em",
+            }}
+            onClick={onClick}
+        >
+            {props.lawTitle.text}
+        </TOCItemDiv>
+    );
+};
 
-        for (const el of lawBody.children) {
-            if (el.tag === "LawTitle") {
-                list.push(...this.processLawTitle(el, 0));
-            } else if (el.tag === "EnactStatement") {
-                list.push(...this.processEnactStatement(el, 0));
-            } else if (el.tag === "TOC") {
-                list.push(...this.processTOC(el, 0));
-            } else if (el.tag === "Preamble") {
-                list.push(...this.processPreamble(el, 0));
-            } else if (el.tag === "MainProvision") {
-                list.push(...this.processArticleGroup(el, 0));
-            } else if (el.tag === "SupplProvision") {
-                list.push(...this.processSupplProvision(el, 0));
-            } else if (el.tag === "AppdxTable") {
-                list.push(...this.processAppdxTable(el, 0));
-            } else if (el.tag === "AppdxStyle") {
-                list.push(...this.processAppdxStyle(el, 0));
-            } else if (el.tag === "AppdxFig") {
-                list.push(...this.processAppdxFig(el, 0));
-            } else if (el.tag === "AppdxNote") {
-                list.push(...this.processAppdxNote(el, 0));
-            } else if (el.tag === "AppdxFormat") {
-                list.push(...this.processAppdxFormat(el, 0));
-            } else if (el.tag === "Appdx") {
-                list.push(...this.processAppdx(el, 0));
-            } else {
-                assertNever(el);
-            }
-        }
+const NavEnactStatement: React.FC<{enactStatement: std.EnactStatement, indent: number}> = props => {
+    const onClick = () => {
+        actions.scrollLaw(props.enactStatement.id.toString());
+    };
 
-        return (
-            <div>
-                {list}
-            </div>
-        );
-    }
+    return (
+        <TOCItemDiv
+            key={props.enactStatement.id}
+            style={{
+                paddingLeft: (props.indent + 2) + "em",
+            }}
+            onClick={onClick}
+        >
+            制定文
+        </TOCItemDiv>
+    );
+};
 
-    protected processLawTitle(lawTitle: std.LawTitle, indent: number) {
-        const list: JSX.Element[] = [];
+const NavPreamble: React.FC<{preamble: std.Preamble, indent: number}> = props => {
+    const onClick = () => {
+        actions.scrollLaw(props.preamble.id.toString());
+    };
 
-        const onClick = () => {
-            this.props.scrollLaw(lawTitle.id.toString());
-        };
+    return (
+        <TOCItemDiv
+            key={props.preamble.id}
+            style={{
+                paddingLeft: (props.indent + 2) + "em",
+            }}
+            onClick={onClick}
+        >
+            前文
+        </TOCItemDiv>
+    );
+};
 
-        list.push(
-            <TOCItemDiv
-                key={lawTitle.id}
-                style={{
-                    paddingLeft: (indent + 2) + "em",
-                }}
-                onClick={onClick}
-            >
-                {lawTitle.text}
-            </TOCItemDiv>,
-        );
+const NavTOC: React.FC<{toc: std.TOC, indent: number}> = props => {
+    const tocLabel = props.toc.children.find((el) => el.tag === "TOCLabel") as std.TOCLabel | undefined;
 
-        return list;
-    }
+    const onClick = () => {
+        actions.scrollLaw(props.toc.id.toString());
+    };
 
-    protected processEnactStatement(preamble: std.EnactStatement, indent: number) {
-        const list: JSX.Element[] = [];
+    return tocLabel ? (
+        <TOCItemDiv
+            key={props.toc.id}
+            style={{
+                paddingLeft: (props.indent + 2) + "em",
+            }}
+            onClick={onClick}
+        >
+            {tocLabel.text}
+        </TOCItemDiv>
+    ) : null;
+};
 
-        const onClick = () => {
-            this.props.scrollLaw(preamble.id.toString());
-        };
+const NavArticleGroup: React.FC<{
+    articleGroup: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division,
+    indent: number,
+}> = props => {
+    return (<>
+        {[...props.articleGroup.children].map((el) => {
+            if (el.tag === "Part" || el.tag === "Chapter" || el.tag === "Section" || el.tag === "Subsection" || el.tag === "Division") {
+                return <NavArticleGroup
+                    key={el.id}
+                    articleGroup={el}
+                    indent={props.articleGroup.tag === "MainProvision" ? props.indent : props.indent + 1}
+                />;
 
-        list.push(
-            <TOCItemDiv
-                key={preamble.id}
-                style={{
-                    paddingLeft: (indent + 2) + "em",
-                }}
-                onClick={onClick}
-            >
-                制定文
-            </TOCItemDiv>,
-        );
+            } else if (el.tag === "Article") {
+                return <NavArticle
+                    key={el.id}
+                    article={el}
+                    indent={props.articleGroup.tag === "MainProvision" ? props.indent : props.indent + 1}
+                />;
 
-        return list;
-    }
-
-    protected processPreamble(preamble: std.Preamble, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const onClick = () => {
-            this.props.scrollLaw(preamble.id.toString());
-        };
-
-        list.push(
-            <TOCItemDiv
-                key={preamble.id}
-                style={{
-                    paddingLeft: (indent + 2) + "em",
-                }}
-                onClick={onClick}
-            >
-                前文
-            </TOCItemDiv>,
-        );
-
-        return list;
-    }
-
-    protected processTOC(toc: std.TOC, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const tocLabel = toc.children.find((el) => el.tag === "TOCLabel") as std.TOCLabel | undefined;
-
-        const onClick = () => {
-            this.props.scrollLaw(toc.id.toString());
-        };
-
-        if (tocLabel) {
-            list.push(
-                <TOCItemDiv
-                    key={toc.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                >
-                    {tocLabel.text}
-                </TOCItemDiv>,
-            );
-        }
-
-        return list;
-    }
-
-    protected processArticleGroup(
-        articleGroup: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division,
-        indent: number,
-    ) {
-        const list: JSX.Element[] = [];
-
-        for (const el of articleGroup.children) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if (el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle" || el.tag as any === "AppdxStyleTitle") {
-
+            } else if (el.tag === "Paragraph" || el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
                 const onClick = () => {
-                    this.props.scrollLaw(articleGroup.id.toString());
+                    actions.scrollLaw(props.articleGroup.id.toString());
                 };
 
-                list.push(
+                return (
                     <TOCItemDiv
                         key={el.id}
                         style={{
-                            paddingLeft: (indent + 2) + "em",
+                            paddingLeft: (props.indent + 2) + "em",
                         }}
                         onClick={onClick}
                         title={el.text}
                     >
                         {el.text}
-                    </TOCItemDiv>,
+                    </TOCItemDiv>
                 );
-
-            }
-        }
-
-        for (const el of articleGroup.children) {
-            if (el.tag === "Part" || el.tag === "Chapter" || el.tag === "Section" || el.tag === "Subsection" || el.tag === "Division") {
-                list.push(...this.processArticleGroup(el, articleGroup.tag === "MainProvision" ? indent : indent + 1));
-
-            } else if (el.tag === "Article") {
-                list.push(...this.processArticle(el, articleGroup.tag === "MainProvision" ? indent : indent + 1));
-
-            } else if (el.tag === "Paragraph" || el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
-                //
 
             } else {
                 console.error(`unexpected element! ${JSON.stringify(el, undefined, 2)}`);
-                list.push(...this.processAnyLaw(el, indent));
+                return <NavAnyLaw
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    key={(el as any).id}
+                    el={el}
+                    indent={props.indent}
+                />;
 
             }
+        })}
+    </>);
+};
+
+const NavArticle: React.FC<{article: std.Article, indent: number}> = props => {
+    const articleCaption = props.article.children.find((el) => el.tag === "ArticleCaption") as std.ArticleCaption | undefined;
+    const articleTitle = props.article.children.find((el) => el.tag === "ArticleTitle") as std.ArticleCaption | undefined;
+
+    if (articleTitle) {
+        const name = articleTitle.text;
+        let text = name;
+        if (articleCaption) {
+            const appendText = articleCaption.text;
+            text += (appendText[0] === "（" ? "" : "　") + appendText;
         }
 
-        return list;
-    }
+        const onClick = () => {
+            actions.scrollLaw(props.article.id.toString());
+        };
 
-    protected processArticle(article: std.Article, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const articleCaption = article.children.find((el) => el.tag === "ArticleCaption") as std.ArticleCaption | undefined;
-        const articleTitle = article.children.find((el) => el.tag === "ArticleTitle") as std.ArticleCaption | undefined;
-
-        if (articleTitle) {
-            const name = articleTitle.text;
-            let text = name;
-            if (articleCaption) {
-                const appendText = articleCaption.text;
-                text += (appendText[0] === "（" ? "" : "　") + appendText;
-            }
-
-            const onClick = () => {
-                this.props.scrollLaw(article.id.toString());
-            };
-
-            list.push(
-                <TOCItemDiv
-                    key={article.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                    title={text}
-                >
-                    {text}
-                </TOCItemDiv>,
-            );
-        }
-
-        return list;
-    }
-
-    protected processSupplProvision(supplProvision: std.SupplProvision, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const supplProvisionLabel = supplProvision.children.find((el) => el.tag === "SupplProvisionLabel") as std.SupplProvisionLabel | undefined;
-
-        if (supplProvisionLabel) {
-            const name = supplProvisionLabel.text;
-            const amendLawNum = supplProvision.attr.AmendLawNum || "";
-            // eslint-disable-next-line no-irregular-whitespace
-            const text = (name + (amendLawNum ? ("（" + amendLawNum + "）") : "")).replace(/[\s　]+/, "");
-
-            const onClick = () => {
-                this.props.scrollLaw(supplProvision.id.toString());
-            };
-
-            list.push(
-                <TOCItemDiv
-                    key={supplProvision.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                    title={text}
-                >
-                    {text}
-                </TOCItemDiv>,
-            );
-        }
-
-        return list;
-    }
-
-    protected processAppdxTable(appdxTable: std.AppdxTable, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const appdxTableTitle = appdxTable.children.find((el) => el.tag === "AppdxTableTitle") as std.AppdxTableTitle | undefined;
-
-        if (appdxTableTitle) {
-            const onClick = () => {
-                this.props.scrollLaw(appdxTable.id.toString());
-            };
-
-            list.push(
-                <TOCItemDiv
-                    key={appdxTable.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                    title={appdxTableTitle.text}
-                >
-                    {appdxTableTitle.text}
-                </TOCItemDiv>,
-            );
-        }
-
-        return list;
-    }
-
-    protected processAppdxStyle(appdxStyle: std.AppdxStyle, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const appdxStyleTitle = appdxStyle.children.find((el) => el.tag === "AppdxStyleTitle") as std.AppdxStyleTitle | undefined;
-
-        if (appdxStyleTitle) {
-            const onClick = () => {
-                this.props.scrollLaw(appdxStyle.id.toString());
-            };
-            list.push(
-                <TOCItemDiv
-                    key={appdxStyle.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                    title={appdxStyleTitle.text}
-                >
-                    {appdxStyleTitle.text}
-                </TOCItemDiv>,
-            );
-        }
-
-        return list;
-    }
-
-    protected processAppdxFig(appdxFig: std.AppdxFig, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const AppdxFigTitle = appdxFig.children.find((el) => el.tag === "AppdxFigTitle") as std.AppdxFigTitle | undefined;
-
-        if (AppdxFigTitle) {
-            const onClick = () => {
-                this.props.scrollLaw(appdxFig.id.toString());
-            };
-            list.push(
-                <TOCItemDiv
-                    key={appdxFig.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                    title={AppdxFigTitle.text}
-                >
-                    {AppdxFigTitle.text}
-                </TOCItemDiv>,
-            );
-        }
-
-        return list;
-    }
-
-    protected processAppdxFormat(appdxFig: std.AppdxFormat, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const appdxFormatTitle = appdxFig.children.find((el) => el.tag === "AppdxFormatTitle") as std.AppdxFormatTitle | undefined;
-
-        if (appdxFormatTitle) {
-            const onClick = () => {
-                this.props.scrollLaw(appdxFig.id.toString());
-            };
-            list.push(
-                <TOCItemDiv
-                    key={appdxFig.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                    title={appdxFormatTitle.text}
-                >
-                    {appdxFormatTitle.text}
-                </TOCItemDiv>,
-            );
-        }
-
-        return list;
-    }
-
-    protected processAppdxNote(appdxFig: std.AppdxNote, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const appdxNoteTitle = appdxFig.children.find((el) => el.tag === "AppdxNoteTitle") as std.AppdxNoteTitle | undefined;
-
-        if (appdxNoteTitle) {
-            const onClick = () => {
-                this.props.scrollLaw(appdxFig.id.toString());
-            };
-            list.push(
-                <TOCItemDiv
-                    key={appdxFig.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                    title={appdxNoteTitle.text}
-                >
-                    {appdxNoteTitle.text}
-                </TOCItemDiv>,
-            );
-        }
-
-        return list;
-    }
-
-
-    protected processAppdx(appdxFig: std.Appdx, indent: number) {
-        const list: JSX.Element[] = [];
-
-        const ArithFormulaNum = appdxFig.children.find((el) => el.tag === "ArithFormulaNum") as std.ArithFormulaNum | undefined;
-
-        if (ArithFormulaNum) {
-            const onClick = () => {
-                this.props.scrollLaw(appdxFig.id.toString());
-            };
-            list.push(
-                <TOCItemDiv
-                    key={appdxFig.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                    title={ArithFormulaNum.text}
-                >
-                    {ArithFormulaNum.text}
-                </TOCItemDiv>,
-            );
-        }
-
-        return list;
-    }
-
-    protected renderNavBlock() {
-        if (this.props.law) {
-            const lawBody = this.props.law.children.find((el) => el.tag === "LawBody") as std.LawBody;
-            return (
-                <LawNavDiv>
-                    {this.processLawBody(lawBody)}
-                </LawNavDiv>
-            );
-        }
+        return (
+            <TOCItemDiv
+                key={props.article.id}
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+                title={text}
+            >
+                {text}
+            </TOCItemDiv>
+        );
+    } else {
         return null;
     }
+};
 
-    protected processAnyLaw(el: EL, indent: number) {
-        const list: JSX.Element[] = [];
+const NavSupplProvision: React.FC<{supplProvision: std.SupplProvision, indent: number}> = props => {
+    const supplProvisionLabel = props.supplProvision.children.find((el) => el.tag === "SupplProvisionLabel") as std.SupplProvisionLabel | undefined;
 
-        const titleEL = el.children.find(c => typeof c !== "string" && c.tag.includes("Title")) as EL | undefined || el;
+    if (supplProvisionLabel) {
+        const name = supplProvisionLabel.text;
+        const amendLawNum = props.supplProvision.attr.AmendLawNum || "";
+        // eslint-disable-next-line no-irregular-whitespace
+        const text = (name + (amendLawNum ? ("（" + amendLawNum + "）") : "")).replace(/[\s　]+/, "");
 
-        if (titleEL) {
-            const onClick = () => {
-                this.props.scrollLaw(el.id.toString());
-            };
-            list.push(
-                <TOCItemDiv
-                    key={el.id}
-                    style={{
-                        paddingLeft: (indent + 2) + "em",
-                    }}
-                    onClick={onClick}
-                    title={titleEL.text}
-                >
-                    {titleEL.text}
-                </TOCItemDiv>,
-            );
-        }
+        const onClick = () => {
+            actions.scrollLaw(props.supplProvision.id.toString());
+        };
 
-        return list;
+        return (
+            <TOCItemDiv
+                key={props.supplProvision.id}
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+                title={text}
+            >
+                {text}
+            </TOCItemDiv>
+        );
+    } else {
+        return null;
     }
-}
+};
+
+const NavAppdxTable: React.FC<{appdxTable: std.AppdxTable, indent: number}> = props => {
+    const appdxTableTitle = props.appdxTable.children.find((el) => el.tag === "AppdxTableTitle") as std.AppdxTableTitle | undefined;
+
+    if (appdxTableTitle) {
+        const onClick = () => {
+            actions.scrollLaw(props.appdxTable.id.toString());
+        };
+
+        return (
+            <TOCItemDiv
+                key={props.appdxTable.id}
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+                title={appdxTableTitle.text}
+            >
+                {appdxTableTitle.text}
+            </TOCItemDiv>
+        );
+    } else {
+        return null;
+    }
+};
+
+const NavAppdxStyle: React.FC<{appdxStyle: std.AppdxStyle, indent: number}> = props => {
+    const appdxStyleTitle = props.appdxStyle.children.find((el) => el.tag === "AppdxStyleTitle") as std.AppdxStyleTitle | undefined;
+
+    if (appdxStyleTitle) {
+        const onClick = () => {
+            actions.scrollLaw(props.appdxStyle.id.toString());
+        };
+        return (
+            <TOCItemDiv
+                key={props.appdxStyle.id}
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+                title={appdxStyleTitle.text}
+            >
+                {appdxStyleTitle.text}
+            </TOCItemDiv>
+        );
+    } else {
+        return null;
+    }
+};
+
+const NavAppdxFig: React.FC<{appdxFig: std.AppdxFig, indent: number}> = props => {
+    const AppdxFigTitle = props.appdxFig.children.find((el) => el.tag === "AppdxFigTitle") as std.AppdxFigTitle | undefined;
+
+    if (AppdxFigTitle) {
+        const onClick = () => {
+            actions.scrollLaw(props.appdxFig.id.toString());
+        };
+        return (
+            <TOCItemDiv
+                key={props.appdxFig.id}
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+                title={AppdxFigTitle.text}
+            >
+                {AppdxFigTitle.text}
+            </TOCItemDiv>
+        );
+    } else {
+        return null;
+    }
+};
+
+const NavAppdxFormat: React.FC<{appdxFig: std.AppdxFormat, indent: number}> = props => {
+    const appdxFormatTitle = props.appdxFig.children.find((el) => el.tag === "AppdxFormatTitle") as std.AppdxFormatTitle | undefined;
+
+    if (appdxFormatTitle) {
+        const onClick = () => {
+            actions.scrollLaw(props.appdxFig.id.toString());
+        };
+        return (
+            <TOCItemDiv
+                key={props.appdxFig.id}
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+                title={appdxFormatTitle.text}
+            >
+                {appdxFormatTitle.text}
+            </TOCItemDiv>
+        );
+    } else {
+        return null;
+    }
+};
+
+const NavAppdxNote: React.FC<{appdxFig: std.AppdxNote, indent: number}> = props => {
+    const appdxNoteTitle = props.appdxFig.children.find((el) => el.tag === "AppdxNoteTitle") as std.AppdxNoteTitle | undefined;
+
+    if (appdxNoteTitle) {
+        const onClick = () => {
+            actions.scrollLaw(props.appdxFig.id.toString());
+        };
+        return (
+            <TOCItemDiv
+                key={props.appdxFig.id}
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+                title={appdxNoteTitle.text}
+            >
+                {appdxNoteTitle.text}
+            </TOCItemDiv>
+        );
+    } else {
+        return null;
+    }
+};
+
+
+const NavAppdx: React.FC<{appdxFig: std.Appdx, indent: number}> = props => {
+    const ArithFormulaNum = props.appdxFig.children.find((el) => el.tag === "ArithFormulaNum") as std.ArithFormulaNum | undefined;
+
+    if (ArithFormulaNum) {
+        const onClick = () => {
+            actions.scrollLaw(props.appdxFig.id.toString());
+        };
+        return (
+            <TOCItemDiv
+                key={props.appdxFig.id}
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+                title={ArithFormulaNum.text}
+            >
+                {ArithFormulaNum.text}
+            </TOCItemDiv>
+        );
+    } else {
+        return null;
+    }
+};
+
+const NavAnyLaw: React.FC<{el: EL, indent: number}> = props => {
+    const titleEL = props.el.children.find(c => typeof c !== "string" && c.tag.includes("Title")) as EL | undefined || props.el;
+
+    if (titleEL) {
+        const onClick = () => {
+            actions.scrollLaw(props.el.id.toString());
+        };
+        return (
+            <TOCItemDiv
+                key={props.el.id}
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+                title={titleEL.text}
+            >
+                {titleEL.text}
+            </TOCItemDiv>
+        );
+    } else {
+        return null;
+    }
+};
+
+const LawBody: React.FC<{lawBody: std.LawBody}> = props => {
+    return (
+        <>
+            {props.lawBody.children.map(el => {
+                if (el.tag === "LawTitle") {
+                    return <NavLawTitle key={el.id} lawTitle={el} indent={0} />;
+                } else if (el.tag === "EnactStatement") {
+                    return <NavEnactStatement key={el.id} enactStatement={el} indent={0} />;
+                } else if (el.tag === "TOC") {
+                    return <NavTOC key={el.id} toc={el} indent={0} />;
+                } else if (el.tag === "Preamble") {
+                    return <NavPreamble key={el.id} preamble={el} indent={0} />;
+                } else if (el.tag === "MainProvision") {
+                    return <NavArticleGroup key={el.id} articleGroup={el} indent={0} />;
+                } else if (el.tag === "SupplProvision") {
+                    return <NavSupplProvision key={el.id} supplProvision={el} indent={0} />;
+                } else if (el.tag === "AppdxTable") {
+                    return <NavAppdxTable key={el.id} appdxTable={el} indent={0} />;
+                } else if (el.tag === "AppdxStyle") {
+                    return <NavAppdxStyle key={el.id} appdxStyle={el} indent={0} />;
+                } else if (el.tag === "AppdxFig") {
+                    return <NavAppdxFig key={el.id} appdxFig={el} indent={0} />;
+                } else if (el.tag === "AppdxNote") {
+                    return <NavAppdxNote key={el.id} appdxFig={el} indent={0} />;
+                } else if (el.tag === "AppdxFormat") {
+                    return <NavAppdxFormat key={el.id} appdxFig={el} indent={0} />;
+                } else if (el.tag === "Appdx") {
+                    return <NavAppdx key={el.id} appdxFig={el} indent={0} />;
+                } else {
+                    return assertNever(el);
+                }
+            })}
+        </>
+    );
+};
+
+const NavBlock: React.FC<{law: std.Law | null}> = props => {
+    if (props.law) {
+        const lawBody = props.law.children.find((el) => el.tag === "LawBody") as std.LawBody;
+        return (
+            <LawNavDiv>
+                <LawBody lawBody={lawBody}/>
+            </LawNavDiv>
+        );
+    }
+    return null;
+};
+
+
+const SidebarBody: React.FC<{law: std.Law | null}> = props => {
+    return (
+        <SidebarBodyDiv>
+            <NavBlock law={props.law} />
+        </SidebarBodyDiv>
+    );
+};
 
 
 const SidebarFooterDiv = styled.div`
@@ -668,20 +615,18 @@ const SidebarFooterDiv = styled.div`
     flex-direction: column;
 `;
 
-class SidebarFooter extends React.Component<Props> {
-    public render() {
-        return (
-            <SidebarFooterDiv>
-                <div style={{ fontSize: "0.8em", textAlign: "center", padding: "0.3em 0", color: "rgb(192, 192, 192)" }}>
-                    <a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer" style={{ marginRight: "2em" }}>
+const SidebarFooter: React.FC = () => {
+    return (
+        <SidebarFooterDiv>
+            <div style={{ fontSize: "0.8em", textAlign: "center", padding: "0.3em 0", color: "rgb(192, 192, 192)" }}>
+                <a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer" style={{ marginRight: "2em" }}>
                         GitHub
-                    </a>
-                    &copy; 2017-{new Date().getFullYear()} yamachi
-                </div >
-            </SidebarFooterDiv >
-        );
-    }
-}
+                </a>
+                &copy; 2017-{new Date().getFullYear()} yamachi
+            </div >
+        </SidebarFooterDiv >
+    );
+};
 
 
 const SidebarDiv = styled.div`
@@ -691,14 +636,13 @@ const SidebarDiv = styled.div`
     justify-content: space-between;
 `;
 
-export class Sidebar extends React.Component<Props> {
-    public render(): JSX.Element {
-        return (
-            <SidebarDiv>
-                <SidebarHead {...this.props} />
-                <SidebarBody {...this.props} />
-                <SidebarFooter {...this.props} />
-            </SidebarDiv >
-        );
-    }
-}
+export const Sidebar: React.FC<LawtextAppPageStateStruct> = props => {
+    const { origState } = props;
+    return (
+        <SidebarDiv>
+            <SidebarHead {...{ origState }} />
+            <SidebarBody law={origState.law} />
+            <SidebarFooter />
+        </SidebarDiv >
+    );
+};

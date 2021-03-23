@@ -1,63 +1,54 @@
-import { saveAs } from "file-saver";
 import $ from "jquery";
-import { RouteComponentProps } from "react-router";
-import { Dispatch } from "redux";
-import { Action } from "typescript-fsa";
-import { reducerWithInitialState } from "typescript-fsa-reducers/dist";
+import { LawtextAppPageState, SetLawtextAppPageState } from "./LawtextAppPageState";
+import * as std from "@coresrc/std_law";
 import * as analyzer from "@coresrc/analyzer";
+import * as util from "@coresrc/util";
 import { parse } from "@coresrc/parser_wrapper";
+import * as lawdata from "../states/lawdata";
 import * as renderer from "@coresrc/renderer";
 import render_lawtext from "@coresrc/renderers/lawtext";
-import * as std from "@coresrc/std_law";
-import * as util from "@coresrc/util";
-import { LawtextAppPageActions } from "../actions";
-import * as lawdata from "./lawdata";
 
-export type RouteState = RouteComponentProps<{ lawSearchKey: string | undefined }>;
+const readFileAsText = (file: Blob): Promise<string> => {
+    const reader = new FileReader();
 
-export interface LawtextAppPageState {
-    law: std.Law | null;
-    loadingLaw: boolean;
-    loadingLawMessage: string;
-    lawSearchKey: string | null;
-    lawSearchedKey: string | null;
-    analysis: analyzer.Analysis | null;
-    hasError: boolean;
-    errors: Error[];
-}
-
-const initialState: LawtextAppPageState = {
-    law: null,
-    loadingLaw: false,
-    loadingLawMessage: "",
-    lawSearchKey: null,
-    lawSearchedKey: null,
-    analysis: null,
-    hasError: false,
-    errors: [],
+    return new Promise((resolve, reject) => {
+        reader.onerror = () => {
+            reader.abort();
+            reject(reader.error);
+        };
+        reader.onload = () => {
+            resolve(reader.result as string);
+        };
+        reader.readAsText(file);
+    });
 };
-
-export const LawtextAppPageReducer = reducerWithInitialState(initialState);
 
 
 export const OpenFileInputName = "LawtextAppPage.OpenFileInput";
-const origOpenFile = () => {
+export const openFile = (): void => {
     const els = document.getElementsByName(OpenFileInputName);
     if (els) {
         els[0].click();
     }
 };
 
+export const openFileInputChange = async (
+    setState: SetLawtextAppPageState,
+    event: React.ChangeEvent<HTMLInputElement>,
+): Promise<void> => {
+    const openFileInput = event.target;
+    const file = openFileInput.files ? openFileInput.files[0] : null;
+    if (!file) return;
 
-const scrollToLawAnchor = (id: string) => {
-    for (const el of Array.from(document.getElementsByClassName("law-anchor"))) {
-        if ((el as HTMLElement).dataset.el_id === id) {
-            const offset = $(el).offset();
-            if (offset) $("html,body").animate({ scrollTop: offset.top }, "normal");
-        }
-    }
+    setState({ loadingLaw: true, loadingLawMessage: "ファイルを読み込んでいます..." });
+    console.log("openFileInputChange: Loading file");
+    await util.wait(30);
+
+    const text = await readFileAsText(file);
+    openFileInput.value = "";
+    await loadLawText(setState, text, true);
+    setState({ lawSearchKey: "", loadingLaw: false, loadingLawMessage: "" });
 };
-
 
 export const ErrorModalID = "LawtextAppPage.ErrorModal";
 const showErrorModal = (title: string, bodyEl: string) => {
@@ -68,6 +59,99 @@ const showErrorModal = (title: string, bodyEl: string) => {
     modal.find(".modal-title").html(title);
     modal.find(".modal-body").html(bodyEl);
     modal.modal("show");
+};
+
+export const invokeError =
+    (title: string, bodyEl: string): void =>
+        showErrorModal(title, bodyEl);
+
+export const loadLawText = async (
+    setState: SetLawtextAppPageState,
+    text: string,
+    analyzeXml: boolean,
+): Promise<std.Law | null> => {
+    let law: std.Law | null = null;
+    let analysis: analyzer.Analysis | null = null;
+    let begin: number;
+
+    begin = Date.now();
+    try {
+        if (/^(?:<\?xml|<Law)/.test(text.trim())) {
+            setState({ loadingLawMessage: "法令XMLをパースしています..." });
+            console.log("loadLawText: Parse as XML");
+            await util.wait(30);
+            law = util.xmlToJson(text) as std.Law;
+            if (analyzeXml) {
+                analyzer.stdxmlToExt(law);
+            }
+            analysis = analyzer.analyze(law);
+        } else {
+            setState({ loadingLawMessage: "Lawtextをパースしています..." });
+            console.log("loadLawText: Parse as Lawtext");
+            await util.wait(30);
+            law = parse(text, { startRule: "start" }) as std.Law;
+            analysis = analyzer.analyze(law);
+
+        }
+    } catch (err) {
+        console.log(err);
+        const errStr = err.toString();
+        const pre = $("<pre>")
+            .css({ "white-space": "pre-wrap" })
+            .css({ "line-height": "1.2em" })
+            .css({ "padding": "1em 0" })
+            .html(errStr);
+        invokeError(
+            "読み込んだ法令データにエラーがあります",
+            (pre[0] ).outerHTML,
+        );
+        law = null;
+    }
+    console.log(`loadLawText: Parse end: ${Date.now() - begin}ms`);
+
+    const newState: Partial<LawtextAppPageState> = {};
+    if (law) {
+        newState.law = law;
+        newState.analysis = analysis;
+        const lawBody = law.children.find(el => el.tag === "LawBody") as std.LawBody | undefined;
+        const lawTitle = lawBody && lawBody.children.find(el => el.tag === "LawTitle") as std.LawTitle | undefined;
+        document.title = lawTitle ? `${lawTitle.text} | Lawtext` : "Lawtext";
+    } else {
+        document.title = "Lawtext";
+    }
+    setState({ loadingLawMessage: "レンダリングしています..." });
+    console.log("loadLawText: Setting Law into State");
+    await util.wait(30);
+    begin = Date.now();
+    setState(newState);
+    console.log(`loadLawText: Render end: ${Date.now() - begin}ms`);
+    return law;
+};
+
+export const displayLaw = async (
+    origState: LawtextAppPageState,
+    setState: SetLawtextAppPageState,
+): Promise<void> => {
+    console.log(`displayLaw(${origState.lawSearchKey})`);
+    if (origState.lawSearchKey === origState.lawSearchedKey) return;
+    if (!origState.lawSearchKey) {
+        setState({ law: null, lawSearchedKey: origState.lawSearchKey });
+        return;
+    }
+    setState({ loadingLaw: true, lawSearchedKey: origState.lawSearchKey, loadingLawMessage: "法令を検索しています..." });
+    console.log("displayLaw: Searching Law");
+    await util.wait(30);
+    try {
+        const text = await lawdata.loadLaw(origState.lawSearchKey);
+        await loadLawText(setState, text, true);
+    } catch (err) {
+        console.log(err);
+        invokeError(
+            err[0] || "エラー",
+            err[1] || err.toString(),
+        );
+    }
+    setState({ loadingLaw: false, loadingLawMessage: "" });
 };
 
 
@@ -122,150 +206,6 @@ export const tobeDownloadedRange = (): SelectionRange | null => {
         start: sPos,
         end: ePos,
     };
-};
-
-
-export const openFile =
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-    (dispatch: Dispatch<Action<any>>): void =>
-        origOpenFile();
-
-// interface FileReaderProgressEvent extends ProgressEvent {
-//     readonly target: FileReader | null;
-// }
-
-const readFileAsText = (file: Blob): Promise<string> => {
-    const reader = new FileReader();
-
-    return new Promise((resolve, reject) => {
-        reader.onerror = () => {
-            reader.abort();
-            reject(reader.error);
-        };
-        reader.onload = () => {
-            resolve(reader.result as string);
-        };
-        reader.readAsText(file);
-    });
-};
-
-export const openFileInputChange = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatch: Dispatch<Action<any>>,
-    event: React.ChangeEvent<HTMLInputElement>,
-): Promise<void> => {
-    const openFileInput = event.target;
-    const file = openFileInput.files ? openFileInput.files[0] : null;
-    if (!file) return;
-
-    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true, loadingLawMessage: "ファイルを読み込んでいます..." }));
-    console.log("openFileInputChange: Loading file");
-    await util.wait(30);
-
-    const text = await readFileAsText(file);
-    openFileInput.value = "";
-    await loadLawText(dispatch, text, true);
-    dispatch(LawtextAppPageActions.modifyState({ lawSearchKey: null, loadingLaw: false, loadingLawMessage: "" }));
-};
-
-LawtextAppPageReducer.case(LawtextAppPageActions.modifyState, (state, newState) => {
-    return Object.assign({}, state, newState);
-});
-
-export const invokeError =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (dispatch: Dispatch<Action<any>>, title: string, bodyEl: string): void =>
-        showErrorModal(title, bodyEl);
-
-export const loadLawText = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatch: Dispatch<Action<any>>,
-    text: string,
-    analyzeXml: boolean,
-): Promise<std.Law | null> => {
-    let law: std.Law | null = null;
-    let analysis: analyzer.Analysis | null = null;
-    let begin: number;
-
-    begin = Date.now();
-    try {
-        if (/^(?:<\?xml|<Law)/.test(text.trim())) {
-            dispatch(LawtextAppPageActions.modifyState({ loadingLawMessage: "法令XMLをパースしています..." }));
-            console.log("loadLawText: Parse as XML");
-            await util.wait(30);
-            law = util.xmlToJson(text) as std.Law;
-            if (analyzeXml) {
-                analyzer.stdxmlToExt(law);
-            }
-            analysis = analyzer.analyze(law);
-        } else {
-            dispatch(LawtextAppPageActions.modifyState({ loadingLawMessage: "Lawtextをパースしています..." }));
-            console.log("loadLawText: Parse as Lawtext");
-            await util.wait(30);
-            law = parse(text, { startRule: "start" }) as std.Law;
-            analysis = analyzer.analyze(law);
-
-        }
-    } catch (err) {
-        console.log(err);
-        const errStr = err.toString();
-        const pre = $("<pre>")
-            .css({ "white-space": "pre-wrap" })
-            .css({ "line-height": "1.2em" })
-            .css({ "padding": "1em 0" })
-            .html(errStr);
-        invokeError(
-            dispatch,
-            "読み込んだ法令データにエラーがあります",
-            (pre[0] ).outerHTML,
-        );
-        law = null;
-    }
-    console.log(`loadLawText: Parse end: ${Date.now() - begin}ms`);
-
-    const newState: Partial<LawtextAppPageState> = {};
-    if (law) {
-        newState.law = law;
-        newState.analysis = analysis;
-        const lawBody = law.children.find(el => el.tag === "LawBody") as std.LawBody | undefined;
-        const lawTitle = lawBody && lawBody.children.find(el => el.tag === "LawTitle") as std.LawTitle | undefined;
-        document.title = lawTitle ? `${lawTitle.text} | Lawtext` : "Lawtext";
-    } else {
-        document.title = "Lawtext";
-    }
-    dispatch(LawtextAppPageActions.modifyState({ loadingLawMessage: "レンダリングしています..." }));
-    console.log("loadLawText: Setting Law into State");
-    await util.wait(30);
-    begin = Date.now();
-    dispatch(LawtextAppPageActions.modifyState(newState));
-    console.log(`loadLawText: Render end: ${Date.now() - begin}ms`);
-    return law;
-};
-
-export const searchLaw = async (
-    getState: () => LawtextAppPageState,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatch: Dispatch<Action<any>>,
-    lawSearchKey: string,
-): Promise<void> => {
-    console.log(`searchLaw(${lawSearchKey})`);
-    const state = getState();
-    if (lawSearchKey === state.lawSearchedKey) return;
-    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true, lawSearchedKey: lawSearchKey, loadingLawMessage: "法令を検索しています..." }));
-    console.log("searchLaw: Searching Law");
-    await util.wait(30);
-    try {
-        const text = await lawdata.loadLaw(lawSearchKey);
-        await loadLawText(dispatch, text, true);
-    } catch (err) {
-        console.log(err);
-        invokeError(
-            dispatch,
-            err[0] || "エラー",
-            err[1] || err.toString(),
-        );
-    }
-    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false, loadingLawMessage: "" }));
 };
 
 export const containerInfoOf = (el: util.EL | string): {tag: string, id: string | number} => {
@@ -419,8 +359,6 @@ export const getLawName = (law: std.Law): string => {
 };
 
 export const downloadDocx = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatch: Dispatch<Action<any>>,
     law: std.Law,
     downloadSelection: boolean,
 ): Promise<void> => {
@@ -439,8 +377,6 @@ export const downloadDocx = async (
 };
 
 export const downloadLawtext = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatch: Dispatch<Action<any>>,
     law: std.Law,
 ): Promise<void> => {
     const sLawtext = render_lawtext(law);
@@ -453,8 +389,6 @@ export const downloadLawtext = async (
 };
 
 export const downloadXml = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatch: Dispatch<Action<any>>,
     law: std.Law,
 ): Promise<void> => {
     const xml = renderer.renderXml(law);
@@ -466,23 +400,37 @@ export const downloadXml = async (
     saveAs(blob, `${lawName}.xml`);
 };
 
+
+const scrollToLawAnchor = (id: string) => {
+    for (const el of Array.from(document.getElementsByClassName("law-anchor"))) {
+        if ((el as HTMLElement).dataset.el_id === id) {
+            // const rect = el.getBoundingClientRect();
+            // const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            // const newScrollTop = scrollTop + rect.top;
+            // document.body.scrollTop = newScrollTop;
+            // document.documentElement.scrollTop = newScrollTop;
+            const offset = $(el).offset();
+            if (offset) $("html,body").animate({ scrollTop: offset.top }, "normal");
+        }
+    }
+};
+
 export const scrollLaw =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (dispatch: Dispatch<Action<any>>, id: string): void =>
+    (id: string): void =>
         scrollToLawAnchor(id);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const sampleSampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml").default;
+const sampleSampleXml: string = require("../states/405AC0000000088_20180401_429AC0000000004.xml").default;
 
 export const downloadSampleLawtext = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dispatch: Dispatch<Action<any>>,
+    setState: SetLawtextAppPageState,
 ): Promise<void> => {
-    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: true }));
+    setState({ loadingLaw: true });
     await util.wait(30);
-    const law = await loadLawText(dispatch, sampleSampleXml, true);
+    const law = await loadLawText(setState, sampleSampleXml, true);
     if (law) {
-        await downloadLawtext(dispatch, law);
+        await downloadLawtext(law);
     }
-    dispatch(LawtextAppPageActions.modifyState({ loadingLaw: false }));
+    setState({ loadingLaw: false });
 };

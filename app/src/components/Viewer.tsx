@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import { Dispatchers } from "../containers/LawtextAppPageContainer";
-import { LawtextAppPageState, RouteState } from "../states";
+import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { LawView } from "./LawView";
-
-
-type Props = LawtextAppPageState & Dispatchers & RouteState;
+import * as actions from "./actions";
+import { useHistory } from "react-router";
 
 
 const ViewerLoadingDiv = styled.div`
@@ -20,17 +18,15 @@ const ViewerLoadingDiv = styled.div`
     text-align: center;
 `;
 
-class ViewerLoading extends React.Component<Props> {
-    public render() {
-        return (
-            <ViewerLoadingDiv>
-                <div className="container-fluid" style={{ textAlign: "right" }}>
-                    <span className="badge badge-secondary">{this.props.loadingLawMessage}</span>
-                </div>
-            </ViewerLoadingDiv>
-        );
-    }
-}
+const ViewerLoading: React.FC<{loadingLawMessage: string}> = props => {
+    return (
+        <ViewerLoadingDiv>
+            <div className="container-fluid" style={{ textAlign: "right" }}>
+                <span className="badge badge-secondary">{props.loadingLawMessage}</span>
+            </div>
+        </ViewerLoadingDiv>
+    );
+};
 
 
 const ViewerWelcomeDiv = styled.div`
@@ -47,119 +43,111 @@ const ViewerWelcomeDiv = styled.div`
     align-items: stretch;
 `;
 
-class ViewerWelcome extends React.Component<Props, { lawSearchKey: string }> {
+const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
+    const { origState, setState } = props;
 
-    public state = { lawSearchKey: "" };
-    protected lawSearchKeyInput: React.RefObject<HTMLInputElement>;
+    const [editingKey, setEditingKey] = React.useState(origState.lawSearchKey ?? "");
 
-    constructor(props: Props) {
-        super(props);
-        this.state = { lawSearchKey: props.lawSearchKey || "" };
-        this.lawSearchKeyInput = React.createRef<HTMLInputElement>();
-    }
+    const history = useHistory();
 
-    protected handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const lawSearchKeyInputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        this.props.history.push(`/${this.state.lawSearchKey}`);
-    }
+        history.push(`/${editingKey}`);
+    };
 
-    public componentDidMount() {
-        const input = this.lawSearchKeyInput.current;
+    useEffect(() => {
+        const input = lawSearchKeyInputRef.current;
         if (input) {
             input.focus();
         }
-    }
+    }, []);
 
-    public render() {
+    const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEditingKey(e.target.value);
+    };
 
-        const formOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-            this.handleSearchSubmit(e);
-        };
+    const downloadSampleLawtextOnClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        actions.downloadSampleLawtext(setState);
+    };
 
-        const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            this.setState({ lawSearchKey: e.target.value });
-        };
-
-        const downloadSampleLawtextOnClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-            this.props.downloadSampleLawtext(); e.preventDefault();
-        };
-
-        return (
-            <ViewerWelcomeDiv>
-                <div>
-                    <div className="container-fluid">
-                        <p style={{ fontSize: "3em", textAlign: "center" }}>
+    return (
+        <ViewerWelcomeDiv>
+            <div>
+                <div className="container-fluid">
+                    <p style={{ fontSize: "3em", textAlign: "center" }}>
                             Lawtextへようこそ！
-                        </p>
-                    </div>
+                    </p>
                 </div>
+            </div>
 
-                <div className="row justify-content-center search-law-block" style={{ margin: "1em" }}>
-                    <div className="col-md-6" style={{ maxWidth: "500px" }}>
-                        <form onSubmit={formOnSubmit}>
-                            <div className="input-group">
-                                <input
-                                    ref={this.lawSearchKeyInput}
-                                    name="lawSearchKey"
-                                    onChange={lawSearchKeyOnChange}
-                                    className="form-control search-law-textbox"
-                                    placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
-                                    value={this.state.lawSearchKey || ""}
-                                />
-                                <span className="input-group-btn">
-                                    <button className="btn btn-secondary search-law-button" type="submit" >
+            <div className="row justify-content-center search-law-block" style={{ margin: "1em" }}>
+                <div className="col-md-6" style={{ maxWidth: "500px" }}>
+                    <form onSubmit={handleSearchSubmit}>
+                        <div className="input-group">
+                            <input
+                                ref={lawSearchKeyInputRef}
+                                name="lawSearchKey"
+                                onChange={lawSearchKeyOnChange}
+                                className="form-control search-law-textbox"
+                                placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
+                                value={editingKey}
+                            />
+                            <span className="input-group-btn">
+                                <button className="btn btn-secondary search-law-button" type="submit" >
                                         検索
-                                    </button>
-                                </span>
-                            </div>
-                        </form>
-                    </div>
+                                </button>
+                            </span>
+                        </div>
+                    </form>
                 </div>
+            </div>
 
-                <div>
-                    <div className="container-fluid">
-                        <div style={{ textAlign: "center" }}>
-                            <button
-                                onClick={this.props.openFile}
-                                className="lawtext-open-file-button btn btn-primary"
-                            >
+            <div>
+                <div className="container-fluid">
+                    <div style={{ textAlign: "center" }}>
+                        <button
+                            onClick={actions.openFile}
+                            className="lawtext-open-file-button btn btn-primary"
+                        >
                                 法令ファイルを開く
-                            </button>
-                        </div>
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "4em" }}>
-                    <div className="container-fluid">
-                        <p style={{ textAlign: "center" }}>
+            <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "4em" }}>
+                <div className="container-fluid">
+                    <p style={{ textAlign: "center" }}>
                             法令ファイルがありませんか？
+                    </p>
+                    <ul>
+                        <li><a href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
+                        <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>ファイルを作れます。<a href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            {location.href.startsWith("file:") ? (
+                <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "4em" }}>
+                        このページはファイルから直接表示されているため、法令名・番号検索機能など、一部の機能が動作しない場合があります。
+                    <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer" style={{ whiteSpace: "nowrap" }}>Web版Lawtext</a>
+                </div>
+            ) : (
+                <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "1em" }}>
+                    <div className="container-fluid">
+                        <hr />
+                        <p style={{ textAlign: "center" }}>
+                            <a href="https://yamachig.github.io/lawtext-app/download.html" target="_blank" rel="noreferrer">ダウンロード版Lawtext</a>
                         </p>
-                        <ul>
-                            <li><a href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
-                            <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>ファイルを作れます。<a href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
-                        </ul>
                     </div>
                 </div>
-
-                {location.href.startsWith("file:") ? (
-                    <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "4em" }}>
-                        このページはファイルから直接表示されているため、法令名・番号検索機能など、一部の機能が動作しない場合があります。
-                        <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer" style={{ whiteSpace: "nowrap" }}>Web版Lawtext</a>
-                    </div>
-                ) : (
-                    <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "1em" }}>
-                        <div className="container-fluid">
-                            <hr />
-                            <p style={{ textAlign: "center" }}>
-                                <a href="https://yamachig.github.io/lawtext-app/download.html" target="_blank" rel="noreferrer">ダウンロード版Lawtext</a>
-                            </p>
-                        </div>
-                    </div>
-                )}
-            </ViewerWelcomeDiv>
-        );
-    }
-}
+            )}
+        </ViewerWelcomeDiv>
+    );
+};
 
 
 const ViewerDiv = styled.div`
@@ -169,20 +157,19 @@ const ViewerDiv = styled.div`
     justify-content: space-between;
 `;
 
-export class Viewer extends React.Component<Props> {
-    public render(): JSX.Element {
-        return (
-            <ViewerDiv>
-                {this.props.loadingLaw &&
-                    <ViewerLoading {...this.props} />
-                }
-                {!this.props.loadingLaw && !this.props.law &&
-                    <ViewerWelcome {...this.props} />
-                }
-                {this.props.law &&
-                    <LawView {...this.props} />
-                }
-            </ViewerDiv>
-        );
-    }
-}
+export const Viewer: React.FC<LawtextAppPageStateStruct> = props => {
+    const { origState } = props;
+    return (
+        <ViewerDiv>
+            {origState.loadingLaw &&
+                <ViewerLoading loadingLawMessage={origState.loadingLawMessage} />
+            }
+            {!origState.loadingLaw && !origState.law &&
+                <ViewerWelcome {...props} />
+            }
+            {origState.law &&
+                <LawView {...props} />
+            }
+        </ViewerDiv>
+    );
+};

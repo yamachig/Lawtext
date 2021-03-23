@@ -38,10 +38,12 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 "path": require.resolve("path-browserify"),
             },
         },
-        externals: [nodeExternals()],
-        node: {
-            __dirname: false,
-        },
+        externals: [
+            nodeExternals(),
+            "react",
+            "react-dom",
+        ],
+        node: false,
 
         optimization: {
             minimizer: [
