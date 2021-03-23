@@ -1,49 +1,37 @@
 import CircularDependencyPlugin from "circular-dependency-plugin";
-import HtmlWebPackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
 import webpack from "webpack";
 import nodeExternals from "webpack-node-externals";
+import WatchMessagePlugin from "./WatchMessagePlugin";
 
-class WatchMessagePlugin {
-    public apply(compiler: webpack.Compiler) {
-        compiler.hooks.watchRun.tap("WatchMessagePlugin", () => {
-            console.log("\x1b[36m" + "Begin compile at " + new Date() + " \x1b[39m");
-        });
-        compiler.hooks.done.tap("WatchMessagePlugin", () => {
-            setTimeout(() => {
-                console.log("\x1b[36m" + "Done compile at " + new Date() + " \x1b[39m");
-            }, 30);
-        });
-    }
-}
+const rootDir = path.dirname(__dirname);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration => {
     const config: webpack.Configuration = {
         target: "node",
-        entry: ["./test/setup.ts", "./test/components.tsx"],
+        entry: ["./bin/index.ts"],
         output: {
-            filename: "bundle.js",
-            path: path.resolve(__dirname, "dist-test"),
+            filename: "index.js",
+            path: path.resolve(rootDir, "dist-bin"),
+            clean: true,
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
             alias: {
-                "@appsrc": path.resolve(__dirname, "./src"),
-                "@coresrc": path.resolve(__dirname, "../core/src"),
+                "@appsrc": path.resolve(rootDir, "./src"),
+                "@coresrc": path.resolve(rootDir, "../core/src"),
             },
             fallback: {
                 "path": require.resolve("path-browserify"),
             },
         },
-        externals: [
-            nodeExternals(),
-            "react",
-            "react-dom",
-        ],
-        node: false,
+        externals: [nodeExternals()],
+        node: {
+            __dirname: false,
+        },
 
         optimization: {
             minimizer: [
@@ -92,10 +80,10 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 filename: "[name].css",
                 chunkFilename: "[id].css",
             }),
-            new HtmlWebPackPlugin({
-                template: "./src/index.html",
-                filename: "index.html",
-            }),
+            // new HtmlWebPackPlugin({
+            //     template: "./src/index.html",
+            //     filename: "index.html",
+            // }),
             new CircularDependencyPlugin({
                 exclude: /node_modules/,
                 failOnError: true,

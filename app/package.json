@@ -16,14 +16,14 @@
         "test": "test"
     },
     "scripts": {
-        "build": "npx webpack --mode development --color --config ./webpack.config.ts",
-        "build:prod": "npx webpack --mode production --color --config ./webpack.config.ts",
-        "build:test": "npx webpack --mode development --color --config ./webpack.config.test.ts",
-        "build:bin": "npx webpack --mode development --color --config ./webpack.config.bin.ts",
-        "serve": "npx webpack serve --env DEV_SERVER=1 --mode development --color --config ./webpack.config.ts",
-        "serve:prod": "npx webpack serve --env DEV_SERVER=1 --mode production --color --config ./webpack.config.ts",
+        "build": "npx webpack --mode development --color --config ./webpack-configs/client.ts",
+        "build:prod": "npx webpack --mode production --color --config ./webpack-configs/client.ts",
+        "build:test": "npx webpack --mode development --color --config ./webpack-configs/test.ts",
+        "build:bin": "npx webpack --mode development --color --config ./webpack-configs/bin.ts",
+        "serve": "npx webpack serve --env DEV_SERVER=1 --mode development --color --config ./webpack-configs/client.ts",
+        "serve:prod": "npx webpack serve --env DEV_SERVER=1 --mode production --color --config ./webpack-configs/client.ts",
         "test": "npm run build:test && mocha --delay --timeout 60000 --reporter mochawesome ./dist-test/bundle.js & start ./mochawesome-report/mochawesome.html",
-        "watch": "npx webpack --mode development -w --color --info-verbosity verbose --config ./webpack.config.ts"
+        "watch": "npx webpack --mode development -w --color --info-verbosity verbose --config ./webpack-configs/client.ts"
     },
     "devDependencies": {
         "@types/chai": "^4.2.15",
