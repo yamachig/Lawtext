@@ -75,8 +75,18 @@ const LawViewError: React.FC<OrigStateProps> = props => {
 const ErrorComponentDiv = styled.div`
 `;
 
+function withCatcher<P>(Component: React.ComponentType<P & BaseLawCommonProps>) {
+    return function WithCatcher(props: P & BaseLawCommonProps) {
+        return (
+            <ErrorCatcher ls={props.ls}>
+                <Component {...props} />
+            </ErrorCatcher>
+        );
+    };
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-class BaseLawComponent<P, S = Record<string, never>, SS = any> extends React.Component<P & BaseLawCommonProps, S & { hasError: boolean, error: Error | null }, SS> {
+class ErrorCatcher<P, S = Record<string, never>, SS = any> extends React.Component<P & BaseLawCommonProps, S & { hasError: boolean, error: Error | null }, SS> {
     constructor(props: P & BaseLawCommonProps, state: S) {
         super(props);
         this.state = Object.assign({}, state, { hasError: false, error: null });
@@ -97,7 +107,7 @@ class BaseLawComponent<P, S = Record<string, never>, SS = any> extends React.Com
     }
 
     protected renderNormal(): JSX.Element | JSX.Element[] | null | undefined {
-        return undefined;
+        return <>{this.props.children}</>;
     }
 
     protected renderError(): JSX.Element | JSX.Element[] | null | undefined {
@@ -152,132 +162,123 @@ type AnyLawComponentProps = (
     SentenceDummyProps
 );
 
-class AnyLawComponent extends BaseLawComponent<AnyLawComponentProps> {
-    protected renderNormal() {
-        if (isLawComponentProps(this.props)) { return <LawComponent {...this.props} />; }
-        else if (isLawBodyComponentProps(this.props)) { return <LawBodyComponent {...this.props} />; }
-        else if (isLawTitleComponentProps(this.props)) { return <LawTitleComponent {...this.props} />; }
-        else if (isEnactStatementComponentProps(this.props)) { return <EnactStatementComponent {...this.props} />; }
-        else if (isTOCComponentProps(this.props)) { return <TOCComponent {...this.props} />; }
-        else if (isTOCItemComponentProps(this.props)) { return <TOCItemComponent {...this.props} />; }
-        else if (isAppdxTableComponentProps(this.props)) { return <AppdxTableComponent {...this.props} />; }
-        else if (isAppdxStyleComponentProps(this.props)) { return <AppdxStyleComponent {...this.props} />; }
-        else if (isAppdxFigComponentProps(this.props)) { return <AppdxFigComponent {...this.props} />; }
-        else if (isSupplProvisionComponentProps(this.props)) { return <SupplProvisionComponent {...this.props} />; }
-        else if (isArticleGroupComponentProps(this.props)) { return <ArticleGroupComponent {...this.props} />; }
-        else if (isArticleGroupTitleComponentProps(this.props)) { return <ArticleGroupTitleComponent {...this.props} />; }
-        else if (isArticleComponentProps(this.props)) { return <ArticleComponent {...this.props} />; }
-        else if (isParagraphItemComponentProps(this.props)) { return <ParagraphItemComponent {...this.props} />; }
-        else if (isListComponentProps(this.props)) { return <ListComponent {...this.props} />; }
-        else if (isTableStructComponentProps(this.props)) { return <TableStructComponent {...this.props} />; }
-        else if (isTableComponentProps(this.props)) { return <TableComponent {...this.props} />; }
-        else if (isRemarksComponentProps(this.props)) { return <RemarksComponent {...this.props} />; }
-        else if (isTableRowComponentProps(this.props)) { return <TableRowComponent {...this.props} />; }
-        else if (isTableColumnComponentProps(this.props)) { return <TableColumnComponent {...this.props} />; }
-        else if (isNoteStyleFormatComponentProps(this.props)) { return <NoteStyleFormatComponent {...this.props} />; }
-        else if (isStyleStructComponentProps(this.props)) { return <StyleStructComponent {...this.props} />; }
-        else if (isFigStructComponentProps(this.props)) { return <FigStructComponent {...this.props} />; }
-        else if (isFigRunComponentProps(this.props)) { return <FigRunComponent {...this.props} />; }
-        else if (isArithFormulaRunComponentProps(this.props)) { return <ArithFormulaRunComponent {...this.props} />; }
-        else if (isAmendProvisionComponentProps(this.props)) { return <AmendProvisionComponent {...this.props} />; }
-        else if (isPreambleComponentProps(this.props)) { return <PreambleComponent {...this.props} />; }
-        else if (isAppdxNoteComponentProps(this.props)) { return <AppdxNoteComponent {...this.props} />; }
-        else if (isAppdxComponentProps(this.props)) { return <AppdxComponent {...this.props} />; }
-        else if (isAppdxFormatComponentProps(this.props)) { return <AppdxFormatComponent {...this.props} />; }
-        else if (isSupplProvisionAppdxTableComponentProps(this.props)) { return <SupplProvisionAppdxTableComponent {...this.props} />; }
-        else if (isSupplProvisionAppdxStyleComponentProps(this.props)) { return <SupplProvisionAppdxStyleComponent {...this.props} />; }
-        else if (isSupplProvisionAppdxComponentProps(this.props)) { return <SupplProvisionAppdxComponent {...this.props} />; }
-        else if (isNoteStructComponentProps(this.props)) { return <NoteStructComponent {...this.props} />; }
-        else if (isFormatStructComponentProps(this.props)) { return <FormatStructComponent {...this.props} />; }
-        else if (isSentenceDummyProps(this.props)) { return <BlockSentenceComponent els={[this.props.el]} indent={this.props.indent} ls={this.props.ls} />; }
-        else { return assertNever(this.props); }
-    }
-}
+const AnyLawComponent = withCatcher<AnyLawComponentProps>(props => {
+    if (isLawComponentProps(props)) { return <LawComponent {...props} />; }
+    else if (isLawBodyComponentProps(props)) { return <LawBodyComponent {...props} />; }
+    else if (isLawTitleComponentProps(props)) { return <LawTitleComponent {...props} />; }
+    else if (isEnactStatementComponentProps(props)) { return <EnactStatementComponent {...props} />; }
+    else if (isTOCComponentProps(props)) { return <TOCComponent {...props} />; }
+    else if (isTOCItemComponentProps(props)) { return <TOCItemComponent {...props} />; }
+    else if (isAppdxTableComponentProps(props)) { return <AppdxTableComponent {...props} />; }
+    else if (isAppdxStyleComponentProps(props)) { return <AppdxStyleComponent {...props} />; }
+    else if (isAppdxFigComponentProps(props)) { return <AppdxFigComponent {...props} />; }
+    else if (isSupplProvisionComponentProps(props)) { return <SupplProvisionComponent {...props} />; }
+    else if (isArticleGroupComponentProps(props)) { return <ArticleGroupComponent {...props} />; }
+    else if (isArticleGroupTitleComponentProps(props)) { return <ArticleGroupTitleComponent {...props} />; }
+    else if (isArticleComponentProps(props)) { return <ArticleComponent {...props} />; }
+    else if (isParagraphItemComponentProps(props)) { return <ParagraphItemComponent {...props} />; }
+    else if (isListComponentProps(props)) { return <ListComponent {...props} />; }
+    else if (isTableStructComponentProps(props)) { return <TableStructComponent {...props} />; }
+    else if (isTableComponentProps(props)) { return <TableComponent {...props} />; }
+    else if (isRemarksComponentProps(props)) { return <RemarksComponent {...props} />; }
+    else if (isTableRowComponentProps(props)) { return <TableRowComponent {...props} />; }
+    else if (isTableColumnComponentProps(props)) { return <TableColumnComponent {...props} />; }
+    else if (isNoteStyleFormatComponentProps(props)) { return <NoteStyleFormatComponent {...props} />; }
+    else if (isStyleStructComponentProps(props)) { return <StyleStructComponent {...props} />; }
+    else if (isFigStructComponentProps(props)) { return <FigStructComponent {...props} />; }
+    else if (isFigRunComponentProps(props)) { return <FigRunComponent {...props} />; }
+    else if (isArithFormulaRunComponentProps(props)) { return <ArithFormulaRunComponent {...props} />; }
+    else if (isAmendProvisionComponentProps(props)) { return <AmendProvisionComponent {...props} />; }
+    else if (isPreambleComponentProps(props)) { return <PreambleComponent {...props} />; }
+    else if (isAppdxNoteComponentProps(props)) { return <AppdxNoteComponent {...props} />; }
+    else if (isAppdxComponentProps(props)) { return <AppdxComponent {...props} />; }
+    else if (isAppdxFormatComponentProps(props)) { return <AppdxFormatComponent {...props} />; }
+    else if (isSupplProvisionAppdxTableComponentProps(props)) { return <SupplProvisionAppdxTableComponent {...props} />; }
+    else if (isSupplProvisionAppdxStyleComponentProps(props)) { return <SupplProvisionAppdxStyleComponent {...props} />; }
+    else if (isSupplProvisionAppdxComponentProps(props)) { return <SupplProvisionAppdxComponent {...props} />; }
+    else if (isNoteStructComponentProps(props)) { return <NoteStructComponent {...props} />; }
+    else if (isFormatStructComponentProps(props)) { return <FormatStructComponent {...props} />; }
+    else if (isSentenceDummyProps(props)) { return <BlockSentenceComponent els={[props.el]} indent={props.indent} ls={props.ls} />; }
+    else { return assertNever(props); }
+});
 
 
 interface LawComponentProps extends ELComponentProps { el: std.Law, indent: number }
 
 const isLawComponentProps = (props: ELComponentProps): props is LawComponentProps => props.el.tag === "Law";
 
-class LawComponent extends BaseLawComponent<LawComponentProps> {
-    public shouldComponentUpdate(nextProps: LawComponentProps) {
-        return this.props.el !== nextProps.el;
-    }
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
-        let LawNum = "";
-        let LawBody: std.LawBody | undefined;
-        for (const child of el.children) {
-            if (child.tag === "LawNum") {
-                LawNum = child.text;
-            } else if (child.tag === "LawBody") {
-                LawBody = child;
-            } else {
-                assertNever(child);
-            }
+const LawComponent = withCatcher<LawComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
+    let LawNum = "";
+    let LawBody: std.LawBody | null = null;
+    for (const child of el.children) {
+        if (child.tag === "LawNum") {
+            LawNum = child.text;
+        } else if (child.tag === "LawBody") {
+            LawBody = child;
+        } else {
+            assertNever(child);
         }
-
-        return LawBody && <LawBodyComponent el={LawBody} indent={indent} LawNum={LawNum} ls={this.props.ls} />;
     }
-}
+
+    return LawBody && <LawBodyComponent el={LawBody} indent={indent} LawNum={LawNum} ls={props.ls} />;
+});
 
 
 interface LawBodyComponentProps extends ELComponentProps { el: std.LawBody, indent: number, LawNum: string }
 
 const isLawBodyComponentProps = (props: ELComponentProps): props is LawBodyComponentProps => props.el.tag === "LawBody";
 
-class LawBodyComponent extends BaseLawComponent<LawBodyComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
-        const LawNum = this.props.LawNum;
+const LawBodyComponent = withCatcher<LawBodyComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
+    const LawNum = props.LawNum;
 
-        const blocks: JSX.Element[] = [];
-        for (const child of el.children) {
+    const blocks: JSX.Element[] = [];
+    for (const child of el.children) {
 
-            if (child.tag === "LawTitle") {
-                blocks.push(<LawTitleComponent el={child} indent={indent} LawNum={LawNum} key={child.id} ls={this.props.ls} />);
+        if (child.tag === "LawTitle") {
+            blocks.push(<LawTitleComponent el={child} indent={indent} LawNum={LawNum} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "TOC") {
-                blocks.push(<TOCComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "TOC") {
+            blocks.push(<TOCComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "MainProvision") {
-                blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "MainProvision") {
+            blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "SupplProvision") {
-                blocks.push(<SupplProvisionComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "SupplProvision") {
+            blocks.push(<SupplProvisionComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "AppdxTable") {
-                blocks.push(<AppdxTableComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "AppdxTable") {
+            blocks.push(<AppdxTableComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "AppdxStyle") {
-                blocks.push(<AppdxStyleComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "AppdxStyle") {
+            blocks.push(<AppdxStyleComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "AppdxFig") {
-                blocks.push(<AppdxFigComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "AppdxFig") {
+            blocks.push(<AppdxFigComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "AppdxNote") {
-                blocks.push(<AppdxNoteComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "AppdxNote") {
+            blocks.push(<AppdxNoteComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "AppdxFormat") {
-                blocks.push(<AppdxFormatComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "AppdxFormat") {
+            blocks.push(<AppdxFormatComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "Appdx") {
-                blocks.push(<AppdxComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Appdx") {
+            blocks.push(<AppdxComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "EnactStatement") {
-                blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "EnactStatement") {
+            blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "Preamble") {
-                blocks.push(<PreambleComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Preamble") {
+            blocks.push(<PreambleComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            }
-            else { assertNever(child); }
         }
-        return blocks;
+        else { assertNever(child); }
     }
-}
+    return <>{blocks}</>;
+});
 
 
 const LawTitleDiv = styled.div`
@@ -292,29 +293,27 @@ interface LawTitleComponentProps extends ELComponentProps { el: std.LawTitle, in
 
 const isLawTitleComponentProps = (props: ELComponentProps): props is LawTitleComponentProps => props.el.tag === "LawTitle";
 
-class LawTitleComponent extends BaseLawComponent<LawTitleComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
-        const LawNum = this.props.LawNum;
+const LawTitleComponent = withCatcher<LawTitleComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
+    const LawNum = props.LawNum;
 
-        return (
-            <div
-                className="law-anchor"
-                data-el_id={el.id.toString()}
-            >
-                <LawTitleDiv style={{ marginLeft: `${indent}em` }}>
-                    {el.text}
-                </LawTitleDiv>
-                {LawNum &&
+    return (
+        <div
+            className="law-anchor"
+            data-el_id={el.id.toString()}
+        >
+            <LawTitleDiv style={{ marginLeft: `${indent}em` }}>
+                {el.text}
+            </LawTitleDiv>
+            {LawNum &&
                     <LawNumDiv>
                         （{LawNum}）
                     </LawNumDiv>
-                }
-            </div>
-        );
-    }
-}
+            }
+        </div>
+    );
+});
 
 
 const PreambleDiv = styled.div`
@@ -326,26 +325,24 @@ interface PreambleComponentProps extends ELComponentProps { el: std.Preamble, in
 
 const isPreambleComponentProps = (props: ELComponentProps): props is PreambleComponentProps => props.el.tag === "Preamble";
 
-class PreambleComponent extends BaseLawComponent<PreambleComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
-        const blocks: JSX.Element[] = [];
+const PreambleComponent = withCatcher<PreambleComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
+    const blocks: JSX.Element[] = [];
 
-        for (const paragraph of el.children) {
-            blocks.push(<ParagraphItemComponent el={paragraph} indent={indent} key={paragraph.id} ls={this.props.ls} />);
-        }
-
-        return (
-            <PreambleDiv
-                className="law-anchor"
-                data-el_id={el.id.toString()}
-            >
-                {blocks}
-            </PreambleDiv>
-        );
+    for (const paragraph of el.children) {
+        blocks.push(<ParagraphItemComponent el={paragraph} indent={indent} key={paragraph.id} ls={props.ls} />);
     }
-}
+
+    return (
+        <PreambleDiv
+            className="law-anchor"
+            data-el_id={el.id.toString()}
+        >
+            {blocks}
+        </PreambleDiv>
+    );
+});
 
 
 const EnactStatementDiv = styled.div`
@@ -358,18 +355,16 @@ interface EnactStatementComponentProps extends ELComponentProps { el: std.EnactS
 
 const isEnactStatementComponentProps = (props: ELComponentProps): props is EnactStatementComponentProps => props.el.tag === "EnactStatement";
 
-class EnactStatementComponent extends BaseLawComponent<EnactStatementComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        // const indent = this.props.indent;
+const EnactStatementComponent = withCatcher<EnactStatementComponentProps>(props => {
+    const el = props.el;
+    // const indent = props.indent;
 
-        return (
-            <EnactStatementDiv>
-                {el.text}
-            </EnactStatementDiv>
-        );
-    }
-}
+    return (
+        <EnactStatementDiv>
+            {el.text}
+        </EnactStatementDiv>
+    );
+});
 
 
 const TOCDiv = styled.div`
@@ -381,45 +376,43 @@ interface TOCComponentProps extends ELComponentProps { el: std.TOC, indent: numb
 
 const isTOCComponentProps = (props: ELComponentProps): props is TOCComponentProps => props.el.tag === "TOC";
 
-class TOCComponent extends BaseLawComponent<TOCComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const TOCComponent = withCatcher<TOCComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
-        // let tocLabelText = "";
-        for (const child of el.children) {
+    const blocks: JSX.Element[] = [];
+    // let tocLabelText = "";
+    for (const child of el.children) {
 
-            if (child.tag === "TOCLabel") {
+        if (child.tag === "TOCLabel") {
 
-                // tocLabelText = child.text;
-                blocks.push(
-                    <div
-                        className="law-anchor"
-                        data-el_id={el.id.toString()}
-                        style={{ marginLeft: `${indent}em` }}
-                        key={child.id}
-                    >
-                        {child.text}
-                    </div>,
-                );
+            // tocLabelText = child.text;
+            blocks.push(
+                <div
+                    className="law-anchor"
+                    data-el_id={el.id.toString()}
+                    style={{ marginLeft: `${indent}em` }}
+                    key={child.id}
+                >
+                    {child.text}
+                </div>,
+            );
 
-            } else if (child.tag === "TOCPart" || child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSupplProvision" || child.tag === "TOCArticle" || child.tag === "TOCAppdxTableLabel" || child.tag === "TOCPreambleLabel") {
-                blocks.push(<TOCItemComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
+        } else if (child.tag === "TOCPart" || child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSupplProvision" || child.tag === "TOCArticle" || child.tag === "TOCAppdxTableLabel" || child.tag === "TOCPreambleLabel") {
+            blocks.push(<TOCItemComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
 
-            }
-            else { assertNever(child); }
         }
-
-        return (
-            <TOCDiv
-                data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
-            >
-                {blocks}
-            </TOCDiv>
-        );
+        else { assertNever(child); }
     }
-}
+
+    return (
+        <TOCDiv
+            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+        >
+            {blocks}
+        </TOCDiv>
+    );
+});
 
 
 interface TOCItemComponentProps extends ELComponentProps { el: std.TOCPart | std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCSupplProvision | std.TOCArticle | std.TOCAppdxTableLabel | std.TOCPreambleLabel, indent: number }
@@ -428,82 +421,80 @@ const isTOCItemComponentProps = (props: ELComponentProps): props is TOCItemCompo
     return props.el.tag === "TOCPart" || props.el.tag === "TOCPart" || props.el.tag === "TOCChapter" || props.el.tag === "TOCSection" || props.el.tag === "TOCSubsection" || props.el.tag === "TOCDivision" || props.el.tag === "TOCSupplProvision" || props.el.tag === "TOCArticle" || props.el.tag === "TOCAppdxTableLabel" || props.el.tag === "TOCPreambleLabel";
 };
 
-class TOCItemComponent extends BaseLawComponent<TOCItemComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const TOCItemComponent = withCatcher<TOCItemComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
-        if (el.tag === "TOCArticle") {
-            let ArticleTitle: std.ArticleTitle | null = null;
-            let ArticleCaption: std.ArticleCaption | null = null;
-            for (const child of el.children) {
-                if (child.tag === "ArticleTitle") {
-                    ArticleTitle = child;
-                } else if (child.tag === "ArticleCaption") {
-                    ArticleCaption = child;
-                }
-                else { assertNever(child); }
+    const blocks: JSX.Element[] = [];
+    if (el.tag === "TOCArticle") {
+        let ArticleTitle: std.ArticleTitle | null = null;
+        let ArticleCaption: std.ArticleCaption | null = null;
+        for (const child of el.children) {
+            if (child.tag === "ArticleTitle") {
+                ArticleTitle = child;
+            } else if (child.tag === "ArticleCaption") {
+                ArticleCaption = child;
             }
-            if (ArticleTitle || ArticleCaption) {
-                blocks.push(
-                    <div
-                        style={{ marginLeft: `${indent}em` }}
-                        key={(ArticleTitle || ArticleCaption || { id: 0 }).id}
-                    >
-                        {ArticleTitle && <RunComponent els={ArticleTitle.children} ls={this.props.ls} />}
-                        {ArticleCaption && <RunComponent els={ArticleCaption.children} ls={this.props.ls} />}
-                    </div>,
-                );
-            }
-
-        } else if (el.tag === "TOCPreambleLabel" || el.tag === "TOCAppdxTableLabel") {
+            else { assertNever(child); }
+        }
+        if (ArticleTitle || ArticleCaption) {
             blocks.push(
                 <div
                     style={{ marginLeft: `${indent}em` }}
-                    key={el.id}
+                    key={(ArticleTitle || ArticleCaption || { id: 0 }).id}
                 >
-                    <RunComponent els={el.children} ls={this.props.ls} />
+                    {ArticleTitle && <RunComponent els={ArticleTitle.children} ls={props.ls} />}
+                    {ArticleCaption && <RunComponent els={ArticleCaption.children} ls={props.ls} />}
                 </div>,
             );
-
-        } else {
-            let TocItemTitle: std.PartTitle | std.ChapterTitle | std.SectionTitle | std.SubsectionTitle | std.DivisionTitle | std.SupplProvisionLabel | null = null;
-            let ArticleRange: std.ArticleRange | null = null;
-            const TOCItems: Array<std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCArticle> = [];
-            for (const child of el.children) {
-
-                if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle" || child.tag === "SupplProvisionLabel") {
-                    TocItemTitle = child;
-
-                } else if (child.tag === "ArticleRange") {
-                    ArticleRange = child;
-
-                } else if (child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSubsection" || child.tag === "TOCDivision" || child.tag === "TOCArticle") {
-                    TOCItems.push(child);
-
-                }
-                else { assertNever(child); }
-            }
-            if (TocItemTitle || ArticleRange) {
-                blocks.push(
-                    <div
-                        style={{ marginLeft: `${indent}em` }}
-                        key={(TocItemTitle || ArticleRange || { id: 0 }).id}
-                    >
-                        {TocItemTitle && <RunComponent els={TocItemTitle.children} ls={this.props.ls} />}
-                        {ArticleRange && <RunComponent els={ArticleRange.children} ls={this.props.ls} />}
-                    </div>,
-                );
-            }
-            for (const TOCItem of TOCItems) {
-                blocks.push(<TOCItemComponent el={TOCItem} indent={indent + 1} key={TOCItem.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-            }
-
         }
-        return blocks;
+
+    } else if (el.tag === "TOCPreambleLabel" || el.tag === "TOCAppdxTableLabel") {
+        blocks.push(
+            <div
+                style={{ marginLeft: `${indent}em` }}
+                key={el.id}
+            >
+                <RunComponent els={el.children} ls={props.ls} />
+            </div>,
+        );
+
+    } else {
+        let TocItemTitle: std.PartTitle | std.ChapterTitle | std.SectionTitle | std.SubsectionTitle | std.DivisionTitle | std.SupplProvisionLabel | null = null;
+        let ArticleRange: std.ArticleRange | null = null;
+        const TOCItems: Array<std.TOCChapter | std.TOCSection | std.TOCSubsection | std.TOCDivision | std.TOCArticle> = [];
+        for (const child of el.children) {
+
+            if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle" || child.tag === "SupplProvisionLabel") {
+                TocItemTitle = child;
+
+            } else if (child.tag === "ArticleRange") {
+                ArticleRange = child;
+
+            } else if (child.tag === "TOCChapter" || child.tag === "TOCSection" || child.tag === "TOCSubsection" || child.tag === "TOCDivision" || child.tag === "TOCArticle") {
+                TOCItems.push(child);
+
+            }
+            else { assertNever(child); }
+        }
+        if (TocItemTitle || ArticleRange) {
+            blocks.push(
+                <div
+                    style={{ marginLeft: `${indent}em` }}
+                    key={(TocItemTitle || ArticleRange || { id: 0 }).id}
+                >
+                    {TocItemTitle && <RunComponent els={TocItemTitle.children} ls={props.ls} />}
+                    {ArticleRange && <RunComponent els={ArticleRange.children} ls={props.ls} />}
+                </div>,
+            );
+        }
+        for (const TOCItem of TOCItems) {
+            blocks.push(<TOCItemComponent el={TOCItem} indent={indent + 1} key={TOCItem.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+        }
+
     }
-}
+    return <>{blocks}</>;
+});
 
 
 const AppdxTableDiv = styled.div`
@@ -519,67 +510,65 @@ interface AppdxTableComponentProps extends ELComponentProps { el: std.AppdxTable
 
 const isAppdxTableComponentProps = (props: ELComponentProps): props is AppdxTableComponentProps => props.el.tag === "AppdxTable";
 
-class AppdxTableComponent extends BaseLawComponent<AppdxTableComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const AppdxTableComponent = withCatcher<AppdxTableComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let AppdxTableTitle: std.AppdxTableTitle | null = null;
-        let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        const ChildItems: Array<std.TableStruct | std.Item | std.Remarks> = [];
-        for (const child of el.children) {
+    let AppdxTableTitle: std.AppdxTableTitle | null = null;
+    let RelatedArticleNum: std.RelatedArticleNum | null = null;
+    const ChildItems: Array<std.TableStruct | std.Item | std.Remarks> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "AppdxTableTitle") {
-                AppdxTableTitle = child;
+        if (child.tag === "AppdxTableTitle") {
+            AppdxTableTitle = child;
 
-            } else if (child.tag === "RelatedArticleNum") {
-                RelatedArticleNum = child;
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = child;
 
-            } else if (child.tag === "TableStruct" || child.tag === "Item" || child.tag === "Remarks") {
-                ChildItems.push(child);
+        } else if (child.tag === "TableStruct" || child.tag === "Item" || child.tag === "Remarks") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (AppdxTableTitle || RelatedArticleNum) {
-            blocks.push(
-                <AppdxTableTitleDiv
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={(AppdxTableTitle || RelatedArticleNum || { id: 0 }).id}
-                >
-                    {AppdxTableTitle && <RunComponent els={AppdxTableTitle.children} ls={this.props.ls} />}
-                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={this.props.ls} />}
-                </AppdxTableTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "TableStruct") {
-                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Item") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <AppdxTableDiv
-                data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+    if (AppdxTableTitle || RelatedArticleNum) {
+        blocks.push(
+            <AppdxTableTitleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={(AppdxTableTitle || RelatedArticleNum || { id: 0 }).id}
             >
-                {blocks}
-            </AppdxTableDiv>
+                {AppdxTableTitle && <RunComponent els={AppdxTableTitle.children} ls={props.ls} />}
+                {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={props.ls} />}
+            </AppdxTableTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        if (child.tag === "TableStruct") {
+            blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Item") {
+            blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <AppdxTableDiv
+            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+        >
+            {blocks}
+        </AppdxTableDiv>
+    );
+});
 
 
 const AppdxStyleDiv = styled.div`
@@ -595,67 +584,65 @@ interface AppdxStyleComponentProps extends ELComponentProps { el: std.AppdxStyle
 
 const isAppdxStyleComponentProps = (props: ELComponentProps): props is AppdxStyleComponentProps => props.el.tag === "AppdxStyle";
 
-class AppdxStyleComponent extends BaseLawComponent<AppdxStyleComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const AppdxStyleComponent = withCatcher<AppdxStyleComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let AppdxStyleTitle: std.AppdxStyleTitle | null = null;
-        let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        const ChildItems: Array<std.StyleStruct | std.Item | std.Remarks> = [];
-        for (const child of el.children) {
+    let AppdxStyleTitle: std.AppdxStyleTitle | null = null;
+    let RelatedArticleNum: std.RelatedArticleNum | null = null;
+    const ChildItems: Array<std.StyleStruct | std.Item | std.Remarks> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "AppdxStyleTitle") {
-                AppdxStyleTitle = child;
+        if (child.tag === "AppdxStyleTitle") {
+            AppdxStyleTitle = child;
 
-            } else if (child.tag === "RelatedArticleNum") {
-                RelatedArticleNum = child;
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = child;
 
-            } else if (child.tag === "StyleStruct" || child.tag === "Remarks") {
-                ChildItems.push(child);
+        } else if (child.tag === "StyleStruct" || child.tag === "Remarks") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (AppdxStyleTitle || RelatedArticleNum) {
-            blocks.push(
-                <AppdxStyleTitleDiv
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={(AppdxStyleTitle || RelatedArticleNum || { id: 0 }).id}
-                >
-                    {AppdxStyleTitle && <RunComponent els={AppdxStyleTitle.children} ls={this.props.ls} />}
-                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={this.props.ls} />}
-                </AppdxStyleTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "StyleStruct") {
-                blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Item") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <AppdxStyleDiv
-                data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+    if (AppdxStyleTitle || RelatedArticleNum) {
+        blocks.push(
+            <AppdxStyleTitleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={(AppdxStyleTitle || RelatedArticleNum || { id: 0 }).id}
             >
-                {blocks}
-            </AppdxStyleDiv>
+                {AppdxStyleTitle && <RunComponent els={AppdxStyleTitle.children} ls={props.ls} />}
+                {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={props.ls} />}
+            </AppdxStyleTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        if (child.tag === "StyleStruct") {
+            blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Item") {
+            blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <AppdxStyleDiv
+            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+        >
+            {blocks}
+        </AppdxStyleDiv>
+    );
+});
 
 
 const AppdxFormatDiv = styled.div`
@@ -671,64 +658,62 @@ interface AppdxFormatComponentProps extends ELComponentProps { el: std.AppdxForm
 
 const isAppdxFormatComponentProps = (props: ELComponentProps): props is AppdxFormatComponentProps => props.el.tag === "AppdxFormat";
 
-class AppdxFormatComponent extends BaseLawComponent<AppdxFormatComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const AppdxFormatComponent = withCatcher<AppdxFormatComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let AppdxFormatTitle: std.AppdxFormatTitle | null = null;
-        let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        const ChildItems: Array<std.FormatStruct | std.Remarks> = [];
-        for (const child of el.children) {
+    let AppdxFormatTitle: std.AppdxFormatTitle | null = null;
+    let RelatedArticleNum: std.RelatedArticleNum | null = null;
+    const ChildItems: Array<std.FormatStruct | std.Remarks> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "AppdxFormatTitle") {
-                AppdxFormatTitle = child;
+        if (child.tag === "AppdxFormatTitle") {
+            AppdxFormatTitle = child;
 
-            } else if (child.tag === "RelatedArticleNum") {
-                RelatedArticleNum = child;
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = child;
 
-            } else if (child.tag === "FormatStruct" || child.tag === "Remarks") {
-                ChildItems.push(child);
+        } else if (child.tag === "FormatStruct" || child.tag === "Remarks") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (AppdxFormatTitle || RelatedArticleNum) {
-            blocks.push(
-                <AppdxFormatTitleDiv
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={(AppdxFormatTitle || RelatedArticleNum || { id: 0 }).id}
-                >
-                    {AppdxFormatTitle && <RunComponent els={AppdxFormatTitle.children} ls={this.props.ls} />}
-                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={this.props.ls} />}
-                </AppdxFormatTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "FormatStruct") {
-                blocks.push(<FormatStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <AppdxFormatDiv
-                data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+    if (AppdxFormatTitle || RelatedArticleNum) {
+        blocks.push(
+            <AppdxFormatTitleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={(AppdxFormatTitle || RelatedArticleNum || { id: 0 }).id}
             >
-                {blocks}
-            </AppdxFormatDiv>
+                {AppdxFormatTitle && <RunComponent els={AppdxFormatTitle.children} ls={props.ls} />}
+                {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={props.ls} />}
+            </AppdxFormatTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        if (child.tag === "FormatStruct") {
+            blocks.push(<FormatStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <AppdxFormatDiv
+            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+        >
+            {blocks}
+        </AppdxFormatDiv>
+    );
+});
 
 
 const AppdxFigDiv = styled.div`
@@ -744,64 +729,62 @@ interface AppdxFigComponentProps extends ELComponentProps { el: std.AppdxFig, in
 
 const isAppdxFigComponentProps = (props: ELComponentProps): props is AppdxFigComponentProps => props.el.tag === "AppdxFig";
 
-class AppdxFigComponent extends BaseLawComponent<AppdxFigComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const AppdxFigComponent = withCatcher<AppdxFigComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let AppdxFigTitle: std.AppdxFigTitle | null = null;
-        let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        const ChildItems: Array<std.TableStruct | std.FigStruct> = [];
-        for (const child of el.children) {
+    let AppdxFigTitle: std.AppdxFigTitle | null = null;
+    let RelatedArticleNum: std.RelatedArticleNum | null = null;
+    const ChildItems: Array<std.TableStruct | std.FigStruct> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "AppdxFigTitle") {
-                AppdxFigTitle = child;
+        if (child.tag === "AppdxFigTitle") {
+            AppdxFigTitle = child;
 
-            } else if (child.tag === "RelatedArticleNum") {
-                RelatedArticleNum = child;
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = child;
 
-            } else if (child.tag === "FigStruct" || child.tag === "TableStruct") {
-                ChildItems.push(child);
+        } else if (child.tag === "FigStruct" || child.tag === "TableStruct") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (AppdxFigTitle || RelatedArticleNum) {
-            blocks.push(
-                <AppdxFigTitleDiv
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={(AppdxFigTitle || RelatedArticleNum || { id: 0 }).id}
-                >
-                    {AppdxFigTitle && <RunComponent els={AppdxFigTitle.children} ls={this.props.ls} />}
-                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={this.props.ls} />}
-                </AppdxFigTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "TableStruct") {
-                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "FigStruct") {
-                blocks.push(<FigStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <AppdxFigDiv
-                data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+    if (AppdxFigTitle || RelatedArticleNum) {
+        blocks.push(
+            <AppdxFigTitleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={(AppdxFigTitle || RelatedArticleNum || { id: 0 }).id}
             >
-                {blocks}
-            </AppdxFigDiv>
+                {AppdxFigTitle && <RunComponent els={AppdxFigTitle.children} ls={props.ls} />}
+                {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={props.ls} />}
+            </AppdxFigTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        if (child.tag === "TableStruct") {
+            blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "FigStruct") {
+            blocks.push(<FigStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <AppdxFigDiv
+            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+        >
+            {blocks}
+        </AppdxFigDiv>
+    );
+});
 
 
 const AppdxNoteDiv = styled.div`
@@ -817,70 +800,68 @@ interface AppdxNoteComponentProps extends ELComponentProps { el: std.AppdxNote, 
 
 const isAppdxNoteComponentProps = (props: ELComponentProps): props is AppdxNoteComponentProps => props.el.tag === "AppdxNote";
 
-class AppdxNoteComponent extends BaseLawComponent<AppdxNoteComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const AppdxNoteComponent = withCatcher<AppdxNoteComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let AppdxNoteTitle: std.AppdxNoteTitle | null = null;
-        let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        const ChildItems: Array<std.TableStruct | std.FigStruct | std.Remarks | std.NoteStruct> = [];
-        for (const child of el.children) {
+    let AppdxNoteTitle: std.AppdxNoteTitle | null = null;
+    let RelatedArticleNum: std.RelatedArticleNum | null = null;
+    const ChildItems: Array<std.TableStruct | std.FigStruct | std.Remarks | std.NoteStruct> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "AppdxNoteTitle") {
-                AppdxNoteTitle = child;
+        if (child.tag === "AppdxNoteTitle") {
+            AppdxNoteTitle = child;
 
-            } else if (child.tag === "RelatedArticleNum") {
-                RelatedArticleNum = child;
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = child;
 
-            } else if (child.tag === "NoteStruct" || child.tag === "FigStruct" || child.tag === "TableStruct" || child.tag === "Remarks") {
-                ChildItems.push(child);
+        } else if (child.tag === "NoteStruct" || child.tag === "FigStruct" || child.tag === "TableStruct" || child.tag === "Remarks") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (AppdxNoteTitle || RelatedArticleNum) {
-            blocks.push(
-                <AppdxNoteTitleDiv
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={(AppdxNoteTitle || RelatedArticleNum || { id: 0 }).id}
-                >
-                    {AppdxNoteTitle && <RunComponent els={AppdxNoteTitle.children} ls={this.props.ls} />}
-                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={this.props.ls} />}
-                </AppdxNoteTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "TableStruct") {
-                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "FigStruct") {
-                blocks.push(<FigStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "NoteStruct") {
-                blocks.push(<NoteStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <AppdxNoteDiv
-                data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+    if (AppdxNoteTitle || RelatedArticleNum) {
+        blocks.push(
+            <AppdxNoteTitleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={(AppdxNoteTitle || RelatedArticleNum || { id: 0 }).id}
             >
-                {blocks}
-            </AppdxNoteDiv>
+                {AppdxNoteTitle && <RunComponent els={AppdxNoteTitle.children} ls={props.ls} />}
+                {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={props.ls} />}
+            </AppdxNoteTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        if (child.tag === "TableStruct") {
+            blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "FigStruct") {
+            blocks.push(<FigStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "NoteStruct") {
+            blocks.push(<NoteStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <AppdxNoteDiv
+            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+        >
+            {blocks}
+        </AppdxNoteDiv>
+    );
+});
 
 
 const AppdxDiv = styled.div`
@@ -896,68 +877,66 @@ interface AppdxComponentProps extends ELComponentProps { el: std.Appdx, indent: 
 
 const isAppdxComponentProps = (props: ELComponentProps): props is AppdxComponentProps => props.el.tag === "Appdx";
 
-class AppdxComponent extends BaseLawComponent<AppdxComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const AppdxComponent = withCatcher<AppdxComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let ArithFormulaNum: std.ArithFormulaNum | null = null;
-        let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        const ChildItems: Array<std.ArithFormula | std.Remarks> = [];
-        for (const child of el.children) {
+    let ArithFormulaNum: std.ArithFormulaNum | null = null;
+    let RelatedArticleNum: std.RelatedArticleNum | null = null;
+    const ChildItems: Array<std.ArithFormula | std.Remarks> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "ArithFormulaNum") {
-                ArithFormulaNum = child;
+        if (child.tag === "ArithFormulaNum") {
+            ArithFormulaNum = child;
 
-            } else if (child.tag === "RelatedArticleNum") {
-                RelatedArticleNum = child;
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = child;
 
-            } else if (child.tag === "ArithFormula" || child.tag === "Remarks") {
-                ChildItems.push(child);
+        } else if (child.tag === "ArithFormula" || child.tag === "Remarks") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (ArithFormulaNum || RelatedArticleNum) {
-            blocks.push(
-                <AppdxTitleDiv
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={(ArithFormulaNum || RelatedArticleNum || { id: 0 }).id}
-                >
-                    {ArithFormulaNum && <RunComponent els={ArithFormulaNum.children} ls={this.props.ls} />}
-                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={this.props.ls} />}
-                </AppdxTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "ArithFormula") {
-                blocks.push(
-                    <div style={{ marginLeft: `${indent + 1}em` }} key={child.id}>
-                        <ArithFormulaRunComponent el={child} ls={this.props.ls} />
-                    </div>,
-                ); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <AppdxDiv
-                data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+    if (ArithFormulaNum || RelatedArticleNum) {
+        blocks.push(
+            <AppdxTitleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={(ArithFormulaNum || RelatedArticleNum || { id: 0 }).id}
             >
-                {blocks}
-            </AppdxDiv>
+                {ArithFormulaNum && <RunComponent els={ArithFormulaNum.children} ls={props.ls} />}
+                {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={props.ls} />}
+            </AppdxTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        if (child.tag === "ArithFormula") {
+            blocks.push(
+                <div style={{ marginLeft: `${indent + 1}em` }} key={child.id}>
+                    <ArithFormulaRunComponent el={child} ls={props.ls} />
+                </div>,
+            ); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <AppdxDiv
+            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+        >
+            {blocks}
+        </AppdxDiv>
+    );
+});
 
 
 const SupplProvisionAppdxTableDiv = styled.div`
@@ -973,65 +952,63 @@ interface SupplProvisionAppdxTableComponentProps extends ELComponentProps { el: 
 
 const isSupplProvisionAppdxTableComponentProps = (props: ELComponentProps): props is SupplProvisionAppdxTableComponentProps => props.el.tag === "SupplProvisionAppdxTable";
 
-class SupplProvisionAppdxTableComponent extends BaseLawComponent<SupplProvisionAppdxTableComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const SupplProvisionAppdxTableComponent = withCatcher<SupplProvisionAppdxTableComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let SupplProvisionAppdxTableTitle: std.SupplProvisionAppdxTableTitle | null = null;
-        let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        const ChildItems: Array<std.TableStruct | std.Item | std.Remarks> = [];
-        for (const child of el.children) {
+    let SupplProvisionAppdxTableTitle: std.SupplProvisionAppdxTableTitle | null = null;
+    let RelatedArticleNum: std.RelatedArticleNum | null = null;
+    const ChildItems: Array<std.TableStruct | std.Item | std.Remarks> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "SupplProvisionAppdxTableTitle") {
-                SupplProvisionAppdxTableTitle = child;
+        if (child.tag === "SupplProvisionAppdxTableTitle") {
+            SupplProvisionAppdxTableTitle = child;
 
-            } else if (child.tag === "RelatedArticleNum") {
-                RelatedArticleNum = child;
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = child;
 
-            } else if (child.tag === "TableStruct") {
-                ChildItems.push(child);
+        } else if (child.tag === "TableStruct") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (SupplProvisionAppdxTableTitle || RelatedArticleNum) {
-            blocks.push(
-                <SupplProvisionAppdxTableTitleDiv
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={(SupplProvisionAppdxTableTitle || RelatedArticleNum || { id: 0 }).id}
-                >
-                    {SupplProvisionAppdxTableTitle && <RunComponent els={SupplProvisionAppdxTableTitle.children} ls={this.props.ls} />}
-                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={this.props.ls} />}
-                </SupplProvisionAppdxTableTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "TableStruct") {
-                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Item") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <SupplProvisionAppdxTableDiv>
-                {blocks}
-            </SupplProvisionAppdxTableDiv>
+    if (SupplProvisionAppdxTableTitle || RelatedArticleNum) {
+        blocks.push(
+            <SupplProvisionAppdxTableTitleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={(SupplProvisionAppdxTableTitle || RelatedArticleNum || { id: 0 }).id}
+            >
+                {SupplProvisionAppdxTableTitle && <RunComponent els={SupplProvisionAppdxTableTitle.children} ls={props.ls} />}
+                {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={props.ls} />}
+            </SupplProvisionAppdxTableTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        if (child.tag === "TableStruct") {
+            blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Item") {
+            blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <SupplProvisionAppdxTableDiv>
+            {blocks}
+        </SupplProvisionAppdxTableDiv>
+    );
+});
 
 
 const SupplProvisionAppdxStyleDiv = styled.div`
@@ -1047,65 +1024,63 @@ interface SupplProvisionAppdxStyleComponentProps extends ELComponentProps { el: 
 
 const isSupplProvisionAppdxStyleComponentProps = (props: ELComponentProps): props is SupplProvisionAppdxStyleComponentProps => props.el.tag === "SupplProvisionAppdxStyle";
 
-class SupplProvisionAppdxStyleComponent extends BaseLawComponent<SupplProvisionAppdxStyleComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const SupplProvisionAppdxStyleComponent = withCatcher<SupplProvisionAppdxStyleComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let SupplProvisionAppdxStyleTitle: std.SupplProvisionAppdxStyleTitle | null = null;
-        let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        const ChildItems: Array<std.StyleStruct | std.Item | std.Remarks> = [];
-        for (const child of el.children) {
+    let SupplProvisionAppdxStyleTitle: std.SupplProvisionAppdxStyleTitle | null = null;
+    let RelatedArticleNum: std.RelatedArticleNum | null = null;
+    const ChildItems: Array<std.StyleStruct | std.Item | std.Remarks> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "SupplProvisionAppdxStyleTitle") {
-                SupplProvisionAppdxStyleTitle = child;
+        if (child.tag === "SupplProvisionAppdxStyleTitle") {
+            SupplProvisionAppdxStyleTitle = child;
 
-            } else if (child.tag === "RelatedArticleNum") {
-                RelatedArticleNum = child;
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = child;
 
-            } else if (child.tag === "StyleStruct") {
-                ChildItems.push(child);
+        } else if (child.tag === "StyleStruct") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (SupplProvisionAppdxStyleTitle || RelatedArticleNum) {
-            blocks.push(
-                <SupplProvisionAppdxStyleTitleDiv
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={(SupplProvisionAppdxStyleTitle || RelatedArticleNum || { id: 0 }).id}
-                >
-                    {SupplProvisionAppdxStyleTitle && <RunComponent els={SupplProvisionAppdxStyleTitle.children} ls={this.props.ls} />}
-                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={this.props.ls} />}
-                </SupplProvisionAppdxStyleTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "StyleStruct") {
-                blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Item") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <SupplProvisionAppdxStyleDiv>
-                {blocks}
-            </SupplProvisionAppdxStyleDiv>
+    if (SupplProvisionAppdxStyleTitle || RelatedArticleNum) {
+        blocks.push(
+            <SupplProvisionAppdxStyleTitleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={(SupplProvisionAppdxStyleTitle || RelatedArticleNum || { id: 0 }).id}
+            >
+                {SupplProvisionAppdxStyleTitle && <RunComponent els={SupplProvisionAppdxStyleTitle.children} ls={props.ls} />}
+                {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={props.ls} />}
+            </SupplProvisionAppdxStyleTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        if (child.tag === "StyleStruct") {
+            blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Item") {
+            blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <SupplProvisionAppdxStyleDiv>
+            {blocks}
+        </SupplProvisionAppdxStyleDiv>
+    );
+});
 
 
 const SupplProvisionAppdxDiv = styled.div`
@@ -1121,197 +1096,191 @@ interface SupplProvisionAppdxComponentProps extends ELComponentProps { el: std.S
 
 const isSupplProvisionAppdxComponentProps = (props: ELComponentProps): props is SupplProvisionAppdxComponentProps => props.el.tag === "SupplProvisionAppdx";
 
-class SupplProvisionAppdxComponent extends BaseLawComponent<SupplProvisionAppdxComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const SupplProvisionAppdxComponent = withCatcher<SupplProvisionAppdxComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let ArithFormulaNum: std.ArithFormulaNum | null = null;
-        let RelatedArticleNum: std.RelatedArticleNum | null = null;
-        const ChildItems: std.ArithFormula[] = [];
-        for (const child of el.children) {
+    let ArithFormulaNum: std.ArithFormulaNum | null = null;
+    let RelatedArticleNum: std.RelatedArticleNum | null = null;
+    const ChildItems: std.ArithFormula[] = [];
+    for (const child of el.children) {
 
-            if (child.tag === "ArithFormulaNum") {
-                ArithFormulaNum = child;
+        if (child.tag === "ArithFormulaNum") {
+            ArithFormulaNum = child;
 
-            } else if (child.tag === "RelatedArticleNum") {
-                RelatedArticleNum = child;
+        } else if (child.tag === "RelatedArticleNum") {
+            RelatedArticleNum = child;
 
-            } else if (child.tag === "ArithFormula") {
-                ChildItems.push(child);
+        } else if (child.tag === "ArithFormula") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (ArithFormulaNum || RelatedArticleNum) {
-            blocks.push(
-                <SupplProvisionAppdxTitleDiv
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={(ArithFormulaNum || RelatedArticleNum || { id: 0 }).id}
-                >
-                    {ArithFormulaNum && <RunComponent els={ArithFormulaNum.children} ls={this.props.ls} />}
-                    {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={this.props.ls} />}
-                </SupplProvisionAppdxTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            blocks.push(
-                <div style={{ marginLeft: `${indent + 1}em` }} key={child.id}>
-                    <ArithFormulaRunComponent el={child} ls={this.props.ls} />
-                </div>,
-            ); /* >>>> INDENT >>>> */
-        }
-
-        return (
-            <SupplProvisionAppdxDiv>
-                {blocks}
-            </SupplProvisionAppdxDiv>
+    if (ArithFormulaNum || RelatedArticleNum) {
+        blocks.push(
+            <SupplProvisionAppdxTitleDiv
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={(ArithFormulaNum || RelatedArticleNum || { id: 0 }).id}
+            >
+                {ArithFormulaNum && <RunComponent els={ArithFormulaNum.children} ls={props.ls} />}
+                {RelatedArticleNum && <RunComponent els={RelatedArticleNum.children} ls={props.ls} />}
+            </SupplProvisionAppdxTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        blocks.push(
+            <div style={{ marginLeft: `${indent + 1}em` }} key={child.id}>
+                <ArithFormulaRunComponent el={child} ls={props.ls} />
+            </div>,
+        ); /* >>>> INDENT >>>> */
+    }
+
+    return (
+        <SupplProvisionAppdxDiv>
+            {blocks}
+        </SupplProvisionAppdxDiv>
+    );
+});
 
 
 interface SupplProvisionComponentProps extends ELComponentProps { el: std.SupplProvision, indent: number }
 
 const isSupplProvisionComponentProps = (props: ELComponentProps): props is SupplProvisionComponentProps => props.el.tag === "SupplProvision";
 
-class SupplProvisionComponent extends BaseLawComponent<SupplProvisionComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const SupplProvisionComponent = withCatcher<SupplProvisionComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let SupplProvisionLabel: std.SupplProvisionLabel | null = null;
-        const ChildItems: Array<std.Chapter | std.Article | std.Paragraph | std.SupplProvisionAppdxTable | std.SupplProvisionAppdxStyle | std.SupplProvisionAppdx> = [];
-        for (const child of el.children) {
+    let SupplProvisionLabel: std.SupplProvisionLabel | null = null;
+    const ChildItems: Array<std.Chapter | std.Article | std.Paragraph | std.SupplProvisionAppdxTable | std.SupplProvisionAppdxStyle | std.SupplProvisionAppdx> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "SupplProvisionLabel") {
-                SupplProvisionLabel = child;
+        if (child.tag === "SupplProvisionLabel") {
+            SupplProvisionLabel = child;
 
-            } else if (child.tag === "Chapter" || child.tag === "Article" || child.tag === "Paragraph" || child.tag === "SupplProvisionAppdxTable" || child.tag === "SupplProvisionAppdxStyle" || child.tag === "SupplProvisionAppdx") {
-                ChildItems.push(child);
+        } else if (child.tag === "Chapter" || child.tag === "Article" || child.tag === "Paragraph" || child.tag === "SupplProvisionAppdxTable" || child.tag === "SupplProvisionAppdxStyle" || child.tag === "SupplProvisionAppdx") {
+            ChildItems.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (SupplProvisionLabel) {
-            const Extract = el.attr.Extract === "true" ? `${MARGIN}抄` : "";
-            const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
-            blocks.push(
-                <ArticleGroupTitleDiv
-                    style={{ marginLeft: `${indent + 3}em` }}
-                    key={SupplProvisionLabel.id}
-                >
-                    <RunComponent els={SupplProvisionLabel.children} ls={this.props.ls} />{AmendLawNum}{Extract}
-                </ArticleGroupTitleDiv>,
-            );
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "Article") {
-                blocks.push(<ArticleComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            } else if (child.tag === "Paragraph") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            } else if (child.tag === "Chapter") {
-                blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            } else if (child.tag === "SupplProvisionAppdxTable") {
-                blocks.push(<SupplProvisionAppdxTableComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            } else if (child.tag === "SupplProvisionAppdxStyle") {
-                blocks.push(<SupplProvisionAppdxStyleComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            } else if (child.tag === "SupplProvisionAppdx") {
-                blocks.push(<SupplProvisionAppdxComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <div
-                className="law-anchor"
-                data-el_id={el.id.toString()}
-                data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+    if (SupplProvisionLabel) {
+        const Extract = el.attr.Extract === "true" ? `${MARGIN}抄` : "";
+        const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
+        blocks.push(
+            <ArticleGroupTitleDiv
+                style={{ marginLeft: `${indent + 3}em` }}
+                key={SupplProvisionLabel.id}
             >
-                {blocks}
-            </div>
+                <RunComponent els={SupplProvisionLabel.children} ls={props.ls} />{AmendLawNum}{Extract}
+            </ArticleGroupTitleDiv>,
         );
     }
-}
+
+    for (const child of ChildItems) {
+        if (child.tag === "Article") {
+            blocks.push(<ArticleComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        } else if (child.tag === "Paragraph") {
+            blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        } else if (child.tag === "Chapter") {
+            blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        } else if (child.tag === "SupplProvisionAppdxTable") {
+            blocks.push(<SupplProvisionAppdxTableComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        } else if (child.tag === "SupplProvisionAppdxStyle") {
+            blocks.push(<SupplProvisionAppdxStyleComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        } else if (child.tag === "SupplProvisionAppdx") {
+            blocks.push(<SupplProvisionAppdxComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <div
+            className="law-anchor"
+            data-el_id={el.id.toString()}
+            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+        >
+            {blocks}
+        </div>
+    );
+});
 
 interface ArticleGroupComponentProps extends ELComponentProps { el: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division, indent: number }
 
 const isArticleGroupComponentProps = (props: ELComponentProps): props is ArticleGroupComponentProps => props.el.tag === "MainProvision" || props.el.tag === "Part" || props.el.tag === "Chapter" || props.el.tag === "Section" || props.el.tag === "Subsection" || props.el.tag === "Division";
 
-class ArticleGroupComponent extends BaseLawComponent<ArticleGroupComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const ArticleGroupComponent = withCatcher<ArticleGroupComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let ArticleGroupTitle: std.PartTitle | std.ChapterTitle | std.SectionTitle | std.SubsectionTitle | std.DivisionTitle | null = null;
-        const ChildItems: Array<std.Part | std.Chapter | std.Section | std.Subsection | std.Division | std.Article | std.Paragraph> = [];
-        for (const child of el.children) {
+    let ArticleGroupTitle: std.PartTitle | std.ChapterTitle | std.SectionTitle | std.SubsectionTitle | std.DivisionTitle | null = null;
+    const ChildItems: Array<std.Part | std.Chapter | std.Section | std.Subsection | std.Division | std.Article | std.Paragraph> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle") {
-                ArticleGroupTitle = child;
+        if (child.tag === "PartTitle" || child.tag === "ChapterTitle" || child.tag === "SectionTitle" || child.tag === "SubsectionTitle" || child.tag === "DivisionTitle") {
+            ArticleGroupTitle = child;
 
-            } else {
-                ChildItems.push(child);
+        } else {
+            ChildItems.push(child);
 
-            }
         }
-
-        if (ArticleGroupTitle) {
-            blocks.push(<ArticleGroupTitleComponent el={ArticleGroupTitle} indent={indent} key={ArticleGroupTitle.id} ls={this.props.ls} />);
-        }
-
-        for (const child of ChildItems) {
-            if (child.tag === "Article") {
-                blocks.push(<ArticleComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            } else if (child.tag === "Paragraph") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
-                blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            } else {
-                console.error(`unexpected element! ${JSON.stringify(child, undefined, 2)}`);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                blocks.push(<AnyLawComponent el={child} indent={indent} key={(child as any).id} ls={this.props.ls} />);
-
-            }
-        }
-
-        return (
-            el.tag === "MainProvision" ? (
-                <div data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}>
-                    {blocks}
-                </div>
-            ) : (
-                <div
-                    className="law-anchor"
-                    data-el_id={el.id.toString()}
-                    key={el.id}
-                >
-                    {blocks}
-                </div>
-            )
-        );
     }
-}
+
+    if (ArticleGroupTitle) {
+        blocks.push(<ArticleGroupTitleComponent el={ArticleGroupTitle} indent={indent} key={ArticleGroupTitle.id} ls={props.ls} />);
+    }
+
+    for (const child of ChildItems) {
+        if (child.tag === "Article") {
+            blocks.push(<ArticleComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        } else if (child.tag === "Paragraph") {
+            blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
+            blocks.push(<ArticleGroupComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        } else {
+            console.error(`unexpected element! ${JSON.stringify(child, undefined, 2)}`);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            blocks.push(<AnyLawComponent el={child} indent={indent} key={(child as any).id} ls={props.ls} />);
+
+        }
+    }
+
+    return (
+        el.tag === "MainProvision" ? (
+            <div data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}>
+                {blocks}
+            </div>
+        ) : (
+            <div
+                className="law-anchor"
+                data-el_id={el.id.toString()}
+                key={el.id}
+            >
+                {blocks}
+            </div>
+        )
+    );
+});
 
 
 const ArticleGroupTitleDiv = styled.div`
@@ -1324,30 +1293,28 @@ interface ArticleGroupTitleComponentProps extends ELComponentProps { el: std.Par
 
 const isArticleGroupTitleComponentProps = (props: ELComponentProps): props is ArticleGroupTitleComponentProps => props.el.tag === "PartTitle" || props.el.tag === "ChapterTitle" || props.el.tag === "SectionTitle" || props.el.tag === "SubsectionTitle" || props.el.tag === "DivisionTitle";
 
-class ArticleGroupTitleComponent extends BaseLawComponent<ArticleGroupTitleComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const ArticleGroupTitleComponent = withCatcher<ArticleGroupTitleComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const titleIndent =
-            el.tag === "PartTitle"
-                ? 2
-                : el.tag === "ChapterTitle"
-                    ? 3
-                    : el.tag === "SectionTitle"
-                        ? 4
-                        : el.tag === "SubsectionTitle"
-                            ? 5
-                            : el.tag === "DivisionTitle"
-                                ? 6
-                                : assertNever(el);
-        return (
-            <ArticleGroupTitleDiv style={{ marginLeft: `${indent + titleIndent}em` }}>
-                <RunComponent els={el.children} ls={this.props.ls} />
-            </ArticleGroupTitleDiv>
-        );
-    }
-}
+    const titleIndent =
+        el.tag === "PartTitle"
+            ? 2
+            : el.tag === "ChapterTitle"
+                ? 3
+                : el.tag === "SectionTitle"
+                    ? 4
+                    : el.tag === "SubsectionTitle"
+                        ? 5
+                        : el.tag === "DivisionTitle"
+                            ? 6
+                            : assertNever(el);
+    return (
+        <ArticleGroupTitleDiv style={{ marginLeft: `${indent + titleIndent}em` }}>
+            <RunComponent els={el.children} ls={props.ls} />
+        </ArticleGroupTitleDiv>
+    );
+});
 
 
 const ArticleDiv = styled.div`
@@ -1359,80 +1326,78 @@ interface ArticleComponentProps extends ELComponentProps { el: std.Article, inde
 
 const isArticleComponentProps = (props: ELComponentProps): props is ArticleComponentProps => props.el.tag === "Article";
 
-class ArticleComponent extends BaseLawComponent<ArticleComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const ArticleComponent = withCatcher<ArticleComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let ArticleCaption: std.ArticleCaption | null = null;
-        let ArticleTitle: std.ArticleTitle | null = null;
-        const Paragraphs: std.Paragraph[] = [];
-        const SupplNotes: std.SupplNote[] = [];
-        for (const child of el.children) {
+    let ArticleCaption: std.ArticleCaption | null = null;
+    let ArticleTitle: std.ArticleTitle | null = null;
+    const Paragraphs: std.Paragraph[] = [];
+    const SupplNotes: std.SupplNote[] = [];
+    for (const child of el.children) {
 
-            if (child.tag === "ArticleCaption") {
-                ArticleCaption = child;
+        if (child.tag === "ArticleCaption") {
+            ArticleCaption = child;
 
-            } else if (child.tag === "ArticleTitle") {
-                ArticleTitle = child;
+        } else if (child.tag === "ArticleTitle") {
+            ArticleTitle = child;
 
-            } else if (child.tag === "Paragraph") {
-                Paragraphs.push(child);
+        } else if (child.tag === "Paragraph") {
+            Paragraphs.push(child);
 
-            } else if (std.isItem(child)) {
-                console.error(`unexpected element! ${JSON.stringify(child, undefined, 2)}`);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                Paragraphs.push(child as any);
+        } else if (std.isItem(child)) {
+            console.error(`unexpected element! ${JSON.stringify(child, undefined, 2)}`);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            Paragraphs.push(child as any);
 
-            } else if (child.tag === "SupplNote") {
-                SupplNotes.push(child);
+        } else if (child.tag === "SupplNote") {
+            SupplNotes.push(child);
 
-            }
-            else { assertNever(child); }
         }
+        else { assertNever(child); }
+    }
 
-        if (ArticleCaption) {
-            blocks.push(
-                <div style={{ marginLeft: `${indent + 1}em` }} key={ArticleCaption.id}>
-                    <RunComponent els={ArticleCaption.children} ls={this.props.ls} />
-                </div>,
-            ); /* >>>> INDENT >>>> */
-        }
+    if (ArticleCaption) {
+        blocks.push(
+            <div style={{ marginLeft: `${indent + 1}em` }} key={ArticleCaption.id}>
+                <RunComponent els={ArticleCaption.children} ls={props.ls} />
+            </div>,
+        ); /* >>>> INDENT >>>> */
+    }
 
-        for (let i = 0; i < Paragraphs.length; i++) {
-            const Paragraph = Paragraphs[i];
-            blocks.push(
-                <ParagraphItemComponent
-                    el={Paragraph}
-                    indent={indent}
-                    ArticleTitle={(i === 0 && ArticleTitle) ? ArticleTitle : undefined}
-                    key={Paragraph.id}
-                    ls={this.props.ls}
-                />,
-            );
-        }
-
-        for (const SupplNote of SupplNotes) {
-            blocks.push(
-                <div style={{ marginLeft: `${indent + 2}em` }} key={SupplNote.id}>
-                    <RunComponent els={SupplNote.children} ls={this.props.ls} />
-                </div>,
-            ); /* >>>> INDENT ++++ INDENT >>>> */
-        }
-
-        return (
-            <ArticleDiv
-                className="law-anchor"
-                data-el_id={el.id.toString()}
-                data-container_info={JSON.stringify(actions.containerInfoOf(el))}
-            >
-                {blocks}
-            </ArticleDiv>
+    for (let i = 0; i < Paragraphs.length; i++) {
+        const Paragraph = Paragraphs[i];
+        blocks.push(
+            <ParagraphItemComponent
+                el={Paragraph}
+                indent={indent}
+                ArticleTitle={(i === 0 && ArticleTitle) ? ArticleTitle : undefined}
+                key={Paragraph.id}
+                ls={props.ls}
+            />,
         );
     }
-}
+
+    for (const SupplNote of SupplNotes) {
+        blocks.push(
+            <div style={{ marginLeft: `${indent + 2}em` }} key={SupplNote.id}>
+                <RunComponent els={SupplNote.children} ls={props.ls} />
+            </div>,
+        ); /* >>>> INDENT ++++ INDENT >>>> */
+    }
+
+    return (
+        <ArticleDiv
+            className="law-anchor"
+            data-el_id={el.id.toString()}
+            data-container_info={JSON.stringify(actions.containerInfoOf(el))}
+        >
+            {blocks}
+        </ArticleDiv>
+    );
+});
 
 
 const ParagraphDiv = styled.div`
@@ -1454,181 +1419,175 @@ interface ParagraphItemComponentProps extends ELComponentProps { el: std.Paragra
 
 const isParagraphItemComponentProps = (props: ELComponentProps): props is ParagraphItemComponentProps => props.el.tag === "Paragraph" || props.el.tag === "Item" || props.el.tag === "Subitem1" || props.el.tag === "Subitem2" || props.el.tag === "Subitem3" || props.el.tag === "Subitem4" || props.el.tag === "Subitem5" || props.el.tag === "Subitem6" || props.el.tag === "Subitem7" || props.el.tag === "Subitem8" || props.el.tag === "Subitem9" || props.el.tag === "Subitem10";
 
-class ParagraphItemComponent extends BaseLawComponent<ParagraphItemComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
-        const ArticleTitle = this.props.ArticleTitle;
+const ParagraphItemComponent = withCatcher<ParagraphItemComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
+    const ArticleTitle = props.ArticleTitle;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let ParagraphCaption: std.ParagraphCaption | null = null;
-        let ParagraphItemTitle: std.ParagraphNum | std.ItemTitle | std.Subitem1Title | std.Subitem2Title | std.Subitem3Title | std.Subitem4Title | std.Subitem5Title | std.Subitem6Title | std.Subitem7Title | std.Subitem8Title | std.Subitem9Title | std.Subitem10Title | null = null;
-        let ParagraphItemSentence: std.ParagraphSentence | std.ItemSentence | std.Subitem1Sentence | std.Subitem2Sentence | std.Subitem3Sentence | std.Subitem4Sentence | std.Subitem5Sentence | std.Subitem6Sentence | std.Subitem7Sentence | std.Subitem8Sentence | std.Subitem9Sentence | std.Subitem10Sentence | undefined;
-        const Children: Array<std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10 | std.AmendProvision | std.Class | std.TableStruct | std.FigStruct | std.StyleStruct | std.List> = [];
-        for (const child of el.children) {
+    let ParagraphCaption: std.ParagraphCaption | null = null;
+    let ParagraphItemTitle: std.ParagraphNum | std.ItemTitle | std.Subitem1Title | std.Subitem2Title | std.Subitem3Title | std.Subitem4Title | std.Subitem5Title | std.Subitem6Title | std.Subitem7Title | std.Subitem8Title | std.Subitem9Title | std.Subitem10Title | null = null;
+    let ParagraphItemSentence: std.ParagraphSentence | std.ItemSentence | std.Subitem1Sentence | std.Subitem2Sentence | std.Subitem3Sentence | std.Subitem4Sentence | std.Subitem5Sentence | std.Subitem6Sentence | std.Subitem7Sentence | std.Subitem8Sentence | std.Subitem9Sentence | std.Subitem10Sentence | undefined;
+    const Children: Array<std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10 | std.AmendProvision | std.Class | std.TableStruct | std.FigStruct | std.StyleStruct | std.List> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "ParagraphCaption") {
-                ParagraphCaption = child;
+        if (child.tag === "ParagraphCaption") {
+            ParagraphCaption = child;
 
-            } else if (std.isArticleCaption(child)) {
-                console.error(`unexpected element! ${JSON.stringify(child, undefined, 2)}`);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                ParagraphCaption = child as any;
+        } else if (std.isArticleCaption(child)) {
+            console.error(`unexpected element! ${JSON.stringify(child, undefined, 2)}`);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ParagraphCaption = child as any;
 
-            } else if (child.tag === "ParagraphNum" || child.tag === "ItemTitle" || child.tag ===
-                "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
-                "Subitem5Title" || child.tag === "Subitem6Title" || child.tag === "Subitem7Title" || child.tag === "Subitem8Title" || child.tag ===
-                "Subitem9Title" || child.tag === "Subitem10Title") {
-                ParagraphItemTitle = child;
+        } else if (child.tag === "ParagraphNum" || child.tag === "ItemTitle" || child.tag ===
+            "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
+            "Subitem5Title" || child.tag === "Subitem6Title" || child.tag === "Subitem7Title" || child.tag === "Subitem8Title" || child.tag ===
+            "Subitem9Title" || child.tag === "Subitem10Title") {
+            ParagraphItemTitle = child;
 
-            } else if (child.tag === "ParagraphSentence" || child.tag === "ItemSentence" || child.tag ===
-                "Subitem1Sentence" || child.tag === "Subitem2Sentence" || child.tag === "Subitem3Sentence" || child.tag === "Subitem4Sentence" || child.tag ===
-                "Subitem5Sentence" || child.tag === "Subitem6Sentence" || child.tag === "Subitem7Sentence" || child.tag === "Subitem8Sentence" || child.tag ===
-                "Subitem9Sentence" || child.tag === "Subitem10Sentence") {
-                ParagraphItemSentence = child;
+        } else if (child.tag === "ParagraphSentence" || child.tag === "ItemSentence" || child.tag ===
+            "Subitem1Sentence" || child.tag === "Subitem2Sentence" || child.tag === "Subitem3Sentence" || child.tag === "Subitem4Sentence" || child.tag ===
+            "Subitem5Sentence" || child.tag === "Subitem6Sentence" || child.tag === "Subitem7Sentence" || child.tag === "Subitem8Sentence" || child.tag ===
+            "Subitem9Sentence" || child.tag === "Subitem10Sentence") {
+            ParagraphItemSentence = child;
 
-            } else {
-                Children.push(child);
-
-            }
-        }
-
-        if (ParagraphCaption) {
-            blocks.push(
-                <div style={{ marginLeft: `${indent + 1}em` }} key={ParagraphCaption.id}>
-                    <RunComponent els={ParagraphCaption.children} ls={this.props.ls} />
-                </div>,
-            ); /* >>>> INDENT >>>> */
-        }
-
-        const Title = (
-            <span style={{ fontWeight: "bold" }}>
-                {ParagraphItemTitle && <RunComponent els={ParagraphItemTitle.children} ls={this.props.ls} />}
-                {ArticleTitle && <RunComponent els={ArticleTitle.children} ls={this.props.ls} />}
-            </span>
-        );
-        const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
-        blocks.push(
-            <BlockSentenceComponent
-                els={SentenceChildren}
-                indent={indent}
-                Title={Title}
-                style={{ paddingLeft: "1em", textIndent: "-1em" }}
-                key={-1}
-                ls={this.props.ls}
-            />,
-        );
-
-        for (const child of Children) {
-            if (child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "TableStruct") {
-                blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "FigStruct") {
-                blocks.push(<FigStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "StyleStruct") {
-                blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} ls={this.props.ls} />); /* >>>> INDENT >>>> */
-
-            } else if (child.tag === "List") {
-                blocks.push(<ListComponent el={child} indent={indent + 2} key={child.id} ls={this.props.ls} />); /* >>>> INDENT ++++ INDENT >>>> */
-
-            } else if (child.tag === "AmendProvision") {
-                blocks.push(<AmendProvisionComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
-
-            } else if (child.tag === "Class") {
-                throw new NotImplementedError(child.tag);
-
-            } else {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                blocks.push(<AnyLawComponent el={child} indent={indent} key={(child as any).id} ls={this.props.ls} />);
-
-            }
-        }
-
-        if (el.tag === "Paragraph") {
-            if (ArticleTitle) {
-                return <ParagraphDiv className={`paragraph-item-${el.tag}`}>{blocks}</ParagraphDiv>;
-            } else {
-                return (
-                    <ParagraphDiv
-                        data-container_info={JSON.stringify(actions.containerInfoOf(el))}
-                        className={`paragraph-item-${el.tag}`}
-                    >
-                        {blocks}
-                    </ParagraphDiv>
-                );
-            }
         } else {
-            return <ItemDiv className={`paragraph-item-${el.tag}`}>{blocks}</ItemDiv>;
+            Children.push(child);
+
         }
     }
-}
+
+    if (ParagraphCaption) {
+        blocks.push(
+            <div style={{ marginLeft: `${indent + 1}em` }} key={ParagraphCaption.id}>
+                <RunComponent els={ParagraphCaption.children} ls={props.ls} />
+            </div>,
+        ); /* >>>> INDENT >>>> */
+    }
+
+    const Title = (
+        <span style={{ fontWeight: "bold" }}>
+            {ParagraphItemTitle && <RunComponent els={ParagraphItemTitle.children} ls={props.ls} />}
+            {ArticleTitle && <RunComponent els={ArticleTitle.children} ls={props.ls} />}
+        </span>
+    );
+    const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
+    blocks.push(
+        <BlockSentenceComponent
+            els={SentenceChildren}
+            indent={indent}
+            Title={Title}
+            style={{ paddingLeft: "1em", textIndent: "-1em" }}
+            key={-1}
+            ls={props.ls}
+        />,
+    );
+
+    for (const child of Children) {
+        if (child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
+            blocks.push(<ParagraphItemComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "TableStruct") {
+            blocks.push(<TableStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "FigStruct") {
+            blocks.push(<FigStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "StyleStruct") {
+            blocks.push(<StyleStructComponent el={child} indent={indent + 1} key={child.id} ls={props.ls} />); /* >>>> INDENT >>>> */
+
+        } else if (child.tag === "List") {
+            blocks.push(<ListComponent el={child} indent={indent + 2} key={child.id} ls={props.ls} />); /* >>>> INDENT ++++ INDENT >>>> */
+
+        } else if (child.tag === "AmendProvision") {
+            blocks.push(<AmendProvisionComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+
+        } else if (child.tag === "Class") {
+            throw new NotImplementedError(child.tag);
+
+        } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            blocks.push(<AnyLawComponent el={child} indent={indent} key={(child as any).id} ls={props.ls} />);
+
+        }
+    }
+
+    if (el.tag === "Paragraph") {
+        if (ArticleTitle) {
+            return <ParagraphDiv className={`paragraph-item-${el.tag}`}>{blocks}</ParagraphDiv>;
+        } else {
+            return (
+                <ParagraphDiv
+                    data-container_info={JSON.stringify(actions.containerInfoOf(el))}
+                    className={`paragraph-item-${el.tag}`}
+                >
+                    {blocks}
+                </ParagraphDiv>
+            );
+        }
+    } else {
+        return <ItemDiv className={`paragraph-item-${el.tag}`}>{blocks}</ItemDiv>;
+    }
+});
 
 interface ListComponentProps extends ELComponentProps { el: std.List | std.Sublist1 | std.Sublist2 | std.Sublist3, indent: number }
 
 const isListComponentProps = (props: ELComponentProps): props is ListComponentProps => props.el.tag === "List" || props.el.tag === "Sublist1" || props.el.tag === "Sublist2" || props.el.tag === "Sublist3";
 
-class ListComponent extends BaseLawComponent<ListComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const ListComponent = withCatcher<ListComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (child.tag === "ListSentence" || child.tag === "Sublist1Sentence" || child.tag === "Sublist2Sentence" || child.tag === "Sublist3Sentence") {
-                blocks.push(<BlockSentenceComponent els={child.children} indent={indent} key={child.id} ls={this.props.ls} />);
+        if (child.tag === "ListSentence" || child.tag === "Sublist1Sentence" || child.tag === "Sublist2Sentence" || child.tag === "Sublist3Sentence") {
+            blocks.push(<BlockSentenceComponent els={child.children} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "Sublist1" || child.tag === "Sublist2" || child.tag === "Sublist3") {
-                blocks.push(<ListComponent el={child} indent={indent + 2} key={child.id} ls={this.props.ls} />); /* >>>> INDENT ++++ INDENT >>>> */
+        } else if (child.tag === "Sublist1" || child.tag === "Sublist2" || child.tag === "Sublist3") {
+            blocks.push(<ListComponent el={child} indent={indent + 2} key={child.id} ls={props.ls} />); /* >>>> INDENT ++++ INDENT >>>> */
 
-            }
-            else { assertNever(child); }
         }
-
-        return <>{blocks}</>;
+        else { assertNever(child); }
     }
-}
+
+    return <>{blocks}</>;
+});
 
 
 interface TableStructComponentProps extends ELComponentProps { el: std.TableStruct, indent: number }
 
 const isTableStructComponentProps = (props: ELComponentProps): props is TableStructComponentProps => props.el.tag === "TableStruct";
 
-class TableStructComponent extends BaseLawComponent<TableStructComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const TableStructComponent = withCatcher<TableStructComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (child.tag === "TableStructTitle") {
-                blocks.push(
-                    <div style={{ marginLeft: `${indent}em` }}>
-                        <RunComponent els={child.children} key={child.id} ls={this.props.ls} />
-                    </div>,
-                );
+        if (child.tag === "TableStructTitle") {
+            blocks.push(
+                <div style={{ marginLeft: `${indent}em` }}>
+                    <RunComponent els={child.children} key={child.id} ls={props.ls} />
+                </div>,
+            );
 
-            } else if (child.tag === "Table") {
-                blocks.push(<TableComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Table") {
+            blocks.push(<TableComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            }
-            else { assertNever(child); }
         }
-
-        return <>{blocks}</>;
+        else { assertNever(child); }
     }
-}
+
+    return <>{blocks}</>;
+});
 
 
 const Table = styled.table`
@@ -1642,122 +1601,116 @@ interface TableComponentProps extends ELComponentProps { el: std.Table, indent: 
 
 const isTableComponentProps = (props: ELComponentProps): props is TableComponentProps => props.el.tag === "Table";
 
-class TableComponent extends BaseLawComponent<TableComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const TableComponent = withCatcher<TableComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const rows: JSX.Element[] = [];
+    const rows: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (child.tag === "TableRow" || child.tag === "TableHeaderRow") {
-                rows.push(<TableRowComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        if (child.tag === "TableRow" || child.tag === "TableHeaderRow") {
+            rows.push(<TableRowComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            }
-            else { assertNever(child); }
         }
-
-        return (
-            <div style={{ marginLeft: `${indent}em` }}>
-                <Table>
-                    <tbody>
-                        {rows}
-                    </tbody>
-                </Table>
-            </div>
-        );
+        else { assertNever(child); }
     }
-}
+
+    return (
+        <div style={{ marginLeft: `${indent}em` }}>
+            <Table>
+                <tbody>
+                    {rows}
+                </tbody>
+            </Table>
+        </div>
+    );
+});
 
 
 interface RemarksComponentProps extends ELComponentProps { el: std.Remarks, indent: number }
 
 const isRemarksComponentProps = (props: ELComponentProps): props is RemarksComponentProps => props.el.tag === "Remarks";
 
-class RemarksComponent extends BaseLawComponent<RemarksComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const RemarksComponent = withCatcher<RemarksComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        let RemarksLabel: std.RemarksLabel | null = null;
-        const ChildItems: Array<std.Item | std.Sentence> = [];
-        for (const child of el.children) {
+    let RemarksLabel: std.RemarksLabel | null = null;
+    const ChildItems: Array<std.Item | std.Sentence> = [];
+    for (const child of el.children) {
 
-            if (child.tag === "RemarksLabel") {
-                RemarksLabel = child;
+        if (child.tag === "RemarksLabel") {
+            RemarksLabel = child;
 
-            } else if (child.tag === "Item" || child.tag === "Sentence") {
-                ChildItems.push(child);
+        } else if (child.tag === "Item" || child.tag === "Sentence") {
+            ChildItems.push(child);
 
-            } else { assertNever(child); }
-        }
-
-        for (let i = 0; i < ChildItems.length; i++) {
-            const child = ChildItems[i];
-
-            if (child.tag === "Sentence") {
-                blocks.push(
-                    <BlockSentenceComponent
-                        els={[child]}
-                        Title={(i === 0 && RemarksLabel && <RunComponent els={RemarksLabel.children} style={{ fontWeight: "bold" }} ls={this.props.ls} />) || undefined}
-                        indent={0}
-                        key={child.id}
-                        ls={this.props.ls}
-                    />,
-                );
-
-            } else if (child.tag === "Item") {
-                if (i === 0 && RemarksLabel) {
-                    blocks.push(
-                        <NoMarginDiv key={RemarksLabel.id}>
-                            <RunComponent els={RemarksLabel.children} style={{ fontWeight: "bold" }} ls={this.props.ls} />
-                        </NoMarginDiv>,
-                    );
-                }
-                blocks.push(<ParagraphItemComponent el={child} indent={1} key={child.id} ls={this.props.ls} />);
-
-            }
-            else { assertNever(child); }
-        }
-
-        return (
-            <div style={{ marginLeft: `${indent}em` }}>
-                {blocks}
-            </div>
-        );
+        } else { assertNever(child); }
     }
-}
+
+    for (let i = 0; i < ChildItems.length; i++) {
+        const child = ChildItems[i];
+
+        if (child.tag === "Sentence") {
+            blocks.push(
+                <BlockSentenceComponent
+                    els={[child]}
+                    Title={(i === 0 && RemarksLabel && <RunComponent els={RemarksLabel.children} style={{ fontWeight: "bold" }} ls={props.ls} />) || undefined}
+                    indent={0}
+                    key={child.id}
+                    ls={props.ls}
+                />,
+            );
+
+        } else if (child.tag === "Item") {
+            if (i === 0 && RemarksLabel) {
+                blocks.push(
+                    <NoMarginDiv key={RemarksLabel.id}>
+                        <RunComponent els={RemarksLabel.children} style={{ fontWeight: "bold" }} ls={props.ls} />
+                    </NoMarginDiv>,
+                );
+            }
+            blocks.push(<ParagraphItemComponent el={child} indent={1} key={child.id} ls={props.ls} />);
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <div style={{ marginLeft: `${indent}em` }}>
+            {blocks}
+        </div>
+    );
+});
 
 interface TableRowComponentProps extends ELComponentProps { el: std.TableRow | std.TableHeaderRow, indent: number }
 
 const isTableRowComponentProps = (props: ELComponentProps): props is TableRowComponentProps => props.el.tag === "TableRow" || props.el.tag === "TableHeaderRow";
 
-class TableRowComponent extends BaseLawComponent<TableRowComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        // const indent = this.props.indent;
+const TableRowComponent = withCatcher<TableRowComponentProps>(props => {
+    const el = props.el;
+    // const indent = props.indent;
 
-        const columns: JSX.Element[] = [];
+    const columns: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (child.tag === "TableColumn" || child.tag === "TableHeaderColumn") {
-                columns.push(<TableColumnComponent el={child} indent={1} key={child.id} ls={this.props.ls} />);
+        if (child.tag === "TableColumn" || child.tag === "TableHeaderColumn") {
+            columns.push(<TableColumnComponent el={child} indent={1} key={child.id} ls={props.ls} />);
 
-            }
-            else { assertNever(child); }
         }
-
-        return (
-            <tr>
-                {columns}
-            </tr>
-        );
+        else { assertNever(child); }
     }
-}
+
+    return (
+        <tr>
+            {columns}
+        </tr>
+    );
+});
 
 
 const Td = styled.td`
@@ -1776,384 +1729,366 @@ interface TableColumnComponentProps extends ELComponentProps { el: std.TableColu
 
 const isTableColumnComponentProps = (props: ELComponentProps): props is TableColumnComponentProps => props.el.tag === "TableColumn" || props.el.tag === "TableHeaderColumn";
 
-class TableColumnComponent extends BaseLawComponent<TableColumnComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        // const indent = this.props.indent;
+const TableColumnComponent = withCatcher<TableColumnComponentProps>(props => {
+    const el = props.el;
+    // const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        if (el.tag === "TableHeaderColumn") {
-            blocks.push(
-                <NoMarginDiv key={el.id}>
-                    <RunComponent els={el.children} ls={this.props.ls} />
-                </NoMarginDiv>,
-            );
+    if (el.tag === "TableHeaderColumn") {
+        blocks.push(
+            <NoMarginDiv key={el.id}>
+                <RunComponent els={el.children} ls={props.ls} />
+            </NoMarginDiv>,
+        );
 
-        } else if (el.tag === "TableColumn") {
-            for (const child of el.children) {
+    } else if (el.tag === "TableColumn") {
+        for (const child of el.children) {
 
-                if (child.tag === "Sentence" || child.tag === "Column") {
-                    blocks.push(<BlockSentenceComponent els={[child]} indent={0} key={child.id} ls={this.props.ls} />);
+            if (child.tag === "Sentence" || child.tag === "Column") {
+                blocks.push(<BlockSentenceComponent els={[child]} indent={0} key={child.id} ls={props.ls} />);
 
-                } else if (child.tag === "FigStruct") {
-                    blocks.push(<FigStructComponent el={child} indent={0} key={child.id} ls={this.props.ls} />);
+            } else if (child.tag === "FigStruct") {
+                blocks.push(<FigStructComponent el={child} indent={0} key={child.id} ls={props.ls} />);
 
-                } else if (child.tag === "Remarks") {
-                    blocks.push(<RemarksComponent el={child} indent={0} key={child.id} ls={this.props.ls} />);
+            } else if (child.tag === "Remarks") {
+                blocks.push(<RemarksComponent el={child} indent={0} key={child.id} ls={props.ls} />);
 
-                } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
-                    blocks.push(<ArticleGroupComponent el={child} indent={0} key={child.id} ls={this.props.ls} />);
+            } else if (child.tag === "Part" || child.tag === "Chapter" || child.tag === "Section" || child.tag === "Subsection" || child.tag === "Division") {
+                blocks.push(<ArticleGroupComponent el={child} indent={0} key={child.id} ls={props.ls} />);
 
-                } else if (child.tag === "Article") {
-                    blocks.push(<ArticleComponent el={child} indent={0} key={child.id} ls={this.props.ls} />);
+            } else if (child.tag === "Article") {
+                blocks.push(<ArticleComponent el={child} indent={0} key={child.id} ls={props.ls} />);
 
-                } else if (child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
-                    blocks.push(<ParagraphItemComponent el={child} indent={0} key={child.id} ls={this.props.ls} />);
-                }
-                else { assertNever(child); }
+            } else if (child.tag === "Paragraph" || child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
+                blocks.push(<ParagraphItemComponent el={child} indent={0} key={child.id} ls={props.ls} />);
             }
-
+            else { assertNever(child); }
         }
-        else { assertNever(el); }
 
-        if (el.tag === "TableColumn") {
-            const style: React.CSSProperties = {};
-            if (el.attr.BorderTop) style.borderTopStyle = el.attr.BorderTop;
-            if (el.attr.BorderBottom) style.borderBottomStyle = el.attr.BorderBottom;
-            if (el.attr.BorderLeft) style.borderLeftStyle = el.attr.BorderLeft;
-            if (el.attr.BorderRight) style.borderRightStyle = el.attr.BorderRight;
-            if (el.attr.Align) style.textAlign = el.attr.Align;
-            if (el.attr.Valign) style.verticalAlign = el.attr.Valign;
-            return (
-                <Td
-                    rowSpan={el.attr.rowspan ? Number(el.attr.rowspan) : undefined}
-                    colSpan={el.attr.colspan ? Number(el.attr.colspan) : undefined}
-                    style={style}
-                >
-                    {blocks}
-                </Td>
-            );
-        } else {
-            return (
-                <Th>
-                    {blocks}
-                </Th>
-            );
-        }
     }
-}
+    else { assertNever(el); }
+
+    if (el.tag === "TableColumn") {
+        const style: React.CSSProperties = {};
+        if (el.attr.BorderTop) style.borderTopStyle = el.attr.BorderTop;
+        if (el.attr.BorderBottom) style.borderBottomStyle = el.attr.BorderBottom;
+        if (el.attr.BorderLeft) style.borderLeftStyle = el.attr.BorderLeft;
+        if (el.attr.BorderRight) style.borderRightStyle = el.attr.BorderRight;
+        if (el.attr.Align) style.textAlign = el.attr.Align;
+        if (el.attr.Valign) style.verticalAlign = el.attr.Valign;
+        return (
+            <Td
+                rowSpan={el.attr.rowspan ? Number(el.attr.rowspan) : undefined}
+                colSpan={el.attr.colspan ? Number(el.attr.colspan) : undefined}
+                style={style}
+            >
+                {blocks}
+            </Td>
+        );
+    } else {
+        return (
+            <Th>
+                {blocks}
+            </Th>
+        );
+    }
+});
 
 
 interface NoteStyleFormatComponentProps extends ELComponentProps { el: std.Note | std.Style | std.Format, indent: number }
 
 const isNoteStyleFormatComponentProps = (props: ELComponentProps): props is NoteStyleFormatComponentProps => props.el.tag === "Note" || props.el.tag === "Style" || props.el.tag === "Format";
 
-class NoteStyleFormatComponent extends BaseLawComponent<NoteStyleFormatComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const NoteStyleFormatComponent = withCatcher<NoteStyleFormatComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const [i, child] of el.children.entries()) {
-            if ((typeof child === "string") || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
-                blocks.push(<RunComponent els={[child]} key={(typeof child === "string") ? i : child.id} ls={this.props.ls} />);
+    for (const [i, child] of el.children.entries()) {
+        if ((typeof child === "string") || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
+            blocks.push(<RunComponent els={[child]} key={(typeof child === "string") ? i : child.id} ls={props.ls} />);
 
-            } else if (std.isSentence(child)) {
-                blocks.push(
-                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
-                        <RunComponent els={child.children} ls={this.props.ls} />
-                    </div>,
-                );
+        } else if (std.isSentence(child)) {
+            blocks.push(
+                <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                    <RunComponent els={child.children} ls={props.ls} />
+                </div>,
+            );
 
-            } else if (std.isParagraph(child)) {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (std.isParagraph(child)) {
+            blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (std.isItem(child)) {
-                blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (std.isItem(child)) {
+            blocks.push(<ParagraphItemComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (std.isTable(child)) {
-                blocks.push(<TableComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (std.isTable(child)) {
+            blocks.push(<TableComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (std.isTableStruct(child)) {
-                blocks.push(<TableStructComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (std.isTableStruct(child)) {
+            blocks.push(<TableStructComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (std.isFigStruct(child)) {
-                blocks.push(<FigStructComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (std.isFigStruct(child)) {
+            blocks.push(<FigStructComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (std.isFig(child)) {
-                blocks.push(
-                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
-                        <FigRunComponent el={child} ls={this.props.ls} />
-                    </div>,
-                );
+        } else if (std.isFig(child)) {
+            blocks.push(
+                <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                    <FigRunComponent el={child} ls={props.ls} />
+                </div>,
+            );
 
-                // } else if (std.isArithFormula(child)) {
-                //     blocks.push(
-                //         <div style={{ marginLeft: `${indent}em` }} key={child.id}>
-                //             <ArithFormulaRunComponent el={child} />
-                //         </div>,
-                //     );
+            // } else if (std.isArithFormula(child)) {
+            //     blocks.push(
+            //         <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+            //             <ArithFormulaRunComponent el={child} />
+            //         </div>,
+            //     );
 
-            } else if (std.isList(child)) {
-                blocks.push(<ListComponent el={child} indent={indent + 2} key={child.id} ls={this.props.ls} />); /* >>>> INDENT ++++ INDENT >>>> */
+        } else if (std.isList(child)) {
+            blocks.push(<ListComponent el={child} indent={indent + 2} key={child.id} ls={props.ls} />); /* >>>> INDENT ++++ INDENT >>>> */
 
-            } else if (std.isStyle(child)) {
-                blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (std.isStyle(child)) {
+            blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else {
-                throw new NotImplementedError(child.tag);
+        } else {
+            throw new NotImplementedError(child.tag);
 
-            }
         }
-
-        return <>{blocks}</>;
     }
-}
+
+    return <>{blocks}</>;
+});
 
 
 interface StyleStructComponentProps extends ELComponentProps { el: std.StyleStruct, indent: number }
 
 const isStyleStructComponentProps = (props: ELComponentProps): props is StyleStructComponentProps => props.el.tag === "StyleStruct";
 
-class StyleStructComponent extends BaseLawComponent<StyleStructComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const StyleStructComponent = withCatcher<StyleStructComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (child.tag === "StyleStructTitle") {
-                blocks.push(
-                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
-                        <RunComponent els={child.children} ls={this.props.ls} />
-                    </div>,
-                );
+        if (child.tag === "StyleStructTitle") {
+            blocks.push(
+                <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                    <RunComponent els={child.children} ls={props.ls} />
+                </div>,
+            );
 
-            } else if (child.tag === "Style") {
-                blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Style") {
+            blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            }
-            else { assertNever(child); }
         }
-
-        return <>{blocks}</>;
+        else { assertNever(child); }
     }
-}
+
+    return <>{blocks}</>;
+});
 
 
 interface FormatStructComponentProps extends ELComponentProps { el: std.FormatStruct, indent: number }
 
 const isFormatStructComponentProps = (props: ELComponentProps): props is FormatStructComponentProps => props.el.tag === "FormatStruct";
 
-class FormatStructComponent extends BaseLawComponent<FormatStructComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const FormatStructComponent = withCatcher<FormatStructComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (child.tag === "FormatStructTitle") {
-                blocks.push(
-                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
-                        <RunComponent els={child.children} ls={this.props.ls} />
-                    </div>,
-                );
+        if (child.tag === "FormatStructTitle") {
+            blocks.push(
+                <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                    <RunComponent els={child.children} ls={props.ls} />
+                </div>,
+            );
 
-            } else if (child.tag === "Format") {
-                blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Format") {
+            blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            }
-            else { assertNever(child); }
         }
-
-        return <>{blocks}</>;
+        else { assertNever(child); }
     }
-}
+
+    return <>{blocks}</>;
+});
 
 
 interface NoteStructComponentProps extends ELComponentProps { el: std.NoteStruct, indent: number }
 
 const isNoteStructComponentProps = (props: ELComponentProps): props is NoteStructComponentProps => props.el.tag === "NoteStruct";
 
-class NoteStructComponent extends BaseLawComponent<NoteStructComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const NoteStructComponent = withCatcher<NoteStructComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (child.tag === "NoteStructTitle") {
-                blocks.push(
-                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
-                        <RunComponent els={child.children} ls={this.props.ls} />
-                    </div>,
-                );
+        if (child.tag === "NoteStructTitle") {
+            blocks.push(
+                <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                    <RunComponent els={child.children} ls={props.ls} />
+                </div>,
+            );
 
-            } else if (child.tag === "Note") {
-                blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Note") {
+            blocks.push(<NoteStyleFormatComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            }
-            else { assertNever(child); }
         }
-
-        return <>{blocks}</>;
+        else { assertNever(child); }
     }
-}
+
+    return <>{blocks}</>;
+});
 
 interface ArithFormulaRunComponentProps extends ELComponentProps { el: std.ArithFormula }
 
 const isArithFormulaRunComponentProps = (props: ELComponentProps): props is ArithFormulaRunComponentProps => props.el.tag === "ArithFormula";
 
-class ArithFormulaRunComponent extends BaseLawComponent<ArithFormulaRunComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
+const ArithFormulaRunComponent = withCatcher<ArithFormulaRunComponentProps>(props => {
+    const el = props.el;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const [i, child] of el.children.entries()) {
-            if ((typeof child === "string") || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
-                blocks.push(<RunComponent els={[child]} key={(typeof child === "string") ? i : child.id} ls={this.props.ls} />);
+    for (const [i, child] of el.children.entries()) {
+        if ((typeof child === "string") || std.isLine(child) || std.isQuoteStruct(child) || std.isArithFormula(child) || std.isRuby(child) || std.isSup(child) || std.isSub(child) || isControl(child)) {
+            blocks.push(<RunComponent els={[child]} key={(typeof child === "string") ? i : child.id} ls={props.ls} />);
 
-            } else if (std.isFigStruct(child)) {
-                blocks.push(<FigStructComponent el={child} indent={0} key={child.id} ls={this.props.ls} />);
+        } else if (std.isFigStruct(child)) {
+            blocks.push(<FigStructComponent el={child} indent={0} key={child.id} ls={props.ls} />);
 
-            } else if (std.isFig(child)) {
-                blocks.push(
-                    <NoMarginDiv key={child.id}>
-                        <FigRunComponent el={child} ls={this.props.ls} />
-                    </NoMarginDiv>,
-                );
+        } else if (std.isFig(child)) {
+            blocks.push(
+                <NoMarginDiv key={child.id}>
+                    <FigRunComponent el={child} ls={props.ls} />
+                </NoMarginDiv>,
+            );
 
-            } else if (std.isList(child)) {
-                blocks.push(<ListComponent el={child} indent={0} key={child.id} ls={this.props.ls} />);
+        } else if (std.isList(child)) {
+            blocks.push(<ListComponent el={child} indent={0} key={child.id} ls={props.ls} />);
 
-            } else if (std.isSentence(child)) {
-                blocks.push(
-                    <NoMarginDiv key={child.id}>
-                        <RunComponent els={child.children} ls={this.props.ls} />
-                    </NoMarginDiv>,
-                );
+        } else if (std.isSentence(child)) {
+            blocks.push(
+                <NoMarginDiv key={child.id}>
+                    <RunComponent els={child.children} ls={props.ls} />
+                </NoMarginDiv>,
+            );
 
-            } else if (std.isRemarks(child)) {
-                blocks.push(<RemarksComponent el={child} indent={0} key={child.id} ls={this.props.ls} />);
+        } else if (std.isRemarks(child)) {
+            blocks.push(<RemarksComponent el={child} indent={0} key={child.id} ls={props.ls} />);
 
-            } else {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                blocks.push(<AnyLawComponent el={child as any} indent={0} key={child.id} ls={this.props.ls} />);
+        } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            blocks.push(<AnyLawComponent el={child as any} indent={0} key={child.id} ls={props.ls} />);
 
-            }
         }
-
-        return (
-            <span style={{ display: "inline-block" }}>
-                {blocks}
-            </span>
-        );
     }
-}
+
+    return (
+        <span style={{ display: "inline-block" }}>
+            {blocks}
+        </span>
+    );
+});
 
 
 interface FigStructComponentProps extends ELComponentProps { el: std.FigStruct, indent: number }
 
 const isFigStructComponentProps = (props: ELComponentProps): props is FigStructComponentProps => props.el.tag === "FigStruct";
 
-class FigStructComponent extends BaseLawComponent<FigStructComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const FigStructComponent = withCatcher<FigStructComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (child.tag === "FigStructTitle") {
-                blocks.push(
-                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
-                        <RunComponent els={child.children} ls={this.props.ls} />
-                    </div>,
-                );
+        if (child.tag === "FigStructTitle") {
+            blocks.push(
+                <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                    <RunComponent els={child.children} ls={props.ls} />
+                </div>,
+            );
 
-            } else if (child.tag === "Fig") {
-                blocks.push(
-                    <div style={{ marginLeft: `${indent}em` }} key={child.id}>
-                        <FigRunComponent el={child} ls={this.props.ls} />
-                    </div>,
-                );
+        } else if (child.tag === "Fig") {
+            blocks.push(
+                <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                    <FigRunComponent el={child} ls={props.ls} />
+                </div>,
+            );
 
-            } else if (child.tag === "Remarks") {
-                blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "Remarks") {
+            blocks.push(<RemarksComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-            }
-            else { assertNever(child); }
         }
-
-        return <>{blocks}</>;
+        else { assertNever(child); }
     }
-}
+
+    return <>{blocks}</>;
+});
 
 interface FigRunComponentProps extends ELComponentProps { el: std.Fig }
 
 const isFigRunComponentProps = (props: ELComponentProps): props is FigRunComponentProps => props.el.tag === "Fig";
 
-class FigRunComponent extends BaseLawComponent<FigRunComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
+const FigRunComponent = withCatcher<FigRunComponentProps>(props => {
+    const el = props.el;
 
-        if (el.children.length > 0) {
-            throw new NotImplementedError(el.outerXML());
-        }
-
-        return <span>[{el.attr.src}]</span>;
+    if (el.children.length > 0) {
+        throw new NotImplementedError(el.outerXML());
     }
-}
+
+    return <span>[{el.attr.src}]</span>;
+});
 
 
 interface AmendProvisionComponentProps extends ELComponentProps { el: std.AmendProvision, indent: number }
 
 const isAmendProvisionComponentProps = (props: ELComponentProps): props is AmendProvisionComponentProps => props.el.tag === "AmendProvision";
 
-class AmendProvisionComponent extends BaseLawComponent<AmendProvisionComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        const indent = this.props.indent;
+const AmendProvisionComponent = withCatcher<AmendProvisionComponentProps>(props => {
+    const el = props.el;
+    const indent = props.indent;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (child.tag === "AmendProvisionSentence") {
-                blocks.push(<BlockSentenceComponent els={child.children} indent={indent} style={{ textIndent: "1em" }} key={child.id} ls={this.props.ls} />);
+        if (child.tag === "AmendProvisionSentence") {
+            blocks.push(<BlockSentenceComponent els={child.children} indent={indent} style={{ textIndent: "1em" }} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "NewProvision") {
-                for (const subchild of child.children) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    blocks.push(<AnyLawComponent {...{ el: subchild, indent: indent + 1 } as any} key={subchild.id} />);
-                }
-
+        } else if (child.tag === "NewProvision") {
+            for (const subchild of child.children) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                blocks.push(<AnyLawComponent {...{ el: subchild, indent: indent + 1 } as any} key={subchild.id} />);
             }
-            else { assertNever(child); }
-        }
 
-        return <>{blocks}</>;
+        }
+        else { assertNever(child); }
     }
-}
+
+    return <>{blocks}</>;
+});
 
 
 interface SentenceDummyProps extends ELComponentProps { el: std.Sentence, indent: number }
@@ -2167,118 +2102,114 @@ const FirstColumnSpan = styled.span`
 
 interface BlockSentenceComponentProps { els: Array<std.Sentence | std.Column | std.Table>, indent: number, Title?: JSX.Element, style?: React.CSSProperties }
 
-class BlockSentenceComponent extends BaseLawComponent<BlockSentenceComponentProps> {
-    protected renderNormal() {
-        const els = this.props.els;
-        const indent = this.props.indent;
-        const Title = this.props.Title;
-        const style = this.props.style;
+const BlockSentenceComponent = withCatcher<BlockSentenceComponentProps>(props => {
+    const els = props.els;
+    const indent = props.indent;
+    const Title = props.Title;
+    const style = props.style;
 
-        const runs: JSX.Element[] = [];
+    const runs: JSX.Element[] = [];
 
-        if (Title) {
-            runs.push(<span key={-2}>{Title}</span>);
-            runs.push(<span key={-1}>{MARGIN}</span>);
+    if (Title) {
+        runs.push(<span key={-2}>{Title}</span>);
+        runs.push(<span key={-1}>{MARGIN}</span>);
+    }
+
+    for (let i = 0; i < els.length; i++) {
+        const el = els[i];
+
+        if (el.tag === "Sentence") {
+            runs.push(<RunComponent els={el.children} key={i * 2} ls={props.ls} />);
+
+        } else if (el.tag === "Column") {
+            if (i !== 0) {
+                runs.push(<span key={i * 2}>{MARGIN}</span>);
+            }
+
+            const subruns: JSX.Element[] = [];
+            for (let j = 0; j < el.children.length; j++) {
+                const subel = el.children[j];
+                subruns.push(<RunComponent els={subel.children} key={j} ls={props.ls} />);
+            }
+
+            if (i === 0) {
+                runs.push(<FirstColumnSpan key={i * 2 + 1}>{subruns}</FirstColumnSpan>);
+            } else {
+                runs.push(<span key={i * 2 + 1}>{subruns}</span>);
+            }
+
+        } else if (el.tag === "Table") {
+            throw new NotImplementedError(el.tag);
+
         }
+        else { assertNever(el); }
+    }
 
-        for (let i = 0; i < els.length; i++) {
-            const el = els[i];
+    return (
+        <div style={{ marginLeft: `${indent}em`, ...style }}>
+            {runs}
+        </div>
+    );
+});
 
-            if (el.tag === "Sentence") {
-                runs.push(<RunComponent els={el.children} key={i * 2} ls={this.props.ls} />);
 
-            } else if (el.tag === "Column") {
-                if (i !== 0) {
-                    runs.push(<span key={i * 2}>{MARGIN}</span>);
-                }
+interface RunComponentProps { els: Array<string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub | std.__EL>, style?: React.CSSProperties }
 
-                const subruns: JSX.Element[] = [];
-                for (let j = 0; j < el.children.length; j++) {
-                    const subel = el.children[j];
-                    subruns.push(<RunComponent els={subel.children} key={j} ls={this.props.ls} />);
-                }
+const RunComponent = withCatcher<RunComponentProps>(props => {
+    const els = props.els;
+    const style = props.style;
 
-                if (i === 0) {
-                    runs.push(<FirstColumnSpan key={i * 2 + 1}>{subruns}</FirstColumnSpan>);
-                } else {
-                    runs.push(<span key={i * 2 + 1}>{subruns}</span>);
-                }
+    const runs: JSX.Element[] = [];
 
-            } else if (el.tag === "Table") {
+
+    for (let i = 0; i < els.length; i++) {
+        const _el = els[i];
+
+        if (typeof _el === "string" || _el instanceof String) {
+            runs.push(<span key={i}>{_el}</span>);
+
+        } else if (_el.isControl) {
+            runs.push(<ControlRunComponent el={_el} key={i} ls={props.ls} />);
+
+        } else {
+            const el: std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub = _el;
+            if (el.tag === "Ruby") {
+                const rb = el.children
+                    .map(c =>
+                        (typeof c === "string")
+                            ? c
+                            : !std.isRt(c)
+                                ? c.text
+                                : "",
+                    ).join("");
+                const rt = (el.children
+                    .filter(c => !(typeof c === "string") && std.isRt(c)) as std.Rt[])
+                    .map(c => c.text)
+                    .join("");
+                runs.push(<ruby key={i}>{rb}<rt>{rt}</rt></ruby>);
+
+            } else if (el.tag === "Sub") {
+                runs.push(<sub key={i}>{el.text}</sub>);
+
+            } else if (el.tag === "Sup") {
+                runs.push(<sup key={i}>{el.text}</sup>);
+
+            } else if (el.tag === "QuoteStruct") {
+                runs.push(<span key={i}>{el.outerXML()}</span>);
+
+            } else if (el.tag === "ArithFormula") {
+                runs.push(<ArithFormulaRunComponent el={el} key={i} ls={props.ls} />);
+
+            } else if (el.tag === "Line") {
                 throw new NotImplementedError(el.tag);
 
             }
             else { assertNever(el); }
         }
-
-        return (
-            <div style={{ marginLeft: `${indent}em`, ...style }}>
-                {runs}
-            </div>
-        );
     }
-}
 
-
-interface RunComponentProps { els: Array<string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub | std.__EL>, style?: React.CSSProperties }
-
-class RunComponent extends BaseLawComponent<RunComponentProps> {
-    protected renderNormal() {
-        const els = this.props.els;
-        const style = this.props.style;
-
-        const runs: JSX.Element[] = [];
-
-
-        for (let i = 0; i < els.length; i++) {
-            const _el = els[i];
-
-            if (typeof _el === "string" || _el instanceof String) {
-                runs.push(<span key={i}>{_el}</span>);
-
-            } else if (_el.isControl) {
-                runs.push(<ControlRunComponent el={_el} key={i} ls={this.props.ls} />);
-
-            } else {
-                const el: std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub = _el;
-                if (el.tag === "Ruby") {
-                    const rb = el.children
-                        .map(c =>
-                            (typeof c === "string")
-                                ? c
-                                : !std.isRt(c)
-                                    ? c.text
-                                    : "",
-                        ).join("");
-                    const rt = (el.children
-                        .filter(c => !(typeof c === "string") && std.isRt(c)) as std.Rt[])
-                        .map(c => c.text)
-                        .join("");
-                    runs.push(<ruby key={i}>{rb}<rt>{rt}</rt></ruby>);
-
-                } else if (el.tag === "Sub") {
-                    runs.push(<sub key={i}>{el.text}</sub>);
-
-                } else if (el.tag === "Sup") {
-                    runs.push(<sup key={i}>{el.text}</sup>);
-
-                } else if (el.tag === "QuoteStruct") {
-                    runs.push(<span key={i}>{el.outerXML()}</span>);
-
-                } else if (el.tag === "ArithFormula") {
-                    runs.push(<ArithFormulaRunComponent el={el} key={i} ls={this.props.ls} />);
-
-                } else if (el.tag === "Line") {
-                    throw new NotImplementedError(el.tag);
-
-                }
-                else { assertNever(el); }
-            }
-        }
-
-        return <span style={style}>{runs}</span>;
-    }
-}
+    return <span style={style}>{runs}</span>;
+});
 
 
 type InlineEL = string | std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub;
@@ -2310,42 +2241,40 @@ interface ControlRunComponentProps extends ELComponentProps { el: std.__EL }
 
 // const isControlRunComponentProps = (props: ELComponentProps): props is ControlRunComponentProps => props.el.isControl;
 
-class ControlRunComponent extends BaseLawComponent<ControlRunComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
+const ControlRunComponent = withCatcher<ControlRunComponentProps>(props => {
+    const el = props.el;
 
-        if (el.tag === "____Declaration") {
-            return <____DeclarationComponent el={el} ls={this.props.ls} />;
+    if (el.tag === "____Declaration") {
+        return <____DeclarationComponent el={el} ls={props.ls} />;
 
-        } else if (el.tag === "____VarRef") {
-            return <____VarRefComponent el={el} ls={this.props.ls} />;
+    } else if (el.tag === "____VarRef") {
+        return <____VarRefComponent el={el} ls={props.ls} />;
 
-        } else if (el.tag === "____LawNum") {
-            return <____LawNumComponent el={el} ls={this.props.ls} />;
+    } else if (el.tag === "____LawNum") {
+        return <____LawNumComponent el={el} ls={props.ls} />;
 
-        } else if (el.tag === "__Parentheses") {
-            return <__ParenthesesComponent el={el} ls={this.props.ls} />;
+    } else if (el.tag === "__Parentheses") {
+        return <__ParenthesesComponent el={el} ls={props.ls} />;
 
-        } else if (el.tag === "__PStart") {
-            return <__PStartComponent el={el} ls={this.props.ls} />;
+    } else if (el.tag === "__PStart") {
+        return <__PStartComponent el={el} ls={props.ls} />;
 
-        } else if (el.tag === "__PContent") {
-            return <__PContentComponent el={el} ls={this.props.ls} />;
+    } else if (el.tag === "__PContent") {
+        return <__PContentComponent el={el} ls={props.ls} />;
 
-        } else if (el.tag === "__PEnd") {
-            return <__PEndComponent el={el} ls={this.props.ls} />;
+    } else if (el.tag === "__PEnd") {
+        return <__PEndComponent el={el} ls={props.ls} />;
 
-        } else if (el.tag === "__MismatchStartParenthesis") {
-            return <__MismatchStartParenthesisComponent el={el} ls={this.props.ls} />;
+    } else if (el.tag === "__MismatchStartParenthesis") {
+        return <__MismatchStartParenthesisComponent el={el} ls={props.ls} />;
 
-        } else if (el.tag === "__MismatchEndParenthesis") {
-            return <__MismatchEndParenthesisComponent el={el} ls={this.props.ls} />;
+    } else if (el.tag === "__MismatchEndParenthesis") {
+        return <__MismatchEndParenthesisComponent el={el} ls={props.ls} />;
 
-        } else {
-            return getInnerRun(el, this.props.ls);
-        }
+    } else {
+        return getInnerRun(el, props.ls);
     }
-}
+});
 
 
 const DeclarationSpan = styled.span`
@@ -2354,18 +2283,16 @@ const DeclarationSpan = styled.span`
 
 interface ____DeclarationComponentProps extends ELComponentProps { el: std.__EL }
 
-class ____DeclarationComponent extends BaseLawComponent<____DeclarationComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        return (
-            <DeclarationSpan
-                data-lawtext_declaration_index={el.attr.declaration_index}
-            >
-                {getInnerRun(el, this.props.ls)}
-            </DeclarationSpan>
-        );
-    }
-}
+const ____DeclarationComponent = withCatcher<____DeclarationComponentProps>(props => {
+    const el = props.el;
+    return (
+        <DeclarationSpan
+            data-lawtext_declaration_index={el.attr.declaration_index}
+        >
+            {getInnerRun(el, props.ls)}
+        </DeclarationSpan>
+    );
+});
 
 
 const VarRefSpan = styled.span`
@@ -2412,226 +2339,216 @@ const VarRefWindowSpan = styled.span`
 
 interface ____VarRefComponentProps extends ELComponentProps { el: std.__EL }
 
-interface ____VarRefComponentState { state: VarRefFloatState, arrowLeft: string }
+interface ____VarRefComponentState { mode: VarRefFloatState, arrowLeft: string }
 
-class ____VarRefComponent extends BaseLawComponent<____VarRefComponentProps, ____VarRefComponentState> {
-    private refText = React.createRef<HTMLSpanElement>();
-    private refWindow = React.createRef<HTMLSpanElement>();
-    constructor(props: ____VarRefComponentProps & BaseLawCommonProps) {
-        super(props, { state: VarRefFloatState.HIDDEN, arrowLeft: "0" });
-        this.updateSize = this.updateSize.bind(this);
-        window.addEventListener("resize", this.updateSize);
-    }
+const ____VarRefComponent = withCatcher<____VarRefComponentProps>(props => {
+    const refText = React.useRef<HTMLSpanElement>(null);
+    const refWindow = React.useRef<HTMLSpanElement>(null);
 
-    public componentWillUnmount() {
-        window.removeEventListener("resize", this.updateSize);
-    }
+    const [state, setState] = React.useState<____VarRefComponentState>({ mode: VarRefFloatState.HIDDEN, arrowLeft: "0" });
 
-    public onClick(/* e: React.MouseEvent<HTMLSpanElement> */) {
-        if (this.state.state === VarRefFloatState.OPEN) {
-            this.setState({ state: VarRefFloatState.CLOSED });
+    React.useEffect(() => {
+        window.addEventListener("resize", updateSize);
+        return () => {
+            window.removeEventListener("resize", updateSize);
+        };
+    });
+
+    const varRefTextSpanOnClick = (/* e: React.MouseEvent<HTMLSpanElement> */) => {
+        if (state.mode === VarRefFloatState.OPEN) {
+            setState(prevState => ({ ...prevState, mode: VarRefFloatState.CLOSED }));
         } else {
-            this.setState({ state: VarRefFloatState.OPEN });
+            setState(prevState => ({ ...prevState, mode: VarRefFloatState.OPEN }));
             setTimeout(() => {
-                this.updateSize();
+                updateSize();
             }, 30);
         }
-    }
+    };
 
-    public onAnimationEnd() {
-        if (this.state.state === VarRefFloatState.CLOSED) {
-            this.setState({ state: VarRefFloatState.HIDDEN });
+    const onAnimationEnd = () => {
+        if (state.mode === VarRefFloatState.CLOSED) {
+            setState(prevState => ({ ...prevState, mode: VarRefFloatState.HIDDEN }));
         }
-    }
+    };
 
-    public updateSize() {
-        if (!this.refText.current || !this.refWindow.current) return;
+    const updateSize = () => {
+        if (!refText.current || !refWindow.current) return;
 
-        const textOffset = this.refText.current.getBoundingClientRect();
-        const windowOffset = this.refWindow.current.getBoundingClientRect();
+        const textOffset = refText.current.getBoundingClientRect();
+        const windowOffset = refWindow.current.getBoundingClientRect();
 
         const textLeft = textOffset ? textOffset.left : 0;
         const windowLeft = windowOffset ? windowOffset.left : 0;
         const relLeft = textLeft - windowLeft;
         const left = Math.max(relLeft, em(0.2));
-        this.setState({ arrowLeft: `${left}px` });
-    }
+        setState(prevState => ({ ...prevState, arrowLeft: `${left}px` }));
+    };
 
-    protected renderNormal() {
-        const el = this.props.el;
+    const animateHeightOnAnimationEnd = () => {
+        onAnimationEnd();
+    };
 
-        const varRefTextSpanOnClick = (/* e: React.MouseEvent<HTMLSpanElement> */) => {
-            this.onClick(/* e */);
-        };
+    return (
+        <VarRefSpan>
 
-        const animateHeightOnAnimationEnd = () => {
-            this.onAnimationEnd();
-        };
+            <VarRefTextSpan onClick={varRefTextSpanOnClick} ref={refText}>
+                {getInnerRun(props.el, props.ls)}
+            </VarRefTextSpan>
 
-        return (
-            <VarRefSpan>
+            <AnimateHeight
+                height={state.mode === VarRefFloatState.OPEN ? "auto" : 0}
+                style={{
+                    float: "right",
+                    width: "100%",
+                    padding: 0,
+                    margin: 0,
+                    textIndent: 0,
+                    fontSize: 0,
+                    fontWeight: "normal",
+                    overflow: "hidden",
+                    position: "relative",
+                    color: "initial",
+                }}
+                onAnimationEnd={animateHeightOnAnimationEnd}
+            >
+                {(state.mode !== VarRefFloatState.HIDDEN) && (
+                    <VarRefFloatBlockInnerSpan>
+                        <VarRefArrowSpan style={{ marginLeft: state.arrowLeft }} />
+                        <VarRefWindowSpan ref={refWindow}>
+                            <VarRefView el={props.el} ls={props.ls} />
+                        </VarRefWindowSpan>
+                    </VarRefFloatBlockInnerSpan>
+                )}
+            </AnimateHeight>
 
-                <VarRefTextSpan onClick={varRefTextSpanOnClick} ref={this.refText}>
-                    {getInnerRun(el, this.props.ls)}
-                </VarRefTextSpan>
-
-                <AnimateHeight
-                    height={this.state.state === VarRefFloatState.OPEN ? "auto" : 0}
-                    style={{
-                        float: "right",
-                        width: "100%",
-                        padding: 0,
-                        margin: 0,
-                        textIndent: 0,
-                        fontSize: 0,
-                        fontWeight: "normal",
-                        overflow: "hidden",
-                        position: "relative",
-                        color: "initial",
-                    }}
-                    onAnimationEnd={animateHeightOnAnimationEnd}
-                >
-                    {(this.state.state !== VarRefFloatState.HIDDEN) && (
-                        <VarRefFloatBlockInnerSpan>
-                            <VarRefArrowSpan style={{ marginLeft: this.state.arrowLeft }} />
-                            <VarRefWindowSpan ref={this.refWindow}>
-                                <VarRefView el={el} ls={this.props.ls} />
-                            </VarRefWindowSpan>
-                        </VarRefFloatBlockInnerSpan>
-                    )}
-                </AnimateHeight>
-
-            </VarRefSpan>
-        );
-    }
-}
+        </VarRefSpan>
+    );
+});
 
 
 interface VarRefViewProps extends ELComponentProps { el: std.__EL }
 
-class VarRefView extends BaseLawComponent<VarRefViewProps> {
-    protected renderNormal() {
-        const el = this.props.el;
+const VarRefView = withCatcher<VarRefViewProps>(props => {
+    const el = props.el;
 
-        const analysis = this.props.ls.analysis;
-        if (!analysis) return null;
+    const analysis = props.ls.analysis;
+    if (!analysis) return null;
 
-        const declarationIndex = Number(el.attr.ref_declaration_index);
-        const declaration = analysis.declarations.get(declarationIndex);
-        const declContainer = declaration.namePos.env.container;
-        const containerStack = declContainer.linealAscendant(c => {
-            if (std.isParagraph(c.el)) {
-                const paragraphNum = c.el.children.find(cc => std.isParagraphNum(cc));
-                if (!c.parent) return true;
-                if (
-                    std.isArticle(c.parent.el) &&
-                    c.parent.children.filter(pc => std.isParagraph(pc.el)).length === 1 &&
-                    paragraphNum && paragraphNum.text === ""
-                ) {
-                    return false;
-                } else {
-                    return true;
-                }
+    const declarationIndex = Number(el.attr.ref_declaration_index);
+    const declaration = analysis.declarations.get(declarationIndex);
+    const declContainer = declaration.namePos.env.container;
+    const containerStack = declContainer.linealAscendant(c => {
+        if (std.isParagraph(c.el)) {
+            const paragraphNum = c.el.children.find(cc => std.isParagraphNum(cc));
+            if (!c.parent) return true;
+            if (
+                std.isArticle(c.parent.el) &&
+                c.parent.children.filter(pc => std.isParagraph(pc.el)).length === 1 &&
+                paragraphNum && paragraphNum.text === ""
+            ) {
+                return false;
             } else {
                 return true;
             }
-        });
-        const names: string[] = [];
-        let lastContainerEl = declContainer.el;
-
-        const titleTags = [
-            "ArticleTitle",
-            "ParagraphNum",
-            "ItemTitle",
-            "Subitem1Title",
-            "Subitem2Title",
-            "Subitem3Title",
-            "Subitem4Title",
-            "Subitem5Title",
-            "Subitem6Title",
-            "Subitem7Title",
-            "Subitem8Title",
-            "Subitem9Title",
-            "Subitem10Title",
-            "TableStructTitle",
-        ];
-        const ignoreTags = ["ArticleCaption", "ParagraphCaption", ...titleTags];
-
-        for (const container of containerStack) {
-            if (std.isEnactStatement(container.el)) {
-                names.push("（制定文）");
-
-            } else if (std.isArticle(container.el)) {
-                const articleTitle = container.el.children
-                    .find(child => child.tag === "ArticleTitle") as std.ArticleTitle;
-                if (articleTitle) names.push(articleTitle.text);
-
-            } else if (std.isParagraph(container.el)) {
-                const paragraphNum = container.el.children
-                    .find(child => child.tag === "ParagraphNum") as std.ParagraphNum;
-                if (paragraphNum) names.push(paragraphNum.text || "１");
-
-            } else if (std.isItem(container.el) || std.isSubitem1(container.el) || std.isSubitem2(container.el) || std.isSubitem3(container.el) || std.isSubitem4(container.el) || std.isSubitem5(container.el) || std.isSubitem6(container.el) || std.isSubitem7(container.el) || std.isSubitem8(container.el) || std.isSubitem9(container.el) || std.isSubitem10(container.el)) {
-                const itemTitle = (container.el.children as EL[])
-                    .find(child => child.tag === `${container.el.tag}Title`);
-                if (itemTitle) names.push(itemTitle.text);
-
-            } else if (std.isTableStruct(container.el)) {
-                const tableStructTitleEl = container.el.children
-                    .find(child => child.tag === "TableStructTitle");
-                const tableStructTitle = tableStructTitleEl
-                    ? tableStructTitleEl.text
-                    : "表";
-                names.push(tableStructTitle + "（抜粋）");
-
-            } else {
-                continue;
-            }
-            lastContainerEl = container.el;
+        } else {
+            return true;
         }
+    });
+    const names: string[] = [];
+    let lastContainerEl = declContainer.el;
 
-        const declElTitleTag = titleTags
-            .find(s => Boolean(s) && s.startsWith(lastContainerEl.tag));
+    const titleTags = [
+        "ArticleTitle",
+        "ParagraphNum",
+        "ItemTitle",
+        "Subitem1Title",
+        "Subitem2Title",
+        "Subitem3Title",
+        "Subitem4Title",
+        "Subitem5Title",
+        "Subitem6Title",
+        "Subitem7Title",
+        "Subitem8Title",
+        "Subitem9Title",
+        "Subitem10Title",
+        "TableStructTitle",
+    ];
+    const ignoreTags = ["ArticleCaption", "ParagraphCaption", ...titleTags];
 
-        if (declElTitleTag) {
-            const declEl = new EL(
-                lastContainerEl.tag,
-                {},
-                [
-                    new EL(declElTitleTag, {}, [names.join("／")]),
-                    ...(lastContainerEl.children as EL[])
-                        .filter(child => ignoreTags.indexOf(child.tag) < 0),
-                ],
-            );
+    for (const container of containerStack) {
+        if (std.isEnactStatement(container.el)) {
+            names.push("（制定文）");
 
-            if (std.isArticle(declEl)) {
-                return <ArticleComponent el={declEl} indent={0} ls={this.props.ls} />;
+        } else if (std.isArticle(container.el)) {
+            const articleTitle = container.el.children
+                .find(child => child.tag === "ArticleTitle") as std.ArticleTitle;
+            if (articleTitle) names.push(articleTitle.text);
 
-            } else if (std.isParagraph(declEl) || std.isItem(declEl) || std.isSubitem1(declEl) || std.isSubitem2(declEl) || std.isSubitem3(declEl) || std.isSubitem4(declEl) || std.isSubitem5(declEl) || std.isSubitem6(declEl) || std.isSubitem7(declEl) || std.isSubitem8(declEl) || std.isSubitem9(declEl) || std.isSubitem10(declEl)) {
-                return <ParagraphItemComponent el={declEl} indent={0} ls={this.props.ls} />;
+        } else if (std.isParagraph(container.el)) {
+            const paragraphNum = container.el.children
+                .find(child => child.tag === "ParagraphNum") as std.ParagraphNum;
+            if (paragraphNum) names.push(paragraphNum.text || "１");
 
-            } else if (std.isTable(declEl)) {
-                return <TableComponent el={declEl} indent={0} ls={this.props.ls} />;
+        } else if (std.isItem(container.el) || std.isSubitem1(container.el) || std.isSubitem2(container.el) || std.isSubitem3(container.el) || std.isSubitem4(container.el) || std.isSubitem5(container.el) || std.isSubitem6(container.el) || std.isSubitem7(container.el) || std.isSubitem8(container.el) || std.isSubitem9(container.el) || std.isSubitem10(container.el)) {
+            const itemTitle = (container.el.children as EL[])
+                .find(child => child.tag === `${container.el.tag}Title`);
+            if (itemTitle) names.push(itemTitle.text);
 
-            } else {
-                throw new NotImplementedError(declEl.tag);
-
-            }
-        } else if (std.isEnactStatement(lastContainerEl)) {
-            return (
-                <div style={{ paddingLeft: "1em", textIndent: "-1em" }}>
-                    <span>{names.join("／")}</span>
-                    <span>{MARGIN}</span>
-                    <RunComponent els={lastContainerEl.children} ls={this.props.ls} />
-                </div>
-            );
+        } else if (std.isTableStruct(container.el)) {
+            const tableStructTitleEl = container.el.children
+                .find(child => child.tag === "TableStructTitle");
+            const tableStructTitle = tableStructTitleEl
+                ? tableStructTitleEl.text
+                : "表";
+            names.push(tableStructTitle + "（抜粋）");
 
         } else {
-            throw new NotImplementedError(lastContainerEl.tag);
+            continue;
+        }
+        lastContainerEl = container.el;
+    }
+
+    const declElTitleTag = titleTags
+        .find(s => Boolean(s) && s.startsWith(lastContainerEl.tag));
+
+    if (declElTitleTag) {
+        const declEl = new EL(
+            lastContainerEl.tag,
+            {},
+            [
+                new EL(declElTitleTag, {}, [names.join("／")]),
+                ...(lastContainerEl.children as EL[])
+                    .filter(child => ignoreTags.indexOf(child.tag) < 0),
+            ],
+        );
+
+        if (std.isArticle(declEl)) {
+            return <ArticleComponent el={declEl} indent={0} ls={props.ls} />;
+
+        } else if (std.isParagraph(declEl) || std.isItem(declEl) || std.isSubitem1(declEl) || std.isSubitem2(declEl) || std.isSubitem3(declEl) || std.isSubitem4(declEl) || std.isSubitem5(declEl) || std.isSubitem6(declEl) || std.isSubitem7(declEl) || std.isSubitem8(declEl) || std.isSubitem9(declEl) || std.isSubitem10(declEl)) {
+            return <ParagraphItemComponent el={declEl} indent={0} ls={props.ls} />;
+
+        } else if (std.isTable(declEl)) {
+            return <TableComponent el={declEl} indent={0} ls={props.ls} />;
+
+        } else {
+            throw new NotImplementedError(declEl.tag);
 
         }
+    } else if (std.isEnactStatement(lastContainerEl)) {
+        return (
+            <div style={{ paddingLeft: "1em", textIndent: "-1em" }}>
+                <span>{names.join("／")}</span>
+                <span>{MARGIN}</span>
+                <RunComponent els={lastContainerEl.children} ls={props.ls} />
+            </div>
+        );
+
+    } else {
+        throw new NotImplementedError(lastContainerEl.tag);
+
     }
-}
+});
 
 
 const LawNumA = styled.a`
@@ -2639,16 +2556,14 @@ const LawNumA = styled.a`
 
 interface ____LawNumComponentProps extends ELComponentProps { el: std.__EL }
 
-class ____LawNumComponent extends BaseLawComponent<____LawNumComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        return (
-            <LawNumA href={`#${el.text}`} target="_blank">
-                {getInnerRun(el, this.props.ls)}
-            </LawNumA>
-        );
-    }
-}
+const ____LawNumComponent = withCatcher<____LawNumComponentProps>(props => {
+    const el = props.el;
+    return (
+        <LawNumA href={`#${el.text}`} target="_blank">
+            {getInnerRun(el, props.ls)}
+        </LawNumA>
+    );
+});
 
 
 const GlobalStyle = createGlobalStyle`
@@ -2735,42 +2650,40 @@ const ParenthesesSpan = styled.span`
 
 interface __ParenthesesComponentProps extends ELComponentProps { el: std.__EL }
 
-class __ParenthesesComponent extends BaseLawComponent<__ParenthesesComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
+const __ParenthesesComponent = withCatcher<__ParenthesesComponentProps>(props => {
+    const el = props.el;
 
-        const blocks: JSX.Element[] = [];
+    const blocks: JSX.Element[] = [];
 
-        for (const child of el.children) {
+    for (const child of el.children) {
 
-            if (typeof child === "string" || child instanceof String) {
-                throw new NotImplementedError("string");
+        if (typeof child === "string" || child instanceof String) {
+            throw new NotImplementedError("string");
 
-            } else if (child.tag === "__PStart") {
-                blocks.push(<__PStartComponent el={child as std.__EL} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "__PStart") {
+            blocks.push(<__PStartComponent el={child as std.__EL} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "__PContent") {
-                blocks.push(<__PContentComponent el={child as std.__EL} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "__PContent") {
+            blocks.push(<__PContentComponent el={child as std.__EL} key={child.id} ls={props.ls} />);
 
-            } else if (child.tag === "__PEnd") {
-                blocks.push(<__PEndComponent el={child as std.__EL} key={child.id} ls={this.props.ls} />);
+        } else if (child.tag === "__PEnd") {
+            blocks.push(<__PEndComponent el={child as std.__EL} key={child.id} ls={props.ls} />);
 
-            } else {
-                throw new NotImplementedError(child.tag);
+        } else {
+            throw new NotImplementedError(child.tag);
 
-            }
         }
-        return (
-            <ParenthesesSpan
-                className="lawtext-analyzed-parentheses"
-                data-lawtext_parentheses_type={el.attr.type}
-                data-lawtext_parentheses_depth={el.attr.depth}
-            >
-                {blocks}
-            </ParenthesesSpan>
-        );
     }
-}
+    return (
+        <ParenthesesSpan
+            className="lawtext-analyzed-parentheses"
+            data-lawtext_parentheses_type={el.attr.type}
+            data-lawtext_parentheses_depth={el.attr.depth}
+        >
+            {blocks}
+        </ParenthesesSpan>
+    );
+});
 
 
 const PStartSpan = styled.span`
@@ -2778,19 +2691,17 @@ const PStartSpan = styled.span`
 
 interface __PStartComponentProps extends ELComponentProps { el: std.__EL }
 
-class __PStartComponent extends BaseLawComponent<__PStartComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        return (
-            <PStartSpan
-                className="lawtext-analyzed-start-parenthesis"
-                data-lawtext_parentheses_type={el.attr.type}
-            >
-                {getInnerRun(el, this.props.ls)}
-            </PStartSpan>
-        );
-    }
-}
+const __PStartComponent = withCatcher<__PStartComponentProps>(props => {
+    const el = props.el;
+    return (
+        <PStartSpan
+            className="lawtext-analyzed-start-parenthesis"
+            data-lawtext_parentheses_type={el.attr.type}
+        >
+            {getInnerRun(el, props.ls)}
+        </PStartSpan>
+    );
+});
 
 
 const PContentSpan = styled.span`
@@ -2798,19 +2709,17 @@ const PContentSpan = styled.span`
 
 interface __PContentComponentProps extends ELComponentProps { el: std.__EL }
 
-class __PContentComponent extends BaseLawComponent<__PContentComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        return (
-            <PContentSpan
-                className="lawtext-analyzed-parentheses-content"
-                data-lawtext_parentheses_type={el.attr.type}
-            >
-                {getInnerRun(el, this.props.ls)}
-            </PContentSpan>
-        );
-    }
-}
+const __PContentComponent = withCatcher<__PContentComponentProps>(props => {
+    const el = props.el;
+    return (
+        <PContentSpan
+            className="lawtext-analyzed-parentheses-content"
+            data-lawtext_parentheses_type={el.attr.type}
+        >
+            {getInnerRun(el, props.ls)}
+        </PContentSpan>
+    );
+});
 
 
 const PEndSpan = styled.span`
@@ -2818,19 +2727,17 @@ const PEndSpan = styled.span`
 
 interface __PEndComponentProps extends ELComponentProps { el: std.__EL }
 
-class __PEndComponent extends BaseLawComponent<__PEndComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        return (
-            <PEndSpan
-                className="lawtext-analyzed-end-parenthesis"
-                data-lawtext_parentheses_type={el.attr.type}
-            >
-                {getInnerRun(el, this.props.ls)}
-            </PEndSpan>
-        );
-    }
-}
+const __PEndComponent = withCatcher<__PEndComponentProps>(props => {
+    const el = props.el;
+    return (
+        <PEndSpan
+            className="lawtext-analyzed-end-parenthesis"
+            data-lawtext_parentheses_type={el.attr.type}
+        >
+            {getInnerRun(el, props.ls)}
+        </PEndSpan>
+    );
+});
 
 
 const MismatchStartParenthesisSpan = styled.span`
@@ -2839,17 +2746,14 @@ const MismatchStartParenthesisSpan = styled.span`
 
 interface __MismatchStartParenthesisComponentProps extends ELComponentProps { el: std.__EL }
 
-class __MismatchStartParenthesisComponent extends BaseLawComponent<__MismatchStartParenthesisComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        return (
-            <MismatchStartParenthesisSpan>
-                {getInnerRun(el, this.props.ls)}
-            </MismatchStartParenthesisSpan>
-        );
-    }
-}
-
+const __MismatchStartParenthesisComponent = withCatcher<__MismatchStartParenthesisComponentProps>(props => {
+    const el = props.el;
+    return (
+        <MismatchStartParenthesisSpan>
+            {getInnerRun(el, props.ls)}
+        </MismatchStartParenthesisSpan>
+    );
+});
 
 const MismatchEndParenthesisSpan = styled.span`
     color: red;
@@ -2857,13 +2761,11 @@ const MismatchEndParenthesisSpan = styled.span`
 
 interface __MismatchEndParenthesisComponentProps extends ELComponentProps { el: std.__EL }
 
-class __MismatchEndParenthesisComponent extends BaseLawComponent<__MismatchEndParenthesisComponentProps> {
-    protected renderNormal() {
-        const el = this.props.el;
-        return (
-            <MismatchEndParenthesisSpan>
-                {getInnerRun(el, this.props.ls)}
-            </MismatchEndParenthesisSpan>
-        );
-    }
-}
+const __MismatchEndParenthesisComponent = withCatcher<__MismatchEndParenthesisComponentProps>(props => {
+    const el = props.el;
+    return (
+        <MismatchEndParenthesisSpan>
+            {getInnerRun(el, props.ls)}
+        </MismatchEndParenthesisSpan>
+    );
+});
