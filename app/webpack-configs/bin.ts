@@ -1,4 +1,3 @@
-import CircularDependencyPlugin from "circular-dependency-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
@@ -34,10 +33,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
 
         optimization: {
-            minimizer: [
-                new CssMinimizerPlugin(),
-            // new TerserPlugin(),
-            ],
+            minimizer: [new CssMinimizerPlugin()],
         },
 
         module: {
@@ -80,15 +76,6 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 filename: "[name].css",
                 chunkFilename: "[id].css",
             }),
-            // new HtmlWebPackPlugin({
-            //     template: "./src/index.html",
-            //     filename: "index.html",
-            // }),
-            new CircularDependencyPlugin({
-                exclude: /node_modules/,
-                failOnError: true,
-                cwd: process.cwd(),
-            }) as webpack.WebpackPluginInstance,
         ],
 
         watchOptions: {
