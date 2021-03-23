@@ -4,7 +4,7 @@ import * as std from "@coresrc/std_law";
 import { assertNever, EL } from "@coresrc/util";
 import { LawtextAppPageStateStruct, OrigStateProps } from "./LawtextAppPageState";
 import { useHistory } from "react-router";
-import * as actions from "./actions";
+import * as actions from "@appsrc/actions";
 
 
 const SidebarH1 = styled.h1`

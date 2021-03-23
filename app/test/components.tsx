@@ -1,3 +1,4 @@
+import React from "react";
 import chai from "chai";
 import { it } from "mocha";
 import ReactDOMServer from "react-dom/server";
@@ -59,13 +60,13 @@ const renderAllLaws = async () => {
                 origSetState({ ...currentState, ...newState });
             };
 
-            const renderedElement = LawView({
-                origState: currentState,
-                setState,
-                origSetState,
-            }) as JSX.Element;
-
-            void ReactDOMServer.renderToStaticMarkup(renderedElement);
+            void ReactDOMServer.renderToStaticMarkup(
+                <LawView
+                    origState={currentState}
+                    setState={setState}
+                    origSetState={origSetState}
+                />,
+            );
 
             chai.assert(
                 !currentState.hasError,

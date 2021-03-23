@@ -6,7 +6,7 @@ import { assertNever, EL, NotImplementedError } from "@coresrc/util";
 import * as std from "@coresrc/std_law";
 import { LawtextAppPageStateStruct, OrigStateProps } from "./LawtextAppPageState";
 import * as analyzer from "@coresrc/analyzer";
-import * as actions from "./actions";
+import * as actions from "@appsrc/actions";
 
 
 const MARGIN = "　";
@@ -30,16 +30,9 @@ const LawViewDiv = styled.div`
 export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
     const { origState, origSetState } = props;
 
-    let onError: (error: Error) => void = () => { /**/ };
-    try {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        onError = useCallback((error: Error) => {
-            origSetState(prev => ({ ...prev, hasError: true, errors: [...prev.errors, error] }));
-        }, [origSetState]);
-    } catch (e) {
-        console.warn(e.message);
-        console.warn(e.stack);
-    }
+    const onError = useCallback((error: Error) => {
+        origSetState(prev => ({ ...prev, hasError: true, errors: [...prev.errors, error] }));
+    }, [origSetState]);
 
     return (
         <LawViewDiv>
@@ -307,9 +300,9 @@ const LawTitleComponent = withCatcher<LawTitleComponentProps>(props => {
                 {el.text}
             </LawTitleDiv>
             {LawNum &&
-                    <LawNumDiv>
-                        （{LawNum}）
-                    </LawNumDiv>
+                <LawNumDiv>
+                    （{LawNum}）
+                </LawNumDiv>
             }
         </div>
     );

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { LawView } from "./LawView";
-import * as actions from "./actions";
+import * as actions from "@appsrc/actions";
 import { useHistory } from "react-router";
 
 

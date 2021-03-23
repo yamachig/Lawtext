@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Sidebar } from "./Sidebar";
 import { useLawtextAppPageState } from "./LawtextAppPageState";
 import { Viewer } from "./Viewer";
-import { ErrorModalID, openFileInputChange, OpenFileInputName, displayLaw } from "./actions";
+import { ErrorModalID, openFileInputChange, OpenFileInputName, displayLaw } from "@appsrc/actions";
 import { RouteComponentProps, useParams } from "react-router";
 
 interface RouteParams {

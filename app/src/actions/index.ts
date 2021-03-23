@@ -1,10 +1,10 @@
 import $ from "jquery";
-import { LawtextAppPageState, SetLawtextAppPageState } from "./LawtextAppPageState";
+import { LawtextAppPageState, SetLawtextAppPageState } from "../components/LawtextAppPageState";
 import * as std from "@coresrc/std_law";
 import * as analyzer from "@coresrc/analyzer";
 import * as util from "@coresrc/util";
 import { parse } from "@coresrc/parser_wrapper";
-import * as lawdata from "../states/lawdata";
+import * as lawdata from "./lawdata";
 import * as renderer from "@coresrc/renderer";
 import render_lawtext from "@coresrc/renderers/lawtext";
 
@@ -421,7 +421,7 @@ export const scrollLaw =
         scrollToLawAnchor(id);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const sampleSampleXml: string = require("../states/405AC0000000088_20180401_429AC0000000004.xml").default;
+const sampleSampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml").default;
 
 export const downloadSampleLawtext = async (
     setState: SetLawtextAppPageState,

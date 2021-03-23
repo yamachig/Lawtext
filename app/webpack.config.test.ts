@@ -23,7 +23,7 @@ class WatchMessagePlugin {
 export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration => {
     const config: webpack.Configuration = {
         target: "node",
-        entry: ["./test/setup.ts", "./test/components.ts"],
+        entry: ["./test/setup.ts", "./test/components.tsx"],
         output: {
             filename: "bundle.js",
             path: path.resolve(__dirname, "dist-test"),
