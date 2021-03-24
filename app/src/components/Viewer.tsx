@@ -1,18 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { LawView } from "./LawView";
 import * as actions from "@appsrc/actions";
 import { useHistory } from "react-router";
+import { ResolvedType } from "@coresrc/util";
+import { ensureAllLawListCSV, ensureLawListJson, saveListJson } from "@appsrc/actions/lawdata";
 
 
 const ViewerLoadingDiv = styled.div`
-    position: fixed;
+    /* position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
-    left: 280px;
+    left: 280px; */
     z-index: 100;
+    min-height: 100vh;
+    padding: 3em 0;
 
     padding-top: 1rem;
     text-align: center;
@@ -30,12 +34,14 @@ const ViewerLoading: React.FC<{loadingLawMessage: string}> = props => {
 
 
 const ViewerWelcomeDiv = styled.div`
-    position: fixed;
+    /* position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
-    left: 280px;
+    left: 280px; */
     z-index: 100;
+    min-height: 100vh;
+    padding: 3em 0;
 
     display: flex;
     flex-direction: column;
@@ -57,11 +63,17 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
         history.push(`/${editingKey}`);
     };
 
+    const [fetchAbility, setFetchAbility] = React.useState<ResolvedType<ReturnType<typeof actions.ensureFetch>> | null>(null);
+
     useEffect(() => {
         const input = lawSearchKeyInputRef.current;
         if (input) {
             input.focus();
         }
+        (async () => {
+            const ffa = await actions.ensureFetch();
+            setFetchAbility(ffa);
+        })();
     }, []);
 
     const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,7 +90,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
             <div>
                 <div className="container-fluid">
                     <p style={{ fontSize: "3em", textAlign: "center" }}>
-                            Lawtextへようこそ！
+                        Lawtextへようこそ！
                     </p>
                 </div>
             </div>
@@ -97,7 +109,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                             />
                             <span className="input-group-btn">
                                 <button className="btn btn-secondary search-law-button" type="submit" >
-                                        検索
+                                    検索
                                 </button>
                             </span>
                         </div>
@@ -112,7 +124,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                             onClick={actions.openFile}
                             className="lawtext-open-file-button btn btn-primary"
                         >
-                                法令ファイルを開く
+                            法令ファイルを開く
                         </button>
                     </div>
                 </div>
@@ -121,7 +133,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
             <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "4em" }}>
                 <div className="container-fluid">
                     <p style={{ textAlign: "center" }}>
-                            法令ファイルがありませんか？
+                        法令ファイルがありませんか？
                     </p>
                     <ul>
                         <li><a href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
@@ -130,22 +142,219 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                 </div>
             </div>
 
-            {location.href.startsWith("file:") ? (
-                <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "4em" }}>
+            {location.protocol === "file:" && (
+                <>
+                    <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "2em" }}>
                         このページはファイルから直接表示されているため、法令名・番号検索機能など、一部の機能が動作しない場合があります。
-                    <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer" style={{ whiteSpace: "nowrap" }}>Web版Lawtext</a>
-                </div>
-            ) : (
+                    </div>
+                </>
+            )}
+
+            {location.hostname !== "yamachig.github.io" && (
                 <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "1em" }}>
                     <div className="container-fluid">
                         <hr />
                         <p style={{ textAlign: "center" }}>
-                            <a href="https://yamachig.github.io/lawtext-app/download.html" target="_blank" rel="noreferrer">ダウンロード版Lawtext</a>
+                            <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer">Web版Lawtext</a>
                         </p>
                     </div>
                 </div>
             )}
+
+            {fetchAbility?.canFetch && location.hostname !== "yamachig.github.io" && (
+                <div style={{ alignSelf: "center", maxWidth: "600px", marginTop: "1em" }}>
+                    <DataDirInfoToggle />
+                </div>
+            )}
         </ViewerWelcomeDiv>
+    );
+};
+
+const ListJsonDownloader: React.FC = () => {
+    const [state, replaceState] = React.useState({
+        processing: false,
+        progress: 0,
+        message: "",
+        blob: null as Blob | null,
+        blobURL: "" as string | null,
+    });
+
+    useEffect(() => {
+        replaceState(prev => ({
+            ...prev,
+            processing: true,
+            progress: 0,
+            message: "準備しています",
+            blob: null,
+        }));
+        (async () => {
+            const blob = await saveListJson((progress, message) => replaceState(prev => ({ ...prev, progress, message })));
+            replaceState(prev => ({
+                ...prev,
+                processing: false,
+                progress: 1,
+                message: "完了しました",
+                blob,
+                blobURL: URL.createObjectURL(blob),
+            }));
+        })();
+        return () => {
+            if (state.blobURL !== null) {
+                URL.revokeObjectURL(state.blobURL);
+            }
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return (<>
+        {state.processing ? (<>
+            <div className="progress">
+                <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow={state.progress} aria-valuemin={0} aria-valuemax={1} style={{ width: `${state.progress * 100}%` }}></div>
+            </div>
+            <div style={{ whiteSpace: "nowrap", overflowX: "hidden", textOverflow: "ellipsis" }}>{state.message}</div>
+        </>) : (<>
+            {state.blobURL !== null && (<>
+                <a download="list.json" href={state.blobURL} className="btn btn-sm btn-primary">list.json をダウンロード</a>
+            </>)}
+        </>)}
+    </>);
+};
+
+const DataDirInfoToggle: React.FC = () => {
+    const [state, replaceState] = React.useState({
+        open: false,
+        csvChecking: false,
+        csvCheckPressed: false,
+        csvExists: false,
+        jsonChecking: false,
+        jsonCheckPressed: false,
+        jsonExists: false,
+        downloadingJson: false,
+    });
+
+    const setState = useCallback((partialState: Partial<typeof state>) => {
+        return replaceState((prevState: typeof state) => ({ ...prevState, ...partialState }));
+    }, [replaceState]);
+
+    const checkCsv = useCallback(() => {
+        setState({ csvChecking: true });
+        (async () => {
+            const csvExists = await ensureAllLawListCSV();
+            setState({ csvExists, csvChecking: false });
+        })();
+    }, [setState]);
+
+    const checkCsvButtonClick = useCallback(() => {
+        checkCsv();
+        setState({ csvCheckPressed: true });
+    }, [checkCsv, setState]);
+
+    const saveListJsonButtonClick = useCallback(() => {
+        setState({ downloadingJson: true });
+    }, [setState]);
+
+    const checkJson = useCallback(() => {
+        setState({ jsonChecking: true });
+        (async () => {
+            const jsonExists = await ensureLawListJson();
+            setState({ jsonExists, jsonChecking: false });
+        })();
+    }, [setState]);
+
+    const checkJsonButtonClick = useCallback(() => {
+        checkJson();
+        setState({ jsonCheckPressed: true });
+    }, [checkJson, setState]);
+
+    useEffect(() => {
+        checkCsv();
+        checkJson();
+    }, [checkCsv, checkJson]);
+
+    return (
+        state.open ? (
+            <div className="card">
+                <div className="card-body">
+                    <h5 className="card-title">オフライン用データの保存方法</h5>
+                    <p className="card-text">
+                        下記の手順でオフライン用データを保存することで、e-Laws APIにアクセスできない環境でも法令を検索・表示できるようになります。
+                    </p>
+                    <ul>
+
+                        <li>Lawtextのフォルダ内、index.htmlと同じ階層に data という名前のフォルダを作成してください。</li>
+
+                        <li>
+                            <a href="https://elaws.e-gov.go.jp/download/" target="_blank" rel="noreferrer">e-Gov</a> から「全ての法令データ」（Zipファイル）をダウンロードし、Zipファイルの内容を data フォルダ内の lawdata フォルダとして展開してください。下記のようなフォルダ構成になります。
+                            <pre style={{ marginLeft: "1em" }}>{`
+data
+ └─ lawdata (Zipファイルを展開したもの)
+     ├─ 105DF0000000337_20150801_000000000000000
+     │   └─ 105DF0000000337_20150801_000000000000000.xml
+     ├─ ...
+     ├─ ... (同様のフォルダ)
+     ├─ ...
+     └─ all_law_list.csv
+`}</pre>
+                        </li>
+
+                        {state.csvExists ? (<>
+                            {state.downloadingJson ? (<>
+                                <li>
+                                    <ListJsonDownloader />
+                                </li>
+                            </>) : (<>
+                                <li>
+                                    {state.csvCheckPressed && <><span className="text-success">保存されたファイルを確認できました。</span>次に、</>}法令XMLの一覧を生成します。 <button className="btn btn-sm btn-outline-primary" onClick={saveListJsonButtonClick}>このボタン</button> を押して list.json をダウンロードしてください。少し時間がかかります。
+                                </li>
+                            </>)}
+                            <li>
+                                list.jsonがダウンロードされたら、data フォルダ内に保存してください。下記のようなフォルダ構成になります。
+                                <pre style={{ marginLeft: "1em" }}>{`
+data
+ ├─ lawdata
+ └─ list.json (ダウンロードしたもの)
+`}</pre>
+                            </li>
+                        </>) : state.csvChecking ? (<>
+                            <li>
+                                <span className="text-info">保存されたファイルを確認しています。</span>
+                            </li>
+                        </>) : state.csvCheckPressed ? (<>
+                            <li>
+                                <span className="text-danger">保存されたファイルが見つかりませんでした。</span>上記の手順を完了したにもかかわらず次の手順が表示されない場合は、保存場所に誤りがある可能性があるのでご確認ください。手順を完了したら、再度 <button className="btn btn-sm btn-outline-primary" onClick={checkCsvButtonClick}>このボタン</button> を押して次の手順を表示してください。
+                            </li>
+                        </>) : (<>
+                            <li>
+                                上記の手順を完了したら、 <button className="btn btn-sm btn-outline-primary" onClick={checkCsvButtonClick}>このボタン</button> を押して次の手順を表示してください。
+                            </li>
+                        </>)}
+
+                        {state.jsonExists ? (<>
+                            <li>
+                                {state.jsonCheckPressed && <><span className="text-success">保存された list.json を確認できました。</span></>}オフライン用データの保存が完了しました。
+                            </li>
+                        </>) : state.jsonChecking ? (<>
+                            <li>
+                                <span className="text-info">保存されたファイルを確認しています。</span>
+                            </li>
+                        </>) : state.jsonCheckPressed ? (<>
+                            <li>
+                                <span className="text-danger">保存された list.json が見つかりませんでした。</span>上記の手順を完了したにもかかわらず次の手順が表示されない場合は、保存場所に誤りがある可能性があるのでご確認ください。手順を完了したら、再度 <button className="btn btn-sm btn-outline-primary" onClick={checkJsonButtonClick}>このボタン</button> を押してください。
+                            </li>
+                        </>) : (<>
+                            <li>
+                                上記の手順を完了したら、 <button className="btn btn-sm btn-outline-primary" onClick={checkJsonButtonClick}>このボタン</button> を押してください。
+                            </li>
+                        </>)}
+
+                    </ul>
+                </div>
+            </div>
+        ) : (
+            <button className="btn btn-sm btn-outline-secondary" onClick={() => setState({ open: true })}>
+                オフライン用データの保存方法
+            </button>
+        )
     );
 };
 

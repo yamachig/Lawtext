@@ -23,7 +23,7 @@
         "serve": "npx webpack serve --env DEV_SERVER=1 --mode development --color --config ./webpack-configs/client.ts",
         "serve:prod": "npx webpack serve --env DEV_SERVER=1 --mode production --color --config ./webpack-configs/client.ts",
         "test": "npm run build:test && mocha --delay --timeout 60000 --reporter mochawesome ./dist-test/bundle.js & start ./mochawesome-report/mochawesome.html",
-        "watch": "npx webpack --mode development -w --color --info-verbosity verbose --config ./webpack-configs/client.ts"
+        "watch": "npx webpack --watch --mode development --color --config ./webpack-configs/client.ts"
     },
     "devDependencies": {
         "@types/chai": "^4.2.15",
@@ -70,6 +70,7 @@
     "dependencies": {
         "autoprefixer": "^10.2.5",
         "bootstrap": "^4.6.0",
+        "buffer": "^6.0.3",
         "chai": "^4.3.4",
         "cli-progress": "^3.9.0",
         "core-js": "^3.9.1",
@@ -80,6 +81,7 @@
         "hash.js": "^1.1.7",
         "html-loader": "^2.1.2",
         "html-webpack-plugin": "^5.3.1",
+        "iconv-lite": "^0.4.24",
         "jquery": "^3.6.0",
         "js-levenshtein": "^1.1.6",
         "jszip": "^3.6.0",

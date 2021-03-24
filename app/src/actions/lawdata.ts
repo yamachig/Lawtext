@@ -1,7 +1,8 @@
 import levenshtein from "js-levenshtein";
 import { fetchLawData } from "@coresrc/elaws_api";
 import { getLawList, LawInfo, BaseLawInfo, TextFetcher, getLawXml as core_getLawXml, getLawXmlByInfo, getLawCSVList, makeList } from "@coresrc/data/lawlist";
-import { saveAs } from "file-saver";
+import iconv from "iconv-lite";
+import { Buffer } from "buffer";
 
 let dataPath = "./data";
 export const setDataPath = (p: string): void => {
@@ -25,9 +26,24 @@ export const textFetcher: TextFetcher = async (textPath: string) => {
     }
 };
 
+export const sjisTextFetcher: TextFetcher = async (textPath: string) => {
+    try {
+        const res = await fetch(textPath);
+        if (!res.ok) {
+            console.log(res.statusText);
+            return null;
+        }
+        const buf = await res.arrayBuffer();
+        return iconv.decode(Buffer.from(buf), "Shift_JIS");
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+};
+
 export const saveListJson = async (
     onProgress: (ratio: number, message: string) => void = () => undefined,
-): Promise<void> => {
+): Promise<Blob | null> => {
 
     const progress = (() => {
         let currentRatio = 0;
@@ -39,12 +55,14 @@ export const saveListJson = async (
         };
     })();
 
+    progress(0, "Loading CSV...");
+
     console.log("\nListing up XMLs...");
-    const infos = await getLawCSVList(dataPath, textFetcher);
+    const infos = await getLawCSVList(dataPath, sjisTextFetcher);
 
     if (infos === null) {
         console.error("CSV list cannot be fetched.");
-        return;
+        return null;
     }
 
     console.log(`Processing ${infos.length} XMLs...`);
@@ -61,7 +79,14 @@ export const saveListJson = async (
     }
 
     const list = await makeList(lawIdXmls(infos), infos.length, progress);
-    saveAs(JSON.stringify(list), "list.json");
+    progress(undefined, "Generating json...");
+    const json = JSON.stringify(list);
+    progress(undefined, "Saving json...");
+    const blob = new Blob(
+        [json],
+        { type: "application/json" },
+    );
+    return blob;
 };
 
 const getLawXml = async (lawnum: string): Promise<string> => {
@@ -234,4 +259,22 @@ export const loadLaw = async (lawSearchKey: string): Promise<string> => {
     const lawnum = await getLawnum(lawSearchKey);
     const xml = await getLawXml(lawnum);
     return xml;
+};
+
+export const ensureAllLawListCSV = async (): Promise<boolean> => {
+    try {
+        const res = await fetch("./data/lawdata/all_law_list.csv", { method: "HEAD" });
+        return res.ok;
+    } catch (e) {
+        return false;
+    }
+};
+
+export const ensureLawListJson = async (): Promise<boolean> => {
+    try {
+        const res = await fetch("./data/list.json", { method: "HEAD" });
+        return res.ok;
+    } catch (e) {
+        return false;
+    }
 };

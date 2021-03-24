@@ -434,3 +434,13 @@ export const downloadSampleLawtext = async (
     }
     setState({ loadingLaw: false });
 };
+
+export const ensureFetch = async (): Promise<{isFile: boolean, canFetch: boolean}> => {
+    const isFile = location.protocol === "file:";
+    try {
+        const res = await fetch("./index.html", { method: "HEAD" });
+        return { isFile, canFetch: res.ok };
+    } catch (e) {
+        return { isFile, canFetch: false };
+    }
+};

@@ -28,6 +28,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             },
             fallback: {
                 "path": require.resolve("path-browserify"),
+                "buffer": require.resolve("buffer/"),
             },
         },
 
