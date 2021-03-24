@@ -5,6 +5,7 @@ import path from "path";
 import webpack from "webpack";
 import webpack_dev_server from "webpack-dev-server";
 import WatchMessagePlugin from "./WatchMessagePlugin";
+import CreateAppZipPlugin from "./CreateAppZipPlugin";
 
 const rootDir = path.dirname(__dirname);
 
@@ -89,6 +90,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 template: path.resolve(rootDir, "./src/index.html"),
                 filename: "index.html",
             }),
+            ...(env.DEV_SERVER ? [] : [new CreateAppZipPlugin()]),
         ],
 
         watchOptions: {

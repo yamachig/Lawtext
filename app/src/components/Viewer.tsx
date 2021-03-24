@@ -142,24 +142,18 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                 </div>
             </div>
 
-            {location.protocol === "file:" && (
-                <>
-                    <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "2em" }}>
-                        このページはファイルから直接表示されているため、法令名・番号検索機能など、一部の機能が動作しない場合があります。
-                    </div>
-                </>
-            )}
-
-            {location.hostname !== "yamachig.github.io" && (
-                <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "1em" }}>
-                    <div className="container-fluid">
-                        <hr />
-                        <p style={{ textAlign: "center" }}>
+            <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "1em" }}>
+                <div className="container-fluid">
+                    <hr />
+                    <p style={{ textAlign: "center" }}>
+                        {location.hostname === "yamachig.github.io" ? (<>
+                            <a href="https://yamachig.github.io/lawtext-app/#download/" target="_blank" rel="noreferrer">ダウンロード版Lawtext</a>
+                        </>) : (<>
                             <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer">Web版Lawtext</a>
-                        </p>
-                    </div>
+                        </>)}
+                    </p>
                 </div>
-            )}
+            </div>
 
             {fetchAbility?.canFetch && location.hostname !== "yamachig.github.io" && (
                 <div style={{ alignSelf: "center", maxWidth: "600px", marginTop: "1em" }}>
@@ -277,7 +271,7 @@ const DataDirInfoToggle: React.FC = () => {
                 <div className="card-body">
                     <h5 className="card-title">オフライン用データの保存方法</h5>
                     <p className="card-text">
-                        下記の手順でオフライン用データを保存することで、e-Laws APIにアクセスできない環境でも法令を検索・表示できるようになります。
+                        下記の手順でオフライン用データを保存することで、e-Gov 法令APIにアクセスできない環境でも法令を検索・表示できるようになります。
                     </p>
                     <ul>
 

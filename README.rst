@@ -44,7 +44,7 @@ Lawtextを用いると、既存のソースコード管理ツールをそのま�
 
 - `e-LAWS <http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html>`__\ （2016年10月リリース)。法令文書の、政府内部での管理に用いられる、正式なデータベース・出版システムです。e-LAWSにより、日本のすべての現行法令はデジタル形式で保存され、これが正式な文書として扱われるようになりました。
 - `法令標準XML <http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2>`__\ （2017年5月リリース）。法令を段落単位でマークアップする、標準化されたXML形式です。日本のあらゆる法令は、（既にあるHTML形式に加えて）法令標準XMLで公開されるようになりました。
-- `e-LAWS API <http://www.e-gov.go.jp/elaws/interface_api/index.html>`__\ （2017年6月リリース）。広く一般に利用可能な、法令標準XMLを提供するAPIです。
+- `e-Gov 法令 API <http://www.e-gov.go.jp/elaws/interface_api/index.html>`__\ （2017年6月リリース）。広く一般に利用可能な、法令標準XMLを提供するAPIです。
 
     法令標準XMLの例（抜粋）：
 
@@ -136,7 +136,7 @@ Lawtextの文書フォーマットに加えて、ユーティリティツール�
 
 Lawtext-appは次の特徴を備えます：
 
-- Lawtext-appはシングルページアプリケーション（single-page application、SPA）として実装されており、ブラウザ上で動作します。ローカルファイル（\ `ダウンロード <https://yamachig.github.io/lawtext-app/download.html>`__\ ）からも実行でき、また、（オンラインの機能が不要であれば）オフライン環境でも実行できます。したがって、機密性の高い場面にも適用することが可能です。
+- Lawtext-appはシングルページアプリケーション（single-page application、SPA）として実装されており、ブラウザ上で動作します。ローカルファイル（\ `ダウンロード <https://yamachig.github.io/lawtext-app/#download/>`__\ ）からも実行でき、また、（オンラインの機能が不要であれば）オフライン環境でも実行できます。したがって、機密性の高い場面にも適用することが可能です。
 - Lawtextや法令標準XML（ローカルファイルから、又はe-LAWS APIから）を、ナビゲーション機能付きのWebページとして表示します。
 - Lawtext-appは、追加的な構文解析器や簡単な意味解析器を搭載しており、対応する括弧や入れ子構造を表示したり、用語の定義箇所を表示することができます。
 - 表示している法令を、Lawtextや法令標準XMLだけでなく、Microsoft Word文書（.docx）として出力できます。
@@ -170,7 +170,7 @@ Besides, recently, some breakthroughs are made in the field of Japanese law mana
 
 - `e-LAWS <http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html>`__ (released in October 2016), authentic database and publishing system for laws, for use inside the government. By e-LAWS, all current law documents in Japan are formally stored as digital.
 - `Standard law XML <http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2>`__ (released in May 2017), standardized paragraph-level markup format for Japanese laws. Any Japanese law is now made public as standard law XML (in addition to HTML already available).
-- `e-LAWS API <http://www.e-gov.go.jp/elaws/interface_api/index.html>`__ (released in June 2017), open web API which provides standard law XML.
+- `e-Gov laws API <http://www.e-gov.go.jp/elaws/interface_api/index.html>`__ (released in June 2017), open web API which provides standard law XML.
 
     Example of Standard law XML (extracted):
 
@@ -262,7 +262,7 @@ Along with the Lawtext format, I also provide a utility tool "Lawtext-app" (\ `w
 
 Lawtext-app has these features:
 
-- Lawtext-app is a single-page application run on web browsers. In a confidential use-case, you can `download <https://yamachig.github.io/lawtext-app/download.html>`__ and run it offline.
+- Lawtext-app is a single-page application run on web browsers. In a confidential use-case, you can `download <https://yamachig.github.io/lawtext-app/#download/>`__ and run it offline.
 - It shows Lawtext, standard law XML (both from local file and e-LAWS API) as a web page with some navigating features.
 - Lawtext-app is accompanied by an additional syntax analyzer and an elemental semantic analyzer of law text. For example, it shows corresponding parentheses and nesting depth. It also indicates term definition positions.
 - It can emit Microsoft Word document (.docx) as well as Lawtext and standard law XML of displayed law.

@@ -38,6 +38,10 @@ export const LawtextAppPage: React.FC = () => {
     const { origState, setState } = stateStruct;
 
     React.useEffect(() => {
+        document.title = "Lawtext";
+    }, []);
+
+    React.useEffect(() => {
         displayLaw(origState, setState);
     }, [origState, setState]);
 
