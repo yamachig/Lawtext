@@ -167,8 +167,10 @@ export const makeList = async (
         currentLength++;
         progress(currentLength / totalCount, `${lawInfo.LawNum}：${lawInfo.LawTitle}`);
     }
+    progress(undefined, "Analyzing references...");
     lawInfos.setReferences();
     progress(1);
+    progress(undefined, "Generating list...");
 
     return lawInfos.getList();
 };
@@ -236,13 +238,67 @@ export const getLawCSVList = async (dataPath: string, textFetcher: TextFetcher):
     });
 };
 
+const parseCSV = (origText: string) => {
+    const text = origText.replace(/\r\n/g, "\n").replace(/\r/g, "\n").trimRight() + "\n";
+    const lines: string[][] = [];
+    let line: string[] = [];
+    let inQuote = false;
+    let startPos = 0;
+    let i = 0;
+    while (i < text.length) {
+        if (inQuote) {
+            if (text[i] === "\"") {
+                if (text[i + 1] === "," || text[i + 1] === "\n") {
+                    line.push(text.slice(startPos, i));
+                    i = i + 2;
+                    inQuote = false;
+                    startPos = i;
+                } else {
+                    console.error(`No comma after quote end (pos ${i + 1})`);
+                    console.error(text.slice(i - 20, i + 20));
+                    inQuote = false;
+                    i++;
+                }
+            } else {
+                i++;
+            }
+        } else {
+            if (text[i] === "\"") {
+                if (i === startPos) {
+                    inQuote = true;
+                    i++;
+                } else {
+                    console.error(`Irregular quote start (pos ${i + 1})`);
+                    console.error(text.slice(i - 20, i + 20));
+                    inQuote = true;
+                    i++;
+                }
+            } else if (text[i] === ",") {
+                line.push(text.slice(startPos, i));
+                i++;
+                startPos = i;
+            } else if (text[i] === "\n") {
+                line.push(text.slice(startPos, i));
+                lines.push(line);
+                line = [];
+                i++;
+                startPos = i;
+            } else {
+                i++;
+            }
+        }
+    }
+    return lines;
+};
+
 export const getCSVList = async (csvPath: string, textFetcher: TextFetcher): Promise<Record<string, string>[] | null> => {
     const text = await textFetcher(csvPath);
     if (text === null) return null;
-    const [headerStr, ...rowStrs] = text.split(/\r?\n/);
-    const header = headerStr.split(",");
-    const rows = rowStrs.map((rowStr, rowI) => {
-        const row = rowStr.split(",");
+    // const [headerStr, ...rowStrs] = text.split(/\r?\n/);
+    const [header, ...rows] = parseCSV(text);
+    // const header = headerStr.split(",");
+    const rowItems = rows.map((row, rowI) => {
+        // const row = rowStr.split(",");
         if (row.length !== header.length) {
             console.error(`Column mismatch: row ${rowI + 1}`);
         }
@@ -252,5 +308,5 @@ export const getCSVList = async (csvPath: string, textFetcher: TextFetcher): Pro
         }
         return ret;
     });
-    return rows;
+    return rowItems;
 };
