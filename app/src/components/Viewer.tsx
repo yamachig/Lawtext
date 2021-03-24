@@ -108,7 +108,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                                 value={editingKey}
                             />
                             <span className="input-group-btn">
-                                <button className="btn btn-secondary search-law-button" type="submit" >
+                                <button className="btn btn-primary search-law-button" type="submit" >
                                     検索
                                 </button>
                             </span>
@@ -117,39 +117,46 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                 </div>
             </div>
 
-            <div>
+            <div className="container-fluid" style={{ alignSelf: "center", maxWidth: "15em", margin: "1em" }}>
+                <hr />
+            </div>
+
+            <div style={{ alignSelf: "center", maxWidth: "500px" }}>
                 <div className="container-fluid">
                     <div style={{ textAlign: "center" }}>
+                        <p className="text-primary" style={{ marginBottom: "1em" }}>
+                            または
+                        </p>
                         <button
                             onClick={actions.openFile}
-                            className="lawtext-open-file-button btn btn-primary"
+                            className="lawtext-open-file-button btn btn-outline-primary"
                         >
                             法令ファイルを開く
                         </button>
                     </div>
+                    <div className="text-muted" style={{ marginTop: "1em" }}>
+                        <p style={{ textAlign: "center" }}>
+                            法令ファイルがありませんか？
+                        </p>
+                        <ul>
+                            <li><a href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
+                            <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>ファイルを作れます。<a href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "4em" }}>
-                <div className="container-fluid">
-                    <p style={{ textAlign: "center" }}>
-                        法令ファイルがありませんか？
-                    </p>
-                    <ul>
-                        <li><a href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
-                        <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>ファイルを作れます。<a href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
-                    </ul>
-                </div>
+            <div className="container-fluid" style={{ alignSelf: "center", maxWidth: "15em", margin: "1em" }}>
+                <hr />
             </div>
 
-            <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px", marginTop: "1em" }}>
+            <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px" }}>
                 <div className="container-fluid">
-                    <hr />
                     <p style={{ textAlign: "center" }}>
                         {location.hostname === "yamachig.github.io" ? (<>
-                            <a href="https://yamachig.github.io/lawtext-app/#download/" target="_blank" rel="noreferrer">ダウンロード版Lawtext</a>
+                            <a href="https://yamachig.github.io/lawtext-app/#download/" target="_blank" rel="noreferrer">ダウンロード版Lawtextはこちら</a>
                         </>) : (<>
-                            <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer">Web版Lawtext</a>
+                            <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer">Web版Lawtextはこちら</a>
                         </>)}
                     </p>
                 </div>
@@ -232,9 +239,10 @@ const DataDirInfoToggle: React.FC = () => {
 
     const checkCsv = useCallback(() => {
         setState({ csvChecking: true });
-        (async () => {
+        return (async () => {
             const csvExists = await ensureAllLawListCSV();
             setState({ csvExists, csvChecking: false });
+            return csvExists;
         })();
     }, [setState]);
 
@@ -244,8 +252,11 @@ const DataDirInfoToggle: React.FC = () => {
     }, [checkCsv, setState]);
 
     const saveListJsonButtonClick = useCallback(() => {
-        setState({ downloadingJson: true });
-    }, [setState]);
+        (async () => {
+            const csvExists = await checkCsv();
+            setState({ downloadingJson: csvExists, csvCheckPressed: true });
+        })();
+    }, [checkCsv, setState]);
 
     const checkJson = useCallback(() => {
         setState({ jsonChecking: true });
@@ -269,12 +280,20 @@ const DataDirInfoToggle: React.FC = () => {
         state.open ? (
             <div className="card">
                 <div className="card-body">
+
                     <h5 className="card-title">オフライン用データの保存方法</h5>
+
+                    {state.csvExists && state.jsonExists && !state.csvCheckPressed && !state.jsonCheckPressed && (<>
+                        <p className="alert alert-success">
+                            オフライン用データが既に保存されていることを確認しました。下記の手順を繰り返すことでデータを更新することができます。
+                        </p>
+                    </>)}
+
                     <p className="card-text">
                         下記の手順でオフライン用データを保存することで、e-Gov 法令APIにアクセスできない環境でも法令を検索・表示できるようになります。
                     </p>
-                    <ul>
 
+                    <ul>
                         <li>Lawtextのフォルダ内、index.htmlと同じ階層に data という名前のフォルダを作成してください。</li>
 
                         <li>
@@ -298,11 +317,11 @@ data
                                 </li>
                             </>) : (<>
                                 <li>
-                                    {state.csvCheckPressed && <><span className="text-success">保存されたファイルを確認できました。</span>次に、</>}法令XMLの一覧を生成します。 <button className="btn btn-sm btn-outline-primary" onClick={saveListJsonButtonClick}>このボタン</button> を押して list.json をダウンロードしてください。少し時間がかかります。
+                                    {state.csvCheckPressed && <><span className="text-success">保存されたファイルを確認できました。</span>次に、</>}法令XMLの一覧を生成します。 <button className={`btn btn-sm ${state.jsonExists ? "btn-outline-secondary" : "btn-primary"}`} onClick={saveListJsonButtonClick}>このボタン</button> を押して list.json をダウンロードしてください。少し時間がかかります。
                                 </li>
                             </>)}
                             <li>
-                                list.jsonがダウンロードされたら、data フォルダ内に保存してください。下記のようなフォルダ構成になります。
+                                list.jsonをダウンロードしたら、data フォルダ内に保存してください。下記のようなフォルダ構成になります。
                                 <pre style={{ marginLeft: "1em" }}>{`
 data
  ├─ lawdata
@@ -315,30 +334,33 @@ data
                             </li>
                         </>) : state.csvCheckPressed ? (<>
                             <li>
-                                <span className="text-danger">保存されたファイルが見つかりませんでした。</span>上記の手順を完了したにもかかわらず次の手順が表示されない場合は、保存場所に誤りがある可能性があるのでご確認ください。手順を完了したら、再度 <button className="btn btn-sm btn-outline-primary" onClick={checkCsvButtonClick}>このボタン</button> を押して次の手順を表示してください。
+                                <span className="text-danger">保存された法令データが見つかりませんでした。</span>上記の手順を完了したにもかかわらず次の手順が表示されない場合は、保存場所に誤りがある可能性があるのでご確認ください。手順を完了したら、再度 <button className="btn btn-sm btn-primary" onClick={checkCsvButtonClick}>このボタン</button> を押して次の手順を表示してください。
                             </li>
                         </>) : (<>
                             <li>
-                                上記の手順を完了したら、 <button className="btn btn-sm btn-outline-primary" onClick={checkCsvButtonClick}>このボタン</button> を押して次の手順を表示してください。
+                                上記の手順を完了したら、 <button className="btn btn-sm btn-primary" onClick={checkCsvButtonClick}>このボタン</button> を押して次の手順を表示してください。
                             </li>
                         </>)}
 
                         {state.jsonExists ? (<>
-                            <li>
-                                {state.jsonCheckPressed && <><span className="text-success">保存された list.json を確認できました。</span></>}オフライン用データの保存が完了しました。
-                            </li>
+                            {state.jsonCheckPressed ? (<>
+                                <li>
+                                    <span className="text-success">保存された list.json を確認できました。オフライン用データの保存が完了しました。</span>今後、上記の手順を繰り返すことでデータを更新することができます。
+                                </li>
+                            </>) : (<></>)}
                         </>) : state.jsonChecking ? (<>
                             <li>
                                 <span className="text-info">保存されたファイルを確認しています。</span>
                             </li>
                         </>) : state.jsonCheckPressed ? (<>
                             <li>
-                                <span className="text-danger">保存された list.json が見つかりませんでした。</span>上記の手順を完了したにもかかわらず次の手順が表示されない場合は、保存場所に誤りがある可能性があるのでご確認ください。手順を完了したら、再度 <button className="btn btn-sm btn-outline-primary" onClick={checkJsonButtonClick}>このボタン</button> を押してください。
+                                <span className="text-danger">保存された list.json が見つかりませんでした。</span>上記の手順を完了したにもかかわらず次の手順が表示されない場合は、保存場所に誤りがある可能性があるのでご確認ください。手順を完了したら、再度 <button className="btn btn-sm btn-primary" onClick={checkJsonButtonClick}>このボタン</button> を押してください。
+                            </li>
+                        </>) : state.csvExists ? (<>
+                            <li>
+                                上記の手順を完了したら、 <button className="btn btn-sm btn-primary" onClick={checkJsonButtonClick}>このボタン</button> を押してください。
                             </li>
                         </>) : (<>
-                            <li>
-                                上記の手順を完了したら、 <button className="btn btn-sm btn-outline-primary" onClick={checkJsonButtonClick}>このボタン</button> を押してください。
-                            </li>
                         </>)}
 
                     </ul>
