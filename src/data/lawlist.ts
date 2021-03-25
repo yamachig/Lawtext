@@ -202,7 +202,7 @@ export const ensureList = async (dataPath: string, textFetcher: TextFetcher): Pr
     }
 };
 
-export const getLawList = async (dataPath: string, textFetcher: TextFetcher): Promise<[LawInfo[], { [index: string]: LawInfo }]> => {
+export const getLawList = async (dataPath: string, textFetcher: TextFetcher): Promise<[lawList: LawInfo[], lawListByLawnum: { [index: string]: LawInfo }]> => {
     await ensureList(dataPath, textFetcher);
     return [lawList, lawListByLawnum];
 };
