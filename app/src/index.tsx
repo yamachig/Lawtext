@@ -8,7 +8,6 @@ import "./index.scss";
 import { LawtextAppPage } from "./components/LawtextAppPage";
 import { DownloadPage } from "./components/DownloadPage";
 
-
 ReactDOM.render(
     <HashRouter hashType="noslash">
         <Switch>
@@ -19,3 +18,8 @@ ReactDOM.render(
     ,
     document.getElementById("root"),
 );
+
+import lawtextGlobals from "./globals";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+window["lawtext"] = lawtextGlobals;
