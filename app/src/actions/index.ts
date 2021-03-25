@@ -7,6 +7,7 @@ import { parse } from "@coresrc/parser_wrapper";
 import * as lawdata from "./lawdata";
 import * as renderer from "@coresrc/renderer";
 import render_lawtext from "@coresrc/renderers/lawtext";
+import { saveAs } from "file-saver";
 
 const readFileAsText = (file: Blob): Promise<string> => {
     const reader = new FileReader();
