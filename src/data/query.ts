@@ -1,4 +1,8 @@
-import { LawInfo, getLawList, TextFetcher } from "./lawlist";
+import { EL, elementToJson } from "@coresrc/util";
+import { LawInfo, getLawList, TextFetcher, getLawXmlByInfo } from "./lawlist";
+// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;
+const domParser = new DOMParser();
 
 interface QueryCriteria<TItem> {
     match: (item: TItem) => boolean | Promise<boolean>;
@@ -54,7 +58,7 @@ export class Query<
         TRetCriteria extends QueryCriteria<TItem>
             = TQueryCriteriaOrFunc extends QueryCriteriaOrFunc<TItem, infer TNewCriteria>
                 ? TNewCriteria
-                : QueryCriteria<TItem>,
+                : never,
     >(criteriaOrFunc: TQueryCriteriaOrFunc): Query<TItem, TRetCriteria> {
         return new Query<TItem, TRetCriteria>(
             this[Symbol.asyncIterator](),
@@ -62,6 +66,20 @@ export class Query<
                 ? criteriaOrFunc
                 : { match: criteriaOrFunc }) as unknown as TRetCriteria,
         );
+    }
+
+    public pickKey<K extends keyof TItem>(key: K): Query<TItem[K]> {
+        return this.map(item => item[key]);
+    }
+
+    public pickKeys<K extends keyof TItem>(...keys: K[]): Query<Pick<TItem, K>> {
+        return this.map(item => {
+            const picked = {} as Pick<TItem, K>;
+            for (const key of keys) {
+                picked[key] = item[key];
+            }
+            return picked;
+        });
     }
 
     public async toArray(): Promise<TItem[]> {
@@ -102,6 +120,8 @@ const getDefaultLawCriteriaArgs = () => ({
     ReferencedLawNum: undefined as RegExp | undefined,
 });
 export type LawCriteriaArgs = ReturnType<typeof getDefaultLawCriteriaArgs>;
+
+type LawCriteriaOrFuncOrArgs<TQuery extends QueryCriteria<LawQueryItem>> = QueryCriteriaOrFunc<LawQueryItem, TQuery> | LawCriteriaArgs;
 export class LawCriteria implements QueryCriteria<LawQueryItem> {
 
     public args: LawCriteriaArgs;
@@ -170,15 +190,44 @@ export class LawQueryItem extends LawInfo {
         return item;
     }
 
+    protected xml: string | null = null;
+    public async getXML(dataPath: string, textFetcher: TextFetcher): Promise<string | null> {
+        if (this.xml === null) {
+            this.xml = await getLawXmlByInfo(dataPath, this, textFetcher);
+        }
+        return this.xml;
+    }
+
+    protected document: XMLDocument | null = null;
+    public async getDocument(dataPath: string, textFetcher: TextFetcher): Promise<XMLDocument | null> {
+        if (this.document === null) {
+            const xml = await this.getXML(dataPath, textFetcher);
+            if (xml === null) return null;
+            this.document = domParser.parseFromString(xml, "text/xml");
+        }
+        return this.document;
+    }
+
+    protected el: EL | null = null;
+    public async getEl(dataPath: string, textFetcher: TextFetcher): Promise<EL | null> {
+        if (this.el === null) {
+            const doc = await this.getDocument(dataPath, textFetcher);
+            if (doc === null) return null;
+            this.el = elementToJson(doc.documentElement);
+        }
+        return this.el;
+    }
+
     public toString(): string {
         return `${this.LawID} ${this.LawNum}「${this.LawTitle}」`;
     }
 }
 
-async function *getLawQueryPopulationWithProgress(lawList: LawInfo[]) {
+async function *getLawQueryPopulationWithProgress(lawListOrPromise: LawInfo[] | Promise<LawInfo[]> | (() => LawInfo[] | Promise<LawInfo[]>)) {
     const startTime = new Date();
     let lastMessageTime = startTime;
     let matchCount = 0;
+    const lawList = typeof lawListOrPromise === "function" ? await lawListOrPromise() : await lawListOrPromise;
     for (const item of lawList.map(LawQueryItem.fromLawInfo)) {
         matchCount++;
         yield item;
@@ -196,44 +245,54 @@ async function *getLawQueryPopulationWithProgress(lawList: LawInfo[]) {
     }
 }
 
-export class LawQuery
-    extends Query<LawQueryItem, LawCriteria> {
+export class LawQuery<TCriteria extends QueryCriteria<LawQueryItem> = QueryCriteria<LawQueryItem>>
+    extends Query<LawQueryItem, TCriteria> {
 
     public constructor (
         population: AsyncIterable<LawQueryItem>,
-        criteriaOrArgs: LawCriteria | LawCriteriaArgs,
+        criteriaOrFuncOrArgs: LawCriteriaOrFuncOrArgs<TCriteria>,
     ) {
+        const casted: LawCriteriaOrFuncOrArgs<QueryCriteria<LawQueryItem>> = criteriaOrFuncOrArgs;
+        let criteria: QueryCriteria<LawQueryItem>;
+        if ("match" in casted) {
+            criteria = casted;
+        } else if (typeof casted === "function") {
+            criteria = { "match": casted };
+        } else {
+            criteria = new LawCriteria(casted);
+        }
         super(
             population,
-            criteriaOrArgs instanceof LawCriteria
-                ? criteriaOrArgs
-                : new LawCriteria(criteriaOrArgs),
+            criteria as unknown as TCriteria,
         );
     }
 
-    public static fromFetchInfo(
+    public filter<
+        TLawCriteriaOrFuncOrArgs extends LawCriteriaOrFuncOrArgs<QueryCriteria<LawQueryItem>>,
+        TRetCriteria extends QueryCriteria<LawQueryItem>
+            = TLawCriteriaOrFuncOrArgs extends LawCriteriaArgs
+                ? LawCriteria
+                : TLawCriteriaOrFuncOrArgs extends QueryCriteriaOrFunc<LawQueryItem, infer TNewCriteria>
+                    ? TNewCriteria
+                    : QueryCriteria<LawQueryItem>,
+    >(criteriaOrFuncOrArgs: TLawCriteriaOrFuncOrArgs): LawQuery<TRetCriteria> {
+        return new LawQuery<TRetCriteria>(
+            this[Symbol.asyncIterator](),
+            criteriaOrFuncOrArgs as LawCriteriaOrFuncOrArgs<TRetCriteria>,
+        );
+    }
+
+    public static fromFetchInfo<TCriteria extends QueryCriteria<LawQueryItem>>(
         dataPath: string,
         textFetcher: TextFetcher,
+        criteriaOrFuncOrArgs: LawCriteriaOrFuncOrArgs<TCriteria>,
     ): LawQuery {
         return new LawQuery(
-            (async function *() {
+            getLawQueryPopulationWithProgress((async () => {
                 const [lawList] = await getLawList(dataPath, textFetcher);
-                yield* getLawQueryPopulationWithProgress(lawList);
-            })(),
-            new LawCriteria({}),
-        );
-    }
-
-    public static fromPromiseLawInfos(
-        pLawList: Promise<LawInfo[]>,
-        criteriaOrArgs: LawCriteria | LawCriteriaArgs,
-    ): LawQuery {
-        return new LawQuery(
-            (async function *() {
-                const lawList = await pLawList;
-                yield* getLawQueryPopulationWithProgress(lawList);
-            })(),
-            criteriaOrArgs,
+                return lawList;
+            })),
+            criteriaOrFuncOrArgs,
         );
     }
 }
