@@ -21,8 +21,9 @@ export default {
     getLawList: getLawListOnly,
     getLawListByLawnum: getLawListByLawnum,
     query: (criteriaOrArgs: LawCriteria | LawCriteriaArgs): LawQuery =>
-        LawQuery.fromPromiseLawInfos(
-            getLawListOnly(),
+        LawQuery.fromFetchInfo(
+            lawdata.getDataPath(),
+            lawdata.textFetcher,
             criteriaOrArgs,
         ),
 };
