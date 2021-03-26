@@ -1,4 +1,4 @@
-import { LawInfo } from "./lawlist";
+import { LawInfo, getLawList, TextFetcher } from "./lawlist";
 
 interface QueryCriteria<TItem> {
     match: (item: TItem) => boolean | Promise<boolean>;
@@ -169,8 +169,30 @@ export class LawQueryItem extends LawInfo {
         item.ReferencedLawNums = lawInfo.ReferencedLawNums;
         return item;
     }
+
     public toString(): string {
         return `${this.LawID} ${this.LawNum}「${this.LawTitle}」`;
+    }
+}
+
+async function *getLawQueryPopulationWithProgress(lawList: LawInfo[]) {
+    const startTime = new Date();
+    let lastMessageTime = startTime;
+    let matchCount = 0;
+    for (const item of lawList.map(LawQueryItem.fromLawInfo)) {
+        matchCount++;
+        yield item;
+        const now = new Date();
+        if (now.getTime() - lastMessageTime.getTime() > 1000) {
+            console.info(`   << source:\t⌛ running...\t(${matchCount}/${lawList.length}=${Math.floor(matchCount / lawList.length * 100)}%\tin ${now.getTime() - startTime.getTime()} msec)`);
+            lastMessageTime = now;
+        }
+    }
+
+    const now = new Date();
+    const msec = now.getTime() - startTime.getTime();
+    if (msec > 1000) {
+        console.info(`   << source:\t✓ completed.\t(${matchCount} total  \tin ${msec} msec)`);
     }
 }
 
@@ -189,30 +211,27 @@ export class LawQuery
         );
     }
 
+    public static fromFetchInfo(
+        dataPath: string,
+        textFetcher: TextFetcher,
+    ): LawQuery {
+        return new LawQuery(
+            (async function *() {
+                const [lawList] = await getLawList(dataPath, textFetcher);
+                yield* getLawQueryPopulationWithProgress(lawList);
+            })(),
+            new LawCriteria({}),
+        );
+    }
+
     public static fromPromiseLawInfos(
         pLawList: Promise<LawInfo[]>,
         criteriaOrArgs: LawCriteria | LawCriteriaArgs,
     ): LawQuery {
         return new LawQuery(
             (async function *() {
-                const startTime = new Date();
-                let lastMessageTime = startTime;
-                let matchCount = 0;
                 const lawList = await pLawList;
-                for (const item of lawList.map(LawQueryItem.fromLawInfo)) {
-                    matchCount++;
-                    yield item;
-                    const now = new Date();
-                    if (now.getTime() - lastMessageTime.getTime() > 1000) {
-                        console.info(`   << source:\t⌛ running...\t(${matchCount}/${lawList.length}=${Math.floor(matchCount / lawList.length * 100)}%\tin ${now.getTime() - startTime.getTime()} msec)`);
-                        lastMessageTime = now;
-                    }
-                }
-                const now = new Date();
-                const msec = now.getTime() - startTime.getTime();
-                if (msec > 1000) {
-                    console.info(`   << source:\t✓ completed.\t(${matchCount} total  \tin ${msec} msec)`);
-                }
+                yield* getLawQueryPopulationWithProgress(lawList);
             })(),
             criteriaOrArgs,
         );
