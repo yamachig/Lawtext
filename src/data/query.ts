@@ -127,6 +127,7 @@ const getDefaultLawCriteriaArgs = () => ({
     LawID: undefined as RegExp | undefined,
     LawNum: undefined as RegExp | undefined,
     LawTitle: undefined as RegExp | undefined,
+    Enforced: undefined as boolean | undefined,
     Path: undefined as RegExp | undefined,
     XmlName: undefined as RegExp | undefined,
     ReferencingLawNum: undefined as RegExp | undefined,
@@ -167,6 +168,7 @@ export class BaseLawCriteria implements BaseQueryCriteria<LawQueryItem> {
         if (this.args.LawID !== undefined && !this.args.LawID.exec(item.LawID)) return false;
         if (this.args.LawNum !== undefined && !this.args.LawNum.exec(item.LawNum)) return false;
         if (this.args.LawTitle !== undefined && !this.args.LawTitle.exec(item.LawTitle)) return false;
+        if (this.args.Enforced !== undefined && this.args.Enforced !== item.Enforced) return false;
         if (this.args.Path !== undefined && !this.args.Path.exec(item.Path)) return false;
         if (this.args.XmlName !== undefined && !this.args.XmlName.exec(item.XmlName)) return false;
         if (this.args.ReferencingLawNum !== undefined) {
@@ -201,6 +203,7 @@ export class LawQueryItem extends LawInfo {
             lawInfo.LawID,
             lawInfo.LawNum,
             lawInfo.LawTitle,
+            lawInfo.Enforced,
             lawInfo.Path,
             lawInfo.XmlName,
         );
@@ -229,7 +232,7 @@ export class LawQueryItem extends LawInfo {
     }
 
     public toString(): string {
-        return `${this.LawID} ${this.LawNum}「${this.LawTitle}」`;
+        return `${this.LawID} ${this.Enforced ? "" : "【未施行】"}${this.LawNum}「${this.LawTitle}」`;
     }
 }
 

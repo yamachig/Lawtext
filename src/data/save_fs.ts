@@ -6,7 +6,7 @@ import fs from "fs";
 import fetch from "node-fetch";
 import fsExtra from "fs-extra";
 import { promisify } from "util";
-import { makeList } from "@coresrc/data/lawlist";
+import { BaseLawInfo, getLawCSVList, getLawXmlByInfo, makeList, TextFetcher } from "@coresrc/data/lawlist";
 
 export const download = async (
     lawdataPath: string,
@@ -69,8 +69,11 @@ export const download = async (
 };
 
 export const saveList = async (
-    lawdataDir: string, listJsonPath: string,
+    lawdataPath: string,
+    listJsonPath: string,
     onProgress: (ratio: number, message: string) => void = () => undefined,
+    textFetcher: TextFetcher,
+    sjisTextFetcher: TextFetcher,
 ): Promise<void> => {
 
     const progress = (() => {
@@ -83,25 +86,29 @@ export const saveList = async (
         };
     })();
 
+    progress(0, "Loading CSV...");
+
     console.log("\nListing up XMLs...");
-    const dirs = (await promisify(fs.readdir)(lawdataDir, { withFileTypes: true })).filter(p => p.isDirectory()).map(p => path.join(lawdataDir, p.name));
-    const files: string[] = [];
-    for (const dir of dirs) {
-        files.push(...(await promisify(fs.readdir)(dir, { withFileTypes: true })).filter(p => p.isFile() && /\.xml$/.exec(p.name)).map(p => path.join(dir, p.name)));
+    const infos = await getLawCSVList(getDataPath(), sjisTextFetcher);
+
+    if (infos === null) {
+        console.error("CSV list cannot be fetched.");
+        return;
     }
 
-    console.log(`Processing ${files.length} XMLs...`);
+    console.log(`Processing ${infos.length} XMLs...`);
 
-    async function* lawIdXmls(files: string[]) {
-        for (const file of files) {
-            const lawID = /^[A-Za-z0-9]+/.exec(path.basename(file))?.[0] ?? "";
-            const xml = await promisify(fs.readFile)(file, { encoding: "utf-8" });
-            const Path = path.basename(path.dirname(file));
-            const XmlName = path.basename(file);
-            yield { lawID, xml, Path, XmlName };
+    async function* lawIdXmls(list: BaseLawInfo[]) {
+        for (const info of list) {
+            const xml = await getLawXmlByInfo(lawdataPath, info, textFetcher);
+            if (xml === null) {
+                console.error("XML cannot fetched", info);
+                continue;
+            }
+            yield { lawID: info.LawID, xml, Path: info.Path, XmlName: info.XmlName, Enforced: info.Enforced };
         }
     }
 
-    const list = await makeList(lawIdXmls(files), files.length, progress);
+    const list = await makeList(lawIdXmls(infos), infos.length, progress);
     await promisify(fs.writeFile)(listJsonPath, JSON.stringify(list), { encoding: "utf-8" });
 };

@@ -11,6 +11,7 @@ export type LawInfoListItem = [
     LawID: string,
     LawNum: string,
     LawTitle: string,
+    Enforced: boolean,
     Path: string,
     XmlName: string,
     ReferencingLawNums: string[],
@@ -21,6 +22,7 @@ export interface BaseLawInfo {
     LawID: string,
     LawNum: string,
     LawTitle: string,
+    Enforced: boolean,
     Path: string,
     XmlName: string,
 }
@@ -31,6 +33,7 @@ export class LawInfo implements BaseLawInfo {
         public LawID: string,
         public LawNum: string,
         public LawTitle: string,
+        public Enforced: boolean,
         public Path: string,
         public XmlName: string,
     ) {}
@@ -40,6 +43,7 @@ export class LawInfo implements BaseLawInfo {
             this.LawID,
             this.LawNum,
             this.LawTitle,
+            this.Enforced,
             this.Path,
             this.XmlName,
             Array.from(this.ReferencingLawNums),
@@ -52,6 +56,7 @@ export class LawInfo implements BaseLawInfo {
             LawID,
             LawNum,
             LawTitle,
+            Enforced,
             Path,
             XmlName,
         } = baseLawInfo;
@@ -60,6 +65,7 @@ export class LawInfo implements BaseLawInfo {
             LawID,
             LawNum,
             LawTitle,
+            Enforced,
             Path,
             XmlName,
         );
@@ -67,11 +73,26 @@ export class LawInfo implements BaseLawInfo {
         return lawInfo;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    public static getHeader() {
+        return [
+            "LawID",
+            "LawNum",
+            "LawTitle",
+            "Enforced",
+            "Path",
+            "XmlName",
+            "ReferencingLawNums",
+            "ReferencedLawNums",
+        ] as const;
+    }
+
     public static fromTuple(tuple: LawInfoListItem): LawInfo {
         const [
             LawID,
             LawNum,
             LawTitle,
+            Enforced,
             Path,
             XmlName,
             ReferencingLawNums,
@@ -82,6 +103,7 @@ export class LawInfo implements BaseLawInfo {
             LawID,
             LawNum,
             LawTitle,
+            Enforced,
             Path,
             XmlName,
         );
@@ -91,12 +113,13 @@ export class LawInfo implements BaseLawInfo {
         return lawInfo;
     }
 
-    public static fromLawData(lawData: LawData, Path: string, XmlName: string): LawInfo {
+    public static fromLawData(lawData: LawData, Path: string, XmlName: string, Enforced: boolean): LawInfo {
 
         const lawInfo = new LawInfo(
             lawData.lawID,
             (lawData.law.getElementsByTagName("LawNum").item(0)?.textContent || "").trim(),
             (lawData.law.getElementsByTagName("LawBody").item(0)?.getElementsByTagName("LawTitle").item(0)?.textContent || "").trim(),
+            Enforced,
             Path,
             XmlName,
         );
@@ -108,28 +131,36 @@ export class LawInfo implements BaseLawInfo {
         return lawInfo;
     }
 
-    public static fromXml(lawID: string, xml: string, Path: string, XmlName: string): LawInfo {
+    public static fromXml(lawID: string, xml: string, Path: string, XmlName: string, Enforced: boolean): LawInfo {
         const law = domParser.parseFromString(xml, "text/xml").getElementsByTagName("Law")[0];
         const lawData = new LawData(lawID, law, null, xml);
-        return LawInfo.fromLawData(lawData, Path, XmlName);
+        return LawInfo.fromLawData(lawData, Path, XmlName, Enforced);
     }
+}
+
+export interface LawList {
+    header: ReturnType<typeof LawInfo["getHeader"]>,
+    body: LawInfoListItem[],
 }
 
 export class LawInfos {
     protected lawInfos: LawInfo[] = [];
-    protected lawInfoMap: Map<string, LawInfo> = new Map<string, LawInfo>();
+    protected lawInfoMap: Map<string, LawInfo[]> = new Map<string, LawInfo[]>();
 
     public add(lawInfo: LawInfo): void {
         this.lawInfos.push(lawInfo);
-        this.lawInfoMap.set(lawInfo.LawNum, lawInfo);
+        if (!this.lawInfoMap.has(lawInfo.LawNum)) this.lawInfoMap.set(lawInfo.LawNum, []);
+        this.lawInfoMap.get(lawInfo.LawNum)?.push(lawInfo);
     }
 
     public setReferences(): void {
         for (const referencingLawInfo of this.lawInfos) {
             for (const lawnum of Array.from(referencingLawInfo.ReferencingLawNums)) {
-                const referencedLawInfo = this.lawInfoMap.get(lawnum);
-                if (referencedLawInfo) {
-                    referencedLawInfo.ReferencedLawNums.add(referencingLawInfo.LawNum);
+                const referencedLawInfos = this.lawInfoMap.get(lawnum);
+                if (referencedLawInfos) {
+                    for (const referencedLawInfo of referencedLawInfos) {
+                        referencedLawInfo.ReferencedLawNums.add(referencingLawInfo.LawNum);
+                    }
                 } else {
                     referencingLawInfo.ReferencingLawNums.delete(lawnum);
                 }
@@ -137,16 +168,19 @@ export class LawInfos {
         }
     }
 
-    public getList(): LawInfoListItem[] {
-        return this.lawInfos.map(lawinfo => lawinfo.toTuple());
+    public getList(): LawList {
+        return {
+            header: LawInfo.getHeader(),
+            body: this.lawInfos.map(lawinfo => lawinfo.toTuple()),
+        };
     }
 }
 
 export const makeList = async (
-    lawIdXmls: AsyncIterable<{lawID: string, xml: string, Path: string, XmlName: string}>,
+    lawIdXmls: AsyncIterable<{lawID: string, xml: string, Path: string, XmlName: string, Enforced: boolean}>,
     totalCount: number,
     onProgress: (ratio: number, message: string) => void = () => undefined,
-): Promise<LawInfoListItem[]> => {
+): Promise<LawList> => {
 
     const progress = (() => {
         let currentRatio = 0;
@@ -161,8 +195,8 @@ export const makeList = async (
     let currentLength = 0;
     progress(0, "");
     const lawInfos = new LawInfos();
-    for await (const { lawID, xml, Path, XmlName } of lawIdXmls) {
-        const lawInfo = LawInfo.fromXml(lawID, xml, Path, XmlName);
+    for await (const { lawID, xml, Path, XmlName, Enforced } of lawIdXmls) {
+        const lawInfo = LawInfo.fromXml(lawID, xml, Path, XmlName, Enforced);
         lawInfos.add(lawInfo);
         currentLength++;
         progress(currentLength / totalCount, `${lawInfo.LawNum}：${lawInfo.LawTitle}`);
@@ -175,7 +209,7 @@ export const makeList = async (
     return lawInfos.getList();
 };
 
-const lawListByLawnum: { [index: string]: LawInfo } = {};
+const lawListByLawnum: { [index: string]: LawInfo[] } = {};
 const lawList: LawInfo[] = [];
 let lawListReady = false;
 
@@ -188,11 +222,15 @@ export const ensureList = async (dataPath: string, textFetcher: TextFetcher): Pr
         const text = await textFetcher(listJsonPath);
         if (text === null) return;
         try {
-            const json = JSON.parse(text);
-            for (const item of json) {
+            const json = JSON.parse(text) as LawList;
+            for (const [i, h] of LawInfo.getHeader().entries()) {
+                if (json.header[i] !== h) throw new Error("List header mismatch");
+            }
+            for (const item of json.body) {
                 const lawInfo = LawInfo.fromTuple(item);
                 lawList.push(lawInfo);
-                lawListByLawnum[lawInfo.LawNum] = lawInfo;
+                if (!(lawInfo.LawNum in lawListByLawnum)) lawListByLawnum[lawInfo.LawNum] = [];
+                lawListByLawnum[lawInfo.LawNum].push(lawInfo);
             }
             console.log(`### loaded ${lawList.length} laws`);
             lawListReady = true;
@@ -202,7 +240,7 @@ export const ensureList = async (dataPath: string, textFetcher: TextFetcher): Pr
     }
 };
 
-export const getLawList = async (dataPath: string, textFetcher: TextFetcher): Promise<[lawList: LawInfo[], lawListByLawnum: { [index: string]: LawInfo }]> => {
+export const getLawList = async (dataPath: string, textFetcher: TextFetcher): Promise<[lawList: LawInfo[], lawListByLawnum: { [index: string]: LawInfo[] }]> => {
     await ensureList(dataPath, textFetcher);
     return [lawList, lawListByLawnum];
 };
@@ -217,8 +255,14 @@ export const getLawXmlByInfo = async (dataPath: string, lawInfo: BaseLawInfo, te
 export const getLawXml = async (dataPath: string, lawNum: string, textFetcher: TextFetcher): Promise<string | null> => {
     const [/**/, listByLawnum] = await getLawList(dataPath, textFetcher);
     if (!(lawNum in listByLawnum)) return null;
-    const lawInfo = listByLawnum[lawNum];
-    return getLawXmlByInfo(dataPath, lawInfo, textFetcher);
+    const lawInfos = listByLawnum[lawNum];
+    if (lawInfos.length > 1) console.warn(`getLawXml: ${lawInfos.length} items match for lawNum "${lawNum}".`);
+    for (const lawInfo of lawInfos) {
+        if (lawInfo.Enforced) {
+            return getLawXmlByInfo(dataPath, lawInfo, textFetcher);
+        }
+    }
+    return getLawXmlByInfo(dataPath, lawInfos[0], textFetcher);
 };
 
 export const getLawCSVList = async (dataPath: string, textFetcher: TextFetcher): Promise<BaseLawInfo[] | null> => {
@@ -231,6 +275,7 @@ export const getLawCSVList = async (dataPath: string, textFetcher: TextFetcher):
             LawID: row["法令ID"],
             LawNum: row["法令番号"],
             LawTitle: row["法令名"],
+            Enforced: row["未施行"] === "",
             Path: longID,
             XmlName: `${longID}.xml`,
         };
