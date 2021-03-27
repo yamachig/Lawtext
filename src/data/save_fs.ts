@@ -6,12 +6,15 @@ import fs from "fs";
 import fetch from "node-fetch";
 import fsExtra from "fs-extra";
 import { promisify } from "util";
-import { BaseLawInfo, getLawCSVList, getLawXmlByInfo, makeList, TextFetcher } from "@coresrc/data/lawlist";
+import { getLawCSVList, LawInfo, makeList, TextFetcher } from "@coresrc/data/lawlist";
+import { getLawdataPath } from "./paths";
 
 export const download = async (
-    lawdataPath: string,
+    dataPath: string,
     onProgress: (ratio: number, message: string) => void = () => undefined,
 ): Promise<void> => {
+
+    const lawdataPath = getLawdataPath(dataPath);
 
     const progress = (() => {
         let currentRatio = 0;
@@ -69,7 +72,7 @@ export const download = async (
 };
 
 export const saveList = async (
-    lawdataPath: string,
+    dataPath: string,
     listJsonPath: string,
     onProgress: (ratio: number, message: string) => void = () => undefined,
     textFetcher: TextFetcher,
@@ -89,7 +92,7 @@ export const saveList = async (
     progress(0, "Loading CSV...");
 
     console.log("\nListing up XMLs...");
-    const infos = await getLawCSVList(getDataPath(), sjisTextFetcher);
+    const infos = await getLawCSVList(dataPath, sjisTextFetcher);
 
     if (infos === null) {
         console.error("CSV list cannot be fetched.");
@@ -98,17 +101,12 @@ export const saveList = async (
 
     console.log(`Processing ${infos.length} XMLs...`);
 
-    async function* lawIdXmls(list: BaseLawInfo[]) {
-        for (const info of list) {
-            const xml = await getLawXmlByInfo(lawdataPath, info, textFetcher);
-            if (xml === null) {
-                console.error("XML cannot fetched", info);
-                continue;
-            }
-            yield { lawID: info.LawID, xml, Path: info.Path, XmlName: info.XmlName, Enforced: info.Enforced };
-        }
-    }
-
-    const list = await makeList(lawIdXmls(infos), infos.length, progress);
+    const list = await makeList(
+        infos.map(LawInfo.fromBaseLawInfo),
+        dataPath,
+        textFetcher,
+        infos.length,
+        progress,
+    );
     await promisify(fs.writeFile)(listJsonPath, JSON.stringify(list), { encoding: "utf-8" });
 };

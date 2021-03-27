@@ -14,20 +14,10 @@ import { analyze, parse } from "@coresrc/parser_wrapper";
 import { render as renderLawtext } from "@coresrc/renderers/lawtext";
 import { TERMC, toTableText } from "@coresrc/term_util";
 import * as util from "@coresrc/util";
-import { prepare, getDataPath } from "./prepare_test";
-import { ensureList, getLawXml, TextFetcher } from "@coresrc/data/lawlist";
+import { prepare, getDataPath, textFetcher } from "./prepare_test";
+import { ensureList, getLawXml } from "@coresrc/data/lawlist";
 
 const domParser = new xmldom.DOMParser();
-
-const textFetcher: TextFetcher = async (textPath: string) => {
-    try {
-        const text = await promisify(fs.readFile)(textPath, { encoding: "utf-8" });
-        return text;
-    } catch (e) {
-        console.log(e);
-        return null;
-    }
-};
 
 before(async () => {
     await prepare();

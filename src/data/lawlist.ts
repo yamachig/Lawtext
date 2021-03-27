@@ -113,7 +113,14 @@ export class LawInfo implements BaseLawInfo {
         return lawInfo;
     }
 
-    public static fromLawData(lawData: LawData, Path: string, XmlName: string, Enforced: boolean): LawInfo {
+    public addReferencingLawNums(xml: string): void {
+        // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
+        for (const m of xml.match(new RegExp(reLawnum, "g")) || []) {
+            if (m !== this.LawNum) this.ReferencingLawNums.add(m);
+        }
+    }
+
+    public static _fromLawData(lawData: LawData, Path: string, XmlName: string, Enforced: boolean): LawInfo {
 
         const lawInfo = new LawInfo(
             lawData.lawID,
@@ -131,10 +138,10 @@ export class LawInfo implements BaseLawInfo {
         return lawInfo;
     }
 
-    public static fromXml(lawID: string, xml: string, Path: string, XmlName: string, Enforced: boolean): LawInfo {
+    public static _fromXml(lawID: string, xml: string, Path: string, XmlName: string, Enforced: boolean): LawInfo {
         const law = domParser.parseFromString(xml, "text/xml").getElementsByTagName("Law")[0];
         const lawData = new LawData(lawID, law, null, xml);
-        return LawInfo.fromLawData(lawData, Path, XmlName, Enforced);
+        return LawInfo._fromLawData(lawData, Path, XmlName, Enforced);
     }
 }
 
@@ -177,7 +184,9 @@ export class LawInfos {
 }
 
 export const makeList = async (
-    lawIdXmls: AsyncIterable<{lawID: string, xml: string, Path: string, XmlName: string, Enforced: boolean}>,
+    lawInfoList: LawInfo[],
+    dataPath: string,
+    textFetcher: TextFetcher,
     totalCount: number,
     onProgress: (ratio: number, message: string) => void = () => undefined,
 ): Promise<LawList> => {
@@ -192,11 +201,19 @@ export const makeList = async (
         };
     })();
 
+    const lawdataPath = data_paths.getLawdataPath(dataPath);
+
     let currentLength = 0;
     progress(0, "");
     const lawInfos = new LawInfos();
-    for await (const { lawID, xml, Path, XmlName, Enforced } of lawIdXmls) {
-        const lawInfo = LawInfo.fromXml(lawID, xml, Path, XmlName, Enforced);
+    for (const lawInfo of lawInfoList) {
+        const filepath = path.join(lawdataPath, lawInfo.Path, lawInfo.XmlName);
+        const xml = await textFetcher(filepath);
+        if (xml === null) {
+            console.error("XML cannot fetched", lawInfo);
+            continue;
+        }
+        lawInfo.addReferencingLawNums(xml);
         lawInfos.add(lawInfo);
         currentLength++;
         progress(currentLength / totalCount, `${lawInfo.LawNum}：${lawInfo.LawTitle}`);

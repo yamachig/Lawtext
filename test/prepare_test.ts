@@ -5,6 +5,28 @@ import { promisify } from "util";
 import * as data_paths from "@coresrc/data/paths";
 import { download, saveList } from "@coresrc/data/save_fs";
 import { ProgressBar } from "@coresrc/term_util";
+import { TextFetcher } from "./data/lawlist";
+import iconv from "iconv-lite";
+
+export const textFetcher: TextFetcher = async (textPath: string) => {
+    try {
+        const text = await promisify(fs.readFile)(textPath, { encoding: "utf-8" });
+        return text;
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+};
+
+export const sjisTextFetcher: TextFetcher = async (textPath: string) => {
+    try {
+        const buf = await promisify(fs.readFile)(textPath);
+        return iconv.decode(Buffer.from(buf), "Shift_JIS");
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+};
 
 let called = false;
 
@@ -30,7 +52,7 @@ export const prepare = async (): Promise<void> => {
         console.log(`Preparing lawdata into ${lawdataPath} ...`);
 
         bar.start(1, 0);
-        await download(lawdataPath, progress);
+        await download(dataPath, progress);
         bar.stop();
     }
 
@@ -38,7 +60,7 @@ export const prepare = async (): Promise<void> => {
         console.log(`Preparing list json into ${listJsonPath} ...`);
 
         bar.start(1, 0);
-        await saveList(lawdataPath, listJsonPath, progress);
+        await saveList(dataPath, listJsonPath, progress, textFetcher, sjisTextFetcher);
         bar.stop();
     }
 };
