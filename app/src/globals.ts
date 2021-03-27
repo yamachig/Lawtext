@@ -1,5 +1,6 @@
 import * as actions from "./actions";
 import * as lawdata from "./actions/lawdata";
+import * as query from "./actions/query";
 import { getLawList, LawInfo } from "@coresrc/data/lawlist";
 import { LawCriteria, LawQuery } from "@coresrc/data/query";
 
@@ -17,9 +18,11 @@ export default {
     app: {
         actions,
         lawdata,
+        query,
     },
     getLawList: getLawListOnly,
     getLawListByLawnum: getLawListByLawnum,
+    openLawInNewTab: query.openLawInNewTab,
     query: (criteria: LawCriteria): LawQuery =>
         LawQuery.fromFetchInfo(
             lawdata.getDataPath(),

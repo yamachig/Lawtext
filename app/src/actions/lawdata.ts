@@ -3,6 +3,7 @@ import { fetchLawData } from "@coresrc/elaws_api";
 import { getLawList, LawInfo, BaseLawInfo, TextFetcher, getLawXml as core_getLawXml, getLawXmlByInfo, getLawCSVList, makeList } from "@coresrc/data/lawlist";
 import iconv from "iconv-lite";
 import { Buffer } from "buffer";
+import { getTempLaw } from "./query";
 
 let dataPath = "./data";
 export const setDataPath = (p: string): void => {
@@ -256,6 +257,10 @@ const getLawnumRemote = async (lawSearchKey: string): Promise<string> => {
 
 
 export const loadLaw = async (lawSearchKey: string): Promise<string> => {
+    const temp_xml = getTempLaw(lawSearchKey);
+    if (temp_xml !== null) {
+        return temp_xml;
+    }
     const lawnum = await getLawnum(lawSearchKey);
     const xml = await getLawXml(lawnum);
     return xml;
