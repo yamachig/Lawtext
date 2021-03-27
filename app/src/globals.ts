@@ -14,19 +14,27 @@ const getLawListByLawnum = async (): Promise<{[index: string]: LawInfo[]}> => {
     const [, lawListByLawnum] = await getLawListAuto();
     return lawListByLawnum;
 };
+
+
 export default {
+
     app: {
         actions,
         lawdata,
         query,
     },
+
     getLawList: getLawListOnly,
+
     getLawListByLawnum: getLawListByLawnum,
+
     openLawInNewTab: query.openLawInNewTab,
-    query: (criteria: LawCriteria): LawQuery =>
+
+    laws: (criteria: LawCriteria = null): LawQuery =>
         LawQuery.fromFetchInfo(
             lawdata.getDataPath(),
             lawdata.textFetcher,
             criteria,
         ),
+
 };
