@@ -15,6 +15,17 @@ export function* range(start: number, end: number): Generator<number, void, unkn
 
 export type ResolvedType<T> = T extends PromiseLike<infer U> ? U : T;
 
+export const pick = <T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> => {
+    const ret = {} as Pick<T, K>;
+    for (const key of keys) ret[key] = obj[key];
+    return ret;
+};
+export const omit = <T, K extends keyof T>(obj: T, ...keys: K[]): Omit<T, K> => {
+    const ret = { ...obj } as T;
+    for (const key of keys) delete ret[key];
+    return ret;
+};
+
 export const decodeBase64 = (base64: string): Uint8Array => {
     const binary = atob(base64);
     const buf = new Uint8Array(binary.length);

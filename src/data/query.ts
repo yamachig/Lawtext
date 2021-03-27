@@ -18,6 +18,11 @@ interface AsyncIterable<T> {
     [Symbol.asyncIterator](): AsyncIterator<T, void, undefined>;
 }
 
+const symbolFinalyzeQueryItem = Symbol("symbolFinalyzeQueryItem");
+interface QueryItem {
+    [symbolFinalyzeQueryItem]: () => void;
+}
+
 export class Query<
     TItem,
     TBaseCriteriaOrNull extends BaseQueryCriteria<TItem> | null,
@@ -83,6 +88,23 @@ export class Query<
         );
     }
 
+    public limit(max: number): Query<TItem, null> {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        return new Query(
+            (async function *() {
+                if (max <= 0) return;
+                let count = 0;
+                for await (const item of self) {
+                    yield item;
+                    count++;
+                    if (count >= max) break;
+                }
+            })(),
+            null,
+        );
+    }
+
     public pickKey<K extends keyof TItem>(key: K): Query<TItem[K], null> {
         return this.map(item => item[key]);
     }
@@ -115,6 +137,9 @@ export class Query<
                 console.info(`Query progress:\t⌛ running...\t(${matchCount.toString().padStart(4, " ")} matches\tin ${now.getTime() - startTime.getTime()} msec)`);
                 lastMessageTime = now;
             }
+            if (symbolFinalyzeQueryItem in item) {
+                (item as unknown as QueryItem)[symbolFinalyzeQueryItem]();
+            }
         }
         const now = new Date();
         const msec = now.getTime() - startTime.getTime();
@@ -123,17 +148,85 @@ export class Query<
 
 }
 
-const getDefaultLawCriteriaArgs = () => ({
-    LawID: undefined as RegExp | undefined,
-    LawNum: undefined as RegExp | undefined,
-    LawTitle: undefined as RegExp | undefined,
-    Enforced: undefined as boolean | undefined,
-    Path: undefined as RegExp | undefined,
-    XmlName: undefined as RegExp | undefined,
-    ReferencingLawNum: undefined as RegExp | undefined,
-    ReferencedLawNum: undefined as RegExp | undefined,
-});
-export type LawCriteriaArgs = ReturnType<typeof getDefaultLawCriteriaArgs>;
+interface Validator<T> {
+    typeDescription: string,
+    default: () => T,
+    validate: (v: unknown) => v is T,
+}
+
+type Validators<TArgs> = {
+    [K in keyof TArgs]: Validator<TArgs[K]>
+}
+
+const getDefaultArgs = <VS extends {[key: string]: Validator<unknown>}>(validators: VS) => {
+    const ret = {} as Record<string, unknown>;
+    for (const key of Object.keys(validators)) {
+        ret[key] = validators[key].default();
+    }
+    return ret as unknown as LawCriteriaArgs;
+};
+
+const RegExpValidator: Validator<RegExp | undefined> = {
+    typeDescription: "RegExp",
+    default: () => undefined,
+    validate: (v): v is RegExp | undefined =>
+        v === undefined || v instanceof RegExp,
+};
+
+const BooleanValidator: Validator<boolean | undefined> = {
+    typeDescription: "boolean",
+    default: () => undefined,
+    validate: (v): v is boolean | undefined =>
+        v === undefined || typeof v === "boolean",
+};
+
+export interface LawCriteriaArgs {
+    LawID: RegExp | undefined,
+    LawNum: RegExp | undefined,
+    LawTitle: RegExp | undefined,
+    Enforced: boolean | undefined,
+
+    Path: RegExp | undefined,
+    XmlName: RegExp | undefined,
+
+    ReferencingLawNum: RegExp | undefined,
+    ReferencedLawNum: RegExp | undefined,
+
+    xml: RegExp | undefined,
+    document: ((document: XMLDocument) => boolean | Promise<boolean>) | undefined,
+    el: ((el: EL) => boolean | Promise<boolean>) | undefined,
+}
+
+const LawCriteriaValidator: Validators<LawCriteriaArgs> = {
+
+    LawID: RegExpValidator,
+    LawNum: RegExpValidator,
+    LawTitle: RegExpValidator,
+    Enforced: BooleanValidator,
+
+    Path: RegExpValidator,
+    XmlName: RegExpValidator,
+
+    ReferencingLawNum: RegExpValidator,
+    ReferencedLawNum: RegExpValidator,
+
+    xml: RegExpValidator,
+    document: {
+        typeDescription: "function",
+        default: (): LawCriteriaArgs["document"] => undefined,
+        validate: (v): v is LawCriteriaArgs["document"] =>
+            v === undefined || typeof v === "function",
+    },
+    el: {
+        typeDescription: "function",
+        default: (): LawCriteriaArgs["el"] => undefined,
+        validate: (v): v is LawCriteriaArgs["el"] =>
+            v === undefined || typeof v === "function",
+    },
+
+};
+
+const getDefaultLawCriteriaArgs = () => getDefaultArgs(LawCriteriaValidator);
 
 export type LawCriteria<
     TLawQueryItem extends LawQueryItem = LawQueryItem,
@@ -147,14 +240,14 @@ export class BaseLawCriteria implements BaseQueryCriteria<LawQueryItem> {
     public constructor(args: Partial<LawCriteriaArgs>){
         const defaults = getDefaultLawCriteriaArgs();
         const invalidKeys: [key: string, message: string][] = [];
-        for (const key in args) {
-            if (!(key in defaults)) {
-                invalidKeys.push([key, "unknown key"]);
+        for (const unknownKey in args) {
+            if (!(unknownKey in defaults)) {
+                invalidKeys.push([unknownKey, "unknown key"]);
                 continue;
             }
-            const value = args[key as keyof typeof args];
-            if (value !== undefined && !(value instanceof RegExp)) {
-                invalidKeys.push([key, "RegExp needed"]);
+            const key = unknownKey as keyof LawCriteriaArgs;
+            if (!LawCriteriaValidator[key].validate(args[key])) {
+                invalidKeys.push([key, `a value of ${LawCriteriaValidator[key].typeDescription} needed`]);
                 continue;
             }
         }
@@ -164,7 +257,7 @@ export class BaseLawCriteria implements BaseQueryCriteria<LawQueryItem> {
         this.args = { ...defaults, ...args };
     }
 
-    match(item: LawQueryItem): boolean {
+    async match(item: LawQueryItem): Promise<boolean> {
         if (this.args.LawID !== undefined && !this.args.LawID.exec(item.LawID)) return false;
         if (this.args.LawNum !== undefined && !this.args.LawNum.exec(item.LawNum)) return false;
         if (this.args.LawTitle !== undefined && !this.args.LawTitle.exec(item.LawTitle)) return false;
@@ -191,6 +284,18 @@ export class BaseLawCriteria implements BaseQueryCriteria<LawQueryItem> {
             }
             if (!matched) return false;
         }
+        if (this.args.xml !== undefined) {
+            const xml = await item.getXML();
+            if (xml === null || !this.args.xml.exec(xml)) return false;
+        }
+        if (this.args.document !== undefined) {
+            const document = await item.getDocument();
+            if (document === null || !this.args.document(document)) return false;
+        }
+        if (this.args.el !== undefined) {
+            const el = await item.getEl();
+            if (el === null || !this.args.el(el)) return false;
+        }
         return true;
     }
 }
@@ -214,21 +319,39 @@ export class LawQueryItem extends LawInfo {
         return item;
     }
 
+    protected _xml: string | null = null;
     public async getXML(): Promise<string | null> {
-        if (this.dataPath === null || this.textFetcher === null) throw Error("dataPath or textFetcher not specified");
-        return getLawXmlByInfo(this.dataPath, this, this.textFetcher);
+        if (this._xml === null) {
+            if (this.dataPath === null || this.textFetcher === null) throw Error("dataPath or textFetcher not specified");
+            this._xml = await getLawXmlByInfo(this.dataPath, this, this.textFetcher);
+        }
+        return this._xml;
     }
 
+    protected _document: XMLDocument | null = null;
     public async getDocument(): Promise<XMLDocument | null> {
-        const xml = await this.getXML();
-        if (xml === null) return null;
-        return domParser.parseFromString(xml, "text/xml");
+        if (this._document === null) {
+            const xml = await this.getXML();
+            if (xml === null) return null;
+            this._document = domParser.parseFromString(xml, "text/xml");
+        }
+        return this._document;
     }
 
+    protected _el: EL | null = null;
     public async getEl(): Promise<EL | null> {
-        const doc = await this.getDocument();
-        if (doc === null) return null;
-        return elementToJson(doc.documentElement);
+        if (this._el === null) {
+            const doc = await this.getDocument();
+            if (doc === null) return null;
+            this._el = elementToJson(doc.documentElement);
+        }
+        return this._el ;
+    }
+
+    public [symbolFinalyzeQueryItem](): void {
+        this._el = null;
+        this._document = null;
+        this._xml = null;
     }
 
     public toString(): string {
@@ -245,22 +368,31 @@ async function *getLawQueryPopulationWithProgress(
 ) {
     const startTime = new Date();
     let lastMessageTime = startTime;
-    let matchCount = 0;
+    let yieldCount = 0;
     const lawList = typeof lawListOrPromise === "function" ? await lawListOrPromise() : await lawListOrPromise;
-    for (const lawInfo of lawList) {
-        const item = LawQueryItem.fromLawInfo(lawInfo, dataPath, textFetcher);
-        matchCount++;
-        yield item;
-        const now = new Date();
-        if (now.getTime() - lastMessageTime.getTime() > 1000) {
-            console.info(`   << source:\t⌛ running...\t(${matchCount.toString().padStart(4, " ")}/${lawList.length.toString().padStart(4, " ")}=${Math.floor(matchCount / lawList.length * 100)}%\tin ${now.getTime() - startTime.getTime()} msec)`);
-            lastMessageTime = now;
-        }
-    }
+    try {
+        for (const lawInfo of lawList) {
+            const item = LawQueryItem.fromLawInfo(lawInfo, dataPath, textFetcher);
+            yieldCount++;
+            const now = new Date();
+            if (now.getTime() - lastMessageTime.getTime() > 1000) {
+                console.info(`   << source:\t⌛ running...\t(${yieldCount.toString().padStart(4, " ")}/${lawList.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawList.length * 100)}%\tin ${now.getTime() - startTime.getTime()} msec)`);
+                lastMessageTime = now;
+            }
 
-    const now = new Date();
-    const msec = now.getTime() - startTime.getTime();
-    console.info(`   << source:\t✓ completed.\t(${matchCount.toString().padStart(4, " ")} total  \tin ${msec} msec)`);
+            try {
+                yield item;
+            } finally {
+                if (symbolFinalyzeQueryItem in item) {
+                    (item as unknown as QueryItem)[symbolFinalyzeQueryItem]();
+                }
+            }
+        }
+    } finally {
+        const now = new Date();
+        const msec = now.getTime() - startTime.getTime();
+        console.info(`   << source:\t${yieldCount === lawList.length ? "✓ completed." : "🚧 stopped. "}\t(${yieldCount.toString().padStart(4, " ")}/${lawList.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawList.length * 100)}%\tin ${msec} msec)`);
+    }
 }
 
 export class LawQuery<
