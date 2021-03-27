@@ -1,7 +1,7 @@
 import * as actions from "./actions";
 import * as lawdata from "./actions/lawdata";
 import { getLawList, LawInfo } from "@coresrc/data/lawlist";
-import { LawCriteria, LawCriteriaArgs, LawQuery } from "@coresrc/data/query";
+import { LawCriteria, LawQuery } from "@coresrc/data/query";
 
 const getLawListAuto = (): ReturnType<typeof getLawList> =>
     getLawList(lawdata.getDataPath(), lawdata.textFetcher);
@@ -20,10 +20,10 @@ export default {
     },
     getLawList: getLawListOnly,
     getLawListByLawnum: getLawListByLawnum,
-    query: (criteriaOrArgs: LawCriteria | LawCriteriaArgs): LawQuery =>
+    query: (criteria: LawCriteria): LawQuery =>
         LawQuery.fromFetchInfo(
             lawdata.getDataPath(),
             lawdata.textFetcher,
-            criteriaOrArgs,
+            criteria,
         ),
 };
