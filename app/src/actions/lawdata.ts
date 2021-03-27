@@ -1,6 +1,6 @@
 import levenshtein from "js-levenshtein";
 import { fetchLawData } from "@coresrc/elaws_api";
-import { getLawList, LawInfo, BaseLawInfo, TextFetcher, getLawXml as core_getLawXml, getLawXmlByInfo, getLawCSVList, makeList } from "@coresrc/data/lawlist";
+import { getLawList, LawInfo, TextFetcher, getLawXml as core_getLawXml, getLawCSVList, makeList } from "@coresrc/data/lawlist";
 import iconv from "iconv-lite";
 import { Buffer } from "buffer";
 import { getTempLaw } from "./query";
@@ -68,18 +68,13 @@ export const saveListJson = async (
 
     console.log(`Processing ${infos.length} XMLs...`);
 
-    async function* lawIdXmls(list: BaseLawInfo[]) {
-        for (const info of list) {
-            const xml = await getLawXmlByInfo(dataPath, info, textFetcher);
-            if (xml === null) {
-                console.error("XML cannot fetched", info);
-                continue;
-            }
-            yield { lawID: info.LawID, xml, Path: info.Path, XmlName: info.XmlName, Enforced: info.Enforced };
-        }
-    }
-
-    const list = await makeList(lawIdXmls(infos), infos.length, progress);
+    const list = await makeList(
+        infos.map(LawInfo.fromBaseLawInfo),
+        dataPath,
+        textFetcher,
+        infos.length,
+        progress,
+    );
     progress(undefined, "Generating json...");
     const json = JSON.stringify(list);
     progress(undefined, "Saving json...");
