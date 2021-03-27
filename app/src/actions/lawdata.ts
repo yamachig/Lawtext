@@ -75,7 +75,7 @@ export const saveListJson = async (
                 console.error("XML cannot fetched", info);
                 continue;
             }
-            yield { lawID: info.LawID, xml, Path: info.Path, XmlName: info.XmlName };
+            yield { lawID: info.LawID, xml, Path: info.Path, XmlName: info.XmlName, Enforced: info.Enforced };
         }
     }
 

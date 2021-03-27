@@ -10,7 +10,7 @@ const getLawListOnly = async (): Promise<LawInfo[]> => {
     const [lawList] = await getLawListAuto();
     return lawList;
 };
-const getLawListByLawnum = async (): Promise<{[index: string]: LawInfo}> => {
+const getLawListByLawnum = async (): Promise<{[index: string]: LawInfo[]}> => {
     const [, lawListByLawnum] = await getLawListAuto();
     return lawListByLawnum;
 };
