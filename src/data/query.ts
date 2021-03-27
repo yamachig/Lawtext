@@ -90,6 +90,25 @@ export class Query<
         );
     }
 
+    public while(func: (item: TItem) => boolean | Promise<boolean>, yieldLast = false): Query<TItem, null> {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        return new Query(
+            (async function *() {
+                for await (const item of self) {
+                    const continuing = await func(item);
+                    if (continuing) {
+                        yield item;
+                    } else {
+                        if (yieldLast) yield item;
+                        break;
+                    }
+                }
+            })(),
+            null,
+        );
+    }
+
     public limit(max: number): Query<TItem, null> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
