@@ -19,8 +19,10 @@ interface AsyncIterable<T> {
 }
 
 const symbolFinalyzeQueryItem = Symbol("symbolFinalyzeQueryItem");
+const symbolDoNotFinalize = Symbol("symbolDoNotFinalize");
 interface QueryItem {
     [symbolFinalyzeQueryItem]: () => void;
+    [symbolDoNotFinalize]: boolean;
 }
 
 export class Query<
@@ -119,9 +121,14 @@ export class Query<
         });
     }
 
-    public async toArray(): Promise<TItem[]> {
+    public async toArray(options: {preserveCache: boolean} = { preserveCache: false }): Promise<TItem[]> {
         const arr: TItem[] = [];
-        await this.forEach(item => arr.push(item));
+        await this.forEach(item => {
+            if (options.preserveCache && symbolDoNotFinalize in item) {
+                (item[symbolDoNotFinalize as keyof TItem] as unknown as boolean) = true;
+            }
+            arr.push(item);
+        });
         return arr;
     }
 
@@ -300,7 +307,7 @@ export class BaseLawCriteria implements BaseQueryCriteria<LawQueryItem> {
     }
 }
 
-export class LawQueryItem extends LawInfo {
+export class LawQueryItem extends LawInfo implements QueryItem {
     public dataPath: string | null = null;
     public textFetcher: TextFetcher | null = null;
     public static fromLawInfo(lawInfo: LawInfo, dataPath: string | null, textFetcher: TextFetcher | null): LawQueryItem {
@@ -319,40 +326,43 @@ export class LawQueryItem extends LawInfo {
         return item;
     }
 
-    protected _xml: string | null = null;
+    protected _cache: {
+        xml: string | null,
+        document: XMLDocument | null,
+        el: EL | null,
+    } = { xml: null, document: null, el: null };
+
     public async getXML(): Promise<string | null> {
-        if (this._xml === null) {
+        if (this._cache.xml === null) {
             if (this.dataPath === null || this.textFetcher === null) throw Error("dataPath or textFetcher not specified");
-            this._xml = await getLawXmlByInfo(this.dataPath, this, this.textFetcher);
+            this._cache.xml = await getLawXmlByInfo(this.dataPath, this, this.textFetcher);
         }
-        return this._xml;
+        return this._cache.xml;
     }
 
-    protected _document: XMLDocument | null = null;
     public async getDocument(): Promise<XMLDocument | null> {
-        if (this._document === null) {
+        if (this._cache.document === null) {
             const xml = await this.getXML();
             if (xml === null) return null;
-            this._document = domParser.parseFromString(xml, "text/xml");
+            this._cache.document = domParser.parseFromString(xml, "text/xml");
         }
-        return this._document;
+        return this._cache.document;
     }
 
-    protected _el: EL | null = null;
     public async getEl(): Promise<EL | null> {
-        if (this._el === null) {
+        if (this._cache.el === null) {
             const doc = await this.getDocument();
             if (doc === null) return null;
-            this._el = elementToJson(doc.documentElement);
+            this._cache.el = elementToJson(doc.documentElement);
         }
-        return this._el ;
+        return this._cache.el ;
     }
 
     public [symbolFinalyzeQueryItem](): void {
-        this._el = null;
-        this._document = null;
-        this._xml = null;
+        if (this[symbolDoNotFinalize]) return;
+        this._cache = { xml: null, document: null, el: null };
     }
+    public [symbolDoNotFinalize] = false;
 
     public toString(): string {
         return `${this.LawID} ${this.Enforced ? "" : "【未施行】"}${this.LawNum}「${this.LawTitle}」`;
