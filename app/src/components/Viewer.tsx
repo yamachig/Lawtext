@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { LawView } from "./LawView";
@@ -167,6 +167,9 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                     <DataDirInfoToggle />
                 </div>
             )}
+            <div style={{ alignSelf: "center", maxWidth: "600px", marginTop: "1em" }}>
+                <QueryInfoToggle />
+            </div>
         </ViewerWelcomeDiv>
     );
 };
@@ -371,6 +374,65 @@ data
                 オフライン用データの保存方法
             </button>
         )
+    );
+};
+
+const QueryInfoToggle: React.FC = () => {
+    const [state, setState] = useState({
+        open: false,
+    });
+
+    return (
+        state.open ? (<>
+            <div className="card">
+                <div className="card-body">
+
+                    <h5 className="card-title">Lawtext query の使用方法<small>（法令XML構造・正規表現検索など）</small></h5>
+
+                    <p className="card-text">
+                        Lawtext query は、ブラウザのコンソールとjavascriptを利用した高度な検索機能です。Lawtext query を使用すると、法令XMLの構造や正規表現を利用した法令検索ができます。
+                    </p>
+
+                    <ol>
+                        <li>
+                            Lawtextの画面でブラウザのコンソールを開きます。
+                            <ul>
+                                <li><a href="https://developer.chrome.com/docs/devtools/open/#console" target="_blank" rel="noreferrer">Google Chrome の場合</a>（Windowsなど: Ctrl+Shift+J, Mac: Cmd+Option+J）</li>
+                                <li><a href="https://developer.mozilla.org/docs/Tools/Web_Console/UI_Tour" target="_blank" rel="noreferrer">Firefox の場合</a>（Windowsなど: Ctrl+Shift+K,Mac: Cmd+Option+K）</li>
+                            </ul>
+                        </li>
+                        <li>
+                            コンソールに Lawtext query を使用する javascriptコードを入力して実行します。<br/>
+                            コードの例<small>（平成に新規制定された法律の法令番号と法令名をヒットしたものから10件表示</small>）：
+                            <pre><code style={{ marginLeft: "1em" }}>{`
+lawtext
+    .lawsViaAPI({LawNum: /^平成.{1,3}年法律/})
+    .limit(10)
+    .pickKeys("LawNum", "LawTitle")
+    .toArray()
+    .then(console.table)
+`.trim()}</code></pre>
+                        </li>
+                    </ol>
+
+                    <h5 className="card-title">検索に用いるデータの取得元</h5>
+
+                    <p className="card-text">
+                        Lawtext query の検索に用いるデータは、e-Gov 法令API とオフライン用データの2種類のどちらかを選択します。
+                    </p>
+                    <ul>
+                        <li>e-Gov 法令API: <code>lawtext.lawsViaAPI()</code> を使用します。e-Gov法令APIからデータを取得します。e-Gov 法令APIにアクセスできる環境があれば事前の準備なく利用できます。ただし、データをインターネット経由で毎回取得するため、実行に時間がかかる場合があります。</li>
+                        <li>オフライン用データ: <code>lawtext.laws()</code> を使用します。ダウンロード版Lawtextでオフライン用データを保存している場合に使用できます。多くの場合、e-Gov 法令APIを使用する方法よりも高速です。</li>
+                    </ul>
+
+                </div>
+            </div>
+        </>) : (<>
+            <button className="btn btn-sm btn-outline-secondary" onClick={() => setState(prev => ({ ...prev, open: true }))}>
+                Lawtext query の使用方法<br/>
+                （法令XML構造・正規表現検索など）
+            </button>
+        </>)
     );
 };
 

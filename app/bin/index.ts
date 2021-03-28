@@ -4,28 +4,16 @@ import { analyze } from "@coresrc/analyzer";
 import * as std from "@coresrc/std_law";
 import * as util from "@coresrc/util";
 import { LawView } from "@appsrc/components/LawView";
-import { getLawXml, TextFetcher } from "@coresrc/data/lawlist";
-import { promisify } from "util";
-import fs from "fs";
 import path from "path";
 import { LawtextAppPageState } from "./components/LawtextAppPageState";
-
-
-const textFetcher: TextFetcher = async (textPath: string) => {
-    try {
-        const text = await promisify(fs.readFile)(textPath, { encoding: "utf-8" });
-        return text;
-    } catch (e) {
-        console.log(e);
-        return null;
-    }
-};
+import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
 
 const dataPath = path.join(__dirname, "../../core/data");
+const loader = new FSStoredLoader(dataPath);
 
 const render = async (lawNum: string) => {
 
-    const origXML = await getLawXml(dataPath, lawNum, textFetcher);
+    const origXML = await loader.getLawXmlByLawNum(lawNum);
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const origEL = util.xmlToJson(origXML!);
