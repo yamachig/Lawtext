@@ -404,7 +404,7 @@ const QueryInfoToggle: React.FC = () => {
                         <li>
                             コンソールに Lawtext query を使用する javascriptコードを入力して実行します。<br/>
                             コードの例<small>（平成に新規制定された法律の法令番号と法令名をヒットしたものから10件表示</small>）：
-                            <pre><code style={{ marginLeft: "1em" }}>{`
+                            <pre style={{ marginLeft: "1em" }}><code>{`
 lawtext
     .lawsViaAPI({LawNum: /^平成.{1,3}年法律/})
     .limit(10)
