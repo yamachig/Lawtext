@@ -406,7 +406,7 @@ const QueryInfoToggle: React.FC = () => {
                             コードの例<small>（平成に新規制定された法律の法令番号と法令名をヒットしたものから10件表示</small>）：
                             <pre style={{ marginLeft: "1em" }}><code>{`
 lawtext
-    .lawsViaAPI({LawNum: /^平成.{1,3}年法律/})
+    .queryViaAPI({LawNum: /^平成.{1,3}年法律/})
     .limit(10)
     .pickKeys("LawNum", "LawTitle")
     .toArray()
@@ -421,8 +421,8 @@ lawtext
                         Lawtext query の検索に用いるデータは、e-Gov 法令API とオフライン用データの2種類のどちらかを選択します。
                     </p>
                     <ul>
-                        <li>e-Gov 法令API: <code>lawtext.lawsViaAPI()</code> を使用します。e-Gov法令APIからデータを取得します。e-Gov 法令APIにアクセスできる環境があれば事前の準備なく利用できます。ただし、データをインターネット経由で毎回取得するため、実行に時間がかかる場合があります。</li>
-                        <li>オフライン用データ: <code>lawtext.laws()</code> を使用します。ダウンロード版Lawtextでオフライン用データを保存している場合に使用できます。多くの場合、e-Gov 法令APIを使用する方法よりも高速です。</li>
+                        <li>e-Gov 法令API: <code>lawtext.queryViaAPI()</code> を使用します。e-Gov法令APIからデータを取得します。e-Gov 法令APIにアクセスできる環境があれば事前の準備なく利用できます。ただし、データをインターネット経由で毎回取得するため、実行に時間がかかる場合があります。</li>
+                        <li>オフライン用データ: <code>lawtext.query()</code> を使用します。ダウンロード版Lawtextでオフライン用データを保存している場合に使用できます。多くの場合、e-Gov 法令APIを使用する方法よりも高速です。</li>
                     </ul>
 
                 </div>
