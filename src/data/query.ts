@@ -164,7 +164,7 @@ export class Query<
                 console.info(`Query progress:\t⌛ running...\t(${matchCount.toString().padStart(4, " ")} matches\tin ${now.getTime() - startTime.getTime()} msec)`);
                 lastMessageTime = now;
             }
-            if (symbolFinalyzeQueryItem in item) {
+            if (typeof item === "object" && symbolFinalyzeQueryItem in item) {
                 (item as unknown as QueryItem)[symbolFinalyzeQueryItem]();
             }
         }
@@ -411,7 +411,7 @@ async function *getLawQueryPopulationWithProgress(
             try {
                 yield item;
             } finally {
-                if (symbolFinalyzeQueryItem in item) {
+                if (typeof item === "object" && symbolFinalyzeQueryItem in item) {
                     (item as unknown as QueryItem)[symbolFinalyzeQueryItem]();
                 }
             }
