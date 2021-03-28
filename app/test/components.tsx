@@ -6,36 +6,24 @@ import { analyze } from "@coresrc/analyzer";
 import * as std from "@coresrc/std_law";
 import * as util from "@coresrc/util";
 import { LawView } from "@appsrc/components/LawView";
-import { getLawList, getLawXml, TextFetcher } from "@coresrc/data/lawlist";
-import { promisify } from "util";
-import fs from "fs";
+import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
 import path from "path";
 import { LawtextAppPageState } from "./components/LawtextAppPageState";
 
-
-const textFetcher: TextFetcher = async (textPath: string) => {
-    try {
-        const text = await promisify(fs.readFile)(textPath, { encoding: "utf-8" });
-        return text;
-    } catch (e) {
-        console.log(e);
-        return null;
-    }
-};
-
 const dataPath = path.join(__dirname, "../../core/data");
+const loader = new FSStoredLoader(dataPath);
 
 const renderAllLaws = async () => {
 
     const pickedLawNum = "平成二十六年政令第三百九十四号";
 
-    const [list /**/] = await getLawList(dataPath, textFetcher);
+    const { lawInfos } = await loader.loadLawInfosStruct();
 
-    for (const { LawNum: lawNum, LawTitle: lawTitle } of list.filter(o => o.LawNum === pickedLawNum)) {
+    for (const { LawNum: lawNum, LawTitle: lawTitle } of lawInfos.filter(o => o.LawNum === pickedLawNum)) {
 
         it(`${lawTitle}（${lawNum}）`, async () => {
 
-            const origXML = await getLawXml(dataPath, lawNum, textFetcher);
+            const origXML = await loader.getLawXmlByLawNum(lawNum);
 
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const origEL = util.xmlToJson(origXML!);
