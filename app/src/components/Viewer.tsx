@@ -5,7 +5,7 @@ import { LawView } from "./LawView";
 import * as actions from "@appsrc/actions";
 import { useHistory } from "react-router";
 import { ResolvedType } from "@coresrc/util";
-import { ensureAllLawListCSV, ensureLawListJson, saveListJson } from "@appsrc/actions/lawdata";
+import { saveListJson, storedLoader } from "@appsrc/actions/lawdata";
 
 
 const ViewerLoadingDiv = styled.div`
@@ -240,7 +240,7 @@ const DataDirInfoToggle: React.FC = () => {
     const checkCsv = useCallback(() => {
         setState({ csvChecking: true });
         return (async () => {
-            const csvExists = await ensureAllLawListCSV();
+            const csvExists = await storedLoader.listCSVExists();
             setState({ csvExists, csvChecking: false });
             return csvExists;
         })();
@@ -261,7 +261,7 @@ const DataDirInfoToggle: React.FC = () => {
     const checkJson = useCallback(() => {
         setState({ jsonChecking: true });
         (async () => {
-            const jsonExists = await ensureLawListJson();
+            const jsonExists = await storedLoader.listJsonExists();
             setState({ jsonExists, jsonChecking: false });
         })();
     }, [setState]);

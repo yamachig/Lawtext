@@ -1,8 +1,5 @@
-import { LawQueryItem } from "@coresrc/data/query";
-
-export const openLawInNewTab = async (item: LawQueryItem): Promise<void> => {
+export const showLawXML = async (xml: string): Promise<void> => {
     const id = `temp_law_${Math.floor(Math.random() * 1000000000)}`;
-    const xml = await item.getXML();
     localStorage.setItem(
         "temp_law:" + id,
         JSON.stringify({

@@ -1,46 +1,12 @@
 import levenshtein from "js-levenshtein";
-import { fetchLawData } from "@coresrc/elaws_api";
-import { getLawList, LawInfo, TextFetcher, getLawXml as core_getLawXml, getLawCSVList, makeList } from "@coresrc/data/lawlist";
-import iconv from "iconv-lite";
-import { Buffer } from "buffer";
-import { getTempLaw } from "./query";
+import { FetchElawsLoader } from "@coresrc/data/loaders/FetchElawsLoader";
+import { FetchStoredLoader } from "@coresrc/data/loaders/FetchStoredLoader";
+import { BaseLawInfo, LawInfo } from "@coresrc/data/lawinfo";
+import { getTempLaw } from "./temp_law";
 
-let dataPath = "./data";
-export const setDataPath = (p: string): void => {
-    dataPath = p;
-};
-export const getDataPath = (): string => {
-    return dataPath;
-};
-
-export const textFetcher: TextFetcher = async (textPath: string) => {
-    try {
-        const res = await fetch(textPath);
-        if (!res.ok) {
-            console.log(res.statusText);
-            return null;
-        }
-        return await res.text();
-    } catch (e) {
-        console.log(e);
-        return null;
-    }
-};
-
-export const sjisTextFetcher: TextFetcher = async (textPath: string) => {
-    try {
-        const res = await fetch(textPath);
-        if (!res.ok) {
-            console.log(res.statusText);
-            return null;
-        }
-        const buf = await res.arrayBuffer();
-        return iconv.decode(Buffer.from(buf), "Shift_JIS");
-    } catch (e) {
-        console.log(e);
-        return null;
-    }
-};
+const _dataPath = "./data";
+export const elawsLoader = new FetchElawsLoader();
+export const storedLoader = new FetchStoredLoader(_dataPath);
 
 export const saveListJson = async (
     onProgress: (ratio: number, message: string) => void = () => undefined,
@@ -59,22 +25,18 @@ export const saveListJson = async (
     progress(0, "Loading CSV...");
 
     console.log("\nListing up XMLs...");
-    const infos = await getLawCSVList(dataPath, sjisTextFetcher);
-
-    if (infos === null) {
+    let infos: BaseLawInfo[];
+    try {
+        infos = await storedLoader.loadBaseLawInfosFromCSV();
+    } catch (e) {
         console.error("CSV list cannot be fetched.");
+        console.error(e.message, e.stack);
         return null;
     }
 
     console.log(`Processing ${infos.length} XMLs...`);
 
-    const list = await makeList(
-        infos.map(LawInfo.fromBaseLawInfo),
-        dataPath,
-        textFetcher,
-        infos.length,
-        progress,
-    );
+    const list = await storedLoader.makeLawListFromBaseLawInfos(infos);
     progress(undefined, "Generating json...");
     const json = JSON.stringify(list);
     progress(undefined, "Saving json...");
@@ -87,9 +49,9 @@ export const saveListJson = async (
 
 const getLawXml = async (lawnum: string): Promise<string> => {
     const xml = (
+        await getLawXmlStored(lawnum) ||
         await getLawXmlCache(lawnum) ||
-        await getLawXmlLocal(lawnum) ||
-        await getLawXmlRemote(lawnum)
+        await getLawXmlElaws(lawnum)
     );
 
     if (localStorage) {
@@ -127,21 +89,22 @@ const getLawXmlCache = async (lawnum: string): Promise<string | null> => {
     return null;
 };
 
-const getLawXmlLocal = async (lawnum: string): Promise<string | null> => {
-    console.log(`getLawXmlLocal("${lawnum}")`);
+const getLawXmlStored = async (lawnum: string): Promise<string | null> => {
+    console.log(`getLawXmlStored("${lawnum}")`);
 
-    return core_getLawXml(dataPath, lawnum, textFetcher);
+    return storedLoader.getLawXmlByLawNum(lawnum);
 };
 
-const getLawXmlRemote = async (lawnum: string): Promise<string> => {
-    console.log(`getLawXmlRemote("${lawnum}")`);
+const getLawXmlElaws = async (lawnum: string): Promise<string> => {
+    console.log(`getLawXmlElaws("${lawnum}")`);
 
     // const response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawdata&lawnum=${encodeURI(lawnum)}`, {
     //     mode: "cors",
     // });
     try {
-        const lawData = await fetchLawData(lawnum);
-        return lawData.xml;
+        const xml = await elawsLoader.getLawXmlByLawNum(lawnum);
+        if (xml === null) throw new Error("法令XMLを読み込めませんでした");
+        return xml;
     } catch (e) {
         console.error(e);
         throw [
@@ -160,7 +123,7 @@ const getLawnum = async (lawSearchKey: string): Promise<string> => {
     const lawnum = (
         (match && match[0]) ||
         await getLawnumCache(lawSearchKey) ||
-        await getLawnumLocal(lawSearchKey) ||
+        await getLawnumStored(lawSearchKey) ||
         await getLawnumRemote(lawSearchKey)
     );
 
@@ -202,15 +165,15 @@ const getLawnumCache = async (lawSearchKey: string): Promise<string | null> => {
     return null;
 };
 
-const getLawnumLocal = async (lawSearchKey: string): Promise<string | null> => {
-    console.log(`getLawnumLocal("${lawSearchKey}")`);
+const getLawnumStored = async (lawSearchKey: string): Promise<string | null> => {
+    console.log(`getLawnumStored("${lawSearchKey}")`);
 
-    const [lawList /**/] = await getLawList(dataPath, textFetcher);
+    const { lawInfos } = await storedLoader.loadLawInfosStruct();
 
     console.log(`started ${new Date().toISOString()}`);
     let partMatchMode = false;
     const bestMatch = { score: Infinity, info: null as LawInfo | null };
-    for (const info of lawList) {
+    for (const info of lawInfos) {
         if (info.LawTitle.includes(lawSearchKey)) {
             if (!partMatchMode) {
                 partMatchMode = true;
@@ -259,22 +222,4 @@ export const loadLaw = async (lawSearchKey: string): Promise<string> => {
     const lawnum = await getLawnum(lawSearchKey);
     const xml = await getLawXml(lawnum);
     return xml;
-};
-
-export const ensureAllLawListCSV = async (): Promise<boolean> => {
-    try {
-        const res = await fetch("./data/lawdata/all_law_list.csv", { method: "HEAD" });
-        return res.ok;
-    } catch (e) {
-        return false;
-    }
-};
-
-export const ensureLawListJson = async (): Promise<boolean> => {
-    try {
-        const res = await fetch("./data/list.json", { method: "HEAD" });
-        return res.ok;
-    } catch (e) {
-        return false;
-    }
 };
