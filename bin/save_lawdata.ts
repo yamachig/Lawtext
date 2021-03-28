@@ -1,21 +1,20 @@
 
-import * as dataPaths from "@coresrc/data/paths";
 import yargs from "yargs";
 import { ProgressBar } from "@coresrc/term_util";
 import * as save_fs from "@coresrc/data/save_fs";
+import { FSStoredLoader } from "./data/loaders/FSStoredLoader";
 
 const bar = new ProgressBar();
 const progress = bar.progress.bind(bar);
 
 const download = async (dataDir: string): Promise<void> => {
-    const lawdataDir = dataPaths.getLawdataPath(dataDir);
-    await save_fs.download(lawdataDir, progress);
+    const loader = new FSStoredLoader(dataDir);
+    await save_fs.download(loader, progress);
 };
 
 const saveList = async (dataDir: string): Promise<void> => {
-    const lawdataDir = dataPaths.getLawdataPath(dataDir);
-    const listJsonPath = dataPaths.getListJsonPath(dataDir);
-    await save_fs.saveList(lawdataDir, listJsonPath, progress);
+    const loader = new FSStoredLoader(dataDir);
+    await save_fs.saveList(loader, progress);
 };
 
 const main = async (): Promise<void> => {

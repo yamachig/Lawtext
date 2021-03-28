@@ -1,5 +1,6 @@
 import { assertNever, EL, elementToJson } from "@coresrc/util";
-import { LawInfo, getLawList, TextFetcher, getLawXmlByInfo } from "./lawlist";
+import { LawInfo } from "./lawinfo";
+import { Loader } from "./loaders/common";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;
 const domParser = new DOMParser();
@@ -327,9 +328,8 @@ export class BaseLawCriteria implements BaseQueryCriteria<LawQueryItem> {
 }
 
 export class LawQueryItem extends LawInfo implements QueryItem {
-    public dataPath: string | null = null;
-    public textFetcher: TextFetcher | null = null;
-    public static fromLawInfo(lawInfo: LawInfo, dataPath: string | null, textFetcher: TextFetcher | null): LawQueryItem {
+    public loader: Loader | null = null;
+    public static fromLawInfo(lawInfo: LawInfo, loader: Loader | null): LawQueryItem {
         const item = new LawQueryItem(
             lawInfo.LawID,
             lawInfo.LawNum,
@@ -340,21 +340,20 @@ export class LawQueryItem extends LawInfo implements QueryItem {
         );
         item.ReferencingLawNums = lawInfo.ReferencingLawNums;
         item.ReferencedLawNums = lawInfo.ReferencedLawNums;
-        item.dataPath = dataPath;
-        item.textFetcher = textFetcher;
+        item.loader = loader;
         return item;
     }
 
-    protected _cache: {
-        xml: string | null,
-        document: XMLDocument | null,
-        el: EL | null,
-    } = { xml: null, document: null, el: null };
+    protected _cache = {
+        xml: null as string | null,
+        document: null as XMLDocument | null,
+        el: null as EL | null,
+    };
 
     public async getXML(): Promise<string | null> {
         if (this._cache.xml === null) {
-            if (this.dataPath === null || this.textFetcher === null) throw Error("dataPath or textFetcher not specified");
-            this._cache.xml = await getLawXmlByInfo(this.dataPath, this, this.textFetcher);
+            if (this.loader === null) throw Error("Loader not specified");
+            this._cache.xml = await this.loader.loadLawXMLByInfo(this);
         }
         return this._cache.xml;
     }
@@ -389,23 +388,23 @@ export class LawQueryItem extends LawInfo implements QueryItem {
 }
 
 async function *getLawQueryPopulationWithProgress(
-    lawListOrPromise:
+    lawInfosOrPromise:
         | LawInfo[]
         | Promise<LawInfo[]>
         | (() => LawInfo[] | Promise<LawInfo[]>),
-    dataPath: string | null, textFetcher: TextFetcher | null,
+    loader: Loader | null,
 ) {
     const startTime = new Date();
     let lastMessageTime = startTime;
     let yieldCount = 0;
-    const lawList = typeof lawListOrPromise === "function" ? await lawListOrPromise() : await lawListOrPromise;
+    const lawInfos = typeof lawInfosOrPromise === "function" ? await lawInfosOrPromise() : await lawInfosOrPromise;
     try {
-        for (const lawInfo of lawList) {
-            const item = LawQueryItem.fromLawInfo(lawInfo, dataPath, textFetcher);
+        for (const lawInfo of lawInfos) {
+            const item = LawQueryItem.fromLawInfo(lawInfo, loader);
             yieldCount++;
             const now = new Date();
             if (now.getTime() - lastMessageTime.getTime() > 1000) {
-                console.info(`   << source:\t⌛ running...\t(${yieldCount.toString().padStart(4, " ")}/${lawList.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawList.length * 100)}%\tin ${now.getTime() - startTime.getTime()} msec)`);
+                console.info(`   << source:\t⌛ running...\t(${yieldCount.toString().padStart(4, " ")}/${lawInfos.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawInfos.length * 100)}%\tin ${now.getTime() - startTime.getTime()} msec)`);
                 lastMessageTime = now;
             }
 
@@ -420,7 +419,7 @@ async function *getLawQueryPopulationWithProgress(
     } finally {
         const now = new Date();
         const msec = now.getTime() - startTime.getTime();
-        console.info(`   << source:\t${yieldCount === lawList.length ? "✓ completed." : "🚧 stopped. "}\t(${yieldCount.toString().padStart(4, " ")}/${lawList.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawList.length * 100)}%\tin ${msec} msec)`);
+        console.info(`   << source:\t${yieldCount === lawInfos.length ? "✓ completed." : "🚧 stopped. "}\t(${yieldCount.toString().padStart(4, " ")}/${lawInfos.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawInfos.length * 100)}%\tin ${msec} msec)`);
     }
 }
 
@@ -452,18 +451,16 @@ export class LawQuery<
     }
 
     public static fromFetchInfo<TCriteria extends BaseQueryCriteria<LawQueryItem> | null>(
-        dataPath: string,
-        textFetcher: TextFetcher,
+        loader: Loader,
         criteria: LawCriteria<LawQueryItem, TCriteria>,
     ): LawQuery {
         return new LawQuery(
             getLawQueryPopulationWithProgress(
                 (async () => {
-                    const [lawList] = await getLawList(dataPath, textFetcher);
+                    const { lawInfos: lawList } = await loader.cacheLawListStruct();
                     return lawList;
                 }),
-                dataPath,
-                textFetcher,
+                loader,
             ),
             criteria,
         );

@@ -100,7 +100,7 @@ const extractSpans = (law: EL): [Span[], Container[], Container] => {
         }
 
         if (isMixed && el.children.length !== 1) {
-            console.error(`unexpected mixed content! ${JSON.stringify(el)}`);
+            console.warn(`unexpected mixed content! ${JSON.stringify(el)}`);
         }
 
         if (isMixed) {
@@ -260,7 +260,7 @@ const parseRanges = (text: string): util.Ranges => { // closed
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return parser.parse(text, { startRule: "ranges" });
     } catch (e) {
-        console.error(text, e);
+        console.warn(text, e);
         return [];
     }
 };
@@ -281,7 +281,7 @@ const locatePointer = (
         locatedPointer = origPointer;
 
     } else if (head.relPos === RelPos.SAME) {
-        console.error("RelPos.SAME is detected. Skipping:", currentSpan, origPointer);
+        console.warn("RelPos.SAME is detected. Skipping:", currentSpan, origPointer);
         const copy = head.copy();
         copy.locatedContainer = currentContainer
             .thisOrClosest(c => c.type === ContainerType.TOPLEVEL);
@@ -416,7 +416,7 @@ const getScope = (currentSpan: Span, scopeText: string, following: boolean, foll
                 ret.push(new ScopeRange(fromc.spanRange[0], 0, toc.spanRange[1], 0));
             }
         } else {
-            console.error("Scope couldn't be detected:", { from, to });
+            console.warn("Scope couldn't be detected:", { from, to });
         }
     }
     // console.log(scope_text, ranges, ret);

@@ -14,14 +14,14 @@ import { analyze, parse } from "@coresrc/parser_wrapper";
 import { render as renderLawtext } from "@coresrc/renderers/lawtext";
 import { TERMC, toTableText } from "@coresrc/term_util";
 import * as util from "@coresrc/util";
-import { prepare, getDataPath, textFetcher } from "./prepare_test";
-import { ensureList, getLawXml } from "@coresrc/data/lawlist";
+import { prepare } from "./prepare_test";
+import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
 
 const domParser = new xmldom.DOMParser();
+const loader = new FSStoredLoader(path.join(__dirname, "../data"));
 
 before(async () => {
-    await prepare();
-    await ensureList(getDataPath(), textFetcher);
+    await prepare(loader);
 });
 
 const LIMIT_WIDTH = 34;
@@ -261,7 +261,7 @@ it("Render and Parse Lawtext", async () => {
 
     const lawNum = "平成二十六年政令第三百九十四号";
 
-    const origXML = await getLawXml(getDataPath(), lawNum, textFetcher);
+    const origXML = await loader.getLawXmlByLawNum(lawNum);
     if (origXML === null) throw new Error(`XML cannot be fetched: ${lawNum}`);
     console.log(`Temporary directory: "${tempDir}"`);
     const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);

@@ -6,15 +6,12 @@ import fs from "fs";
 import fetch from "node-fetch";
 import fsExtra from "fs-extra";
 import { promisify } from "util";
-import { getLawCSVList, LawInfo, makeList, TextFetcher } from "@coresrc/data/lawlist";
-import { getLawdataPath } from "./paths";
+import { FSStoredLoader } from "./loaders/FSStoredLoader";
 
 export const download = async (
-    dataPath: string,
+    loader: FSStoredLoader,
     onProgress: (ratio: number, message: string) => void = () => undefined,
 ): Promise<void> => {
-
-    const lawdataPath = getLawdataPath(dataPath);
 
     const progress = (() => {
         let currentRatio = 0;
@@ -59,24 +56,21 @@ export const download = async (
     console.log("\nExtracting zip file...");
 
     progress(0, "");
-    await promisify(fsExtra.ensureDir)(lawdataPath);
+    await promisify(fsExtra.ensureDir)(loader.lawdataPath);
     currentLength = 0;
     const zip = new Zip.async({ file: tempZip });
     zip.on("extract", (entry) => {
         currentLength += entry.compressedSize;
         progress(currentLength / contentLength, entry.name);
     });
-    await zip.extract(null, lawdataPath);
+    await zip.extract(null, loader.lawdataPath);
     await zip.close();
     progress(1);
 };
 
 export const saveList = async (
-    dataPath: string,
-    listJsonPath: string,
+    loader: FSStoredLoader,
     onProgress: (ratio: number, message: string) => void = () => undefined,
-    textFetcher: TextFetcher,
-    sjisTextFetcher: TextFetcher,
 ): Promise<void> => {
 
     const progress = (() => {
@@ -92,7 +86,7 @@ export const saveList = async (
     progress(0, "Loading CSV...");
 
     console.log("\nListing up XMLs...");
-    const infos = await getLawCSVList(dataPath, sjisTextFetcher);
+    const infos = await loader.loadBaseLawInfosFromCSV();
 
     if (infos === null) {
         console.error("CSV list cannot be fetched.");
@@ -101,12 +95,6 @@ export const saveList = async (
 
     console.log(`Processing ${infos.length} XMLs...`);
 
-    const list = await makeList(
-        infos.map(LawInfo.fromBaseLawInfo),
-        dataPath,
-        textFetcher,
-        infos.length,
-        progress,
-    );
-    await promisify(fs.writeFile)(listJsonPath, JSON.stringify(list), { encoding: "utf-8" });
+    const list = await loader.makeLawListFromBaseLawInfos(infos);
+    await promisify(fs.writeFile)(loader.listJsonPath, JSON.stringify(list), { encoding: "utf-8" });
 };
