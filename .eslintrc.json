@@ -10,7 +10,8 @@
     ],
     "plugins": [
         "@typescript-eslint",
-        "prefer-arrow"
+        "prefer-arrow",
+        "eslint-plugin-tsdoc"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -40,7 +41,8 @@
         "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
         "no-trailing-spaces": "error",
         "eol-last": ["error", "always"],
-        "keyword-spacing": "error"
+        "keyword-spacing": "error",
+        "tsdoc/syntax": "warn"
     },
     "ignorePatterns": ["/dist/*"]
 }

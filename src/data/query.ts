@@ -26,13 +26,32 @@ interface QueryItem {
     [symbolDoNotFinalize]: boolean;
 }
 
+/**
+ * The query object that represents a source list and a filtering criteria.
+ *
+ * @example
+ * A `Query` works as an async generator.
+ *
+ * ```ts
+ * const query = new Query(population, criteria);
+ * for await (const item of query) {
+ *     console.log(item);
+ * }
+ * ```
+ */
 export class Query<
     TItem,
     TBaseCriteriaOrNull extends BaseQueryCriteria<TItem> | null,
 > implements AsyncIterable<TItem> {
+
     public population: AsyncIterable<TItem>;
     public criteria: TBaseCriteriaOrNull;
 
+    /**
+     * Instanciate a `Query`.
+     * @param population - a source list
+     * @param criteria - a filtering criteria
+     */
     public constructor (
         population: AsyncIterable<TItem>,
         criteria: QueryCriteria<TBaseCriteriaOrNull>,
@@ -61,6 +80,11 @@ export class Query<
         }
     }
 
+    /**
+     * Apply a function for each filtered item.
+     * @param func - a function to be called for each filtered item
+     * @returns - a new `Query` that yields items returned by `func`
+     */
     public map<T, TRet=T extends void | undefined ? never : T>(func: (item: TItem) => T | Promise<T>): Query<TRet, null> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
@@ -78,6 +102,11 @@ export class Query<
         );
     }
 
+    /**
+     * Apply an additional filter.
+     * @param criteria - an additional criteria
+     * @returns - a new `Query` that applies `criteria` to the filtered items of the original `Query`
+     */
     public filter<
         TNewCriteria extends QueryCriteria<TItem>,
         TNewBaseCriteriaOrNull extends BaseQueryCriteria<TItem> | null
@@ -91,6 +120,12 @@ export class Query<
         );
     }
 
+    /**
+     * Yield while `func` returns `true`.
+     * @param func - a function to be called for each filtered item. Returning `false` terminates the iteration.
+     * @param yieldLast - whether to return the item that caused `func` returned `false`
+     * @returns - a new `Query` that yields while `func` returns `true`
+     */
     public while(func: (item: TItem) => boolean | Promise<boolean>, yieldLast = false): Query<TItem, null> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
@@ -110,6 +145,11 @@ export class Query<
         );
     }
 
+    /**
+     * Yield until it reaches the maximum count.
+     * @param max - the maximum count
+     * @returns - a new `Query` that yields until it reaches the maximum count.
+     */
     public limit(max: number): Query<TItem, null> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
@@ -127,11 +167,21 @@ export class Query<
         );
     }
 
-    public pickKey<K extends keyof TItem>(key: K): Query<TItem[K], null> {
+    /**
+     * Yield a property of each item.
+     * @param key - the key of a property to be picked
+     * @returns - a new `Query` that yields the picked property
+     */
+    public property<K extends keyof TItem>(key: K): Query<TItem[K], null> {
         return this.map(item => item[key]);
     }
 
-    public pickKeys<K extends keyof TItem>(...keys: K[]): Query<Pick<TItem, K>, null> {
+    /**
+     * Pick properties of each item.
+     * @param keys - the keys of properties to be picked
+     * @returns - a new `Query` that yields the objects with the picked properties
+     */
+    public pick<K extends keyof TItem>(...keys: K[]): Query<Pick<TItem, K>, null> {
         return this.map(item => {
             const picked = {} as Pick<TItem, K>;
             for (const key of keys) {
@@ -141,6 +191,11 @@ export class Query<
         });
     }
 
+    /**
+     * Generate an array from the `Query`. Running this function will invoke the whole iteration process of the `Query`.
+     * @param options.preserveCache - whether to suggest the `Query` to preserve the cached data for each item, which normally will be cleared after yield (default: `false`)
+     * @returns - a `Promise` that resolves a generated array
+     */
     public async toArray(options: {preserveCache: boolean} = { preserveCache: false }): Promise<TItem[]> {
         const arr: TItem[] = [];
         await this.forEach(item => {
@@ -152,6 +207,10 @@ export class Query<
         return arr;
     }
 
+    /**
+     * Invoke `func` for each filtered item. Running this function will invoke the whole iteration process of the `Query`.
+     * @param func - a function to be called for each item
+     */
     public async forEach(func: (item: TItem) => unknown | Promise<unknown>): Promise<void> {
         const startTime = new Date();
         let lastMessageTime = startTime;
