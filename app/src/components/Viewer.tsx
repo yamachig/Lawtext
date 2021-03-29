@@ -408,9 +408,8 @@ const QueryInfoToggle: React.FC = () => {
 lawtext
     .queryViaAPI({LawNum: /^平成.{1,3}年法律/})
     .limit(10)
-    .pickKeys("LawNum", "LawTitle")
     .toArray()
-    .then(console.table)
+    .then(a => console.table(a, ["LawNum", "LawTitle"]))
 `.trim()}</code></pre>
                         </li>
                     </ol>

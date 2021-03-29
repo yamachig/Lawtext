@@ -20,6 +20,8 @@ ReactDOM.render(
 );
 
 import lawtextGlobals from "./globals";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-window["lawtext"] = lawtextGlobals;
+for (const key in lawtextGlobals) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    window[key] = lawtextGlobals[key];
+}
