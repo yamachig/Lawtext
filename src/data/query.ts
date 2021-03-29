@@ -28,9 +28,11 @@ interface QueryItem {
 
 /**
  * The query object that represents a source list and a filtering criteria.
+ * フィルタ条件と検索元リストを表すクエリオブジェクト。
  *
  * @example
  * A `Query` works as an async generator.
+ * `Query` は async generator として使用できます。
  *
  * ```ts
  * const query = new Query(population, criteria);
@@ -82,8 +84,9 @@ export class Query<
 
     /**
      * Apply a function for each filtered item.
-     * @param func - a function to be called for each filtered item
-     * @returns - a new `Query` that yields items returned by `func`
+     * フィルタ後の要素ごとに関数を実行します。
+     * @param func - a function to be called for each filtered item <br/> 要素ごとに実行される関数
+     * @returns - a new `Query` that yields items returned by `func` <br/> `func` の返り値を列挙する新しい `Query`
      */
     public map<T, TRet=T extends void | undefined ? never : T>(func: (item: TItem) => T | Promise<T>): Query<TRet, null> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -104,8 +107,9 @@ export class Query<
 
     /**
      * Apply an additional filter.
-     * @param criteria - an additional criteria
-     * @returns - a new `Query` that applies `criteria` to the filtered items of the original `Query`
+     * フィルタを追加します。
+     * @param criteria - an additional criteria / 追加するフィルタ条件
+     * @returns - a new `Query` that applies `criteria` to the filtered items of the original `Query` <br/> フィルタ後の項目を検索元とし、`criteria` を検索条件とする新しい `Query`
      */
     public filter<
         TNewCriteria extends QueryCriteria<TItem>,
@@ -122,9 +126,10 @@ export class Query<
 
     /**
      * Yield while `func` returns `true`.
-     * @param func - a function to be called for each filtered item. Returning `false` terminates the iteration.
-     * @param yieldLast - whether to return the item that caused `func` returned `false`
-     * @returns - a new `Query` that yields while `func` returns `true`
+     * `func` が `true` を返す間、列挙を続けます。
+     * @param func - a function to be called for each filtered item. Returning `false` terminates the iteration. <br/>要素ごとに実行される関数。`false`を返すと列挙を停止します。
+     * @param yieldLast - whether to return the item that caused `func` returned `false` <br/>`func`が`false`を返す要因となった要素を出力するかどうか
+     * @returns - a new `Query` that yields while `func` returns `true`<br/>`func` が `true` を返す間列挙を続ける新しい `Query`
      */
     public while(func: (item: TItem) => boolean | Promise<boolean>, yieldLast = false): Query<TItem, null> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -147,8 +152,9 @@ export class Query<
 
     /**
      * Yield until it reaches the maximum count.
-     * @param max - the maximum count
-     * @returns - a new `Query` that yields until it reaches the maximum count.
+     * 出力の最大件数を設定します。
+     * @param max - the maximum count<br/>最大件数
+     * @returns - a new `Query` that yields until it reaches the maximum count.<br/>最大件数に達するまで列挙を続ける新しい `Query`
      */
     public limit(max: number): Query<TItem, null> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -169,8 +175,9 @@ export class Query<
 
     /**
      * Yield a property of each item.
-     * @param key - the key of a property to be picked
-     * @returns - a new `Query` that yields the picked property
+     * 特定のプロパティの内容を一つ抜き出して列挙します。
+     * @param key - the key of a property to be picked<br/>抜き出すプロパティのキー
+     * @returns - a new `Query` that yields the picked property<br/>抜き出したプロパティの内容を列挙する新しい `Query`
      */
     public property<K extends keyof TItem>(key: K): Query<TItem[K], null> {
         return this.map(item => item[key]);
@@ -178,8 +185,9 @@ export class Query<
 
     /**
      * Pick properties of each item.
-     * @param keys - the keys of properties to be picked
-     * @returns - a new `Query` that yields the objects with the picked properties
+     * 特定のプロパティ以外のプロパティを削除したオブジェクトを列挙します。
+     * @param keys - the keys of properties to be picked<br/>抜き出すプロパティのキー
+     * @returns - a new `Query` that yields the objects with the picked properties<br/>プロパティを抜き出した新しいオブジェクトの内容を列挙する新しい `Query`
      */
     public pick<K extends keyof TItem>(...keys: K[]): Query<Pick<TItem, K>, null> {
         return this.map(item => {
@@ -191,11 +199,14 @@ export class Query<
         });
     }
 
+    /* eslint-disable tsdoc/syntax */
     /**
      * Generate an array from the `Query`. Running this function will invoke the whole iteration process of the `Query`.
-     * @param options.preserveCache - whether to suggest the `Query` to preserve the cached data for each item, which normally will be cleared after yield (default: `false`)
-     * @returns - a `Promise` that resolves a generated array
+     * `Query` から配列を生成します。この関数を実行すると `Query` の列挙を最後まで実行します。
+     * @param options.preserveCache - whether to suggest the `Query` to preserve the cached data for each item, which normally will be cleared after yield (default: `false`)<br/>`Query`にキャッシュされたデータを削除せずそのまま残すかどうかを指示します。
+     * @returns - a `Promise` that resolves a generated array<br/>生成された配列を返す `Promise`
      */
+    /* eslint-enable tsdoc/syntax */
     public async toArray(options: {preserveCache: boolean} = { preserveCache: false }): Promise<TItem[]> {
         const arr: TItem[] = [];
         await this.forEach(item => {
@@ -209,7 +220,8 @@ export class Query<
 
     /**
      * Invoke `func` for each filtered item. Running this function will invoke the whole iteration process of the `Query`.
-     * @param func - a function to be called for each item
+     * 列挙された要素ごとに `func` を実行します。この関数を実行すると `Query` の列挙を最後まで実行します。
+     * @param func - a function to be called for each item<br/>要素ごとに実行される関数
      */
     public async forEach(func: (item: TItem) => unknown | Promise<unknown>): Promise<void> {
         const startTime = new Date();
@@ -266,19 +278,30 @@ const BooleanValidator: Validator<boolean | undefined> = {
         v === undefined || typeof v === "boolean",
 };
 
+/**
+ * Lawtext query の法令検索パラメータです。
+ */
 export interface LawCriteriaArgs {
+    /** 法令IDのマッチに用いる正規表現 */
     LawID: RegExp | undefined,
+    /** 法令番号のマッチに用いる正規表現 */
     LawNum: RegExp | undefined,
+    /** 法令名のマッチに用いる正規表現 */
     LawTitle: RegExp | undefined,
+    /** 施行済み法令かどうか */
     Enforced: boolean | undefined,
 
     Path: RegExp | undefined,
     XmlName: RegExp | undefined,
 
+    /** この法令が参照している法令の法令番号のマッチに用いる正規表現 */
     ReferencingLawNum: RegExp | undefined,
+    /** この法令を参照している法令の法令番号のマッチに用いる正規表現 */
     ReferencedLawNum: RegExp | undefined,
 
+    /** 法令XML文字列のマッチに用いる正規表現 */
     xml: RegExp | undefined,
+    /** 法令XMLのDOMを受け取り、マッチしたかどうかを返す関数。 */
     document: ((document: XMLDocument) => boolean | Promise<boolean>) | undefined,
     el: ((el: EL) => boolean | Promise<boolean>) | undefined,
 }
@@ -319,6 +342,7 @@ export type LawCriteria<
     TBaseCriteriaOrNull extends BaseQueryCriteria<TLawQueryItem> | null
         = BaseQueryCriteria<TLawQueryItem> | null,
 > = QueryCriteria<TLawQueryItem, TBaseCriteriaOrNull> | LawCriteriaArgs;
+
 export class BaseLawCriteria implements BaseQueryCriteria<LawQueryItem> {
 
     public args: LawCriteriaArgs;
@@ -482,6 +506,9 @@ async function *getLawQueryPopulationWithProgress(
     }
 }
 
+/**
+ * Lawtext query の法令検索を行う {@link Query} の派生クラス。メンバーメソッドなどについては {@link Query} を参照してください。
+ */
 export class LawQuery<
     TItem extends LawQueryItem = LawQueryItem,
     TBaseCriteria extends BaseQueryCriteria<TItem> | null
