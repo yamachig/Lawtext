@@ -23,7 +23,9 @@
         "serve": "npx webpack serve --env DEV_SERVER=1 --mode development --color --config ./webpack-configs/client.ts",
         "serve:prod": "npx webpack serve --env DEV_SERVER=1 --mode production --color --config ./webpack-configs/client.ts",
         "test": "npm run build:test && mocha --delay --timeout 60000 --reporter mochawesome ./dist-test/bundle.js & start ./mochawesome-report/mochawesome.html",
-        "watch": "npx webpack --watch --mode development --color --config ./webpack-configs/client.ts"
+        "watch": "npx webpack --watch --mode development --color --config ./webpack-configs/client.ts",
+        "query-docs": "npx typedoc ../core/src/data/query.ts src/globals.ts --plugin none --excludeNotDocumented --name \"Lawtext query\" --readme \"src/query-docs-readme-src.md\" --out \"dist-dev/query-docs\" --theme default",
+        "query-docs:prod": "npx typedoc ../core/src/data/query.ts src/globals.ts --plugin none --excludeNotDocumented --name \"Lawtext query\" --readme \"src/query-docs-readme-src.md\" --out \"dist-prod/query-docs\" --theme default"
     },
     "devDependencies": {
         "@types/chai": "^4.2.15",
@@ -62,6 +64,8 @@
         "source-map-support": "^0.5.19",
         "style-loader": "^2.0.0",
         "tsconfig-paths": "^3.9.0",
+        "typedoc": "^0.20.34",
+        "typedoc-plugin-markdown": "^3.6.0",
         "webpack": "^5.27.0",
         "webpack-cli": "^4.5.0",
         "webpack-dev-server": "^3.11.2",

@@ -6,6 +6,7 @@ import webpack from "webpack";
 import webpack_dev_server from "webpack-dev-server";
 import WatchMessagePlugin from "./WatchMessagePlugin";
 import CreateAppZipPlugin from "./CreateAppZipPlugin";
+import QueryDocsPlugin from "./QueryDocsPlugin";
 
 const rootDir = path.dirname(__dirname);
 
@@ -91,6 +92,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 filename: "index.html",
             }),
             ...(env.DEV_SERVER ? [] : [new CreateAppZipPlugin()]),
+            ...(env.DEV_SERVER ? [] : [new QueryDocsPlugin()]),
         ],
 
         watchOptions: {

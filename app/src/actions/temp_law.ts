@@ -1,4 +1,4 @@
-export const showLawXML = async (xml: string): Promise<void> => {
+export const showLawXML = (xml: string): void => {
     const id = `temp_law_${Math.floor(Math.random() * 1000000000)}`;
     localStorage.setItem(
         "temp_law:" + id,
