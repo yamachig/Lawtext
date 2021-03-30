@@ -1,6 +1,6 @@
 import webpack from "webpack";
 import path from "path";
-import { generateDocs } from "@appsrc/query-docs";
+import { generateDocs } from "../src/query-docs";
 
 
 export default class QueryDocsPlugin {
