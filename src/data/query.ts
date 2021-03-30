@@ -619,7 +619,7 @@ export class LawQuery<
      * @param ensure - 法令XMLが取得できたもののみを列挙するかどうか（デフォルト: `true`）
      * @returns - 法令XMLのDOMを `document` プロパティとして追加したオブジェクトを列挙する新しい `Query`
      */
-    public withDocument<TEnsure extends boolean=true>(ensure: TEnsure = true as TEnsure):
+    public assignDocument<TEnsure extends boolean=true>(ensure: TEnsure = true as TEnsure):
         LawQuery<TItem & {document: TEnsure extends true ? XMLDocument : (XMLDocument | null) }> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
