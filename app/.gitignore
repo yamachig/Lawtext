@@ -25,3 +25,4 @@ MANIFEST
 /dist-bin
 /test/lawdata
 mochawesome-report
+/src/query-docs/temp-includes

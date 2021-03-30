@@ -11,16 +11,7 @@ Lawtext query は、ブラウザのコンソールとjavascriptを利用した�
 
     - [Firefox の場合](https://developer.mozilla.org/docs/Tools/Web_Console/UI_Tour)（Windowsなど: Ctrl+Shift+K,Mac: Cmd+Option+K）
     
-2. コンソールに Lawtext query を使用する javascriptコードを入力して実行します。
-
-    コードの例<small>（平成に新規制定された法律の法令番号と法令名をヒットしたものから10件表示</small>：
-    ```js
-    lawtext
-        .queryViaAPI({LawNum: /^平成.{1,3}年法律/})
-        .limit(10)
-        .toArray()
-        .then(a => console.table(a, ["LawNum", "LawTitle"]))
-    ```
+2. コンソールに Lawtext query を使用する javascriptコードを入力して実行します。（[コードの例](#examples)）
 
 ## 検索に用いるデータの取得元
 
@@ -35,3 +26,8 @@ Lawtext query の検索に用いるデータは、e-Gov 法令API とオフラ�
 - 法令の検索条件について: {@link LawCriteriaArgs}
 - 検索結果の制御について: {@link Query}
 - ブラウザのコンソールから利用できる {@link lawtext} オブジェクトについて: {@link lawtext}
+
+## Lawtext query のコード例<a name="examples"></a>
+
+[[include:examples.md]]
+
