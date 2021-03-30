@@ -22,7 +22,7 @@
     "ts-node": "node -r ts-node/register -r tsconfig-paths/register --trace-warnings",
     "build": "npm run ts-node bin/build.ts && tsc",
     "prepare": "npm run build",
-    "test": "node --max_old_space_size=2048 -r ts-node/register -r tsconfig-paths/register ./test/prepare_test.ts && mocha --timeout 10000 -r ts-node/register -r tsconfig-paths/register test/**/*.ts"
+    "test": "node --max_old_space_size=2048 -r ts-node/register -r tsconfig-paths/register ./test/prepare_test.ts && mocha --exit --timeout 10000 -r ts-node/register -r tsconfig-paths/register test/**/*.ts"
   },
   "dependencies": {
     "argparse": "^2.0.1",

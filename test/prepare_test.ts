@@ -5,6 +5,14 @@ import { promisify } from "util";
 import { download, saveList } from "@coresrc/data/save_fs";
 import { ProgressBar } from "@coresrc/term_util";
 import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
+// import { before } from "mocha";
+
+export const loader = new FSStoredLoader(path.join(__dirname, "../data"));
+
+// before("Run prepare_test", async function() {
+//     this.timeout(3600_000);
+//     await prepare(loader);
+// });
 
 export const prepare = async (loader: FSStoredLoader): Promise<void> => {
     const bar = new ProgressBar();
@@ -29,10 +37,14 @@ export const prepare = async (loader: FSStoredLoader): Promise<void> => {
 
 
 if (typeof require !== "undefined" && require.main === module) {
+    console.log("running prepare() from toplevel.");
     process.on("unhandledRejection", e => {
+        // const newErr = new Error(`Unhandled rejection in prepare(): ${e}`);
+        console.log();
         console.dir(e);
+        // console.error(newErr);
         process.exit(1);
     });
     const loader = new FSStoredLoader(path.join(__dirname, "../data"));
-    prepare(loader).catch(e => { throw e; });
+    prepare(loader);
 }

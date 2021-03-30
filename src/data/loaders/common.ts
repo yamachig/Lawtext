@@ -42,8 +42,8 @@ export abstract class Loader {
             let currentRatio = 0;
             let currentMessage = "";
             return (ratio?: number, message?: string) => {
-                currentRatio = ratio || currentRatio;
-                currentMessage = message || currentMessage;
+                currentRatio = ratio ?? currentRatio;
+                currentMessage = message ?? currentMessage;
                 onProgress(currentRatio, currentMessage);
             };
         })();
@@ -52,16 +52,19 @@ export abstract class Loader {
         progress(0, "");
         const generator = new LawListGenerator();
         for (const baseLawInfo of baseLawInfos) {
-            const xml = await this.getLawXmlByLawNum(baseLawInfo.LawNum);
+            progress(currentLength / baseLawInfos.length, `Load Xml: ${baseLawInfo.LawNum}：${baseLawInfo.LawTitle}`);
+            const xml = await this.loadLawXMLByInfo(baseLawInfo);
             if (xml === null) {
                 console.error("XML cannot fetched", baseLawInfo);
                 continue;
             }
             const lawInfo = LawInfo.fromBaseLawInfo(baseLawInfo);
+            progress(undefined, `Read LawNums: ${baseLawInfo.LawNum}：${baseLawInfo.LawTitle}`);
             lawInfo.addReferencingLawNums(xml);
+            progress(undefined, `Add LawInfo: ${baseLawInfo.LawNum}：${baseLawInfo.LawTitle}`);
             generator.add(lawInfo);
             currentLength++;
-            progress(currentLength / baseLawInfos.length, `${baseLawInfo.LawNum}：${baseLawInfo.LawTitle}`);
+            progress(currentLength / baseLawInfos.length, `Completed: ${baseLawInfo.LawNum}：${baseLawInfo.LawTitle}`);
         }
         progress(undefined, "Analyzing references...");
         generator.setReferences();

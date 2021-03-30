@@ -1,7 +1,7 @@
 import chai from "chai";
 import fs from "fs";
 import fsExtra from "fs-extra";
-import { before, it } from "mocha";
+import { it } from "mocha";
 import os from "os";
 import path from "path";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -14,15 +14,9 @@ import { analyze, parse } from "@coresrc/parser_wrapper";
 import { render as renderLawtext } from "@coresrc/renderers/lawtext";
 import { TERMC, toTableText } from "@coresrc/term_util";
 import * as util from "@coresrc/util";
-import { prepare } from "./prepare_test";
-import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
+import { loader } from "./prepare_test";
 
 const domParser = new xmldom.DOMParser();
-const loader = new FSStoredLoader(path.join(__dirname, "../data"));
-
-before(async () => {
-    await prepare(loader);
-});
 
 const LIMIT_WIDTH = 34;
 

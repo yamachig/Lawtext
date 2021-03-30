@@ -77,24 +77,24 @@ export const saveList = async (
         let currentRatio = 0;
         let currentMessage = "";
         return (ratio?: number, message?: string) => {
-            currentRatio = ratio || currentRatio;
-            currentMessage = message || currentMessage;
+            currentRatio = ratio ?? currentRatio;
+            currentMessage = message ?? currentMessage;
             onProgress(currentRatio, currentMessage);
         };
     })();
 
     progress(0, "Loading CSV...");
-
-    console.log("\nListing up XMLs...");
     const infos = await loader.loadBaseLawInfosFromCSV();
+    progress(0, "");
 
     if (infos === null) {
         console.error("CSV list cannot be fetched.");
         return;
     }
 
-    console.log(`Processing ${infos.length} XMLs...`);
+    console.log(`\nProcessing ${infos.length} XMLs...`);
 
     const list = await loader.makeLawListFromBaseLawInfos(infos);
+    console.log("\nWriting JSON...");
     await promisify(fs.writeFile)(loader.listJsonPath, JSON.stringify(list), { encoding: "utf-8" });
 };
