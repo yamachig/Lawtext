@@ -91,8 +91,8 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 template: path.resolve(rootDir, "./src/index.html"),
                 filename: "index.html",
             }),
-            ...(env.DEV_SERVER ? [] : [new CreateAppZipPlugin()]),
             ...(env.DEV_SERVER ? [] : [new QueryDocsPlugin()]),
+            ...(env.DEV_SERVER ? [] : [new CreateAppZipPlugin()]),
         ],
 
         watchOptions: {
