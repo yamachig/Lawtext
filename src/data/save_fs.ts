@@ -94,7 +94,7 @@ export const saveList = async (
 
     console.log(`\nProcessing ${infos.length} XMLs...`);
 
-    const list = await loader.makeLawListFromBaseLawInfos(infos);
+    const list = await loader.makeLawListFromBaseLawInfos(infos, progress);
     console.log("\nWriting JSON...");
     await promisify(fs.writeFile)(loader.listJsonPath, JSON.stringify(list), { encoding: "utf-8" });
 };
