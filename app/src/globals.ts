@@ -18,7 +18,7 @@ export const lawtext = {
      * @param criteria - 法令のフィルタに用いる {@link LawCriteriaArgs}。`null` を設定するとフィルタを行わず全ての項目を列挙します。
      * @returns - フィルタを適用した{@link LawQuery}。
      */
-    query: (criteria: LawCriteria = null): LawQuery =>
+    query: (criteria: LawCriteria | null = null): LawQuery =>
         LawQuery.fromFetchInfo(lawdata.storedLoader, criteria),
 
     /**
@@ -26,7 +26,7 @@ export const lawtext = {
      * @param criteria - 法令のフィルタに用いる {@link LawCriteriaArgs}。`null` を設定するとフィルタを行わず全ての項目を列挙します。
      * @returns - フィルタを適用した{@link Query}。
      */
-    queryViaAPI: (criteria: LawCriteria = null): LawQuery => {
+    queryViaAPI: (criteria: LawCriteria | null = null): LawQuery => {
         console.warn("クエリの実行に e-Gov 法令API を使用します。時間がかかる場合があります。");
         return LawQuery.fromFetchInfo(lawdata.elawsLoader, criteria);
     },
