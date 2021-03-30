@@ -1,11 +1,19 @@
 import * as lawdata from "./actions/lawdata";
 import { showLawXML } from "./actions/temp_law";
 import { LawCriteria, LawQuery } from "@coresrc/data/query";
+import { traceTitles } from "./law_util";
 
 /**
  * ブラウザのコンソールから利用可能なオブジェクトです。
  */
 export const lawtext = {
+
+    /**
+     * `Element` の親をさかのぼって条番号や項番号などの階層を取得します。
+     * @param el - 検索対象の `Element`
+     * @returns - 条番号などを羅列した配列
+     */
+    traceTitles: (el: Element): string[] => traceTitles(el),
 
     /**
      * 法令XMLを新しいウィンドウのLawtextで表示します。
