@@ -24,7 +24,7 @@ Lawtext query の検索に用いるデータは、e-Gov 法令API とオフラ�
 ## Lawtext query リファレンス
 
 - 法令の検索条件について: {@link LawCriteriaArgs}
-- 検索結果の制御について: {@link Query}
+- 検索結果の制御について: {@link Query}, {@link LawQuery}
 - ブラウザのコンソールから利用できる {@link lawtext} オブジェクトについて: {@link lawtext}
 
 ## Lawtext query のコード例<a name="examples"></a>
