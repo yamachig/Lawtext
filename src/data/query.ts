@@ -5,15 +5,11 @@ import { Loader } from "./loaders/common";
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;
 const domParser = new DOMParser();
 
-interface BaseQueryCriteria<TItem> {
+interface CoreQueryCriteria<TItem> {
     match: (item: TItem) => boolean | Promise<boolean>;
 }
 
-type QueryCriteria<
-    TItem,
-    TQuery extends BaseQueryCriteria<TItem> | null
-        = BaseQueryCriteria<TItem> | null,
-> = TQuery | BaseQueryCriteria<TItem>["match"];
+type QueryCriteria<TItem> = CoreQueryCriteria<TItem> | CoreQueryCriteria<TItem>["match"];
 
 interface AsyncIterable<T> {
     [Symbol.asyncIterator](): AsyncIterator<T, void, undefined>;
@@ -28,10 +24,12 @@ interface QueryItem {
 
 /**
  * The query object that represents a source list and a filtering criteria.
+ *
  * フィルタ条件と検索元リストを表すクエリオブジェクト。
  *
  * @example
  * A `Query` works as an async generator.
+ *
  * `Query` は async generator として使用できます。
  *
  * ```ts
@@ -43,11 +41,10 @@ interface QueryItem {
  */
 export class Query<
     TItem,
-    TBaseCriteriaOrNull extends BaseQueryCriteria<TItem> | null,
 > implements AsyncIterable<TItem> {
 
     public population: AsyncIterable<TItem>;
-    public criteria: TBaseCriteriaOrNull;
+    public criteria: CoreQueryCriteria<TItem> | null;
 
     /**
      * Instanciate a `Query`.
@@ -56,18 +53,25 @@ export class Query<
      */
     public constructor (
         population: AsyncIterable<TItem>,
-        criteria: QueryCriteria<TBaseCriteriaOrNull>,
+        criteria: QueryCriteria<TItem> | null,
     ) {
         this.population = population;
         if (criteria === null) {
-            this.criteria = criteria as TBaseCriteriaOrNull;
+            this.criteria = criteria;
         } else if ("match" in criteria) {
-            this.criteria = criteria as unknown as TBaseCriteriaOrNull;
+            this.criteria = criteria;
         } else if (typeof criteria === "function") {
-            this.criteria = { "match": criteria } as unknown as TBaseCriteriaOrNull;
+            this.criteria = { "match": criteria };
         } else {
             throw assertNever(criteria);
         }
+    }
+
+    protected new(
+        population: AsyncIterable<TItem>,
+        criteria: QueryCriteria<TItem> | null,
+    ): this {
+        return new Query(population, criteria) as this;
     }
 
     async *[Symbol.asyncIterator](): AsyncGenerator<TItem, void, undefined> {
@@ -84,11 +88,17 @@ export class Query<
 
     /**
      * Apply a function for each filtered item.
+     *
      * フィルタ後の要素ごとに関数を実行します。
+     *
      * @param func - a function to be called for each filtered item <br/> 要素ごとに実行される関数
+     * @param criteria - an additional criteria applied after filtering / 関数実行後に適用するフィルタ条件
      * @returns - a new `Query` that yields items returned by `func` <br/> `func` の返り値を列挙する新しい `Query`
      */
-    public map<T, TRet=T extends void | undefined ? never : T>(func: (item: TItem) => T | Promise<T>): Query<TRet, null> {
+    public map<T, TRet=T extends (void | undefined) ? never : T>(
+        func: (item: TItem) => T | Promise<T>,
+        criteria: QueryCriteria<TRet> | null = null,
+    ): Query<TRet> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
         return new Query(
@@ -101,40 +111,67 @@ export class Query<
                     yield value as unknown as TRet;
                 }
             })(),
-            null,
+            criteria,
         );
     }
 
     /**
+     * Apply a function for each filtered item and iterate the merged object with the returned and original object.
+     *
+     * フィルタ後の要素ごとに関数を実行し、返り値と元の要素のプロパティをマージしたオブジェクトを列挙します。
+     *
+     * @param func - a function to be called for each filtered item <br/> 要素ごとに実行される関数
+     * @param criteria - an additional criteria applied after merge / マージ後に適用するフィルタ条件
+     * @returns - a new `Query` that yields merged objects <br/> マージされたオブジェクトを列挙する新しい `Query`
+     */
+    public assign<T>(
+        func: (item: TItem) => T | Promise<T>,
+        criteria: QueryCriteria<T extends (void | undefined) ? never : (T & TItem)> | null = null,
+    ): Query<T extends (void | undefined) ? never : (T & TItem)> {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        return this.new(
+            (async function *() {
+                for await (const item of self) {
+                    const value = await func(item);
+                    if (value === undefined) {
+                        throw TypeError(`Query.assign: the mapped function (${func}) returned an undefined. Please check the definition of the function. (First occurance: ${item})`);
+                    }
+                    yield { ...item, ...value };
+                }
+            })(),
+            criteria as QueryCriteria<TItem> | null,
+        ) as unknown as Query<T extends (void | undefined) ? never : (T & TItem)>;
+    }
+
+    /**
      * Apply an additional filter.
+     *
      * フィルタを追加します。
+     *
      * @param criteria - an additional criteria / 追加するフィルタ条件
      * @returns - a new `Query` that applies `criteria` to the filtered items of the original `Query` <br/> フィルタ後の項目を検索元とし、`criteria` を検索条件とする新しい `Query`
      */
-    public filter<
-        TNewCriteria extends QueryCriteria<TItem>,
-        TNewBaseCriteriaOrNull extends BaseQueryCriteria<TItem> | null
-            = TNewCriteria extends QueryCriteria<TItem, infer Inf>
-                ? Inf
-                : never,
-    >(criteria: TNewCriteria): Query<TItem, TNewBaseCriteriaOrNull> {
-        return new Query(
+    public filter(criteria: QueryCriteria<TItem> | null): this {
+        return this.new(
             this[Symbol.asyncIterator](),
-            criteria as QueryCriteria<TNewBaseCriteriaOrNull>,
+            criteria,
         );
     }
 
     /**
      * Yield while `func` returns `true`.
+     *
      * `func` が `true` を返す間、列挙を続けます。
+     *
      * @param func - a function to be called for each filtered item. Returning `false` terminates the iteration. <br/>要素ごとに実行される関数。`false`を返すと列挙を停止します。
      * @param yieldLast - whether to return the item that caused `func` returned `false` <br/>`func`が`false`を返す要因となった要素を出力するかどうか
      * @returns - a new `Query` that yields while `func` returns `true`<br/>`func` が `true` を返す間列挙を続ける新しい `Query`
      */
-    public while(func: (item: TItem) => boolean | Promise<boolean>, yieldLast = false): Query<TItem, null> {
+    public while(func: (item: TItem) => boolean | Promise<boolean>, yieldLast = false): this {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
-        return new Query(
+        return this.new(
             (async function *() {
                 for await (const item of self) {
                     const continuing = await func(item);
@@ -152,14 +189,16 @@ export class Query<
 
     /**
      * Yield until it reaches the maximum count.
+     *
      * 出力の最大件数を設定します。
+     *
      * @param max - the maximum count<br/>最大件数
      * @returns - a new `Query` that yields until it reaches the maximum count.<br/>最大件数に達するまで列挙を続ける新しい `Query`
      */
-    public limit(max: number): Query<TItem, null> {
+    public limit(max: number): this {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
-        return new Query(
+        return this.new(
             (async function *() {
                 if (max <= 0) return;
                 let count = 0;
@@ -175,21 +214,25 @@ export class Query<
 
     /**
      * Yield a property of each item.
+     *
      * 特定のプロパティの内容を一つ抜き出して列挙します。
+     *
      * @param key - the key of a property to be picked<br/>抜き出すプロパティのキー
      * @returns - a new `Query` that yields the picked property<br/>抜き出したプロパティの内容を列挙する新しい `Query`
      */
-    public property<K extends keyof TItem>(key: K): Query<TItem[K], null> {
+    public property<K extends keyof TItem>(key: K): Query<TItem[K]> {
         return this.map(item => item[key]);
     }
 
     /**
      * Pick properties of each item.
+     *
      * 特定のプロパティ以外のプロパティを削除したオブジェクトを列挙します。
+     *
      * @param keys - the keys of properties to be picked<br/>抜き出すプロパティのキー
      * @returns - a new `Query` that yields the objects with the picked properties<br/>プロパティを抜き出した新しいオブジェクトの内容を列挙する新しい `Query`
      */
-    public pick<K extends keyof TItem>(...keys: K[]): Query<Pick<TItem, K>, null> {
+    public pick<K extends keyof TItem>(...keys: K[]): Query<Pick<TItem, K>> {
         return this.map(item => {
             const picked = {} as Pick<TItem, K>;
             for (const key of keys) {
@@ -199,14 +242,17 @@ export class Query<
         });
     }
 
-    /* eslint-disable tsdoc/syntax */
     /**
      * Generate an array from the `Query`. Running this function will invoke the whole iteration process of the `Query`.
+     *
      * `Query` から配列を生成します。この関数を実行すると `Query` の列挙を最後まで実行します。
-     * @param options.preserveCache - whether to suggest the `Query` to preserve the cached data for each item, which normally will be cleared after yield (default: `false`)<br/>`Query`にキャッシュされたデータを削除せずそのまま残すかどうかを指示します。
+     *
+     * @param options
+     *
+     * - `options.preserveCache <boolean>`: whether to suggest the `Query` to preserve the cached data for each item, which normally will be cleared after yield (default: `false`)<br/>`Query`にキャッシュされたデータを削除せずそのまま残すかどうかを指示します。
+     *
      * @returns - a `Promise` that resolves a generated array<br/>生成された配列を返す `Promise`
      */
-    /* eslint-enable tsdoc/syntax */
     public async toArray(options: {preserveCache: boolean} = { preserveCache: false }): Promise<TItem[]> {
         const arr: TItem[] = [];
         await this.forEach(item => {
@@ -220,7 +266,9 @@ export class Query<
 
     /**
      * Invoke `func` for each filtered item. Running this function will invoke the whole iteration process of the `Query`.
+     *
      * 列挙された要素ごとに `func` を実行します。この関数を実行すると `Query` の列挙を最後まで実行します。
+     *
      * @param func - a function to be called for each item<br/>要素ごとに実行される関数
      */
     public async forEach(func: (item: TItem) => unknown | Promise<unknown>): Promise<void> {
@@ -253,7 +301,7 @@ interface Validator<T> {
 }
 
 type Validators<TArgs> = {
-    [K in keyof TArgs]: Validator<TArgs[K]>
+    [K in keyof Required<TArgs>]: Validator<TArgs[K]>
 }
 
 const getDefaultArgs = <VS extends {[key: string]: Validator<unknown>}>(validators: VS) => {
@@ -283,27 +331,27 @@ const BooleanValidator: Validator<boolean | undefined> = {
  */
 export interface LawCriteriaArgs {
     /** 法令IDのマッチに用いる正規表現 */
-    LawID: RegExp | undefined,
+    LawID?: RegExp,
     /** 法令番号のマッチに用いる正規表現 */
-    LawNum: RegExp | undefined,
+    LawNum?: RegExp,
     /** 法令名のマッチに用いる正規表現 */
-    LawTitle: RegExp | undefined,
+    LawTitle?: RegExp,
     /** 施行済み法令かどうか */
-    Enforced: boolean | undefined,
+    Enforced?: boolean,
 
-    Path: RegExp | undefined,
-    XmlName: RegExp | undefined,
+    Path?: RegExp,
+    XmlName?: RegExp,
 
     /** この法令が参照している法令の法令番号のマッチに用いる正規表現 */
-    ReferencingLawNum: RegExp | undefined,
+    ReferencingLawNum?: RegExp,
     /** この法令を参照している法令の法令番号のマッチに用いる正規表現 */
-    ReferencedLawNum: RegExp | undefined,
+    ReferencedLawNum?: RegExp,
 
     /** 法令XML文字列のマッチに用いる正規表現 */
-    xml: RegExp | undefined,
+    xml?: RegExp,
     /** 法令XMLのDOMを受け取り、マッチしたかどうかを返す関数。 */
-    document: ((document: XMLDocument) => boolean | Promise<boolean>) | undefined,
-    el: ((el: EL) => boolean | Promise<boolean>) | undefined,
+    document?: (document: XMLDocument) => boolean | Promise<boolean>,
+    el?: (el: EL) => boolean | Promise<boolean>,
 }
 
 const LawCriteriaValidator: Validators<LawCriteriaArgs> = {
@@ -337,13 +385,9 @@ const LawCriteriaValidator: Validators<LawCriteriaArgs> = {
 
 const getDefaultLawCriteriaArgs = () => getDefaultArgs(LawCriteriaValidator);
 
-export type LawCriteria<
-    TLawQueryItem extends LawQueryItem = LawQueryItem,
-    TBaseCriteriaOrNull extends BaseQueryCriteria<TLawQueryItem> | null
-        = BaseQueryCriteria<TLawQueryItem> | null,
-> = QueryCriteria<TLawQueryItem, TBaseCriteriaOrNull> | LawCriteriaArgs;
+export type LawCriteria<TLawQueryItem extends LawQueryItem = LawQueryItem> = QueryCriteria<TLawQueryItem> | LawCriteriaArgs;
 
-export class BaseLawCriteria implements BaseQueryCriteria<LawQueryItem> {
+export class BaseLawCriteria implements CoreQueryCriteria<LawQueryItem> {
 
     public args: LawCriteriaArgs;
 
@@ -507,38 +551,42 @@ async function *getLawQueryPopulationWithProgress(
 }
 
 /**
- * Lawtext query の法令検索を行う {@link Query} の派生クラス。メンバーメソッドなどについては {@link Query} を参照してください。
+ * Lawtext query の法令検索を行う {@link Query} の派生クラス。ここに列挙されているもの以外のクラスメンバーについては {@link Query} を参照してください。
  */
 export class LawQuery<
     TItem extends LawQueryItem = LawQueryItem,
-    TBaseCriteria extends BaseQueryCriteria<TItem> | null
-        = BaseQueryCriteria<TItem> | null,
-> extends Query<TItem, TBaseCriteria> {
+> extends Query<TItem> {
 
     public constructor (
         population: AsyncIterable<TItem>,
-        criteria: LawCriteria<TItem, TBaseCriteria>,
+        criteria: LawCriteria<TItem> | null,
     ) {
-        const casted: LawCriteria<TItem> = criteria;
-        let this_criteria: QueryCriteria<TItem>;
-        if (casted === null) {
-            this_criteria = casted;
-        } else if ("match" in casted) {
-            this_criteria = casted;
-        } else if (typeof casted === "function") {
-            this_criteria = casted;
+        let this_criteria: QueryCriteria<TItem> | null;
+        if (criteria === null) {
+            this_criteria = criteria;
+        } else if ("match" in criteria) {
+            this_criteria = criteria;
+        } else if (typeof criteria === "function") {
+            this_criteria = criteria;
         } else {
-            this_criteria = new BaseLawCriteria(casted);
+            this_criteria = new BaseLawCriteria(criteria);
         }
         super(
             population,
-            this_criteria as unknown as QueryCriteria<TBaseCriteria>,
+            this_criteria,
         );
     }
 
-    public static fromFetchInfo<TCriteria extends BaseQueryCriteria<LawQueryItem> | null>(
+    protected new(
+        population: AsyncIterable<TItem>,
+        criteria: LawCriteria<TItem> | null,
+    ): this {
+        return new LawQuery(population, criteria) as this;
+    }
+
+    public static fromFetchInfo(
         loader: Loader,
-        criteria: LawCriteria<LawQueryItem, TCriteria>,
+        criteria: LawCriteria<LawQueryItem> | null,
     ): LawQuery {
         return new LawQuery(
             getLawQueryPopulationWithProgress(
@@ -552,18 +600,39 @@ export class LawQuery<
         );
     }
 
-    public filter<
-        TNewCriteria extends LawCriteria<TItem>,
-        TNewBaseCriteria extends BaseQueryCriteria<TItem> | null
-            = TNewCriteria extends LawCriteriaArgs
-                ? BaseLawCriteria
-                : TNewCriteria extends QueryCriteria<TItem, infer TInf>
-                    ? TInf
-                    : never,
-    >(criteria: TNewCriteria): LawQuery<TItem, TNewBaseCriteria> {
-        return new LawQuery<TItem, TNewBaseCriteria>(
+    public filter(criteria: LawCriteria<TItem> | null): this {
+        return this.new(
             this[Symbol.asyncIterator](),
-            criteria as LawCriteria<TItem, TNewBaseCriteria>,
+            criteria,
         );
+    }
+
+    public assign<T>(
+        func: (item: TItem) => T | Promise<T>,
+        criteria: LawCriteria<T extends (void | undefined) ? never : (T & TItem)> | null = null,
+    ): LawQuery<T extends (void | undefined) ? never : (T & TItem)> {
+        return super.assign(func, criteria as CoreQueryCriteria<TItem>) as unknown as LawQuery<T extends (void | undefined) ? never : (T & TItem)>;
+    }
+
+    /**
+     * 法令XMLのDOMを取得して追加したオブジェクトを列挙します。
+     * @param ensure - 法令XMLが取得できたもののみを列挙するかどうか（デフォルト: `true`）
+     * @returns - 法令XMLのDOMを `document` プロパティとして追加したオブジェクトを列挙する新しい `Query`
+     */
+    public withDocument<TEnsure extends boolean=true>(ensure: TEnsure = true as TEnsure):
+        LawQuery<TItem & {document: TEnsure extends true ? XMLDocument : (XMLDocument | null) }> {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        return this.new(
+            (async function *() {
+                for await (const item of self) {
+                    const document = await item.getDocument();
+                    if (!ensure || document !== null) {
+                        yield { ...item, document };
+                    }
+                }
+            })(),
+            null,
+        ) as unknown as LawQuery<TItem & {document: TEnsure extends true ? XMLDocument : (XMLDocument | null) }>;
     }
 }
