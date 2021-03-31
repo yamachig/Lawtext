@@ -1,6 +1,8 @@
+import { fetchLawData } from "@coresrc/elaws_api";
 import { assertNever, EL, elementToJson } from "@coresrc/util";
 import { LawInfo } from "./lawinfo";
 import { Loader } from "./loaders/common";
+import { FetchElawsLoader } from "./loaders/FetchElawsLoader";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;
 const domParser = new DOMParser();
@@ -471,16 +473,26 @@ export class LawQueryItem extends LawInfo implements QueryItem {
         return item;
     }
 
-    protected _cache = {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    protected static initialCache = () => ({
+        imageData: null as Uint8Array | null,
         xml: null as string | null,
         document: null as XMLDocument | null,
         el: null as EL | null,
-    };
+    });
+
+    protected _cache = LawQueryItem.initialCache();
 
     public async getXML(): Promise<string | null> {
         if (this._cache.xml === null) {
             if (this.loader === null) throw Error("Loader not specified");
-            this._cache.xml = await this.loader.loadLawXMLByInfo(this);
+            if (this.loader instanceof FetchElawsLoader) {
+                const elawsLawData = await fetchLawData(this.LawID);
+                this._cache.xml = elawsLawData.xml;
+                this._cache.imageData = elawsLawData.imageData;
+            } else {
+                this._cache.xml = await this.loader.loadLawXMLByInfo(this);
+            }
         }
         return this._cache.xml;
     }
@@ -505,7 +517,7 @@ export class LawQueryItem extends LawInfo implements QueryItem {
 
     public [symbolFinalyzeQueryItem](): void {
         if (this[symbolDoNotFinalize]) return;
-        this._cache = { xml: null, document: null, el: null };
+        this._cache = LawQueryItem.initialCache();
     }
     public [symbolDoNotFinalize] = false;
 

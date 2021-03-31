@@ -15,11 +15,21 @@ export const fetchElaws = async (url: string, retry = 5): Promise<Element> => {
     if (retry <= 0) {
         throw Error("fetchElaws(): Failed after retries");
     }
-    const response = await fetch(url, {
-        mode: "cors",
-    });
-    if (!response.ok) throw Error(response.statusText);
-    const text = await response.text();
+
+    let text: string;
+    try {
+        const response = await fetch(url, {
+            mode: "cors",
+        });
+        if (!response.ok) throw Error(response.statusText);
+        text = await response.text();
+    } catch (e) {
+        console.error(e);
+        console.error("request URL: " + url);
+        console.error(`remaining retries: ${retry - 1}`);
+        return fetchElaws(url, retry - 1);
+    }
+
     const doc = domParser.parseFromString(text, "text/xml") as XMLDocument;
     const elResult = doc.getElementsByTagName("DataRoot").item(0)?.getElementsByTagName("Result").item(0);
     const elCode = elResult?.getElementsByTagName("Code").item(0);
