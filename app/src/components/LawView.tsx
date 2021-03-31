@@ -1,10 +1,10 @@
 import $ from "jquery";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import AnimateHeight from "react-animate-height";
 import styled, { createGlobalStyle } from "styled-components";
 import { assertNever, EL, NotImplementedError } from "@coresrc/util";
 import * as std from "@coresrc/std_law";
-import { LawtextAppPageStateStruct, OrigStateProps } from "./LawtextAppPageState";
+import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import path from "path";
 import { storedLoader } from "@appsrc/lawdata/loaders";
 import { LawData } from "@appsrc/lawdata/common";
@@ -39,19 +39,28 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
     return (
         <LawViewDiv>
             <GlobalStyle />
-            {origState.hasError && <LawViewError {...{ origState }} />}
-            {origState.law &&
-                <LawComponent
-                    el={origState.law.el}
-                    indent={0}
-                    ls={{
-                        onError,
-                        lawData: origState.law,
-                    }}
-                />
-            }
+            {origState.hasError && <LawViewError {...props} />}
+            {origState.law && <LawDataComponent lawData={origState.law} onError={onError} />}
         </LawViewDiv>
     );
+};
+
+const LawDataComponent: React.FC<{
+    lawData: LawData,
+    onError: (error: Error) => unknown,
+}> = props => {
+    const { lawData, onError } = props;
+
+    const ls = useMemo(() => ({
+        onError,
+        lawData,
+    }), [onError, lawData]);
+
+    return <LawComponent
+        el={lawData.el}
+        indent={0}
+        ls={ls}
+    />;
 };
 
 interface BaseLawCommonState {
@@ -66,7 +75,7 @@ interface BaseLawCommonProps {
 const LawViewErrorDiv = styled.div`
 `;
 
-const LawViewError: React.FC<OrigStateProps> = props => {
+const LawViewError: React.FC<LawtextAppPageStateStruct> = props => {
     const { origState } = props;
     return (
         <LawViewErrorDiv className="alert alert-danger">

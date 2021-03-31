@@ -2,11 +2,9 @@ import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { LawView } from "./LawView";
-import { useHistory } from "react-router";
 import { ResolvedType } from "@coresrc/util";
 import { saveListJson } from "@appsrc/lawdata/saveListJson";
 import { ensureFetch, storedLoader } from "@appsrc/lawdata/loaders";
-import { downloadSampleLawtext } from "@appsrc/actions";
 import { openFile } from "@appsrc/actions/openFile";
 
 
@@ -52,11 +50,9 @@ const ViewerWelcomeDiv = styled.div`
 `;
 
 const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
-    const { origState, setState } = props;
+    const { history, lawSearchKey } = props;
 
-    const [editingKey, setEditingKey] = React.useState(origState.lawSearchKey ?? "");
-
-    const history = useHistory();
+    const [editingKey, setEditingKey] = React.useState(lawSearchKey);
 
     const lawSearchKeyInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -72,10 +68,15 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
         if (input) {
             input.focus();
         }
+        let unmounted = false;
         (async () => {
             const ffa = await ensureFetch();
+            if (unmounted) return;
             setFetchAbility(ffa);
         })();
+        return () => {
+            unmounted = true;
+        };
     }, []);
 
     const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +85,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
 
     const downloadSampleLawtextOnClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        downloadSampleLawtext(setState);
+        history.push("/(sample)");
     };
 
     return (

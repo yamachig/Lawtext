@@ -1,4 +1,4 @@
-import { showLawXML } from "./actions/temp_law";
+import { showLaw } from "./actions/temp_law";
 import { LawCriteria, LawQuery } from "@coresrc/data/query";
 import { traceTitles } from "./law_util";
 import { elawsLoader, storedLoader } from "./lawdata/loaders";
@@ -16,10 +16,10 @@ export const lawtext = {
     traceTitles: (el: Element): string[] => traceTitles(el),
 
     /**
-     * 法令XMLを新しいウィンドウのLawtextで表示します。
-     * @param xml - 表示する法令XML
+     * 法令XMLまたは Lawtext を新しいウィンドウの Lawtext app で表示します。
+     * @param text - 表示する法令XMLまたは Lawtext
      */
-    showLawXML: (xml: string): void => showLawXML(xml),
+    showLaw: (text: string): void => showLaw(text),
 
     /**
      * 保存されたオフライン用データを用いてLawtext queryを実行します。

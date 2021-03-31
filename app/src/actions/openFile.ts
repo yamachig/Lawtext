@@ -1,8 +1,3 @@
-import { SetLawtextAppPageState } from "../components/LawtextAppPageState";
-import * as util from "@coresrc/util";
-import { LawDataResult, toLawData } from "@appsrc/lawdata/common";
-import { displayLawDataResult } from "./displayLawDataResult";
-
 const readFileAsText = (file: Blob): Promise<string> => {
     const reader = new FileReader();
 
@@ -27,46 +22,12 @@ export const openFile = (): void => {
     }
 };
 
-export const openFileInputChange = async (
-    setState: SetLawtextAppPageState,
-    event: React.ChangeEvent<HTMLInputElement>,
-): Promise<void> => {
-    const openFileInput = event.target;
+export const readFileInput = async (): Promise<string | null> => {
+    const openFileInput = document.getElementsByName(OpenFileInputName).item(0) as HTMLInputElement;
+    if (!openFileInput) return null;
     const file = openFileInput.files ? openFileInput.files[0] : null;
-    if (!file) return;
-
-    setState({ loadingLaw: true, loadingLawMessage: "ファイルを読み込んでいます..." });
-    console.log("openFileInputChange: Loading file");
-    await util.wait(30);
-
+    if (!file) return null;
     const text = await readFileAsText(file);
     openFileInput.value = "";
-
-    let lawDataResult: LawDataResult;
-
-    if (/^(?:<\?xml|<Law)/.test(text.trim())) {
-        setState({ loadingLawMessage: "法令XMLをパースしています..." });
-        lawDataResult = toLawData({
-            source: "file_xml",
-            xml: text,
-        });
-    } else {
-        setState({ loadingLawMessage: "Lawtextをパースしています..." });
-        lawDataResult = toLawData({
-            source: "file_lawtext",
-            lawtext: text,
-        });
-    }
-
-    await displayLawDataResult(
-        lawDataResult,
-        setState,
-    );
-
-    if (lawDataResult.ok) {
-        setState({ lawSearchKey: "", loadingLaw: false, loadingLawMessage: "" });
-    } else {
-        setState({ loadingLaw: false, loadingLawMessage: "" });
-    }
-
+    return text;
 };

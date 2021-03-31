@@ -2,8 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import * as std from "@coresrc/std_law";
 import { assertNever, EL } from "@coresrc/util";
-import { LawtextAppPageStateStruct, OrigStateProps } from "./LawtextAppPageState";
-import { useHistory } from "react-router";
+import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { downloadDocx, downloadLawtext, downloadXml } from "@appsrc/actions/download";
 import { openFile } from "@appsrc/actions/openFile";
 import { scrollToLawAnchor } from "@appsrc/actions/scroll";
@@ -20,12 +19,10 @@ const SidebarHeadDiv = styled.div`
     margin-bottom: 1rem;
 `;
 
-const SidebarHead: React.FC<OrigStateProps> = props => {
-    const { origState } = props;
+const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
+    const { origState, history, lawSearchKey } = props;
 
-    const [editingKey, setEditingKey] = React.useState(origState.lawSearchKey ?? "");
-
-    const history = useHistory();
+    const [editingKey, setEditingKey] = React.useState(lawSearchKey);
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -639,11 +636,10 @@ const SidebarDiv = styled.div`
 `;
 
 export const Sidebar: React.FC<LawtextAppPageStateStruct> = props => {
-    const { origState } = props;
     return (
         <SidebarDiv>
-            <SidebarHead {...{ origState }} />
-            <SidebarBody law={origState.law?.el ?? null} />
+            <SidebarHead {...props} />
+            <SidebarBody law={props.origState.law?.el ?? null} />
             <SidebarFooter />
         </SidebarDiv >
     );

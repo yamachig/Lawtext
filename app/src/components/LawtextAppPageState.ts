@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
-import * as analyzer from "@coresrc/analyzer";
+import React from "react";
 import { LawData } from "@appsrc/lawdata/common";
+import { useHistory } from "react-router";
+import { useParams } from "react-router";
 
 export interface BaseLawtextAppPageState {
     law: LawData | null;
     loadingLaw: boolean;
     loadingLawMessage: string;
-    lawSearchedKey: string;
-    analysis: analyzer.Analysis | null;
     hasError: boolean;
     errors: Error[];
 }
@@ -16,33 +15,28 @@ const initialState: BaseLawtextAppPageState = {
     law: null,
     loadingLaw: false,
     loadingLawMessage: "",
-    lawSearchedKey: "",
-    analysis: null,
     hasError: false,
     errors: [],
 };
-
-export type LawtextAppPageState = BaseLawtextAppPageState & {
-    lawSearchKey: string;
-}
-
-export type SetLawtextAppPageState = (newState: Partial<LawtextAppPageState>) => void;
+export type SetLawtextAppPageState = (newState: Partial<BaseLawtextAppPageState>) => void;
+export type OrigSetLawtextAppPageState = React.Dispatch<React.SetStateAction<BaseLawtextAppPageState>>;
 
 export interface LawtextAppPageStateStruct {
-    origState: Readonly<LawtextAppPageState>,
-    origSetState: React.Dispatch<React.SetStateAction<LawtextAppPageState>>,
+    origState: Readonly<BaseLawtextAppPageState>,
+    origSetState: OrigSetLawtextAppPageState,
     setState: SetLawtextAppPageState,
+    history: ReturnType<typeof useHistory>,
+    lawSearchKey: string,
+}
+interface RouteParams {
+    lawSearchKey: string | undefined,
 }
 
-export interface OrigStateProps {
-    origState: Readonly<LawtextAppPageState>,
-}
+export const useLawtextAppPageState = (): LawtextAppPageStateStruct => {
 
-export const useLawtextAppPageState = (lawSearchKey: string): LawtextAppPageStateStruct => {
-    const [state, origSetState] = React.useState<LawtextAppPageState>({
-        ...initialState,
-        lawSearchKey,
-    });
+    const { lawSearchKey } = useParams<RouteParams>();
+
+    const [state, origSetState] = React.useState<BaseLawtextAppPageState>(initialState);
 
     const setState = React.useCallback(
         (newState: Partial<BaseLawtextAppPageState>) => {
@@ -50,14 +44,13 @@ export const useLawtextAppPageState = (lawSearchKey: string): LawtextAppPageStat
         },
         [origSetState],
     );
-
-    useEffect(() => {
-        origSetState(prevState => ({ ...prevState, lawSearchKey }));
-    }, [lawSearchKey]);
+    const history = useHistory();
 
     return {
         origState: state,
         origSetState,
         setState,
+        history,
+        lawSearchKey: lawSearchKey ?? "",
     };
 };

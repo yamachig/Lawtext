@@ -5,8 +5,9 @@ import * as std from "@coresrc/std_law";
 import * as util from "@coresrc/util";
 import { LawView } from "@appsrc/components/LawView";
 import path from "path";
-import { LawtextAppPageState } from "./components/LawtextAppPageState";
+import { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "./components/LawtextAppPageState";
 import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
+import { createMemoryHistory } from "history";
 
 const dataPath = path.join(__dirname, "../../core/data");
 const loader = new FSStoredLoader(dataPath);
@@ -21,7 +22,7 @@ const render = async (lawNum: string) => {
     const origEL = util.xmlToJson(origXML);
     const analysis = analyze(origEL);
 
-    let currentState: LawtextAppPageState = {
+    let currentState: BaseLawtextAppPageState = {
         law: {
             source: "file_xml",
             el: origEL as std.Law,
@@ -30,24 +31,23 @@ const render = async (lawNum: string) => {
         },
         loadingLaw: false,
         loadingLawMessage: "",
-        lawSearchKey: "",
-        lawSearchedKey: "",
-        analysis: null,
         hasError: false,
         errors: [],
     };
 
-    const origSetState: React.Dispatch<React.SetStateAction<LawtextAppPageState>> = (newState: LawtextAppPageState | ((prevState: LawtextAppPageState) => LawtextAppPageState)) => {
+    const origSetState: OrigSetLawtextAppPageState = newState => {
         currentState = typeof newState === "function" ? newState(currentState) : newState;
     };
 
-    const setState = (newState: Partial<LawtextAppPageState>) => {
+    const setState = (newState: Partial<BaseLawtextAppPageState>) => {
         origSetState({ ...currentState, ...newState });
     };
     const renderedElement = LawView({
         origState: currentState,
         setState,
         origSetState,
+        history: createMemoryHistory({ initialEntries: ["/"] }),
+        lawSearchKey: lawInfo.LawNum,
     }) as JSX.Element;
 
     void renderToString(renderedElement);

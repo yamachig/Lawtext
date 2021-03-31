@@ -3,15 +3,11 @@ import styled from "styled-components";
 import { Sidebar } from "./Sidebar";
 import { useLawtextAppPageState } from "./LawtextAppPageState";
 import { Viewer } from "./Viewer";
-import { refreshDisplayLaw } from "@appsrc/actions";
-import { RouteComponentProps, useParams } from "react-router";
-import { openFileInputChange, OpenFileInputName } from "@appsrc/actions/openFile";
+import { onNavigated } from "@appsrc/actions/onNavigated";
+import { OpenFileInputName, readFileInput } from "@appsrc/actions/openFile";
 import { ErrorModalID } from "@appsrc/actions/showErrorModal";
+import { storeTempLaw } from "@appsrc/actions/temp_law";
 
-interface RouteParams {
-    lawSearchKey: string | undefined,
-}
-export type RouteState = RouteComponentProps<RouteParams>;
 
 const SideBarDiv = styled.div`
     position: fixed;
@@ -34,18 +30,28 @@ const HiddenInput = styled.input`
 
 export const LawtextAppPage: React.FC = () => {
 
-    const { lawSearchKey } = useParams<RouteParams>();
-
-    const stateStruct = useLawtextAppPageState(lawSearchKey ?? "");
-    const { origState, setState } = stateStruct;
+    const stateStruct = useLawtextAppPageState();
+    const { setState, history, lawSearchKey } = stateStruct;
 
     React.useEffect(() => {
         document.title = "Lawtext";
     }, []);
 
     React.useEffect(() => {
-        refreshDisplayLaw(origState, setState);
-    }, [origState, setState]);
+        onNavigated(lawSearchKey, setState);
+    }, [lawSearchKey, setState]);
+
+    const inputChanged = async () => {
+        setState({ loadingLaw: true, loadingLawMessage: "ファイルを読み込んでいます..." });
+        console.log("openFileInputChange: Loading file");
+        const text = await readFileInput();
+        if (!text) {
+            setState({ loadingLaw: false, loadingLawMessage: "" });
+            return;
+        }
+        const id = storeTempLaw(text);
+        history.push(`/${id}`);
+    };
 
     return (
         <div>
@@ -53,7 +59,7 @@ export const LawtextAppPage: React.FC = () => {
                 name={OpenFileInputName}
                 type="file"
                 accept="text/plain,application/xml"
-                onChange={e => openFileInputChange(setState, e)}
+                onChange={inputChanged}
             />
 
             <SideBarDiv>
