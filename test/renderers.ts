@@ -255,7 +255,9 @@ it("Render and Parse Lawtext", async () => {
 
     const lawNum = "平成二十六年政令第三百九十四号";
 
-    const origXML = await loader.getLawXmlByLawNum(lawNum);
+    const lawInfo = await loader.getLawInfoByLawNum(lawNum);
+    if (lawInfo === null) throw Error("LawInfo not found");
+    const origXML = await loader.loadLawXMLByInfo(lawInfo);
     if (origXML === null) throw new Error(`XML cannot be fetched: ${lawNum}`);
     console.log(`Temporary directory: "${tempDir}"`);
     const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);

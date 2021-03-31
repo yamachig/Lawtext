@@ -20,17 +20,17 @@ export abstract class Loader {
         return this._cache.lawListStruct;
     }
 
-    public async getLawXmlByLawNum(lawNum: string): Promise<string | null> {
+    public async getLawInfoByLawNum(lawNum: string): Promise<LawInfo | null> {
         const { lawInfosByLawnum: lawListByLawnum } = await this.cacheLawListStruct();
         if (!(lawNum in lawListByLawnum)) return null;
         const lawInfos = lawListByLawnum[lawNum];
         if (lawInfos.length > 1) console.warn(`getLawXml: ${lawInfos.length} items match for lawNum "${lawNum}".`);
         for (const lawInfo of lawInfos) {
             if (lawInfo.Enforced) {
-                return this.loadLawXMLByInfo(lawInfo);
+                return lawInfo;
             }
         }
-        return this.loadLawXMLByInfo(lawInfos[0]);
+        return lawInfos[0];
     }
 
     public async makeLawListFromBaseLawInfos(

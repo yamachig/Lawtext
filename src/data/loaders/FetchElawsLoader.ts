@@ -35,8 +35,4 @@ export class FetchElawsLoader extends Loader {
         return lawData.xml;
     }
 
-    public async getLawXmlByLawNum(lawNum: string): Promise<string | null> {
-        const lawData = await fetchLawData(lawNum);
-        return lawData.xml;
-    }
 }

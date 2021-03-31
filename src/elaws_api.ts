@@ -65,7 +65,7 @@ export const fetchLawNameList = async (): Promise<LawNameListInfo[]> => {
     return lawNameList;
 };
 
-export class LawData {
+export class ElawsLawData {
     constructor(
         public lawID: string,
         public law: Element,
@@ -84,7 +84,7 @@ export class LawData {
     }
 }
 
-export const fetchLawData = async (lawIDOrLawNum: string): Promise<LawData> => {
+export const fetchLawData = async (lawIDOrLawNum: string): Promise<ElawsLawData> => {
     const elApplData = await fetchElaws(lawdataURL + lawIDOrLawNum);
     if (!elApplData) {
         throw Error("getLawData(): fetchElaws failed");
@@ -98,7 +98,7 @@ export const fetchLawData = async (lawIDOrLawNum: string): Promise<LawData> => {
     const elImageData = elApplData.getElementsByTagName("ImageData").item(0);
     const imageData = elImageData ? decodeBase64(elImageData.innerHTML) : null;
 
-    return new LawData(
+    return new ElawsLawData(
         elApplData.getElementsByTagName("LawId").item(0)?.textContent ?? "",
         law,
         imageData,
