@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import * as analyzer from "@coresrc/analyzer";
-import { LawData } from "@appsrc/actions/lawdata";
+import { LawData } from "@appsrc/lawdata/common";
 
 export interface BaseLawtextAppPageState {
     law: LawData | null;

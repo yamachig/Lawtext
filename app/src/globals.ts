@@ -1,7 +1,7 @@
-import * as lawdata from "./actions/lawdata";
 import { showLawXML } from "./actions/temp_law";
 import { LawCriteria, LawQuery } from "@coresrc/data/query";
 import { traceTitles } from "./law_util";
+import { elawsLoader, storedLoader } from "./lawdata/loaders";
 
 /**
  * ブラウザのコンソールから利用可能なオブジェクトです。
@@ -27,7 +27,7 @@ export const lawtext = {
      * @returns - フィルタを適用した{@link LawQuery}。
      */
     query: (criteria: LawCriteria | null = null): LawQuery =>
-        LawQuery.fromFetchInfo(lawdata.storedLoader, criteria),
+        LawQuery.fromFetchInfo(storedLoader, criteria),
 
     /**
      * e-Gov 法令APIを用いてLawtext queryを実行します。
@@ -36,7 +36,7 @@ export const lawtext = {
      */
     queryViaAPI: (criteria: LawCriteria | null = null): LawQuery => {
         console.warn("クエリの実行に e-Gov 法令API を使用します。時間がかかる場合があります。");
-        return LawQuery.fromFetchInfo(lawdata.elawsLoader, criteria);
+        return LawQuery.fromFetchInfo(elawsLoader, criteria);
     },
 };
 

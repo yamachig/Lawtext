@@ -2,10 +2,12 @@ import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { LawView } from "./LawView";
-import * as actions from "@appsrc/actions";
 import { useHistory } from "react-router";
 import { ResolvedType } from "@coresrc/util";
-import { saveListJson, storedLoader } from "@appsrc/actions/lawdata";
+import { saveListJson } from "@appsrc/lawdata/saveListJson";
+import { ensureFetch, storedLoader } from "@appsrc/lawdata/loaders";
+import { downloadSampleLawtext } from "@appsrc/actions";
+import { openFile } from "@appsrc/actions/openFile";
 
 
 const ViewerLoadingDiv = styled.div`
@@ -63,7 +65,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
         history.push(`/${editingKey}`);
     };
 
-    const [fetchAbility, setFetchAbility] = React.useState<ResolvedType<ReturnType<typeof actions.ensureFetch>> | null>(null);
+    const [fetchAbility, setFetchAbility] = React.useState<ResolvedType<ReturnType<typeof ensureFetch>> | null>(null);
 
     useEffect(() => {
         const input = lawSearchKeyInputRef.current;
@@ -71,7 +73,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
             input.focus();
         }
         (async () => {
-            const ffa = await actions.ensureFetch();
+            const ffa = await ensureFetch();
             setFetchAbility(ffa);
         })();
     }, []);
@@ -82,7 +84,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
 
     const downloadSampleLawtextOnClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        actions.downloadSampleLawtext(setState);
+        downloadSampleLawtext(setState);
     };
 
     return (
@@ -128,7 +130,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                             または
                         </p>
                         <button
-                            onClick={actions.openFile}
+                            onClick={openFile}
                             className="lawtext-open-file-button btn btn-outline-primary"
                         >
                             法令ファイルを開く

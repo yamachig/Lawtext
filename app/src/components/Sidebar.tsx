@@ -4,7 +4,9 @@ import * as std from "@coresrc/std_law";
 import { assertNever, EL } from "@coresrc/util";
 import { LawtextAppPageStateStruct, OrigStateProps } from "./LawtextAppPageState";
 import { useHistory } from "react-router";
-import * as actions from "@appsrc/actions";
+import { downloadDocx, downloadLawtext, downloadXml } from "@appsrc/actions/download";
+import { openFile } from "@appsrc/actions/openFile";
+import { scrollToLawAnchor } from "@appsrc/actions/scroll";
 
 
 const SidebarH1 = styled.h1`
@@ -34,27 +36,27 @@ const SidebarHead: React.FC<OrigStateProps> = props => {
         setEditingKey(e.target.value);
     };
 
-    const downloadLawtext = () => {
+    const downloadLawtextClick = () => {
         if (origState.law) {
-            actions.downloadLawtext(origState.law.el);
+            downloadLawtext(origState.law.el);
         }
     };
 
-    const downloadXml = () => {
+    const downloadXmlClick = () => {
         if (origState.law) {
-            actions.downloadXml(origState.law.el);
+            downloadXml(origState.law.el);
         }
     };
 
-    const downloadDocxAll = () => {
+    const downloadDocxAllClick = () => {
         if (origState.law) {
-            actions.downloadDocx(origState.law.el, false);
+            downloadDocx(origState.law.el, false);
         }
     };
 
-    const downloadDocxSelection = () => {
+    const downloadDocxSelectionClick = () => {
         if (origState.law) {
-            actions.downloadDocx(origState.law.el, true);
+            downloadDocx(origState.law.el, true);
         }
     };
 
@@ -70,7 +72,7 @@ const SidebarHead: React.FC<OrigStateProps> = props => {
 
                     <div className="list-group" style={{ textAlign: "center" }}>
                         <button
-                            onClick={actions.openFile}
+                            onClick={openFile}
                             className="list-group-item list-group-item-sm list-group-item-action"
                             style={{ fontSize: "0.8em", padding: "0.5em" }}
                         >
@@ -126,19 +128,19 @@ const SidebarHead: React.FC<OrigStateProps> = props => {
                         <div>
                             <span className="btn-group btn-group-sm">
                                 <button
-                                    onClick={downloadDocxAll}
+                                    onClick={downloadDocxAllClick}
                                     className="btn btn-outline-primary"
                                 >
                                     Word
                                 </button>
                                 <button
-                                    onClick={downloadLawtext}
+                                    onClick={downloadLawtextClick}
                                     className="btn btn-outline-primary"
                                 >
                                     Lawtext
                                 </button>
                                 <button
-                                    onClick={downloadXml}
+                                    onClick={downloadXmlClick}
                                     className="btn btn-outline-primary"
                                 >
                                     法令XML
@@ -146,7 +148,7 @@ const SidebarHead: React.FC<OrigStateProps> = props => {
                             </span>
                             <span className="btn-group btn-group-sm" style={{ marginTop: "0.2rem" }}>
                                 <button
-                                    onClick={downloadDocxSelection}
+                                    onClick={downloadDocxSelectionClick}
                                     className="btn btn-outline-primary"
                                     style={{ padding: "0 8px" }}
                                 >
@@ -194,7 +196,7 @@ const LawNavDiv = styled.div`
 
 const NavLawTitle: React.FC<{lawTitle: std.LawTitle, indent: number}> = props => {
     const onClick = () => {
-        actions.scrollLaw(props.lawTitle.id.toString());
+        scrollToLawAnchor(props.lawTitle.id.toString());
     };
 
     return (
@@ -212,7 +214,7 @@ const NavLawTitle: React.FC<{lawTitle: std.LawTitle, indent: number}> = props =>
 
 const NavEnactStatement: React.FC<{enactStatement: std.EnactStatement, indent: number}> = props => {
     const onClick = () => {
-        actions.scrollLaw(props.enactStatement.id.toString());
+        scrollToLawAnchor(props.enactStatement.id.toString());
     };
 
     return (
@@ -230,7 +232,7 @@ const NavEnactStatement: React.FC<{enactStatement: std.EnactStatement, indent: n
 
 const NavPreamble: React.FC<{preamble: std.Preamble, indent: number}> = props => {
     const onClick = () => {
-        actions.scrollLaw(props.preamble.id.toString());
+        scrollToLawAnchor(props.preamble.id.toString());
     };
 
     return (
@@ -250,7 +252,7 @@ const NavTOC: React.FC<{toc: std.TOC, indent: number}> = props => {
     const tocLabel = props.toc.children.find((el) => el.tag === "TOCLabel") as std.TOCLabel | undefined;
 
     const onClick = () => {
-        actions.scrollLaw(props.toc.id.toString());
+        scrollToLawAnchor(props.toc.id.toString());
     };
 
     return tocLabel ? (
@@ -288,7 +290,7 @@ const NavArticleGroup: React.FC<{
 
             } else if (el.tag === "Paragraph" || el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
                 const onClick = () => {
-                    actions.scrollLaw(props.articleGroup.id.toString());
+                    scrollToLawAnchor(props.articleGroup.id.toString());
                 };
 
                 return (
@@ -331,7 +333,7 @@ const NavArticle: React.FC<{article: std.Article, indent: number}> = props => {
         }
 
         const onClick = () => {
-            actions.scrollLaw(props.article.id.toString());
+            scrollToLawAnchor(props.article.id.toString());
         };
 
         return (
@@ -361,7 +363,7 @@ const NavSupplProvision: React.FC<{supplProvision: std.SupplProvision, indent: n
         const text = (name + (amendLawNum ? ("（" + amendLawNum + "）") : "")).replace(/[\s　]+/, "");
 
         const onClick = () => {
-            actions.scrollLaw(props.supplProvision.id.toString());
+            scrollToLawAnchor(props.supplProvision.id.toString());
         };
 
         return (
@@ -386,7 +388,7 @@ const NavAppdxTable: React.FC<{appdxTable: std.AppdxTable, indent: number}> = pr
 
     if (appdxTableTitle) {
         const onClick = () => {
-            actions.scrollLaw(props.appdxTable.id.toString());
+            scrollToLawAnchor(props.appdxTable.id.toString());
         };
 
         return (
@@ -411,7 +413,7 @@ const NavAppdxStyle: React.FC<{appdxStyle: std.AppdxStyle, indent: number}> = pr
 
     if (appdxStyleTitle) {
         const onClick = () => {
-            actions.scrollLaw(props.appdxStyle.id.toString());
+            scrollToLawAnchor(props.appdxStyle.id.toString());
         };
         return (
             <TOCItemDiv
@@ -435,7 +437,7 @@ const NavAppdxFig: React.FC<{appdxFig: std.AppdxFig, indent: number}> = props =>
 
     if (AppdxFigTitle) {
         const onClick = () => {
-            actions.scrollLaw(props.appdxFig.id.toString());
+            scrollToLawAnchor(props.appdxFig.id.toString());
         };
         return (
             <TOCItemDiv
@@ -459,7 +461,7 @@ const NavAppdxFormat: React.FC<{appdxFig: std.AppdxFormat, indent: number}> = pr
 
     if (appdxFormatTitle) {
         const onClick = () => {
-            actions.scrollLaw(props.appdxFig.id.toString());
+            scrollToLawAnchor(props.appdxFig.id.toString());
         };
         return (
             <TOCItemDiv
@@ -483,7 +485,7 @@ const NavAppdxNote: React.FC<{appdxFig: std.AppdxNote, indent: number}> = props 
 
     if (appdxNoteTitle) {
         const onClick = () => {
-            actions.scrollLaw(props.appdxFig.id.toString());
+            scrollToLawAnchor(props.appdxFig.id.toString());
         };
         return (
             <TOCItemDiv
@@ -508,7 +510,7 @@ const NavAppdx: React.FC<{appdxFig: std.Appdx, indent: number}> = props => {
 
     if (ArithFormulaNum) {
         const onClick = () => {
-            actions.scrollLaw(props.appdxFig.id.toString());
+            scrollToLawAnchor(props.appdxFig.id.toString());
         };
         return (
             <TOCItemDiv
@@ -532,7 +534,7 @@ const NavAnyLaw: React.FC<{el: EL, indent: number}> = props => {
 
     if (titleEL) {
         const onClick = () => {
-            actions.scrollLaw(props.el.id.toString());
+            scrollToLawAnchor(props.el.id.toString());
         };
         return (
             <TOCItemDiv

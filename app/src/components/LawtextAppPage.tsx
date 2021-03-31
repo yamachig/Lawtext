@@ -3,8 +3,10 @@ import styled from "styled-components";
 import { Sidebar } from "./Sidebar";
 import { useLawtextAppPageState } from "./LawtextAppPageState";
 import { Viewer } from "./Viewer";
-import { ErrorModalID, openFileInputChange, OpenFileInputName, refreshDisplayLaw } from "@appsrc/actions";
+import { refreshDisplayLaw } from "@appsrc/actions";
 import { RouteComponentProps, useParams } from "react-router";
+import { openFileInputChange, OpenFileInputName } from "@appsrc/actions/openFile";
+import { ErrorModalID } from "@appsrc/actions/showErrorModal";
 
 interface RouteParams {
     lawSearchKey: string | undefined,

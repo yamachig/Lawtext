@@ -5,9 +5,10 @@ import styled, { createGlobalStyle } from "styled-components";
 import { assertNever, EL, NotImplementedError } from "@coresrc/util";
 import * as std from "@coresrc/std_law";
 import { LawtextAppPageStateStruct, OrigStateProps } from "./LawtextAppPageState";
-import * as actions from "@appsrc/actions";
-import * as lawdata from "@appsrc/actions/lawdata";
 import path from "path";
+import { storedLoader } from "@appsrc/lawdata/loaders";
+import { LawData } from "@appsrc/lawdata/common";
+import { containerInfoOf } from "@appsrc/actions/download";
 
 
 const MARGIN = "　";
@@ -55,7 +56,7 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
 
 interface BaseLawCommonState {
     onError: (error: Error) => void;
-    lawData: lawdata.LawData,
+    lawData: LawData,
 }
 
 interface BaseLawCommonProps {
@@ -410,7 +411,7 @@ const TOCComponent = withCatcher<TOCComponentProps>(props => {
 
     return (
         <TOCDiv
-            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+            data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
         >
             {blocks}
         </TOCDiv>
@@ -566,7 +567,7 @@ const AppdxTableComponent = withCatcher<AppdxTableComponentProps>(props => {
 
     return (
         <AppdxTableDiv
-            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+            data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
         >
             {blocks}
         </AppdxTableDiv>
@@ -640,7 +641,7 @@ const AppdxStyleComponent = withCatcher<AppdxStyleComponentProps>(props => {
 
     return (
         <AppdxStyleDiv
-            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+            data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
         >
             {blocks}
         </AppdxStyleDiv>
@@ -711,7 +712,7 @@ const AppdxFormatComponent = withCatcher<AppdxFormatComponentProps>(props => {
 
     return (
         <AppdxFormatDiv
-            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+            data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
         >
             {blocks}
         </AppdxFormatDiv>
@@ -782,7 +783,7 @@ const AppdxFigComponent = withCatcher<AppdxFigComponentProps>(props => {
 
     return (
         <AppdxFigDiv
-            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+            data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
         >
             {blocks}
         </AppdxFigDiv>
@@ -859,7 +860,7 @@ const AppdxNoteComponent = withCatcher<AppdxNoteComponentProps>(props => {
 
     return (
         <AppdxNoteDiv
-            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+            data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
         >
             {blocks}
         </AppdxNoteDiv>
@@ -934,7 +935,7 @@ const AppdxComponent = withCatcher<AppdxComponentProps>(props => {
 
     return (
         <AppdxDiv
-            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+            data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
         >
             {blocks}
         </AppdxDiv>
@@ -1216,7 +1217,7 @@ const SupplProvisionComponent = withCatcher<SupplProvisionComponentProps>(props 
         <div
             className="law-anchor"
             data-el_id={el.id.toString()}
-            data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}
+            data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}
         >
             {blocks}
         </div>
@@ -1270,7 +1271,7 @@ const ArticleGroupComponent = withCatcher<ArticleGroupComponentProps>(props => {
 
     return (
         el.tag === "MainProvision" ? (
-            <div data-toplevel_container_info={JSON.stringify(actions.containerInfoOf(el))}>
+            <div data-toplevel_container_info={JSON.stringify(containerInfoOf(el))}>
                 {blocks}
             </div>
         ) : (
@@ -1395,7 +1396,7 @@ const ArticleComponent = withCatcher<ArticleComponentProps>(props => {
         <ArticleDiv
             className="law-anchor"
             data-el_id={el.id.toString()}
-            data-container_info={JSON.stringify(actions.containerInfoOf(el))}
+            data-container_info={JSON.stringify(containerInfoOf(el))}
         >
             {blocks}
         </ArticleDiv>
@@ -1522,7 +1523,7 @@ const ParagraphItemComponent = withCatcher<ParagraphItemComponentProps>(props =>
         } else {
             return (
                 <ParagraphDiv
-                    data-container_info={JSON.stringify(actions.containerInfoOf(el))}
+                    data-container_info={JSON.stringify(containerInfoOf(el))}
                     className={`paragraph-item-${el.tag}`}
                 >
                     {blocks}
@@ -2072,7 +2073,7 @@ const FigRunComponent = withCatcher<FigRunComponentProps>(props => {
             }
         } else if (lawData.source === "stored") {
             (async () => {
-                const url = path.join(lawdata.storedLoader.lawdataPath, lawData.lawPath, el.attr.src);
+                const url = path.join(storedLoader.lawdataPath, lawData.lawPath, el.attr.src);
                 const res = await fetch(url);
                 if (!res.ok) return;
                 const blob = await res.blob();
