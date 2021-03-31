@@ -36,25 +36,25 @@ const SidebarHead: React.FC<OrigStateProps> = props => {
 
     const downloadLawtext = () => {
         if (origState.law) {
-            actions.downloadLawtext(origState.law);
+            actions.downloadLawtext(origState.law.el);
         }
     };
 
     const downloadXml = () => {
         if (origState.law) {
-            actions.downloadXml(origState.law);
+            actions.downloadXml(origState.law.el);
         }
     };
 
     const downloadDocxAll = () => {
         if (origState.law) {
-            actions.downloadDocx(origState.law, false);
+            actions.downloadDocx(origState.law.el, false);
         }
     };
 
     const downloadDocxSelection = () => {
         if (origState.law) {
-            actions.downloadDocx(origState.law, true);
+            actions.downloadDocx(origState.law.el, true);
         }
     };
 
@@ -641,7 +641,7 @@ export const Sidebar: React.FC<LawtextAppPageStateStruct> = props => {
     return (
         <SidebarDiv>
             <SidebarHead {...{ origState }} />
-            <SidebarBody law={origState.law} />
+            <SidebarBody law={origState.law?.el ?? null} />
             <SidebarFooter />
         </SidebarDiv >
     );

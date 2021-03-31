@@ -1,9 +1,7 @@
 import $ from "jquery";
 import { LawtextAppPageState, SetLawtextAppPageState } from "../components/LawtextAppPageState";
 import * as std from "@coresrc/std_law";
-import * as analyzer from "@coresrc/analyzer";
 import * as util from "@coresrc/util";
-import { parse } from "@coresrc/parser_wrapper";
 import * as lawdata from "./lawdata";
 import * as renderer from "@coresrc/renderer";
 import render_lawtext from "@coresrc/renderers/lawtext";
@@ -47,8 +45,34 @@ export const openFileInputChange = async (
 
     const text = await readFileAsText(file);
     openFileInput.value = "";
-    await loadLawText(setState, text, true);
-    setState({ lawSearchKey: "", loadingLaw: false, loadingLawMessage: "" });
+
+    let lawDataResult: lawdata.LawDataResult;
+
+    if (/^(?:<\?xml|<Law)/.test(text.trim())) {
+        setState({ loadingLawMessage: "法令XMLをパースしています..." });
+        lawDataResult = lawdata.toLawData({
+            source: "file_xml",
+            xml: text,
+        });
+    } else {
+        setState({ loadingLawMessage: "Lawtextをパースしています..." });
+        lawDataResult = lawdata.toLawData({
+            source: "file_lawtext",
+            lawtext: text,
+        });
+    }
+
+    await displayLawDataResult(
+        lawDataResult,
+        setState,
+    );
+
+    if (lawDataResult.ok) {
+        setState({ lawSearchKey: "", loadingLaw: false, loadingLawMessage: "" });
+    } else {
+        setState({ loadingLaw: false, loadingLawMessage: "" });
+    }
+
 };
 
 export const ErrorModalID = "LawtextAppPage.ErrorModal";
@@ -66,70 +90,45 @@ export const invokeError =
     (title: string, bodyEl: string): void =>
         showErrorModal(title, bodyEl);
 
-export const loadLawText = async (
+const displayLawDataResult = async (
+    lawDataResult: lawdata.LawDataResult,
     setState: SetLawtextAppPageState,
-    text: string,
-    analyzeXml: boolean,
-): Promise<std.Law | null> => {
-    let law: std.Law | null = null;
-    let analysis: analyzer.Analysis | null = null;
-    let begin: number;
+): Promise<void> => {
 
-    begin = Date.now();
-    try {
-        if (/^(?:<\?xml|<Law)/.test(text.trim())) {
-            setState({ loadingLawMessage: "法令XMLをパースしています..." });
-            console.log("loadLawText: Parse as XML");
-            await util.wait(30);
-            law = util.xmlToJson(text) as std.Law;
-            if (analyzeXml) {
-                analyzer.stdxmlToExt(law);
-            }
-            analysis = analyzer.analyze(law);
-        } else {
-            setState({ loadingLawMessage: "Lawtextをパースしています..." });
-            console.log("loadLawText: Parse as Lawtext");
-            await util.wait(30);
-            law = parse(text, { startRule: "start" }) as std.Law;
-            analysis = analyzer.analyze(law);
+    if (lawDataResult.ok) {
 
-        }
-    } catch (err) {
-        console.log(err);
-        const errStr = err.toString();
+
+        const lawBody = lawDataResult.lawData.el.children.find(el => el.tag === "LawBody") as std.LawBody | undefined;
+        const lawTitle = lawBody && lawBody.children.find(el => el.tag === "LawTitle") as std.LawTitle | undefined;
+        document.title = lawTitle ? `${lawTitle.text} | Lawtext` : "Lawtext";
+
+        setState({ loadingLawMessage: "レンダリングしています..." });
+        console.log("loadLawText: Setting Law into State");
+        await util.wait(30);
+        setState({
+            law: lawDataResult.lawData,
+        });
+
+    } else {
+
+        console.log(lawDataResult.error);
+        const errStr = lawDataResult.error.toString();
         const pre = $("<pre>")
             .css({ "white-space": "pre-wrap" })
             .css({ "line-height": "1.2em" })
             .css({ "padding": "1em 0" })
             .html(errStr);
-        invokeError(
-            "読み込んだ法令データにエラーがあります",
-            (pre[0] ).outerHTML,
-        );
-        law = null;
-    }
-    console.log(`loadLawText: Parse end: ${Date.now() - begin}ms`);
 
-    const newState: Partial<LawtextAppPageState> = {};
-    if (law) {
-        newState.law = law;
-        newState.analysis = analysis;
-        const lawBody = law.children.find(el => el.tag === "LawBody") as std.LawBody | undefined;
-        const lawTitle = lawBody && lawBody.children.find(el => el.tag === "LawTitle") as std.LawTitle | undefined;
-        document.title = lawTitle ? `${lawTitle.text} | Lawtext` : "Lawtext";
-    } else {
-        document.title = "Lawtext";
+        invokeError(
+            "法令の読み込み時にエラーが発生しました",
+            (pre[0]).outerHTML,
+        );
+
     }
-    setState({ loadingLawMessage: "レンダリングしています..." });
-    console.log("loadLawText: Setting Law into State");
-    await util.wait(30);
-    begin = Date.now();
-    setState(newState);
-    console.log(`loadLawText: Render end: ${Date.now() - begin}ms`);
-    return law;
+
 };
 
-export const displayLaw = async (
+export const refreshDisplayLaw = async (
     origState: LawtextAppPageState,
     setState: SetLawtextAppPageState,
 ): Promise<void> => {
@@ -139,19 +138,18 @@ export const displayLaw = async (
         setState({ law: null, lawSearchedKey: origState.lawSearchKey });
         return;
     }
-    setState({ loadingLaw: true, lawSearchedKey: origState.lawSearchKey, loadingLawMessage: "法令を検索しています..." });
+
+    setState({
+        loadingLaw: true,
+        lawSearchedKey: origState.lawSearchKey,
+        loadingLawMessage: "法令を検索しています...",
+    });
     console.log("displayLaw: Searching Law");
     await util.wait(30);
-    try {
-        const text = await lawdata.loadLaw(origState.lawSearchKey);
-        await loadLawText(setState, text, true);
-    } catch (err) {
-        console.log(err);
-        invokeError(
-            err[0] || "エラー",
-            err[1] || err.toString(),
-        );
-    }
+
+    const lawDataResult = await lawdata.loadLawByKey(origState.lawSearchKey);
+    await displayLawDataResult(lawDataResult, setState);
+
     setState({ loadingLaw: false, loadingLawMessage: "" });
 };
 
@@ -172,7 +170,7 @@ interface SelectionRange {
 }
 
 
-export const tobeDownloadedRange = (): SelectionRange | null => {
+const tobeDownloadedRange = (): SelectionRange | null => {
     const getPos = (node: Node) => {
         if (!node.parentNode) return null;
         const el = $(node.parentNode as HTMLElement);
@@ -347,7 +345,7 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
     return law;
 };
 
-export const getLawName = (law: std.Law): string => {
+const getLawName = (law: std.Law): string => {
     const lawNum = law.children.find((el) => el.tag === "LawNum") as std.LawNum;
     const lawBody = law.children.find((el) => el.tag === "LawBody") as std.LawBody;
     const lawTitle = lawBody && lawBody.children.find((el) => el.tag === "LawTitle") as std.LawTitle;
@@ -429,9 +427,16 @@ export const downloadSampleLawtext = async (
 ): Promise<void> => {
     setState({ loadingLaw: true });
     await util.wait(30);
-    const law = await loadLawText(setState, sampleSampleXml, true);
-    if (law) {
-        await downloadLawtext(law);
+    const lawDataResult = lawdata.toLawData({
+        source: "file_xml",
+        xml: sampleSampleXml,
+    });
+    await displayLawDataResult(
+        lawDataResult,
+        setState,
+    );
+    if (lawDataResult.ok) {
+        await downloadLawtext(lawDataResult.lawData.el);
     }
     setState({ loadingLaw: false });
 };

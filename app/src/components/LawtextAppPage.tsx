@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Sidebar } from "./Sidebar";
 import { useLawtextAppPageState } from "./LawtextAppPageState";
 import { Viewer } from "./Viewer";
-import { ErrorModalID, openFileInputChange, OpenFileInputName, displayLaw } from "@appsrc/actions";
+import { ErrorModalID, openFileInputChange, OpenFileInputName, refreshDisplayLaw } from "@appsrc/actions";
 import { RouteComponentProps, useParams } from "react-router";
 
 interface RouteParams {
@@ -42,7 +42,7 @@ export const LawtextAppPage: React.FC = () => {
     }, []);
 
     React.useEffect(() => {
-        displayLaw(origState, setState);
+        refreshDisplayLaw(origState, setState);
     }, [origState, setState]);
 
     return (

@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import * as std from "@coresrc/std_law";
 import * as analyzer from "@coresrc/analyzer";
+import { LawData } from "@appsrc/actions/lawdata";
 
 export interface BaseLawtextAppPageState {
-    law: std.Law | null;
+    law: LawData | null;
     loadingLaw: boolean;
     loadingLawMessage: string;
     lawSearchedKey: string;

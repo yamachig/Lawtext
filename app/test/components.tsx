@@ -23,14 +23,21 @@ const renderAllLaws = async () => {
 
         it(`${lawTitle}（${lawNum}）`, async () => {
 
-            const origXML = await loader.getLawXmlByLawNum(lawNum);
+            const lawInfo = await loader.getLawInfoByLawNum(lawNum);
+            if (lawInfo === null) throw Error("LawInfo not found");
+            const origXML = await loader.loadLawXMLByInfo(lawInfo);
+            if (origXML === null) throw Error("XML not found");
 
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const origEL = util.xmlToJson(origXML!);
-            analyze(origEL);
+            const origEL = util.xmlToJson(origXML);
+            const analysis = analyze(origEL);
 
             let currentState: LawtextAppPageState = {
-                law: origEL as std.Law,
+                law: {
+                    source: "file_xml",
+                    el: origEL as std.Law,
+                    xml: origXML,
+                    analysis,
+                },
                 loadingLaw: false,
                 loadingLawMessage: "",
                 lawSearchKey: "",

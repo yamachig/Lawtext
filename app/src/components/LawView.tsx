@@ -5,8 +5,9 @@ import styled, { createGlobalStyle } from "styled-components";
 import { assertNever, EL, NotImplementedError } from "@coresrc/util";
 import * as std from "@coresrc/std_law";
 import { LawtextAppPageStateStruct, OrigStateProps } from "./LawtextAppPageState";
-import * as analyzer from "@coresrc/analyzer";
 import * as actions from "@appsrc/actions";
+import * as lawdata from "@appsrc/actions/lawdata";
+import path from "path";
 
 
 const MARGIN = "　";
@@ -38,14 +39,23 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
         <LawViewDiv>
             <GlobalStyle />
             {origState.hasError && <LawViewError {...{ origState }} />}
-            {origState.law && <LawComponent el={origState.law} indent={0} ls={{ onError, analysis: origState.analysis }} />}
+            {origState.law &&
+                <LawComponent
+                    el={origState.law.el}
+                    indent={0}
+                    ls={{
+                        onError,
+                        lawData: origState.law,
+                    }}
+                />
+            }
         </LawViewDiv>
     );
 };
 
 interface BaseLawCommonState {
     onError: (error: Error) => void;
-    analysis: analyzer.Analysis | null;
+    lawData: lawdata.LawData,
 }
 
 interface BaseLawCommonProps {
@@ -2045,13 +2055,46 @@ interface FigRunComponentProps extends ELComponentProps { el: std.Fig }
 const isFigRunComponentProps = (props: ELComponentProps): props is FigRunComponentProps => props.el.tag === "Fig";
 
 const FigRunComponent = withCatcher<FigRunComponentProps>(props => {
-    const el = props.el;
+    const { el, ls: { lawData } } = props;
+
+    const [ state, setState ] = React.useState({
+        blobUrl: null as string | null,
+    });
+
+    React.useEffect(() => {
+        const cleaners: (() => unknown)[] = [];
+        if (lawData.source === "elaws" && lawData.pict) {
+            const blob = lawData.pict.get(el.attr.src);
+            if (blob) {
+                const blobUrl = URL.createObjectURL(blob);
+                setState(prev => ({ ...prev, blobUrl }));
+                cleaners.push(() => URL.revokeObjectURL(blobUrl));
+            }
+        } else if (lawData.source === "stored") {
+            (async () => {
+                const url = path.join(lawdata.storedLoader.lawdataPath, lawData.lawPath, el.attr.src);
+                const res = await fetch(url);
+                if (!res.ok) return;
+                const blob = await res.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                setState(prev => ({ ...prev, blobUrl }));
+                cleaners.push(() => URL.revokeObjectURL(blobUrl));
+            })();
+        }
+        return () => {
+            for (const cleaner of cleaners) cleaner();
+        };
+    }, [lawData, el, setState]);
 
     if (el.children.length > 0) {
         throw new NotImplementedError(el.outerXML());
     }
 
-    return <span>[{el.attr.src}]</span>;
+    if (state.blobUrl !== null) {
+        return <img src={state.blobUrl} style={{ maxWidth: "100%" }}/>;
+    } else {
+        return <span>[{el.attr.src}]</span>;
+    }
 });
 
 
@@ -2424,7 +2467,7 @@ interface VarRefViewProps extends ELComponentProps { el: std.__EL }
 const VarRefView = withCatcher<VarRefViewProps>(props => {
     const el = props.el;
 
-    const analysis = props.ls.analysis;
+    const analysis = props.ls.lawData.analysis;
     if (!analysis) return null;
 
     const declarationIndex = Number(el.attr.ref_declaration_index);
