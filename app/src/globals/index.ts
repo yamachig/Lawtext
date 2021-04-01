@@ -2,11 +2,17 @@ import { showLaw } from "@appsrc/actions/temp_law";
 import { LawCriteria, LawQuery } from "@coresrc/data/query";
 import { traceTitles } from "@appsrc/law_util";
 import { elawsLoader, storedLoader } from "@appsrc/lawdata/loaders";
+import * as coreUtil from "@coresrc/util";
 
 /**
  * ブラウザのコンソールから利用可能なオブジェクトです。
  */
 export const lawtext = {
+
+    /**
+     * `core.util` モジュールの内容。
+     */
+    coreUtil,
 
     /**
      * `Element` の親をさかのぼって条番号や項番号などの階層を取得します。

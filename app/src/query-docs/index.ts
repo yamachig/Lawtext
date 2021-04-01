@@ -17,7 +17,10 @@ const prepareTempIncludes = async (dir: string, tempIncludesDir: string, relpath
                 const text = await promisify(fs.readFile)(path.join(dir, item.name), { encoding: "utf-8" });
                 const lines: string[] = [];
                 let currentIndent = "";
-                for (const line of text.split(/\r?\n/)) {
+                for (const line of text.replace(/\/\*\s*\[\s*md-ignore-start\s*\]\*\/.*?\/\*\s*\[\s*md-ignore-end\s*\]\*\//g, "").split(/\r?\n/)) {
+                    const mIgnore = /\/\/\s*\[\s*md-ignore\s*\]/.exec(line);
+                    if (mIgnore) continue;
+                    if (mIgnore) continue;
                     const m = /^(\s*)\/\/\s*\[\s*md\s*\](.*)$/.exec(line);
                     if (m) {
                         lines.push(m[2]);

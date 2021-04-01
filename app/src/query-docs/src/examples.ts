@@ -1,10 +1,8 @@
-//[md]<!--
-import { lawtext } from "@appsrc/globals";
-//[md]-->
+/* eslint-disable @typescript-eslint/ban-ts-comment */ //[md-ignore]
 
-//[md]<!--
-void (async () => {
-//[md]-->
+import { lawtext } from "@appsrc/globals"; //[md-ignore]
+
+void (async () => { //[md-ignore]
 
     //[md]### 法令番号が正規表現 `/^平成.{1,3}年法律/` にマッチする法令の法令番号と法令名を、順不同で10件表示
     //[md]```ts
@@ -14,6 +12,10 @@ void (async () => {
         .toArray()
         .then(a => console.table(a, ["LawNum", "LawTitle"]));
     //[md]```
+
+}); //[md-ignore]
+
+void (async () => { //[md-ignore]
 
     //[md]### &lt;EnactStatement&gt;タグを含む法律を順不同で10件検索し、見つかり次第タグの内容を出力
     //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
@@ -34,6 +36,10 @@ void (async () => {
         });
     //[md]```
 
+}); //[md-ignore]
+
+void (async () => { //[md-ignore]
+
     //[md]### &lt;Fig&gt;タグを含む政令を順不同で10件検索し、見つかり次第法令内の位置を出力
     //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
     //[md]```ts
@@ -53,6 +59,31 @@ void (async () => {
         });
     //[md]```
 
-//[md]<!--
-});
-//[md]-->
+}); //[md-ignore]
+
+void (async () => { //[md-ignore]
+
+    //[md]### 正規表現 `/の意[義味].*に定めるところによる/` にマッチする文を含む本文タグを検索し、タグ内の文言が重複しないものを見つかり次第100件まで出力
+    //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
+    //[md]```ts
+    (() => {
+        const set = new Set()/*[md-ignore-start]*/as Set<string>/*[md-ignore-end]*/;
+        lawtext
+            .query()
+            .assignDocument()
+            .while(() => set.size < 100)
+            .forEach(law => {
+                for (const tag of lawtext.coreUtil.paragraphItemSentenceTags) {
+                    for (const el of Array.from(law.document.getElementsByTagName(tag))) {
+                        const text = (el.textContent ?? "").trim();
+                        if (/の意[義味].*に定めるところによる/.exec(text) && !set.has(text)) {
+                            console.log(`${text}【${law.LawTitle}（${law.LawNum}）${lawtext.traceTitles(el)}】`);
+                            set.add(text);
+                        }
+                    }
+                }
+            });
+    })();
+    //[md]```
+
+}); //[md-ignore]
