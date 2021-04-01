@@ -1,5 +1,4 @@
 "use strict";
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import sha512 from "hash.js/lib/hash/sha/512";
@@ -544,7 +543,7 @@ const detectLawname = (spans: Span[], spanIndex: number) => {
 
 };
 
-const detectName = (spans: Span[], spanIndex: number) => {
+const detectNameInline = (spans: Span[], spanIndex: number) => {
     if (spans.length < spanIndex + 5) return null;
     const [
         nameBeforeSpan,
@@ -594,6 +593,65 @@ const detectName = (spans: Span[], spanIndex: number) => {
     return null;
 };
 
+const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => {
+    const ret: ____Declaration[] = [];
+
+    const paragraphMatch = /([^。]+?)において、?[次左]の各号に掲げる用語の意義は、(?:それぞれ)?当該各号に定めるところによる。$/.exec(spans[spanIndex].text);
+    if (!paragraphMatch) return ret;
+
+    const paragraph = spans[spanIndex].env.container;
+    for (const item of paragraph.parent?.children ?? []) {
+        const sentence = item.el.children.find(el => util.isJsonEL(el) && util.paragraphItemSentenceTags.includes(el.tag));
+        if (!sentence || !util.isJsonEL(sentence) || sentence.children.length !== 2) continue;
+        const [nameCol, valCol] = sentence.children;
+        if (!util.isJsonEL(nameCol) || !util.isJsonEL(valCol)) continue;
+
+        let nameSpan: Span | null = null;
+
+        for (let i = item.spanRange[0]; i < item.spanRange[1]; i++) {
+            if (spans[i].env.parents.includes(nameCol)) nameSpan = spans[i];
+        }
+        if (nameSpan === null) continue;
+
+        const scopeText = paragraphMatch[1] || null;
+
+        const scope = !scopeText
+            ? [new ScopeRange(spanIndex, 0, spans.length, 0)]
+            : util.lawTypes.some(([ptn]) => {
+                const re = new RegExp(`^この${ptn}$`);
+                return re.exec(scopeText);
+            })
+                ? [new ScopeRange(0, 0, spans.length, 0)]
+                : getScope(
+                    spans[spanIndex], // currentSpan
+                    scopeText, // scopeText
+                    false, // following
+                    spanIndex, // followingIndex
+                );
+
+        const namePos = new Pos(
+            nameSpan,       // span
+            nameSpan.index, // span_index
+            0,               // text_index
+            nameSpan.text.length, // length
+            nameSpan.env,   // env
+        );
+
+        const declaration = new ____Declaration(
+            "LawName", // type
+            nameCol.text,  // name
+            valCol.text,   // value
+            scope,     // scope
+            namePos,  // name_pos
+        );
+
+        nameSpan.el.replaceSpan(0, nameSpan.text.length, declaration);
+
+        ret.push(declaration);
+    }
+    return ret;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const detectDeclarations = (_law: EL, spans: Span[], _containers: Container[]) => {
 
@@ -602,8 +660,13 @@ const detectDeclarations = (_law: EL, spans: Span[], _containers: Container[]) =
     for (let spanIndex = 0; spanIndex < spans.length; spanIndex++) {
         const declaration =
             detectLawname(spans, spanIndex) ||
-            detectName(spans, spanIndex);
+            detectNameInline(spans, spanIndex);
         if (declaration) {
+            declaration.attr.declaration_index = String(declarations.length);
+            declarations.add(declaration);
+        }
+
+        for (const declaration of detectNameList(spans, spanIndex)) {
             declaration.attr.declaration_index = String(declarations.length);
             declarations.add(declaration);
         }

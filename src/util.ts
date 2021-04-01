@@ -229,13 +229,13 @@ export class EL implements JsonEL {
 
 export enum ContainerType {
     // eslint-disable-next-line no-unused-vars
-    ROOT,
+    ROOT = "ROOT",
     // eslint-disable-next-line no-unused-vars
-    TOPLEVEL,
+    TOPLEVEL = "TOPLEVEL",
     // eslint-disable-next-line no-unused-vars
-    ARTICLES,
+    ARTICLES = "ARTICLES",
     // eslint-disable-next-line no-unused-vars
-    SPANS,
+    SPANS = "SPANS",
 }
 
 
@@ -608,15 +608,22 @@ export const listTags = ["List", "Sublist1", "Sublist2", "Sublist3"];
 
 export const reLawnum = /(?:(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年(?:(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[―〇一二三四五六七八九]+)|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)|明治三十二年勅令|大正十二年内務省・鉄道省令|昭和五年逓信省・鉄道省令|昭和九年逓信省・農林省令|人事院規則一〇―一五)/;
 
+export const lawTypes = [
+    ["憲法", "Constitution"],
+    ["法律", "Act"],
+    ["政令", "CabinetOrder"],
+    ["勅令", "ImperialOrder"],
+    ["\\S*[^政勅]令", "MinisterialOrdinance"],
+    ["\\S*規則", "Rule"],
+];
+
 
 export const getLawtype = (text: string): string | null => {
-    if (/^憲法/.exec(text)) return "Constitution";
-    else if (/^法律/.exec(text)) return "Act";
-    else if (/^政令/.exec(text)) return "CabinetOrder";
-    else if (/^勅令/.exec(text)) return "ImperialOrder";
-    else if (/^^\S*[^政勅]令/.exec(text)) return "MinisterialOrdinance";
-    else if (/^\S*規則/.exec(text)) return "Rule";
-    else return null;
+    for (const [ptn, type] of lawTypes) {
+        const re = new RegExp(`^${ptn}`);
+        if (re.exec(text)) return type;
+    }
+    return null;
 };
 
 export const eras = {
@@ -814,15 +821,15 @@ export const setItemNum = (els: EL[]): void => {
 
 export enum RelPos {
     // eslint-disable-next-line no-unused-vars
-    PREV,
+    PREV = "PREV",
     // eslint-disable-next-line no-unused-vars
-    HERE,
+    HERE = "HERE",
     // eslint-disable-next-line no-unused-vars
-    NEXT,
+    NEXT = "NEXT",
     // eslint-disable-next-line no-unused-vars
-    SAME,
+    SAME = "SAME",
     // eslint-disable-next-line no-unused-vars
-    NAMED,
+    NAMED = "NAMED",
 }
 export const isRelPos = (object: unknown): object is RelPos => {
     return (
