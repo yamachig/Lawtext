@@ -2060,6 +2060,29 @@ const FigStructComponent = withCatcher<FigStructComponentProps>(props => {
     return <>{blocks}</>;
 });
 
+const FigIframe = styled.iframe`
+    width: 100%;
+    height: 80vh;
+    border: 1px solid gray;
+`;
+
+const FigIframeDummy = styled.div`
+    display: inline-block;
+    width: 100%;
+    height: 80vh;
+    border: 1px solid gray;
+`;
+
+const FigImg = styled.img`
+    max-width: 100%;
+`;
+
+const FigImgDummy = styled.div`
+    display: inline-block;
+    width: 10em;
+    height: 10em;
+`;
+
 interface FigRunComponentProps extends ELComponentProps { el: std.Fig }
 
 const isFigRunComponentProps = (props: ELComponentProps): props is FigRunComponentProps => props.el.tag === "Fig";
@@ -2067,44 +2090,80 @@ const isFigRunComponentProps = (props: ELComponentProps): props is FigRunCompone
 const FigRunComponent = withCatcher<FigRunComponentProps>(props => {
     const { el, ls: { lawData } } = props;
 
-    const [ state, setState ] = React.useState({
-        blobUrl: null as string | null,
-    });
+    const [ srcInfo, setSrcInfo ] = React.useState<{
+        url: string,
+        type: string,
+    } | null>(null);
 
     React.useEffect(() => {
         const cleaners: (() => unknown)[] = [];
         if (lawData.source === "elaws" && lawData.pict) {
             const blob = lawData.pict.get(el.attr.src);
             if (blob) {
-                const blobUrl = URL.createObjectURL(blob);
-                setState(prev => ({ ...prev, blobUrl }));
-                cleaners.push(() => URL.revokeObjectURL(blobUrl));
+                const url = URL.createObjectURL(blob);
+                setSrcInfo({ url, type: blob.type });
+                cleaners.push(() => URL.revokeObjectURL(url));
             }
         } else if (lawData.source === "stored") {
             (async () => {
                 const url = path.join(storedLoader.lawdataPath, lawData.lawPath, el.attr.src);
-                const res = await fetch(url);
+                const res = await fetch(url, { method: "HEAD" });
                 if (!res.ok) return;
-                const blob = await res.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                setState(prev => ({ ...prev, blobUrl }));
-                cleaners.push(() => URL.revokeObjectURL(blobUrl));
+                setSrcInfo({ url, type: res.headers.get("Content-Type") ?? "" });
             })();
         }
         return () => {
             for (const cleaner of cleaners) cleaner();
         };
-    }, [lawData, el, setState]);
+    }, [lawData, el, setSrcInfo]);
 
     if (el.children.length > 0) {
         throw new NotImplementedError(el.outerXML());
     }
 
-    if (state.blobUrl !== null) {
-        return <img src={state.blobUrl} style={{ maxWidth: "100%" }}/>;
-    } else {
-        return <span>[{el.attr.src}]</span>;
-    }
+    const [observed, setObserved] = React.useState(false);
+    const ref = React.useRef<HTMLSpanElement>(null);
+    React.useEffect(() => {
+        const target = ref.current;
+        if (!target) {
+            console.error("FigRunComponent: no ref found");
+            return;
+        }
+        const unobserve = () => {
+            observer.unobserve(target);
+        };
+        const observer = new IntersectionObserver(entries => {
+            for (const entry of entries) {
+                if (entry.intersectionRatio > 0) {
+                    unobserve();
+                    setObserved(true);
+                    return;
+                }
+            }
+        });
+        observer.observe(target);
+        return unobserve;
+    }, []);
+
+    return <span ref={ref}>
+        {srcInfo === null ? (
+            <>[{el.attr.src}]</>
+        ) : srcInfo.type.includes("pdf") ? (
+            observed ? (
+                <FigIframe src={srcInfo.url} />
+            ) : (
+                <FigIframeDummy>[{el.attr.src}]</FigIframeDummy>
+            )
+        ) : srcInfo.type.startsWith("image/") ? (
+            observed ? (
+                <FigImg src={srcInfo.url} />
+            ) : (
+                <FigImgDummy>[{el.attr.src}]</FigImgDummy>
+            )
+        ) : (
+            <a href={srcInfo.url} type={srcInfo.type} target="_blank" rel="noreferrer">{el.attr.src}</a>
+        )}
+    </span>;
 });
 
 
@@ -2398,7 +2457,7 @@ const ____VarRefComponent = withCatcher<____VarRefComponentProps>(props => {
         return () => {
             window.removeEventListener("resize", updateSize);
         };
-    });
+    }, []);
 
     const varRefTextSpanOnClick = (/* e: React.MouseEvent<HTMLSpanElement> */) => {
         if (state.mode === VarRefFloatState.OPEN) {
