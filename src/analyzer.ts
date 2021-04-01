@@ -3,7 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import sha512 from "hash.js/lib/hash/sha/512";
-import { LAWNUM_TABLE } from "./lawnum_table";
+import { LAWNUM_TABLE, KEY_LENGTH } from "./lawnum_table";
 import * as parser from "./parser";
 import * as util from "./util";
 import { Container, ContainerType, EL, Env, RelPos, Span, throwError } from "./util";
@@ -11,7 +11,7 @@ import { Container, ContainerType, EL, Env, RelPos, Span, throwError } from "./u
 export const getLawNameLength = (lawNum: string): number => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const digest = sha512().update(lawNum).digest("hex") as string;
-    const key = parseInt(digest.slice(0, 7), 16);
+    const key = parseInt(digest.slice(0, KEY_LENGTH), 16);
     return LAWNUM_TABLE[key];
 };
 

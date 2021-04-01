@@ -7,9 +7,12 @@ import { promisify } from "util";
 import { DOMParser } from "xmldom";
 import fetch from "node-fetch";
 
+const KEY_LENGTH = 7;
+const LEN_LENGTH = 2;
+
 const pad16 = (num: number, size: number) => {
     let s = num.toString(16);
-    while (s.length < (size || 2)) s = "0" + s;
+    while (s.length < (size || LEN_LENGTH)) s = "0" + s;
     return s;
 };
 
@@ -44,12 +47,12 @@ const main = async (): Promise<void> => {
     for (const law of laws) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         const digest = sha512().update(law.num).digest("hex") as string;
-        const key = digest.slice(0, 7);
+        const key = digest.slice(0, KEY_LENGTH);
         if (data.has(key)) {
             console.error(`collision: ${law.num} ${law.name} key:${key}`);
         }
         const length = law.name.length;
-        const value = key + pad16(length, 2);
+        const value = key + pad16(length, LEN_LENGTH);
         data.set(key, value);
         table += value;
     }
@@ -61,9 +64,13 @@ export const LAWNUM_TABLE: { [key: string]: number } = {};
 
 const LAWNUM_TABLE_RAW =  "${table}";
 
-for(let i = 0; i < LAWNUM_TABLE_RAW.length; i += 9) {
-    const key = parseInt(LAWNUM_TABLE_RAW.slice(i, i + 7), 16);
-    const length = parseInt(LAWNUM_TABLE_RAW.slice(i + 7, i + 9), 16);
+export const KEY_LENGTH = ${KEY_LENGTH};
+
+const LEN_LENGTH = ${LEN_LENGTH};
+
+for(let i = 0; i < LAWNUM_TABLE_RAW.length; i += KEY_LENGTH + LEN_LENGTH) {
+    const key = parseInt(LAWNUM_TABLE_RAW.slice(i, i + KEY_LENGTH), 16);
+    const length = parseInt(LAWNUM_TABLE_RAW.slice(i + KEY_LENGTH, i + KEY_LENGTH + LEN_LENGTH), 16);
     LAWNUM_TABLE[key] = length;
 }
 `.trimLeft());
