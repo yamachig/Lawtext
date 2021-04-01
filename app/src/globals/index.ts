@@ -1,7 +1,7 @@
-import { showLaw } from "./actions/temp_law";
+import { showLaw } from "@appsrc/actions/temp_law";
 import { LawCriteria, LawQuery } from "@coresrc/data/query";
-import { traceTitles } from "./law_util";
-import { elawsLoader, storedLoader } from "./lawdata/loaders";
+import { traceTitles } from "@appsrc/law_util";
+import { elawsLoader, storedLoader } from "@appsrc/lawdata/loaders";
 
 /**
  * ブラウザのコンソールから利用可能なオブジェクトです。

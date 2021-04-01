@@ -19,9 +19,4 @@ ReactDOM.render(
     document.getElementById("root"),
 );
 
-import lawtextGlobals from "./globals";
-for (const key in lawtextGlobals) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window[key] = lawtextGlobals[key];
-}
+import "./globals/register";
