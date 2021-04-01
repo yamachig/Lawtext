@@ -190,6 +190,32 @@ export class Query<
     }
 
     /**
+     * Skip specified count.
+     *
+     * 指定した件数スキップします。
+     *
+     * @param count - count to skip<br/>スキップする件数
+     * @returns - a new `Query` that yields after skipping specified count.<br/>指定した件数のスキップ後列挙を続ける新しい `Query`
+     */
+    public skip(count: number): this {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        return this.new(
+            (async function *() {
+                let remain = count;
+                for await (const item of self) {
+                    if (remain > 0) {
+                        remain--;
+                        continue;
+                    }
+                    yield item;
+                }
+            })(),
+            null,
+        );
+    }
+
+    /**
      * Yield until it reaches the maximum count.
      *
      * 出力の最大件数を設定します。
@@ -638,7 +664,12 @@ export class LawQuery<
         return this.new(
             (async function *() {
                 for await (const item of self) {
-                    const document = await item.getDocument();
+                    let document: XMLDocument | null = null;
+                    try {
+                        document = await item.getDocument();
+                    } catch (e) {
+                        console.error(e);
+                    }
                     if (!ensure || document !== null) {
                         yield { ...item, document };
                     }
