@@ -596,29 +596,72 @@ const detectNameInline = (spans: Span[], spanIndex: number) => {
 const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => {
     const ret: ____Declaration[] = [];
 
-    const paragraphMatch = /([^。]+?)において、?[次左]の各号に掲げる用語の意義は、(?:それぞれ)?当該各号に定めるところによる。$/.exec(spans[spanIndex].text);
-    if (!paragraphMatch) return ret;
+    let columnsMode = true;
+    let paragraphMatch = /([^。]+?)において、?[次左]の各号に掲げる用語の意義は、(?:それぞれ)?当該各号に定めるところによる。$/.exec(spans[spanIndex].text);
+    if (!paragraphMatch) {
+        columnsMode = false;
+        paragraphMatch = /^(.+?)(?:及びこの法律に基づく命令)?(?:において次に掲げる用語は、|の規定の解釈に(?:ついて|関して)は、)次の定義に従うものとする。$/.exec(spans[spanIndex].text);
+        if (!paragraphMatch) return ret;
+    }
 
     const paragraph = spans[spanIndex].env.container;
     for (const item of paragraph.parent?.children ?? []) {
         const sentence = item.el.children.find(el => util.isJsonEL(el) && util.paragraphItemSentenceTags.includes(el.tag));
-        if (!sentence || !util.isJsonEL(sentence) || sentence.children.length !== 2) continue;
-        const [nameCol, valCol] = sentence.children;
-        if (!util.isJsonEL(nameCol) || !util.isJsonEL(valCol)) continue;
+        if (!sentence || !util.isJsonEL(sentence)) continue;
 
-        let nameSpan: Span | null = null;
+        let nameSpan: Span|null = null;
+        let name: string|null = null;
+        let value: string|null = null;
+        if (columnsMode) {
+            if (sentence.children.length < 2) continue;
 
-        for (let i = item.spanRange[0]; i < item.spanRange[1]; i++) {
-            if (spans[i].env.parents.includes(nameCol)) nameSpan = spans[i];
+            const [nameCol, valCol] = sentence.children;
+            if (!util.isJsonEL(nameCol) || !util.isJsonEL(valCol)) continue;
+
+            name = nameCol.text;
+            value = valCol.text;
+
+            for (let i = item.spanRange[0]; i < item.spanRange[1]; i++) {
+                if (spans[i].env.parents.includes(nameCol)) nameSpan = spans[i];
+            }
+        } else {
+            let defStartSpanI: number | null = null;
+            for (let i = item.spanRange[0]; i < item.spanRange[1]; i++) {
+                if (spans[i].env.parents.includes(sentence)) {
+                    defStartSpanI = i;
+                    break;
+                }
+            }
+            if (defStartSpanI === null) continue;
+            const [
+                nameStartSpan,
+                _nameSpan,
+                nameEndSpan,
+                ...nameAfterSpans
+            ] = spans.slice(defStartSpanI, item.spanRange[1]);
+            const nameAfterSpansText = nameAfterSpans.map(s => s.text).join();
+            const nameAfterMatch = /^とは、(.+)をいう。(?!）)/.exec(nameAfterSpansText);
+            if (
+                nameStartSpan.el.tag === "__PStart" &&
+                nameStartSpan.el.attr.type === "square" &&
+                nameEndSpan.el.tag === "__PEnd" &&
+                nameEndSpan.el.attr.type === "square" &&
+                nameAfterMatch
+            ) {
+                nameSpan = _nameSpan;
+                name = nameSpan.text;
+                value = nameAfterMatch[1];
+            }
         }
-        if (nameSpan === null) continue;
+
+        if (nameSpan === null || name === null || value === null) continue;
 
         const scopeText = paragraphMatch[1] || null;
 
         const scope = !scopeText
             ? [new ScopeRange(spanIndex, 0, spans.length, 0)]
             : util.lawTypes.some(([ptn]) => {
-                const re = new RegExp(`^この${ptn}$`);
+                const re = new RegExp(`^この${ptn}`);
                 return re.exec(scopeText);
             })
                 ? [new ScopeRange(0, 0, spans.length, 0)]
@@ -639,8 +682,8 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
 
         const declaration = new ____Declaration(
             "LawName", // type
-            nameCol.text,  // name
-            valCol.text,   // value
+            name,  // name
+            value,   // value
             scope,     // scope
             namePos,  // name_pos
         );
