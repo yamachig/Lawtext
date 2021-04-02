@@ -32,6 +32,8 @@ const LawViewDiv = styled.div`
 export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
     const { origState, origSetState } = props;
 
+    console.log([origState.navigatedLawSearchKey, props.lawSearchKey]);
+
     const onError = useCallback((error: Error) => {
         origSetState(prev => ({ ...prev, hasError: true, errors: [...prev.errors, error] }));
     }, [origSetState]);
@@ -40,7 +42,10 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
         <LawViewDiv>
             <GlobalStyle />
             {origState.hasError && <LawViewError {...props} />}
-            {origState.law && <LawDataComponent lawData={origState.law} onError={onError} />}
+            {origState.law &&
+                (origState.navigatedLawSearchKey === props.lawSearchKey) &&
+                    <LawDataComponent lawData={origState.law} onError={onError} />
+            }
         </LawViewDiv>
     );
 };
@@ -1586,8 +1591,8 @@ const TableStructComponent = withCatcher<TableStructComponentProps>(props => {
 
         if (child.tag === "TableStructTitle") {
             blocks.push(
-                <div style={{ marginLeft: `${indent}em` }}>
-                    <RunComponent els={child.children} key={child.id} ls={props.ls} />
+                <div style={{ marginLeft: `${indent}em` }} key={child.id}>
+                    <RunComponent els={child.children} ls={props.ls} />
                 </div>,
             );
 

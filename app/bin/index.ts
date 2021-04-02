@@ -33,6 +33,7 @@ const render = async (lawNum: string) => {
         loadingLawMessage: "",
         hasError: false,
         errors: [],
+        navigatedLawSearchKey: lawInfo.LawNum,
     };
 
     const origSetState: OrigSetLawtextAppPageState = newState => {
@@ -47,7 +48,7 @@ const render = async (lawNum: string) => {
         setState,
         origSetState,
         history: createMemoryHistory({ initialEntries: ["/"] }),
-        lawSearchKey: lawInfo.LawNum,
+        lawSearchKey: currentState.navigatedLawSearchKey,
     }) as JSX.Element;
 
     void renderToString(renderedElement);

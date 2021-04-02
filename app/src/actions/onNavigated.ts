@@ -20,11 +20,21 @@ export const onNavigated = async (
 
     if (!lawSearchKey) {
         console.log("onNavigated: detected the top page.");
-        setState({ law: null, loadingLaw: false, loadingLawMessage: "" });
+        setState({
+            navigatedLawSearchKey: lawSearchKey,
+            law: null,
+            loadingLaw: false,
+            loadingLawMessage: "",
+        });
         return;
     }
 
-    setState({ law: null, loadingLaw: true, loadingLawMessage: "法令を読み込んでいます..." });
+    setState({
+        navigatedLawSearchKey: lawSearchKey,
+        law: null,
+        loadingLaw: true,
+        loadingLawMessage: "法令を読み込んでいます...",
+    });
 
     const toDownloadSample = (lawSearchKey.startsWith("(sample)"));
     let lawDataResult: LawDataResult;
@@ -58,7 +68,11 @@ export const onNavigated = async (
             (pre[0]).outerHTML,
         );
 
-        setState({ law: null, loadingLaw: false, loadingLawMessage: "" });
+        setState({
+            law: null,
+            loadingLaw: false,
+            loadingLawMessage: "",
+        });
         return;
     }
 

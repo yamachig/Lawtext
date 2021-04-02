@@ -9,6 +9,7 @@ export interface BaseLawtextAppPageState {
     loadingLawMessage: string;
     hasError: boolean;
     errors: Error[];
+    navigatedLawSearchKey: string;
 }
 
 const initialState: BaseLawtextAppPageState = {
@@ -17,6 +18,7 @@ const initialState: BaseLawtextAppPageState = {
     loadingLawMessage: "",
     hasError: false,
     errors: [],
+    navigatedLawSearchKey: "",
 };
 export type SetLawtextAppPageState = (newState: Partial<BaseLawtextAppPageState>) => void;
 export type OrigSetLawtextAppPageState = React.Dispatch<React.SetStateAction<BaseLawtextAppPageState>>;
