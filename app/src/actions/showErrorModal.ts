@@ -1,4 +1,4 @@
-
+import $ from "jquery";
 export const ErrorModalID = "LawtextAppPage.ErrorModal";
 export const showErrorModal = (title: string, bodyEl: string): void => {
     const modalEl = document.getElementById(ErrorModalID);
