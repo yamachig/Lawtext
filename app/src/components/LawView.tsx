@@ -32,8 +32,6 @@ const LawViewDiv = styled.div`
 export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
     const { origState, origSetState } = props;
 
-    console.log([origState.navigatedLawSearchKey, props.lawSearchKey]);
-
     const onError = useCallback((error: Error) => {
         origSetState(prev => ({ ...prev, hasError: true, errors: [...prev.errors, error] }));
     }, [origSetState]);
