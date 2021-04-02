@@ -161,6 +161,7 @@ type AnyLawComponentProps = (
     StyleStructComponentProps |
     FigStructComponentProps |
     FigRunComponentProps |
+    QuoteStructRunComponentProps |
     ArithFormulaRunComponentProps |
     AmendProvisionComponentProps |
     PreambleComponentProps |
@@ -200,6 +201,7 @@ const AnyLawComponent = withCatcher<AnyLawComponentProps>(props => {
     else if (isStyleStructComponentProps(props)) { return <StyleStructComponent {...props} />; }
     else if (isFigStructComponentProps(props)) { return <FigStructComponent {...props} />; }
     else if (isFigRunComponentProps(props)) { return <FigRunComponent {...props} />; }
+    else if (isQuoteStructRunComponentProps(props)) { return <QuoteStructRunComponent {...props} />; }
     else if (isArithFormulaRunComponentProps(props)) { return <ArithFormulaRunComponent {...props} />; }
     else if (isAmendProvisionComponentProps(props)) { return <AmendProvisionComponent {...props} />; }
     else if (isPreambleComponentProps(props)) { return <PreambleComponent {...props} />; }
@@ -2166,6 +2168,33 @@ const FigRunComponent = withCatcher<FigRunComponentProps>(props => {
     </span>;
 });
 
+interface QuoteStructRunComponentProps extends ELComponentProps { el: std.QuoteStruct }
+
+const isQuoteStructRunComponentProps = (props: ELComponentProps): props is QuoteStructRunComponentProps => props.el.tag === "QuoteStruct";
+
+const QuoteStructRunComponent = withCatcher<QuoteStructRunComponentProps>(props => {
+    const el = props.el;
+
+    const blocks: JSX.Element[] = [];
+
+    for (const [i, child] of el.children.entries()) {
+        if (typeof child === "string") {
+            blocks.push(<RunComponent els={[child]} key={i} ls={props.ls} />);
+
+        } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            blocks.push(<AnyLawComponent el={child as any} indent={0} key={child.id} ls={props.ls} />);
+
+        }
+    }
+
+    return (
+        <span style={{ display: "inline-block" }}>
+            {blocks}
+        </span>
+    );
+});
+
 
 interface AmendProvisionComponentProps extends ELComponentProps { el: std.AmendProvision, indent: number }
 
@@ -2300,7 +2329,7 @@ const RunComponent = withCatcher<RunComponentProps>(props => {
                 runs.push(<sup key={i}>{el.text}</sup>);
 
             } else if (el.tag === "QuoteStruct") {
-                runs.push(<span key={i}>{el.outerXML()}</span>);
+                runs.push(<QuoteStructRunComponent el={el} key={i} ls={props.ls} />);
 
             } else if (el.tag === "ArithFormula") {
                 runs.push(<ArithFormulaRunComponent el={el} key={i} ls={props.ls} />);
