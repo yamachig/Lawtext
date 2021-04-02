@@ -9,48 +9,48 @@ export const searchLawnum = async (lawSearchKey: string): Promise<string | null>
 
     const lawnum = (
         (match && match[0]) ||
-        await getLawnumCache(lawSearchKey) ||
+        // await getLawnumCache(lawSearchKey) ||
         await getLawnumStored(lawSearchKey) ||
         await getLawnumRemote(lawSearchKey)
     );
 
-    if (lawnum && localStorage) {
-        for (let i = 0; i < 5; i++) {
-            try {
-                localStorage.setItem(
-                    "law_num_for:" + lawSearchKey,
-                    JSON.stringify({
-                        datetime: new Date().toISOString(),
-                        lawnum,
-                    }),
-                );
-            } catch (e) {
-                console.log(e);
-                localStorage.clear();
-            }
-        }
-    }
+    // if (lawnum && localStorage) {
+    //     for (let i = 0; i < 5; i++) {
+    //         try {
+    //             localStorage.setItem(
+    //                 "law_num_for:" + lawSearchKey,
+    //                 JSON.stringify({
+    //                     datetime: new Date().toISOString(),
+    //                     lawnum,
+    //                 }),
+    //             );
+    //         } catch (e) {
+    //             console.log(e);
+    //             localStorage.clear();
+    //         }
+    //     }
+    // }
 
     return lawnum;
 };
 
-const getLawnumCache = async (lawSearchKey: string): Promise<string | null> => {
-    console.log(`getLawnumCache("${lawSearchKey}")`);
+// const getLawnumCache = async (lawSearchKey: string): Promise<string | null> => {
+//     console.log(`getLawnumCache("${lawSearchKey}")`);
 
-    const lawNumDataStr = localStorage ? localStorage.getItem(`law_num_for:${lawSearchKey}`) : null;
-    if (lawNumDataStr) {
-        const lawNumData = JSON.parse(lawNumDataStr);
-        const datetime = new Date(lawNumData.datetime);
-        const now = new Date();
-        const ms = now.getTime() - datetime.getTime();
-        const days = ms / (1000 * 60 * 60 * 24);
-        if (days < 1) {
-            return lawNumData.lawnum;
-        }
-    }
+//     const lawNumDataStr = localStorage ? localStorage.getItem(`law_num_for:${lawSearchKey}`) : null;
+//     if (lawNumDataStr) {
+//         const lawNumData = JSON.parse(lawNumDataStr);
+//         const datetime = new Date(lawNumData.datetime);
+//         const now = new Date();
+//         const ms = now.getTime() - datetime.getTime();
+//         const days = ms / (1000 * 60 * 60 * 24);
+//         if (days < 1) {
+//             return lawNumData.lawnum;
+//         }
+//     }
 
-    return null;
-};
+//     return null;
+// };
 
 const getLawnumStored = async (lawSearchKey: string): Promise<string | null> => {
     try {
