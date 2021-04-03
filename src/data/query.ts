@@ -532,7 +532,20 @@ export class BaseLawCriteria implements CoreQueryCriteria<LawQueryItem> {
     }
 }
 
+/* eslint-disable tsdoc/syntax */
+/**
+ * {@link LawQuery} で列挙される、法令を表すオブジェクト。
+ *
+ * @property {string} LawID - 法令ID
+ * @property {string} LawNum - 法令番号
+ * @property {string} LawTitle - 法令名
+ * @property {boolean} Enforced - 施行済みかどうか
+ * @property {Set<string>} ReferencingLawNums - この法令が参照している法令の法令番号の一覧
+ * @property {Set<string>} ReferencedLawNums - この法令を参照している法令の法令番号の一覧
+ */
+/* eslint-enable tsdoc/syntax */
 export class LawQueryItem extends LawInfo implements QueryItem {
+
     public loader: Loader | null = null;
     public static fromLawInfo(lawInfo: LawInfo, loader: Loader | null): LawQueryItem {
         const item = new LawQueryItem(
@@ -559,6 +572,10 @@ export class LawQueryItem extends LawInfo implements QueryItem {
 
     protected _cache = LawQueryItem.initialCache();
 
+    /**
+     * e-Gov 法令APIから法令XMLを取得します。
+     * @returns 法令XML
+     */
     public async getXML(): Promise<string | null> {
         if (this._cache.xml === null) {
             if (this.loader === null) throw Error("Loader not specified");
@@ -573,6 +590,10 @@ export class LawQueryItem extends LawInfo implements QueryItem {
         return this._cache.xml;
     }
 
+    /**
+     * e-Gov 法令APIから法令XMLを取得し、`XMLDocument` として返します。
+     * @returns 法令XMLの `XMLDocument`
+     */
     public async getDocument(): Promise<XMLDocument | null> {
         if (this._cache.document === null) {
             const xml = await this.getXML();
@@ -597,6 +618,10 @@ export class LawQueryItem extends LawInfo implements QueryItem {
     }
     public [symbolDoNotFinalize] = false;
 
+    /**
+     * 「法令名（法令番号）」の形式の文字列を返します。未施行の場合は文頭に「【未施行】」を付します。
+     * @returns 文字列
+     */
     public toString(): string {
         return `${this.LawID} ${this.Enforced ? "" : "【未施行】"}${this.LawNum}「${this.LawTitle}」`;
     }
