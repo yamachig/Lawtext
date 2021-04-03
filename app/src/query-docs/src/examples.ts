@@ -21,7 +21,7 @@ void (async () => { //[md-ignore]
     //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
     //[md]```ts
     lawtext
-        .query({ LawNum: /^.{3,5}年法律/ })
+        .queryViaAPI({ LawNum: /^.{3,5}年法律/ })
         .assignDocument()
         .assign(law => ({
             els: Array.from(law.document.getElementsByTagName("EnactStatement")),
@@ -29,11 +29,14 @@ void (async () => { //[md-ignore]
         .filter(law => law.els.length > 0)
         .limit(10)
         .forEach(law => {
-            console.log(`📘 ${law.LawTitle}（${law.LawNum}）`);
+            console.group(`📘 ${law.LawTitle}（${law.LawNum}）`);
             for (const el of law.els) {
                 console.log(el.outerHTML);
             }
-        });
+            console.log(lawtext.getLawtextAppUrl(law));
+            console.groupEnd();
+        })
+        .then(() => "✓ completed.");
     //[md]```
 
 }); //[md-ignore]
@@ -44,7 +47,7 @@ void (async () => { //[md-ignore]
     //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
     //[md]```ts
     lawtext
-        .query({ LawNum: /政令/ })
+        .queryViaAPI({ LawNum: /政令/ })
         .assignDocument()
         .assign(law => ({
             els: Array.from(law.document.getElementsByTagName("Fig")),
@@ -52,26 +55,29 @@ void (async () => { //[md-ignore]
         .filter(law => law.els.length > 0)
         .limit(10)
         .forEach(law => {
-            console.log(`📘 ${law.LawTitle}（${law.LawNum}）`);
+            console.group(`📘 ${law.LawTitle}（${law.LawNum}）`);
             for (const el of law.els) {
                 console.log(lawtext.traceTitles(el));
             }
-        });
+            console.log(lawtext.getLawtextAppUrl(law));
+            console.groupEnd();
+        })
+        .then(() => "✓ completed.");
     //[md]```
 
 }); //[md-ignore]
 
 void (async () => { //[md-ignore]
 
-    //[md]### 正規表現 `/の意[義味].*に定めるところによる/` にマッチする文を含む本文タグを検索し、タグ内の文言が重複しないものを見つかり次第100件まで出力（途中経過を表示しない）
+    //[md]### 正規表現 `/の意[義味].*に定めるところによる/` にマッチする文を含む本文タグを検索し、タグ内の文言が重複しないものを見つかり次第10件まで出力（途中経過を表示しない）
     //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
     //[md]```ts
-    (() => {
+    (async () => {
         const set = new Set()/*[md-ignore-start]*/as Set<string>/*[md-ignore-end]*/;
-        lawtext
-            .query(null, { showProgress: false })
+        return lawtext
+            .queryViaAPI(null)
             .assignDocument()
-            .while(() => set.size < 100)
+            .while(() => set.size < 10)
             .forEach(law => {
                 for (const tag of lawtext.coreUtil.paragraphItemSentenceTags) {
                     for (const el of Array.from(law.document.getElementsByTagName(tag))) {
@@ -85,7 +91,8 @@ void (async () => { //[md-ignore]
                         }
                     }
                 }
-            }).then(() => "✓ completed.");
+            })
+            .then(() => "✓ completed.");
     })();
     //[md]```
 
