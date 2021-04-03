@@ -1,51 +1,56 @@
-import { showLaw } from "@appsrc/actions/temp_law";
-import { LawCriteria, LawQuery } from "@coresrc/data/query";
-import { traceTitles } from "@appsrc/law_util";
+/**
+ * ブラウザのコンソールから `lawtext` オブジェクトのプロパティとして利用可能となる項目です。
+ */
+import * as temp_law from "@appsrc/actions/temp_law";
+import * as coreQuery from "@coresrc/data/query";
+import * as law_util from "@appsrc/law_util";
 import { elawsLoader, storedLoader } from "@appsrc/lawdata/loaders";
-import * as coreUtil from "@coresrc/util";
+import { LawInfo } from "@coresrc/data/lawinfo";
+import * as _coreUtil from "@coresrc/util";
 
 /**
- * ブラウザのコンソールから利用可能なオブジェクトです。
+ * `core.util` モジュールの内容。
  */
-export const lawtext = {
+export const coreUtil = _coreUtil;
 
-    /**
-     * `core.util` モジュールの内容。
-     */
-    coreUtil,
+/**
+ * `Element` の親をさかのぼって条番号や項番号などの階層を取得します。
+ * @param el - 検索対象の `Element`
+ * @returns - 条番号などを羅列した配列
+ */
+export const traceTitles = (el: Element): string[] => law_util.traceTitles(el);
 
-    /**
-     * `Element` の親をさかのぼって条番号や項番号などの階層を取得します。
-     * @param el - 検索対象の `Element`
-     * @returns - 条番号などを羅列した配列
-     */
-    traceTitles: (el: Element): string[] => traceTitles(el),
+/**
+ * 法令XML、Lawtext または {@link LawQuery} で列挙された法令を新しいウィンドウの Lawtext app で表示します。
+ * @param text - 表示する法令XMLまたは Lawtext
+ */
+export const showLaw = (text: string | coreQuery.LawQueryItem): Promise<void> => temp_law.showLaw(text);
 
-    /**
-     * 法令XMLまたは Lawtext を新しいウィンドウの Lawtext app で表示します。
-     * @param text - 表示する法令XMLまたは Lawtext
-     */
-    showLaw: (text: string): void => showLaw(text),
+/**
+ * 指定した法令番号または{@link LawQuery} で列挙された法令を表示するLawtext AppのURLを取得します。
+ * @param lawOrLawNum - 法令番号または{@link LawQuery} で列挙された法令
+ * @param lawtextAppRoot - Lawtext App のトップ画面のURL。指定しない場合は現在表示しているページの情報を使用します。
+ * @returns
+ */
+export const getLawtextAppUrl = (lawOrLawNum: string | LawInfo, lawtextAppRoot?: string): string => law_util.getLawtextAppUrl(lawOrLawNum, lawtextAppRoot);
 
-    /**
-     * 保存されたオフライン用データを用いてLawtext queryを実行します。
-     * @param criteria - 法令のフィルタに用いる {@link LawCriteriaArgs}。`null` を設定するとフィルタを行わず全ての項目を列挙します。
-     * @returns - フィルタを適用した{@link LawQuery}。
-     */
-    query: (criteria: LawCriteria | null = null): LawQuery =>
-        LawQuery.fromFetchInfo(storedLoader, criteria),
+/**
+ * 保存されたオフライン用データを用いてLawtext queryを実行します。
+ * @param criteria - 法令のフィルタに用いる {@link LawCriteriaArgs}。`null` を設定するとフィルタを行わず全ての項目を列挙します。
+ * @param options - {@link Query} のオプション項目。
+ * @returns - フィルタを適用した{@link LawQuery}。
+ */
+export const query = (criteria: coreQuery.LawCriteria | null = null, options?: coreQuery.QueryOptions): coreQuery.LawQuery =>
+    coreQuery.LawQuery.fromFetchInfo(storedLoader, criteria, options);
 
-    /**
-     * e-Gov 法令APIを用いてLawtext queryを実行します。
-     * @param criteria - 法令のフィルタに用いる {@link LawCriteriaArgs}。`null` を設定するとフィルタを行わず全ての項目を列挙します。
-     * @returns - フィルタを適用した{@link Query}。
-     */
-    queryViaAPI: (criteria: LawCriteria | null = null): LawQuery => {
-        console.warn("クエリの実行に e-Gov 法令API を使用します。時間がかかる場合があります。");
-        return LawQuery.fromFetchInfo(elawsLoader, criteria);
-    },
+/**
+ * e-Gov 法令APIを用いてLawtext queryを実行します。
+ * @param criteria - 法令のフィルタに用いる {@link LawCriteriaArgs}。`null` を設定するとフィルタを行わず全ての項目を列挙します。
+ * @param options - {@link Query} のオプション項目。
+ * @returns - フィルタを適用した{@link Query}。
+ */
+export const queryViaAPI = (criteria: coreQuery.LawCriteria | null = null, options?: coreQuery.QueryOptions): coreQuery.LawQuery => {
+    console.warn("クエリの実行に e-Gov 法令API を使用します。時間がかかる場合があります。");
+    return coreQuery.LawQuery.fromFetchInfo(elawsLoader, criteria, options);
 };
 
-export default {
-    lawtext,
-};

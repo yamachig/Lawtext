@@ -1,3 +1,5 @@
+import { LawQueryItem } from "@coresrc/data/query";
+
 export const storeTempLaw = (text: string): string => {
     const id = `temp_law_${Math.floor(Math.random() * 1000000000)}`;
     localStorage.setItem(
@@ -10,7 +12,12 @@ export const storeTempLaw = (text: string): string => {
     return id;
 };
 
-export const showLaw = (text: string): void => {
+export const showLaw = async (textOrLaw: string | LawQueryItem): Promise<void> => {
+    const text = typeof textOrLaw === "string" ? textOrLaw : await textOrLaw.getXML();
+    if (!text) {
+        console.error("showLaw: XML cannot be fetched.");
+        return;
+    }
     const id = storeTempLaw(text);
     window.open(`${location.protocol}//${location.host}${location.pathname}#${id}`);
 };

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */ //[md-ignore]
 
-import { lawtext } from "@appsrc/globals"; //[md-ignore]
+import * as lawtext from "@appsrc/globals"; //[md-ignore]
 
 void (async () => { //[md-ignore]
 
@@ -63,13 +63,13 @@ void (async () => { //[md-ignore]
 
 void (async () => { //[md-ignore]
 
-    //[md]### 正規表現 `/の意[義味].*に定めるところによる/` にマッチする文を含む本文タグを検索し、タグ内の文言が重複しないものを見つかり次第100件まで出力
+    //[md]### 正規表現 `/の意[義味].*に定めるところによる/ にマッチする文を含む本文タグを検索し、タグ内の文言が重複しないものを見つかり次第100件まで出力（途中経過を表示しない）
     //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
     //[md]```ts
     (() => {
         const set = new Set()/*[md-ignore-start]*/as Set<string>/*[md-ignore-end]*/;
         lawtext
-            .query()
+            .query(null, { showProgress: false })
             .assignDocument()
             .while(() => set.size < 100)
             .forEach(law => {
@@ -77,12 +77,15 @@ void (async () => { //[md-ignore]
                     for (const el of Array.from(law.document.getElementsByTagName(tag))) {
                         const text = (el.textContent ?? "").trim();
                         if (/の意[義味].*に定めるところによる/.exec(text) && !set.has(text)) {
-                            console.log(`${text}【${law.LawTitle}（${law.LawNum}）${lawtext.traceTitles(el)}】`);
+                            console.group(`【${law.LawTitle}（${law.LawNum}）${lawtext.traceTitles(el).join("/")}】`);
+                            console.log(`%c${text}`, "color: navy;");
+                            console.log(lawtext.getLawtextAppUrl(law));
+                            console.groupEnd();
                             set.add(text);
                         }
                     }
                 }
-            });
+            }).then(() => "✓ completed.");
     })();
     //[md]```
 

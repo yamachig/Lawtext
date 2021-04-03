@@ -1,10 +1,18 @@
 import * as std from "@coresrc/std_law";
+import { LawInfo } from "./data/lawinfo";
 
 export const traceTitles = (el: Element, _titles: string[] = []): string[] => {
     const titles: string[] = [..._titles];
     for (const child of Array.from(el.children)) {
         if (
-            (child.tagName.endsWith("Title") && child.tagName !== "LawTitle") ||
+            (child.tagName.endsWith("Title") && ![
+                "LawTitle",
+                "PartTitle",
+                "ChapterTitle",
+                "SectionTitle",
+                "SubsectionTitle",
+                "DivisionTitle",
+            ].includes(child.tagName)) ||
             child.tagName.endsWith("Label") ||
             (child.tagName.endsWith("Num") && child.tagName !== "LawNum" && child.tagName !== "RelatedArticleNum")
         ) {
@@ -26,4 +34,10 @@ export const getLawTitleWithNum = (law: std.Law): string => {
     sLawNum = (sLawNum && sLawTitle) ? (`（${sLawNum}）`) : sLawNum;
 
     return sLawTitle + sLawNum;
+};
+
+export const getLawtextAppUrl = (lawOrLawNum: string | LawInfo, lawtextAppRoot?: string): string => {
+    const lawNum = typeof lawOrLawNum === "string" ? lawOrLawNum : lawOrLawNum.LawNum;
+    const root = lawtextAppRoot ?? `${location.protocol}//${location.host}${location.pathname}`;
+    return encodeURI(`${root}#${lawNum}`);
 };
