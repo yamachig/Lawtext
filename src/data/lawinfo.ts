@@ -20,16 +20,44 @@ export interface BaseLawInfo {
     XmlName: string,
 }
 export class LawInfo implements BaseLawInfo {
+
+    /** この法令が参照している法令の法令番号の一覧 */
     public ReferencingLawNums: Set<string> = new Set();
+
+    /** この法令を参照している法令の法令番号の一覧 */
     public ReferencedLawNums: Set<string> = new Set();
+
+    /** 法令ID */
+    public LawID: string;
+
+    /** 法令番号 */
+    public LawNum: string;
+
+    /** 法令名 */
+    public LawTitle: string;
+
+    /** 施行済みかどうか */
+    public Enforced: boolean;
+
+    public Path: string;
+
+    public XmlName: string;
+
     public constructor(
-        public LawID: string,
-        public LawNum: string,
-        public LawTitle: string,
-        public Enforced: boolean,
-        public Path: string,
-        public XmlName: string,
-    ) {}
+        LawID: string,
+        LawNum: string,
+        LawTitle: string,
+        Enforced: boolean,
+        Path: string,
+        XmlName: string,
+    ) {
+        this.LawID = LawID;
+        this.LawNum = LawNum;
+        this.LawTitle = LawTitle;
+        this.Enforced = Enforced;
+        this.Path = Path;
+        this.XmlName = XmlName;
+    }
 
     public toTuple(): LawInfoListItem {
         return [

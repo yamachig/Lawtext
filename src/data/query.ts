@@ -532,18 +532,9 @@ export class BaseLawCriteria implements CoreQueryCriteria<LawQueryItem> {
     }
 }
 
-/* eslint-disable tsdoc/syntax */
 /**
  * {@link LawQuery} で列挙される、法令を表すオブジェクト。
- *
- * @property {string} LawID - 法令ID
- * @property {string} LawNum - 法令番号
- * @property {string} LawTitle - 法令名
- * @property {boolean} Enforced - 施行済みかどうか
- * @property {Set<string>} ReferencingLawNums - この法令が参照している法令の法令番号の一覧
- * @property {Set<string>} ReferencedLawNums - この法令を参照している法令の法令番号の一覧
  */
-/* eslint-enable tsdoc/syntax */
 export class LawQueryItem extends LawInfo implements QueryItem {
 
     public loader: Loader | null = null;
