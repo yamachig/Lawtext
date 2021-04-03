@@ -3,7 +3,7 @@ Lawtext: Manageable plain text format and utility tools for laws
 
 **Lawtext** is a human-readable/editable plain text format designed for Japanese laws.
 
-Lawtext works efficiently with existing source code management tools so that it makes law text management open, safe, and creative.
+Lawtext works efficiently with existing source code management tools to make law text management open, safe, and creative.
 
 Lawtext is currently under development; however, the essential feature is already available.
 
@@ -33,7 +33,7 @@ Lawtextを用いると、既存のソースコード管理ツールをそのま�
 
 法令を読む場面での課題：
 
-- 法令はHTML形式で公開されていますが、きれいに印刷することが難しいことが多く、また、編集のために再利用することができません。
+- 公開されている法令データの多く（HTML、PDFなど）は、編集のために再利用することができません。
 - バージョンを比較する手段が存在しません。
 - そもそも法令の文書自体が、そのままではあまり読みやすいものではありません。特に、何段にも入れ子になった括弧など。
 - 法令がパブリックコメントに付される際には、PDFのみが公開されることが一般的です。PDFは編集や比較が困難です。
@@ -43,9 +43,9 @@ Lawtextを用いると、既存のソースコード管理ツールをそのま�
 - [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html)（2016年10月リリース)。法令文書の、政府内部での管理に用いられる、正式なデータベース・出版システムです。e-LAWSにより、日本のすべての現行法令はデジタル形式で保存され、これが正式な文書として扱われるようになりました。
 - [法令標準XML](http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2)（2017年5月リリース）。法令を段落単位でマークアップする、標準化されたXML形式です。日本のあらゆる法令は、（既にあるHTML形式に加えて）法令標準XMLで公開されるようになりました。
 - [e-Gov 法令 API](http://www.e-gov.go.jp/elaws/interface_api/index.html)（2017年6月リリース）。広く一般に利用可能な、法令標準XMLを提供するAPIです。
+- [e-Gov 法令検索リニューアル](https://elaws.e-gov.go.jp/)（2020年11月リリース）。それまでHTML形式形式で公開され、きれいに印刷することが難しい状況でしたが、RTFやPDFのダウンロードにも対応しました。
 
   法令標準XMLの例（抜粋）：
-
   ```xml
   <?xml version="1.0" encoding="UTF-8" standalone="no"?>
   <Law Era="Heisei" Lang="ja" LawType="Act" Num="88" Year="05">
@@ -140,32 +140,32 @@ Lawtext-appは次の特徴を備えます：
 
 ## Background
 
-Law is one of the most effective types of document, which draws interest from legal, business, and academic area. It is considered that the text of law and changes in the law should be open and transparent, and that editing law should not allow any mistake.
+Law is one of the most influential document types, which draws interest from legal, business, and academic area. It is considered that the text of law and changes in the law should be open and transparent, and editing law should not allow any mistake.
 
 However, currently in Japan, managing law text has several problems.
 
 Problems of editor side:
 
-- Editing law ends up managing layout and font settings in a document editor, rather than editing text itself, because the editing process and presentation of the document are not separated. It not only costs time and effort but also yields mistakes.
+- Editing law ends up managing layout and font settings in a document editor, rather than editing text itself, because the document's editing process and presentation are not separated. It not only costs time and effort but also yields mistakes.
 - The layout configuration of law files is not uniform. It causes editing law files in a team or maintaining old archived data is not as simple as just modifying text. It is like analyzing the complicated structure of styles, which is not essential.
 - There is only primitive version control: copying files. Editing by multiple people often results in reversions hard to find.
 - The whole workflow depends on specific apps like Microsoft Word and JustSystems Ichitaro. It causes vendor lock-in.
 
 Problems of reader side:
 
-- Although laws are available online as HTML, they often could not be pretty-printed and are not reusable for editing.
+- Most law data made available are in HTML or PDF, which are not reusable for editing.
 - There is no way available to compare versions.
-- Law text itself is not human-friendly. Especially deep nested parentheses.
-- When a law is under public comments, always PDF is the only document made available, which is hard to modify or compare.
+- Law text itself is not human-friendly: deeply nested parentheses, for example.
+- When a law is under public comments, the only document made available is always PDF, which is hard to modify or compare.
 
 Besides, recently, some breakthroughs are made in the field of Japanese law management:
 
 - [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html) (released in October 2016), authentic database and publishing system for laws, for use inside the government. By e-LAWS, all current law documents in Japan are formally stored as digital.
 - [Standard law XML](http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2) (released in May 2017), standardized paragraph-level markup format for Japanese laws. Any Japanese law is now made public as standard law XML (in addition to HTML already available).
-- [e-Gov laws API](http://www.e-gov.go.jp/elaws/interface_api/index.html) (released in June 2017), open web API which provides standard law XML.
+- [e-Gov laws API](http://www.e-gov.go.jp/elaws/interface_api/index.html) (released in June 2017), an open web API which provides standard law XML.
+- [Renewed e-Gov laws search](https://elaws.e-gov.go.jp/) (released in November 2020). Before renewal, it provided the laws HTML, which often could not be pretty-printed and are not reusable for editing. It now provides RTF or PDF.
 
   Example of Standard law XML (extracted):
-
   ```xml
   <?xml version="1.0" encoding="UTF-8" standalone="no"?>
   <Law Era="Heisei" Lang="ja" LawType="Act" Num="88" Year="05">
@@ -197,17 +197,17 @@ Besides, recently, some breakthroughs are made in the field of Japanese law mana
   </Law>
   ```
 
-Although e-LAWS and standard law XML laid the foundation for automation of legislation, there are still some problems remain:
+Although e-LAWS and standard law XML laid the foundation for automation of legislation, there are still some problems that remain:
 
-- XML tags and structures is not an essential matter of laws themselves and require other skills to edit. In other words, XML is not readable/editable for law writers.
+- XML tags and structures are not an essential matter of laws themselves and require other skills to edit. In other words, XML is not readable/editable for law writers.
 - e-LAWS provides a specially made editor to avoid writing XML directly. It may cause another lock-in.
 
 In the field of programming and open source community (suggestive of the term "code"), several optimized solutions are available to solve such problems:
 
-- Source codes are in a manageable plain text format. It is not only machine-readable by nature, but also designed so that people can read and edit them efficiently. Because they are just simple plain text files, many third-party useful (and often free) tools are available.
-- Various kinds of source code editors and viewers are available. These editors and viewers typically have syntax highlighting features. Some of them provide navigation features and more advanced tools like linters can be combined.
+- Source codes are in a manageable plain text format. It is machine-readable by nature and designed so that people can read and edit them efficiently. Because they are just simple plain text files, many third-party useful (and often free) tools are available.
+- Various kinds of source code editors and viewers are available. These editors and viewers typically have syntax highlighting features. Some of them provide navigation features, and more advanced tools like linters can be combined.
 - Multifunctional version control systems are available, which are generally the basis of programming workflow. They avoid reversions and make it easy for developers to collaborate in a team.
-- Source codes are stored and shared on public repositories with changing history, in human-readable and editable form. Modifying and commenting features are also integrated.
+- Source codes are stored and shared on public repositories with changing history in human-readable and editable form. Modifying and commenting features are also integrated.
 
 
 ## Proposal
@@ -218,7 +218,7 @@ To solve such problems of law text management described above, I propose "**Lawt
 
 Lawtext has these features:
 
-- A Lawtext document itself (just a plain text) works well as a presentation format. It looks akin to what you read law in a printed/web page. You can read/edit a Lawtext like writing a regular document without managing complicated style configurations. This feature is made referring to reStructuredText and Markdown.
+- A Lawtext document itself (just a plain text file) works well as a presentation format. It looks akin to what you read law on a printed/web page. You can read/edit a Lawtext like writing a regular document without managing complicated style configurations. This feature is made referring to reStructuredText and Markdown.
 
     Example of a Lawtext (of the same part as the XML example above):
 
@@ -234,16 +234,16 @@ Lawtext has these features:
     ```
 
 - You can compile a Lawtext to a standard law XML. It means Lawtext is compatible with e-LAWS and any system utilizing standard law XML. Moreover, reversely, a standard law XML, can be converted to a Lawtext. Therefore, you can obtain the Lawtext of any existing law available online. You can store and share law documents in both forms of Lawtext or standard law XML as you like.
-- Lawtext works effectively with existing source code management tools. As an example, [the Lawtext syntax highlighter for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) is available.
+- Lawtext works effectively with existing source code management tools. For example, [the Lawtext syntax highlighter for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) is available.
 
   [![vscode-screenshot1](https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png)](https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png)
 
-- You can display Lawtext appropriately in online source code repository such as GitHub ([example](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)).
+- You can display Lawtext appropriately in an online source code repository such as GitHub ([example](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)).
 
 
 ### Lawtext-app
 
-Along with the Lawtext format, I also provide a utility tool "Lawtext-app" ([working example](https://yamachig.github.io/lawtext-app/)), which utilizes Lawtext, standard law XML and e-LAWS API.
+Along with the Lawtext format, I also provide a utility tool, "Lawtext-app" ([working example](https://yamachig.github.io/lawtext-app/)), which utilizes Lawtext, standard law XML, and e-LAWS API.
 
 [![app-screenshot2](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
 
@@ -252,7 +252,7 @@ Lawtext-app has these features:
 - Lawtext-app is a single-page application run on web browsers. In a confidential use-case, you can [download](https://yamachig.github.io/lawtext-app/#download/) and run it offline.
 - It shows Lawtext, standard law XML (both from local file and e-LAWS API) as a web page with some navigating features.
 - Lawtext-app is accompanied by an additional syntax analyzer and an elemental semantic analyzer of law text. For example, it shows corresponding parentheses and nesting depth. It also indicates term definition positions.
-- It can emit Microsoft Word document (.docx) as well as Lawtext and standard law XML of displayed law.
+- It can emit Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
 
 
 
@@ -276,49 +276,49 @@ Lawtext-app has these features:
 
 ## Example of Lawtext file / Lawtextファイルの例
 
-    ```
-    行政手続法
-    （平成五年法律第八十八号）
+```
+行政手続法
+（平成五年法律第八十八号）
 
-    目次
-      第一章　総則（第一条―第四条）
-      第二章　申請に対する処分（第五条―第十一条）
-      第三章　不利益処分
-        第一節　通則（第十二条―第十四条）
-        第二節　聴聞（第十五条―第二十八条）
-        第三節　弁明の機会の付与（第二十九条―第三十一条）
-      第四章　行政指導（第三十二条―第三十六条の二）
-      第四章の二　処分等の求め（第三十六条の三）
-      第五章　届出（第三十七条）
-      第六章　意見公募手続等（第三十八条―第四十五条）
-      第七章　補則（第四十六条）
-      附則
+目次
+  第一章　総則（第一条―第四条）
+  第二章　申請に対する処分（第五条―第十一条）
+  第三章　不利益処分
+    第一節　通則（第十二条―第十四条）
+    第二節　聴聞（第十五条―第二十八条）
+    第三節　弁明の機会の付与（第二十九条―第三十一条）
+  第四章　行政指導（第三十二条―第三十六条の二）
+  第四章の二　処分等の求め（第三十六条の三）
+  第五章　届出（第三十七条）
+  第六章　意見公募手続等（第三十八条―第四十五条）
+  第七章　補則（第四十六条）
+  附則
 
-          第一章　総則
+      第一章　総則
 
-      （目的等）
-    第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
-    ２　処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。
+  （目的等）
+第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
+２　処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。
 
-      （定義）
-    第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
-      一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
-      二　処分　行政庁の処分その他公権力の行使に当たる行為をいう。
-      三　申請　法令に基づき、行政庁の許可、認可、免許その他の自己に対し何らかの利益を付与する処分（以下「許認可等」という。）を求める行為であって、当該行為に対して行政庁が諾否の応答をすべきこととされているものをいう。
-      四　不利益処分　行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。
-        イ　事実上の行為及び事実上の行為をするに当たりその範囲、時期等を明らかにするために法令上必要とされている手続としての処分
-        ロ　申請により求められた許認可等を拒否する処分その他申請に基づき当該申請をした者を名あて人としてされる処分
-        ハ　名あて人となるべき者の同意の下にすることとされている処分
-        ニ　許認可等の効力を失わせる処分であって、当該許認可等の基礎となった事実が消滅した旨の届出があったことを理由としてされるもの
-      五　行政機関　次に掲げる機関をいう。
-        イ　法律の規定に基づき内閣に置かれる機関若しくは内閣の所轄の下に置かれる機関、宮内庁、内閣府設置法（平成十一年法律第八十九号）第四十九条第一項若しくは第二項に規定する機関、国家行政組織法（昭和二十三年法律第百二十号）第三条第二項に規定する機関、会計検査院若しくはこれらに置かれる機関又はこれらの機関の職員であって法律上独立に権限を行使することを認められた職員
-        ロ　地方公共団体の機関（議会を除く。）
-      六　行政指導　行政機関がその任務又は所掌事務の範囲内において一定の行政目的を実現するため特定の者に一定の作為又は不作為を求める指導、勧告、助言その他の行為であって処分に該当しないものをいう。
-      七　届出　行政庁に対し一定の事項の通知をする行為（申請に該当するものを除く。）であって、法令により直接に当該通知が義務付けられているもの（自己の期待する一定の法律上の効果を発生させるためには当該通知をすべきこととされているものを含む。）をいう。
-      八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
-        イ　法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則
-        ロ　審査基準（申請により求められた許認可等をするかどうかをその法令の定めに従って判断するために必要とされる基準をいう。以下同じ。）
-        ハ　処分基準（不利益処分をするかどうか又はどのような不利益処分とするかについてその法令の定めに従って判断するために必要とされる基準をいう。以下同じ。）
-        ニ　行政指導指針（同一の行政目的を実現するため一定の条件に該当する複数の者に対し行政指導をしようとするときにこれらの行政指導に共通してその内容となるべき事項をいう。以下同じ。）
-    ```
+  （定義）
+第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+  一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
+  二　処分　行政庁の処分その他公権力の行使に当たる行為をいう。
+  三　申請　法令に基づき、行政庁の許可、認可、免許その他の自己に対し何らかの利益を付与する処分（以下「許認可等」という。）を求める行為であって、当該行為に対して行政庁が諾否の応答をすべきこととされているものをいう。
+  四　不利益処分　行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。
+    イ　事実上の行為及び事実上の行為をするに当たりその範囲、時期等を明らかにするために法令上必要とされている手続としての処分
+    ロ　申請により求められた許認可等を拒否する処分その他申請に基づき当該申請をした者を名あて人としてされる処分
+    ハ　名あて人となるべき者の同意の下にすることとされている処分
+    ニ　許認可等の効力を失わせる処分であって、当該許認可等の基礎となった事実が消滅した旨の届出があったことを理由としてされるもの
+  五　行政機関　次に掲げる機関をいう。
+    イ　法律の規定に基づき内閣に置かれる機関若しくは内閣の所轄の下に置かれる機関、宮内庁、内閣府設置法（平成十一年法律第八十九号）第四十九条第一項若しくは第二項に規定する機関、国家行政組織法（昭和二十三年法律第百二十号）第三条第二項に規定する機関、会計検査院若しくはこれらに置かれる機関又はこれらの機関の職員であって法律上独立に権限を行使することを認められた職員
+    ロ　地方公共団体の機関（議会を除く。）
+  六　行政指導　行政機関がその任務又は所掌事務の範囲内において一定の行政目的を実現するため特定の者に一定の作為又は不作為を求める指導、勧告、助言その他の行為であって処分に該当しないものをいう。
+  七　届出　行政庁に対し一定の事項の通知をする行為（申請に該当するものを除く。）であって、法令により直接に当該通知が義務付けられているもの（自己の期待する一定の法律上の効果を発生させるためには当該通知をすべきこととされているものを含む。）をいう。
+  八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+    イ　法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則
+    ロ　審査基準（申請により求められた許認可等をするかどうかをその法令の定めに従って判断するために必要とされる基準をいう。以下同じ。）
+    ハ　処分基準（不利益処分をするかどうか又はどのような不利益処分とするかについてその法令の定めに従って判断するために必要とされる基準をいう。以下同じ。）
+    ニ　行政指導指針（同一の行政目的を実現するため一定の条件に該当する複数の者に対し行政指導をしようとするときにこれらの行政指導に共通してその内容となるべき事項をいう。以下同じ。）
+```
 
