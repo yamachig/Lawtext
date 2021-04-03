@@ -25,6 +25,24 @@ interface QueryItem {
 }
 
 /**
+ * Options for {@link Query}.
+ *
+ * {@link Query} のオプション項目
+ */
+export interface QueryOptions {
+    /**
+     * Whether to show progress message.
+     *
+     * 進捗状況を表示するかどうか。
+     */
+    showProgress: boolean;
+}
+
+const defaultQueryOptions = (): QueryOptions => ({
+    showProgress: true,
+});
+
+/**
  * The query object that represents a source list and a filtering criteria.
  *
  * フィルタ条件と検索元リストを表すクエリオブジェクト。
@@ -47,15 +65,18 @@ export class Query<
 
     public population: AsyncIterable<TItem>;
     public criteria: CoreQueryCriteria<TItem> | null;
+    public options: QueryOptions;
 
     /**
      * Instanciate a `Query`.
      * @param population - a source list
      * @param criteria - a filtering criteria
+     * @param options - options
      */
     public constructor (
         population: AsyncIterable<TItem>,
         criteria: QueryCriteria<TItem> | null,
+        options?: Partial<QueryOptions>,
     ) {
         this.population = population;
         if (criteria === null) {
@@ -67,13 +88,15 @@ export class Query<
         } else {
             throw assertNever(criteria);
         }
+        this.options = { ...defaultQueryOptions(), ...options };
     }
 
     protected new(
         population: AsyncIterable<TItem>,
         criteria: QueryCriteria<TItem> | null,
+        overrideOptions?: Partial<QueryOptions>,
     ): this {
-        return new Query(population, criteria) as this;
+        return new Query(population, criteria, { ...this.options, ...overrideOptions }) as this;
     }
 
     async *[Symbol.asyncIterator](): AsyncGenerator<TItem, void, undefined> {
@@ -95,11 +118,13 @@ export class Query<
      *
      * @param func - a function to be called for each filtered item <br/> 要素ごとに実行される関数
      * @param criteria - an additional criteria applied after filtering / 関数実行後に適用するフィルタ条件
+     * @param options - options which override the original ones / 上書きするオプション項目
      * @returns - a new `Query` that yields items returned by `func` <br/> `func` の返り値を列挙する新しい `Query`
      */
     public map<T, TRet=T extends (void | undefined) ? never : T>(
         func: (item: TItem) => T | Promise<T>,
         criteria: QueryCriteria<TRet> | null = null,
+        options?: Partial<QueryOptions>,
     ): Query<TRet> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
@@ -114,6 +139,7 @@ export class Query<
                 }
             })(),
             criteria,
+            options,
         );
     }
 
@@ -124,11 +150,13 @@ export class Query<
      *
      * @param func - a function to be called for each filtered item <br/> 要素ごとに実行される関数
      * @param criteria - an additional criteria applied after merge / マージ後に適用するフィルタ条件
+     * @param options - options which override the original ones / 上書きするオプション項目
      * @returns - a new `Query` that yields merged objects <br/> マージされたオブジェクトを列挙する新しい `Query`
      */
     public assign<T>(
         func: (item: TItem) => T | Promise<T>,
         criteria: QueryCriteria<T extends (void | undefined) ? never : (T & TItem)> | null = null,
+        options?: Partial<QueryOptions>,
     ): Query<T extends (void | undefined) ? never : (T & TItem)> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
@@ -143,6 +171,7 @@ export class Query<
                 }
             })(),
             criteria as QueryCriteria<TItem> | null,
+            options,
         ) as unknown as Query<T extends (void | undefined) ? never : (T & TItem)>;
     }
 
@@ -152,12 +181,17 @@ export class Query<
      * フィルタを追加します。
      *
      * @param criteria - an additional criteria / 追加するフィルタ条件
+     * @param options - options which override the original ones / 上書きするオプション項目
      * @returns - a new `Query` that applies `criteria` to the filtered items of the original `Query` <br/> フィルタ後の項目を検索元とし、`criteria` を検索条件とする新しい `Query`
      */
-    public filter(criteria: QueryCriteria<TItem> | null): this {
+    public filter(
+        criteria: QueryCriteria<TItem> | null,
+        options?: Partial<QueryOptions>,
+    ): this {
         return this.new(
             this[Symbol.asyncIterator](),
             criteria,
+            options,
         );
     }
 
@@ -168,9 +202,14 @@ export class Query<
      *
      * @param func - a function to be called for each filtered item. Returning `false` terminates the iteration. <br/>要素ごとに実行される関数。`false`を返すと列挙を停止します。
      * @param yieldLast - whether to return the item that caused `func` returned `false` <br/>`func`が`false`を返す要因となった要素を出力するかどうか
+     * @param options - options which override the original ones / 上書きするオプション項目
      * @returns - a new `Query` that yields while `func` returns `true`<br/>`func` が `true` を返す間列挙を続ける新しい `Query`
      */
-    public while(func: (item: TItem) => boolean | Promise<boolean>, yieldLast = false): this {
+    public while(
+        func: (item: TItem) => boolean | Promise<boolean>,
+        yieldLast = false,
+        options?: Partial<QueryOptions>,
+    ): this {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
         return this.new(
@@ -186,6 +225,7 @@ export class Query<
                 }
             })(),
             null,
+            options,
         );
     }
 
@@ -195,9 +235,13 @@ export class Query<
      * 指定した件数スキップします。
      *
      * @param count - count to skip<br/>スキップする件数
+     * @param options - options which override the original ones / 上書きするオプション項目
      * @returns - a new `Query` that yields after skipping specified count.<br/>指定した件数のスキップ後列挙を続ける新しい `Query`
      */
-    public skip(count: number): this {
+    public skip(
+        count: number,
+        options?: Partial<QueryOptions>,
+    ): this {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
         return this.new(
@@ -212,6 +256,7 @@ export class Query<
                 }
             })(),
             null,
+            options,
         );
     }
 
@@ -221,9 +266,13 @@ export class Query<
      * 出力の最大件数を設定します。
      *
      * @param max - the maximum count<br/>最大件数
+     * @param options - options which override the original ones / 上書きするオプション項目
      * @returns - a new `Query` that yields until it reaches the maximum count.<br/>最大件数に達するまで列挙を続ける新しい `Query`
      */
-    public limit(max: number): this {
+    public limit(
+        max: number,
+        options?: Partial<QueryOptions>,
+    ): this {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
         return this.new(
@@ -237,6 +286,7 @@ export class Query<
                 }
             })(),
             null,
+            options,
         );
     }
 
@@ -308,7 +358,7 @@ export class Query<
             await func(item);
             const now = new Date();
             if (now.getTime() - lastMessageTime.getTime() > 1000) {
-                console.info(`Query progress:\t⌛ running...\t(${matchCount.toString().padStart(4, " ")} matches\tin ${now.getTime() - startTime.getTime()} msec)`);
+                if (this.options.showProgress) console.info(`Query progress:\t⌛ running...\t(${matchCount.toString().padStart(4, " ")} matches\tin ${now.getTime() - startTime.getTime()} msec)`);
                 lastMessageTime = now;
             }
             if (typeof item === "object" && symbolFinalyzeQueryItem in item) {
@@ -317,7 +367,7 @@ export class Query<
         }
         const now = new Date();
         const msec = now.getTime() - startTime.getTime();
-        console.info(`Query progress:\t✓ completed.\t(${matchCount.toString().padStart(4, " ")} matches\tin ${msec} msec)`);
+        if (this.options.showProgress) console.info(`Query progress:\t✓ completed.\t(${matchCount.toString().padStart(4, " ")} matches\tin ${msec} msec)`);
     }
 
 }
@@ -558,6 +608,7 @@ async function *getLawQueryPopulationWithProgress(
         | Promise<LawInfo[]>
         | (() => LawInfo[] | Promise<LawInfo[]>),
     loader: Loader | null,
+    options: QueryOptions,
 ) {
     const startTime = new Date();
     let lastMessageTime = startTime;
@@ -569,7 +620,7 @@ async function *getLawQueryPopulationWithProgress(
             yieldCount++;
             const now = new Date();
             if (now.getTime() - lastMessageTime.getTime() > 1000) {
-                console.info(`   << source:\t⌛ running...\t(${yieldCount.toString().padStart(4, " ")}/${lawInfos.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawInfos.length * 100)}%\tin ${now.getTime() - startTime.getTime()} msec)`);
+                if (options.showProgress) console.info(`   << source:\t⌛ running...\t(${yieldCount.toString().padStart(4, " ")}/${lawInfos.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawInfos.length * 100)}%\tin ${now.getTime() - startTime.getTime()} msec)`);
                 lastMessageTime = now;
             }
 
@@ -584,7 +635,7 @@ async function *getLawQueryPopulationWithProgress(
     } finally {
         const now = new Date();
         const msec = now.getTime() - startTime.getTime();
-        console.info(`   << source:\t${yieldCount === lawInfos.length ? "✓ completed." : "🚧 stopped. "}\t(${yieldCount.toString().padStart(4, " ")}/${lawInfos.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawInfos.length * 100)}%\tin ${msec} msec)`);
+        if (options.showProgress) console.info(`   << source:\t${yieldCount === lawInfos.length ? "✓ completed." : "🚧 stopped. "}\t(${yieldCount.toString().padStart(4, " ")}/${lawInfos.length.toString().padStart(4, " ")}=${Math.floor(yieldCount / lawInfos.length * 100)}%\tin ${msec} msec)`);
     }
 }
 
@@ -598,6 +649,7 @@ export class LawQuery<
     public constructor (
         population: AsyncIterable<TItem>,
         criteria: LawCriteria<TItem> | null,
+        options?: Partial<QueryOptions>,
     ) {
         let this_criteria: QueryCriteria<TItem> | null;
         if (criteria === null) {
@@ -612,20 +664,24 @@ export class LawQuery<
         super(
             population,
             this_criteria,
+            options,
         );
     }
 
     protected new(
         population: AsyncIterable<TItem>,
         criteria: LawCriteria<TItem> | null,
+        overrideOptions?: Partial<QueryOptions>,
     ): this {
-        return new LawQuery(population, criteria) as this;
+        return new LawQuery(population, criteria, { ...this.options, ...overrideOptions }) as this;
     }
 
     public static fromFetchInfo(
         loader: Loader,
         criteria: LawCriteria<LawQueryItem> | null,
+        options?: Partial<QueryOptions>,
     ): LawQuery {
+        const fullOptions = { ...defaultQueryOptions(), ...options };
         return new LawQuery(
             getLawQueryPopulationWithProgress(
                 (async () => {
@@ -633,8 +689,10 @@ export class LawQuery<
                     return lawList;
                 }),
                 loader,
+                fullOptions,
             ),
             criteria,
+            fullOptions,
         );
     }
 
@@ -648,16 +706,25 @@ export class LawQuery<
     public assign<T>(
         func: (item: TItem) => T | Promise<T>,
         criteria: LawCriteria<T extends (void | undefined) ? never : (T & TItem)> | null = null,
+        options?: Partial<QueryOptions>,
     ): LawQuery<T extends (void | undefined) ? never : (T & TItem)> {
-        return super.assign(func, criteria as CoreQueryCriteria<TItem>) as unknown as LawQuery<T extends (void | undefined) ? never : (T & TItem)>;
+        return super.assign(
+            func,
+            criteria as CoreQueryCriteria<TItem>,
+            options,
+        ) as unknown as LawQuery<T extends (void | undefined) ? never : (T & TItem)>;
     }
 
     /**
      * 法令XMLのDOMを取得して追加したオブジェクトを列挙します。
      * @param ensure - 法令XMLが取得できたもののみを列挙するかどうか（デフォルト: `true`）
+     * @param options - 上書きするオプション項目
      * @returns - 法令XMLのDOMを `document` プロパティとして追加したオブジェクトを列挙する新しい `Query`
      */
-    public assignDocument<TEnsure extends boolean=true>(ensure: TEnsure = true as TEnsure):
+    public assignDocument<TEnsure extends boolean=true>(
+        ensure: TEnsure = true as TEnsure,
+        options?: Partial<QueryOptions>,
+    ):
         LawQuery<TItem & {document: TEnsure extends true ? XMLDocument : (XMLDocument | null) }> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
@@ -676,6 +743,7 @@ export class LawQuery<
                 }
             })(),
             null,
+            options,
         ) as unknown as LawQuery<TItem & {document: TEnsure extends true ? XMLDocument : (XMLDocument | null) }>;
     }
 }
