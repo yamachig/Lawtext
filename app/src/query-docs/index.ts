@@ -55,8 +55,11 @@ export const generateDocs = async (targetDir: string): Promise<void> => {
     app.bootstrap({
         entryPoints: [
             path.join(__dirname, "../../../core/src/data/query.ts"),
-            path.join(__dirname, "../globals/index.ts"),
+            path.join(__dirname, "../globals/lawtext.ts"),
         ],
+        // excludePrivate: true,
+        // excludeProtected: true,
+        // excludeInternal: true,
         excludeNotDocumented: true,
         name: "Lawtext query",
         readme: path.join(__dirname, "./src/readme.md"),
