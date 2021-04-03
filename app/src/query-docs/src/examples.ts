@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */ //[md-ignore]
 
-import * as lawtext from "@appsrc/globals/lawtext"; //[md-ignore]
+import { lawtext } from "@appsrc/globals"; //[md-ignore]
 
 void (async () => { //[md-ignore]
 
