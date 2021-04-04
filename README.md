@@ -43,7 +43,7 @@ Lawtext is currently under development; however, the essential feature is alread
 - [法令全体のLawtextサンプルをダウンロード / Download a sample of Lawtext for a whole law](https://yamachig.github.io/lawtext-app/#(sample) )
 
 <details>
-<summary>（参考）上記の Lawtext を変換して生成した法令標準XML（クリックして表示）</summary>
+<summary>（参考）上記の Lawtext を変換して生成した法令標準XML（クリックして表示） / Standard law XML generated from the lawtext above (click to open)</summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
