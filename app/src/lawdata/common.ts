@@ -61,30 +61,86 @@ export type LawData = LawDataProps & LawDataCore;
 
 export type LawDataResult<TLawDataProps extends LawDataProps = LawDataProps> =
     { ok: true, lawData: LawDataCore & TLawDataProps} | {ok: false, error: Error};
+export class Timing {
+    public searchLawNum: number | null = null;
+    public fetchStoredLawInfo: number | null = null;
+    public loadData: number | null = null;
+    public extractPict: number | null = null;
+    public parseXMLOrLawtext: number | null = null;
+    public addControlTags: number | null = null;
+    public analyze: number | null = null;
+    public render: number | null = null;
 
-export const toLawData = <TLawDataProps extends LawDataProps>(props: TLawDataProps): LawDataResult<TLawDataProps> => {
+    public toString(): string {
+        return `
+Timing {
+    searchLawNum: ${this.searchLawNum} ms,
+    fetchStoredLawInfo: ${this.fetchStoredLawInfo} ms,
+    loadData: ${this.loadData} ms,
+    extractPict: ${this.extractPict} ms,
+    parseXMLOrLawtext: ${this.parseXMLOrLawtext} ms,
+    addControlTags: ${this.addControlTags} ms,
+    analyze: ${this.analyze} ms,
+    render: ${this.render} ms,
+}
+`.trim();
+    }
+}
+
+export const toLawData = async <TLawDataProps extends LawDataProps>(
+    props: TLawDataProps,
+    onMessage: (message: string) => unknown,
+    timing: Timing,
+): Promise<LawDataResult<TLawDataProps>> => {
     const _props = props as LawDataProps;
     try {
         if (isStoredLawDataProps(_props) || isElawsLawDataProps(_props) || isTempXMLLawDataProps(_props) || isFileXMLLawDataProps(_props)) {
-            const el = util.xmlToJson(_props.xml) as std.Law;
-            analyzer.stdxmlToExt(el);
-            const analysis = analyzer.analyze(el);
+
+            onMessage("法令XMLをパースしています...");
+            console.log("toLawData: parsing law xml...");
+            await util.wait(30);
+            const [parseXMLOrLawtextTime, el] = await util.withTime(util.xmlToJson)(_props.xml);
+            timing.parseXMLOrLawtext = parseXMLOrLawtextTime;
+
+            onMessage("制御タグを追加しています...");
+            console.log("onNavigated: adding control tags...");
+            await util.wait(30);
+            const [addControlTagsTime] = await util.withTime(analyzer.stdxmlToExt)(el);
+            timing.addControlTags = addControlTagsTime;
+
+            onMessage("法令を解析しています...");
+            console.log("onNavigated: analysing law...");
+            await util.wait(30);
+            const [analyzeTime, analysis] = await util.withTime(analyzer.analyze)(el);
+            timing.analyze = analyzeTime;
+
             return {
                 ok: true,
                 lawData: {
                     ...(_props as typeof props),
-                    el,
+                    el: el as std.Law,
                     analysis,
                 },
             };
         } else if (isTempLawtextLawDataProps(_props) || isFileLawtextLawDataProps(_props)) {
-            const el = parse(_props.lawtext, { startRule: "start" }) as std.Law;
-            const analysis = analyzer.analyze(el);
+
+            onMessage("Lawtextをパースしています...");
+            console.log("onNavigated: parsing lawtext...");
+            await util.wait(30);
+            const [parseXMLOrLawtextTime, el] = await util.withTime(parse)(_props.lawtext, { startRule: "start" });
+            timing.parseXMLOrLawtext = parseXMLOrLawtextTime;
+
+            onMessage("法令を解析しています...");
+            console.log("onNavigated: analysing law...");
+            await util.wait(30);
+            const [analyzeTime, analysis] = await util.withTime(analyzer.analyze)(el);
+            timing.analyze = analyzeTime;
+
             return {
                 ok: true,
                 lawData: {
                     ...(_props as typeof props),
-                    el,
+                    el: el as std.Law,
                     analysis,
                 },
             };
