@@ -69,7 +69,7 @@ export class Timing {
     public parseXMLOrLawtext: number | null = null;
     public addControlTags: number | null = null;
     public analyze: number | null = null;
-    public render: number | null = null;
+    public updateComponents: number | null = null;
 
     public toString(): string {
         return `
@@ -81,7 +81,7 @@ Timing {
     parseXMLOrLawtext: ${this.parseXMLOrLawtext} ms,
     addControlTags: ${this.addControlTags} ms,
     analyze: ${this.analyze} ms,
-    render: ${this.render} ms,
+    updateComponents: ${this.updateComponents} ms,
 }
 `.trim();
     }

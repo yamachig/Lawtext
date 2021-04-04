@@ -96,7 +96,7 @@ export const onNavigated = async (
         loadingLaw: false,
         loadingLawMessage: "",
     });
-    timing.render = (new Date()).getTime() - start.getTime();
+    timing.updateComponents = (new Date()).getTime() - start.getTime();
 
     console.log(timing.toString());
 };
