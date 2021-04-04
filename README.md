@@ -102,8 +102,6 @@ Lawtext is currently under development; however, the essential feature is alread
 
 - [Lawtext-appはこちら / Click here to go to Lawtext-app](https://yamachig.github.io/lawtext-app/)
 
-[![app-screenshot2](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
-
 #### Lawtext-app の主な特徴
 
 - **法令閲覧**：Lawtextや法令標準XML（ファイルまたはe-LAWS APIから）を解析し、見やすく表示します。法令名や法令番号での検索ができます。
@@ -113,6 +111,10 @@ Lawtext is currently under development; however, the essential feature is alread
 - **XMLの文書構造や正規表現を使用した高度な法令検索（Lawtext query）**：ブラウザのコンソールを用いて、XMLの文書構造や正規表現を使用した高度な法令検索を実行できます。
 - **インストール不要（ブラウザで動作）**：ブラウザ上でシングルページアプリケーション（single-page application、SPA）として動作します。
 - **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#download/)）
+
+[![app-screenshot2](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
+
+[![app-screenshot3](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)
 
 #### Main features of Lawtext-app
 
@@ -248,6 +250,7 @@ Lawtext-appは次の特徴を備えます：
 
 [![app-screenshot2](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
 
+[![app-screenshot3](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)
 
 ------------
 
@@ -368,4 +371,6 @@ Lawtext-app has these features:
 - It shows Lawtext, standard law XML (both from local file and e-LAWS API) as a web page with some navigating features.
 - Lawtext-app is accompanied by an additional syntax analyzer and an elemental semantic analyzer of law text. For example, it shows corresponding parentheses and nesting depth. It also indicates term definition positions.
 - It can emit Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
+
+[![app-screenshot3](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)
 
