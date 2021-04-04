@@ -88,7 +88,7 @@ export const onNavigated = async (
     document.title = lawTitle ? `${lawTitle} | Lawtext` : "Lawtext";
 
     onMessage("レンダリングしています...");
-    console.log("onNavigated: setting law into state...");
+    console.log("onNavigated: rendering. setting law into state...");
     await util.wait(30);
     const start = new Date();
     setState({
@@ -97,7 +97,7 @@ export const onNavigated = async (
         loadingLawMessage: "",
     });
     timing.render = (new Date()).getTime() - start.getTime();
-    console.log("onNavigated: completed.");
+    console.log("onNavigated: render completed.");
     console.log(timing.toString());
 };
 
