@@ -58,7 +58,6 @@ const getLawnumStored = async (lawSearchKey: string): Promise<string | null> => 
 
         const { lawInfos } = await storedLoader.loadLawInfosStruct();
 
-        console.log(`started ${new Date().toISOString()}`);
         let partMatchMode = false;
         const bestMatch = { score: Infinity, info: null as LawInfo | null };
         for (const info of lawInfos) {
@@ -78,7 +77,6 @@ const getLawnumStored = async (lawSearchKey: string): Promise<string | null> => 
                 bestMatch.info = info;
             }
         }
-        console.log(`finished ${new Date().toISOString()}`);
 
         return bestMatch.info && bestMatch.info.LawNum;
     } catch {

@@ -9,6 +9,7 @@ import path from "path";
 import { storedLoader } from "@appsrc/lawdata/loaders";
 import { LawData } from "@appsrc/lawdata/common";
 import { containerInfoOf } from "@appsrc/actions/download";
+import { useObserved } from "./useObserved";
 
 
 const MARGIN = "　";
@@ -2126,31 +2127,9 @@ const FigRunComponent = withCatcher<FigRunComponentProps>(props => {
         throw new NotImplementedError(el.outerXML());
     }
 
-    const [observed, setObserved] = React.useState(false);
-    const ref = React.useRef<HTMLSpanElement>(null);
-    React.useEffect(() => {
-        const target = ref.current;
-        if (!target) {
-            console.error("FigRunComponent: no ref found");
-            return;
-        }
-        const unobserve = () => {
-            observer.unobserve(target);
-        };
-        const observer = new IntersectionObserver(entries => {
-            for (const entry of entries) {
-                if (entry.intersectionRatio > 0) {
-                    unobserve();
-                    setObserved(true);
-                    return;
-                }
-            }
-        });
-        observer.observe(target);
-        return unobserve;
-    }, []);
+    const { observed, observedRef } = useObserved();
 
-    return <span ref={ref}>
+    return <span ref={observedRef}>
         {srcInfo === null ? (
             <>[{el.attr.src}]</>
         ) : srcInfo.type.includes("pdf") ? (
@@ -2296,8 +2275,9 @@ const RunComponent = withCatcher<RunComponentProps>(props => {
     const els = props.els;
     const style = props.style;
 
-    const runs: JSX.Element[] = [];
+    const { observed, observedRef } = useObserved();
 
+    const runs: JSX.Element[] = [];
 
     for (let i = 0; i < els.length; i++) {
         const _el = els[i];
@@ -2306,7 +2286,11 @@ const RunComponent = withCatcher<RunComponentProps>(props => {
             runs.push(<span key={i}>{_el}</span>);
 
         } else if (_el.isControl) {
-            runs.push(<ControlRunComponent el={_el} key={i} ls={props.ls} />);
+            if (observed) {
+                runs.push(<ControlRunComponent el={_el} key={i} ls={props.ls} />);
+            } else {
+                runs.push(<span key={i}>{_el.text}</span>);
+            }
 
         } else {
             const el: std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub = _el;
@@ -2345,7 +2329,7 @@ const RunComponent = withCatcher<RunComponentProps>(props => {
         }
     }
 
-    return <span style={style}>{runs}</span>;
+    return <span style={style} ref={observedRef}>{runs}</span>;
 });
 
 
