@@ -1,11 +1,11 @@
 import webpack from "webpack";
 import nodeExternals from "webpack-node-externals";
-import * as build from "./bin/build";
+import { build } from "./bin/build";
 
 export class BuildPlugin {
-    apply(compiler: webpack.Compiler): void {
+    apply (compiler: webpack.Compiler): void {
         compiler.hooks.run.tapPromise("BuildPlugin", async () => {
-            await build.main();
+            await build();
         });
     }
 }

@@ -2,22 +2,15 @@
     "root": true,
     "env": {
         "commonjs": true,
-        "es2021": true
+        "es2021": true,
+        "node": true
     },
     "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        "eslint:recommended"
     ],
     "plugins": [
-        "@typescript-eslint",
-        "prefer-arrow",
-        "eslint-plugin-tsdoc"
+        "prefer-arrow"
     ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "project": "./tsconfig.json",
-        "ecmaVersion": 12
-    },
     "rules": {
         "indent": ["error", 4],
         "quotes": ["error", "double"],
@@ -30,19 +23,41 @@
         "no-unused-vars": ["error", { "args": "none" }],
         "comma-spacing": ["error", { "before": false, "after": true }],
         "arrow-spacing": "error",
-        "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
         "no-constant-condition": ["error", { "checkLoops": false }],
         "key-spacing": ["error", { "beforeColon": false }],
         "space-unary-ops": ["error", {"words": true, "nonwords": false}],
         "space-infix-ops": ["error", { "int32Hint": false }],
+        "space-before-function-paren": ["error", {"asyncArrow": "always"}],
         "block-spacing": "error",
-        "@typescript-eslint/type-annotation-spacing": "error",
         "nonblock-statement-body-position": ["error", "beside"],
         "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
         "no-trailing-spaces": "error",
         "eol-last": ["error", "always"],
-        "keyword-spacing": "error",
-        "tsdoc/syntax": "warn"
+        "keyword-spacing": "error"
     },
-    "ignorePatterns": ["/dist/*"]
+    "ignorePatterns": ["/dist/*"],
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx"],            
+            "extends": [
+                "eslint:recommended",
+                "plugin:@typescript-eslint/recommended"
+            ],
+            "plugins": [
+                "@typescript-eslint",
+                "prefer-arrow",
+                "eslint-plugin-tsdoc"
+            ],
+            "parser": "@typescript-eslint/parser",
+            "parserOptions": {
+                "project": "./tsconfig.json",
+                "ecmaVersion": 12
+            },
+            "rules": {
+                "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
+                "@typescript-eslint/type-annotation-spacing": "error",
+                "tsdoc/syntax": "warn"
+            }
+        }
+    ]
 }

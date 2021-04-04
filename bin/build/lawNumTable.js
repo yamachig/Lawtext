@@ -1,22 +1,29 @@
-import * as fs from "fs";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import sha512 from "hash.js/lib/hash/sha/512";
-import * as path from "path";
-import { promisify } from "util";
-import { DOMParser } from "xmldom";
-import fetch from "node-fetch";
+const fs = require("fs");
+const sha512 = require( "hash.js/lib/hash/sha/512");
+const path = require( "path");
+const { promisify } = require( "util");
+const { DOMParser } = require( "xmldom");
+const fetch = require( "node-fetch");
+const { defaultBasePath } = require("./defaultBasePath");
 
 const KEY_LENGTH = 7;
 const LEN_LENGTH = 2;
 
-const pad16 = (num: number, size: number) => {
+/**
+ * @param {number} num
+ * @param {number} size
+ */
+const pad16 = (num, size) => {
     let s = num.toString(16);
     while (s.length < (size || LEN_LENGTH)) s = "0" + s;
     return s;
 };
 
-const main = async (): Promise<void> => {
+/**
+ * @param {string} basePath
+ */
+const buildLawNumTable = async (basePath = defaultBasePath) => {
+    const srcPath = path.join(basePath, "src");
     const response = await fetch(
         "https://elaws.e-gov.go.jp/api/1/lawlists/1",
         {
@@ -42,11 +49,13 @@ const main = async (): Promise<void> => {
         };
     });
 
-    const data = new Map<string, string>();
+    /** @type {Map<string, string>} */
+    const data = new Map() ;
+
     let table = "";
     for (const law of laws) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        const digest = sha512().update(law.num).digest("hex") as string;
+        /** @type {string} */
+        const digest = sha512().update(law.num).digest("hex");
         const key = digest.slice(0, KEY_LENGTH);
         if (data.has(key)) {
             console.error(`collision: ${law.num} ${law.name} key:${key}`);
@@ -57,7 +66,7 @@ const main = async (): Promise<void> => {
         table += value;
     }
 
-    await promisify(fs.writeFile)(path.join(__dirname, "..", "src", "lawnum_table.ts"), `
+    await promisify(fs.writeFile)(path.join(srcPath, "lawnum_table.ts"), `
 "use strict";
 
 export const LAWNUM_TABLE: { [key: string]: number } = {};
@@ -75,13 +84,8 @@ for(let i = 0; i < LAWNUM_TABLE_RAW.length; i += KEY_LENGTH + LEN_LENGTH) {
 }
 `.trimLeft());
 };
-
-export default main;
+exports.buildLawNumTable = buildLawNumTable;
 
 if (typeof require !== "undefined" && require.main === module) {
-    process.on("unhandledRejection", e => {
-        console.dir(e);
-        process.exit(1);
-    });
-    main().catch(e => { throw e; });
+    buildLawNumTable().catch(console.error);
 }
