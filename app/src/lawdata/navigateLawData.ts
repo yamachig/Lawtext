@@ -5,6 +5,7 @@ import path from "path";
 import { ElawsLawDataProps, LawDataResult, StoredLawDataProps, TempXMLLawDataProps, TempLawtextLawDataProps, toLawData } from "./common";
 import { storedLoader } from "./loaders";
 import { searchLawnum } from "./searchLawNum";
+import * as util from "@coresrc/util";
 
 
 export const navigateLawData = async (
@@ -16,12 +17,14 @@ export const navigateLawData = async (
     if (text !== null) {
         if (/^(?:<\?xml|<Law)/.test(text.trim())) {
             onMessage("法令XMLをパースしています...");
+            await util.wait(30);
             return toLawData({
                 source: "temp_xml",
                 xml: text,
             });
         } else {
             onMessage("Lawtextをパースしています...");
+            await util.wait(30);
             return toLawData({
                 source: "temp_lawtext",
                 lawtext: text,
@@ -48,6 +51,7 @@ export const navigateLawData = async (
         if (!xml) throw null;
 
         onMessage("法令XMLをパースしています...");
+        await util.wait(30);
         return toLawData({
             source: "stored",
             xml,
@@ -75,6 +79,7 @@ export const navigateLawData = async (
         }
 
         onMessage("法令XMLをパースしています...");
+        await util.wait(30);
         return toLawData({
             source: "elaws",
             xml: elawsLawData.xml,
