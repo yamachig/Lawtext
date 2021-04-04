@@ -38,7 +38,8 @@
     "ignorePatterns": ["/dist/*"],
     "overrides": [
         {
-            "files": ["*.ts", "*.tsx"],            
+            "files": ["*.ts", "*.tsx"],
+            "excludedFiles": ["*.d.ts"],
             "extends": [
                 "eslint:recommended",
                 "plugin:@typescript-eslint/recommended"
@@ -57,6 +58,26 @@
                 "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
                 "@typescript-eslint/type-annotation-spacing": "error",
                 "tsdoc/syntax": "warn"
+            }
+        },
+        {
+            "files": ["*.d.ts"],
+            "extends": [
+                "eslint:recommended",
+                "plugin:@typescript-eslint/recommended"
+            ],
+            "plugins": [
+                "@typescript-eslint",
+                "prefer-arrow"
+            ],
+            "parser": "@typescript-eslint/parser",
+            "parserOptions": {
+                "project": "./tsconfig.json",
+                "ecmaVersion": 12
+            },
+            "rules": {
+                "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
+                "@typescript-eslint/type-annotation-spacing": "error"
             }
         }
     ]

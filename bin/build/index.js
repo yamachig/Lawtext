@@ -3,6 +3,11 @@ const { buildTemplates } = require("./templates");
 const { buildLawNumTable } = require("./lawNumTable");
 const { defaultBasePath } = require("./defaultBasePath");
 
+exports.buildParser = buildParser;
+exports.buildTemplates = buildTemplates;
+exports.buildLawNumTable = buildLawNumTable;
+exports.defaultBasePath = defaultBasePath;
+
 /**
  * @param {string} basePath
  */
