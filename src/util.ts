@@ -7,6 +7,15 @@ export const wait = (ms: number): Promise<void> => {
     return new Promise<void>(resolve => setTimeout(resolve, ms));
 };
 
+export const withTime = <TArgs extends unknown[], TRet>(func: (...args: TArgs) => TRet | Promise<TRet>) =>
+    async (...args: TArgs): Promise<[time: number, ret: TRet]> => {
+        const start = new Date();
+        const ret = await func(...args);
+        const end = new Date();
+        const time = end.getTime() - start.getTime();
+        return [time, ret];
+    };
+
 export function* range(start: number, end: number): Generator<number, void, unknown> {
     for (let i = start; i < end; i++) {
         yield i;
