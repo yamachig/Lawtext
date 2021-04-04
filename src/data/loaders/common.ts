@@ -21,9 +21,9 @@ export abstract class Loader {
     }
 
     public async getLawInfoByLawNum(lawNum: string): Promise<LawInfo | null> {
-        const { lawInfosByLawnum: lawListByLawnum } = await this.cacheLawListStruct();
-        if (!(lawNum in lawListByLawnum)) return null;
-        const lawInfos = lawListByLawnum[lawNum];
+        const { lawInfosByLawnum } = await this.cacheLawListStruct();
+        if (!(lawNum in lawInfosByLawnum)) return null;
+        const lawInfos = lawInfosByLawnum[lawNum];
         if (lawInfos.length > 1) console.warn(`getLawXml: ${lawInfos.length} items match for lawNum "${lawNum}".`);
         for (const lawInfo of lawInfos) {
             if (lawInfo.Enforced) {
