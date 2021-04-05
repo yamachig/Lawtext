@@ -40,20 +40,24 @@ export class FSStoredLoader extends Loader {
 
     public async loadLawInfosStruct(): Promise<LawInfosStruct> {
         const text = await readText(this.listJsonPath);
-        if (text === null) throw new Error("Text cannot be fetched");
+        if (text === null) throw new Error(`Text cannot be fetched: ${this.listJsonPath}`);
         return jsonTextToLawInfos(text);
     }
 
     public async loadBaseLawInfosFromCSV(): Promise<BaseLawInfo[]> {
         const text = await readSjisText(this.listCSVPath);
-        if (text === null) throw new Error("Text cannot be fetched");
+        if (text === null) throw new Error(`Text cannot be fetched: ${this.listCSVPath}`);
         return csvTextToLawInfos(text);
     }
 
+    public getXmlPath(lawInfo: BaseLawInfo): string {
+        return path.join(this.lawdataPath, lawInfo.Path, lawInfo.XmlName);
+    }
+
     public async loadLawXMLByInfo(lawInfo: BaseLawInfo): Promise<string> {
-        const filepath = path.join(this.lawdataPath, lawInfo.Path, lawInfo.XmlName);
+        const filepath = this.getXmlPath(lawInfo);
         const text = await readText(filepath);
-        if (text === null) throw new Error("Text cannot be fetched");
+        if (text === null) throw new Error(`Text cannot be fetched: ${filepath}`);
         return text;
     }
 

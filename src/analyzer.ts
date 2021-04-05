@@ -579,7 +579,7 @@ const detectNameInline = (spans: Span[], spanIndex: number) => {
         );
 
         const declaration = new ____Declaration(
-            "LawName", // type
+            "Keyword", // type
             nameSpan.text,  // name
             null,   // value
             scope,     // scope
@@ -681,7 +681,7 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
         );
 
         const declaration = new ____Declaration(
-            "LawName", // type
+            "Keyword", // type
             name,  // name
             value,   // value
             scope,     // scope
