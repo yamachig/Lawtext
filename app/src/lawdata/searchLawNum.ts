@@ -54,7 +54,7 @@ export const searchLawnum = async (lawSearchKey: string): Promise<string | null>
 
 const getLawnumStored = async (lawSearchKey: string): Promise<string | null> => {
     try {
-        console.log(`getLawnumStored("${lawSearchKey}")`);
+        // console.log(`getLawnumStored("${lawSearchKey}")`);
 
         const { lawInfos } = await storedLoader.loadLawInfosStruct();
 
@@ -85,7 +85,7 @@ const getLawnumStored = async (lawSearchKey: string): Promise<string | null> => 
 };
 
 const getLawnumRemote = async (lawSearchKey: string): Promise<string | null> => {
-    console.log(`getLawnumRemote("${lawSearchKey}")`);
+    // console.log(`getLawnumRemote("${lawSearchKey}")`);
 
     const response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=${encodeURI(lawSearchKey)}`, {
         mode: "cors",

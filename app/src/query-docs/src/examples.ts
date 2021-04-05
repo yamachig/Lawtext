@@ -75,7 +75,7 @@ void (async () => { //[md-ignore]
     (async () => {
         const set = new Set()/*[md-ignore-start]*/as Set<string>/*[md-ignore-end]*/;
         return lawtext
-            .queryViaAPI(null)
+            .queryViaAPI()
             .assignDocument()
             .while(() => set.size < 10)
             .forEach(law => {

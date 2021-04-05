@@ -1,11 +1,12 @@
 import { SetLawtextAppPageState } from "../components/LawtextAppPageState";
 import * as util from "@coresrc/util";
-import { LawDataResult, Timing, toLawData } from "@appsrc/lawdata/common";
+import { LawDataResult, Timing, toLawData } from "@coresrc/data/lawdata";
 import { navigateLawData } from "@appsrc/lawdata/navigateLawData";
 import { downloadLawtext } from "./download";
 import $ from "jquery";
 import { getLawTitleWithNum } from "@appsrc/law_util";
 import { showErrorModal } from "./showErrorModal";
+import { LawDataProps } from "@appsrc/lawdata/common";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const sampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml").default;
@@ -16,7 +17,10 @@ export const onNavigated = async (
 ): Promise<void> => {
     console.log(`onNavigated(${lawSearchKey})`);
 
-    const onMessage = (message: string) => setState({ loadingLawMessage: message });
+    const onMessage = (message: string) => {
+        setState({ loadingLawMessage: message });
+        console.log(message);
+    };
 
     if (!lawSearchKey) {
         console.log("onNavigated: detected the top page.");
@@ -37,20 +41,20 @@ export const onNavigated = async (
     });
 
     const toDownloadSample = (lawSearchKey.startsWith("(sample)"));
-    let lawDataResult: LawDataResult;
+    let lawDataResult: LawDataResult<LawDataProps>;
 
     const timing = new Timing();
 
     if (toDownloadSample) {
         onMessage("サンプル法令を読み込んでいます...");
-        console.log("onNavigated: loading the sample low...");
+        // console.log("onNavigated: loading the sample low...");
         lawDataResult = await toLawData({
             source: "file_xml",
             xml: sampleXml,
         }, onMessage, timing);
     } else {
         onMessage("法令を検索しています...");
-        console.log("onNavigated: searching law...");
+        // console.log("onNavigated: searching law...");
         await util.wait(30);
         lawDataResult = await navigateLawData(lawSearchKey, onMessage, timing);
     }
@@ -80,7 +84,7 @@ export const onNavigated = async (
 
     if (toDownloadSample && lawDataResult.ok) {
         onMessage("サンプル法令を保存しています...");
-        console.log("onNavigated: saving the sample low...");
+        // console.log("onNavigated: saving the sample low...");
         await downloadLawtext(lawDataResult.lawData.el);
     }
 
@@ -88,7 +92,7 @@ export const onNavigated = async (
     document.title = lawTitle ? `${lawTitle} | Lawtext` : "Lawtext";
 
     onMessage("コンポーネントを更新しています...");
-    console.log("onNavigated: updating components...");
+    // console.log("onNavigated: updating components...");
     await util.wait(30);
     const start = new Date();
     setState({

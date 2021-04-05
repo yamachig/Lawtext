@@ -3,8 +3,11 @@ import { LawInfo } from "./data/lawinfo";
 
 export const traceTitles = (el: Element, _titles: string[] = []): string[] => {
     const titles: string[] = [..._titles];
-    for (const child of Array.from(el.children)) {
+    for (const childNode of Array.from(el.childNodes)) {
+        if (childNode.nodeType !== 1) continue;
+        const child = childNode as Element;
         if (
+            child.nodeType === 1 &&
             (child.tagName.endsWith("Title") && ![
                 "LawTitle",
                 "PartTitle",

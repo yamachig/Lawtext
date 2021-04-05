@@ -9,6 +9,7 @@ import * as law_util from "@appsrc/law_util";
 import { elawsLoader, storedLoader } from "@appsrc/lawdata/loaders";
 import { LawInfo } from "@coresrc/data/lawinfo";
 import * as _coreUtil from "@coresrc/util";
+import { Loader } from "@coresrc/data/loaders/common";
 
 /**
  * `core.util` モジュールの内容。
@@ -53,7 +54,7 @@ export const query = (criteria: coreQuery.LawCriteria | null = null, options?: c
             }
         });
     }
-    return coreQuery.LawQuery.fromFetchInfo(storedLoader, criteria, options);
+    return queryWithLoader(storedLoader, criteria, options);
 };
 
 /**
@@ -65,6 +66,14 @@ export const query = (criteria: coreQuery.LawCriteria | null = null, options?: c
 export const queryViaAPI = (criteria: coreQuery.LawCriteria | null = null, options?: coreQuery.QueryOptions): coreQuery.LawQuery => {
     console.warn("クエリの実行に e-Gov 法令API を使用します。時間がかかる場合があります。ダウンロード版Lawtextでオフライン用データを使用することをご検討ください。ダウンロード版Lawtextはこちら：");
     console.warn("https://yamachig.github.io/lawtext-app/#download/");
-    return coreQuery.LawQuery.fromFetchInfo(elawsLoader, criteria, options);
+    return queryWithLoader(elawsLoader, criteria, options);
+};
+
+export const queryWithLoader = (
+    loader: Loader,
+    criteria: coreQuery.LawCriteria | null = null,
+    options?: coreQuery.QueryOptions,
+): coreQuery.LawQuery => {
+    return coreQuery.LawQuery.fromFetchInfo(loader, criteria, options);
 };
 

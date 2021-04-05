@@ -36,6 +36,7 @@
         "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
         "no-constant-condition": ["error", { "checkLoops": false }],
         "key-spacing": ["error", { "beforeColon": false }],
+        "space-before-function-paren": ["error", {"asyncArrow": "always", "named": "never"}],
         "space-unary-ops": ["error", {"words": true, "nonwords": false}],
         "space-infix-ops": ["error", { "int32Hint": false }],
         "block-spacing": "error",
