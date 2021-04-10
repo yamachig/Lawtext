@@ -8,6 +8,17 @@ import { searchLawnum } from "./searchLawNum";
 import * as util from "@coresrc/util";
 import { LawDataResult, Timing, toLawData } from "@coresrc/data/lawdata";
 
+const pictMimeDict = {
+    ".jpeg": "image/jpeg",
+    ".jpg": "image/jpeg",
+    ".png": "image/png",
+    ".pdf": "application/pdf",
+    ".bmp": "image/bmp",
+    ".gif": "image/gif",
+    ".svg": "image/svg+xml",
+    ".tif": "image/tiff",
+    ".tiff": "image/tiff",
+} as const;
 
 export const navigateLawData = async (
     lawSearchKey: string,
@@ -85,12 +96,13 @@ export const navigateLawData = async (
             // console.log("navigateLawData: extracting pict...");
             const start = new Date();
             pict = new Map();
-            const zip = new JSZip(elawsLawData.imageData);
+            const zip = await JSZip.loadAsync(elawsLawData.imageData);
             for (const relPath in zip.files) {
-                pict.set(
-                    path.join("./pict", relPath),
-                    await zip.files[relPath].async("blob"),
-                );
+                const buf = await zip.files[relPath].async("arraybuffer");
+                const ext = path.extname(relPath) as keyof typeof pictMimeDict;
+                const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
+                const blob = new Blob([buf], { type });
+                pict.set(`./pict/${relPath}`, blob);
             }
             timing.extractPict = (new Date()).getTime() - start.getTime();
         }
