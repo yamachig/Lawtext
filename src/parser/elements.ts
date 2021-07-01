@@ -1,60 +1,14 @@
 /* eslint-disable no-irregular-whitespace */
 import * as util from "@coresrc/util";
+import { factory, ValueRule } from "./common";
+import { $INDENT, $DEDENT, $_, $__, $CHAR, $NEWLINE } from "./lexical";
 
 const EL = util.EL;
 const __Text = util.__Text;
 const __Parentheses = util.__Parentheses;
 
-const baseIndentStack: Array<[number, boolean, number]> = [];
-let listDepth = 0;
-let parenthesesDepth = 0;
 
-import { stringOffsetToPos, Rule, Empty, ValueOfRule } from "generic-parser/lib/core";
-import { RuleFactory } from "generic-parser/lib/rules/factory";
-
-type Env = ReturnType<typeof initializer>;
-type ValueRule<TValue> = Rule<string, TValue, Env, Empty>
-
-const factory = new RuleFactory<string, Env>();
-
-const initializer = (options: Record<string | number | symbol, unknown>) => {
-    const registerCurrentRangeTarget = () => { /**/ };
-    const offsetToPos = stringOffsetToPos;
-
-    const indentMemo = options.indentMemo as { [key: number]: number };
-
-    return {
-        offsetToPos,
-        registerCurrentRangeTarget,
-        options,
-        indentMemo,
-    };
-};
-
-const $start = factory
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
-            .and(r => r
-                .ref(() => $law)
-            , "law")
-            .and(r => r
-                .nextIsNot(r => r
-                    .anyOne(),
-                ),
-            ),
-        )
-    , (({ law }) => {
-        return law;
-    }),
-    )
-    ;
-
-const $law = factory
+export const $law = factory
     .action(r => r
         .sequence(c => c
             .and(r => r
@@ -251,7 +205,7 @@ const $law = factory
     )
     ;
 
-const $law_title = factory
+export const $law_title = factory
     .withName("law_title")
     .choice(c => c
         .or(r => r
@@ -307,7 +261,7 @@ const $law_title = factory
     )
     ;
 
-const $enact_statement = factory
+export const $enact_statement = factory
     .withName("enact_statement")
     .action(r => r
         .sequence(c => c
@@ -341,7 +295,7 @@ const $enact_statement = factory
     )
     ;
 
-const $toc_label = factory
+export const $toc_label = factory
     .withName("toc_label")
     .sequence(c => c
         .and(r => r
@@ -379,7 +333,7 @@ const $toc_label = factory
     )
     ;
 
-const $toc = factory
+export const $toc = factory
     .withName("toc")
     .action(r => r
         .sequence(c => c
@@ -432,7 +386,7 @@ const $toc = factory
     )
     ;
 
-const $toc_item: ValueRule<util.EL> = factory
+export const $toc_item: ValueRule<util.EL> = factory
     .withName("toc_item")
     .action(r => r
         .sequence(c => c
@@ -588,7 +542,7 @@ const $toc_item: ValueRule<util.EL> = factory
     )
     ;
 
-const $main_provision = factory
+export const $main_provision = factory
     .choice(c => c
         .or(r => r
             .action(r => r
@@ -626,7 +580,7 @@ const $main_provision = factory
     )
     ;
 
-const $article_group_title = factory
+export const $article_group_title = factory
     .withName("article_group_title")
     .action(r => r
         .sequence(c => c
@@ -715,7 +669,7 @@ const $article_group_title = factory
     )
     ;
 
-const $article_group: ValueRule<util.EL> = factory
+export const $article_group: ValueRule<util.EL> = factory
     .withName("article_group")
     .action(r => r
         .sequence(c => c
@@ -784,7 +738,7 @@ const $article_group: ValueRule<util.EL> = factory
     )
     ;
 
-const $article_paragraph_caption = factory
+export const $article_paragraph_caption = factory
     .withName("article_paragraph_caption")
     .action(r => r
         .sequence(c => c
@@ -809,7 +763,7 @@ const $article_paragraph_caption = factory
     )
     ;
 
-const $article_title = factory
+export const $article_title = factory
     .withName("article_title")
     .sequence(c => c
         .and(r => r
@@ -847,7 +801,7 @@ const $article_title = factory
     )
     ;
 
-const $article = factory
+export const $article = factory
     .withName("article")
     .action(r => r
         .sequence(c => c
@@ -1060,7 +1014,7 @@ const $article = factory
     )
     ;
 
-const $suppl_note = factory
+export const $suppl_note = factory
     .withName("suppl_note")
     .action(r => r
         .sequence(c => c
@@ -1085,7 +1039,7 @@ const $suppl_note = factory
     )
     ;
 
-const $paragraph_item: ValueRule<util.EL> = factory
+export const $paragraph_item: ValueRule<util.EL> = factory
     .withName("paragraph_item")
     .action(r => r
         .sequence(c => c
@@ -1299,12 +1253,12 @@ const $paragraph_item: ValueRule<util.EL> = factory
                 )
             , "children"),
         )
-    , (({ indentMemo, location, paragraph_caption, paragraph_item_title, inline_contents, children }) => {
+    , (({ state, location, paragraph_caption, paragraph_item_title, inline_contents, children }) => {
         const lineno = location().start.line;
-        let indent = indentMemo[lineno];
+        let indent = state.indentMemo[lineno];
 
-        if (baseIndentStack.length > 0) {
-            const [base_indent, is_first, base_lineno] = baseIndentStack[baseIndentStack.length - 1];
+        if (state.baseIndentStack.length > 0) {
+            const [base_indent, is_first, base_lineno] = state.baseIndentStack[state.baseIndentStack.length - 1];
             if (!is_first || lineno !== base_lineno) {
                 indent -= base_indent;
             }
@@ -1343,7 +1297,7 @@ const $paragraph_item: ValueRule<util.EL> = factory
     )
     ;
 
-const $in_table_column_paragraph_items = factory
+export const $in_table_column_paragraph_items = factory
     .withName("in_table_column_paragraph_items")
     .choice(c => c
         .or(r => r
@@ -1566,12 +1520,12 @@ const $in_table_column_paragraph_items = factory
                         .ref(() => $DEDENT),
                     ),
                 )
-            , (({ indentMemo, location, paragraph_item_title, inline_contents, children, rest }) => {
+            , (({ state, location, paragraph_item_title, inline_contents, children, rest }) => {
                 const lineno = location().start.line;
-                let indent = indentMemo[lineno];
+                let indent = state.indentMemo[lineno];
 
-                if (baseIndentStack.length > 0) {
-                    const [base_indent, is_first, base_lineno] = baseIndentStack[baseIndentStack.length - 1];
+                if (state.baseIndentStack.length > 0) {
+                    const [base_indent, is_first, base_lineno] = state.baseIndentStack[state.baseIndentStack.length - 1];
                     if (!is_first || lineno !== base_lineno) {
                         indent -= base_indent;
                     }
@@ -1677,12 +1631,12 @@ const $in_table_column_paragraph_items = factory
                         ),
                     ),
                 )
-            , (({ indentMemo, location, paragraph_item_title, inline_contents }) => {
+            , (({ state, location, paragraph_item_title, inline_contents }) => {
                 const lineno = location().start.line;
-                let indent = indentMemo[lineno];
+                let indent = state.indentMemo[lineno];
 
-                if (baseIndentStack.length > 0) {
-                    const [base_indent, is_first, base_lineno] = baseIndentStack[baseIndentStack.length - 1];
+                if (state.baseIndentStack.length > 0) {
+                    const [base_indent, is_first, base_lineno] = state.baseIndentStack[state.baseIndentStack.length - 1];
                     if (!is_first || lineno !== base_lineno) {
                         indent -= base_indent;
                     }
@@ -1714,7 +1668,7 @@ const $in_table_column_paragraph_items = factory
     )
     ;
 
-const $no_name_paragraph_item: ValueRule<util.EL> = factory
+export const $no_name_paragraph_item: ValueRule<util.EL> = factory
     .withName("no_name_paragraph_item")
     .action(r => r
         .sequence(c => c
@@ -1809,12 +1763,12 @@ const $no_name_paragraph_item: ValueRule<util.EL> = factory
                 )
             , "children"),
         )
-    , (({ indentMemo, location, paragraph_caption, inline_contents, lists, children }) => {
+    , (({ state, location, paragraph_caption, inline_contents, lists, children }) => {
         const lineno = location().start.line;
-        let indent = indentMemo[lineno];
+        let indent = state.indentMemo[lineno];
 
-        if (baseIndentStack.length > 0) {
-            const [base_indent, is_first, base_lineno] = baseIndentStack[baseIndentStack.length - 1];
+        if (state.baseIndentStack.length > 0) {
+            const [base_indent, is_first, base_lineno] = state.baseIndentStack[state.baseIndentStack.length - 1];
             if (!is_first || lineno !== base_lineno) {
                 indent -= base_indent;
             }
@@ -1846,7 +1800,7 @@ const $no_name_paragraph_item: ValueRule<util.EL> = factory
     )
     ;
 
-const $paragraph_item_child: ValueRule<util.EL> = factory
+export const $paragraph_item_child: ValueRule<util.EL> = factory
     .withName("paragraph_item_child")
     .choice(c => c
         .or(r => r
@@ -1867,7 +1821,7 @@ const $paragraph_item_child: ValueRule<util.EL> = factory
     )
     ;
 
-const $list: ValueRule<util.EL> = factory
+export const $list: ValueRule<util.EL> = factory
     .withName("list")
     .action(r => r
         .sequence(c => c
@@ -1892,8 +1846,8 @@ const $list: ValueRule<util.EL> = factory
                                                     .seqEqual(""),
                                                 )
                                                 .and(r => r
-                                                    .assert(() => {
-                                                        listDepth++; return true;
+                                                    .assert(({ state }) => {
+                                                        state.listDepth++; return true;
                                                     }),
                                                 ),
                                             ),
@@ -1928,8 +1882,8 @@ const $list: ValueRule<util.EL> = factory
                                                     .seqEqual(""),
                                                 )
                                                 .and(r => r
-                                                    .assert(() => {
-                                                        listDepth--; return true;
+                                                    .assert(({ state }) => {
+                                                        state.listDepth--; return true;
                                                     }),
                                                 ),
                                             ),
@@ -1950,8 +1904,8 @@ const $list: ValueRule<util.EL> = factory
                                                 .seqEqual(""),
                                             )
                                             .and(r => r
-                                                .assert(() => {
-                                                    listDepth--; return false;
+                                                .assert(({ state }) => {
+                                                    state.listDepth--; return false;
                                                 }),
                                             ),
                                         ),
@@ -1966,9 +1920,9 @@ const $list: ValueRule<util.EL> = factory
                 )
             , "sublists"),
         )
-    , (({ columns_or_sentences, sublists }) => {
-        const list = new EL(util.listTags[listDepth]);
-        const list_sentence = new EL(util.listTags[listDepth] + "Sentence");
+    , (({ columns_or_sentences, sublists, state }) => {
+        const list = new EL(util.listTags[state.listDepth]);
+        const list_sentence = new EL(util.listTags[state.listDepth] + "Sentence");
         list.append(list_sentence);
 
         list_sentence.extend(columns_or_sentences);
@@ -1980,7 +1934,7 @@ const $list: ValueRule<util.EL> = factory
     )
     ;
 
-const $amend_provision = factory
+export const $amend_provision = factory
     .withName("amend_provision")
     .action(r => r
         .sequence(c => c
@@ -2030,7 +1984,7 @@ const $amend_provision = factory
     )
     ;
 
-const $table_struct: ValueRule<util.EL> = factory
+export const $table_struct: ValueRule<util.EL> = factory
     .withName("table_struct")
     .action(r => r
         .sequence(c => c
@@ -2098,7 +2052,7 @@ const $table_struct: ValueRule<util.EL> = factory
     )
     ;
 
-const $table_struct_title: ValueRule<util.EL> = factory
+export const $table_struct_title: ValueRule<util.EL> = factory
     .withName("table_struct_title")
     .action(r => r
         .sequence(c => c
@@ -2123,7 +2077,7 @@ const $table_struct_title: ValueRule<util.EL> = factory
     )
     ;
 
-const $table: ValueRule<util.EL> = factory
+export const $table: ValueRule<util.EL> = factory
     .withName("table")
     .action(r => r
         .sequence(c => c
@@ -2241,7 +2195,7 @@ const $table: ValueRule<util.EL> = factory
     )
     ;
 
-const $table_column_attr_name = factory
+export const $table_column_attr_name = factory
     .choice(c => c
         .or(r => r
             .seqEqual("BorderTop"),
@@ -2270,7 +2224,7 @@ const $table_column_attr_name = factory
     )
     ;
 
-const $table_column: ValueRule<util.EL> = factory
+export const $table_column: ValueRule<util.EL> = factory
     .withName("table_column")
     .choice(c => c
         .or(r => r
@@ -2514,7 +2468,7 @@ const $table_column: ValueRule<util.EL> = factory
     )
     ;
 
-const $style_struct = factory
+export const $style_struct = factory
     .withName("style_struct")
     .action(r => r
         .sequence(c => c
@@ -2570,7 +2524,7 @@ const $style_struct = factory
     )
     ;
 
-const $style_struct_title = factory
+export const $style_struct_title = factory
     .withName("style_struct_title")
     .action(r => r
         .sequence(c => c
@@ -2595,7 +2549,7 @@ const $style_struct_title = factory
     )
     ;
 
-const $style = factory
+export const $style = factory
     .withName("style")
     .action(r => r
         .sequence(c => c
@@ -2660,7 +2614,7 @@ const $style = factory
     )
     ;
 
-const $format_struct = factory
+export const $format_struct = factory
     .withName("format_struct")
     .action(r => r
         .sequence(c => c
@@ -2716,7 +2670,7 @@ const $format_struct = factory
     )
     ;
 
-const $format_struct_title = factory
+export const $format_struct_title = factory
     .withName("format_struct_title")
     .action(r => r
         .sequence(c => c
@@ -2741,7 +2695,7 @@ const $format_struct_title = factory
     )
     ;
 
-const $format = factory
+export const $format = factory
     .withName("format")
     .action(r => r
         .sequence(c => c
@@ -2771,7 +2725,7 @@ const $format = factory
     )
     ;
 
-const $note_struct = factory
+export const $note_struct = factory
     .withName("note_struct")
     .action(r => r
         .sequence(c => c
@@ -2827,7 +2781,7 @@ const $note_struct = factory
     )
     ;
 
-const $note_struct_title = factory
+export const $note_struct_title = factory
     .withName("note_struct_title")
     .action(r => r
         .sequence(c => c
@@ -2852,7 +2806,7 @@ const $note_struct_title = factory
     )
     ;
 
-const $note = factory
+export const $note = factory
     .withName("note")
     .action(r => r
         .sequence(c => c
@@ -2952,7 +2906,7 @@ const $note = factory
     )
     ;
 
-const $remarks = factory
+export const $remarks = factory
     .withName("remarks")
     .action(r => r
         .sequence(c => c
@@ -3102,8 +3056,8 @@ const $remarks = factory
                                                                             .seqEqual(""),
                                                                         )
                                                                         .and(r => r
-                                                                            .assert(({ indentMemo, location }) => {
-                                                                                baseIndentStack.push([indentMemo[location().start.line] - 1, false, location().start.line]); return true;
+                                                                            .assert(({ state, location }) => {
+                                                                                state.baseIndentStack.push([state.indentMemo[location().start.line] - 1, false, location().start.line]); return true;
                                                                             }),
                                                                         ),
                                                                     ),
@@ -3126,8 +3080,8 @@ const $remarks = factory
                                                                             .seqEqual(""),
                                                                         )
                                                                         .and(r => r
-                                                                            .assert(() => {
-                                                                                baseIndentStack.pop(); return true;
+                                                                            .assert(({ state }) => {
+                                                                                state.baseIndentStack.pop(); return true;
                                                                             }),
                                                                         ),
                                                                     ),
@@ -3148,8 +3102,8 @@ const $remarks = factory
                                                                         .seqEqual(""),
                                                                     )
                                                                     .and(r => r
-                                                                        .assert(() => {
-                                                                            baseIndentStack.pop(); return false;
+                                                                        .assert(({ state }) => {
+                                                                            state.baseIndentStack.pop(); return false;
                                                                         }),
                                                                     ),
                                                                 ),
@@ -3232,8 +3186,8 @@ const $remarks = factory
                                                                             .seqEqual(""),
                                                                         )
                                                                         .and(r => r
-                                                                            .assert(({ indentMemo, location }) => {
-                                                                                baseIndentStack.push([indentMemo[location().start.line] - 1, false, location().start.line]); return true;
+                                                                            .assert(({ state, location }) => {
+                                                                                state.baseIndentStack.push([state.indentMemo[location().start.line] - 1, false, location().start.line]); return true;
                                                                             }),
                                                                         ),
                                                                     ),
@@ -3256,8 +3210,8 @@ const $remarks = factory
                                                                             .seqEqual(""),
                                                                         )
                                                                         .and(r => r
-                                                                            .assert(() => {
-                                                                                baseIndentStack.pop(); return true;
+                                                                            .assert(({ state }) => {
+                                                                                state.baseIndentStack.pop(); return true;
                                                                             }),
                                                                         ),
                                                                     ),
@@ -3278,8 +3232,8 @@ const $remarks = factory
                                                                         .seqEqual(""),
                                                                     )
                                                                     .and(r => r
-                                                                        .assert(() => {
-                                                                            baseIndentStack.pop(); return false;
+                                                                        .assert(({ state }) => {
+                                                                            state.baseIndentStack.pop(); return false;
                                                                         }),
                                                                     ),
                                                                 ),
@@ -3367,7 +3321,7 @@ const $remarks = factory
     )
     ;
 
-const $fig_struct = factory
+export const $fig_struct = factory
     .withName("fig_struct")
     .action(r => r
         .sequence(c => c
@@ -3398,7 +3352,7 @@ const $fig_struct = factory
     )
     ;
 
-const $fig = factory
+export const $fig = factory
     .withName("fig")
     .action(r => r
         .sequence(c => c
@@ -3435,7 +3389,7 @@ const $fig = factory
     )
     ;
 
-const $appdx_item = factory
+export const $appdx_item = factory
     .choice(c => c
         .or(r => r
             .ref(() => $appdx),
@@ -3461,7 +3415,7 @@ const $appdx_item = factory
     )
     ;
 
-const $appdx_table_title = factory
+export const $appdx_table_title = factory
     .withName("appdx_table_title")
     .action(r => r
         .sequence(c => c
@@ -3643,7 +3597,7 @@ const $appdx_table_title = factory
     )
     ;
 
-const $appdx_table = factory
+export const $appdx_table = factory
     .withName("appdx_table")
     .action(r => r
         .sequence(c => c
@@ -3710,7 +3664,7 @@ const $appdx_table = factory
     )
     ;
 
-const $appdx_table_children = factory
+export const $appdx_table_children = factory
     .withName("appdx_table_children")
     .choice(c => c
         .or(r => r
@@ -3722,7 +3676,7 @@ const $appdx_table_children = factory
     )
     ;
 
-const $suppl_provision_appdx_table_title = factory
+export const $suppl_provision_appdx_table_title = factory
     .withName("suppl_provision_appdx_table_title")
     .action(r => r
         .sequence(c => c
@@ -3874,7 +3828,7 @@ const $suppl_provision_appdx_table_title = factory
     )
     ;
 
-const $suppl_provision_appdx_table = factory
+export const $suppl_provision_appdx_table = factory
     .withName("suppl_provision_appdx_table")
     .action(r => r
         .sequence(c => c
@@ -3941,12 +3895,12 @@ const $suppl_provision_appdx_table = factory
     )
     ;
 
-const $suppl_provision_appdx_table_children = factory
+export const $suppl_provision_appdx_table_children = factory
     .withName("suppl_provision_appdx_table_children")
     .ref(() => $table_struct)
     ;
 
-const $appdx_style_title = factory
+export const $appdx_style_title = factory
     .withName("appdx_style_title")
     .action(r => r
         .sequence(c => c
@@ -4098,7 +4052,7 @@ const $appdx_style_title = factory
     )
     ;
 
-const $appdx_style = factory
+export const $appdx_style = factory
     .withName("appdx_style")
     .action(r => r
         .sequence(c => c
@@ -4177,7 +4131,7 @@ const $appdx_style = factory
     )
     ;
 
-const $suppl_provision_appdx_style_title = factory
+export const $suppl_provision_appdx_style_title = factory
     .withName("suppl_provision_appdx_style_title")
     .action(r => r
         .sequence(c => c
@@ -4263,7 +4217,7 @@ const $suppl_provision_appdx_style_title = factory
     )
     ;
 
-const $suppl_provision_appdx_style = factory
+export const $suppl_provision_appdx_style = factory
     .withName("suppl_provision_appdx_style")
     .action(r => r
         .sequence(c => c
@@ -4340,7 +4294,7 @@ const $suppl_provision_appdx_style = factory
     )
     ;
 
-const $appdx_format_title = factory
+export const $appdx_format_title = factory
     .withName("appdx_format_title")
     .action(r => r
         .sequence(c => c
@@ -4434,7 +4388,7 @@ const $appdx_format_title = factory
     )
     ;
 
-const $appdx_format = factory
+export const $appdx_format = factory
     .withName("appdx_format")
     .action(r => r
         .sequence(c => c
@@ -4538,7 +4492,7 @@ const $appdx_format = factory
     )
     ;
 
-const $appdx_fig_title = factory
+export const $appdx_fig_title = factory
     .withName("appdx_fig_title")
     .action(r => r
         .sequence(c => c
@@ -4599,7 +4553,7 @@ const $appdx_fig_title = factory
     )
     ;
 
-const $appdx_fig = factory
+export const $appdx_fig = factory
     .withName("appdx_fig")
     .action(r => r
         .sequence(c => c
@@ -4694,7 +4648,7 @@ const $appdx_fig = factory
     )
     ;
 
-const $appdx_fig_children = factory
+export const $appdx_fig_children = factory
     .withName("appdx_fig_children")
     .choice(c => c
         .or(r => r
@@ -4706,7 +4660,7 @@ const $appdx_fig_children = factory
     )
     ;
 
-const $appdx_note_title = factory
+export const $appdx_note_title = factory
     .withName("appdx_note_title")
     .action(r => r
         .sequence(c => c
@@ -4838,7 +4792,7 @@ const $appdx_note_title = factory
     )
     ;
 
-const $appdx_note = factory
+export const $appdx_note = factory
     .withName("appdx_note")
     .action(r => r
         .sequence(c => c
@@ -4933,7 +4887,7 @@ const $appdx_note = factory
     )
     ;
 
-const $appdx_note_children = factory
+export const $appdx_note_children = factory
     .withName("appdx_note_children")
     .choice(c => c
         .or(r => r
@@ -4948,7 +4902,7 @@ const $appdx_note_children = factory
     )
     ;
 
-const $appdx_title = factory
+export const $appdx_title = factory
     .withName("appdx_title")
     .action(r => r
         .sequence(c => c
@@ -5062,7 +5016,7 @@ const $appdx_title = factory
     )
     ;
 
-const $appdx = factory
+export const $appdx = factory
     .withName("appdx")
     .action(r => r
         .sequence(c => c
@@ -5136,7 +5090,7 @@ const $appdx = factory
     )
     ;
 
-const $suppl_provision_appdx_title = factory
+export const $suppl_provision_appdx_title = factory
     .withName("suppl_provision_appdx_title")
     .action(r => r
         .sequence(c => c
@@ -5253,7 +5207,7 @@ const $suppl_provision_appdx_title = factory
     )
     ;
 
-const $suppl_provision_appdx = factory
+export const $suppl_provision_appdx = factory
     .withName("suppl_provision_appdx")
     .action(r => r
         .sequence(c => c
@@ -5327,7 +5281,7 @@ const $suppl_provision_appdx = factory
     )
     ;
 
-const $suppl_provision_label = factory
+export const $suppl_provision_label = factory
     .withName("suppl_provision_label")
     .action(r => r
         .sequence(c => c
@@ -5391,7 +5345,7 @@ const $suppl_provision_label = factory
     )
     ;
 
-const $suppl_provision = factory
+export const $suppl_provision = factory
     .withName("suppl_provision")
     .action(r => r
         .sequence(c => c
@@ -5465,7 +5419,7 @@ const $suppl_provision = factory
     )
     ;
 
-const $columns_or_sentences = factory
+export const $columns_or_sentences = factory
     .withName("columns_or_sentences")
     .choice(c => c
         .or(r => r
@@ -5542,7 +5496,7 @@ const $columns_or_sentences = factory
     )
     ;
 
-const $period_sentences = factory
+export const $period_sentences = factory
     .withName("period_sentences")
     .action(r => r
         .sequence(c => c
@@ -5583,7 +5537,7 @@ const $period_sentences = factory
     )
     ;
 
-const $columns = factory
+export const $columns = factory
     .withName("columns")
     .action(r => r
         .sequence(c => c
@@ -5620,7 +5574,7 @@ const $columns = factory
     )
     ;
 
-const $column = factory
+export const $column = factory
     .withName("column")
     .action(r => r
         .sequence(c => c
@@ -5681,7 +5635,7 @@ const $column = factory
     )
     ;
 
-const $INLINE = factory
+export const $INLINE = factory
     .withName("INLINE")
     .action(r => r
         .sequence(c => c
@@ -5717,7 +5671,7 @@ const $INLINE = factory
     )
     ;
 
-const $NEXTINLINE = factory
+export const $NEXTINLINE = factory
     .withName("NEXTINLINE")
     .action(r => r
         .sequence(c => c
@@ -5749,12 +5703,12 @@ const $NEXTINLINE = factory
     )
     ;
 
-const $NOT_PARENTHESIS_CHAR = factory
+export const $NOT_PARENTHESIS_CHAR = factory
     .withName("NOT_PARENTHESIS_CHAR")
     .regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」]/)
     ;
 
-const $INLINE_FRAGMENT = factory
+export const $INLINE_FRAGMENT = factory
     .withName("INLINE_FRAGMENT")
     .action(r => r
         .sequence(c => c
@@ -5803,7 +5757,7 @@ const $INLINE_FRAGMENT = factory
     )
     ;
 
-const $PERIOD_SENTENCE_FRAGMENT = factory
+export const $PERIOD_SENTENCE_FRAGMENT = factory
     .withName("PERIOD_SENTENCE_FRAGMENT")
     .choice(c => c
         .or(r => r
@@ -5902,7 +5856,7 @@ const $PERIOD_SENTENCE_FRAGMENT = factory
     )
     ;
 
-const $OUTSIDE_PARENTHESES_INLINE = factory
+export const $OUTSIDE_PARENTHESES_INLINE = factory
     .withName("OUTSIDE_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
@@ -5930,7 +5884,7 @@ const $OUTSIDE_PARENTHESES_INLINE = factory
     )
     ;
 
-const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
+export const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
     .withName("OUTSIDE_ROUND_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
@@ -5980,7 +5934,7 @@ const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
     )
     ;
 
-const $MISMATCH_START_PARENTHESIS = factory
+export const $MISMATCH_START_PARENTHESIS = factory
     .withName("MISMATCH_START_PARENTHESIS")
     .action(r => r
         .sequence(c => c
@@ -5997,7 +5951,7 @@ const $MISMATCH_START_PARENTHESIS = factory
     )
     ;
 
-const $MISMATCH_END_PARENTHESIS = factory
+export const $MISMATCH_END_PARENTHESIS = factory
     .withName("MISMATCH_END_PARENTHESIS")
     .action(r => r
         .sequence(c => c
@@ -6014,7 +5968,7 @@ const $MISMATCH_END_PARENTHESIS = factory
     )
     ;
 
-const $PARENTHESES_INLINE: ValueRule<util.EL> = factory
+export const $PARENTHESES_INLINE: ValueRule<util.EL> = factory
     .withName("PARENTHESES_INLINE")
     .choice(c => c
         .or(r => r
@@ -6027,8 +5981,8 @@ const $PARENTHESES_INLINE: ValueRule<util.EL> = factory
                                     .seqEqual(""),
                                 )
                                 .and(r => r
-                                    .assert(() => {
-                                        parenthesesDepth++; return true;
+                                    .assert(({ state }) => {
+                                        state.parenthesesDepth++; return true;
                                     }),
                                 ),
                             ),
@@ -6044,8 +5998,8 @@ const $PARENTHESES_INLINE: ValueRule<util.EL> = factory
                                     .seqEqual(""),
                                 )
                                 .and(r => r
-                                    .assert(() => {
-                                        parenthesesDepth--; return true;
+                                    .assert(({ state }) => {
+                                        state.parenthesesDepth--; return true;
                                     }),
                                 ),
                             ),
@@ -6066,8 +6020,8 @@ const $PARENTHESES_INLINE: ValueRule<util.EL> = factory
                                 .seqEqual(""),
                             )
                             .and(r => r
-                                .assert(() => {
-                                    parenthesesDepth--; return false;
+                                .assert(({ state }) => {
+                                    state.parenthesesDepth--; return false;
                                 }),
                             ),
                         ),
@@ -6081,7 +6035,7 @@ const $PARENTHESES_INLINE: ValueRule<util.EL> = factory
     )
     ;
 
-const $PARENTHESES_INLINE_INNER: ValueRule<util.EL> = factory
+export const $PARENTHESES_INLINE_INNER: ValueRule<util.EL> = factory
     .withName("PARENTHESES_INLINE_INNER")
     .choice(c => c
         .or(r => r
@@ -6105,7 +6059,7 @@ const $PARENTHESES_INLINE_INNER: ValueRule<util.EL> = factory
     )
     ;
 
-const $ROUND_PARENTHESES_INLINE = factory
+export const $ROUND_PARENTHESES_INLINE = factory
     .withName("ROUND_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
@@ -6158,13 +6112,13 @@ const $ROUND_PARENTHESES_INLINE = factory
                 .regExp(/^[)）]/)
             , "end"),
         )
-    , (({ text, start, content, end }) => {
-        return new __Parentheses("round", parenthesesDepth, start, end, content, text());
+    , (({ text, start, content, end, state }) => {
+        return new __Parentheses("round", state.parenthesesDepth, start, end, content, text());
     }),
     )
     ;
 
-const $SQUARE_BRACKETS_INLINE = factory
+export const $SQUARE_BRACKETS_INLINE = factory
     .withName("SQUARE_BRACKETS_INLINE")
     .action(r => r
         .sequence(c => c
@@ -6217,13 +6171,13 @@ const $SQUARE_BRACKETS_INLINE = factory
                 .regExp(/^[\]］]/)
             , "end"),
         )
-    , (({ text, start, content, end }) => {
-        return new __Parentheses("squareb", parenthesesDepth, start, end, content, text());
+    , (({ text, start, content, end, state }) => {
+        return new __Parentheses("squareb", state.parenthesesDepth, start, end, content, text());
     }),
     )
     ;
 
-const $CURLY_BRACKETS_INLINE = factory
+export const $CURLY_BRACKETS_INLINE = factory
     .withName("CURLY_BRACKETS_INLINE")
     .action(r => r
         .sequence(c => c
@@ -6276,13 +6230,13 @@ const $CURLY_BRACKETS_INLINE = factory
                 .regExp(/^[}｝]/)
             , "end"),
         )
-    , (({ text, start, content, end }) => {
-        return new __Parentheses("curly", parenthesesDepth, start, end, content, text());
+    , (({ text, start, content, end, state }) => {
+        return new __Parentheses("curly", state.parenthesesDepth, start, end, content, text());
     }),
     )
     ;
 
-const $SQUARE_PARENTHESES_INLINE: ValueRule<util.__Parentheses> = factory
+export const $SQUARE_PARENTHESES_INLINE: ValueRule<util.__Parentheses> = factory
     .withName("SQUARE_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
@@ -6325,13 +6279,13 @@ const $SQUARE_PARENTHESES_INLINE: ValueRule<util.__Parentheses> = factory
                 .regExp(/^[」]/)
             , "end"),
         )
-    , (({ text, start, content, end }) => {
-        return new __Parentheses("square", parenthesesDepth, start, end, content, text());
+    , (({ text, start, content, end, state }) => {
+        return new __Parentheses("square", state.parenthesesDepth, start, end, content, text());
     }),
     )
     ;
 
-const $xml = factory
+export const $xml = factory
     .withName("xml")
     .zeroOrMore(r => r
         .choice(c => c
@@ -6358,7 +6312,7 @@ const $xml = factory
     )
     ;
 
-const $xml_element: ValueRule<util.EL> = factory
+export const $xml_element: ValueRule<util.EL> = factory
     .withName("xml_element")
     .choice(c => c
         .or(r => r
@@ -6565,7 +6519,7 @@ const $xml_element: ValueRule<util.EL> = factory
     )
     ;
 
-const $ranges: ValueRule<[util.PointerFragment[], util.PointerFragment[]][]> = factory
+export const $ranges: ValueRule<[util.PointerFragment[], util.PointerFragment[]][]> = factory
     .withName("ranges")
     .choice(c => c
         .or(r => r
@@ -6611,7 +6565,7 @@ const $ranges: ValueRule<[util.PointerFragment[], util.PointerFragment[]][]> = f
     )
     ;
 
-const $range = factory
+export const $range = factory
     .withName("range")
     .choice(c => c
         .or(r => r
@@ -6650,29 +6604,29 @@ const $range = factory
     )
     ;
 
-const $pointer = factory
+export const $pointer = factory
     .withName("pointer")
     .oneOrMore(r => r
         .ref(() => $pointer_fragment),
     )
     ;
 
-const $kanji_digit = factory
+export const $kanji_digit = factory
     .withName("kanji_digit")
     .regExp(/^[〇一二三四五六七八九十百千]/)
     ;
 
-const $roman_digit = factory
+export const $roman_digit = factory
     .withName("roman_digit")
     .regExp(/^[iIｉＩxXｘＸ]/)
     ;
 
-const $iroha_char = factory
+export const $iroha_char = factory
     .withName("iroha_char")
     .regExp(/^[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]/)
     ;
 
-const $pointer_fragment = factory
+export const $pointer_fragment = factory
     .withName("pointer_fragment")
     .choice(c => c
         .or(r => r
@@ -6924,188 +6878,3 @@ const $pointer_fragment = factory
     )
     ;
 
-const $INDENT = factory
-    .withName("INDENT")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .seqEqual("<INDENT str=\""),
-            )
-            .and(r => r
-                .oneOrMore(r => r
-                    .regExp(/^[^"]/),
-                )
-            , "str")
-            .and(r => r
-                .seqEqual("\">"),
-            ),
-        )
-    , (({ str }) => {
-        return str;
-    }),
-    )
-    ;
-
-const $DEDENT = factory
-    .withName("DEDENT")
-    .seqEqual("<DEDENT>")
-    ;
-
-const $_ = factory
-    .zeroOrMore(r => r
-        .regExp(/^[ 　\t]/),
-    )
-    ;
-
-const $__ = factory
-    .withName("WHITESPACES")
-    .oneOrMore(r => r
-        .regExp(/^[ 　\t]/),
-    )
-    ;
-
-const $CHAR = factory
-    .regExp(/^[^ 　\t\r\n]/)
-    ;
-
-const $NEWLINE: ValueRule<unknown> = factory
-    .withName("NEWLINE")
-    .sequence(c => c
-        .and(r => r
-            .zeroOrOne(r => r
-                .regExp(/^[\r]/),
-            ),
-        )
-        .and(r => r
-            .regExp(/^[\n]/),
-        )
-        .and(r => r
-            .zeroOrOne(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .ref(() => $_),
-                    )
-                    .and(r => r
-                        .nextIs(r => r
-                            .ref(() => $NEWLINE),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    )
-    ;
-
-const rules = {
-    start: $start,
-    law: $law,
-    law_title: $law_title,
-    enact_statement: $enact_statement,
-    toc_label: $toc_label,
-    toc: $toc,
-    toc_item: $toc_item,
-    main_provision: $main_provision,
-    article_group_title: $article_group_title,
-    article_group: $article_group,
-    article_paragraph_caption: $article_paragraph_caption,
-    article_title: $article_title,
-    article: $article,
-    suppl_note: $suppl_note,
-    paragraph_item: $paragraph_item,
-    in_table_column_paragraph_items: $in_table_column_paragraph_items,
-    no_name_paragraph_item: $no_name_paragraph_item,
-    paragraph_item_child: $paragraph_item_child,
-    list: $list,
-    amend_provision: $amend_provision,
-    table_struct: $table_struct,
-    table_struct_title: $table_struct_title,
-    table: $table,
-    table_column_attr_name: $table_column_attr_name,
-    table_column: $table_column,
-    style_struct: $style_struct,
-    style_struct_title: $style_struct_title,
-    style: $style,
-    format_struct: $format_struct,
-    format_struct_title: $format_struct_title,
-    format: $format,
-    note_struct: $note_struct,
-    note_struct_title: $note_struct_title,
-    note: $note,
-    remarks: $remarks,
-    fig_struct: $fig_struct,
-    fig: $fig,
-    appdx_item: $appdx_item,
-    appdx_table_title: $appdx_table_title,
-    appdx_table: $appdx_table,
-    appdx_table_children: $appdx_table_children,
-    suppl_provision_appdx_table_title: $suppl_provision_appdx_table_title,
-    suppl_provision_appdx_table: $suppl_provision_appdx_table,
-    suppl_provision_appdx_table_children: $suppl_provision_appdx_table_children,
-    appdx_style_title: $appdx_style_title,
-    appdx_style: $appdx_style,
-    suppl_provision_appdx_style_title: $suppl_provision_appdx_style_title,
-    suppl_provision_appdx_style: $suppl_provision_appdx_style,
-    appdx_format_title: $appdx_format_title,
-    appdx_format: $appdx_format,
-    appdx_fig_title: $appdx_fig_title,
-    appdx_fig: $appdx_fig,
-    appdx_fig_children: $appdx_fig_children,
-    appdx_note_title: $appdx_note_title,
-    appdx_note: $appdx_note,
-    appdx_note_children: $appdx_note_children,
-    appdx_title: $appdx_title,
-    appdx: $appdx,
-    suppl_provision_appdx_title: $suppl_provision_appdx_title,
-    suppl_provision_appdx: $suppl_provision_appdx,
-    suppl_provision_label: $suppl_provision_label,
-    suppl_provision: $suppl_provision,
-    columns_or_sentences: $columns_or_sentences,
-    period_sentences: $period_sentences,
-    columns: $columns,
-    column: $column,
-    INLINE: $INLINE,
-    NEXTINLINE: $NEXTINLINE,
-    NOT_PARENTHESIS_CHAR: $NOT_PARENTHESIS_CHAR,
-    INLINE_FRAGMENT: $INLINE_FRAGMENT,
-    PERIOD_SENTENCE_FRAGMENT: $PERIOD_SENTENCE_FRAGMENT,
-    OUTSIDE_PARENTHESES_INLINE: $OUTSIDE_PARENTHESES_INLINE,
-    OUTSIDE_ROUND_PARENTHESES_INLINE: $OUTSIDE_ROUND_PARENTHESES_INLINE,
-    MISMATCH_START_PARENTHESIS: $MISMATCH_START_PARENTHESIS,
-    MISMATCH_END_PARENTHESIS: $MISMATCH_END_PARENTHESIS,
-    PARENTHESES_INLINE: $PARENTHESES_INLINE,
-    PARENTHESES_INLINE_INNER: $PARENTHESES_INLINE_INNER,
-    ROUND_PARENTHESES_INLINE: $ROUND_PARENTHESES_INLINE,
-    SQUARE_BRACKETS_INLINE: $SQUARE_BRACKETS_INLINE,
-    CURLY_BRACKETS_INLINE: $CURLY_BRACKETS_INLINE,
-    SQUARE_PARENTHESES_INLINE: $SQUARE_PARENTHESES_INLINE,
-    xml: $xml,
-    xml_element: $xml_element,
-    ranges: $ranges,
-    range: $range,
-    pointer: $pointer,
-    kanji_digit: $kanji_digit,
-    roman_digit: $roman_digit,
-    iroha_char: $iroha_char,
-    pointer_fragment: $pointer_fragment,
-    INDENT: $INDENT,
-    DEDENT: $DEDENT,
-    _: $_,
-    __: $__,
-    CHAR: $CHAR,
-    NEWLINE: $NEWLINE,
-};
-type Rules = typeof rules;
-
-export const parse = <TRuleKey extends (keyof Rules) = "start">(text: string, options: {startRule?: TRuleKey} & Record<string | number | symbol, unknown>): ValueOfRule<Rules[TRuleKey]> => {
-    let rule: ValueRule<unknown> = $start;
-    if ("startRule" in options) {
-        rule = rules[options.startRule as keyof typeof rules];
-    }
-    const result = rule.match(
-        0,
-        text,
-        initializer(options),
-    );
-    if (result.ok) return result.value as ValueOfRule<Rules[TRuleKey]>;
-    throw new Error(`Expected ${result.expected} ${JSON.stringify(result)}`);
-};
