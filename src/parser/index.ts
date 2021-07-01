@@ -1,6 +1,5 @@
 import { ValueOfRule } from "generic-parser/lib/core";
 import { factory, initializer, ValueRule } from "./common";
-
 import { $law, rules as elementsRules } from "./elements";
 import { rules as inlineRules } from "./inline";
 import { $NEWLINE, rules as lexicalRules } from "./lexical";
