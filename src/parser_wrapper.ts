@@ -91,7 +91,7 @@ export const parse = (text: string, options: Record<string, unknown> = {}): util
     // console.error(lexed);
     try {
         options = Object.assign({ indentMemo, startRule: "start" }, options);
-        const parsed = parser.parse(lexed, options) as util.EL;
+        const parsed = parser.parse(lexed, options);
 
         // let t1 = (new Date()).getTime();
         // console.error(`/////  parse end  /////`);

@@ -23,13 +23,14 @@
     "emitBinDeclarations": "tsc -p bin/build/tsconfig.json",
     "build": "node bin/build/ && tsc",
     "prepare": "npm run build",
-    "test": "node bin/build/parser.js && node --max_old_space_size=2048 -r ts-node/register -r tsconfig-paths/register ./test/prepare_test.ts && mocha --exit --timeout 10000 -r ts-node/register -r tsconfig-paths/register test/**/*.ts"
+    "test": "node --max_old_space_size=2048 -r ts-node/register -r tsconfig-paths/register ./test/prepare_test.ts && mocha --exit --timeout 10000 -r ts-node/register -r tsconfig-paths/register test/**/*.ts"
   },
   "dependencies": {
     "argparse": "^2.0.1",
     "browserfs": "^1.4.3",
     "cli-progress": "^3.9.0",
     "fs-extra": "^9.1.0",
+    "generic-parser": "^0.1.0",
     "hash.js": "^1.1.7",
     "js-levenshtein": "^1.1.6",
     "jszip": "^3.6.0",
@@ -37,7 +38,6 @@
     "node-fetch": "^2.6.1",
     "node-stream-zip": "^1.13.2",
     "nunjucks": "^3.2.3",
-    "pegjs": "^0.10.0",
     "pre-build-webpack": "^0.1.0",
     "prettify-xml": "^1.2.0",
     "source-map-loader": "^2.0.1",
