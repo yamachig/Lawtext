@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { EL, paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags, setItemNum } from "@coresrc/util";
+import { newStdEL, Paragraph, Item, Subitem1, Subitem2, Subitem3, Subitem4, Subitem5, Subitem6, Subitem7, Subitem8, Subitem9, Subitem10 } from "@coresrc/std_law";
+import { paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags, setItemNum } from "@coresrc/util";
 import { factory, ValueRule } from "../common";
 import { $DEDENT, $INDENT, $NEWLINE, $__ } from "../lexical";
 import { $amend_provision } from "./amendProvision";
@@ -18,7 +19,7 @@ import { $suppl_provision_label } from "./supplProvision";
 import { $table_struct } from "./tableStruct";
 
 
-export const $paragraph_item: ValueRule<EL> = factory
+export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 | Subitem3 | Subitem4 | Subitem5 | Subitem6 | Subitem7 | Subitem8 | Subitem9 | Subitem10> = factory
     .withName("paragraph_item")
     .action(r => r
         .sequence(c => c
@@ -243,27 +244,27 @@ export const $paragraph_item: ValueRule<EL> = factory
             }
         }
 
-        const paragraph_item = new EL(
+        const paragraph_item = newStdEL(
             paragraphItemTags[indent],
             { Hide: "false" },
         );
         if (indent === 0) {
-            paragraph_item.attr.OldStyle = "false";
+            (paragraph_item as Paragraph).attr.OldStyle = "false";
         } else {
-            paragraph_item.attr.Delete = "false";
+            (paragraph_item as Item | Subitem1 | Subitem2 | Subitem3 | Subitem4 | Subitem5 | Subitem6 | Subitem7 | Subitem8 | Subitem9 | Subitem10).attr.Delete = "false";
         }
         if (paragraph_caption !== null) {
-            paragraph_item.append(new EL("ParagraphCaption", {}, [paragraph_caption]));
+            paragraph_item.append(newStdEL("ParagraphCaption", {}, [paragraph_caption]));
         }
 
-        paragraph_item.append(new EL(paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
+        paragraph_item.append(newStdEL(paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
 
         // let num = parseNamedNum(paragraph_item_title);
         // if(num) {
         //     paragraph_item.attr.Num = num;
         // }
 
-        paragraph_item.append(new EL(paragraphItemSentenceTags[indent], {}, inline_contents));
+        paragraph_item.append(newStdEL(paragraphItemSentenceTags[indent], {}, inline_contents));
 
         if (children) {
             setItemNum(children);
@@ -510,24 +511,24 @@ export const $in_table_column_paragraph_items = factory
                     }
                 }
 
-                const paragraph_item = new EL(
+                const paragraph_item = newStdEL(
                     paragraphItemTags[indent],
                     { Hide: "false" },
                 );
                 if (indent === 0) {
-                    paragraph_item.attr.OldStyle = "false";
+                    (paragraph_item as Paragraph).attr.OldStyle = "false";
                 } else {
-                    paragraph_item.attr.Delete = "false";
+                    (paragraph_item as Item | Subitem1 | Subitem2 | Subitem3 | Subitem4 | Subitem5 | Subitem6 | Subitem7 | Subitem8 | Subitem9 | Subitem10).attr.Delete = "false";
                 }
 
-                paragraph_item.append(new EL(paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
+                paragraph_item.append(newStdEL(paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
 
                 // let num = parseNamedNum(paragraph_item_title);
                 // if(num) {
                 //     paragraph_item.attr.Num = num;
                 // }
 
-                paragraph_item.append(new EL(paragraphItemSentenceTags[indent], {}, inline_contents));
+                paragraph_item.append(newStdEL(paragraphItemSentenceTags[indent], {}, inline_contents));
 
                 if (children) {
                     setItemNum(children);
@@ -621,24 +622,24 @@ export const $in_table_column_paragraph_items = factory
                     }
                 }
 
-                const paragraph_item = new EL(
+                const paragraph_item = newStdEL(
                     paragraphItemTags[indent],
                     { Hide: "false" },
                 );
                 if (indent === 0) {
-                    paragraph_item.attr.OldStyle = "false";
+                    (paragraph_item as Paragraph).attr.OldStyle = "false";
                 } else {
-                    paragraph_item.attr.Delete = "false";
+                    (paragraph_item as Item | Subitem1 | Subitem2 | Subitem3 | Subitem4 | Subitem5 | Subitem6 | Subitem7 | Subitem8 | Subitem9 | Subitem10).attr.Delete = "false";
                 }
 
-                paragraph_item.append(new EL(paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
+                paragraph_item.append(newStdEL(paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
 
                 // let num = parseNamedNum(paragraph_item_title);
                 // if(num) {
                 //     paragraph_item.attr.Num = num;
                 // }
 
-                paragraph_item.append(new EL(paragraphItemSentenceTags[indent], {}, inline_contents));
+                paragraph_item.append(newStdEL(paragraphItemSentenceTags[indent], {}, inline_contents));
 
                 return [paragraph_item];
             }),
@@ -647,7 +648,7 @@ export const $in_table_column_paragraph_items = factory
     )
     ;
 
-export const $no_name_paragraph_item: ValueRule<EL> = factory
+export const $no_name_paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 | Subitem3 | Subitem4 | Subitem5 | Subitem6 | Subitem7 | Subitem8 | Subitem9 | Subitem10> = factory
     .withName("no_name_paragraph_item")
     .action(r => r
         .sequence(c => c
@@ -753,20 +754,20 @@ export const $no_name_paragraph_item: ValueRule<EL> = factory
             }
         }
 
-        const paragraph_item = new EL(
+        const paragraph_item = newStdEL(
             paragraphItemTags[indent],
             { Hide: "false", Num: "1" },
         );
         if (indent === 0) {
-            paragraph_item.attr.OldStyle = "false";
+            (paragraph_item as Paragraph).attr.OldStyle = "false";
         } else {
-            paragraph_item.attr.Delete = "false";
+            (paragraph_item as Item | Subitem1 | Subitem2 | Subitem3 | Subitem4 | Subitem5 | Subitem6 | Subitem7 | Subitem8 | Subitem9 | Subitem10).attr.Delete = "false";
         }
         if (paragraph_caption !== null) {
-            paragraph_item.append(new EL("ParagraphCaption", {}, [paragraph_caption]));
+            paragraph_item.append(newStdEL("ParagraphCaption", {}, [paragraph_caption]));
         }
-        paragraph_item.append(new EL(paragraphItemTitleTags[indent]));
-        paragraph_item.append(new EL(paragraphItemSentenceTags[indent], {}, inline_contents));
+        paragraph_item.append(newStdEL(paragraphItemTitleTags[indent]));
+        paragraph_item.append(newStdEL(paragraphItemSentenceTags[indent], {}, inline_contents));
         paragraph_item.extend(lists || []);
 
         if (children) {
@@ -779,7 +780,7 @@ export const $no_name_paragraph_item: ValueRule<EL> = factory
     )
     ;
 
-export const $paragraph_item_child: ValueRule<EL> = factory
+export const $paragraph_item_child = factory
     .withName("paragraph_item_child")
     .choice(c => c
         .or(r => r

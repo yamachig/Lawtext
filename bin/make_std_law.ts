@@ -10,6 +10,7 @@ import path from "path";
 const schema = xmlToJson(fs.readFileSync(__dirname + "/std_law.xsd", "utf-8"));
 
 const elementIfs: string[] = [];
+const newStdELConditions: string[] = [];
 
 function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
     for (const child of el.children) {
@@ -38,6 +39,10 @@ export interface StdEL extends EL {
 
 for (const element of schema.children.filter(el => typeof el !== "string" && el.tag === "xs:element")) {
     if (typeof element === "string") continue;
+
+    newStdELConditions.push(`\
+    TName extends "${element.attr.name}" ? ${element.attr.name} :
+`);
 
     if (element.attr.type === "xs:string") {
         elementIfs.push(`\
@@ -102,6 +107,25 @@ export const is${element.attr.name ?? ""} = (obj: EL): obj is ${element.attr.nam
 `);
     }
 }
+
+elementIfs.push(`\
+export type StdELType<TName extends string> =
+${newStdELConditions.join("").trimEnd()}
+    never
+
+export const newStdEL = <
+    TName extends string,
+    TStdEL = StdELType<TName>,
+    TAttr extends { [key: string]: string | undefined } = TStdEL extends StdEL ? TStdEL["attr"] : never,
+    TChildren extends Array<EL | string> = TStdEL extends StdEL ? TStdEL["children"] : never,
+>(
+        tag: TName,
+        attr?: TAttr,
+        children?: TChildren,
+    ): StdELType<TName> => {
+    return new EL(tag, attr, children) as StdELType<TName>;
+};
+`);
 
 const out = elementIfs.join(`
 `);

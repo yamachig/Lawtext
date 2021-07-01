@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { EL, parseNamedNum } from "@coresrc/util";
+import { newStdEL, StdEL } from "@coresrc/std_law";
+import { parseNamedNum } from "@coresrc/util";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $_, $NEWLINE, $__, $INDENT, $DEDENT } from "../lexical";
@@ -107,7 +108,7 @@ export const $article = factory
                         .action(r => r
                             .ref(() => $_)
                         , (() => {
-                            return [new EL("Sentence")];
+                            return [newStdEL("Sentence")];
                         }),
                         ),
                     ),
@@ -251,28 +252,28 @@ export const $article = factory
             , "suppl_notes"),
         )
     , (({ article_caption, article_title, inline_contents, lists, children1, paragraphs, children2, suppl_notes }) => {
-        const article = new EL(
+        const article = newStdEL(
             "Article",
             { Delete: "false", Hide: "false" },
         );
         if (article_caption !== null) {
-            article.append(new EL("ArticleCaption", {}, [article_caption]));
+            article.append(newStdEL("ArticleCaption", {}, [article_caption]));
         }
-        article.append(new EL("ArticleTitle", {}, [article_title]));
+        article.append(newStdEL("ArticleTitle", {}, [article_title]));
 
         const num = parseNamedNum(article_title);
         if (num) {
             article.attr.Num = num;
         }
 
-        const paragraph = new EL("Paragraph");
+        const paragraph = newStdEL("Paragraph");
         paragraph.attr.Num = "1";
         paragraph.attr.OldStyle = "false";
-        paragraph.attr.Delete = "false";
+        (paragraph as StdEL).attr.Delete = "false";
         article.append(paragraph);
 
-        paragraph.append(new EL("ParagraphNum"));
-        paragraph.append(new EL("ParagraphSentence", {}, inline_contents));
+        paragraph.append(newStdEL("ParagraphNum"));
+        paragraph.append(newStdEL("ParagraphSentence", {}, inline_contents));
         paragraph.extend(lists || []);
         paragraph.extend(children1 || []);
         paragraph.extend(children2 || []);

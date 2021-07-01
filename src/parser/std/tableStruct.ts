@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { __Text, EL } from "@coresrc/util";
+import { newStdEL, StdEL, Table } from "@coresrc/std_law";
+import { __Text } from "@coresrc/util";
 import { factory, ValueRule } from "../common";
 import { $INLINE } from "../inline";
 import { $_, $NEWLINE, $INDENT, $DEDENT, $__ } from "../lexical";
@@ -8,7 +9,7 @@ import { $in_table_column_paragraph_items } from "./paragraphItem";
 import { $remarks } from "./remarks";
 
 
-export const $table_struct: ValueRule<EL> = factory
+export const $table_struct = factory
     .withName("table_struct")
     .action(r => r
         .sequence(c => c
@@ -59,7 +60,7 @@ export const $table_struct: ValueRule<EL> = factory
             , "remarkses2"),
         )
     , (({ table_struct_title, remarkses1, table, remarkses2 }) => {
-        const table_struct = new EL("TableStruct");
+        const table_struct = newStdEL("TableStruct");
 
         if (table_struct_title !== null) {
             table_struct.append(table_struct_title);
@@ -76,7 +77,7 @@ export const $table_struct: ValueRule<EL> = factory
     )
     ;
 
-export const $table_struct_title: ValueRule<EL> = factory
+export const $table_struct_title = factory
     .withName("table_struct_title")
     .action(r => r
         .sequence(c => c
@@ -96,12 +97,12 @@ export const $table_struct_title: ValueRule<EL> = factory
             ),
         )
     , (({ title }) => {
-        return new EL("TableStructTitle", {}, [new __Text(title)]);
+        return newStdEL("TableStructTitle", {}, [new __Text(title)]);
     }),
     )
     ;
 
-export const $table: ValueRule<EL> = factory
+export const $table: ValueRule<Table> = factory
     .withName("table")
     .action(r => r
         .sequence(c => c
@@ -202,15 +203,15 @@ export const $table: ValueRule<EL> = factory
             , "table_row_columns"),
         )
     , (({ attr, table_row_columns }) => {
-        const table = new EL("Table");
+        const table = newStdEL("Table");
         if (attr) {
             for (let i = 0; i < attr.length; i++) {
                 const [name, value] = attr[i];
-                table.attr[name] = value;
+                (table as StdEL).attr[name] = value;
             }
         }
         for (let i = 0; i < table_row_columns.length; i++) {
-            const table_row = new EL("TableRow", {}, table_row_columns[i]);
+            const table_row = newStdEL("TableRow", {}, table_row_columns[i]);
             table.append(table_row);
         }
 
@@ -248,7 +249,7 @@ export const $table_column_attr_name = factory
     )
     ;
 
-export const $table_column: ValueRule<EL> = factory
+export const $table_column = factory
     .withName("table_column")
     .choice(c => c
         .or(r => r
@@ -374,7 +375,7 @@ export const $table_column: ValueRule<EL> = factory
                                                     ),
                                                 )
                                             , (({ inline }) => {
-                                                return new EL(
+                                                return newStdEL(
                                                     "Sentence",
                                                     {},
                                                     inline || [],
@@ -407,7 +408,7 @@ export const $table_column: ValueRule<EL> = factory
                                                                                     ),
                                                                                 )
                                                                             , (({ inline }) => {
-                                                                                return new EL(
+                                                                                return newStdEL(
                                                                                     "Sentence",
                                                                                     {},
                                                                                     inline,
@@ -450,10 +451,10 @@ export const $table_column: ValueRule<EL> = factory
                     , "children"),
                 )
             , (({ attr, children }) => {
-                const table_column = new EL("TableColumn");
+                const table_column = newStdEL("TableColumn");
                 for (let i = 0; i < attr.length; i++) {
                     const [name, value] = attr[i];
-                    table_column.attr[name] = value;
+                    (table_column as StdEL).attr[name] = value;
                 }
 
                 table_column.extend(children);
@@ -476,7 +477,7 @@ export const $table_column: ValueRule<EL> = factory
                     ),
                 )
             , (() => {
-                return new EL(
+                return newStdEL(
                     "TableColumn",
                     {
                         BorderTop: "solid",
@@ -484,7 +485,7 @@ export const $table_column: ValueRule<EL> = factory
                         BorderBottom: "solid",
                         BorderLeft: "solid",
                     },
-                    [new EL("Sentence")],
+                    [newStdEL("Sentence")],
                 );
             }),
             ),

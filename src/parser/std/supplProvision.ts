@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { __Text, EL, setItemNum } from "@coresrc/util";
+import { newStdEL } from "@coresrc/std_law";
+import { __Text, setItemNum } from "@coresrc/util";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $_, $NEWLINE, $__ } from "../lexical";
@@ -128,14 +129,14 @@ export const $suppl_provision = factory
             , "suppl_provision_appdx_items"),
         )
     , (({ suppl_provision_label, children, suppl_provision_appdx_items }) => {
-        const suppl_provision = new EL("SupplProvision");
+        const suppl_provision = newStdEL("SupplProvision");
         if (suppl_provision_label.amend_law_num) {
             suppl_provision.attr["AmendLawNum"] = suppl_provision_label.amend_law_num;
         }
         if (suppl_provision_label.extract !== null) {
             suppl_provision.attr["Extract"] = "true";
         }
-        suppl_provision.append(new EL("SupplProvisionLabel", {}, [new __Text(suppl_provision_label.label)]));
+        suppl_provision.append(newStdEL("SupplProvisionLabel", {}, [new __Text(suppl_provision_label.label)]));
 
         if (children) {
             setItemNum(children);

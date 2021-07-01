@@ -1,4 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
+import { newStdEL } from "@coresrc/std_law";
 import { EL, articleGroupTitleTag, parseNamedNum, articleGroupType, __Parentheses } from "@coresrc/util";
 import { factory, ValueRule } from "../common";
 import { $OUTSIDE_ROUND_PARENTHESES_INLINE, $ROUND_PARENTHESES_INLINE } from "../inline";
@@ -87,8 +88,8 @@ export const $toc = factory
     , (({ toc_label, first, rest }) => {
         const children = [first].concat(rest);
 
-        const toc = new EL("TOC", {}, []);
-        toc.append(new EL("TOCLabel", {}, [toc_label]));
+        const toc = newStdEL("TOC", {}, []);
+        toc.append(newStdEL("TOCLabel", {}, [toc_label]));
         toc.extend(children);
 
         return toc;
@@ -217,10 +218,10 @@ export const $toc_item: ValueRule<EL> = factory
         let toc_item;
 
         if (title_fragments[0].text.match(/前文/)) {
-            toc_item = new EL("TOCPreambleLabel", {}, title_fragments);
+            toc_item = newStdEL("TOCPreambleLabel", {}, title_fragments);
         } else {
             const type_char = title_fragments[0].text.match(/[編章節款目章則]/)?.[0];
-            toc_item = new EL("TOC" + articleGroupType[type_char as keyof typeof articleGroupType]);
+            toc_item = newStdEL(`TOC${articleGroupType[type_char as keyof typeof articleGroupType]}`);
 
             if (title_fragments[0].text.match(/[編章節款目章]/)) {
                 toc_item.attr.Delete = "false";
@@ -230,14 +231,14 @@ export const $toc_item: ValueRule<EL> = factory
                 }
             }
 
-            toc_item.append(new EL(
+            toc_item.append(newStdEL(
                 articleGroupTitleTag[type_char as keyof typeof articleGroupTitleTag],
                 {},
                 title_fragments,
             ));
 
             if (article_range !== null) {
-                toc_item.append(new EL(
+                toc_item.append(newStdEL(
                     "ArticleRange",
                     {},
                     [article_range],

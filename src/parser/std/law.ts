@@ -1,6 +1,6 @@
-/* eslint-disable no-irregular-whitespace */
-import { EL, eras, parseKanjiNum, getLawtype } from "@coresrc/util";
-import { factory } from "../common";
+import { Law, newStdEL } from "@coresrc/std_law";
+import { eras, parseKanjiNum, getLawtype } from "@coresrc/util";
+import { factory, ValueRule } from "../common";
 import { $INLINE, $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $INDENT, $DEDENT, $__, $NEWLINE } from "../lexical";
 import { $appdx } from "./appdx";
@@ -16,7 +16,7 @@ import { $suppl_provision } from "./supplProvision";
 import { $toc, $toc_label } from "./toc";
 
 
-export const $law = factory
+export const $law: ValueRule<Law> = factory
     .action(r => r
         .sequence(c => c
             .and(r => r
@@ -53,9 +53,9 @@ export const $law = factory
                                             ),
                                         )
                                     , (({ inline }) => {
-                                        return new EL("Paragraph", {}, [
-                                            new EL("ParagraphNum"),
-                                            new EL("ParagraphSentence", {}, [new EL("Sentence", {}, inline)]),
+                                        return newStdEL("Paragraph", {}, [
+                                            newStdEL("ParagraphNum"),
+                                            newStdEL("ParagraphSentence", {}, [newStdEL("Sentence", {}, inline)]),
                                         ]);
                                     }),
                                     ),
@@ -68,7 +68,7 @@ export const $law = factory
                             ),
                         )
                     , (({ target }) => {
-                        return new EL("Preamble", {}, target);
+                        return newStdEL("Preamble", {}, target);
                     }),
                     ),
                 )
@@ -135,9 +135,9 @@ export const $law = factory
                                             ),
                                         )
                                     , (({ inline }) => {
-                                        return new EL("Paragraph", {}, [
-                                            new EL("ParagraphNum"),
-                                            new EL("ParagraphSentence", {}, [new EL("Sentence", {}, inline)]),
+                                        return newStdEL("Paragraph", {}, [
+                                            newStdEL("ParagraphNum"),
+                                            newStdEL("ParagraphSentence", {}, [newStdEL("Sentence", {}, inline)]),
                                         ]);
                                     }),
                                     ),
@@ -150,7 +150,7 @@ export const $law = factory
                             ),
                         )
                     , (({ target }) => {
-                        return new EL("Preamble", {}, target);
+                        return newStdEL("Preamble", {}, target);
                     }),
                     ),
                 )
@@ -165,12 +165,12 @@ export const $law = factory
             , "appdx_items"),
         )
     , (({ law_title, preambles1, enact_statements, toc, preambles2, main_provision, appdx_items }) => {
-        const law = new EL("Law", { Lang: "ja" });
-        const law_body = new EL("LawBody");
+        const law = newStdEL("Law", { Lang: "ja" } as Law["attr"]);
+        const law_body = newStdEL("LawBody");
 
         if (law_title !== null) {
             if (law_title.law_num) {
-                law.append(new EL("LawNum", {}, [law_title.law_num]));
+                law.append(newStdEL("LawNum", {}, [law_title.law_num]));
 
                 const m = law_title.law_num.match(/^(明治|大正|昭和|平成|令和)([一二三四五六七八九十]+)年(\S+?)(?:第([一二三四五六七八九十百千]+)号)?$/);
                 if (m) {
@@ -195,7 +195,7 @@ export const $law = factory
             }
 
             if (law_title.law_title) {
-                law_body.append(new EL("LawTitle", {}, [law_title.law_title]));
+                law_body.append(newStdEL("LawTitle", {}, [law_title.law_title]));
             }
         }
 
@@ -298,7 +298,7 @@ export const $enact_statement = factory
             ),
         )
     , (({ target }) => {
-        return new EL("EnactStatement", {}, target);
+        return newStdEL("EnactStatement", {}, target);
     }),
     )
     ;
@@ -323,7 +323,7 @@ export const $main_provision = factory
                     , "children"),
                 )
             , (({ children }) => {
-                return new EL("MainProvision", {}, children);
+                return newStdEL("MainProvision", {}, children);
             }),
             ),
         )
@@ -335,7 +335,7 @@ export const $main_provision = factory
                     , "paragraph"),
                 )
             , (({ paragraph }) => {
-                return new EL("MainProvision", {}, [paragraph]);
+                return newStdEL("MainProvision", {}, [paragraph]);
             }),
             ),
         ),

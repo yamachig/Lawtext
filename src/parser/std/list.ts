@@ -1,11 +1,12 @@
 /* eslint-disable no-irregular-whitespace */
-import { EL, listTags } from "@coresrc/util";
+import { newStdEL, List, Sublist1, Sublist2, Sublist3 } from "@coresrc/std_law";
+import { listTags } from "@coresrc/util";
 import { factory, ValueRule } from "../common";
 import { $DEDENT, $INDENT, $NEWLINE } from "../lexical";
 import { $columns_or_sentences } from "./columnsOrSentences";
 
 
-export const $list: ValueRule<EL> = factory
+export const $list: ValueRule<List | Sublist1 | Sublist2 | Sublist3> = factory
     .withName("list")
     .action(r => r
         .sequence(c => c
@@ -105,8 +106,8 @@ export const $list: ValueRule<EL> = factory
             , "sublists"),
         )
     , (({ columns_or_sentences, sublists, state }) => {
-        const list = new EL(listTags[state.listDepth]);
-        const list_sentence = new EL(listTags[state.listDepth] + "Sentence");
+        const list = newStdEL(listTags[state.listDepth]);
+        const list_sentence = newStdEL(`${listTags[state.listDepth]}Sentence`);
         list.append(list_sentence);
 
         list_sentence.extend(columns_or_sentences);

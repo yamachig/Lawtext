@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { __Text, EL, setItemNum } from "@coresrc/util";
+import { newStdEL } from "@coresrc/std_law";
+import { __Text, setItemNum } from "@coresrc/util";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $_, $NEWLINE, $DEDENT, $INDENT } from "../lexical";
@@ -198,21 +199,21 @@ export const $suppl_provision_appdx_table = factory
                             ),
                         )
                     , (({ target, remarkses }) => {
-                        return target.concat(remarkses);
+                        return [...target, ...remarkses];
                     }),
                     ),
                 )
             , "children"),
         )
     , (({ location, title_struct, children }) => {
-        const suppl_provision_appdx_table = new EL("SupplProvisionAppdxTable");
+        const suppl_provision_appdx_table = newStdEL("SupplProvisionAppdxTable");
         if (title_struct.table_struct_title !== "") {
             console.error(`### line ${location().start.line}: Maybe irregular SupplProvisionAppdxTableTitle!`);
-            suppl_provision_appdx_table.append(new EL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text( title_struct.text)]));
+            suppl_provision_appdx_table.append(newStdEL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text( title_struct.text)]));
         } else {
-            suppl_provision_appdx_table.append(new EL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text(title_struct.title)]));
+            suppl_provision_appdx_table.append(newStdEL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text(title_struct.title)]));
             if (title_struct.related_article_num) {
-                suppl_provision_appdx_table.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+                suppl_provision_appdx_table.append(newStdEL("RelatedArticleNum", {}, [title_struct.related_article_num]));
             }
         }
 

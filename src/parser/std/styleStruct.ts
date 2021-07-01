@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { __Text, EL } from "@coresrc/util";
+import { newStdEL } from "@coresrc/std_law";
+import { __Text } from "@coresrc/util";
 import { factory } from "../common";
 import { $INLINE } from "../inline";
 import { $_, $NEWLINE, $INDENT, $DEDENT } from "../lexical";
@@ -49,7 +50,7 @@ export const $style_struct = factory
             , "remarkses2"),
         )
     , (({ style_struct_title, remarkses1, style, remarkses2 }) => {
-        const style_struct = new EL("StyleStruct");
+        const style_struct = newStdEL("StyleStruct");
 
         if (style_struct_title !== null) {
             style_struct.append(style_struct_title);
@@ -86,7 +87,7 @@ export const $style_struct_title = factory
             ),
         )
     , (({ title }) => {
-        return new EL("StyleStructTitle", {}, [new __Text(title)]);
+        return newStdEL("StyleStructTitle", {}, [new __Text(title)]);
     }),
     )
     ;
@@ -151,7 +152,7 @@ export const $style = factory
             , "children"),
         )
     , (({ lists, children }) => {
-        return new EL("Style", {}, [...(lists || []), ...children]);
+        return newStdEL("Style", {}, [...(lists || []), ...children]);
     }),
     )
     ;

@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { EL } from "@coresrc/util";
+import { newStdEL } from "@coresrc/std_law";
 import { factory } from "../common";
 import { $INLINE } from "../inline";
 import { $_, $NEWLINE } from "../lexical";
@@ -25,7 +25,7 @@ export const $suppl_note = factory
             ),
         )
     , (({ inline }) => {
-        return new EL("SupplNote", {}, inline);
+        return newStdEL("SupplNote", {}, inline);
     }),
     )
     ;

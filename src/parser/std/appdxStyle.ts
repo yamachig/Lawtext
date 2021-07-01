@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { __Text, EL } from "@coresrc/util";
+import { newStdEL } from "@coresrc/std_law";
+import { __Text } from "@coresrc/util";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $_, $NEWLINE, $CHAR, $INDENT, $DEDENT } from "../lexical";
@@ -225,10 +226,10 @@ export const $appdx_style = factory
             , "children"),
         )
     , (({ title_struct, children }) => {
-        const appdx_style = new EL("AppdxStyle");
-        appdx_style.append(new EL("AppdxStyleTitle", {}, [new __Text(title_struct.title)]));
+        const appdx_style = newStdEL("AppdxStyle");
+        appdx_style.append(newStdEL("AppdxStyleTitle", {}, [new __Text(title_struct.title)]));
         if (title_struct.related_article_num) {
-            appdx_style.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+            appdx_style.append(newStdEL("RelatedArticleNum", {}, [title_struct.related_article_num]));
         }
         appdx_style.extend(children || []);
 

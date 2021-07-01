@@ -1,4 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
+import { Chapter, Division, newStdEL, Part, Section, Subsection } from "@coresrc/std_law";
 import { __Text, EL, articleGroupTypeChars, articleGroupType, articleGroupTitleTag, parseNamedNum } from "@coresrc/util";
 import { factory, ValueRule } from "../common";
 import { $INLINE } from "../inline";
@@ -28,7 +29,7 @@ export const $article_group_title = factory
                                         ),
                                     )
                                     .and(r => r
-                                        .regExp(/^[編章節款目]/)
+                                        .oneOf(articleGroupTypeChars)
                                     , "type_char")
                                     .and(r => r
                                         .zeroOrOne(r => r
@@ -95,7 +96,7 @@ export const $article_group_title = factory
     )
     ;
 
-export const $article_group: ValueRule<EL> = factory
+export const $article_group: ValueRule<Part | Chapter | Section | Subsection | Division> = factory
     .withName("article_group")
     .action(r => r
         .sequence(c => c
@@ -141,12 +142,12 @@ export const $article_group: ValueRule<EL> = factory
             , "children"),
         )
     , (({ article_group_title, children }) => {
-        const article_group = new EL(
-            articleGroupType[article_group_title.type_char as keyof typeof articleGroupType],
+        const article_group = newStdEL(
+            articleGroupType[article_group_title.type_char as keyof typeof articleGroupType] as "Part" | "Chapter" | "Section" | "Subsection" | "Division",
             { Delete: "false", Hide: "false" },
         );
 
-        article_group.append(new EL(
+        article_group.append(newStdEL(
             articleGroupTitleTag[article_group_title.type_char as keyof typeof articleGroupTitleTag],
             {},
             article_group_title.content,

@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { __Text, EL, setItemNum } from "@coresrc/util";
+import { newStdEL } from "@coresrc/std_law";
+import { __Text, setItemNum } from "@coresrc/util";
 import { factory, ValueRule } from "../common";
 import { $INLINE } from "../inline";
 import { $DEDENT, $INDENT, $NEWLINE, $__ } from "../lexical";
@@ -114,7 +115,7 @@ export const $remarks = factory
                             , "_target"),
                         )
                     , (({ _target }) => {
-                        return new EL(
+                        return newStdEL(
                             "Sentence",
                             {},
                             _target,
@@ -225,7 +226,7 @@ export const $remarks = factory
                                                             ),
                                                         )
                                                     , (({ _target }) => {
-                                                        return new EL(
+                                                        return newStdEL(
                                                             "Sentence",
                                                             {},
                                                             _target,
@@ -355,7 +356,7 @@ export const $remarks = factory
                                                             ),
                                                         )
                                                     , (({ _target }) => {
-                                                        return new EL(
+                                                        return newStdEL(
                                                             "Sentence",
                                                             {},
                                                             _target,
@@ -409,8 +410,8 @@ export const $remarks = factory
             }
         }
 
-        const remarks = new EL("Remarks");
-        remarks.append(new EL("RemarksLabel", label_attr, [new __Text(label)]));
+        const remarks = newStdEL("Remarks");
+        remarks.append(newStdEL("RemarksLabel", label_attr, [new __Text(label)]));
         if (children) {
             setItemNum(children);
         }

@@ -1,4 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
+import { newStdEL } from "@coresrc/std_law";
 import { __Text, EL } from "@coresrc/util";
 import { factory } from "../common";
 import { $INLINE, $PERIOD_SENTENCE_FRAGMENT } from "../inline";
@@ -69,7 +70,7 @@ export const $columns_or_sentences = factory
                 )
             , (({ attr, inline }) => {
             // console.error(`### line ${location().start.line}: Maybe mismatched parenthesis!`);
-                const sentence = new EL(
+                const sentence = newStdEL(
                     "Sentence",
                     attr,
                     inline,
@@ -96,7 +97,7 @@ export const $period_sentences = factory
         const proviso_indices: Array<number> = [];
         for (let i = 0; i < fragments.length; i++) {
             const sentence_content = fragments[i];
-            const sentence = new EL(
+            const sentence = newStdEL(
                 "Sentence",
                 {},
                 sentence_content,
@@ -215,7 +216,7 @@ export const $column = factory
             , "content"),
         )
     , (({ attr, content }) => {
-        return new EL("Column", attr, content);
+        return newStdEL("Column", attr, content);
     }),
     )
 ;

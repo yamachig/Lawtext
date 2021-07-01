@@ -1515,3 +1515,153 @@ export interface Sub extends StdEL {
 export const isSub = (obj: EL): obj is Sub => {
     return obj.tag === "Sub";
 };
+
+export type StdELType<TName extends string> =
+    TName extends "Law" ? Law :
+    TName extends "LawNum" ? LawNum :
+    TName extends "LawBody" ? LawBody :
+    TName extends "LawTitle" ? LawTitle :
+    TName extends "EnactStatement" ? EnactStatement :
+    TName extends "TOC" ? TOC :
+    TName extends "TOCLabel" ? TOCLabel :
+    TName extends "TOCPreambleLabel" ? TOCPreambleLabel :
+    TName extends "TOCPart" ? TOCPart :
+    TName extends "TOCChapter" ? TOCChapter :
+    TName extends "TOCSection" ? TOCSection :
+    TName extends "TOCSubsection" ? TOCSubsection :
+    TName extends "TOCDivision" ? TOCDivision :
+    TName extends "TOCArticle" ? TOCArticle :
+    TName extends "TOCSupplProvision" ? TOCSupplProvision :
+    TName extends "TOCAppdxTableLabel" ? TOCAppdxTableLabel :
+    TName extends "ArticleRange" ? ArticleRange :
+    TName extends "Preamble" ? Preamble :
+    TName extends "MainProvision" ? MainProvision :
+    TName extends "Part" ? Part :
+    TName extends "PartTitle" ? PartTitle :
+    TName extends "Chapter" ? Chapter :
+    TName extends "ChapterTitle" ? ChapterTitle :
+    TName extends "Section" ? Section :
+    TName extends "SectionTitle" ? SectionTitle :
+    TName extends "Subsection" ? Subsection :
+    TName extends "SubsectionTitle" ? SubsectionTitle :
+    TName extends "Division" ? Division :
+    TName extends "DivisionTitle" ? DivisionTitle :
+    TName extends "Article" ? Article :
+    TName extends "ArticleTitle" ? ArticleTitle :
+    TName extends "ArticleCaption" ? ArticleCaption :
+    TName extends "Paragraph" ? Paragraph :
+    TName extends "ParagraphCaption" ? ParagraphCaption :
+    TName extends "ParagraphNum" ? ParagraphNum :
+    TName extends "ParagraphSentence" ? ParagraphSentence :
+    TName extends "SupplNote" ? SupplNote :
+    TName extends "AmendProvision" ? AmendProvision :
+    TName extends "AmendProvisionSentence" ? AmendProvisionSentence :
+    TName extends "NewProvision" ? NewProvision :
+    TName extends "Class" ? Class :
+    TName extends "ClassTitle" ? ClassTitle :
+    TName extends "ClassSentence" ? ClassSentence :
+    TName extends "Item" ? Item :
+    TName extends "ItemTitle" ? ItemTitle :
+    TName extends "ItemSentence" ? ItemSentence :
+    TName extends "Subitem1" ? Subitem1 :
+    TName extends "Subitem1Title" ? Subitem1Title :
+    TName extends "Subitem1Sentence" ? Subitem1Sentence :
+    TName extends "Subitem2" ? Subitem2 :
+    TName extends "Subitem2Title" ? Subitem2Title :
+    TName extends "Subitem2Sentence" ? Subitem2Sentence :
+    TName extends "Subitem3" ? Subitem3 :
+    TName extends "Subitem3Title" ? Subitem3Title :
+    TName extends "Subitem3Sentence" ? Subitem3Sentence :
+    TName extends "Subitem4" ? Subitem4 :
+    TName extends "Subitem4Title" ? Subitem4Title :
+    TName extends "Subitem4Sentence" ? Subitem4Sentence :
+    TName extends "Subitem5" ? Subitem5 :
+    TName extends "Subitem5Title" ? Subitem5Title :
+    TName extends "Subitem5Sentence" ? Subitem5Sentence :
+    TName extends "Subitem6" ? Subitem6 :
+    TName extends "Subitem6Title" ? Subitem6Title :
+    TName extends "Subitem6Sentence" ? Subitem6Sentence :
+    TName extends "Subitem7" ? Subitem7 :
+    TName extends "Subitem7Title" ? Subitem7Title :
+    TName extends "Subitem7Sentence" ? Subitem7Sentence :
+    TName extends "Subitem8" ? Subitem8 :
+    TName extends "Subitem8Title" ? Subitem8Title :
+    TName extends "Subitem8Sentence" ? Subitem8Sentence :
+    TName extends "Subitem9" ? Subitem9 :
+    TName extends "Subitem9Title" ? Subitem9Title :
+    TName extends "Subitem9Sentence" ? Subitem9Sentence :
+    TName extends "Subitem10" ? Subitem10 :
+    TName extends "Subitem10Title" ? Subitem10Title :
+    TName extends "Subitem10Sentence" ? Subitem10Sentence :
+    TName extends "Sentence" ? Sentence :
+    TName extends "Column" ? Column :
+    TName extends "SupplProvision" ? SupplProvision :
+    TName extends "SupplProvisionLabel" ? SupplProvisionLabel :
+    TName extends "SupplProvisionAppdxTable" ? SupplProvisionAppdxTable :
+    TName extends "SupplProvisionAppdxTableTitle" ? SupplProvisionAppdxTableTitle :
+    TName extends "SupplProvisionAppdxStyle" ? SupplProvisionAppdxStyle :
+    TName extends "SupplProvisionAppdxStyleTitle" ? SupplProvisionAppdxStyleTitle :
+    TName extends "SupplProvisionAppdx" ? SupplProvisionAppdx :
+    TName extends "AppdxTable" ? AppdxTable :
+    TName extends "AppdxTableTitle" ? AppdxTableTitle :
+    TName extends "AppdxNote" ? AppdxNote :
+    TName extends "AppdxNoteTitle" ? AppdxNoteTitle :
+    TName extends "AppdxStyle" ? AppdxStyle :
+    TName extends "AppdxStyleTitle" ? AppdxStyleTitle :
+    TName extends "AppdxFormat" ? AppdxFormat :
+    TName extends "AppdxFormatTitle" ? AppdxFormatTitle :
+    TName extends "Appdx" ? Appdx :
+    TName extends "ArithFormulaNum" ? ArithFormulaNum :
+    TName extends "ArithFormula" ? ArithFormula :
+    TName extends "AppdxFig" ? AppdxFig :
+    TName extends "AppdxFigTitle" ? AppdxFigTitle :
+    TName extends "TableStruct" ? TableStruct :
+    TName extends "TableStructTitle" ? TableStructTitle :
+    TName extends "Table" ? Table :
+    TName extends "TableRow" ? TableRow :
+    TName extends "TableHeaderRow" ? TableHeaderRow :
+    TName extends "TableHeaderColumn" ? TableHeaderColumn :
+    TName extends "TableColumn" ? TableColumn :
+    TName extends "FigStruct" ? FigStruct :
+    TName extends "FigStructTitle" ? FigStructTitle :
+    TName extends "Fig" ? Fig :
+    TName extends "NoteStruct" ? NoteStruct :
+    TName extends "NoteStructTitle" ? NoteStructTitle :
+    TName extends "Note" ? Note :
+    TName extends "StyleStruct" ? StyleStruct :
+    TName extends "StyleStructTitle" ? StyleStructTitle :
+    TName extends "Style" ? Style :
+    TName extends "FormatStruct" ? FormatStruct :
+    TName extends "FormatStructTitle" ? FormatStructTitle :
+    TName extends "Format" ? Format :
+    TName extends "RelatedArticleNum" ? RelatedArticleNum :
+    TName extends "Remarks" ? Remarks :
+    TName extends "RemarksLabel" ? RemarksLabel :
+    TName extends "List" ? List :
+    TName extends "ListSentence" ? ListSentence :
+    TName extends "Sublist1" ? Sublist1 :
+    TName extends "Sublist1Sentence" ? Sublist1Sentence :
+    TName extends "Sublist2" ? Sublist2 :
+    TName extends "Sublist2Sentence" ? Sublist2Sentence :
+    TName extends "Sublist3" ? Sublist3 :
+    TName extends "Sublist3Sentence" ? Sublist3Sentence :
+    TName extends "QuoteStruct" ? QuoteStruct :
+    TName extends "Ruby" ? Ruby :
+    TName extends "Rt" ? Rt :
+    TName extends "Line" ? Line :
+    TName extends "Sup" ? Sup :
+    TName extends "Sub" ? Sub :
+    never
+
+export const newStdEL = <
+    TName extends string,
+    TStdEL = StdELType<TName>,
+    TAttr extends { [key: string]: string | undefined } = TStdEL extends StdEL ? TStdEL["attr"] : never,
+    TChildren extends Array<EL | string> = TStdEL extends StdEL ? TStdEL["children"] : never,
+>(
+        tag: TName,
+        attr?: TAttr,
+        children?: TChildren,
+    ): StdELType<TName> => {
+    return new EL(tag, attr, children) as StdELType<TName>;
+};

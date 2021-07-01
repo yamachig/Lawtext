@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { __Text, EL, setItemNum } from "@coresrc/util";
+import { newStdEL } from "@coresrc/std_law";
+import { __Text, setItemNum } from "@coresrc/util";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $INDENT, $DEDENT, $_, $NEWLINE } from "../lexical";
@@ -229,21 +230,21 @@ export const $appdx_table = factory
                             ),
                         )
                     , (({ target, remarkses }) => {
-                        return target.concat(remarkses);
+                        return [...target, ...remarkses];
                     }),
                     ),
                 )
             , "children"),
         )
     , (({ location, title_struct, children }) => {
-        const appdx_table = new EL("AppdxTable");
+        const appdx_table = newStdEL("AppdxTable");
         if (title_struct.table_struct_title !== "") {
             console.error(`### line ${location().start.line}: Maybe irregular AppdxTableTitle!`);
-            appdx_table.append(new EL("AppdxTableTitle", title_struct.attr, [new __Text( title_struct.text)]));
+            appdx_table.append(newStdEL("AppdxTableTitle", title_struct.attr, [new __Text( title_struct.text)]));
         } else {
-            appdx_table.append(new EL("AppdxTableTitle", title_struct.attr, [new __Text(title_struct.title)]));
+            appdx_table.append(newStdEL("AppdxTableTitle", title_struct.attr, [new __Text(title_struct.title)]));
             if (title_struct.related_article_num) {
-                appdx_table.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+                appdx_table.append(newStdEL("RelatedArticleNum", {}, [title_struct.related_article_num]));
             }
         }
 

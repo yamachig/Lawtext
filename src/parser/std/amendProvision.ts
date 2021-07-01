@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { EL } from "@coresrc/util";
+import { newStdEL } from "@coresrc/std_law";
 import { factory } from "../common";
 import { $INLINE } from "../inline";
 import { $NEWLINE } from "../lexical";
@@ -33,7 +33,7 @@ export const $amend_provision = factory
                                                 , "_inline"),
                                             )
                                         , (({ _inline }) => {
-                                            return new EL("AmendProvisionSentence", {}, [new EL("Sentence", {}, _inline)]);
+                                            return newStdEL("AmendProvisionSentence", {}, [newStdEL("Sentence", {}, _inline)]);
                                         }),
                                         ),
                                     ),
@@ -51,7 +51,7 @@ export const $amend_provision = factory
             , "target"),
         )
     , (({ target }) => {
-        return new EL("AmendProvision", {}, target);
+        return newStdEL("AmendProvision", {}, target);
     }),
     )
     ;

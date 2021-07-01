@@ -580,7 +580,7 @@ export const paragraphItemTags = [
     "Subitem8",
     "Subitem9",
     "Subitem10",
-];
+] as const;
 
 export const paragraphItemTitleTags = [
     "ParagraphNum",
@@ -595,7 +595,7 @@ export const paragraphItemTitleTags = [
     "Subitem8Title",
     "Subitem9Title",
     "Subitem10Title",
-];
+] as const;
 
 export const paragraphItemSentenceTags = [
     "ParagraphSentence",
@@ -610,24 +610,24 @@ export const paragraphItemSentenceTags = [
     "Subitem8Sentence",
     "Subitem9Sentence",
     "Subitem10Sentence",
-];
+] as const;
 
 
-export const listTags = ["List", "Sublist1", "Sublist2", "Sublist3"];
+export const listTags = ["List", "Sublist1", "Sublist2", "Sublist3"] as const;
 
 export const reLawnum = /(?:(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年(?:(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[―〇一二三四五六七八九]+)|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)|明治三十二年勅令|大正十二年内務省・鉄道省令|昭和五年逓信省・鉄道省令|昭和九年逓信省・農林省令|人事院規則一〇―一五)/;
 
 export const lawTypes = [
-    ["憲法", "Constitution"],
-    ["法律", "Act"],
-    ["政令", "CabinetOrder"],
-    ["勅令", "ImperialOrder"],
-    ["\\S*[^政勅]令", "MinisterialOrdinance"],
-    ["\\S*規則", "Rule"],
+    ["憲法", "Constitution"] as const,
+    ["法律", "Act"] as const,
+    ["政令", "CabinetOrder"] as const,
+    ["勅令", "ImperialOrder"] as const,
+    ["\\S*[^政勅]令", "MinisterialOrdinance"] as const,
+    ["\\S*規則", "Rule"] as const,
 ];
 
 
-export const getLawtype = (text: string): string | null => {
+export const getLawtype = (text: string): (typeof lawTypes)[number][1] | null => {
     for (const [ptn, type] of lawTypes) {
         const re = new RegExp(`^${ptn}`);
         if (re.exec(text)) return type;
@@ -639,22 +639,22 @@ export const eras = {
     "明治": "Meiji", "大正": "Taisho",
     "昭和": "Showa", "平成": "Heisei",
     "令和": "Reiwa",
-};
+} as const;
 
 
-export const articleGroupTypeChars = "編章節款目";
+export const articleGroupTypeChars = ["編", "章", "節", "款", "目"] as const;
 
 export const articleGroupType = {
     "編": "Part", "章": "Chapter", "節": "Section",
     "款": "Subsection", "目": "Division",
     "条": "Article", "項": "Paragraph", "号": "Item", "則": "SupplProvision",
-};
+} as const;
 
 export const articleGroupTitleTag = {
     "編": "PartTitle", "章": "ChapterTitle", "節": "SectionTitle",
     "款": "SubsectionTitle", "目": "DivisionTitle", "条": "ArticleTitle",
     "則": "SupplProvisionLabel",
-};
+} as const;
 
 export const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 

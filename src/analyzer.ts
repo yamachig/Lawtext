@@ -606,7 +606,7 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
 
     const paragraph = spans[spanIndex].env.container;
     for (const item of paragraph.parent?.children ?? []) {
-        const sentence = item.el.children.find(el => util.isJsonEL(el) && util.paragraphItemSentenceTags.includes(el.tag));
+        const sentence = item.el.children.find(el => util.isJsonEL(el) && (util.paragraphItemSentenceTags as unknown as string[]).includes(el.tag));
         if (!sentence || !util.isJsonEL(sentence)) continue;
 
         let nameSpan: Span|null = null;

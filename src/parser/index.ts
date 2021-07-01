@@ -1,3 +1,4 @@
+import * as std from "@coresrc/std_law";
 import { ValueOfRule } from "generic-parser/lib/core";
 import { factory, initializer, ValueRule } from "./common";
 import { rules as inlineRules } from "./inline";
@@ -6,7 +7,7 @@ import { rules as rangeRules } from "./range";
 import { rules as xmlRules } from "./xml";
 import { $law } from "./std/law";
 
-import * as law from "./std/toc";
+import * as law from "./std/law";
 import * as toc from "./std/toc";
 import * as articleGroup from "./std/articleGroup";
 import * as article from "./std/article";
@@ -32,7 +33,7 @@ import * as appdx from "./std/appdx";
 import * as supplProvisionAppdx from "./std/supplProvisionAppdx";
 import * as supplProvision from "./std/supplProvision";
 
-const $start = factory
+const $start: ValueRule<std.Law> = factory
     .sequence(c => c
         .and(r => r
             .zeroOrMore(r => r

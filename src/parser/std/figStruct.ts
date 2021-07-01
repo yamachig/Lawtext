@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { EL } from "@coresrc/util";
+import { newStdEL } from "@coresrc/std_law";
 import { factory } from "../common";
 import { $INLINE } from "../inline";
 import { $_, $NEWLINE, $__ } from "../lexical";
@@ -32,7 +32,7 @@ export const $fig_struct = factory
             , "remarks"),
         )
     , (({ fig, remarks }) => {
-        return new EL("FigStruct", {}, [fig].concat(remarks));
+        return newStdEL("FigStruct", {}, [fig, ...remarks]);
     }),
     )
     ;
@@ -69,7 +69,7 @@ export const $fig = factory
             ),
         )
     , (({ src }) => {
-        return new EL("Fig", { src: src });
+        return newStdEL("Fig", { src: src });
     }),
     )
     ;

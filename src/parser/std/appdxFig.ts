@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { __Text, EL } from "@coresrc/util";
+import { AppdxFig, newStdEL } from "@coresrc/std_law";
+import { __Text } from "@coresrc/util";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $_, $NEWLINE, $INDENT, $DEDENT } from "../lexical";
@@ -138,10 +139,10 @@ export const $appdx_fig = factory
                                 , "children"),
                             )
                         , (({ title_struct, children }) => {
-                            const appdx_fig = new EL("AppdxFig");
-                            appdx_fig.append(new EL("AppdxFigTitle", {}, [new __Text(title_struct.title)]));
+                            const appdx_fig = newStdEL("AppdxFig");
+                            appdx_fig.append(newStdEL("AppdxFigTitle", {}, [new __Text(title_struct.title)]));
                             if (title_struct.related_article_num) {
-                                appdx_fig.append(new EL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+                                appdx_fig.append(newStdEL("RelatedArticleNum", {}, [title_struct.related_article_num]));
                             }
                             appdx_fig.extend(children || []);
 
@@ -158,7 +159,7 @@ export const $appdx_fig = factory
             , "success"),
         )
     , (({ success }) => {
-        return success as EL;
+        return success as AppdxFig;
     }),
     )
     ;
