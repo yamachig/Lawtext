@@ -72,3 +72,30 @@ export const $NEWLINE: ValueRule<unknown> = factory
         ),
     )
 ;
+
+export const $kanji_digit = factory
+    .withName("kanji_digit")
+    .regExp(/^[〇一二三四五六七八九十百千]/)
+    ;
+
+export const $roman_digit = factory
+    .withName("roman_digit")
+    .regExp(/^[iIｉＩxXｘＸ]/)
+    ;
+
+export const $iroha_char = factory
+    .withName("iroha_char")
+    .regExp(/^[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]/)
+    ;
+
+export const rules = {
+    kanji_digit: $kanji_digit,
+    roman_digit: $roman_digit,
+    iroha_char: $iroha_char,
+    INDENT: $INDENT,
+    DEDENT: $DEDENT,
+    _: $_,
+    __: $__,
+    CHAR: $CHAR,
+    NEWLINE: $NEWLINE,
+};

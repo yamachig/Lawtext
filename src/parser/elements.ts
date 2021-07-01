@@ -1,11 +1,9 @@
 /* eslint-disable no-irregular-whitespace */
-import * as util from "@coresrc/util";
+import { __Text, EL, __Parentheses, eras, parseKanjiNum, getLawtype, articleGroupType, parseNamedNum, articleGroupTitleTag, paragraphItemTags, paragraphItemTitleTags, paragraphItemSentenceTags, setItemNum, listTags, articleGroupTypeChars } from "@coresrc/util";
 import { factory, ValueRule } from "./common";
+import { $INLINE, $OUTSIDE_ROUND_PARENTHESES_INLINE, $PERIOD_SENTENCE_FRAGMENT, $ROUND_PARENTHESES_INLINE } from "./inline";
 import { $INDENT, $DEDENT, $_, $__, $CHAR, $NEWLINE } from "./lexical";
-
-const EL = util.EL;
-const __Text = util.__Text;
-const __Parentheses = util.__Parentheses;
+import { $xml_element } from "./xml";
 
 
 export const $law = factory
@@ -168,16 +166,16 @@ export const $law = factory
                 if (m) {
                     const [era, year, law_type, num] = m.slice(1);
 
-                    if (era in util.eras) law.attr.Era = util.eras[era as keyof typeof util.eras];
+                    if (era in eras) law.attr.Era = eras[era as keyof typeof eras];
 
-                    const year_val = util.parseKanjiNum(year);
+                    const year_val = parseKanjiNum(year);
                     if (year_val !== null) law.attr.Year = year_val;
 
-                    const law_type_val = util.getLawtype(law_type);
+                    const law_type_val = getLawtype(law_type);
                     if (law_type_val !== null) law.attr.LawType = law_type_val;
 
                     if (num) {
-                        const num_val = util.parseKanjiNum(num);
+                        const num_val = parseKanjiNum(num);
                         if (num_val !== null) law.attr.Num = num_val;
                         else law.attr.Num = "";
                     } else {
@@ -386,7 +384,7 @@ export const $toc = factory
     )
     ;
 
-export const $toc_item: ValueRule<util.EL> = factory
+export const $toc_item: ValueRule<EL> = factory
     .withName("toc_item")
     .action(r => r
         .sequence(c => c
@@ -440,7 +438,7 @@ export const $toc_item: ValueRule<util.EL> = factory
                         , "sets"),
                     )
                 , (({ sets }) => {
-                    const ret: util.EL[] = [];
+                    const ret: EL[] = [];
                     for (const set of sets) {
                         ret.push(...set);
                     }
@@ -510,18 +508,18 @@ export const $toc_item: ValueRule<util.EL> = factory
             toc_item = new EL("TOCPreambleLabel", {}, title_fragments);
         } else {
             const type_char = title_fragments[0].text.match(/[編章節款目章則]/)?.[0];
-            toc_item = new EL("TOC" + util.articleGroupType[type_char as keyof typeof util.articleGroupType]);
+            toc_item = new EL("TOC" + articleGroupType[type_char as keyof typeof articleGroupType]);
 
             if (title_fragments[0].text.match(/[編章節款目章]/)) {
                 toc_item.attr.Delete = "false";
-                const num = util.parseNamedNum(title_fragments[0].text);
+                const num = parseNamedNum(title_fragments[0].text);
                 if (num) {
                     toc_item.attr.Num = num;
                 }
             }
 
             toc_item.append(new EL(
-                util.articleGroupTitleTag[type_char as keyof typeof util.articleGroupTitleTag],
+                articleGroupTitleTag[type_char as keyof typeof articleGroupTitleTag],
                 {},
                 title_fragments,
             ));
@@ -649,7 +647,7 @@ export const $article_group_title = factory
                         content: name ? [
                             new __Text(num.num),
                             new __Text(name.space),
-                        ].concat(name.inline) : [] as util.EL[],
+                        ].concat(name.inline) : [] as EL[],
                         ...num,
                         ...name,
                     };
@@ -669,7 +667,7 @@ export const $article_group_title = factory
     )
     ;
 
-export const $article_group: ValueRule<util.EL> = factory
+export const $article_group: ValueRule<EL> = factory
     .withName("article_group")
     .action(r => r
         .sequence(c => c
@@ -693,8 +691,8 @@ export const $article_group: ValueRule<util.EL> = factory
                                                 , "next_title")
                                                 .and(r => r
                                                     .assert(({ article_group_title, next_title }) => {
-                                                        const current_level = util.articleGroupTypeChars.indexOf(article_group_title.type_char);
-                                                        const next_level = util.articleGroupTypeChars.indexOf(next_title.type_char);
+                                                        const current_level = articleGroupTypeChars.indexOf(article_group_title.type_char);
+                                                        const next_level = articleGroupTypeChars.indexOf(next_title.type_char);
                                                         return current_level < next_level;
                                                     }),
                                                 ),
@@ -716,17 +714,17 @@ export const $article_group: ValueRule<util.EL> = factory
         )
     , (({ article_group_title, children }) => {
         const article_group = new EL(
-            util.articleGroupType[article_group_title.type_char as keyof typeof util.articleGroupType],
+            articleGroupType[article_group_title.type_char as keyof typeof articleGroupType],
             { Delete: "false", Hide: "false" },
         );
 
         article_group.append(new EL(
-            util.articleGroupTitleTag[article_group_title.type_char as keyof typeof util.articleGroupTitleTag],
+            articleGroupTitleTag[article_group_title.type_char as keyof typeof articleGroupTitleTag],
             {},
             article_group_title.content,
         ));
 
-        const num = util.parseNamedNum(article_group_title.num);
+        const num = parseNamedNum(article_group_title.num);
         if (num) {
             article_group.attr.Num = num;
         }
@@ -989,7 +987,7 @@ export const $article = factory
         }
         article.append(new EL("ArticleTitle", {}, [article_title]));
 
-        const num = util.parseNamedNum(article_title);
+        const num = parseNamedNum(article_title);
         if (num) {
             article.attr.Num = num;
         }
@@ -1039,7 +1037,7 @@ export const $suppl_note = factory
     )
     ;
 
-export const $paragraph_item: ValueRule<util.EL> = factory
+export const $paragraph_item: ValueRule<EL> = factory
     .withName("paragraph_item")
     .action(r => r
         .sequence(c => c
@@ -1265,7 +1263,7 @@ export const $paragraph_item: ValueRule<util.EL> = factory
         }
 
         const paragraph_item = new EL(
-            util.paragraphItemTags[indent],
+            paragraphItemTags[indent],
             { Hide: "false" },
         );
         if (indent === 0) {
@@ -1277,17 +1275,17 @@ export const $paragraph_item: ValueRule<util.EL> = factory
             paragraph_item.append(new EL("ParagraphCaption", {}, [paragraph_caption]));
         }
 
-        paragraph_item.append(new EL(util.paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
+        paragraph_item.append(new EL(paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
 
-        // let num = util.parseNamedNum(paragraph_item_title);
+        // let num = parseNamedNum(paragraph_item_title);
         // if(num) {
         //     paragraph_item.attr.Num = num;
         // }
 
-        paragraph_item.append(new EL(util.paragraphItemSentenceTags[indent], {}, inline_contents));
+        paragraph_item.append(new EL(paragraphItemSentenceTags[indent], {}, inline_contents));
 
         if (children) {
-            util.setItemNum(children);
+            setItemNum(children);
         }
 
         paragraph_item.extend(children || []);
@@ -1532,7 +1530,7 @@ export const $in_table_column_paragraph_items = factory
                 }
 
                 const paragraph_item = new EL(
-                    util.paragraphItemTags[indent],
+                    paragraphItemTags[indent],
                     { Hide: "false" },
                 );
                 if (indent === 0) {
@@ -1541,17 +1539,17 @@ export const $in_table_column_paragraph_items = factory
                     paragraph_item.attr.Delete = "false";
                 }
 
-                paragraph_item.append(new EL(util.paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
+                paragraph_item.append(new EL(paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
 
-                // let num = util.parseNamedNum(paragraph_item_title);
+                // let num = parseNamedNum(paragraph_item_title);
                 // if(num) {
                 //     paragraph_item.attr.Num = num;
                 // }
 
-                paragraph_item.append(new EL(util.paragraphItemSentenceTags[indent], {}, inline_contents));
+                paragraph_item.append(new EL(paragraphItemSentenceTags[indent], {}, inline_contents));
 
                 if (children) {
-                    util.setItemNum(children);
+                    setItemNum(children);
                 }
 
                 paragraph_item.extend(children || []);
@@ -1643,7 +1641,7 @@ export const $in_table_column_paragraph_items = factory
                 }
 
                 const paragraph_item = new EL(
-                    util.paragraphItemTags[indent],
+                    paragraphItemTags[indent],
                     { Hide: "false" },
                 );
                 if (indent === 0) {
@@ -1652,14 +1650,14 @@ export const $in_table_column_paragraph_items = factory
                     paragraph_item.attr.Delete = "false";
                 }
 
-                paragraph_item.append(new EL(util.paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
+                paragraph_item.append(new EL(paragraphItemTitleTags[indent], {}, [paragraph_item_title]));
 
-                // let num = util.parseNamedNum(paragraph_item_title);
+                // let num = parseNamedNum(paragraph_item_title);
                 // if(num) {
                 //     paragraph_item.attr.Num = num;
                 // }
 
-                paragraph_item.append(new EL(util.paragraphItemSentenceTags[indent], {}, inline_contents));
+                paragraph_item.append(new EL(paragraphItemSentenceTags[indent], {}, inline_contents));
 
                 return [paragraph_item];
             }),
@@ -1668,7 +1666,7 @@ export const $in_table_column_paragraph_items = factory
     )
     ;
 
-export const $no_name_paragraph_item: ValueRule<util.EL> = factory
+export const $no_name_paragraph_item: ValueRule<EL> = factory
     .withName("no_name_paragraph_item")
     .action(r => r
         .sequence(c => c
@@ -1775,7 +1773,7 @@ export const $no_name_paragraph_item: ValueRule<util.EL> = factory
         }
 
         const paragraph_item = new EL(
-            util.paragraphItemTags[indent],
+            paragraphItemTags[indent],
             { Hide: "false", Num: "1" },
         );
         if (indent === 0) {
@@ -1786,12 +1784,12 @@ export const $no_name_paragraph_item: ValueRule<util.EL> = factory
         if (paragraph_caption !== null) {
             paragraph_item.append(new EL("ParagraphCaption", {}, [paragraph_caption]));
         }
-        paragraph_item.append(new EL(util.paragraphItemTitleTags[indent]));
-        paragraph_item.append(new EL(util.paragraphItemSentenceTags[indent], {}, inline_contents));
+        paragraph_item.append(new EL(paragraphItemTitleTags[indent]));
+        paragraph_item.append(new EL(paragraphItemSentenceTags[indent], {}, inline_contents));
         paragraph_item.extend(lists || []);
 
         if (children) {
-            util.setItemNum(children);
+            setItemNum(children);
         }
         paragraph_item.extend(children || []);
 
@@ -1800,7 +1798,7 @@ export const $no_name_paragraph_item: ValueRule<util.EL> = factory
     )
     ;
 
-export const $paragraph_item_child: ValueRule<util.EL> = factory
+export const $paragraph_item_child: ValueRule<EL> = factory
     .withName("paragraph_item_child")
     .choice(c => c
         .or(r => r
@@ -1821,7 +1819,7 @@ export const $paragraph_item_child: ValueRule<util.EL> = factory
     )
     ;
 
-export const $list: ValueRule<util.EL> = factory
+export const $list: ValueRule<EL> = factory
     .withName("list")
     .action(r => r
         .sequence(c => c
@@ -1921,8 +1919,8 @@ export const $list: ValueRule<util.EL> = factory
             , "sublists"),
         )
     , (({ columns_or_sentences, sublists, state }) => {
-        const list = new EL(util.listTags[state.listDepth]);
-        const list_sentence = new EL(util.listTags[state.listDepth] + "Sentence");
+        const list = new EL(listTags[state.listDepth]);
+        const list_sentence = new EL(listTags[state.listDepth] + "Sentence");
         list.append(list_sentence);
 
         list_sentence.extend(columns_or_sentences);
@@ -1984,7 +1982,7 @@ export const $amend_provision = factory
     )
     ;
 
-export const $table_struct: ValueRule<util.EL> = factory
+export const $table_struct: ValueRule<EL> = factory
     .withName("table_struct")
     .action(r => r
         .sequence(c => c
@@ -2052,7 +2050,7 @@ export const $table_struct: ValueRule<util.EL> = factory
     )
     ;
 
-export const $table_struct_title: ValueRule<util.EL> = factory
+export const $table_struct_title: ValueRule<EL> = factory
     .withName("table_struct_title")
     .action(r => r
         .sequence(c => c
@@ -2077,7 +2075,7 @@ export const $table_struct_title: ValueRule<util.EL> = factory
     )
     ;
 
-export const $table: ValueRule<util.EL> = factory
+export const $table: ValueRule<EL> = factory
     .withName("table")
     .action(r => r
         .sequence(c => c
@@ -2224,7 +2222,7 @@ export const $table_column_attr_name = factory
     )
     ;
 
-export const $table_column: ValueRule<util.EL> = factory
+export const $table_column: ValueRule<EL> = factory
     .withName("table_column")
     .choice(c => c
         .or(r => r
@@ -3312,7 +3310,7 @@ export const $remarks = factory
         const remarks = new EL("Remarks");
         remarks.append(new EL("RemarksLabel", label_attr, [new __Text(label)]));
         if (children) {
-            util.setItemNum(children);
+            setItemNum(children);
         }
         remarks.extend(children);
 
@@ -3655,7 +3653,7 @@ export const $appdx_table = factory
         }
 
         if (children) {
-            util.setItemNum(children);
+            setItemNum(children);
         }
         appdx_table.extend(children || []);
 
@@ -3886,7 +3884,7 @@ export const $suppl_provision_appdx_table = factory
         }
 
         if (children) {
-            util.setItemNum(children);
+            setItemNum(children);
         }
         suppl_provision_appdx_table.extend(children || []);
 
@@ -4643,7 +4641,7 @@ export const $appdx_fig = factory
             , "success"),
         )
     , (({ success }) => {
-        return success as util.EL;
+        return success as EL;
     }),
     )
     ;
@@ -4878,7 +4876,7 @@ export const $appdx_note = factory
         }
 
         if (children) {
-            util.setItemNum(children);
+            setItemNum(children);
         }
         appdx_note.extend(children || []);
 
@@ -5081,7 +5079,7 @@ export const $appdx = factory
         }
 
         if (children) {
-            util.setItemNum(children);
+            setItemNum(children);
         }
         appdx.extend(children || []);
 
@@ -5272,7 +5270,7 @@ export const $suppl_provision_appdx = factory
         }
 
         if (children) {
-            util.setItemNum(children);
+            setItemNum(children);
         }
         suppl_provision_appdx.extend(children || []);
 
@@ -5410,7 +5408,7 @@ export const $suppl_provision = factory
         suppl_provision.append(new EL("SupplProvisionLabel", {}, [new __Text(suppl_provision_label.label)]));
 
         if (children) {
-            util.setItemNum(children);
+            setItemNum(children);
         }
         suppl_provision.extend(children);
         suppl_provision.extend(suppl_provision_appdx_items);
@@ -5507,7 +5505,7 @@ export const $period_sentences = factory
             , "fragments"),
         )
     , (({ fragments }) => {
-        const sentences: Array<util.EL> = [];
+        const sentences: Array<EL> = [];
         const proviso_indices: Array<number> = [];
         for (let i = 0; i < fragments.length; i++) {
             const sentence_content = fragments[i];
@@ -5635,1246 +5633,70 @@ export const $column = factory
     )
     ;
 
-export const $INLINE = factory
-    .withName("INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .oneOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .ref(() => $OUTSIDE_PARENTHESES_INLINE),
-                        )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
-                        .or(r => r
-                            .ref(() => $MISMATCH_END_PARENTHESIS),
-                        ),
-                    ),
-                )
-            , "texts"),
-        )
-    , (({ texts }) => {
-        return texts;
-    }),
-    )
-    ;
-
-export const $NEXTINLINE = factory
-    .withName("NEXTINLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .ref(() => $INDENT),
-                        )
-                        .or(r => r
-                            .ref(() => $DEDENT),
-                        )
-                        .or(r => r
-                            .regExp(/^[\r\n]/),
-                        ),
-                    ),
-                ),
-            )
-            .and(r => r
-                .ref(() => $INLINE)
-            , "inline"),
-        )
-    , (({ text, inline }) => {
-        return {
-            text: text(),
-            inline: inline,
-        };
-    }),
-    )
-    ;
-
-export const $NOT_PARENTHESIS_CHAR = factory
-    .withName("NOT_PARENTHESIS_CHAR")
-    .regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」]/)
-    ;
-
-export const $INLINE_FRAGMENT = factory
-    .withName("INLINE_FRAGMENT")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .oneOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t]/),
-                                            ),
-                                        )
-                                    , "plain"),
-                                )
-                            , (({ plain }) => {
-                                return new __Text(plain);
-                            }),
-                            ),
-                        )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
-                        .or(r => r
-                            .ref(() => $MISMATCH_END_PARENTHESIS),
-                        ),
-                    ),
-                )
-            , "texts"),
-        )
-    , (({ texts }) => {
-        return texts;
-    }),
-    )
-    ;
-
-export const $PERIOD_SENTENCE_FRAGMENT = factory
-    .withName("PERIOD_SENTENCE_FRAGMENT")
-    .choice(c => c
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $INDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $DEDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .choice(c => c
-                                            .or(r => r
-                                                .action(r => r
-                                                    .sequence(c => c
-                                                        .and(r => r
-                                                            .asSlice(r => r
-                                                                .oneOrMore(r => r
-                                                                    .regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/),
-                                                                ),
-                                                            )
-                                                        , "plain"),
-                                                    )
-                                                , (({ plain }) => {
-                                                    return new __Text(plain);
-                                                }),
-                                                ),
-                                            )
-                                            .or(r => r
-                                                .ref(() => $PARENTHESES_INLINE),
-                                            )
-                                            .or(r => r
-                                                .ref(() => $MISMATCH_END_PARENTHESIS),
-                                            ),
-                                        )
-                                    , "target"),
-                                )
-                            , (({ target }) => {
-                                return target;
-                            }),
-                            ),
-                        )
-                    , "texts")
-                    .and(r => r
-                        .choice(c => c
-                            .or(r => r
-                                .seqEqual("。"),
-                            )
-                            .or(r => r
-                                .nextIs(r => r
-                                    .ref(() => $__),
-                                ),
-                            )
-                            .or(r => r
-                                .nextIs(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            ),
-                        )
-                    , "tail"),
-                )
-            , (({ texts, tail }) => {
-                const last = texts[texts.length - 1];
-                if (tail) {
-                    if (last instanceof __Text) {
-                        last.text += tail;
-                    } else {
-                        texts.push(new __Text(tail));
-                    }
-                }
-                return texts;
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .seqEqual("。")
-                    , "plain"),
-                )
-            , (({ plain }) => {
-                return [new __Text(plain)];
-            }),
-            ),
-        ),
-    )
-    ;
-
-export const $OUTSIDE_PARENTHESES_INLINE = factory
-    .withName("OUTSIDE_PARENTHESES_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .asSlice(r => r
-                    .oneOrMore(r => r
-                        .ref(() => $NOT_PARENTHESIS_CHAR),
-                    ),
-                )
-            , "plain"),
-        )
-    , (({ plain }) => {
-        return new __Text(plain);
-    }),
-    )
-    ;
-
-export const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
-    .withName("OUTSIDE_ROUND_PARENTHESES_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .oneOrMore(r => r
-                    .action(r => r
-                        .sequence(c => c
-                            .and(r => r
-                                .nextIsNot(r => r
-                                    .ref(() => $ROUND_PARENTHESES_INLINE),
-                                ),
-                            )
-                            .and(r => r
-                                .choice(c => c
-                                    .or(r => r
-                                        .ref(() => $OUTSIDE_PARENTHESES_INLINE),
-                                    )
-                                    .or(r => r
-                                        .ref(() => $PARENTHESES_INLINE),
-                                    )
-                                    .or(r => r
-                                        .ref(() => $MISMATCH_END_PARENTHESIS),
-                                    ),
-                                )
-                            , "_target"),
-                        )
-                    , (({ _target }) => {
-                        return _target;
-                    }),
-                    ),
-                )
-            , "target"),
-        )
-    , (({ text, target }) => {
-        return { text: text(), content: target };
-    }),
-    )
-    ;
-
-export const $MISMATCH_START_PARENTHESIS = factory
-    .withName("MISMATCH_START_PARENTHESIS")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .asSlice(r => r
-                    .regExp(/^[<(（[［{｛「]/),
-                )
-            , "mismatch"),
-        )
-    , (({ mismatch }) => {
-        // console.error(`### line ${location().start.line}: Mismatch start parenthesis!`);
-        return new EL("__MismatchStartParenthesis", {}, [mismatch]);
-    }),
-    )
-    ;
-
-export const $MISMATCH_END_PARENTHESIS = factory
-    .withName("MISMATCH_END_PARENTHESIS")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .asSlice(r => r
-                    .regExp(/^[>)）\]］}｝」]/),
-                )
-            , "mismatch"),
-        )
-    , (({ mismatch }) => {
-        // console.error(`### line ${location().start.line}: Mismatch end parenthesis!`);
-        return new EL("__MismatchEndParenthesis", {}, [mismatch]);
-    }),
-    )
-    ;
-
-export const $PARENTHESES_INLINE: ValueRule<util.EL> = factory
-    .withName("PARENTHESES_INLINE")
-    .choice(c => c
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .nextIs(r => r
-                            .sequence(c => c
-                                .and(r => r
-                                    .seqEqual(""),
-                                )
-                                .and(r => r
-                                    .assert(({ state }) => {
-                                        state.parenthesesDepth++; return true;
-                                    }),
-                                ),
-                            ),
-                        ),
-                    )
-                    .and(r => r
-                        .ref(() => $PARENTHESES_INLINE_INNER)
-                    , "target")
-                    .and(r => r
-                        .nextIs(r => r
-                            .sequence(c => c
-                                .and(r => r
-                                    .seqEqual(""),
-                                )
-                                .and(r => r
-                                    .assert(({ state }) => {
-                                        state.parenthesesDepth--; return true;
-                                    }),
-                                ),
-                            ),
-                        ),
-                    ),
-                )
-            , (({ target }) => {
-                return target;
-            }),
-            ),
-        )
-        .or(r => r
-            .sequence(c => c
-                .and(r => r
-                    .nextIs(r => r
-                        .sequence(c => c
-                            .and(r => r
-                                .seqEqual(""),
-                            )
-                            .and(r => r
-                                .assert(({ state }) => {
-                                    state.parenthesesDepth--; return false;
-                                }),
-                            ),
-                        ),
-                    ),
-                )
-                .and(r => r
-                    .seqEqual("DUMMY"),
-                ),
-            ) as unknown as ValueRule<never>,
-        ),
-    )
-    ;
-
-export const $PARENTHESES_INLINE_INNER: ValueRule<util.EL> = factory
-    .withName("PARENTHESES_INLINE_INNER")
-    .choice(c => c
-        .or(r => r
-            .ref(() => $ROUND_PARENTHESES_INLINE),
-        )
-        .or(r => r
-            .ref(() => $SQUARE_BRACKETS_INLINE),
-        )
-        .or(r => r
-            .ref(() => $CURLY_BRACKETS_INLINE),
-        )
-        .or(r => r
-            .ref(() => $SQUARE_PARENTHESES_INLINE),
-        )
-        .or(r => r
-            .ref(() => $xml_element),
-        )
-        .or(r => r
-            .ref(() => $MISMATCH_START_PARENTHESIS),
-        ),
-    )
-    ;
-
-export const $ROUND_PARENTHESES_INLINE = factory
-    .withName("ROUND_PARENTHESES_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .regExp(/^[(（]/)
-            , "start")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .ref(() => $NOT_PARENTHESIS_CHAR),
-                                            ),
-                                        )
-                                    , "plain"),
-                                )
-                            , (({ plain }) => {
-                                return new __Text(plain);
-                            }),
-                            ),
-                        )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .nextIsNot(r => r
-                                            .regExp(/^[)）]/),
-                                        ),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $MISMATCH_END_PARENTHESIS)
-                                    , "target"),
-                                )
-                            , (({ target }) => {
-                                return target;
-                            }),
-                            ),
-                        ),
-                    ),
-                )
-            , "content")
-            .and(r => r
-                .regExp(/^[)）]/)
-            , "end"),
-        )
-    , (({ text, start, content, end, state }) => {
-        return new __Parentheses("round", state.parenthesesDepth, start, end, content, text());
-    }),
-    )
-    ;
-
-export const $SQUARE_BRACKETS_INLINE = factory
-    .withName("SQUARE_BRACKETS_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .regExp(/^[[［]/)
-            , "start")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .ref(() => $NOT_PARENTHESIS_CHAR),
-                                            ),
-                                        )
-                                    , "plain"),
-                                )
-                            , (({ plain }) => {
-                                return new __Text(plain);
-                            }),
-                            ),
-                        )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .nextIsNot(r => r
-                                            .regExp(/^[\]］]/),
-                                        ),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $MISMATCH_END_PARENTHESIS)
-                                    , "target"),
-                                )
-                            , (({ target }) => {
-                                return target;
-                            }),
-                            ),
-                        ),
-                    ),
-                )
-            , "content")
-            .and(r => r
-                .regExp(/^[\]］]/)
-            , "end"),
-        )
-    , (({ text, start, content, end, state }) => {
-        return new __Parentheses("squareb", state.parenthesesDepth, start, end, content, text());
-    }),
-    )
-    ;
-
-export const $CURLY_BRACKETS_INLINE = factory
-    .withName("CURLY_BRACKETS_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .regExp(/^[{｛]/)
-            , "start")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .ref(() => $NOT_PARENTHESIS_CHAR),
-                                            ),
-                                        )
-                                    , "plain"),
-                                )
-                            , (({ plain }) => {
-                                return new __Text(plain);
-                            }),
-                            ),
-                        )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .nextIsNot(r => r
-                                            .regExp(/^[}｝]/),
-                                        ),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $MISMATCH_END_PARENTHESIS)
-                                    , "target"),
-                                )
-                            , (({ target }) => {
-                                return target;
-                            }),
-                            ),
-                        ),
-                    ),
-                )
-            , "content")
-            .and(r => r
-                .regExp(/^[}｝]/)
-            , "end"),
-        )
-    , (({ text, start, content, end, state }) => {
-        return new __Parentheses("curly", state.parenthesesDepth, start, end, content, text());
-    }),
-    )
-    ;
-
-export const $SQUARE_PARENTHESES_INLINE: ValueRule<util.__Parentheses> = factory
-    .withName("SQUARE_PARENTHESES_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .regExp(/^[「]/)
-            , "start")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .ref(() => $xml_element),
-                        )
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .choice(c => c
-                                                .or(r => r
-                                                    .oneOrMore(r => r
-                                                        .regExp(/^[^\r\n<>「」]/),
-                                                    ),
-                                                )
-                                                .or(r => r
-                                                    .ref(() => $SQUARE_PARENTHESES_INLINE),
-                                                ),
-                                            ),
-                                        )
-                                    , "text"),
-                                )
-                            , (({ text }) => {
-                                return new __Text(text);
-                            }),
-                            ),
-                        ),
-                    ),
-                )
-            , "content")
-            .and(r => r
-                .regExp(/^[」]/)
-            , "end"),
-        )
-    , (({ text, start, content, end, state }) => {
-        return new __Parentheses("square", state.parenthesesDepth, start, end, content, text());
-    }),
-    )
-    ;
-
-export const $xml = factory
-    .withName("xml")
-    .zeroOrMore(r => r
-        .choice(c => c
-            .or(r => r
-                .action(r => r
-                    .sequence(c => c
-                        .and(r => r
-                            .asSlice(r => r
-                                .oneOrMore(r => r
-                                    .regExp(/^[^<>]/),
-                                ),
-                            )
-                        , "text"),
-                    )
-                , (({ text }) => {
-                    return new __Text(text);
-                }),
-                ),
-            )
-            .or(r => r
-                .ref(() => $xml_element),
-            ),
-        ),
-    )
-    ;
-
-export const $xml_element: ValueRule<util.EL> = factory
-    .withName("xml_element")
-    .choice(c => c
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $INDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $DEDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .seqEqual("<"),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .seqEqual("/"),
-                        ),
-                    )
-                    .and(r => r
-                        .asSlice(r => r
-                            .oneOrMore(r => r
-                                .regExp(/^[^/<> ="\t\r\n]/),
-                            ),
-                        )
-                    , "tag")
-                    .and(r => r
-                        .zeroOrMore(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^/<> ="\t\r\n]/),
-                                            ),
-                                        )
-                                    , "name")
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .seqEqual("="),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .seqEqual("\""),
-                                    )
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^"]/),
-                                            ),
-                                        )
-                                    , "value")
-                                    .and(r => r
-                                        .seqEqual("\""),
-                                    ),
-                                )
-                            , (({ name, value }) => {
-                                const ret = {} as Record<string, string>;
-                                ret[name] = value;
-                                return ret;
-                            }),
-                            ),
-                        )
-                    , "attr")
-                    .and(r => r
-                        .ref(() => $_),
-                    )
-                    .and(r => r
-                        .seqEqual(">"),
-                    )
-                    .and(r => r
-                        .ref(() => $xml)
-                    , "children")
-                    .and(r => r
-                        .sequence(c => c
-                            .and(r => r
-                                .seqEqual("</"),
-                            )
-                            .and(r => r
-                                .ref(() => $_),
-                            )
-                            .and(r => r
-                                .asSlice(r => r
-                                    .oneOrMore(r => r
-                                        .regExp(/^[^/<> ="\t\r\n]/),
-                                    ),
-                                )
-                            , "end_tag")
-                            .and(r => r
-                                .ref(() => $_),
-                            )
-                            .and(r => r
-                                .seqEqual(">"),
-                            )
-                            .and(r => r
-                                .assert(({ tag, end_tag }) => {
-                                    return end_tag === tag;
-                                }),
-                            ),
-                        ),
-                    ),
-                )
-            , (({ tag, attr, children }) => {
-                return new EL(tag, Object.assign({}, ...attr), children);
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $INDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $DEDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .seqEqual("<"),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .seqEqual("/"),
-                        ),
-                    )
-                    .and(r => r
-                        .asSlice(r => r
-                            .oneOrMore(r => r
-                                .regExp(/^[^/<> ="\t\r\n]/),
-                            ),
-                        )
-                    , "tag")
-                    .and(r => r
-                        .zeroOrMore(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^/<> ="\t\r\n]/),
-                                            ),
-                                        )
-                                    , "name")
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .seqEqual("="),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .seqEqual("\""),
-                                    )
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^"]/),
-                                            ),
-                                        )
-                                    , "value")
-                                    .and(r => r
-                                        .seqEqual("\""),
-                                    ),
-                                )
-                            , (({ name, value }) => {
-                                const ret = {} as Record<string, string>;
-                                ret[name] = value;
-                                return ret;
-                            }),
-                            ),
-                        )
-                    , "attr")
-                    .and(r => r
-                        .ref(() => $_),
-                    )
-                    .and(r => r
-                        .seqEqual("/>"),
-                    ),
-                )
-            , (({ tag, attr }) => {
-                return new EL(tag, Object.assign({}, ...attr));
-            }),
-            ),
-        ),
-    )
-    ;
-
-export const $ranges: ValueRule<[util.PointerFragment[], util.PointerFragment[]][]> = factory
-    .withName("ranges")
-    .choice(c => c
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .ref(() => $range)
-                    , "first")
-                    .and(r => r
-                        .choice(c => c
-                            .or(r => r
-                                .seqEqual("、"),
-                            )
-                            .or(r => r
-                                .seqEqual("及び"),
-                            )
-                            .or(r => r
-                                .seqEqual("並びに"),
-                            ),
-                        ),
-                    )
-                    .and(r => r
-                        .ref(() => $ranges)
-                    , "rest"),
-                )
-            , (({ first, rest }) => {
-                return [first].concat(rest);
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .ref(() => $range)
-                    , "range"),
-                )
-            , (({ range }) => {
-                return [range];
-            }),
-            ),
-        ),
-    )
-    ;
-
-export const $range = factory
-    .withName("range")
-    .choice(c => c
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .ref(() => $pointer)
-                    , "from")
-                    .and(r => r
-                        .seqEqual("から"),
-                    )
-                    .and(r => r
-                        .ref(() => $pointer)
-                    , "to")
-                    .and(r => r
-                        .seqEqual("まで"),
-                    ),
-                )
-            , (({ from, to }) => {
-                return [from, to] as [util.PointerFragment[], util.PointerFragment[]];
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .ref(() => $pointer)
-                    , "pointer"),
-                )
-            , (({ pointer }) => {
-                return [pointer, pointer] as [util.PointerFragment[], util.PointerFragment[]];
-            }),
-            ),
-        ),
-    )
-    ;
-
-export const $pointer = factory
-    .withName("pointer")
-    .oneOrMore(r => r
-        .ref(() => $pointer_fragment),
-    )
-    ;
-
-export const $kanji_digit = factory
-    .withName("kanji_digit")
-    .regExp(/^[〇一二三四五六七八九十百千]/)
-    ;
-
-export const $roman_digit = factory
-    .withName("roman_digit")
-    .regExp(/^[iIｉＩxXｘＸ]/)
-    ;
-
-export const $iroha_char = factory
-    .withName("iroha_char")
-    .regExp(/^[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]/)
-    ;
-
-export const $pointer_fragment = factory
-    .withName("pointer_fragment")
-    .choice(c => c
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .seqEqual("第"),
-                    )
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $kanji_digit),
-                        ),
-                    )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号"] as const)
-                    , "type_char")
-                    .and(r => r
-                        .zeroOrMore(r => r
-                            .sequence(c => c
-                                .and(r => r
-                                    .seqEqual("の"),
-                                )
-                                .and(r => r
-                                    .oneOrMore(r => r
-                                        .ref(() => $kanji_digit),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                )
-            , (({ text, type_char }) => {
-                return new util.PointerFragment(
-                    util.RelPos.NAMED,
-                    util.articleGroupType[type_char],
-                    text(),
-                    util.parseNamedNum(text()),
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .seqEqual("次"),
-                    )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const)
-                    , "type_char"),
-                )
-            , (({ text, type_char }) => {
-                return new util.PointerFragment(
-                    util.RelPos.NEXT,
-                    (type_char === "表")
-                        ? "TableStruct"
-                        : util.articleGroupType[type_char],
-                    text(),
-                    null,
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .seqEqual("前"),
-                    )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const)
-                    , "type_char"),
-                )
-            , (({ text, type_char }) => {
-                return new util.PointerFragment(
-                    util.RelPos.PREV,
-                    (type_char === "表")
-                        ? "TableStruct"
-                        : util.articleGroupType[type_char],
-                    text(),
-                    null,
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .choice(c => c
-                            .or(r => r
-                                .seqEqual("この"),
-                            )
-                            .or(r => r
-                                .seqEqual("本"),
-                            ),
-                        ),
-                    )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const)
-                    , "type_char"),
-                )
-            , (({ text, type_char }) => {
-                return new util.PointerFragment(
-                    util.RelPos.HERE,
-                    (type_char === "表")
-                        ? "TableStruct"
-                        : util.articleGroupType[type_char],
-                    text(),
-                    null,
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .seqEqual("同"),
-                    )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const)
-                    , "type_char"),
-                )
-            , (({ text, type_char }) => {
-                return new util.PointerFragment(
-                    util.RelPos.SAME,
-                    (type_char === "表")
-                        ? "TableStruct"
-                        : util.articleGroupType[type_char],
-                    text(),
-                    null,
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .regExp(/^[付附]/),
-                    )
-                    .and(r => r
-                        .seqEqual("則" as const)
-                    , "type_char"),
-                )
-            , (({ text, type_char }) => {
-                return new util.PointerFragment(
-                    util.RelPos.NAMED,
-                    util.articleGroupType[type_char],
-                    text(),
-                    null,
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .seqEqual("別表"),
-                    )
-                    .and(r => r
-                        .zeroOrOne(r => r
-                            .sequence(c => c
-                                .and(r => r
-                                    .seqEqual("第"),
-                                )
-                                .and(r => r
-                                    .oneOrMore(r => r
-                                        .ref(() => $kanji_digit),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                )
-            , (({ text }) => {
-                return new util.PointerFragment(
-                    util.RelPos.NAMED,
-                    "AppdxTable",
-                    text(),
-                    util.parseNamedNum(text()),
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .seqEqual("前段")
-            , (({ text }) => {
-                return new util.PointerFragment(
-                    util.RelPos.NAMED,
-                    "FIRSTPART",
-                    text(),
-                    null,
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .seqEqual("後段")
-            , (({ text }) => {
-                return new util.PointerFragment(
-                    util.RelPos.NAMED,
-                    "LATTERPART",
-                    text(),
-                    null,
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .seqEqual("ただし書")
-            , (({ text }) => {
-                return new util.PointerFragment(
-                    util.RelPos.NAMED,
-                    "PROVISO",
-                    text(),
-                    null,
-                );
-            }),
-            ),
-        )
-        .or(r => r
-            .action(r => r
-                .choice(c => c
-                    .or(r => r
-                        .ref(() => $iroha_char),
-                    )
-                    .or(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $roman_digit),
-                        ),
-                    ),
-                )
-            , (({ text }) => {
-                return new util.PointerFragment(
-                    util.RelPos.NAMED,
-                    "SUBITEM",
-                    text(),
-                    util.parseNamedNum(text()),
-                );
-            }),
-            ),
-        ),
-    )
-    ;
-
+export const rules = {
+    law: $law,
+    law_title: $law_title,
+    enact_statement: $enact_statement,
+    toc_label: $toc_label,
+    toc: $toc,
+    toc_item: $toc_item,
+    main_provision: $main_provision,
+    article_group_title: $article_group_title,
+    article_group: $article_group,
+    article_paragraph_caption: $article_paragraph_caption,
+    article_title: $article_title,
+    article: $article,
+    suppl_note: $suppl_note,
+    paragraph_item: $paragraph_item,
+    in_table_column_paragraph_items: $in_table_column_paragraph_items,
+    no_name_paragraph_item: $no_name_paragraph_item,
+    paragraph_item_child: $paragraph_item_child,
+    list: $list,
+    amend_provision: $amend_provision,
+    table_struct: $table_struct,
+    table_struct_title: $table_struct_title,
+    table: $table,
+    table_column_attr_name: $table_column_attr_name,
+    table_column: $table_column,
+    style_struct: $style_struct,
+    style_struct_title: $style_struct_title,
+    style: $style,
+    format_struct: $format_struct,
+    format_struct_title: $format_struct_title,
+    format: $format,
+    note_struct: $note_struct,
+    note_struct_title: $note_struct_title,
+    note: $note,
+    remarks: $remarks,
+    fig_struct: $fig_struct,
+    fig: $fig,
+    appdx_item: $appdx_item,
+    appdx_table_title: $appdx_table_title,
+    appdx_table: $appdx_table,
+    appdx_table_children: $appdx_table_children,
+    suppl_provision_appdx_table_title: $suppl_provision_appdx_table_title,
+    suppl_provision_appdx_table: $suppl_provision_appdx_table,
+    suppl_provision_appdx_table_children: $suppl_provision_appdx_table_children,
+    appdx_style_title: $appdx_style_title,
+    appdx_style: $appdx_style,
+    suppl_provision_appdx_style_title: $suppl_provision_appdx_style_title,
+    suppl_provision_appdx_style: $suppl_provision_appdx_style,
+    appdx_format_title: $appdx_format_title,
+    appdx_format: $appdx_format,
+    appdx_fig_title: $appdx_fig_title,
+    appdx_fig: $appdx_fig,
+    appdx_fig_children: $appdx_fig_children,
+    appdx_note_title: $appdx_note_title,
+    appdx_note: $appdx_note,
+    appdx_note_children: $appdx_note_children,
+    appdx_title: $appdx_title,
+    appdx: $appdx,
+    suppl_provision_appdx_title: $suppl_provision_appdx_title,
+    suppl_provision_appdx: $suppl_provision_appdx,
+    suppl_provision_label: $suppl_provision_label,
+    suppl_provision: $suppl_provision,
+    columns_or_sentences: $columns_or_sentences,
+    period_sentences: $period_sentences,
+    columns: $columns,
+    column: $column,
+};
