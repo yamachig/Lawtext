@@ -36,17 +36,11 @@ import * as supplProvision from "./std/supplProvision";
 const $start: ValueRule<std.Law> = factory
     .sequence(c => c
         .and(r => r
-            .zeroOrMore(r => r
-                .ref(() => $NEWLINE),
-            ),
+            .zeroOrMore(() => $NEWLINE),
         )
+        .and(() => $law, "law")
         .and(r => r
-            .ref(() => $law)
-        , "law")
-        .and(r => r
-            .nextIsNot(r => r
-                .anyOne(),
-            ),
+            .nextIsNot(r => r.anyOne()),
         )
         .action((({ law }) => {
             return law;

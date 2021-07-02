@@ -12,39 +12,13 @@ export const $format_struct = factory
     .withName("format_struct")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
-            .and(r => r
-                .zeroOrOne(r => r
-                    .ref(() => $format_struct_title),
-                )
-            , "format_struct_title")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $remarks),
-                )
-            , "remarkses1")
-            .and(r => r
-                .ref(() => $format)
-            , "format")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $remarks),
-                )
-            , "remarkses2"),
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
+            .and(r => r.nextIsNot(() => $NEWLINE))
+            .and(r => r.zeroOrOne(() => $format_struct_title), "format_struct_title")
+            .and(r => r.zeroOrMore(() => $remarks), "remarkses1")
+            .and(() => $format, "format")
+            .and(r => r.zeroOrMore(() => $remarks), "remarkses2"),
         )
     , (({ format_struct_title, remarkses1, format, remarkses2 }) => {
         const format_struct = newStdEL("FormatStruct");
@@ -68,20 +42,10 @@ export const $format_struct_title = factory
     .withName("format_struct_title")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .seqEqual(":format-struct-title:"),
-            )
-            .and(r => r
-                .ref(() => $_),
-            )
-            .and(r => r
-                .asSlice(r => r
-                    .ref(() => $INLINE),
-                )
-            , "title")
-            .and(r => r
-                .ref(() => $NEWLINE),
-            ),
+            .and(r => r.seqEqual(":format-struct-title:"))
+            .and(() => $_)
+            .and(r => r.asSlice(() => $INLINE), "title")
+            .and(() => $NEWLINE),
         )
     , (({ title }) => {
         return newStdEL("FormatStructTitle", {}, [new __Text(title)]);
@@ -98,18 +62,14 @@ export const $format = factory
                     .or(r => r
                         .action(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .ref(() => $fig)
-                                , "fig"),
+                                .and(() => $fig, "fig"),
                             )
                         , (({ fig }) => {
                             return [fig];
                         }),
                         ),
                     )
-                    .or(r => r
-                        .ref(() => $columns_or_sentences),
-                    ),
+                    .or(() => $columns_or_sentences),
                 )
             , "children"),
         )

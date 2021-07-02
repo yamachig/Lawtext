@@ -19,38 +19,24 @@ import { $toc, $toc_label } from "./toc";
 export const $law: ValueRule<Law> = factory
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .zeroOrOne(r => r
-                    .ref(() => $law_title),
-                )
-            , "law_title")
+            .and(r => r.zeroOrOne(() => $law_title), "law_title")
             .and(r => r
                 .zeroOrMore(r => r
                     .action(r => r
                         .sequence(c => c
                             .and(r => r
                                 .choice(c => c
-                                    .or(r => r
-                                        .seqEqual(":前文:"),
-                                    )
-                                    .or(r => r
-                                        .seqEqual(":Preamble:"),
-                                    ),
+                                    .or(r => r.seqEqual(":前文:"))
+                                    .or(r => r.seqEqual(":Preamble:")),
                                 ),
                             )
-                            .and(r => r
-                                .ref(() => $NEWLINE),
-                            )
+                            .and(() => $NEWLINE)
                             .and(r => r
                                 .oneOrMore(r => r
                                     .action(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .ref(() => $INLINE)
-                                            , "inline")
-                                            .and(r => r
-                                                .ref(() => $NEWLINE),
-                                            ),
+                                            .and(() => $INLINE, "inline")
+                                            .and(() => $NEWLINE),
                                         )
                                     , (({ inline }) => {
                                         return newStdEL("Paragraph", {}, [
@@ -61,11 +47,7 @@ export const $law: ValueRule<Law> = factory
                                     ),
                                 )
                             , "target")
-                            .and(r => r
-                                .oneOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            ),
+                            .and(r => r.oneOrMore(() => $NEWLINE)),
                         )
                     , (({ target }) => {
                         return newStdEL("Preamble", {}, target);
@@ -77,23 +59,11 @@ export const $law: ValueRule<Law> = factory
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .oneOrMore(r => r
-                                    .ref(() => $enact_statement),
-                                )
-                            , "target")
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(() => $INDENT)
+                            .and(() => $INDENT)
+                            .and(r => r.oneOrMore(() => $enact_statement), "target")
+                            .and(() => $DEDENT)
+                            .and(() => $DEDENT),
                         )
                     , (({ target }) => {
                         return target;
@@ -101,38 +71,24 @@ export const $law: ValueRule<Law> = factory
                     ),
                 )
             , "enact_statements")
-            .and(r => r
-                .zeroOrOne(r => r
-                    .ref(() => $toc),
-                )
-            , "toc")
+            .and(r => r.zeroOrOne(() => $toc), "toc")
             .and(r => r
                 .zeroOrMore(r => r
                     .action(r => r
                         .sequence(c => c
                             .and(r => r
                                 .choice(c => c
-                                    .or(r => r
-                                        .seqEqual(":前文:"),
-                                    )
-                                    .or(r => r
-                                        .seqEqual(":Preamble:"),
-                                    ),
+                                    .or(r => r.seqEqual(":前文:"))
+                                    .or(r => r.seqEqual(":Preamble:")),
                                 ),
                             )
-                            .and(r => r
-                                .ref(() => $NEWLINE),
-                            )
+                            .and(() => $NEWLINE)
                             .and(r => r
                                 .oneOrMore(r => r
                                     .action(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .ref(() => $INLINE)
-                                            , "inline")
-                                            .and(r => r
-                                                .ref(() => $NEWLINE),
-                                            ),
+                                            .and(() => $INLINE, "inline")
+                                            .and(() => $NEWLINE),
                                         )
                                     , (({ inline }) => {
                                         return newStdEL("Paragraph", {}, [
@@ -143,11 +99,7 @@ export const $law: ValueRule<Law> = factory
                                     ),
                                 )
                             , "target")
-                            .and(r => r
-                                .oneOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            ),
+                            .and(r => r.oneOrMore(() => $NEWLINE)),
                         )
                     , (({ target }) => {
                         return newStdEL("Preamble", {}, target);
@@ -155,14 +107,8 @@ export const $law: ValueRule<Law> = factory
                     ),
                 )
             , "preambles2")
-            .and(r => r
-                .ref(() => $main_provision)
-            , "main_provision")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $appdx_item),
-                )
-            , "appdx_items"),
+            .and(() => $main_provision, "main_provision")
+            .and(r => r.zeroOrMore(() => $appdx_item), "appdx_items"),
         )
     , (({ law_title, preambles1, enact_statements, toc, preambles2, main_provision, appdx_items }) => {
         const law = newStdEL("Law", { Lang: "ja" } as Law["attr"]);
@@ -219,22 +165,10 @@ export const $law_title = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .asSlice(r => r
-                            .ref(() => $INLINE),
-                        )
-                    , "law_title")
-                    .and(r => r
-                        .ref(() => $NEWLINE),
-                    )
-                    .and(r => r
-                        .ref(() => $ROUND_PARENTHESES_INLINE)
-                    , "law_num")
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $NEWLINE),
-                        ),
-                    ),
+                    .and(r => r.asSlice(() => $INLINE), "law_title")
+                    .and(() => $NEWLINE)
+                    .and(() => $ROUND_PARENTHESES_INLINE, "law_num")
+                    .and(r => r.oneOrMore(() => $NEWLINE)),
                 )
             , (({ law_title, law_num }) => {
                 return {
@@ -247,16 +181,8 @@ export const $law_title = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .asSlice(r => r
-                            .ref(() => $INLINE),
-                        )
-                    , "law_title")
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $NEWLINE),
-                        ),
-                    ),
+                    .and(r => r.asSlice(() => $INLINE), "law_title")
+                    .and(r => r.oneOrMore(() => $NEWLINE)),
                 )
             , (({ law_title }) => {
                 return {
@@ -273,29 +199,11 @@ export const $enact_statement = factory
     .withName("enact_statement")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $__),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $toc_label),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $article_title),
-                ),
-            )
-            .and(r => r
-                .ref(() => $INLINE)
-            , "target")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            ),
+            .and(r => r.nextIsNot(() => $__))
+            .and(r => r.nextIsNot(() => $toc_label))
+            .and(r => r.nextIsNot(() => $article_title))
+            .and(() => $INLINE, "target")
+            .and(r => r.oneOrMore(() => $NEWLINE)),
         )
     , (({ target }) => {
         return newStdEL("EnactStatement", {}, target);
@@ -312,12 +220,8 @@ export const $main_provision = factory
                     .and(r => r
                         .oneOrMore(r => r
                             .choice(c => c
-                                .or(r => r
-                                    .ref(() => $article),
-                                )
-                                .or(r => r
-                                    .ref(() => $article_group),
-                                ),
+                                .or(() => $article)
+                                .or(() => $article_group),
                             ),
                         )
                     , "children"),
@@ -330,9 +234,7 @@ export const $main_provision = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .ref(() => $no_name_paragraph_item)
-                    , "paragraph"),
+                    .and(() => $no_name_paragraph_item, "paragraph"),
                 )
             , (({ paragraph }) => {
                 return newStdEL("MainProvision", {}, [paragraph]);
@@ -345,27 +247,13 @@ export const $main_provision = factory
 
 export const $appdx_item = factory
     .choice(c => c
-        .or(r => r
-            .ref(() => $appdx),
-        )
-        .or(r => r
-            .ref(() => $appdx_table),
-        )
-        .or(r => r
-            .ref(() => $appdx_style),
-        )
-        .or(r => r
-            .ref(() => $appdx_format),
-        )
-        .or(r => r
-            .ref(() => $appdx_fig),
-        )
-        .or(r => r
-            .ref(() => $appdx_note),
-        )
-        .or(r => r
-            .ref(() => $suppl_provision),
-        ),
+        .or(() => $appdx)
+        .or(() => $appdx_table)
+        .or(() => $appdx_style)
+        .or(() => $appdx_format)
+        .or(() => $appdx_fig)
+        .or(() => $appdx_note)
+        .or(() => $suppl_provision),
     )
     ;
 

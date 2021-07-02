@@ -8,12 +8,8 @@ import { $__ } from "../lexical";
 export const $columns_or_sentences = factory
     .withName("columns_or_sentences")
     .choice(c => c
-        .or(r => r
-            .ref(() => $columns),
-        )
-        .or(r => r
-            .ref(() => $period_sentences),
-        )
+        .or(() => $columns)
+        .or(() => $period_sentences)
         .or(r => r
             .action(r => r
                 .sequence(c => c
@@ -24,29 +20,19 @@ export const $columns_or_sentences = factory
                                     .zeroOrMore(r => r
                                         .action(r => r
                                             .sequence(c => c
-                                                .and(r => r
-                                                    .seqEqual("["),
-                                                )
+                                                .and(r => r.seqEqual("["))
                                                 .and(r => r
                                                     .asSlice(r => r
-                                                        .oneOrMore(r => r
-                                                            .regExp(/^[^ 　\t\r\n\]=]/),
-                                                        ),
+                                                        .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]=]/)),
                                                     )
                                                 , "name")
-                                                .and(r => r
-                                                    .seqEqual("=\""),
-                                                )
+                                                .and(r => r.seqEqual("=\""))
                                                 .and(r => r
                                                     .asSlice(r => r
-                                                        .oneOrMore(r => r
-                                                            .regExp(/^[^ 　\t\r\n\]"]/),
-                                                        ),
+                                                        .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
                                                     )
                                                 , "value")
-                                                .and(r => r
-                                                    .seqEqual("\"]"),
-                                                ),
+                                                .and(r => r.seqEqual("\"]")),
                                             )
                                         , (({ name, value }) => {
                                             return [name, value];
@@ -64,9 +50,7 @@ export const $columns_or_sentences = factory
                         }),
                         )
                     , "attr")
-                    .and(r => r
-                        .ref(() => $INLINE)
-                    , "inline"),
+                    .and(() => $INLINE, "inline"),
                 )
             , (({ attr, inline }) => {
             // console.error(`### line ${location().start.line}: Maybe mismatched parenthesis!`);
@@ -86,11 +70,7 @@ export const $period_sentences = factory
     .withName("period_sentences")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $PERIOD_SENTENCE_FRAGMENT),
-                )
-            , "fragments"),
+            .and(r => r.oneOrMore(() => $PERIOD_SENTENCE_FRAGMENT), "fragments"),
         )
     , (({ fragments }) => {
         const sentences: Array<EL> = [];
@@ -127,19 +107,13 @@ export const $columns = factory
     .withName("columns")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .ref(() => $column)
-            , "first")
+            .and(() => $column, "first")
             .and(r => r
                 .oneOrMore(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $__),
-                            )
-                            .and(r => r
-                                .ref(() => $column)
-                            , "target"),
+                            .and(() => $__)
+                            .and(() => $column, "target"),
                         )
                     , (({ target }) => {
                         return target;
@@ -171,29 +145,19 @@ export const $column = factory
                             .zeroOrMore(r => r
                                 .action(r => r
                                     .sequence(c => c
-                                        .and(r => r
-                                            .seqEqual("["),
-                                        )
+                                        .and(r => r.seqEqual("["))
                                         .and(r => r
                                             .asSlice(r => r
-                                                .oneOrMore(r => r
-                                                    .regExp(/^[^ 　\t\r\n\]=]/),
-                                                ),
+                                                .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]=]/)),
                                             )
                                         , "name")
-                                        .and(r => r
-                                            .seqEqual("=\""),
-                                        )
+                                        .and(r => r.seqEqual("=\""))
                                         .and(r => r
                                             .asSlice(r => r
-                                                .oneOrMore(r => r
-                                                    .regExp(/^[^ 　\t\r\n\]"]/),
-                                                ),
+                                                .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
                                             )
                                         , "value")
-                                        .and(r => r
-                                            .seqEqual("\"]"),
-                                        ),
+                                        .and(r => r.seqEqual("\"]")),
                                     )
                                 , (({ name, value }) => {
                                     return [name, value];
@@ -211,9 +175,7 @@ export const $column = factory
                 }),
                 )
             , "attr")
-            .and(r => r
-                .ref(() => $period_sentences)
-            , "content"),
+            .and(() => $period_sentences, "content"),
         )
     , (({ attr, content }) => {
         return newStdEL("Column", attr, content);

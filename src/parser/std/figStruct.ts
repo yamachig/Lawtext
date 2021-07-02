@@ -13,23 +13,13 @@ export const $fig_struct = factory
             .and(r => r
                 .zeroOrOne(r => r
                     .sequence(c => c
-                        .and(r => r
-                            .seqEqual(":fig-struct:"),
-                        )
-                        .and(r => r
-                            .ref(() => $NEWLINE),
-                        ),
+                        .and(r => r.seqEqual(":fig-struct:"))
+                        .and(() => $NEWLINE),
                     ),
                 ),
             )
-            .and(r => r
-                .ref(() => $fig)
-            , "fig")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $remarks),
-                )
-            , "remarks"),
+            .and(() => $fig, "fig")
+            .and(r => r.zeroOrMore(() => $remarks), "remarks"),
         )
     , (({ fig, remarks }) => {
         return newStdEL("FigStruct", {}, [fig, ...remarks]);
@@ -41,32 +31,14 @@ export const $fig = factory
     .withName("fig")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .seqEqual(".."),
-            )
-            .and(r => r
-                .ref(() => $__),
-            )
-            .and(r => r
-                .seqEqual("figure"),
-            )
-            .and(r => r
-                .ref(() => $_),
-            )
-            .and(r => r
-                .seqEqual("::"),
-            )
-            .and(r => r
-                .ref(() => $_),
-            )
-            .and(r => r
-                .asSlice(r => r
-                    .ref(() => $INLINE),
-                )
-            , "src")
-            .and(r => r
-                .ref(() => $NEWLINE),
-            ),
+            .and(r => r.seqEqual(".."))
+            .and(() => $__)
+            .and(r => r.seqEqual("figure"))
+            .and(() => $_)
+            .and(r => r.seqEqual("::"))
+            .and(() => $_)
+            .and(r => r.asSlice(() => $INLINE), "src")
+            .and(() => $NEWLINE),
         )
     , (({ src }) => {
         return newStdEL("Fig", { src: src });

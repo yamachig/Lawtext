@@ -23,29 +23,19 @@ export const $appdx_table_title = factory
                                         .zeroOrMore(r => r
                                             .action(r => r
                                                 .sequence(c => c
-                                                    .and(r => r
-                                                        .seqEqual("["),
-                                                    )
+                                                    .and(r => r.seqEqual("["))
                                                     .and(r => r
                                                         .asSlice(r => r
-                                                            .oneOrMore(r => r
-                                                                .regExp(/^[^ 　\t\r\n\]=]/),
-                                                            ),
+                                                            .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]=]/)),
                                                         )
                                                     , "name")
-                                                    .and(r => r
-                                                        .seqEqual("=\""),
-                                                    )
+                                                    .and(r => r.seqEqual("=\""))
                                                     .and(r => r
                                                         .asSlice(r => r
-                                                            .oneOrMore(r => r
-                                                                .regExp(/^[^ 　\t\r\n\]"]/),
-                                                            ),
+                                                            .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
                                                         )
                                                     , "value")
-                                                    .and(r => r
-                                                        .seqEqual("\"]"),
-                                                    ),
+                                                    .and(r => r.seqEqual("\"]")),
                                                 )
                                             , (({ name, value }) => {
                                                 return [name, value];
@@ -71,13 +61,9 @@ export const $appdx_table_title = factory
                                             .and(r => r
                                                 .asSlice(r => r
                                                     .sequence(c => c
+                                                        .and(r => r.seqEqual("別表"))
                                                         .and(r => r
-                                                            .seqEqual("別表"),
-                                                        )
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r
-                                                                .regExp(/^[^\r\n(（]/),
-                                                            ),
+                                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                                         ),
                                                     ),
                                                 )
@@ -86,12 +72,8 @@ export const $appdx_table_title = factory
                                                 .zeroOrOne(r => r
                                                     .action(r => r
                                                         .sequence(c => c
-                                                            .and(r => r
-                                                                .ref(() => $_),
-                                                            )
-                                                            .and(r => r
-                                                                .ref(() => $ROUND_PARENTHESES_INLINE)
-                                                            , "target"),
+                                                            .and(() => $_)
+                                                            .and(() => $ROUND_PARENTHESES_INLINE, "target"),
                                                         )
                                                     , (({ target }) => {
                                                         return target;
@@ -101,16 +83,10 @@ export const $appdx_table_title = factory
                                             , "related_article_num")
                                             .and(r => r
                                                 .asSlice(r => r
-                                                    .zeroOrMore(r => r
-                                                        .regExp(/^[^\r\n(（]/),
-                                                    ),
+                                                    .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                                 )
                                             , "table_struct_title")
-                                            .and(r => r
-                                                .nextIs(r => r
-                                                    .ref(() => $NEWLINE),
-                                                ),
-                                            ),
+                                            .and(r => r.nextIs(() => $NEWLINE)),
                                         )
                                     , (({ text, title, related_article_num, table_struct_title }) => {
                                         return {
@@ -128,40 +104,26 @@ export const $appdx_table_title = factory
                                             .and(r => r
                                                 .asSlice(r => r
                                                     .sequence(c => c
+                                                        .and(r => r.seqEqual("別表"))
                                                         .and(r => r
-                                                            .seqEqual("別表"),
+                                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                                         )
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r
-                                                                .regExp(/^[^\r\n(（]/),
-                                                            ),
-                                                        )
-                                                        .and(r => r
-                                                            .ref(() => $ROUND_PARENTHESES_INLINE),
-                                                        ),
+                                                        .and(() => $ROUND_PARENTHESES_INLINE),
                                                     ),
                                                 )
                                             , "title")
                                             .and(r => r
                                                 .action(r => r
                                                     .sequence(c => c
-                                                        .and(r => r
-                                                            .ref(() => $_),
-                                                        )
-                                                        .and(r => r
-                                                            .ref(() => $ROUND_PARENTHESES_INLINE)
-                                                        , "target"),
+                                                        .and(() => $_)
+                                                        .and(() => $ROUND_PARENTHESES_INLINE, "target"),
                                                     )
                                                 , (({ target }) => {
                                                     return target;
                                                 }),
                                                 )
                                             , "related_article_num")
-                                            .and(r => r
-                                                .nextIs(r => r
-                                                    .ref(() => $NEWLINE),
-                                                ),
-                                            ),
+                                            .and(r => r.nextIs(() => $NEWLINE)),
                                         )
                                     , (({ text, title, related_article_num }) => {
                                         return {
@@ -195,39 +157,17 @@ export const $appdx_table = factory
     .withName("appdx_table")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .ref(() => $appdx_table_title)
-            , "title_struct")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
+            .and(() => $appdx_table_title, "title_struct")
+            .and(r => r.oneOrMore(() => $NEWLINE))
             .and(r => r
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .oneOrMore(r => r
-                                    .ref(() => $appdx_table_children),
-                                )
-                            , "target")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $remarks),
-                                )
-                            , "remarkses")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(() => $INDENT)
+                            .and(r => r.oneOrMore(() => $appdx_table_children), "target")
+                            .and(r => r.zeroOrMore(() => $remarks), "remarkses")
+                            .and(r => r.zeroOrMore(() => $NEWLINE))
+                            .and(() => $DEDENT),
                         )
                     , (({ target, remarkses }) => {
                         return [...target, ...remarkses];
@@ -261,12 +201,8 @@ export const $appdx_table = factory
 export const $appdx_table_children = factory
     .withName("appdx_table_children")
     .choice(c => c
-        .or(r => r
-            .ref(() => $table_struct),
-        )
-        .or(r => r
-            .ref(() => $paragraph_item),
-        ),
+        .or(() => $table_struct)
+        .or(() => $paragraph_item),
     )
     ;
 

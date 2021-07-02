@@ -14,19 +14,11 @@ export const $article_paragraph_caption = factory
     .withName("article_paragraph_caption")
     .action(r => r
         .sequence(c => c
+            .and(() => $__)
+            .and(() => $ROUND_PARENTHESES_INLINE, "article_paragraph_caption")
+            .and(() => $NEWLINE)
             .and(r => r
-                .ref(() => $__),
-            )
-            .and(r => r
-                .ref(() => $ROUND_PARENTHESES_INLINE)
-            , "article_paragraph_caption")
-            .and(r => r
-                .ref(() => $NEWLINE),
-            )
-            .and(r => r
-                .nextIs(r => r
-                    .regExp(/^[^ 　\t\r\n]/),
-                ),
+                .nextIs(r => r.regExp(/^[^ 　\t\r\n]/)),
             ),
         )
     , (({ article_paragraph_caption }) => {
@@ -38,34 +30,22 @@ export const $article_paragraph_caption = factory
 export const $article_title = factory
     .withName("article_title")
     .sequence(c => c
+        .and(r => r.seqEqual("第"))
         .and(r => r
-            .seqEqual("第"),
+            .oneOrMore(r => r.regExp(/^[^ 　\t\r\n条]/)),
         )
-        .and(r => r
-            .oneOrMore(r => r
-                .regExp(/^[^ 　\t\r\n条]/),
-            ),
-        )
-        .and(r => r
-            .seqEqual("条"),
-        )
+        .and(r => r.seqEqual("条"))
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(c => c
                     .and(r => r
                         .choice(c => c
-                            .or(r => r
-                                .regExp(/^[のノ]/),
-                            )
-                            .or(r => r
-                                .seqEqual("及び"),
-                            ),
+                            .or(r => r.regExp(/^[のノ]/))
+                            .or(r => r.seqEqual("及び")),
                         ),
                     )
                     .and(r => r
-                        .oneOrMore(r => r
-                            .regExp(/^[^ 　\t\r\n]/),
-                        ),
+                        .oneOrMore(r => r.regExp(/^[^ 　\t\r\n]/)),
                     ),
                 ),
             ),
@@ -78,26 +58,18 @@ export const $article = factory
     .action(r => r
         .sequence(c => c
             .and(r => r
-                .zeroOrOne(r => r
-                    .ref(() => $article_paragraph_caption),
-                )
+                .zeroOrOne(() => $article_paragraph_caption)
             , "article_caption")
             .and(r => r
-                .asSlice(r => r
-                    .ref(() => $article_title),
-                )
+                .asSlice(() => $article_title)
             , "article_title")
             .and(r => r
                 .choice(c => c
                     .or(r => r
                         .action(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .ref(() => $__),
-                                )
-                                .and(r => r
-                                    .ref(() => $columns_or_sentences)
-                                , "target"),
+                                .and(() => $__)
+                                .and(() => $columns_or_sentences, "target"),
                             )
                         , (({ target }) => {
                             return target;
@@ -115,36 +87,22 @@ export const $article = factory
                 )
             , "inline_contents")
             .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
+                .oneOrMore(() => $NEWLINE),
             )
             .and(r => r
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
+                            .and(() => $INDENT)
+                            .and(() => $INDENT)
                             .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .oneOrMore(r => r
-                                    .ref(() => $list),
-                                )
+                                .oneOrMore(() => $list)
                             , "target")
                             .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
+                                .zeroOrMore(() => $NEWLINE),
                             )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(() => $DEDENT)
+                            .and(() => $DEDENT),
                         )
                     , (({ target }) => {
                         return target;
@@ -156,28 +114,18 @@ export const $article = factory
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
+                            .and(() => $INDENT)
+                            .and(() => $paragraph_item_child, "target")
                             .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $paragraph_item_child)
-                            , "target")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
+                                .zeroOrMore(() => $NEWLINE),
                             )
                             .and(r => r
                                 .zeroOrMore(r => r
                                     .action(r => r
                                         .sequence(c => c
+                                            .and(() => $paragraph_item_child, "_target")
                                             .and(r => r
-                                                .ref(() => $paragraph_item_child)
-                                            , "_target")
-                                            .and(r => r
-                                                .zeroOrMore(r => r
-                                                    .ref(() => $NEWLINE),
-                                                ),
+                                                .zeroOrMore(() => $NEWLINE),
                                             ),
                                         )
                                     , (({ _target }) => {
@@ -186,9 +134,7 @@ export const $article = factory
                                     ),
                                 )
                             , "target_rest")
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(() => $DEDENT),
                         )
                     , (({ target, target_rest }) => {
                         return [target].concat(target_rest);
@@ -197,36 +143,24 @@ export const $article = factory
                 )
             , "children1")
             .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $paragraph_item),
-                )
+                .zeroOrMore(() => $paragraph_item)
             , "paragraphs")
             .and(r => r
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
+                            .and(() => $INDENT)
+                            .and(() => $paragraph_item_child, "target")
                             .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $paragraph_item_child)
-                            , "target")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
+                                .zeroOrMore(() => $NEWLINE),
                             )
                             .and(r => r
                                 .zeroOrMore(r => r
                                     .action(r => r
                                         .sequence(c => c
+                                            .and(() => $paragraph_item_child, "_target")
                                             .and(r => r
-                                                .ref(() => $paragraph_item_child)
-                                            , "_target")
-                                            .and(r => r
-                                                .zeroOrMore(r => r
-                                                    .ref(() => $NEWLINE),
-                                                ),
+                                                .zeroOrMore(() => $NEWLINE),
                                             ),
                                         )
                                     , (({ _target }) => {
@@ -235,9 +169,7 @@ export const $article = factory
                                     ),
                                 )
                             , "target_rest")
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(() => $DEDENT),
                         )
                     , (({ target, target_rest }) => {
                         return [target].concat(target_rest);
@@ -246,9 +178,7 @@ export const $article = factory
                 )
             , "children2")
             .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $suppl_note),
-                )
+                .zeroOrMore(() => $suppl_note)
             , "suppl_notes"),
         )
     , (({ article_caption, article_title, inline_contents, lists, children1, paragraphs, children2, suppl_notes }) => {

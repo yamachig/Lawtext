@@ -10,27 +10,19 @@ export const $amend_provision = factory
     .withName("amend_provision")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .seqEqual(":AmendProvision:"),
-            )
-            .and(r => r
-                .ref(() => $NEWLINE),
-            )
+            .and(r => r.seqEqual(":AmendProvision:"))
+            .and(() => $NEWLINE)
             .and(r => r
                 .oneOrMore(r => r
                     .action(r => r
                         .sequence(c => c
                             .and(r => r
                                 .choice(c => c
-                                    .or(r => r
-                                        .ref(() => $xml_element),
-                                    )
+                                    .or(() => $xml_element)
                                     .or(r => r
                                         .action(r => r
                                             .sequence(c => c
-                                                .and(r => r
-                                                    .ref(() => $INLINE)
-                                                , "_inline"),
+                                                .and(() => $INLINE, "_inline"),
                                             )
                                         , (({ _inline }) => {
                                             return newStdEL("AmendProvisionSentence", {}, [newStdEL("Sentence", {}, _inline)]);
@@ -39,9 +31,7 @@ export const $amend_provision = factory
                                     ),
                                 )
                             , "inline")
-                            .and(r => r
-                                .ref(() => $NEWLINE),
-                            ),
+                            .and(() => $NEWLINE),
                         )
                     , (({ inline }) => {
                         return inline;

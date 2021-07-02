@@ -8,28 +8,14 @@ export const $INLINE = factory
     .withName("INLINE")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
             .and(r => r
                 .oneOrMore(r => r
                     .choice(c => c
-                        .or(r => r
-                            .ref(() => $OUTSIDE_PARENTHESES_INLINE),
-                        )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
-                        .or(r => r
-                            .ref(() => $MISMATCH_END_PARENTHESIS),
-                        ),
+                        .or(() => $OUTSIDE_PARENTHESES_INLINE)
+                        .or(() => $PARENTHESES_INLINE)
+                        .or(() => $MISMATCH_END_PARENTHESIS),
                     ),
                 )
             , "texts"),
@@ -47,21 +33,13 @@ export const $NEXTINLINE = factory
             .and(r => r
                 .zeroOrMore(r => r
                     .choice(c => c
-                        .or(r => r
-                            .ref(() => $INDENT),
-                        )
-                        .or(r => r
-                            .ref(() => $DEDENT),
-                        )
-                        .or(r => r
-                            .regExp(/^[\r\n]/),
-                        ),
+                        .or(() => $INDENT)
+                        .or(() => $DEDENT)
+                        .or(r => r.regExp(/^[\r\n]/)),
                     ),
                 ),
             )
-            .and(r => r
-                .ref(() => $INLINE)
-            , "inline"),
+            .and(() => $INLINE, "inline"),
         )
     , (({ text, inline }) => {
         return {
@@ -81,16 +59,8 @@ export const $INLINE_FRAGMENT = factory
     .withName("INLINE_FRAGMENT")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
             .and(r => r
                 .oneOrMore(r => r
                     .choice(c => c
@@ -99,9 +69,7 @@ export const $INLINE_FRAGMENT = factory
                                 .sequence(c => c
                                     .and(r => r
                                         .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t]/),
-                                            ),
+                                            .oneOrMore(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t]/)),
                                         )
                                     , "plain"),
                                 )
@@ -110,12 +78,8 @@ export const $INLINE_FRAGMENT = factory
                             }),
                             ),
                         )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
-                        .or(r => r
-                            .ref(() => $MISMATCH_END_PARENTHESIS),
-                        ),
+                        .or(() => $PARENTHESES_INLINE)
+                        .or(() => $MISMATCH_END_PARENTHESIS),
                     ),
                 )
             , "texts"),
@@ -132,16 +96,8 @@ export const $PERIOD_SENTENCE_FRAGMENT = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $INDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $DEDENT),
-                        ),
-                    )
+                    .and(r => r.nextIsNot(() => $INDENT))
+                    .and(r => r.nextIsNot(() => $DEDENT))
                     .and(r => r
                         .oneOrMore(r => r
                             .action(r => r
@@ -153,9 +109,7 @@ export const $PERIOD_SENTENCE_FRAGMENT = factory
                                                     .sequence(c => c
                                                         .and(r => r
                                                             .asSlice(r => r
-                                                                .oneOrMore(r => r
-                                                                    .regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/),
-                                                                ),
+                                                                .oneOrMore(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/)),
                                                             )
                                                         , "plain"),
                                                     )
@@ -164,12 +118,8 @@ export const $PERIOD_SENTENCE_FRAGMENT = factory
                                                 }),
                                                 ),
                                             )
-                                            .or(r => r
-                                                .ref(() => $PARENTHESES_INLINE),
-                                            )
-                                            .or(r => r
-                                                .ref(() => $MISMATCH_END_PARENTHESIS),
-                                            ),
+                                            .or(() => $PARENTHESES_INLINE)
+                                            .or(() => $MISMATCH_END_PARENTHESIS),
                                         )
                                     , "target"),
                                 )
@@ -181,19 +131,9 @@ export const $PERIOD_SENTENCE_FRAGMENT = factory
                     , "texts")
                     .and(r => r
                         .choice(c => c
-                            .or(r => r
-                                .seqEqual("。"),
-                            )
-                            .or(r => r
-                                .nextIs(r => r
-                                    .ref(() => $__),
-                                ),
-                            )
-                            .or(r => r
-                                .nextIs(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            ),
+                            .or(r => r.seqEqual("。"))
+                            .or(r => r.nextIs(() => $__))
+                            .or(r => r.nextIs(() => $NEWLINE)),
                         )
                     , "tail"),
                 )
@@ -213,9 +153,7 @@ export const $PERIOD_SENTENCE_FRAGMENT = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .seqEqual("。")
-                    , "plain"),
+                    .and(r => r.seqEqual("。"), "plain"),
                 )
             , (({ plain }) => {
                 return [new __Text(plain)];
@@ -229,22 +167,10 @@ export const $OUTSIDE_PARENTHESES_INLINE = factory
     .withName("OUTSIDE_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
             .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .asSlice(r => r
-                    .oneOrMore(r => r
-                        .ref(() => $NOT_PARENTHESIS_CHAR),
-                    ),
-                )
+                .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
             , "plain"),
         )
     , (({ plain }) => {
@@ -257,36 +183,18 @@ export const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
     .withName("OUTSIDE_ROUND_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
             .and(r => r
                 .oneOrMore(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .nextIsNot(r => r
-                                    .ref(() => $ROUND_PARENTHESES_INLINE),
-                                ),
-                            )
+                            .and(r => r.nextIsNot(() => $ROUND_PARENTHESES_INLINE))
                             .and(r => r
                                 .choice(c => c
-                                    .or(r => r
-                                        .ref(() => $OUTSIDE_PARENTHESES_INLINE),
-                                    )
-                                    .or(r => r
-                                        .ref(() => $PARENTHESES_INLINE),
-                                    )
-                                    .or(r => r
-                                        .ref(() => $MISMATCH_END_PARENTHESIS),
-                                    ),
+                                    .or(() => $OUTSIDE_PARENTHESES_INLINE)
+                                    .or(() => $PARENTHESES_INLINE)
+                                    .or(() => $MISMATCH_END_PARENTHESIS),
                                 )
                             , "_target"),
                         )
@@ -308,9 +216,7 @@ export const $MISMATCH_START_PARENTHESIS = factory
     .action(r => r
         .sequence(c => c
             .and(r => r
-                .asSlice(r => r
-                    .regExp(/^[<(（[［{｛「]/),
-                )
+                .asSlice(r => r.regExp(/^[<(（[［{｛「]/))
             , "mismatch"),
         )
     , (({ mismatch }) => {
@@ -325,9 +231,7 @@ export const $MISMATCH_END_PARENTHESIS = factory
     .action(r => r
         .sequence(c => c
             .and(r => r
-                .asSlice(r => r
-                    .regExp(/^[>)）\]］}｝」]/),
-                )
+                .asSlice(r => r.regExp(/^[>)）\]］}｝」]/))
             , "mismatch"),
         )
     , (({ mismatch }) => {
@@ -346,9 +250,7 @@ export const $PARENTHESES_INLINE: ValueRule<EL> = factory
                     .and(r => r
                         .nextIs(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .seqEqual(""),
-                                )
+                                .and(r => r.seqEqual(""))
                                 .and(r => r
                                     .assert(({ state }) => {
                                         state.parenthesesDepth++; return true;
@@ -357,15 +259,11 @@ export const $PARENTHESES_INLINE: ValueRule<EL> = factory
                             ),
                         ),
                     )
-                    .and(r => r
-                        .ref(() => $PARENTHESES_INLINE_INNER)
-                    , "target")
+                    .and(() => $PARENTHESES_INLINE_INNER, "target")
                     .and(r => r
                         .nextIs(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .seqEqual(""),
-                                )
+                                .and(r => r.seqEqual(""))
                                 .and(r => r
                                     .assert(({ state }) => {
                                         state.parenthesesDepth--; return true;
@@ -385,9 +283,7 @@ export const $PARENTHESES_INLINE: ValueRule<EL> = factory
                 .and(r => r
                     .nextIs(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .seqEqual(""),
-                            )
+                            .and(r => r.seqEqual(""))
                             .and(r => r
                                 .assert(({ state }) => {
                                     state.parenthesesDepth--; return false;
@@ -396,9 +292,7 @@ export const $PARENTHESES_INLINE: ValueRule<EL> = factory
                         ),
                     ),
                 )
-                .and(r => r
-                    .seqEqual("DUMMY"),
-                ),
+                .and(r => r.seqEqual("DUMMY")),
             ) as unknown as ValueRule<never>,
         ),
     )
@@ -407,24 +301,12 @@ export const $PARENTHESES_INLINE: ValueRule<EL> = factory
 export const $PARENTHESES_INLINE_INNER: ValueRule<EL> = factory
     .withName("PARENTHESES_INLINE_INNER")
     .choice(c => c
-        .or(r => r
-            .ref(() => $ROUND_PARENTHESES_INLINE),
-        )
-        .or(r => r
-            .ref(() => $SQUARE_BRACKETS_INLINE),
-        )
-        .or(r => r
-            .ref(() => $CURLY_BRACKETS_INLINE),
-        )
-        .or(r => r
-            .ref(() => $SQUARE_PARENTHESES_INLINE),
-        )
-        .or(r => r
-            .ref(() => $xml_element),
-        )
-        .or(r => r
-            .ref(() => $MISMATCH_START_PARENTHESIS),
-        ),
+        .or(() => $ROUND_PARENTHESES_INLINE)
+        .or(() => $SQUARE_BRACKETS_INLINE)
+        .or(() => $CURLY_BRACKETS_INLINE)
+        .or(() => $SQUARE_PARENTHESES_INLINE)
+        .or(() => $xml_element)
+        .or(() => $MISMATCH_START_PARENTHESIS),
     )
 ;
 
@@ -432,9 +314,7 @@ export const $ROUND_PARENTHESES_INLINE = factory
     .withName("ROUND_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .regExp(/^[(（]/)
-            , "start")
+            .and(r => r.regExp(/^[(（]/), "start")
             .and(r => r
                 .zeroOrMore(r => r
                     .choice(c => c
@@ -442,11 +322,7 @@ export const $ROUND_PARENTHESES_INLINE = factory
                             .action(r => r
                                 .sequence(c => c
                                     .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .ref(() => $NOT_PARENTHESIS_CHAR),
-                                            ),
-                                        )
+                                        .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
                                     , "plain"),
                                 )
                             , (({ plain }) => {
@@ -454,20 +330,14 @@ export const $ROUND_PARENTHESES_INLINE = factory
                             }),
                             ),
                         )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
+                        .or(() => $PARENTHESES_INLINE)
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
                                     .and(r => r
-                                        .nextIsNot(r => r
-                                            .regExp(/^[)）]/),
-                                        ),
+                                        .nextIsNot(r => r.regExp(/^[)）]/)),
                                     )
-                                    .and(r => r
-                                        .ref(() => $MISMATCH_END_PARENTHESIS)
-                                    , "target"),
+                                    .and(() => $MISMATCH_END_PARENTHESIS, "target"),
                                 )
                             , (({ target }) => {
                                 return target;
@@ -477,9 +347,7 @@ export const $ROUND_PARENTHESES_INLINE = factory
                     ),
                 )
             , "content")
-            .and(r => r
-                .regExp(/^[)）]/)
-            , "end"),
+            .and(r => r.regExp(/^[)）]/), "end"),
         )
     , (({ text, start, content, end, state }) => {
         return new __Parentheses("round", state.parenthesesDepth, start, end, content, text());
@@ -491,9 +359,7 @@ export const $SQUARE_BRACKETS_INLINE = factory
     .withName("SQUARE_BRACKETS_INLINE")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .regExp(/^[[［]/)
-            , "start")
+            .and(r => r.regExp(/^[[［]/), "start")
             .and(r => r
                 .zeroOrMore(r => r
                     .choice(c => c
@@ -501,11 +367,7 @@ export const $SQUARE_BRACKETS_INLINE = factory
                             .action(r => r
                                 .sequence(c => c
                                     .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .ref(() => $NOT_PARENTHESIS_CHAR),
-                                            ),
-                                        )
+                                        .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
                                     , "plain"),
                                 )
                             , (({ plain }) => {
@@ -513,20 +375,14 @@ export const $SQUARE_BRACKETS_INLINE = factory
                             }),
                             ),
                         )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
+                        .or(() => $PARENTHESES_INLINE)
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
                                     .and(r => r
-                                        .nextIsNot(r => r
-                                            .regExp(/^[\]］]/),
-                                        ),
+                                        .nextIsNot(r => r.regExp(/^[\]］]/)),
                                     )
-                                    .and(r => r
-                                        .ref(() => $MISMATCH_END_PARENTHESIS)
-                                    , "target"),
+                                    .and(() => $MISMATCH_END_PARENTHESIS, "target"),
                                 )
                             , (({ target }) => {
                                 return target;
@@ -536,9 +392,7 @@ export const $SQUARE_BRACKETS_INLINE = factory
                     ),
                 )
             , "content")
-            .and(r => r
-                .regExp(/^[\]］]/)
-            , "end"),
+            .and(r => r.regExp(/^[\]］]/), "end"),
         )
     , (({ text, start, content, end, state }) => {
         return new __Parentheses("squareb", state.parenthesesDepth, start, end, content, text());
@@ -550,9 +404,7 @@ export const $CURLY_BRACKETS_INLINE = factory
     .withName("CURLY_BRACKETS_INLINE")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .regExp(/^[{｛]/)
-            , "start")
+            .and(r => r.regExp(/^[{｛]/), "start")
             .and(r => r
                 .zeroOrMore(r => r
                     .choice(c => c
@@ -560,11 +412,7 @@ export const $CURLY_BRACKETS_INLINE = factory
                             .action(r => r
                                 .sequence(c => c
                                     .and(r => r
-                                        .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .ref(() => $NOT_PARENTHESIS_CHAR),
-                                            ),
-                                        )
+                                        .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
                                     , "plain"),
                                 )
                             , (({ plain }) => {
@@ -572,20 +420,14 @@ export const $CURLY_BRACKETS_INLINE = factory
                             }),
                             ),
                         )
-                        .or(r => r
-                            .ref(() => $PARENTHESES_INLINE),
-                        )
+                        .or(() => $PARENTHESES_INLINE)
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
                                     .and(r => r
-                                        .nextIsNot(r => r
-                                            .regExp(/^[}｝]/),
-                                        ),
+                                        .nextIsNot(r => r.regExp(/^[}｝]/)),
                                     )
-                                    .and(r => r
-                                        .ref(() => $MISMATCH_END_PARENTHESIS)
-                                    , "target"),
+                                    .and(() => $MISMATCH_END_PARENTHESIS, "target"),
                                 )
                             , (({ target }) => {
                                 return target;
@@ -595,9 +437,7 @@ export const $CURLY_BRACKETS_INLINE = factory
                     ),
                 )
             , "content")
-            .and(r => r
-                .regExp(/^[}｝]/)
-            , "end"),
+            .and(r => r.regExp(/^[}｝]/), "end"),
         )
     , (({ text, start, content, end, state }) => {
         return new __Parentheses("curly", state.parenthesesDepth, start, end, content, text());
@@ -609,15 +449,11 @@ export const $SQUARE_PARENTHESES_INLINE: ValueRule<__Parentheses> = factory
     .withName("SQUARE_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .regExp(/^[「]/)
-            , "start")
+            .and(r => r.regExp(/^[「]/), "start")
             .and(r => r
                 .zeroOrMore(r => r
                     .choice(c => c
-                        .or(r => r
-                            .ref(() => $xml_element),
-                        )
+                        .or(() => $xml_element)
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
@@ -625,13 +461,9 @@ export const $SQUARE_PARENTHESES_INLINE: ValueRule<__Parentheses> = factory
                                         .asSlice(r => r
                                             .choice(c => c
                                                 .or(r => r
-                                                    .oneOrMore(r => r
-                                                        .regExp(/^[^\r\n<>「」]/),
-                                                    ),
+                                                    .oneOrMore(r => r.regExp(/^[^\r\n<>「」]/)),
                                                 )
-                                                .or(r => r
-                                                    .ref(() => $SQUARE_PARENTHESES_INLINE),
-                                                ),
+                                                .or(() => $SQUARE_PARENTHESES_INLINE),
                                             ),
                                         )
                                     , "text"),
@@ -644,9 +476,7 @@ export const $SQUARE_PARENTHESES_INLINE: ValueRule<__Parentheses> = factory
                     ),
                 )
             , "content")
-            .and(r => r
-                .regExp(/^[」]/)
-            , "end"),
+            .and(r => r.regExp(/^[」]/), "end"),
         )
     , (({ text, start, content, end, state }) => {
         return new __Parentheses("square", state.parenthesesDepth, start, end, content, text());

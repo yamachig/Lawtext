@@ -12,9 +12,7 @@ export const $xml = factory
                     .sequence(c => c
                         .and(r => r
                             .asSlice(r => r
-                                .oneOrMore(r => r
-                                    .regExp(/^[^<>]/),
-                                ),
+                                .oneOrMore(r => r.regExp(/^[^<>]/)),
                             )
                         , "text"),
                     )
@@ -23,9 +21,7 @@ export const $xml = factory
                 }),
                 ),
             )
-            .or(r => r
-                .ref(() => $xml_element),
-            ),
+            .or(() => $xml_element),
         ),
     )
 ;
@@ -36,67 +32,37 @@ export const $xml_element: ValueRule<EL> = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
+                    .and(r => r.nextIsNot(() => $INDENT))
+                    .and(r => r.nextIsNot(() => $DEDENT))
+                    .and(r => r.seqEqual("<"))
                     .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $INDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $DEDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .seqEqual("<"),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .seqEqual("/"),
-                        ),
+                        .nextIsNot(r => r.seqEqual("/")),
                     )
                     .and(r => r
                         .asSlice(r => r
-                            .oneOrMore(r => r
-                                .regExp(/^[^/<> ="\t\r\n]/),
-                            ),
+                            .oneOrMore(r => r.regExp(/^[^/<> ="\t\r\n]/)),
                         )
                     , "tag")
                     .and(r => r
                         .zeroOrMore(r => r
                             .action(r => r
                                 .sequence(c => c
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
+                                    .and(() => $_)
                                     .and(r => r
                                         .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^/<> ="\t\r\n]/),
-                                            ),
+                                            .oneOrMore(r => r.regExp(/^[^/<> ="\t\r\n]/)),
                                         )
                                     , "name")
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .seqEqual("="),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .seqEqual("\""),
-                                    )
+                                    .and(() => $_)
+                                    .and(r => r.seqEqual("="))
+                                    .and(() => $_)
+                                    .and(r => r.seqEqual("\""))
                                     .and(r => r
                                         .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^"]/),
-                                            ),
+                                            .oneOrMore(r => r.regExp(/^[^"]/)),
                                         )
                                     , "value")
-                                    .and(r => r
-                                        .seqEqual("\""),
-                                    ),
+                                    .and(r => r.seqEqual("\"")),
                                 )
                             , (({ name, value }) => {
                                 const ret = {} as Record<string, string>;
@@ -106,36 +72,20 @@ export const $xml_element: ValueRule<EL> = factory
                             ),
                         )
                     , "attr")
-                    .and(r => r
-                        .ref(() => $_),
-                    )
-                    .and(r => r
-                        .seqEqual(">"),
-                    )
-                    .and(r => r
-                        .ref(() => $xml)
-                    , "children")
+                    .and(() => $_)
+                    .and(r => r.seqEqual(">"))
+                    .and(() => $xml, "children")
                     .and(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .seqEqual("</"),
-                            )
-                            .and(r => r
-                                .ref(() => $_),
-                            )
+                            .and(r => r.seqEqual("</"))
+                            .and(() => $_)
                             .and(r => r
                                 .asSlice(r => r
-                                    .oneOrMore(r => r
-                                        .regExp(/^[^/<> ="\t\r\n]/),
-                                    ),
+                                    .oneOrMore(r => r.regExp(/^[^/<> ="\t\r\n]/)),
                                 )
                             , "end_tag")
-                            .and(r => r
-                                .ref(() => $_),
-                            )
-                            .and(r => r
-                                .seqEqual(">"),
-                            )
+                            .and(() => $_)
+                            .and(r => r.seqEqual(">"))
                             .and(r => r
                                 .assert(({ tag, end_tag }) => {
                                     return end_tag === tag;
@@ -152,67 +102,37 @@ export const $xml_element: ValueRule<EL> = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
+                    .and(r => r.nextIsNot(() => $INDENT))
+                    .and(r => r.nextIsNot(() => $DEDENT))
+                    .and(r => r.seqEqual("<"))
                     .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $INDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $DEDENT),
-                        ),
-                    )
-                    .and(r => r
-                        .seqEqual("<"),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .seqEqual("/"),
-                        ),
+                        .nextIsNot(r => r.seqEqual("/")),
                     )
                     .and(r => r
                         .asSlice(r => r
-                            .oneOrMore(r => r
-                                .regExp(/^[^/<> ="\t\r\n]/),
-                            ),
+                            .oneOrMore(r => r.regExp(/^[^/<> ="\t\r\n]/)),
                         )
                     , "tag")
                     .and(r => r
                         .zeroOrMore(r => r
                             .action(r => r
                                 .sequence(c => c
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
+                                    .and(() => $_)
                                     .and(r => r
                                         .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^/<> ="\t\r\n]/),
-                                            ),
+                                            .oneOrMore(r => r.regExp(/^[^/<> ="\t\r\n]/)),
                                         )
                                     , "name")
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .seqEqual("="),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $_),
-                                    )
-                                    .and(r => r
-                                        .seqEqual("\""),
-                                    )
+                                    .and(() => $_)
+                                    .and(r => r.seqEqual("="))
+                                    .and(() => $_)
+                                    .and(r => r.seqEqual("\""))
                                     .and(r => r
                                         .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^"]/),
-                                            ),
+                                            .oneOrMore(r => r.regExp(/^[^"]/)),
                                         )
                                     , "value")
-                                    .and(r => r
-                                        .seqEqual("\""),
-                                    ),
+                                    .and(r => r.seqEqual("\"")),
                                 )
                             , (({ name, value }) => {
                                 const ret = {} as Record<string, string>;
@@ -222,12 +142,8 @@ export const $xml_element: ValueRule<EL> = factory
                             ),
                         )
                     , "attr")
-                    .and(r => r
-                        .ref(() => $_),
-                    )
-                    .and(r => r
-                        .seqEqual("/>"),
-                    ),
+                    .and(() => $_)
+                    .and(r => r.seqEqual("/>")),
                 )
             , (({ tag, attr }) => {
                 return new EL(tag, Object.assign({}, ...attr));

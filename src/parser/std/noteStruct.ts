@@ -16,39 +16,13 @@ export const $note_struct = factory
     .withName("note_struct")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
-            .and(r => r
-                .zeroOrOne(r => r
-                    .ref(() => $note_struct_title),
-                )
-            , "note_struct_title")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $remarks),
-                )
-            , "remarkses1")
-            .and(r => r
-                .ref(() => $note)
-            , "note")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $remarks),
-                )
-            , "remarkses2"),
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
+            .and(r => r.nextIsNot(() => $NEWLINE))
+            .and(r => r.zeroOrOne(() => $note_struct_title), "note_struct_title")
+            .and(r => r.zeroOrMore(() => $remarks), "remarkses1")
+            .and(() => $note, "note")
+            .and(r => r.zeroOrMore(() => $remarks), "remarkses2"),
         )
     , (({ note_struct_title, remarkses1, note, remarkses2 }) => {
         const note_struct = newStdEL("NoteStruct");
@@ -72,20 +46,10 @@ export const $note_struct_title = factory
     .withName("note_struct_title")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .seqEqual(":note-struct-title:"),
-            )
-            .and(r => r
-                .ref(() => $_),
-            )
-            .and(r => r
-                .asSlice(r => r
-                    .ref(() => $INLINE),
-                )
-            , "title")
-            .and(r => r
-                .ref(() => $NEWLINE),
-            ),
+            .and(r => r.seqEqual(":note-struct-title:"))
+            .and(() => $_)
+            .and(r => r.asSlice(() => $INLINE), "title")
+            .and(() => $NEWLINE),
         )
     , (({ title }) => {
         return newStdEL("NoteStructTitle", {}, [new __Text(title)]);
@@ -102,9 +66,7 @@ export const $note = factory
                     .or(r => r
                         .action(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .ref(() => $table)
-                                , "table"),
+                                .and(() => $table, "table"),
                             )
                         , (({ table }) => {
                             return [table];
@@ -114,9 +76,7 @@ export const $note = factory
                     .or(r => r
                         .action(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .ref(() => $fig)
-                                , "fig"),
+                                .and(() => $fig, "fig"),
                             )
                         , (({ fig }) => {
                             return [fig];
@@ -128,28 +88,12 @@ export const $note = factory
                             .and(r => r
                                 .action(r => r
                                     .sequence(c => c
-                                        .and(r => r
-                                            .ref(() => $INDENT),
-                                        )
-                                        .and(r => r
-                                            .ref(() => $INDENT),
-                                        )
-                                        .and(r => r
-                                            .oneOrMore(r => r
-                                                .ref(() => $list),
-                                            )
-                                        , "target")
-                                        .and(r => r
-                                            .zeroOrMore(r => r
-                                                .ref(() => $NEWLINE),
-                                            ),
-                                        )
-                                        .and(r => r
-                                            .ref(() => $DEDENT),
-                                        )
-                                        .and(r => r
-                                            .ref(() => $DEDENT),
-                                        ),
+                                        .and(() => $INDENT)
+                                        .and(() => $INDENT)
+                                        .and(r => r.oneOrMore(() => $list), "target")
+                                        .and(r => r.zeroOrMore(() => $NEWLINE))
+                                        .and(() => $DEDENT)
+                                        .and(() => $DEDENT),
                                     )
                                 , (({ target }) => {
                                     return target;
@@ -161,11 +105,7 @@ export const $note = factory
                     .or(r => r
                         .action(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .oneOrMore(r => r
-                                        .ref(() => $paragraph_item),
-                                    )
-                                , "paragraph_items"),
+                                .and(r => r.oneOrMore(() => $paragraph_item), "paragraph_items"),
                             )
                         , (({ paragraph_items }) => {
                             return paragraph_items;
@@ -175,9 +115,7 @@ export const $note = factory
                     .or(r => r
                         .action(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .ref(() => $xml_element)
-                                , "arith_formula"),
+                                .and(() => $xml_element, "arith_formula"),
                             )
                         , (({ arith_formula }) => {
                             return [arith_formula];

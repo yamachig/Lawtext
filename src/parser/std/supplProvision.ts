@@ -14,21 +14,13 @@ export const $suppl_provision_label = factory
     .withName("suppl_provision_label")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .ref(() => $__),
-            )
+            .and(() => $__)
             .and(r => r
                 .asSlice(r => r
                     .sequence(c => c
-                        .and(r => r
-                            .regExp(/^[附付]/),
-                        )
-                        .and(r => r
-                            .ref(() => $_),
-                        )
-                        .and(r => r
-                            .seqEqual("則"),
-                        ),
+                        .and(r => r.regExp(/^[附付]/))
+                        .and(() => $_)
+                        .and(r => r.seqEqual("則")),
                     ),
                 )
             , "label")
@@ -36,9 +28,7 @@ export const $suppl_provision_label = factory
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $ROUND_PARENTHESES_INLINE)
-                            , "target"),
+                            .and(() => $ROUND_PARENTHESES_INLINE, "target"),
                         )
                     , (({ target }) => {
                         return target.content;
@@ -49,20 +39,12 @@ export const $suppl_provision_label = factory
             .and(r => r
                 .zeroOrOne(r => r
                     .sequence(c => c
-                        .and(r => r
-                            .ref(() => $_),
-                        )
-                        .and(r => r
-                            .seqEqual("抄"),
-                        ),
+                        .and(() => $_)
+                        .and(r => r.seqEqual("抄")),
                     ),
                 )
             , "extract")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            ),
+            .and(r => r.oneOrMore(() => $NEWLINE)),
         )
     , (({ label, amend_law_num, extract }) => {
         return {
@@ -78,32 +60,16 @@ export const $suppl_provision = factory
     .withName("suppl_provision")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .ref(() => $suppl_provision_label)
-            , "suppl_provision_label")
+            .and(() => $suppl_provision_label, "suppl_provision_label")
             .and(r => r
                 .choice(c => c
-                    .or(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $article),
-                        ),
-                    )
-                    .or(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $paragraph_item),
-                        ),
-                    )
+                    .or(r => r.oneOrMore(() => $article))
+                    .or(r => r.oneOrMore(() => $paragraph_item))
                     .or(r => r
                         .action(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .ref(() => $no_name_paragraph_item)
-                                , "first")
-                                .and(r => r
-                                    .zeroOrMore(r => r
-                                        .ref(() => $paragraph_item),
-                                    )
-                                , "rest"),
+                                .and(() => $no_name_paragraph_item, "first")
+                                .and(r => r.zeroOrMore(() => $paragraph_item), "rest"),
                             )
                         , (({ first, rest }) => {
                             return [first].concat(rest);
@@ -115,15 +81,9 @@ export const $suppl_provision = factory
             .and(r => r
                 .zeroOrMore(r => r
                     .choice(c => c
-                        .or(r => r
-                            .ref(() => $suppl_provision_appdx_table),
-                        )
-                        .or(r => r
-                            .ref(() => $suppl_provision_appdx_style),
-                        )
-                        .or(r => r
-                            .ref(() => $suppl_provision_appdx),
-                        ),
+                        .or(() => $suppl_provision_appdx_table)
+                        .or(() => $suppl_provision_appdx_style)
+                        .or(() => $suppl_provision_appdx),
                     ),
                 )
             , "suppl_provision_appdx_items"),

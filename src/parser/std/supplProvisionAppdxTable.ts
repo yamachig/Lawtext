@@ -22,29 +22,19 @@ export const $suppl_provision_appdx_table_title = factory
                                         .zeroOrMore(r => r
                                             .action(r => r
                                                 .sequence(c => c
-                                                    .and(r => r
-                                                        .seqEqual("["),
-                                                    )
+                                                    .and(r => r.seqEqual("["))
                                                     .and(r => r
                                                         .asSlice(r => r
-                                                            .oneOrMore(r => r
-                                                                .regExp(/^[^ 　\t\r\n\]=]/),
-                                                            ),
+                                                            .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]=]/)),
                                                         )
                                                     , "name")
-                                                    .and(r => r
-                                                        .seqEqual("=\""),
-                                                    )
+                                                    .and(r => r.seqEqual("=\""))
                                                     .and(r => r
                                                         .asSlice(r => r
-                                                            .oneOrMore(r => r
-                                                                .regExp(/^[^ 　\t\r\n\]"]/),
-                                                            ),
+                                                            .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
                                                         )
                                                     , "value")
-                                                    .and(r => r
-                                                        .seqEqual("\"]"),
-                                                    ),
+                                                    .and(r => r.seqEqual("\"]")),
                                                 )
                                             , (({ name, value }) => {
                                                 return [name, value];
@@ -70,39 +60,23 @@ export const $suppl_provision_appdx_table_title = factory
                                             .choice(c => c
                                                 .or(r => r
                                                     .sequence(c => c
+                                                        .and(r => r.regExp(/^[附付]/))
+                                                        .and(r => r.seqEqual("則別表"))
                                                         .and(r => r
-                                                            .regExp(/^[附付]/),
-                                                        )
-                                                        .and(r => r
-                                                            .seqEqual("則別表"),
-                                                        )
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r
-                                                                .regExp(/^[^\r\n(（]/),
-                                                            ),
+                                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                                         ),
                                                     ),
                                                 )
                                                 .or(r => r
                                                     .sequence(c => c
+                                                        .and(r => r.regExp(/^[附付]/))
+                                                        .and(r => r.seqEqual("則"))
                                                         .and(r => r
-                                                            .regExp(/^[附付]/),
+                                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（様]/)),
                                                         )
+                                                        .and(r => r.seqEqual("様式"))
                                                         .and(r => r
-                                                            .seqEqual("則"),
-                                                        )
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r
-                                                                .regExp(/^[^\r\n(（様]/),
-                                                            ),
-                                                        )
-                                                        .and(r => r
-                                                            .seqEqual("様式"),
-                                                        )
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r
-                                                                .regExp(/^[^\r\n(（]/),
-                                                            ),
+                                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                                         ),
                                                     ),
                                                 ),
@@ -113,12 +87,8 @@ export const $suppl_provision_appdx_table_title = factory
                                         .zeroOrOne(r => r
                                             .action(r => r
                                                 .sequence(c => c
-                                                    .and(r => r
-                                                        .ref(() => $_),
-                                                    )
-                                                    .and(r => r
-                                                        .ref(() => $ROUND_PARENTHESES_INLINE)
-                                                    , "target"),
+                                                    .and(() => $_)
+                                                    .and(() => $ROUND_PARENTHESES_INLINE, "target"),
                                                 )
                                             , (({ target }) => {
                                                 return target;
@@ -128,9 +98,7 @@ export const $suppl_provision_appdx_table_title = factory
                                     , "related_article_num")
                                     .and(r => r
                                         .asSlice(r => r
-                                            .zeroOrMore(r => r
-                                                .regExp(/^[^\r\n(（]/),
-                                            ),
+                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                         )
                                     , "table_struct_title"),
                                 )
@@ -164,39 +132,17 @@ export const $suppl_provision_appdx_table = factory
     .withName("suppl_provision_appdx_table")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .ref(() => $suppl_provision_appdx_table_title)
-            , "title_struct")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
+            .and(() => $suppl_provision_appdx_table_title, "title_struct")
+            .and(r => r.oneOrMore(() => $NEWLINE))
             .and(r => r
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .oneOrMore(r => r
-                                    .ref(() => $suppl_provision_appdx_table_children),
-                                )
-                            , "target")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $remarks),
-                                )
-                            , "remarkses")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(() => $INDENT)
+                            .and(r => r.oneOrMore(() => $suppl_provision_appdx_table_children), "target")
+                            .and(r => r.zeroOrMore(() => $remarks), "remarkses")
+                            .and(r => r.zeroOrMore(() => $NEWLINE))
+                            .and(() => $DEDENT),
                         )
                     , (({ target, remarkses }) => {
                         return [...target, ...remarkses];

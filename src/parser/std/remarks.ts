@@ -18,29 +18,19 @@ export const $remarks = factory
                             .zeroOrMore(r => r
                                 .action(r => r
                                     .sequence(c => c
-                                        .and(r => r
-                                            .seqEqual("["),
-                                        )
+                                        .and(r => r.seqEqual("["))
                                         .and(r => r
                                             .asSlice(r => r
-                                                .oneOrMore(r => r
-                                                    .regExp(/^[^ 　\t\r\n\]=]/),
-                                                ),
+                                                .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]=]/)),
                                             )
                                         , "name")
-                                        .and(r => r
-                                            .seqEqual("=\""),
-                                        )
+                                        .and(r => r.seqEqual("=\""))
                                         .and(r => r
                                             .asSlice(r => r
-                                                .oneOrMore(r => r
-                                                    .regExp(/^[^ 　\t\r\n\]"]/),
-                                                ),
+                                                .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
                                             )
                                         , "value")
-                                        .and(r => r
-                                            .seqEqual("\"]"),
-                                        ),
+                                        .and(r => r.seqEqual("\"]")),
                                     )
                                 , (({ name, value }) => {
                                     return [name, value];
@@ -63,13 +53,9 @@ export const $remarks = factory
                     .or(r => r
                         .action(r => r
                             .sequence(c => c
+                                .and(r => r.seqEqual(":remarks:"))
                                 .and(r => r
-                                    .seqEqual(":remarks:"),
-                                )
-                                .and(r => r
-                                    .zeroOrMore(r => r
-                                        .regExp(/^[^ 　\t\r\n]/),
-                                    ),
+                                    .zeroOrMore(r => r.regExp(/^[^ 　\t\r\n]/)),
                                 ),
                             )
                         , (() => {
@@ -82,21 +68,13 @@ export const $remarks = factory
                             .sequence(c => c
                                 .and(r => r
                                     .choice(c => c
-                                        .or(r => r
-                                            .seqEqual("備考"),
-                                        )
-                                        .or(r => r
-                                            .seqEqual("注"),
-                                        )
-                                        .or(r => r
-                                            .seqEqual("※"),
-                                        ),
+                                        .or(r => r.seqEqual("備考"))
+                                        .or(r => r.seqEqual("注"))
+                                        .or(r => r.seqEqual("※")),
                                     ),
                                 )
                                 .and(r => r
-                                    .zeroOrMore(r => r
-                                        .regExp(/^[^ 　\t\r\n]/),
-                                    ),
+                                    .zeroOrMore(r => r.regExp(/^[^ 　\t\r\n]/)),
                                 ),
                             ),
                         ),
@@ -107,12 +85,8 @@ export const $remarks = factory
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $__),
-                            )
-                            .and(r => r
-                                .ref(() => $INLINE)
-                            , "_target"),
+                            .and(() => $__)
+                            .and(() => $INLINE, "_target"),
                         )
                     , (({ _target }) => {
                         return newStdEL(
@@ -124,21 +98,15 @@ export const $remarks = factory
                     ),
                 )
             , "first")
-            .and(r => r
-                .ref(() => $NEWLINE),
-            )
+            .and(() => $NEWLINE)
             .and(r => r
                 .zeroOrOne(r => r
                     .choice(c => c
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
+                                    .and(() => $INDENT)
+                                    .and(() => $INDENT)
                                     .and(r => r
                                         .oneOrMore(r => r
                                             .choice(c => c
@@ -153,9 +121,7 @@ export const $remarks = factory
                                                             .and(r => r
                                                                 .nextIs(r => r
                                                                     .sequence(c => c
-                                                                        .and(r => r
-                                                                            .seqEqual(""),
-                                                                        )
+                                                                        .and(r => r.seqEqual(""))
                                                                         .and(r => r
                                                                             .assert(({ state, location }) => {
                                                                                 state.baseIndentStack.push([state.indentMemo[location().start.line] - 1, false, location().start.line]); return true;
@@ -166,20 +132,14 @@ export const $remarks = factory
                                                             )
                                                             .and(r => r
                                                                 .choice(c => c
-                                                                    .or(r => r
-                                                                        .ref(() => $paragraph_item),
-                                                                    )
-                                                                    .or(r => r
-                                                                        .ref(() => $no_name_paragraph_item),
-                                                                    ),
+                                                                    .or(() => $paragraph_item)
+                                                                    .or(() => $no_name_paragraph_item),
                                                                 )
                                                             , "_target")
                                                             .and(r => r
                                                                 .nextIs(r => r
                                                                     .sequence(c => c
-                                                                        .and(r => r
-                                                                            .seqEqual(""),
-                                                                        )
+                                                                        .and(r => r.seqEqual(""))
                                                                         .and(r => r
                                                                             .assert(({ state }) => {
                                                                                 state.baseIndentStack.pop(); return true;
@@ -199,9 +159,7 @@ export const $remarks = factory
                                                         .and(r => r
                                                             .nextIs(r => r
                                                                 .sequence(c => c
-                                                                    .and(r => r
-                                                                        .seqEqual(""),
-                                                                    )
+                                                                    .and(r => r.seqEqual(""))
                                                                     .and(r => r
                                                                         .assert(({ state }) => {
                                                                             state.baseIndentStack.pop(); return false;
@@ -210,20 +168,14 @@ export const $remarks = factory
                                                                 ),
                                                             ),
                                                         )
-                                                        .and(r => r
-                                                            .seqEqual("DUMMY"),
-                                                        ),
+                                                        .and(r => r.seqEqual("DUMMY")),
                                                     ) as unknown as ValueRule<never>,
                                                 )
                                                 .or(r => r
                                                     .action(r => r
                                                         .sequence(c => c
-                                                            .and(r => r
-                                                                .ref(() => $INLINE)
-                                                            , "_target")
-                                                            .and(r => r
-                                                                .ref(() => $NEWLINE),
-                                                            ),
+                                                            .and(() => $INLINE, "_target")
+                                                            .and(() => $NEWLINE),
                                                         )
                                                     , (({ _target }) => {
                                                         return newStdEL(
@@ -237,17 +189,9 @@ export const $remarks = factory
                                             ),
                                         )
                                     , "target")
-                                    .and(r => r
-                                        .zeroOrMore(r => r
-                                            .ref(() => $NEWLINE),
-                                        ),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    ),
+                                    .and(r => r.zeroOrMore(() => $NEWLINE))
+                                    .and(() => $DEDENT)
+                                    .and(() => $DEDENT),
                                 )
                             , (({ target }) => {
                                 return target;
@@ -257,18 +201,10 @@ export const $remarks = factory
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
+                                    .and(() => $INDENT)
+                                    .and(() => $INDENT)
+                                    .and(() => $INDENT)
+                                    .and(() => $INDENT)
                                     .and(r => r
                                         .oneOrMore(r => r
                                             .choice(c => c
@@ -283,9 +219,7 @@ export const $remarks = factory
                                                             .and(r => r
                                                                 .nextIs(r => r
                                                                     .sequence(c => c
-                                                                        .and(r => r
-                                                                            .seqEqual(""),
-                                                                        )
+                                                                        .and(r => r.seqEqual(""))
                                                                         .and(r => r
                                                                             .assert(({ state, location }) => {
                                                                                 state.baseIndentStack.push([state.indentMemo[location().start.line] - 1, false, location().start.line]); return true;
@@ -296,20 +230,14 @@ export const $remarks = factory
                                                             )
                                                             .and(r => r
                                                                 .choice(c => c
-                                                                    .or(r => r
-                                                                        .ref(() => $paragraph_item),
-                                                                    )
-                                                                    .or(r => r
-                                                                        .ref(() => $no_name_paragraph_item),
-                                                                    ),
+                                                                    .or(() => $paragraph_item)
+                                                                    .or(() => $no_name_paragraph_item),
                                                                 )
                                                             , "_target")
                                                             .and(r => r
                                                                 .nextIs(r => r
                                                                     .sequence(c => c
-                                                                        .and(r => r
-                                                                            .seqEqual(""),
-                                                                        )
+                                                                        .and(r => r.seqEqual(""))
                                                                         .and(r => r
                                                                             .assert(({ state }) => {
                                                                                 state.baseIndentStack.pop(); return true;
@@ -329,9 +257,7 @@ export const $remarks = factory
                                                         .and(r => r
                                                             .nextIs(r => r
                                                                 .sequence(c => c
-                                                                    .and(r => r
-                                                                        .seqEqual(""),
-                                                                    )
+                                                                    .and(r => r.seqEqual(""))
                                                                     .and(r => r
                                                                         .assert(({ state }) => {
                                                                             state.baseIndentStack.pop(); return false;
@@ -340,20 +266,14 @@ export const $remarks = factory
                                                                 ),
                                                             ),
                                                         )
-                                                        .and(r => r
-                                                            .seqEqual("DUMMY"),
-                                                        ),
+                                                        .and(r => r.seqEqual("DUMMY")),
                                                     ) as unknown as ValueRule<never>,
                                                 )
                                                 .or(r => r
                                                     .action(r => r
                                                         .sequence(c => c
-                                                            .and(r => r
-                                                                .ref(() => $INLINE)
-                                                            , "_target")
-                                                            .and(r => r
-                                                                .ref(() => $NEWLINE),
-                                                            ),
+                                                            .and(() => $INLINE, "_target")
+                                                            .and(() => $NEWLINE),
                                                         )
                                                     , (({ _target }) => {
                                                         return newStdEL(
@@ -367,23 +287,11 @@ export const $remarks = factory
                                             ),
                                         )
                                     , "target")
-                                    .and(r => r
-                                        .zeroOrMore(r => r
-                                            .ref(() => $NEWLINE),
-                                        ),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    ),
+                                    .and(r => r.zeroOrMore(() => $NEWLINE))
+                                    .and(() => $DEDENT)
+                                    .and(() => $DEDENT)
+                                    .and(() => $DEDENT)
+                                    .and(() => $DEDENT),
                                 )
                             , (({ target }) => {
                                 return target;

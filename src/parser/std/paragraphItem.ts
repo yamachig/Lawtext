@@ -23,106 +23,42 @@ export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 |
     .withName("paragraph_item")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .zeroOrOne(r => r
-                    .ref(() => $article_paragraph_caption),
-                )
-            , "paragraph_caption")
+            .and(r => r.zeroOrOne(() => $article_paragraph_caption), "paragraph_caption")
             .and(r => r
                 .asSlice(r => r
                     .sequence(c => c
+                        .and(r => r.nextIsNot(() => $article_title))
+                        .and(r => r.nextIsNot(() => $appdx_table_title))
+                        .and(r => r.nextIsNot(() => $appdx_style_title))
+                        .and(r => r.nextIsNot(() => $appdx_format_title))
+                        .and(r => r.nextIsNot(() => $appdx_fig_title))
+                        .and(r => r.nextIsNot(() => $appdx_note_title))
+                        .and(r => r.nextIsNot(() => $appdx_title))
+                        .and(r => r.nextIsNot(() => $suppl_provision_label))
                         .and(r => r
-                            .nextIsNot(r => r
-                                .ref(() => $article_title),
-                            ),
+                            .nextIsNot(r => r.seqEqual(":SupplNote:")),
                         )
                         .and(r => r
-                            .nextIsNot(r => r
-                                .ref(() => $appdx_table_title),
-                            ),
-                        )
-                        .and(r => r
-                            .nextIsNot(r => r
-                                .ref(() => $appdx_style_title),
-                            ),
-                        )
-                        .and(r => r
-                            .nextIsNot(r => r
-                                .ref(() => $appdx_format_title),
-                            ),
-                        )
-                        .and(r => r
-                            .nextIsNot(r => r
-                                .ref(() => $appdx_fig_title),
-                            ),
-                        )
-                        .and(r => r
-                            .nextIsNot(r => r
-                                .ref(() => $appdx_note_title),
-                            ),
-                        )
-                        .and(r => r
-                            .nextIsNot(r => r
-                                .ref(() => $appdx_title),
-                            ),
-                        )
-                        .and(r => r
-                            .nextIsNot(r => r
-                                .ref(() => $suppl_provision_label),
-                            ),
-                        )
-                        .and(r => r
-                            .nextIsNot(r => r
-                                .seqEqual(":SupplNote:"),
-                            ),
-                        )
-                        .and(r => r
-                            .oneOrMore(r => r
-                                .regExp(/^[^ 　\t\r\n条<]/),
-                            ),
+                            .oneOrMore(r => r.regExp(/^[^ 　\t\r\n条<]/)),
                         ),
                     ),
                 )
             , "paragraph_item_title")
-            .and(r => r
-                .ref(() => $__),
-            )
-            .and(r => r
-                .ref(() => $columns_or_sentences)
-            , "inline_contents")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
+            .and(() => $__)
+            .and(() => $columns_or_sentences, "inline_contents")
+            .and(r => r.oneOrMore(() => $NEWLINE))
             .and(r => r
                 .zeroOrOne(r => r
                     .choice(c => c
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .oneOrMore(r => r
-                                            .ref(() => $list),
-                                        )
-                                    , "target")
-                                    .and(r => r
-                                        .zeroOrMore(r => r
-                                            .ref(() => $NEWLINE),
-                                        ),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    ),
+                                    .and(() => $INDENT)
+                                    .and(() => $INDENT)
+                                    .and(r => r.oneOrMore(() => $list), "target")
+                                    .and(r => r.zeroOrMore(() => $NEWLINE))
+                                    .and(() => $DEDENT)
+                                    .and(() => $DEDENT),
                                 )
                             , (({ target }) => {
                                 return target;
@@ -132,29 +68,15 @@ export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 |
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $paragraph_item_child)
-                                    , "target")
-                                    .and(r => r
-                                        .zeroOrMore(r => r
-                                            .ref(() => $NEWLINE),
-                                        ),
-                                    )
+                                    .and(() => $INDENT)
+                                    .and(() => $paragraph_item_child, "target")
+                                    .and(r => r.zeroOrMore(() => $NEWLINE))
                                     .and(r => r
                                         .zeroOrMore(r => r
                                             .action(r => r
                                                 .sequence(c => c
-                                                    .and(r => r
-                                                        .ref(() => $paragraph_item_child)
-                                                    , "_target")
-                                                    .and(r => r
-                                                        .zeroOrMore(r => r
-                                                            .ref(() => $NEWLINE),
-                                                        ),
-                                                    ),
+                                                    .and(() => $paragraph_item_child, "_target")
+                                                    .and(r => r.zeroOrMore(() => $NEWLINE)),
                                                 )
                                             , (({ _target }) => {
                                                 return _target;
@@ -162,9 +84,7 @@ export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 |
                                             ),
                                         )
                                     , "target_rest")
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    ),
+                                    .and(() => $DEDENT),
                                 )
                             , (({ target, target_rest }) => {
                                 return [target].concat(target_rest);
@@ -174,45 +94,19 @@ export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 |
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .oneOrMore(r => r
-                                            .ref(() => $list),
-                                        )
-                                    , "target1")
-                                    .and(r => r
-                                        .zeroOrMore(r => r
-                                            .ref(() => $NEWLINE),
-                                        ),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $paragraph_item_child)
-                                    , "target2")
-                                    .and(r => r
-                                        .zeroOrMore(r => r
-                                            .ref(() => $NEWLINE),
-                                        ),
-                                    )
+                                    .and(() => $INDENT)
+                                    .and(() => $INDENT)
+                                    .and(r => r.oneOrMore(() => $list), "target1")
+                                    .and(r => r.zeroOrMore(() => $NEWLINE))
+                                    .and(() => $DEDENT)
+                                    .and(() => $paragraph_item_child, "target2")
+                                    .and(r => r.zeroOrMore(() => $NEWLINE))
                                     .and(r => r
                                         .zeroOrMore(r => r
                                             .action(r => r
                                                 .sequence(c => c
-                                                    .and(r => r
-                                                        .ref(() => $paragraph_item_child)
-                                                    , "_target")
-                                                    .and(r => r
-                                                        .zeroOrMore(r => r
-                                                            .ref(() => $NEWLINE),
-                                                        ),
-                                                    ),
+                                                    .and(() => $paragraph_item_child, "_target")
+                                                    .and(r => r.zeroOrMore(() => $NEWLINE)),
                                                 )
                                             , (({ _target }) => {
                                                 return _target;
@@ -220,9 +114,7 @@ export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 |
                                             ),
                                         )
                                     , "target2_rest")
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    ),
+                                    .and(() => $DEDENT),
                                 )
                             , (({ target1, target2, target2_rest }) => {
                                 return [...target1, target2, ...target2_rest];
@@ -286,99 +178,37 @@ export const $in_table_column_paragraph_items = factory
                     .and(r => r
                         .asSlice(r => r
                             .sequence(c => c
+                                .and(r => r.nextIsNot(() => $article_title))
+                                .and(r => r.nextIsNot(() => $appdx_table_title))
+                                .and(r => r.nextIsNot(() => $appdx_style_title))
+                                .and(r => r.nextIsNot(() => $appdx_format_title))
+                                .and(r => r.nextIsNot(() => $appdx_fig_title))
+                                .and(r => r.nextIsNot(() => $appdx_note_title))
+                                .and(r => r.nextIsNot(() => $appdx_title))
+                                .and(r => r.nextIsNot(() => $suppl_provision_label))
                                 .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $article_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_table_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_style_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_format_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_fig_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_note_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $suppl_provision_label),
-                                    ),
-                                )
-                                .and(r => r
-                                    .oneOrMore(r => r
-                                        .regExp(/^[^ 　\t\r\n条<]/),
-                                    ),
+                                    .oneOrMore(r => r.regExp(/^[^ 　\t\r\n条<]/)),
                                 ),
                             ),
                         )
                     , "paragraph_item_title")
-                    .and(r => r
-                        .ref(() => $__),
-                    )
-                    .and(r => r
-                        .ref(() => $columns_or_sentences)
-                    , "inline_contents")
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $NEWLINE),
-                        ),
-                    )
-                    .and(r => r
-                        .ref(() => $INDENT),
-                    )
-                    .and(r => r
-                        .ref(() => $INDENT),
-                    )
+                    .and(() => $__)
+                    .and(() => $columns_or_sentences, "inline_contents")
+                    .and(r => r.oneOrMore(() => $NEWLINE))
+                    .and(() => $INDENT)
+                    .and(() => $INDENT)
                     .and(r => r
                         .zeroOrOne(r => r
                             .choice(c => c
                                 .or(r => r
                                     .action(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .ref(() => $INDENT),
-                                            )
-                                            .and(r => r
-                                                .ref(() => $INDENT),
-                                            )
-                                            .and(r => r
-                                                .oneOrMore(r => r
-                                                    .ref(() => $list),
-                                                )
-                                            , "target")
-                                            .and(r => r
-                                                .zeroOrMore(r => r
-                                                    .ref(() => $NEWLINE),
-                                                ),
-                                            )
-                                            .and(r => r
-                                                .ref(() => $DEDENT),
-                                            )
-                                            .and(r => r
-                                                .ref(() => $DEDENT),
-                                            ),
+                                            .and(() => $INDENT)
+                                            .and(() => $INDENT)
+                                            .and(r => r.oneOrMore(() => $list), "target")
+                                            .and(r => r.zeroOrMore(() => $NEWLINE))
+                                            .and(() => $DEDENT)
+                                            .and(() => $DEDENT),
                                         )
                                     , (({ target }) => {
                                         return target;
@@ -388,29 +218,15 @@ export const $in_table_column_paragraph_items = factory
                                 .or(r => r
                                     .action(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .ref(() => $INDENT),
-                                            )
-                                            .and(r => r
-                                                .ref(() => $paragraph_item_child)
-                                            , "target")
-                                            .and(r => r
-                                                .zeroOrMore(r => r
-                                                    .ref(() => $NEWLINE),
-                                                ),
-                                            )
+                                            .and(() => $INDENT)
+                                            .and(() => $paragraph_item_child, "target")
+                                            .and(r => r.zeroOrMore(() => $NEWLINE))
                                             .and(r => r
                                                 .zeroOrMore(r => r
                                                     .action(r => r
                                                         .sequence(c => c
-                                                            .and(r => r
-                                                                .ref(() => $paragraph_item_child)
-                                                            , "_target")
-                                                            .and(r => r
-                                                                .zeroOrMore(r => r
-                                                                    .ref(() => $NEWLINE),
-                                                                ),
-                                                            ),
+                                                            .and(() => $paragraph_item_child, "_target")
+                                                            .and(r => r.zeroOrMore(() => $NEWLINE)),
                                                         )
                                                     , (({ _target }) => {
                                                         return _target;
@@ -418,9 +234,7 @@ export const $in_table_column_paragraph_items = factory
                                                     ),
                                                 )
                                             , "target_rest")
-                                            .and(r => r
-                                                .ref(() => $DEDENT),
-                                            ),
+                                            .and(() => $DEDENT),
                                         )
                                     , (({ target, target_rest }) => {
                                         return [target].concat(target_rest);
@@ -430,45 +244,19 @@ export const $in_table_column_paragraph_items = factory
                                 .or(r => r
                                     .action(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .ref(() => $INDENT),
-                                            )
-                                            .and(r => r
-                                                .ref(() => $INDENT),
-                                            )
-                                            .and(r => r
-                                                .oneOrMore(r => r
-                                                    .ref(() => $list),
-                                                )
-                                            , "target1")
-                                            .and(r => r
-                                                .zeroOrMore(r => r
-                                                    .ref(() => $NEWLINE),
-                                                ),
-                                            )
-                                            .and(r => r
-                                                .ref(() => $DEDENT),
-                                            )
-                                            .and(r => r
-                                                .ref(() => $paragraph_item_child)
-                                            , "target2")
-                                            .and(r => r
-                                                .zeroOrMore(r => r
-                                                    .ref(() => $NEWLINE),
-                                                ),
-                                            )
+                                            .and(() => $INDENT)
+                                            .and(() => $INDENT)
+                                            .and(r => r.oneOrMore(() => $list), "target1")
+                                            .and(r => r.zeroOrMore(() => $NEWLINE))
+                                            .and(() => $DEDENT)
+                                            .and(() => $paragraph_item_child, "target2")
+                                            .and(r => r.zeroOrMore(() => $NEWLINE))
                                             .and(r => r
                                                 .zeroOrMore(r => r
                                                     .action(r => r
                                                         .sequence(c => c
-                                                            .and(r => r
-                                                                .ref(() => $paragraph_item_child)
-                                                            , "_target")
-                                                            .and(r => r
-                                                                .zeroOrMore(r => r
-                                                                    .ref(() => $NEWLINE),
-                                                                ),
-                                                            ),
+                                                            .and(() => $paragraph_item_child, "_target")
+                                                            .and(r => r.zeroOrMore(() => $NEWLINE)),
                                                         )
                                                     , (({ _target }) => {
                                                         return _target;
@@ -476,9 +264,7 @@ export const $in_table_column_paragraph_items = factory
                                                     ),
                                                 )
                                             , "target2_rest")
-                                            .and(r => r
-                                                .ref(() => $DEDENT),
-                                            ),
+                                            .and(() => $DEDENT),
                                         )
                                     , (({ target1, target2, target2_rest }) => {
                                         return [...target1, target2, ...target2_rest];
@@ -488,17 +274,9 @@ export const $in_table_column_paragraph_items = factory
                             ),
                         )
                     , "children")
-                    .and(r => r
-                        .zeroOrMore(r => r
-                            .ref(() => $paragraph_item),
-                        )
-                    , "rest")
-                    .and(r => r
-                        .ref(() => $DEDENT),
-                    )
-                    .and(r => r
-                        .ref(() => $DEDENT),
-                    ),
+                    .and(r => r.zeroOrMore(() => $paragraph_item), "rest")
+                    .and(() => $DEDENT)
+                    .and(() => $DEDENT),
                 )
             , (({ state, location, paragraph_item_title, inline_contents, children, rest }) => {
                 const lineno = location().start.line;
@@ -546,70 +324,24 @@ export const $in_table_column_paragraph_items = factory
                     .and(r => r
                         .asSlice(r => r
                             .sequence(c => c
+                                .and(r => r.nextIsNot(() => $article_title))
+                                .and(r => r.nextIsNot(() => $appdx_table_title))
+                                .and(r => r.nextIsNot(() => $appdx_style_title))
+                                .and(r => r.nextIsNot(() => $appdx_format_title))
+                                .and(r => r.nextIsNot(() => $appdx_fig_title))
+                                .and(r => r.nextIsNot(() => $appdx_note_title))
+                                .and(r => r.nextIsNot(() => $appdx_title))
+                                .and(r => r.nextIsNot(() => $suppl_provision_label))
                                 .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $article_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_table_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_style_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_format_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_fig_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_note_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $appdx_title),
-                                    ),
-                                )
-                                .and(r => r
-                                    .nextIsNot(r => r
-                                        .ref(() => $suppl_provision_label),
-                                    ),
-                                )
-                                .and(r => r
-                                    .oneOrMore(r => r
-                                        .regExp(/^[^ 　\t\r\n条<]/),
-                                    ),
+                                    .oneOrMore(r => r.regExp(/^[^ 　\t\r\n条<]/)),
                                 ),
                             ),
                         )
                     , "paragraph_item_title")
-                    .and(r => r
-                        .ref(() => $__),
-                    )
-                    .and(r => r
-                        .ref(() => $columns_or_sentences)
-                    , "inline_contents")
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $NEWLINE),
-                        ),
-                    )
-                    .and(r => r
-                        .nextIsNot(r => r
-                            .ref(() => $INDENT),
-                        ),
-                    ),
+                    .and(() => $__)
+                    .and(() => $columns_or_sentences, "inline_contents")
+                    .and(r => r.oneOrMore(() => $NEWLINE))
+                    .and(r => r.nextIsNot(() => $INDENT)),
                 )
             , (({ state, location, paragraph_item_title, inline_contents }) => {
                 const lineno = location().start.line;
@@ -652,45 +384,19 @@ export const $no_name_paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Su
     .withName("no_name_paragraph_item")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .zeroOrOne(r => r
-                    .ref(() => $article_paragraph_caption),
-                )
-            , "paragraph_caption")
-            .and(r => r
-                .ref(() => $columns_or_sentences)
-            , "inline_contents")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
+            .and(r => r.zeroOrOne(() => $article_paragraph_caption), "paragraph_caption")
+            .and(() => $columns_or_sentences, "inline_contents")
+            .and(r => r.oneOrMore(() => $NEWLINE))
             .and(r => r
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .oneOrMore(r => r
-                                    .ref(() => $list),
-                                )
-                            , "target")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(() => $INDENT)
+                            .and(() => $INDENT)
+                            .and(r => r.oneOrMore(() => $list), "target")
+                            .and(r => r.zeroOrMore(() => $NEWLINE))
+                            .and(() => $DEDENT)
+                            .and(() => $DEDENT),
                         )
                     , (({ target }) => {
                         return target;
@@ -702,29 +408,15 @@ export const $no_name_paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Su
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $paragraph_item_child)
-                            , "target")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            )
+                            .and(() => $INDENT)
+                            .and(() => $paragraph_item_child, "target")
+                            .and(r => r.zeroOrMore(() => $NEWLINE))
                             .and(r => r
                                 .zeroOrMore(r => r
                                     .action(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .ref(() => $paragraph_item_child)
-                                            , "_target")
-                                            .and(r => r
-                                                .zeroOrMore(r => r
-                                                    .ref(() => $NEWLINE),
-                                                ),
-                                            ),
+                                            .and(() => $paragraph_item_child, "_target")
+                                            .and(r => r.zeroOrMore(() => $NEWLINE)),
                                         )
                                     , (({ _target }) => {
                                         return _target;
@@ -732,9 +424,7 @@ export const $no_name_paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Su
                                     ),
                                 )
                             , "target_rest")
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(() => $DEDENT),
                         )
                     , (({ target, target_rest }) => {
                         return [target].concat(target_rest);
@@ -783,21 +473,11 @@ export const $no_name_paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Su
 export const $paragraph_item_child = factory
     .withName("paragraph_item_child")
     .choice(c => c
-        .or(r => r
-            .ref(() => $fig_struct),
-        )
-        .or(r => r
-            .ref(() => $amend_provision),
-        )
-        .or(r => r
-            .ref(() => $table_struct),
-        )
-        .or(r => r
-            .ref(() => $paragraph_item),
-        )
-        .or(r => r
-            .ref(() => $style_struct),
-        ),
+        .or(() => $fig_struct)
+        .or(() => $amend_provision)
+        .or(() => $table_struct)
+        .or(() => $paragraph_item)
+        .or(() => $style_struct),
     )
     ;
 

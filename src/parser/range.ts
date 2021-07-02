@@ -9,25 +9,15 @@ export const $ranges: ValueRule<[PointerFragment[], PointerFragment[]][]> = fact
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .ref(() => $range)
-                    , "first")
+                    .and(() => $range, "first")
                     .and(r => r
                         .choice(c => c
-                            .or(r => r
-                                .seqEqual("、"),
-                            )
-                            .or(r => r
-                                .seqEqual("及び"),
-                            )
-                            .or(r => r
-                                .seqEqual("並びに"),
-                            ),
+                            .or(r => r.seqEqual("、"))
+                            .or(r => r.seqEqual("及び"))
+                            .or(r => r.seqEqual("並びに")),
                         ),
                     )
-                    .and(r => r
-                        .ref(() => $ranges)
-                    , "rest"),
+                    .and(() => $ranges, "rest"),
                 )
             , (({ first, rest }) => {
                 return [first].concat(rest);
@@ -37,9 +27,7 @@ export const $ranges: ValueRule<[PointerFragment[], PointerFragment[]][]> = fact
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .ref(() => $range)
-                    , "range"),
+                    .and(() => $range, "range"),
                 )
             , (({ range }) => {
                 return [range];
@@ -55,18 +43,10 @@ export const $range = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .ref(() => $pointer)
-                    , "from")
-                    .and(r => r
-                        .seqEqual("から"),
-                    )
-                    .and(r => r
-                        .ref(() => $pointer)
-                    , "to")
-                    .and(r => r
-                        .seqEqual("まで"),
-                    ),
+                    .and(() => $pointer, "from")
+                    .and(r => r.seqEqual("から"))
+                    .and(() => $pointer, "to")
+                    .and(r => r.seqEqual("まで")),
                 )
             , (({ from, to }) => {
                 return [from, to] as [PointerFragment[], PointerFragment[]];
@@ -76,9 +56,7 @@ export const $range = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .ref(() => $pointer)
-                    , "pointer"),
+                    .and(() => $pointer, "pointer"),
                 )
             , (({ pointer }) => {
                 return [pointer, pointer] as [PointerFragment[], PointerFragment[]];
@@ -90,9 +68,7 @@ export const $range = factory
 
 export const $pointer = factory
     .withName("pointer")
-    .oneOrMore(r => r
-        .ref(() => $pointer_fragment),
-    )
+    .oneOrMore(() => $pointer_fragment)
     ;
 
 export const $pointer_fragment = factory
@@ -101,28 +77,14 @@ export const $pointer_fragment = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .seqEqual("第"),
-                    )
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $kanji_digit),
-                        ),
-                    )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号"] as const)
-                    , "type_char")
+                    .and(r => r.seqEqual("第"))
+                    .and(r => r.oneOrMore(() => $kanji_digit))
+                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号"] as const), "type_char")
                     .and(r => r
                         .zeroOrMore(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .seqEqual("の"),
-                                )
-                                .and(r => r
-                                    .oneOrMore(r => r
-                                        .ref(() => $kanji_digit),
-                                    ),
-                                ),
+                                .and(r => r.seqEqual("の"))
+                                .and(r => r.oneOrMore(() => $kanji_digit)),
                             ),
                         ),
                     ),
@@ -140,12 +102,8 @@ export const $pointer_fragment = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .seqEqual("次"),
-                    )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const)
-                    , "type_char"),
+                    .and(r => r.seqEqual("次"))
+                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
                 )
             , (({ text, type_char }) => {
                 return new PointerFragment(
@@ -162,12 +120,8 @@ export const $pointer_fragment = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .seqEqual("前"),
-                    )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const)
-                    , "type_char"),
+                    .and(r => r.seqEqual("前"))
+                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
                 )
             , (({ text, type_char }) => {
                 return new PointerFragment(
@@ -186,17 +140,11 @@ export const $pointer_fragment = factory
                 .sequence(c => c
                     .and(r => r
                         .choice(c => c
-                            .or(r => r
-                                .seqEqual("この"),
-                            )
-                            .or(r => r
-                                .seqEqual("本"),
-                            ),
+                            .or(r => r.seqEqual("この"))
+                            .or(r => r.seqEqual("本")),
                         ),
                     )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const)
-                    , "type_char"),
+                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
                 )
             , (({ text, type_char }) => {
                 return new PointerFragment(
@@ -213,12 +161,8 @@ export const $pointer_fragment = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .seqEqual("同"),
-                    )
-                    .and(r => r
-                        .oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const)
-                    , "type_char"),
+                    .and(r => r.seqEqual("同"))
+                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
                 )
             , (({ text, type_char }) => {
                 return new PointerFragment(
@@ -235,12 +179,8 @@ export const $pointer_fragment = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .regExp(/^[付附]/),
-                    )
-                    .and(r => r
-                        .seqEqual("則" as const)
-                    , "type_char"),
+                    .and(r => r.regExp(/^[付附]/))
+                    .and(r => r.seqEqual("則" as const), "type_char"),
                 )
             , (({ text, type_char }) => {
                 return new PointerFragment(
@@ -255,20 +195,12 @@ export const $pointer_fragment = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .seqEqual("別表"),
-                    )
+                    .and(r => r.seqEqual("別表"))
                     .and(r => r
                         .zeroOrOne(r => r
                             .sequence(c => c
-                                .and(r => r
-                                    .seqEqual("第"),
-                                )
-                                .and(r => r
-                                    .oneOrMore(r => r
-                                        .ref(() => $kanji_digit),
-                                    ),
-                                ),
+                                .and(r => r.seqEqual("第"))
+                                .and(r => r.oneOrMore(() => $kanji_digit)),
                             ),
                         ),
                     ),
@@ -325,14 +257,8 @@ export const $pointer_fragment = factory
         .or(r => r
             .action(r => r
                 .choice(c => c
-                    .or(r => r
-                        .ref(() => $iroha_char),
-                    )
-                    .or(r => r
-                        .oneOrMore(r => r
-                            .ref(() => $roman_digit),
-                        ),
-                    ),
+                    .or(() => $iroha_char)
+                    .or(r => r.oneOrMore(() => $roman_digit)),
                 )
             , (({ text }) => {
                 return new PointerFragment(

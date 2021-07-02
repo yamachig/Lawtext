@@ -15,39 +15,13 @@ export const $style_struct = factory
     .withName("style_struct")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
-            .and(r => r
-                .zeroOrOne(r => r
-                    .ref(() => $style_struct_title),
-                )
-            , "style_struct_title")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $remarks),
-                )
-            , "remarkses1")
-            .and(r => r
-                .ref(() => $style)
-            , "style")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $remarks),
-                )
-            , "remarkses2"),
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
+            .and(r => r.nextIsNot(() => $NEWLINE))
+            .and(r => r.zeroOrOne(() => $style_struct_title), "style_struct_title")
+            .and(r => r.zeroOrMore(() => $remarks), "remarkses1")
+            .and(() => $style, "style")
+            .and(r => r.zeroOrMore(() => $remarks), "remarkses2"),
         )
     , (({ style_struct_title, remarkses1, style, remarkses2 }) => {
         const style_struct = newStdEL("StyleStruct");
@@ -71,20 +45,10 @@ export const $style_struct_title = factory
     .withName("style_struct_title")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .seqEqual(":style-struct-title:"),
-            )
-            .and(r => r
-                .ref(() => $_),
-            )
-            .and(r => r
-                .asSlice(r => r
-                    .ref(() => $INLINE),
-                )
-            , "title")
-            .and(r => r
-                .ref(() => $NEWLINE),
-            ),
+            .and(r => r.seqEqual(":style-struct-title:"))
+            .and(() => $_)
+            .and(r => r.asSlice(() => $INLINE), "title")
+            .and(() => $NEWLINE),
         )
     , (({ title }) => {
         return newStdEL("StyleStructTitle", {}, [new __Text(title)]);
@@ -100,28 +64,12 @@ export const $style = factory
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .oneOrMore(r => r
-                                    .ref(() => $list),
-                                )
-                            , "target")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(() => $INDENT)
+                            .and(() => $INDENT)
+                            .and(r => r.oneOrMore(() => $list), "target")
+                            .and(r => r.zeroOrMore(() => $NEWLINE))
+                            .and(() => $DEDENT)
+                            .and(() => $DEDENT),
                         )
                     , (({ target }) => {
                         return target;
@@ -132,21 +80,11 @@ export const $style = factory
             .and(r => r
                 .oneOrMore(r => r
                     .choice(c => c
-                        .or(r => r
-                            .ref(() => $table),
-                        )
-                        .or(r => r
-                            .ref(() => $table_struct),
-                        )
-                        .or(r => r
-                            .ref(() => $fig),
-                        )
-                        .or(r => r
-                            .ref(() => $fig_struct),
-                        )
-                        .or(r => r
-                            .ref(() => $paragraph_item),
-                        ),
+                        .or(() => $table)
+                        .or(() => $table_struct)
+                        .or(() => $fig)
+                        .or(() => $fig_struct)
+                        .or(() => $paragraph_item),
                     ),
                 )
             , "children"),

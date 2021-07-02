@@ -10,14 +10,8 @@ export const $list: ValueRule<List | Sublist1 | Sublist2 | Sublist3> = factory
     .withName("list")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .ref(() => $columns_or_sentences)
-            , "columns_or_sentences")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
+            .and(() => $columns_or_sentences, "columns_or_sentences")
+            .and(r => r.oneOrMore(() => $NEWLINE))
             .and(r => r
                 .zeroOrOne(r => r
                     .choice(c => c
@@ -27,9 +21,7 @@ export const $list: ValueRule<List | Sublist1 | Sublist2 | Sublist3> = factory
                                     .and(r => r
                                         .nextIs(r => r
                                             .sequence(c => c
-                                                .and(r => r
-                                                    .seqEqual(""),
-                                                )
+                                                .and(r => r.seqEqual(""))
                                                 .and(r => r
                                                     .assert(({ state }) => {
                                                         state.listDepth++; return true;
@@ -38,34 +30,16 @@ export const $list: ValueRule<List | Sublist1 | Sublist2 | Sublist3> = factory
                                             ),
                                         ),
                                     )
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $INDENT),
-                                    )
-                                    .and(r => r
-                                        .oneOrMore(r => r
-                                            .ref(() => $list),
-                                        )
-                                    , "target")
-                                    .and(r => r
-                                        .zeroOrMore(r => r
-                                            .ref(() => $NEWLINE),
-                                        ),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    )
-                                    .and(r => r
-                                        .ref(() => $DEDENT),
-                                    )
+                                    .and(() => $INDENT)
+                                    .and(() => $INDENT)
+                                    .and(r => r.oneOrMore(() => $list), "target")
+                                    .and(r => r.zeroOrMore(() => $NEWLINE))
+                                    .and(() => $DEDENT)
+                                    .and(() => $DEDENT)
                                     .and(r => r
                                         .nextIs(r => r
                                             .sequence(c => c
-                                                .and(r => r
-                                                    .seqEqual(""),
-                                                )
+                                                .and(r => r.seqEqual(""))
                                                 .and(r => r
                                                     .assert(({ state }) => {
                                                         state.listDepth--; return true;
@@ -85,9 +59,7 @@ export const $list: ValueRule<List | Sublist1 | Sublist2 | Sublist3> = factory
                                 .and(r => r
                                     .nextIs(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .seqEqual(""),
-                                            )
+                                            .and(r => r.seqEqual(""))
                                             .and(r => r
                                                 .assert(({ state }) => {
                                                     state.listDepth--; return false;
@@ -96,9 +68,7 @@ export const $list: ValueRule<List | Sublist1 | Sublist2 | Sublist3> = factory
                                         ),
                                     ),
                                 )
-                                .and(r => r
-                                    .seqEqual("DUMMY"),
-                                ),
+                                .and(r => r.seqEqual("DUMMY")),
                             ) as unknown as ValueRule<never>,
                         ),
                     ),

@@ -11,36 +11,24 @@ export const $article_group_title = factory
     .withName("article_group_title")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .ref(() => $__),
-            )
+            .and(() => $__)
             .and(r => r
                 .action(r => r
                     .sequence(c => c
                         .and(r => r
                             .action(r => r
                                 .sequence(c => c
+                                    .and(r => r.seqEqual("第"))
                                     .and(r => r
-                                        .seqEqual("第"),
+                                        .oneOrMore(r => r.regExp(/^[^ 　\t\r\n編章節款目]/)),
                                     )
-                                    .and(r => r
-                                        .oneOrMore(r => r
-                                            .regExp(/^[^ 　\t\r\n編章節款目]/),
-                                        ),
-                                    )
-                                    .and(r => r
-                                        .oneOf(articleGroupTypeChars)
-                                    , "type_char")
+                                    .and(r => r.oneOf(articleGroupTypeChars), "type_char")
                                     .and(r => r
                                         .zeroOrOne(r => r
                                             .sequence(c => c
+                                                .and(r => r.regExp(/^[のノ]/))
                                                 .and(r => r
-                                                    .regExp(/^[のノ]/),
-                                                )
-                                                .and(r => r
-                                                    .oneOrMore(r => r
-                                                        .regExp(/^[^ 　\t\r\n]/),
-                                                    ),
+                                                    .oneOrMore(r => r.regExp(/^[^ 　\t\r\n]/)),
                                                 ),
                                             ),
                                         ),
@@ -55,14 +43,8 @@ export const $article_group_title = factory
                             .zeroOrOne(r => r
                                 .action(r => r
                                     .sequence(c => c
-                                        .and(r => r
-                                            .asSlice(r => r
-                                                .ref(() => $__),
-                                            )
-                                        , "space")
-                                        .and(r => r
-                                            .ref(() => $INLINE)
-                                        , "inline"),
+                                        .and(r => r.asSlice(() => $__), "space")
+                                        .and(() => $INLINE, "inline"),
                                     )
                                 , (({ space, inline }) => {
                                     return { space: space, inline: inline };
@@ -84,11 +66,7 @@ export const $article_group_title = factory
                 }),
                 )
             , "title")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            ),
+            .and(r => r.oneOrMore(() => $NEWLINE)),
         )
     , (({ title }) => {
         return title;
@@ -100,24 +78,18 @@ export const $article_group: ValueRule<Part | Chapter | Section | Subsection | D
     .withName("article_group")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .ref(() => $article_group_title)
-            , "article_group_title")
+            .and(() => $article_group_title, "article_group_title")
             .and(r => r
                 .oneOrMore(r => r
                     .choice(c => c
-                        .or(r => r
-                            .ref(() => $article),
-                        )
+                        .or(() => $article)
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
                                     .and(r => r
                                         .nextIs(r => r
                                             .sequence(c => c
-                                                .and(r => r
-                                                    .ref(() => $article_group_title)
-                                                , "next_title")
+                                                .and(() => $article_group_title, "next_title")
                                                 .and(r => r
                                                     .assert(({ article_group_title, next_title }) => {
                                                         const current_level = articleGroupTypeChars.indexOf(article_group_title.type_char);
@@ -128,9 +100,7 @@ export const $article_group: ValueRule<Part | Chapter | Section | Subsection | D
                                             ),
                                         ),
                                     )
-                                    .and(r => r
-                                        .ref(() => $article_group)
-                                    , "article_group"),
+                                    .and(() => $article_group, "article_group"),
                                 )
                             , (({ article_group }) => {
                                 return article_group;

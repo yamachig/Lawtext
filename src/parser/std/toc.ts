@@ -9,38 +9,18 @@ import { $NEWLINE, $DEDENT, $INDENT } from "../lexical";
 export const $toc_label = factory
     .withName("toc_label")
     .sequence(c => c
-        .and(r => r
-            .nextIsNot(r => r
-                .ref(() => $INDENT),
-            ),
-        )
-        .and(r => r
-            .nextIsNot(r => r
-                .ref(() => $DEDENT),
-            ),
-        )
-        .and(r => r
-            .nextIsNot(r => r
-                .ref(() => $NEWLINE),
-            ),
-        )
+        .and(r => r.nextIsNot(() => $INDENT))
+        .and(r => r.nextIsNot(() => $DEDENT))
+        .and(r => r.nextIsNot(() => $NEWLINE))
         .and(r => r
             .sequence(c => c
                 .and(r => r
-                    .zeroOrMore(r => r
-                        .regExp(/^[^\r\n目]/),
-                    ),
+                    .zeroOrMore(r => r.regExp(/^[^\r\n目]/)),
                 )
-                .and(r => r
-                    .seqEqual("目次"),
-                ),
+                .and(r => r.seqEqual("目次")),
             ),
         )
-        .and(r => r
-            .nextIs(r => r
-                .ref(() => $NEWLINE),
-            ),
-        ),
+        .and(r => r.nextIs(() => $NEWLINE)),
     )
     ;
 
@@ -48,27 +28,15 @@ export const $toc = factory
     .withName("toc")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .asSlice(r => r
-                    .ref(() => $toc_label),
-                )
-            , "toc_label")
-            .and(r => r
-                .ref(() => $NEWLINE),
-            )
-            .and(r => r
-                .ref(() => $INDENT),
-            )
-            .and(r => r
-                .ref(() => $toc_item)
-            , "first")
+            .and(r => r.asSlice(() => $toc_label), "toc_label")
+            .and(() => $NEWLINE)
+            .and(() => $INDENT)
+            .and(() => $toc_item, "first")
             .and(r => r
                 .zeroOrMore(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $toc_item)
-                            , "target"),
+                            .and(() => $toc_item, "target"),
                         )
                     , (({ target }) => {
                         return target;
@@ -76,14 +44,8 @@ export const $toc = factory
                     ),
                 )
             , "rest")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
-            .and(r => r
-                .ref(() => $DEDENT),
-            ),
+            .and(r => r.zeroOrMore(() => $NEWLINE))
+            .and(() => $DEDENT),
         )
     , (({ toc_label, first, rest }) => {
         const children = [first].concat(rest);
@@ -101,21 +63,9 @@ export const $toc_item: ValueRule<EL> = factory
     .withName("toc_item")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
+            .and(r => r.nextIsNot(() => $NEWLINE))
             .and(r => r
                 .action(r => r
                     .sequence(c => c
@@ -125,9 +75,7 @@ export const $toc_item: ValueRule<EL> = factory
                                     .or(r => r
                                         .action(r => r
                                             .sequence(c => c
-                                                .and(r => r
-                                                    .ref(() => $OUTSIDE_ROUND_PARENTHESES_INLINE)
-                                                , "target"),
+                                                .and(() => $OUTSIDE_ROUND_PARENTHESES_INLINE, "target"),
                                             )
                                         , (({ target }) => {
                                             return target.content;
@@ -137,9 +85,7 @@ export const $toc_item: ValueRule<EL> = factory
                                     .or(r => r
                                         .action(r => r
                                             .sequence(c => c
-                                                .and(r => r
-                                                    .ref(() => $ROUND_PARENTHESES_INLINE)
-                                                , "target"),
+                                                .and(() => $ROUND_PARENTHESES_INLINE, "target"),
                                             )
                                         , (({ target }) => {
                                             return [target];
@@ -159,26 +105,18 @@ export const $toc_item: ValueRule<EL> = factory
                 }),
                 )
             , "fragments")
-            .and(r => r
-                .ref(() => $NEWLINE),
-            )
+            .and(() => $NEWLINE)
             .and(r => r
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
-                            .and(r => r
-                                .ref(() => $toc_item)
-                            , "first")
+                            .and(() => $INDENT)
+                            .and(() => $toc_item, "first")
                             .and(r => r
                                 .zeroOrMore(r => r
                                     .action(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .ref(() => $toc_item)
-                                            , "target"),
+                                            .and(() => $toc_item, "target"),
                                         )
                                     , (({ target }) => {
                                         return target;
@@ -186,14 +124,8 @@ export const $toc_item: ValueRule<EL> = factory
                                     ),
                                 )
                             , "rest")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(r => r.zeroOrMore(() => $NEWLINE))
+                            .and(() => $DEDENT),
                         )
                     , (({ first, rest }) => {
                         return [first].concat(rest);

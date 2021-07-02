@@ -24,29 +24,19 @@ export const $appdx_note_title = factory
                                         .zeroOrMore(r => r
                                             .action(r => r
                                                 .sequence(c => c
-                                                    .and(r => r
-                                                        .seqEqual("["),
-                                                    )
+                                                    .and(r => r.seqEqual("["))
                                                     .and(r => r
                                                         .asSlice(r => r
-                                                            .oneOrMore(r => r
-                                                                .regExp(/^[^ 　\t\r\n\]=]/),
-                                                            ),
+                                                            .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]=]/)),
                                                         )
                                                     , "name")
-                                                    .and(r => r
-                                                        .seqEqual("=\""),
-                                                    )
+                                                    .and(r => r.seqEqual("=\""))
                                                     .and(r => r
                                                         .asSlice(r => r
-                                                            .oneOrMore(r => r
-                                                                .regExp(/^[^ 　\t\r\n\]"]/),
-                                                            ),
+                                                            .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
                                                         )
                                                     , "value")
-                                                    .and(r => r
-                                                        .seqEqual("\"]"),
-                                                    ),
+                                                    .and(r => r.seqEqual("\"]")),
                                                 )
                                             , (({ name, value }) => {
                                                 return [name, value];
@@ -72,21 +62,13 @@ export const $appdx_note_title = factory
                                             .sequence(c => c
                                                 .and(r => r
                                                     .choice(c => c
-                                                        .or(r => r
-                                                            .seqEqual("別記"),
-                                                        )
-                                                        .or(r => r
-                                                            .seqEqual("付録"),
-                                                        )
-                                                        .or(r => r
-                                                            .seqEqual("（別紙）"),
-                                                        ),
+                                                        .or(r => r.seqEqual("別記"))
+                                                        .or(r => r.seqEqual("付録"))
+                                                        .or(r => r.seqEqual("（別紙）")),
                                                     ),
                                                 )
                                                 .and(r => r
-                                                    .zeroOrMore(r => r
-                                                        .regExp(/^[^\r\n(（]/),
-                                                    ),
+                                                    .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                                 ),
                                             ),
                                         )
@@ -95,12 +77,8 @@ export const $appdx_note_title = factory
                                         .zeroOrOne(r => r
                                             .action(r => r
                                                 .sequence(c => c
-                                                    .and(r => r
-                                                        .ref(() => $_),
-                                                    )
-                                                    .and(r => r
-                                                        .ref(() => $ROUND_PARENTHESES_INLINE)
-                                                    , "target"),
+                                                    .and(() => $_)
+                                                    .and(() => $ROUND_PARENTHESES_INLINE, "target"),
                                                 )
                                             , (({ target }) => {
                                                 return target;
@@ -110,9 +88,7 @@ export const $appdx_note_title = factory
                                     , "related_article_num")
                                     .and(r => r
                                         .asSlice(r => r
-                                            .zeroOrMore(r => r
-                                                .regExp(/^[^\r\n(（]/),
-                                            ),
+                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                         )
                                     , "table_struct_title"),
                                 )
@@ -146,40 +122,24 @@ export const $appdx_note = factory
     .withName("appdx_note")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .ref(() => $appdx_note_title)
-            , "title_struct")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
+            .and(() => $appdx_note_title, "title_struct")
+            .and(r => r.oneOrMore(() => $NEWLINE))
             .and(r => r
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .ref(() => $INDENT),
-                            )
+                            .and(() => $INDENT)
                             .and(r => r
                                 .zeroOrOne(r => r
                                     .action(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .ref(() => $appdx_note_children)
-                                            , "first")
+                                            .and(() => $appdx_note_children, "first")
                                             .and(r => r
                                                 .zeroOrMore(r => r
                                                     .action(r => r
                                                         .sequence(c => c
-                                                            .and(r => r
-                                                                .oneOrMore(r => r
-                                                                    .ref(() => $NEWLINE),
-                                                                ),
-                                                            )
-                                                            .and(r => r
-                                                                .ref(() => $appdx_note_children)
-                                                            , "_target"),
+                                                            .and(r => r.oneOrMore(() => $NEWLINE))
+                                                            .and(() => $appdx_note_children, "_target"),
                                                         )
                                                     , (({ _target }) => {
                                                         return _target;
@@ -194,19 +154,9 @@ export const $appdx_note = factory
                                     ),
                                 )
                             , "target")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $remarks),
-                                )
-                            , "remarkses")
-                            .and(r => r
-                                .zeroOrMore(r => r
-                                    .ref(() => $NEWLINE),
-                                ),
-                            )
-                            .and(r => r
-                                .ref(() => $DEDENT),
-                            ),
+                            .and(r => r.zeroOrMore(() => $remarks), "remarkses")
+                            .and(r => r.zeroOrMore(() => $NEWLINE))
+                            .and(() => $DEDENT),
                         )
                     , (({ target, remarkses }) => {
                         return [...(target ?? []), ...remarkses];
@@ -240,15 +190,9 @@ export const $appdx_note = factory
 export const $appdx_note_children = factory
     .withName("appdx_note_children")
     .choice(c => c
-        .or(r => r
-            .ref(() => $fig_struct),
-        )
-        .or(r => r
-            .ref(() => $note_struct),
-        )
-        .or(r => r
-            .ref(() => $table_struct),
-        ),
+        .or(() => $fig_struct)
+        .or(() => $note_struct)
+        .or(() => $table_struct),
     )
     ;
 

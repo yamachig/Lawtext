@@ -9,20 +9,10 @@ export const $suppl_note = factory
     .withName("suppl_note")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .seqEqual(":SupplNote:"),
-            )
-            .and(r => r
-                .ref(() => $_),
-            )
-            .and(r => r
-                .ref(() => $INLINE)
-            , "inline")
-            .and(r => r
-                .oneOrMore(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            ),
+            .and(r => r.seqEqual(":SupplNote:"))
+            .and(() => $_)
+            .and(() => $INLINE, "inline")
+            .and(r => r.oneOrMore(() => $NEWLINE)),
         )
     , (({ inline }) => {
         return newStdEL("SupplNote", {}, inline);

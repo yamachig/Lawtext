@@ -13,51 +13,21 @@ export const $table_struct = factory
     .withName("table_struct")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $INDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $DEDENT),
-                ),
-            )
-            .and(r => r
-                .nextIsNot(r => r
-                    .ref(() => $NEWLINE),
-                ),
-            )
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
+            .and(r => r.nextIsNot(() => $NEWLINE))
             .and(r => r
                 .zeroOrOne(r => r
                     .sequence(c => c
-                        .and(r => r
-                            .seqEqual(":table-struct:"),
-                        )
-                        .and(r => r
-                            .ref(() => $NEWLINE),
-                        ),
+                        .and(r => r.seqEqual(":table-struct:"))
+                        .and(() => $NEWLINE),
                     ),
                 ),
             )
-            .and(r => r
-                .zeroOrOne(r => r
-                    .ref(() => $table_struct_title),
-                )
-            , "table_struct_title")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $remarks),
-                )
-            , "remarkses1")
-            .and(r => r
-                .ref(() => $table)
-            , "table")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .ref(() => $remarks),
-                )
-            , "remarkses2"),
+            .and(r => r.zeroOrOne(() => $table_struct_title), "table_struct_title")
+            .and(r => r.zeroOrMore(() => $remarks), "remarkses1")
+            .and(() => $table, "table")
+            .and(r => r.zeroOrMore(() => $remarks), "remarkses2"),
         )
     , (({ table_struct_title, remarkses1, table, remarkses2 }) => {
         const table_struct = newStdEL("TableStruct");
@@ -81,20 +51,10 @@ export const $table_struct_title = factory
     .withName("table_struct_title")
     .action(r => r
         .sequence(c => c
-            .and(r => r
-                .seqEqual(":table-struct-title:"),
-            )
-            .and(r => r
-                .ref(() => $_),
-            )
-            .and(r => r
-                .asSlice(r => r
-                    .ref(() => $INLINE),
-                )
-            , "title")
-            .and(r => r
-                .ref(() => $NEWLINE),
-            ),
+            .and(r => r.seqEqual(":table-struct-title:"))
+            .and(() => $_)
+            .and(r => r.asSlice(() => $INLINE), "title")
+            .and(() => $NEWLINE),
         )
     , (({ title }) => {
         return newStdEL("TableStructTitle", {}, [new __Text(title)]);
@@ -114,29 +74,19 @@ export const $table: ValueRule<Table> = factory
                                 .oneOrMore(r => r
                                     .action(r => r
                                         .sequence(c => c
-                                            .and(r => r
-                                                .seqEqual("["),
-                                            )
+                                            .and(r => r.seqEqual("["))
                                             .and(r => r
                                                 .asSlice(r => r
-                                                    .oneOrMore(r => r
-                                                        .regExp(/^[^ 　\t\r\n\]=]/),
-                                                    ),
+                                                    .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]=]/)),
                                                 )
                                             , "name")
-                                            .and(r => r
-                                                .seqEqual("=\""),
-                                            )
+                                            .and(r => r.seqEqual("=\""))
                                             .and(r => r
                                                 .asSlice(r => r
-                                                    .oneOrMore(r => r
-                                                        .regExp(/^[^ 　\t\r\n\]"]/),
-                                                    ),
+                                                    .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
                                                 )
                                             , "value")
-                                            .and(r => r
-                                                .seqEqual("\"]"),
-                                            ),
+                                            .and(r => r.seqEqual("\"]")),
                                         )
                                     , (({ name, value }) => {
                                         return [name, value];
@@ -144,9 +94,7 @@ export const $table: ValueRule<Table> = factory
                                     ),
                                 )
                             , "target")
-                            .and(r => r
-                                .ref(() => $NEWLINE),
-                            ),
+                            .and(() => $NEWLINE),
                         )
                     , (({ target }) => {
                         return target;
@@ -158,35 +106,21 @@ export const $table: ValueRule<Table> = factory
                 .oneOrMore(r => r
                     .action(r => r
                         .sequence(c => c
-                            .and(r => r
-                                .seqEqual("*"),
-                            )
-                            .and(r => r
-                                .ref(() => $__),
-                            )
-                            .and(r => r
-                                .ref(() => $table_column)
-                            , "first")
+                            .and(r => r.seqEqual("*"))
+                            .and(() => $__)
+                            .and(() => $table_column, "first")
                             .and(r => r
                                 .zeroOrMore(r => r
                                     .action(r => r
                                         .sequence(c => c
                                             .and(r => r
                                                 .choice(c => c
-                                                    .or(r => r
-                                                        .seqEqual("  "),
-                                                    )
-                                                    .or(r => r
-                                                        .seqEqual("　"),
-                                                    )
-                                                    .or(r => r
-                                                        .seqEqual("\t"),
-                                                    ),
+                                                    .or(r => r.seqEqual("  "))
+                                                    .or(r => r.seqEqual("　"))
+                                                    .or(r => r.seqEqual("\t")),
                                                 ),
                                             )
-                                            .and(r => r
-                                                .ref(() => $table_column)
-                                            , "target"),
+                                            .and(() => $table_column, "target"),
                                         )
                                     , (({ target }) => {
                                         return target;
@@ -222,30 +156,14 @@ export const $table: ValueRule<Table> = factory
 
 export const $table_column_attr_name = factory
     .choice(c => c
-        .or(r => r
-            .seqEqual("BorderTop"),
-        )
-        .or(r => r
-            .seqEqual("BorderBottom"),
-        )
-        .or(r => r
-            .seqEqual("BorderLeft"),
-        )
-        .or(r => r
-            .seqEqual("BorderRight"),
-        )
-        .or(r => r
-            .seqEqual("rowspan"),
-        )
-        .or(r => r
-            .seqEqual("colspan"),
-        )
-        .or(r => r
-            .seqEqual("Align"),
-        )
-        .or(r => r
-            .seqEqual("Valign"),
-        ),
+        .or(r => r.seqEqual("BorderTop"))
+        .or(r => r.seqEqual("BorderBottom"))
+        .or(r => r.seqEqual("BorderLeft"))
+        .or(r => r.seqEqual("BorderRight"))
+        .or(r => r.seqEqual("rowspan"))
+        .or(r => r.seqEqual("colspan"))
+        .or(r => r.seqEqual("Align"))
+        .or(r => r.seqEqual("Valign")),
     )
     ;
 
@@ -255,37 +173,21 @@ export const $table_column = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .seqEqual("-"),
-                    )
-                    .and(r => r
-                        .ref(() => $__),
-                    )
+                    .and(r => r.seqEqual("-"))
+                    .and(() => $__)
                     .and(r => r
                         .zeroOrMore(r => r
                             .action(r => r
                                 .sequence(c => c
-                                    .and(r => r
-                                        .seqEqual("["),
-                                    )
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .ref(() => $table_column_attr_name),
-                                        )
-                                    , "name")
-                                    .and(r => r
-                                        .seqEqual("=\""),
-                                    )
+                                    .and(r => r.seqEqual("["))
+                                    .and(r => r.asSlice(() => $table_column_attr_name), "name")
+                                    .and(r => r.seqEqual("=\""))
                                     .and(r => r
                                         .asSlice(r => r
-                                            .oneOrMore(r => r
-                                                .regExp(/^[^ 　\t\r\n\]"]/),
-                                            ),
+                                            .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
                                         )
                                     , "value")
-                                    .and(r => r
-                                        .seqEqual("\"]"),
-                                    ),
+                                    .and(r => r.seqEqual("\"]")),
                                 )
                             , (({ name, value }) => {
                                 return [name, value];
@@ -300,31 +202,21 @@ export const $table_column = factory
                                     .sequence(c => c
                                         .and(r => r
                                             .choice(c => c
-                                                .or(r => r
-                                                    .ref(() => $remarks),
-                                                )
-                                                .or(r => r
-                                                    .ref(() => $fig_struct),
-                                                ),
+                                                .or(() => $remarks)
+                                                .or(() => $fig_struct),
                                             )
                                         , "first")
                                         .and(r => r
                                             .zeroOrOne(r => r
                                                 .action(r => r
                                                     .sequence(c => c
-                                                        .and(r => r
-                                                            .ref(() => $INDENT),
-                                                        )
-                                                        .and(r => r
-                                                            .ref(() => $INDENT),
-                                                        )
+                                                        .and(() => $INDENT)
+                                                        .and(() => $INDENT)
                                                         .and(r => r
                                                             .oneOrMore(r => r
                                                                 .action(r => r
                                                                     .sequence(c => c
-                                                                        .and(r => r
-                                                                            .ref(() => $fig_struct)
-                                                                        , "_target"),
+                                                                        .and(() => $fig_struct, "_target"),
                                                                     )
                                                                 , (({ _target }) => {
                                                                     return _target;
@@ -332,17 +224,9 @@ export const $table_column = factory
                                                                 ),
                                                             )
                                                         , "target")
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r
-                                                                .ref(() => $NEWLINE),
-                                                            ),
-                                                        )
-                                                        .and(r => r
-                                                            .ref(() => $DEDENT),
-                                                        )
-                                                        .and(r => r
-                                                            .ref(() => $DEDENT),
-                                                        ),
+                                                        .and(r => r.zeroOrMore(() => $NEWLINE))
+                                                        .and(() => $DEDENT)
+                                                        .and(() => $DEDENT),
                                                     )
                                                 , (({ target }) => {
                                                     return target;
@@ -356,23 +240,15 @@ export const $table_column = factory
                                 }),
                                 ),
                             )
-                            .or(r => r
-                                .ref(() => $in_table_column_paragraph_items),
-                            )
+                            .or(() => $in_table_column_paragraph_items)
                             .or(r => r
                                 .action(r => r
                                     .sequence(c => c
                                         .and(r => r
                                             .action(r => r
                                                 .sequence(c => c
-                                                    .and(r => r
-                                                        .zeroOrOne(r => r
-                                                            .ref(() => $INLINE),
-                                                        )
-                                                    , "inline")
-                                                    .and(r => r
-                                                        .ref(() => $NEWLINE),
-                                                    ),
+                                                    .and(r => r.zeroOrOne(() => $INLINE), "inline")
+                                                    .and(() => $NEWLINE),
                                                 )
                                             , (({ inline }) => {
                                                 return newStdEL(
@@ -387,12 +263,8 @@ export const $table_column = factory
                                             .zeroOrOne(r => r
                                                 .action(r => r
                                                     .sequence(c => c
-                                                        .and(r => r
-                                                            .ref(() => $INDENT),
-                                                        )
-                                                        .and(r => r
-                                                            .ref(() => $INDENT),
-                                                        )
+                                                        .and(() => $INDENT)
+                                                        .and(() => $INDENT)
                                                         .and(r => r
                                                             .oneOrMore(r => r
                                                                 .action(r => r
@@ -400,12 +272,8 @@ export const $table_column = factory
                                                                         .and(r => r
                                                                             .action(r => r
                                                                                 .sequence(c => c
-                                                                                    .and(r => r
-                                                                                        .ref(() => $INLINE)
-                                                                                    , "inline")
-                                                                                    .and(r => r
-                                                                                        .ref(() => $NEWLINE),
-                                                                                    ),
+                                                                                    .and(() => $INLINE, "inline")
+                                                                                    .and(() => $NEWLINE),
                                                                                 )
                                                                             , (({ inline }) => {
                                                                                 return newStdEL(
@@ -423,17 +291,9 @@ export const $table_column = factory
                                                                 ),
                                                             )
                                                         , "target")
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r
-                                                                .ref(() => $NEWLINE),
-                                                            ),
-                                                        )
-                                                        .and(r => r
-                                                            .ref(() => $DEDENT),
-                                                        )
-                                                        .and(r => r
-                                                            .ref(() => $DEDENT),
-                                                        ),
+                                                        .and(r => r.zeroOrMore(() => $NEWLINE))
+                                                        .and(() => $DEDENT)
+                                                        .and(() => $DEDENT),
                                                     )
                                                 , (({ target }) => {
                                                     return target;
@@ -466,15 +326,9 @@ export const $table_column = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r
-                        .seqEqual("-"),
-                    )
-                    .and(r => r
-                        .ref(() => $_),
-                    )
-                    .and(r => r
-                        .ref(() => $NEWLINE),
-                    ),
+                    .and(r => r.seqEqual("-"))
+                    .and(() => $_)
+                    .and(() => $NEWLINE),
                 )
             , (() => {
                 return newStdEL(
