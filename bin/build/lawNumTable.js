@@ -71,7 +71,7 @@ const buildLawNumTable = async (basePath = defaultBasePath) => {
 
 export const LAWNUM_TABLE: { [key: string]: number } = {};
 
-const LAWNUM_TABLE_RAW =  "${table}";
+const LAWNUM_TABLE_RAW = "${table}";
 
 export const KEY_LENGTH = ${KEY_LENGTH};
 

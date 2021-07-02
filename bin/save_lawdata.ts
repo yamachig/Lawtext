@@ -19,7 +19,7 @@ const saveList = async (dataDir: string): Promise<void> => {
 
 const main = async (): Promise<void> => {
 
-    const args = yargs
+    const args = await yargs
         .option("mode", {
             type: "string",
             choices: ["all", "download", "save-list"],
