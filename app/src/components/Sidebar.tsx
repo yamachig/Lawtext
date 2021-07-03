@@ -70,22 +70,22 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                     <div className="list-group" style={{ textAlign: "center" }}>
                         <button
                             onClick={openFile}
-                            className="list-group-item list-group-item-sm list-group-item-action"
+                            className="list-group-item  list-group-item-action"
                             style={{ fontSize: "0.8em", padding: "0.5em" }}
                         >
                             法令ファイルを開く
                         </button>
 
                         <form
-                            className="list-group-item list-group-item-sm"
+                            className="list-group-item "
                             style={{ fontSize: "0.8em", padding: 0 }}
                             onSubmit={handleSearchSubmit}
                         >
-                            <div className="input-group">
+                            <div className="input-group input-group-sm">
                                 <input
                                     name="lawSearchKey"
                                     onChange={lawSearchKeyOnChange}
-                                    className="form-control form-control-sm search-law-textbox"
+                                    className="form-control search-law-textbox"
                                     style={{
                                         border: "none",
                                         padding: "0.45em",
@@ -95,15 +95,13 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                     placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
                                     value={editingKey}
                                 />
-                                <span className="input-group-btn">
-                                    <button
-                                        className="btn btn-sm btn-secondary"
-                                        type="submit"
-                                        style={{ borderRadius: 0, borderBottomRightRadius: ".25rem" }}
-                                    >
-                                        検索
-                                    </button>
-                                </span>
+                                <button
+                                    className="btn btn-secondary"
+                                    type="submit"
+                                    style={{ borderRadius: 0, borderBottomRightRadius: ".25rem" }}
+                                >
+                                    検索
+                                </button>
                             </div>
                         </form>
 

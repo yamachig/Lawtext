@@ -1,11 +1,13 @@
-import $ from "jquery";
+import { Modal } from "bootstrap";
+
 export const ErrorModalID = "LawtextAppPage.ErrorModal";
 export const showErrorModal = (title: string, bodyEl: string): void => {
     const modalEl = document.getElementById(ErrorModalID);
-    if (!modalEl) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const modal = $(modalEl) as JQuery<HTMLElement> & { modal: (method: string) => any };
-    modal.find(".modal-title").html(title);
-    modal.find(".modal-body").html(bodyEl);
-    modal.modal("show");
+    const modalTitleEl = modalEl?.querySelector(".modal-title");
+    const modalBodyEl = modalEl?.querySelector(".modal-body");
+    if (!modalEl || !modalTitleEl || !modalBodyEl) return;
+    const modal = new Modal(modalEl);
+    modalTitleEl.innerHTML = title;
+    modalBodyEl.innerHTML = bodyEl;
+    modal.show();
 };

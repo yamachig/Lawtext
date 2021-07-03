@@ -30,7 +30,7 @@ export const saveListJson = async (
 
     console.log(`Processing ${infos.length} XMLs...`);
 
-    const list = await storedLoader.makeLawListFromBaseLawInfos(infos);
+    const list = await storedLoader.makeLawListFromBaseLawInfos(infos, onProgress);
     progress(undefined, "Generating json...");
     const json = JSON.stringify(list);
     progress(undefined, "Saving json...");

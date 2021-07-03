@@ -6,6 +6,7 @@ import { ResolvedType } from "@coresrc/util";
 import { saveListJson } from "@appsrc/lawdata/saveListJson";
 import { ensureFetch, storedLoader } from "@appsrc/lawdata/loaders";
 import { openFile } from "@appsrc/actions/openFile";
+import { ErrorCatcher } from "./ErrorCatcher";
 
 
 const ViewerLoadingDiv = styled.div`
@@ -26,7 +27,7 @@ const ViewerLoading: React.FC<{loadingLawMessage: string}> = props => {
     return (
         <ViewerLoadingDiv>
             <div className="container-fluid" style={{ textAlign: "right" }}>
-                <span className="badge badge-secondary">{props.loadingLawMessage}</span>
+                <span className="badge bg-secondary">{props.loadingLawMessage}</span>
             </div>
         </ViewerLoadingDiv>
     );
@@ -110,11 +111,9 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                                 placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
                                 value={editingKey}
                             />
-                            <span className="input-group-btn">
-                                <button className="btn btn-primary search-law-button" type="submit" >
-                                    検索
-                                </button>
-                            </span>
+                            <button className="btn btn-primary search-law-button" type="submit" >
+                                検索
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -319,7 +318,9 @@ data
                         {state.csvExists ? (<>
                             {state.downloadingJson ? (<>
                                 <li>
-                                    <ListJsonDownloader />
+                                    <ErrorCatcher>
+                                        <ListJsonDownloader />
+                                    </ErrorCatcher>
                                 </li>
                             </>) : (<>
                                 <li>

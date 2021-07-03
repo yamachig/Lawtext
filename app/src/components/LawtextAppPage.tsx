@@ -73,18 +73,17 @@ export const LawtextAppPage: React.FC = () => {
             <div
                 className="modal fade"
                 id={ErrorModalID}
-                role="dialog"
                 aria-labelledby="errorModalLabel"
                 aria-hidden="true"
             >
-                <div className="modal-dialog" role="document">
+                <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="errorModalLabel" />
                             <button
                                 type="button"
-                                className="close"
-                                data-dismiss="modal"
+                                className="btn-close"
+                                data-bs-dismiss="modal"
                                 aria-label="Close"
                             >
                                 <span aria-hidden="true">&times;</span>
@@ -95,7 +94,7 @@ export const LawtextAppPage: React.FC = () => {
                             <button
                                 type="button"
                                 className="btn btn-secondary"
-                                data-dismiss="modal"
+                                data-bs-dismiss="modal"
                             >
                                     閉じる
                             </button>

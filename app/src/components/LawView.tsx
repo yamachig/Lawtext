@@ -10,6 +10,7 @@ import { storedLoader } from "@appsrc/lawdata/loaders";
 import { LawData } from "@appsrc/lawdata/common";
 import { containerInfoOf } from "@appsrc/actions/download";
 import { useObserved } from "./useObserved";
+import { ErrorCatcher } from "./ErrorCatcher";
 
 
 const MARGIN = "　";
@@ -95,39 +96,15 @@ const ErrorComponentDiv = styled.div`
 function withCatcher<P>(Component: React.ComponentType<P & BaseLawCommonProps>) {
     return function WithCatcher(props: P & BaseLawCommonProps) {
         return (
-            <ErrorCatcher ls={props.ls}>
+            <LawErrorCatcher onError={props.ls.onError}>
                 <Component {...props} />
-            </ErrorCatcher>
+            </LawErrorCatcher>
         );
     };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-class ErrorCatcher<P, S = Record<string, never>, SS = any> extends React.Component<P & BaseLawCommonProps, S & { hasError: boolean, error: Error | null }, SS> {
-    constructor(props: P & BaseLawCommonProps, state: S) {
-        super(props);
-        this.state = Object.assign({}, state, { hasError: false, error: null });
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-    public componentDidCatch(error: Error, info: any) {
-        this.setState(Object.assign({}, this.state, { hasError: true, error }));
-        this.props.ls.onError(error);
-    }
-
-    public render(): JSX.Element | JSX.Element[] | null | undefined {
-        if (this.state.hasError) {
-            return this.renderError();
-        } else {
-            return this.renderNormal();
-        }
-    }
-
-    protected renderNormal(): JSX.Element | JSX.Element[] | null | undefined {
-        return <>{this.props.children}</>;
-    }
-
-    protected renderError(): JSX.Element | JSX.Element[] | null | undefined {
+class LawErrorCatcher extends ErrorCatcher {
+    protected override renderError(): JSX.Element | JSX.Element[] | null | undefined {
         return (
             <ErrorComponentDiv className="alert alert-danger">
                 レンダリング時にエラーが発生しました：

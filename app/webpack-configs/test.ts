@@ -29,7 +29,8 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             },
         },
         externals: [
-            nodeExternals(),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            nodeExternals() as any,
             "react",
             "react-dom",
         ],

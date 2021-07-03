@@ -10,9 +10,9 @@ import QueryDocsPlugin from "./QueryDocsPlugin";
 
 const rootDir = path.dirname(__dirname);
 
-export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration & webpack_dev_server.Configuration => {
+export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration & { devServer: webpack_dev_server.Configuration } => {
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev"));
-    const config: webpack.Configuration & webpack_dev_server.Configuration = {
+    const config: webpack.Configuration & { devServer: webpack_dev_server.Configuration } = {
         entry: [
             path.resolve(rootDir, "./src/polyfills.ts"),
             path.resolve(rootDir, "./src/index.tsx"),
@@ -82,6 +82,9 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
 
         plugins: [
+            new webpack.ProvidePlugin({
+                Buffer: ["buffer", "Buffer"],
+            }),
             new WatchMessagePlugin(),
             new MiniCssExtractPlugin({
                 filename: "[name].css",

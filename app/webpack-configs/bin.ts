@@ -27,7 +27,10 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 "path": require.resolve("path-browserify"),
             },
         },
-        externals: [nodeExternals()],
+        externals: [
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            nodeExternals() as any,
+        ],
         node: {
             __dirname: false,
         },

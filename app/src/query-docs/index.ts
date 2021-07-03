@@ -80,7 +80,7 @@ export const generateDocs = async (targetDir: string): Promise<void> => {
 const main = async (): Promise<void> => {
     const yargs = await import("yargs");
 
-    const args = yargs
+    const args = await yargs
         .option("target-dir", {
             type: "string",
             demandOption: true,
