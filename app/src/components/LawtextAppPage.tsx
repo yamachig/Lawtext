@@ -7,6 +7,7 @@ import { onNavigated } from "@appsrc/actions/onNavigated";
 import { OpenFileInputName, readFileInput } from "@appsrc/actions/openFile";
 import { ErrorModalID } from "@appsrc/actions/showErrorModal";
 import { storeTempLaw } from "@appsrc/actions/temp_law";
+import { omit } from "@coresrc/util";
 
 
 const SideBarDiv = styled.div`
@@ -31,22 +32,33 @@ const HiddenInput = styled.input`
 export const LawtextAppPage: React.FC = () => {
 
     const stateStruct = useLawtextAppPageState();
-    const { setState, history, lawSearchKey } = stateStruct;
+    const { history, lawSearchKey, origSetState } = stateStruct;
 
     React.useEffect(() => {
         document.title = "Lawtext";
     }, []);
 
     React.useEffect(() => {
-        onNavigated(lawSearchKey, setState);
-    }, [lawSearchKey, setState]);
+        onNavigated(lawSearchKey, origSetState);
+    }, [lawSearchKey, origSetState]);
 
     const inputChanged = async () => {
-        setState({ loadingLaw: true, loadingLawMessage: "ファイルを読み込んでいます..." });
+        origSetState(s => ({
+            ...s,
+            loadingLaw: true,
+            viewerMessages: {
+                ...s.viewerMessages,
+                loadingLaw: "ファイルを読み込んでいます...",
+            },
+        }));
         console.log("openFileInputChange: Loading file");
         const text = await readFileInput();
         if (!text) {
-            setState({ loadingLaw: false, loadingLawMessage: "" });
+            origSetState(s => ({
+                ...s,
+                loadingLaw: false,
+                viewerMessages: omit(s.viewerMessages, "loadingLaw"),
+            }));
             return;
         }
         const id = storeTempLaw(text);

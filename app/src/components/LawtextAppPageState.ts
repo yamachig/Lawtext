@@ -6,20 +6,20 @@ import { useParams } from "react-router";
 export interface BaseLawtextAppPageState {
     law: LawData | null;
     loadingLaw: boolean;
-    loadingLawMessage: string;
+    viewerMessages: Record<string, string>;
     hasError: boolean;
     errors: Error[];
     navigatedLawSearchKey: string;
 }
 
-const initialState: BaseLawtextAppPageState = {
+const getInitialState = (): BaseLawtextAppPageState => ({
     law: null,
     loadingLaw: false,
-    loadingLawMessage: "",
+    viewerMessages: {},
     hasError: false,
     errors: [],
     navigatedLawSearchKey: "",
-};
+});
 export type SetLawtextAppPageState = (newState: Partial<BaseLawtextAppPageState>) => void;
 export type OrigSetLawtextAppPageState = React.Dispatch<React.SetStateAction<BaseLawtextAppPageState>>;
 
@@ -38,7 +38,7 @@ export const useLawtextAppPageState = (): LawtextAppPageStateStruct => {
 
     const { lawSearchKey } = useParams<RouteParams>();
 
-    const [state, origSetState] = React.useState<BaseLawtextAppPageState>(initialState);
+    const [state, origSetState] = React.useState<BaseLawtextAppPageState>(getInitialState);
 
     const setState = React.useCallback(
         (newState: Partial<BaseLawtextAppPageState>) => {

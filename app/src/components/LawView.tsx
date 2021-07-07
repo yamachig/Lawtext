@@ -2,9 +2,9 @@ import $ from "jquery";
 import React, { useCallback, useMemo } from "react";
 import AnimateHeight from "react-animate-height";
 import styled, { createGlobalStyle } from "styled-components";
-import { assertNever, EL, NotImplementedError } from "@coresrc/util";
+import { assertNever, EL, NotImplementedError, omit } from "@coresrc/util";
 import * as std from "@coresrc/std_law";
-import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
+import { LawtextAppPageStateStruct, OrigSetLawtextAppPageState } from "./LawtextAppPageState";
 import path from "path";
 import { storedLoader } from "@appsrc/lawdata/loaders";
 import { LawData } from "@appsrc/lawdata/common";
@@ -38,28 +38,111 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
         origSetState(prev => ({ ...prev, hasError: true, errors: [...prev.errors, error] }));
     }, [origSetState]);
 
+    const MemoLawDataComponent = React.useMemo(() => React.memo(LawDataComponent), []);
+
     return (
         <LawViewDiv>
             <GlobalStyle />
             {origState.hasError && <LawViewError {...props} />}
             {origState.law &&
                 (origState.navigatedLawSearchKey === props.lawSearchKey) &&
-                    <LawDataComponent lawData={origState.law} onError={onError} />
+                    <MemoLawDataComponent lawData={origState.law} onError={onError} origSetState={origSetState} />
             }
         </LawViewDiv>
     );
 };
 
+const useAfterMountTasks = (origSetState: OrigSetLawtextAppPageState) => {
+    const status = React.useMemo(() => ({
+        tasks: [] as (() => unknown)[],
+        doneCount: 0,
+        started: null as Date | null,
+    }), []);
+
+    const addAfterMountTask = React.useCallback((func: () => unknown) => {
+        status.tasks.push(func);
+    }, [status]);
+
+    const checkTaskTimer = React.useRef<NodeJS.Timer>();
+
+    const checkTaskInner = React.useCallback(() => {
+
+        const tasks = status.tasks.splice(0, 512);
+
+        if (tasks.length === 0) {
+            checkTaskTimer.current = setTimeout(checkTaskInner, 3000);
+            return;
+        }
+
+        if (!status.started) {
+            console.log("useAfterMountTasks started");
+            status.started = new Date();
+            status.doneCount = 0;
+
+            origSetState(s => ({
+                ...s,
+                viewerMessages: {
+                    ...s.viewerMessages,
+                    afterMountTasks: "追加のレンダリングを行っています (0%)...",
+                },
+            }));
+        }
+
+        for (const task of tasks) {
+            task();
+            status.doneCount++;
+        }
+
+        if (status.tasks.length > 0) {
+            origSetState(s => ({
+                ...s,
+                viewerMessages: {
+                    ...s.viewerMessages,
+                    afterMountTasks: `追加のレンダリングを行っています (${Math.ceil(status.doneCount / (status.doneCount + status.tasks.length) * 100)}%)...`,
+                },
+            }));
+        } else {
+            origSetState(s => ({
+                ...s,
+                viewerMessages: omit(s.viewerMessages, "afterMountTasks"),
+            }));
+        }
+
+        if (status.tasks.length === 0 && status.started) {
+            console.log(`useAfterMountTasks finished: ${status.doneCount} items in ${new Date().getTime() - status.started.getTime()} ms`);
+            status.started = null;
+        }
+
+        checkTaskTimer.current = setTimeout(checkTaskInner, 1);
+
+    }, [origSetState, status]);
+
+    React.useEffect(() => {
+        checkTaskTimer.current = setTimeout(checkTaskInner, 300);
+        return () => {
+            if (checkTaskTimer.current) clearTimeout(checkTaskTimer.current);
+        };
+    }, [checkTaskInner]);
+
+    return {
+        addAfterMountTask,
+    };
+};
+
 const LawDataComponent: React.FC<{
     lawData: LawData,
     onError: (error: Error) => unknown,
+    origSetState: OrigSetLawtextAppPageState,
 }> = props => {
-    const { lawData, onError } = props;
+    const { lawData, onError, origSetState } = props;
+
+    const { addAfterMountTask } = useAfterMountTasks(origSetState);
 
     const ls = useMemo(() => ({
         onError,
         lawData,
-    }), [onError, lawData]);
+        addAfterMountTask,
+    }), [onError, lawData, addAfterMountTask]);
 
     return <LawComponent
         el={lawData.el}
@@ -71,6 +154,7 @@ const LawDataComponent: React.FC<{
 interface BaseLawCommonState {
     onError: (error: Error) => void;
     lawData: LawData,
+    addAfterMountTask: (func: () => unknown) => void,
 }
 
 interface BaseLawCommonProps {
@@ -2252,7 +2336,11 @@ const RunComponent = withCatcher<RunComponentProps>(props => {
     const els = props.els;
     const style = props.style;
 
-    const { observed, observedRef } = useObserved();
+    const { observed, observedRef, forceObserved } = useObserved();
+
+    React.useEffect(() => {
+        props.ls.addAfterMountTask(forceObserved);
+    }, [forceObserved, props.ls]);
 
     const runs: JSX.Element[] = [];
 

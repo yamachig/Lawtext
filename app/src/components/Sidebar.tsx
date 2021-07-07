@@ -598,9 +598,10 @@ const NavBlock: React.FC<{law: std.Law | null}> = props => {
 
 
 const SidebarBody: React.FC<{law: std.Law | null}> = props => {
+    const MemoNavBlock = React.useMemo(() => React.memo(NavBlock), []);
     return (
         <SidebarBodyDiv>
-            <NavBlock law={props.law} />
+            <MemoNavBlock law={props.law} />
         </SidebarBodyDiv>
     );
 };

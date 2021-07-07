@@ -9,27 +9,21 @@ import { openFile } from "@appsrc/actions/openFile";
 import { ErrorCatcher } from "./ErrorCatcher";
 
 
-const ViewerLoadingDiv = styled.div`
-    /* position: fixed;
-    top: 0;
-    right: 0;
+const ViewerMessagesDiv = styled.div`
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
     bottom: 0;
-    left: 280px; */
     z-index: 100;
-    min-height: 100vh;
-    padding: 3em 0;
-
-    padding-top: 1rem;
-    text-align: center;
 `;
 
-const ViewerLoading: React.FC<{loadingLawMessage: string}> = props => {
+const ViewerMessages: React.FC<{messages: Record<string, string>}> = props => {
     return (
-        <ViewerLoadingDiv>
-            <div className="container-fluid" style={{ textAlign: "right" }}>
-                <span className="badge bg-secondary">{props.loadingLawMessage}</span>
-            </div>
-        </ViewerLoadingDiv>
+        <ViewerMessagesDiv>
+            {Object.entries(props.messages).map(([key, message]) => (
+                <span className="badge bg-secondary" key={key}>{message}</span>
+            ))}
+        </ViewerMessagesDiv>
     );
 };
 
@@ -392,8 +386,8 @@ export const Viewer: React.FC<LawtextAppPageStateStruct> = props => {
     const { origState } = props;
     return (
         <ViewerDiv>
-            {origState.loadingLaw &&
-                <ViewerLoading loadingLawMessage={origState.loadingLawMessage} />
+            {Object.keys(origState.viewerMessages).length > 0 &&
+                <ViewerMessages messages={origState.viewerMessages} />
             }
             {!origState.loadingLaw && !origState.law &&
                 <ViewerWelcome {...props} />

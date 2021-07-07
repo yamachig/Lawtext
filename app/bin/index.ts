@@ -30,7 +30,7 @@ const render = async (lawNum: string) => {
             analysis,
         },
         loadingLaw: false,
-        loadingLawMessage: "",
+        viewerMessages: {},
         hasError: false,
         errors: [],
         navigatedLawSearchKey: lawInfo.LawNum,

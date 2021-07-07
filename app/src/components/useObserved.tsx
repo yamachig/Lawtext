@@ -2,18 +2,35 @@ import React from "react";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const useObserved = () => {
+
     const [observed, setObserved] = React.useState(false);
+
     const observedRef = React.useRef<HTMLSpanElement>(null);
-    React.useEffect(() => {
+    const observerRef = React.useRef<IntersectionObserver>();
+
+    const unobserve = React.useCallback(() => {
         const target = observedRef.current;
+        const observer = observerRef.current;
+        if (target && observer) observer.unobserve(target);
+    }, []);
+
+    const observe = React.useCallback(() => {
+        const target = observedRef.current;
+        const observer = observerRef.current;
         if (!target) {
-            console.error("FigRunComponent: no ref found");
+            console.error("useObserved: no ref found");
             return;
         }
-        const unobserve = () => {
-            observer.unobserve(target);
-        };
-        const observer = new IntersectionObserver(entries => {
+        if (observer) observer.observe(target);
+    }, []);
+
+    const forceObserved = React.useCallback(() => {
+        unobserve();
+        setObserved(true);
+    }, [unobserve]);
+
+    React.useEffect(() => {
+        observerRef.current = new IntersectionObserver(entries => {
             for (const entry of entries) {
                 if (entry.intersectionRatio > 0) {
                     unobserve();
@@ -22,11 +39,16 @@ export const useObserved = () => {
                 }
             }
         });
-        observer.observe(target);
+    }, [unobserve]);
+
+    React.useEffect(() => {
+        observe();
         return unobserve;
-    }, []);
+    }, [observe, unobserve]);
+
     return {
         observed,
         observedRef,
+        forceObserved,
     };
 };

@@ -1,4 +1,4 @@
-import { SetLawtextAppPageState } from "../components/LawtextAppPageState";
+import { OrigSetLawtextAppPageState } from "../components/LawtextAppPageState";
 import * as util from "@coresrc/util";
 import { LawDataResult, Timing, toLawData } from "@coresrc/data/lawdata";
 import { navigateLawData } from "@appsrc/lawdata/navigateLawData";
@@ -13,32 +13,43 @@ const sampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xm
 
 export const onNavigated = async (
     lawSearchKey: string,
-    setState: SetLawtextAppPageState,
+    origSetState: OrigSetLawtextAppPageState,
 ): Promise<void> => {
     console.log(`onNavigated(${lawSearchKey})`);
 
     const onMessage = (message: string) => {
-        setState({ loadingLawMessage: message });
+        origSetState(s => ({
+            ...s,
+            viewerMessages: {
+                ...s.viewerMessages,
+                loadingLaw: message,
+            },
+        }));
         console.log(message);
     };
 
     if (!lawSearchKey) {
         console.log("onNavigated: detected the top page.");
-        setState({
+        origSetState(s => ({
+            ...s,
             navigatedLawSearchKey: lawSearchKey,
             law: null,
             loadingLaw: false,
-            loadingLawMessage: "",
-        });
+            viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
+        }));
         return;
     }
 
-    setState({
+    origSetState(s => ({
+        ...s,
         navigatedLawSearchKey: lawSearchKey,
         law: null,
         loadingLaw: true,
-        loadingLawMessage: "法令を読み込んでいます...",
-    });
+        viewerMessages: {
+            ...s.viewerMessages,
+            loadingLaw: "法令を読み込んでいます...",
+        },
+    }));
 
     const toDownloadSample = (lawSearchKey.startsWith("(sample)"));
     let lawDataResult: LawDataResult<LawDataProps>;
@@ -74,32 +85,39 @@ export const onNavigated = async (
             (pre[0]).outerHTML,
         );
 
-        setState({
+        origSetState(s => ({
+            ...s,
             law: null,
             loadingLaw: false,
-            loadingLawMessage: "",
-        });
+            viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
+        }));
+
         return;
     }
 
-    if (toDownloadSample && lawDataResult.ok) {
+    const lawData = lawDataResult.lawData;
+
+    if (toDownloadSample) {
         onMessage("サンプル法令を保存しています...");
         // console.log("onNavigated: saving the sample low...");
-        await downloadLawtext(lawDataResult.lawData.el);
+        await downloadLawtext(lawData.el);
     }
 
-    const lawTitle = getLawTitleWithNum(lawDataResult.lawData.el);
+    const lawTitle = getLawTitleWithNum(lawData.el);
     document.title = lawTitle ? `${lawTitle} | Lawtext` : "Lawtext";
 
     onMessage("コンポーネントを更新しています...");
     // console.log("onNavigated: updating components...");
     await util.wait(30);
     const start = new Date();
-    setState({
-        law: lawDataResult.lawData,
+
+    origSetState(s => ({
+        ...s,
+        law: lawData,
         loadingLaw: false,
-        loadingLawMessage: "",
-    });
+        viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
+    }));
+
     timing.updateComponents = (new Date()).getTime() - start.getTime();
 
     console.log(timing.toString());
