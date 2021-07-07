@@ -73,7 +73,7 @@ export class Query<
      * @param criteria - a filtering criteria
      * @param options - options
      */
-    public constructor (
+    public constructor(
         population: AsyncIterable<TItem>,
         criteria: QueryCriteria<TItem> | null,
         options?: Partial<QueryOptions>,
@@ -121,7 +121,7 @@ export class Query<
      * @param options - options which override the original ones / 上書きするオプション項目
      * @returns - a new `Query` that yields items returned by `func` <br/> `func` の返り値を列挙する新しい `Query`
      */
-    public map<T, TRet=T extends (void | undefined) ? never : T>(
+    public map<T, TRet=T extends(void | undefined) ? never : T>(
         func: (item: TItem) => T | Promise<T>,
         criteria: QueryCriteria<TRet> | null = null,
         options?: Partial<QueryOptions>,
@@ -613,7 +613,7 @@ export class LawQueryItem extends LawInfo implements QueryItem {
      * 「法令名（法令番号）」の形式の文字列を返します。未施行の場合は文頭に「【未施行】」を付します。
      * @returns 文字列
      */
-    public toString(): string {
+    public override toString(): string {
         return `${this.LawID} ${this.Enforced ? "" : "【未施行】"}${this.LawNum}「${this.LawTitle}」`;
     }
 }
@@ -662,7 +662,7 @@ export class LawQuery<
     TItem extends LawQueryItem = LawQueryItem,
 > extends Query<TItem> {
 
-    public constructor (
+    public constructor(
         population: AsyncIterable<TItem>,
         criteria: LawCriteria<TItem> | null,
         options?: Partial<QueryOptions>,
@@ -684,7 +684,7 @@ export class LawQuery<
         );
     }
 
-    protected new(
+    protected override new(
         population: AsyncIterable<TItem>,
         criteria: LawCriteria<TItem> | null,
         overrideOptions?: Partial<QueryOptions>,
@@ -712,14 +712,14 @@ export class LawQuery<
         );
     }
 
-    public filter(criteria: LawCriteria<TItem> | null): this {
+    public override filter(criteria: LawCriteria<TItem> | null): this {
         return this.new(
             this[Symbol.asyncIterator](),
             criteria,
         );
     }
 
-    public assign<T>(
+    public override assign<T>(
         func: (item: TItem) => T | Promise<T>,
         criteria: LawCriteria<T extends (void | undefined) ? never : (T & TItem)> | null = null,
         options?: Partial<QueryOptions>,
