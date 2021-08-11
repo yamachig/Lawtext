@@ -1,0 +1,51 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "downlevelIteration": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "lib": ["es2017", "dom", "scripthost"],
+        
+        // "composite": true,
+        // "declaration": true,
+
+        "jsx": "react",
+
+        "baseUrl": "./",
+        "outDir": "dist",
+        "paths": {
+            "@coveragesrc/*": ["src/*"],
+            "@coresrc/*": ["../core/src/*"]
+        },
+        "rootDir": "../",
+        "rootDirs": ["src", "../core/src", "bin", "test"],
+
+        "skipLibCheck": true,
+
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitOverride": true,
+        "noUnusedLocals": true,
+        // "noUnusedParameters": true,
+        "strict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+    },
+    // "include": [
+    //     "src/**/*",
+    //     "test/**/*",
+    //     "bin/**/*",
+    // ],
+}
