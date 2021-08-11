@@ -72,6 +72,17 @@ export class LawInfo implements BaseLawInfo {
         ];
     }
 
+    public toBaseLawInfo(): BaseLawInfo {
+        return {
+            LawID: this.LawID,
+            LawNum: this.LawNum,
+            LawTitle: this.LawTitle,
+            Enforced: this.Enforced,
+            Path: this.Path,
+            XmlName: this.XmlName,
+        };
+    }
+
     public static fromBaseLawInfo(baseLawInfo: BaseLawInfo): LawInfo {
         const {
             LawID,

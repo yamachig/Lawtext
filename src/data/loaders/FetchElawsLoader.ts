@@ -1,4 +1,4 @@
-import { LawInfosStruct, lawInfosToByLawnum, Loader } from "./common";
+import { LawInfosStruct, lawInfosToByLawnumAndID, Loader } from "./common";
 import { BaseLawInfo, LawInfo } from "../lawinfo";
 import { fetchLawNameList, fetchLawData } from "@coresrc/elaws_api";
 
@@ -22,8 +22,8 @@ export class FetchElawsLoader extends Loader {
     public async loadLawInfosStruct(): Promise<LawInfosStruct> {
         const baseLawInfos = await fetchBaseLawInfosFromElaws();
         const lawInfos = baseLawInfos.map(LawInfo.fromBaseLawInfo);
-        const lawInfosByLawnum = lawInfosToByLawnum(lawInfos);
-        return { lawInfos, lawInfosByLawnum };
+        const [lawInfosByLawnum, lawInfosByLawID] = lawInfosToByLawnumAndID(lawInfos);
+        return { lawInfos, lawInfosByLawnum, lawInfosByLawID };
     }
 
     public async loadBaseLawInfosFromCSV(): Promise<BaseLawInfo[]> {

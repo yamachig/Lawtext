@@ -98,7 +98,7 @@ export const parse = (text: string, options: Record<string, unknown> = {}): util
         // console.error(`( ${Math.round((t1 - t0) / lines_count * 1000)} μs/line  =  ${t1 - t0} ms / ${lines_count} lines )`);
         return parsed;
     } catch (e) {
-        console.error("##### parse error #####");
+        // console.error("##### parse error #####");
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (e.location) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions

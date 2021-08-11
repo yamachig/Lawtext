@@ -1,6 +1,10 @@
 import { BaseLawInfo, LawInfo, LawListGenerator, LawList } from "../lawinfo";
 
-export interface LawInfosStruct {lawInfos: LawInfo[], lawInfosByLawnum: { [index: string]: LawInfo[] }}
+export interface LawInfosStruct {
+    lawInfos: LawInfo[],
+    lawInfosByLawnum: { [index: string]: LawInfo[] },
+    lawInfosByLawID: { [index: string]: LawInfo[] },
+}
 
 export abstract class Loader {
     public abstract loadLawInfosStruct(): Promise<LawInfosStruct>;
@@ -24,7 +28,20 @@ export abstract class Loader {
         const { lawInfosByLawnum } = await this.cacheLawListStruct();
         if (!(lawNum in lawInfosByLawnum)) return null;
         const lawInfos = lawInfosByLawnum[lawNum];
-        if (lawInfos.length > 1) console.warn(`getLawXml: ${lawInfos.length} items match for lawNum "${lawNum}".`);
+        if (lawInfos.length > 1) console.warn(`getLawInfoByLawNum: ${lawInfos.length} items match for lawNum "${lawNum}".`);
+        for (const lawInfo of lawInfos) {
+            if (lawInfo.Enforced) {
+                return lawInfo;
+            }
+        }
+        return lawInfos[0];
+    }
+
+    public async getLawInfoByLawID(lawID: string): Promise<LawInfo | null> {
+        const { lawInfosByLawID } = await this.cacheLawListStruct();
+        if (!(lawID in lawInfosByLawID)) return null;
+        const lawInfos = lawInfosByLawID[lawID];
+        if (lawInfos.length > 1) console.warn(`getLawInfoByLawID: ${lawInfos.length} items match for LawID "${lawID}".`);
         for (const lawInfo of lawInfos) {
             if (lawInfo.Enforced) {
                 return lawInfo;
@@ -78,19 +95,23 @@ export const jsonTextToLawInfos = (text: string): LawInfosStruct => {
         if (json.header[i] !== h) throw new Error("List header mismatch");
     }
     const lawInfos = json.body.map(LawInfo.fromTuple);
-    const lawInfosByLawnum = lawInfosToByLawnum(lawInfos);
-    return { lawInfos, lawInfosByLawnum };
+    const [lawInfosByLawnum, lawInfosByLawID] = lawInfosToByLawnumAndID(lawInfos);
+    return { lawInfos, lawInfosByLawnum, lawInfosByLawID };
 };
 
-export const lawInfosToByLawnum = (lawInfos: LawInfo[]): {
-    [index: string]: LawInfo[];
-} => {
+export const lawInfosToByLawnumAndID = (lawInfos: LawInfo[]): [
+    lawInfosByLawnum: {[index: string]: LawInfo[]},
+    lawInfosByLawID: {[index: string]: LawInfo[]},
+] => {
     const lawInfosByLawnum: { [index: string]: LawInfo[] } = {};
+    const lawInfosByLawID: { [index: string]: LawInfo[] } = {};
     for (const lawInfo of lawInfos) {
         if (!(lawInfo.LawNum in lawInfosByLawnum)) lawInfosByLawnum[lawInfo.LawNum] = [];
         lawInfosByLawnum[lawInfo.LawNum].push(lawInfo);
+        if (!(lawInfo.LawID in lawInfosByLawID)) lawInfosByLawID[lawInfo.LawID] = [];
+        lawInfosByLawID[lawInfo.LawID].push(lawInfo);
     }
-    return lawInfosByLawnum;
+    return [lawInfosByLawnum, lawInfosByLawID];
 };
 
 
