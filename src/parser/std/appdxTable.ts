@@ -176,10 +176,10 @@ export const $appdx_table = factory
                 )
             , "children"),
         )
-    , (({ location, title_struct, children }) => {
+    , (({ title_struct, children }) => {
         const appdx_table = newStdEL("AppdxTable");
         if (title_struct.table_struct_title !== "") {
-            console.error(`### line ${location().start.line}: Maybe irregular AppdxTableTitle!`);
+            // console.warn(`### line ${location().start.line}: Maybe irregular AppdxTableTitle!`);
             appdx_table.append(newStdEL("AppdxTableTitle", title_struct.attr, [new __Text( title_struct.text)]));
         } else {
             appdx_table.append(newStdEL("AppdxTableTitle", title_struct.attr, [new __Text(title_struct.title)]));

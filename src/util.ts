@@ -658,14 +658,14 @@ export const articleGroupTitleTag = {
 
 export const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 
-export const parseKanjiNum = (text: string): string | null => {
+export const parseKanjiNum = (text: string): number | null => {
     const m = reKanjiNum.exec(text);
     if (m) {
         const d1000 = m[1] ? kanjiDigits[m[2] as keyof typeof kanjiDigits] || 1 : 0;
         const d100 = m[3] ? kanjiDigits[m[4] as keyof typeof kanjiDigits] || 1 : 0;
         const d10 = m[5] ? kanjiDigits[m[6] as keyof typeof kanjiDigits] || 1 : 0;
         const d1 = kanjiDigits[m[7] as keyof typeof kanjiDigits] || 0;
-        return `${d1000 * 1000 + d100 * 100 + d10 * 10 + d1}`;
+        return d1000 * 1000 + d100 * 100 + d10 * 10 + d1;
     }
     return null;
 };
@@ -786,6 +786,34 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
 
     return numsGroup.join(":");
 };
+
+interface LawNumStruct {
+    Era: (typeof eras)[keyof typeof eras] | null,
+    Year: number | null,
+    LawType: (typeof lawTypes)[number][1] | null,
+    Num: number | null,
+}
+
+export const parseLawNum = (lawNum: string): LawNumStruct => {
+
+    const ret: LawNumStruct = {
+        Era: null,
+        Year: null,
+        LawType: null,
+        Num: null,
+    };
+    const m = lawNum.match(/^(明治|大正|昭和|平成|令和)([一二三四五六七八九十]+)年(\S+?)(?:第([一二三四五六七八九十百千]+)号)?$/);
+    if (m) {
+        const [era, year, law_type, num] = m.slice(1);
+        if (era in eras) ret.Era = eras[era as keyof typeof eras];
+        ret.Year = parseKanjiNum(year);
+        ret.LawType = getLawtype(law_type);
+        ret.Num = parseKanjiNum(num);
+    }
+
+    return ret;
+};
+
 
 export const setItemNum = (els: EL[]): void => {
     const items: Array<std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10> = [];

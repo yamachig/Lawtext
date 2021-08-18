@@ -1,4 +1,3 @@
-import { isString } from "util";
 import * as xpath from "xpath";
 import * as util from "../util";
 import { compare, EditTable } from "./edit_table";
@@ -140,7 +139,7 @@ export class ComparableEL implements util.JsonEL {
         this.index = index;
         this.parent = parent;
         this.nextIndex = index + 1;
-        if (isString(el)) {
+        if (typeof el === "string") {
             this.tag = "";
             this.attr = {};
             this.textCache = el;

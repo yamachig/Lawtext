@@ -1,5 +1,5 @@
 import { Law, newStdEL } from "@coresrc/std_law";
-import { eras, parseKanjiNum, getLawtype } from "@coresrc/util";
+import { parseLawNum } from "@coresrc/util";
 import { factory, ValueRule } from "../common";
 import { $INLINE, $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $INDENT, $DEDENT, $__, $NEWLINE } from "../lexical";
@@ -117,27 +117,11 @@ export const $law: ValueRule<Law> = factory
         if (law_title !== null) {
             if (law_title.law_num) {
                 law.append(newStdEL("LawNum", {}, [law_title.law_num]));
-
-                const m = law_title.law_num.match(/^(明治|大正|昭和|平成|令和)([一二三四五六七八九十]+)年(\S+?)(?:第([一二三四五六七八九十百千]+)号)?$/);
-                if (m) {
-                    const [era, year, law_type, num] = m.slice(1);
-
-                    if (era in eras) law.attr.Era = eras[era as keyof typeof eras];
-
-                    const year_val = parseKanjiNum(year);
-                    if (year_val !== null) law.attr.Year = year_val;
-
-                    const law_type_val = getLawtype(law_type);
-                    if (law_type_val !== null) law.attr.LawType = law_type_val;
-
-                    if (num) {
-                        const num_val = parseKanjiNum(num);
-                        if (num_val !== null) law.attr.Num = num_val;
-                        else law.attr.Num = "";
-                    } else {
-                        law.attr.Num = "";
-                    }
-                }
+                const { Era, Year, LawType, Num } = parseLawNum(law_title.law_num);
+                if (Era !== null) law.attr.Era = Era;
+                if (Year !== null) law.attr.Year = Year.toString();
+                if (LawType !== null) law.attr.LawType = LawType;
+                law.attr.Num = Num !== null ? Num.toString() : "";
             }
 
             if (law_title.law_title) {

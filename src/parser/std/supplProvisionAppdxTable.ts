@@ -151,10 +151,10 @@ export const $suppl_provision_appdx_table = factory
                 )
             , "children"),
         )
-    , (({ location, title_struct, children }) => {
+    , (({ title_struct, children }) => {
         const suppl_provision_appdx_table = newStdEL("SupplProvisionAppdxTable");
         if (title_struct.table_struct_title !== "") {
-            console.error(`### line ${location().start.line}: Maybe irregular SupplProvisionAppdxTableTitle!`);
+            // console.warn(`### line ${location().start.line}: Maybe irregular SupplProvisionAppdxTableTitle!`);
             suppl_provision_appdx_table.append(newStdEL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text( title_struct.text)]));
         } else {
             suppl_provision_appdx_table.append(newStdEL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text(title_struct.title)]));
