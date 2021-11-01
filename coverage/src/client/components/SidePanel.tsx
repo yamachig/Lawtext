@@ -219,7 +219,7 @@ const FilterInfoFilterContainer: React.FC<{allLawCoveragesLoaded: boolean, allLa
                 <small style={{ verticalAlign: "middle" }}>
                     Orig:{" "}
                     {OriginalLawStatusCounter.get(OriginalLawStatus.Fail) !== 0 &&
-                        <><span className="badge bg-danger">{OriginalLawStatusCounter.get(OriginalLawStatus.Fail)} Fails</span>&nbsp;</>
+                        <><span className="badge bg-dark">{OriginalLawStatusCounter.get(OriginalLawStatus.Fail)} Fails</span>&nbsp;</>
                     }
                     {OriginalLawStatusCounter.get(OriginalLawStatus.Success) !== 0 &&
                         <><span className="badge bg-success">{OriginalLawStatusCounter.get(OriginalLawStatus.Success)} Success</span>&nbsp;</>
@@ -233,7 +233,7 @@ const FilterInfoFilterContainer: React.FC<{allLawCoveragesLoaded: boolean, allLa
                 <small style={{ verticalAlign: "middle" }}>
                     Rendered:{" "}
                     {RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Fail) !== 0 &&
-                        <><span className="badge bg-danger">{RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Fail)} Fails</span>&nbsp;</>
+                        <><span className="badge bg-dark">{RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Fail)} Fails</span>&nbsp;</>
                     }
                     {RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Success) !== 0 &&
                         <><span className="badge bg-success">{RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Success)} Success</span>&nbsp;</>
@@ -247,7 +247,7 @@ const FilterInfoFilterContainer: React.FC<{allLawCoveragesLoaded: boolean, allLa
                 <small style={{ verticalAlign: "middle" }}>
                     Parsed:{" "}
                     {ParsedLawStatusCounter.get(ParsedLawStatus.Fail) !== 0 &&
-                        <><span className="badge bg-danger">{ParsedLawStatusCounter.get(ParsedLawStatus.Fail)} Fails</span>&nbsp;</>
+                        <><span className="badge bg-dark">{ParsedLawStatusCounter.get(ParsedLawStatus.Fail)} Fails</span>&nbsp;</>
                     }
                     {ParsedLawStatusCounter.get(ParsedLawStatus.Success) !== 0 &&
                         <><span className="badge bg-success">{ParsedLawStatusCounter.get(ParsedLawStatus.Success)} Success</span>&nbsp;</>

@@ -6,6 +6,7 @@ import { connect, ConnectionInfo } from "./connection";
 import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackConfigFn from "../webpack-configs/client";
 import webpack from "webpack";
+import WebpackDevServer from "webpack-dev-server";
 
 const asyncMiddleware = (fn: express.RequestHandler): express.RequestHandler =>
     (req, res, next) => {
@@ -19,7 +20,7 @@ const webpackConfig = webpackConfigFn({ DEV_SERVER: "DEV_SERVER" }, { mode: "dev
 
 const webpackCompiler = webpack(webpackConfig);
 app.use(webpackDevMiddleware(webpackCompiler, {
-    publicPath: webpackConfig.devServer.publicPath,
+    publicPath: (webpackConfig.devServer.static as WebpackDevServer.Static).publicPath as string,
 }));
 
 // app.use(express.static(path.join(process.cwd(), "public")));
@@ -85,7 +86,7 @@ async function main(): Promise<void> {
     app.listen(
         port,
         () => {
-            console.log(`Serving at port ${port}`);
+            console.log(`Serving at http://localhost:${port}/`);
         },
     );
 }

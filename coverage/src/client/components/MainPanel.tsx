@@ -19,10 +19,11 @@ function* zipLongest<T extends unknown[][]>(lists: T, defaultValues: ZipItem<T>)
 }
 
 
-const itemToSpans = (item: law_diff.DiffTableItemData) => {
+const itemToSpans = (item: Partial<law_diff.DiffTableItemData>) => {
     const ret: JSX.Element[] = [];
     if (item.type === law_diff.TagType.Open || item.type === law_diff.TagType.Empty) {
-        if (item.attr.length) {
+        if (item.attr && item.attr.length) {
+            const attr = item.attr;
             ret.push(
                 <span key={ret.length}>
                     <span>&lt;</span>
@@ -30,12 +31,12 @@ const itemToSpans = (item: law_diff.DiffTableItemData) => {
                 </span>,
             );
             ret.push(
-                ...Object.keys(item.attr).map((key, i) => (
+                ...Object.keys(attr).map((key, i) => (
                     <span key={ret.length + i}>
                         <span>&nbsp;&nbsp;</span>
                         <span>{key}</span>
                         <span>=</span>
-                        <span>&quot;{item.attr[key]}&quot;</span>
+                        <span>&quot;{attr[key]}&quot;</span>
                     </span>
                 )),
             );
@@ -67,6 +68,9 @@ const itemToSpans = (item: law_diff.DiffTableItemData) => {
         ret.push(
             <span key={ret.length}>{item.text}</span>,
         );
+
+    } else if (item.type === undefined) {
+        /* */
 
     } else { throw assertNever(item.type); }
 

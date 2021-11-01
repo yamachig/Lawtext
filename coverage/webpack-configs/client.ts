@@ -23,6 +23,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             alias: {
                 "@coveragesrc": path.resolve(rootDir, "./src"),
                 "@coresrc": path.resolve(rootDir, "../core/src"),
+                "node-fetch": false,
             },
             fallback: {
                 "path": require.resolve("path-browserify"),
@@ -30,12 +31,14 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
 
         devServer: {
-            contentBase: distDir,
+            static: {
+                directory: distDir,
+                publicPath: "/",
+            },
             compress: true,
-            lazy: true,
-            publicPath: "/",
+            // lazy: true,
             liveReload: false,
-            filename: "bundle.js",
+            // filename: "bundle.js",
             port: 8081,
         },
 

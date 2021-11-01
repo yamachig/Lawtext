@@ -119,7 +119,7 @@ export const navigateLawData = async (
     } catch (error) {
         return {
             ok: false,
-            error,
+            error: error as Error,
         };
     }
 };

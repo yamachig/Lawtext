@@ -10,11 +10,18 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
     Path: { type: String, required: true },
     XmlName: { type: String, required: true },
 
-    Era: { type: Era, required: false },
+    Era: {
+        type: String,
+        enum: Object.values(Era),
+        required: false,
+    },
     Year: { type: Number, required: false },
     Num: { type: Number, required: false },
-    LawType: { type: LawType, required: false },
-
+    LawType: {
+        type: String,
+        enum: Object.values(LawType),
+        required: false,
+    },
     updateDate: { type: Date, required: true },
 
     originalLaw: {
@@ -62,13 +69,24 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
             ok: {
                 required: false,
                 type: new mongoose.Schema<Required<LawCoverage>["lawDiff"]["ok"]>({
-                    mostSeriousStatus: { type: law_diff.ProblemStatus, required: true },
+                    mostSeriousStatus: {
+                        type: Number,
+                        enum: Object.values(law_diff.ProblemStatus),
+                        required: true,
+                    },
                     result: {
                         required: true,
-                        type: new mongoose.Schema<Required<Required<LawCoverage>["lawDiff"]>["ok"]["result"]>({
-                            items: { type: Object, required: true },
-                            totalCount: { type: Number, required: true },
-                        }, { minimize: false }),
+                        type: new mongoose.Schema<Required<Required<LawCoverage>["lawDiff"]>["ok"]["result"]>(
+                            {
+                                items: {
+                                    type: [],
+                                    required: true,
+                                    minimize: false,
+                                },
+                                totalCount: { type: Number, required: true },
+                            },
+                            { minimize: false },
+                        ),
                     },
                     requiredms: { type: Map, of: Number, required: true },
                 }, { minimize: false }),

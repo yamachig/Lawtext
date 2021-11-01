@@ -1,5 +1,5 @@
 // import formatXML from "xml-formatter";
-import { DOMParser } from "xmldom";
+import { DOMParser } from "@xmldom/xmldom";
 import * as law_diff from "@coresrc/diff/law_diff";
 import * as parser_wrapper from "@coresrc/parser_wrapper";
 import { render as renderLawtext } from "@coresrc/renderers/lawtext";
@@ -9,7 +9,7 @@ import { EL, parseLawNum, xmlToJson } from "@coresrc/util";
 import mongoose from "mongoose";
 import { Bar, Presets } from "cli-progress";
 import { LawInfo } from "@coresrc/data/lawinfo";
-import fetch from "node-fetch";
+import { fetch } from "./node-fetch";
 import { Era, LawCoverage, LawType } from "./lawCoverage";
 import { connect, ConnectionInfo } from "./connection";
 import config from "./config";
@@ -80,13 +80,16 @@ const getOriginalLaw = async (lawInfo: LawInfo, loader: Loader): Promise<{
         const origEL = xmlToJson(origXML) as Law;
         requiredms.set("xmlToJson", lap.lapms());
 
+        const Year = Number(origEL.attr.Year);
+        const Num = Number(origEL.attr.Num);
+
         return {
             origEL,
             origXML,
             lawNumStruct: {
                 Era: origEL.attr.Era as Era,
-                Year: Number(origEL.attr.Year),
-                Num: origEL.attr.Num === "" ? null : Number(origEL.attr.Num),
+                Year: Number.isNaN(Year) ? null : Year,
+                Num: Number.isNaN(Num) ? null : Num,
                 LawType: origEL.attr.LawType as LawType,
             },
             originalLaw: {
@@ -99,7 +102,7 @@ const getOriginalLaw = async (lawInfo: LawInfo, loader: Loader): Promise<{
     } catch (e) {
         return {
             originalLaw: {
-                info: { error: e.stack },
+                info: { error: (e as Error).stack },
             },
         };
     }
@@ -129,7 +132,7 @@ const getRenderedLawtext = async (origEL: EL): Promise<{
     } catch (e) {
         return {
             renderedLawtext: {
-                info: { error: e.stack },
+                info: { error: (e as Error).stack },
             },
         };
     }
@@ -167,14 +170,14 @@ const getParsedLaw = async (lawtext: string): Promise<{
     } catch (e) {
         return {
             parsedLaw: {
-                info: { error: e.stack },
+                info: { error: (e as Error).stack },
             },
         };
     }
 };
 
 
-const MAX_DIFF_LENGTH = 10;
+const MAX_DIFF_LENGTH = 20;
 
 const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsedEL: EL): Promise<{
     lawDiff: Required<LawCoverage>["lawDiff"],
@@ -225,7 +228,7 @@ const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsed
     } catch (e) {
         return {
             lawDiff: {
-                info: { error: e.stack },
+                info: { error: (e as Error).stack },
             },
         };
     }
@@ -253,6 +256,7 @@ const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo) => {
             orConditions.push(
                 { "originalLaw.ok": undefined },
                 { "renderedLawtext.ok": undefined },
+                { "renderedLawtext.ok.mostSeriousStatus": law_diff.ProblemStatus.Error },
                 { "parsedLaw.ok": undefined },
                 { "lawDiff.ok": undefined },
             );
@@ -272,26 +276,38 @@ const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
 
     const { lawInfos: allLawInfos } = await loader.cacheLawListStruct();
 
-    const allLawIDsInList = allLawInfos.map(li => li.LawID);
+    const allLawIDsInList =
+        allLawInfos
+            .map(li => li.LawID);
     const allLawIDsInListSet = new Set(allLawIDsInList);
 
     const toUpdateLawIDsInDB = await getToUpdateLawIDsOnDB(args, db);
-    const toUpdateLawIDsInDBInList = toUpdateLawIDsInDB.filter(lawID => allLawIDsInListSet.has(lawID));
+    const toUpdateLawIDsInDBInList =
+        toUpdateLawIDsInDB
+            .filter(lawID => allLawIDsInListSet.has(lawID));
 
-    const allLawIDsInDB = await db.lawCoverage
-        .find()
-        .select("LawID")
-        .then(res => res.map(lc => lc.LawID));
+    const allLawIDsInDB =
+        await db.lawCoverage
+            .find()
+            .select("LawID")
+            .then(res => res.map(lc => lc.LawID));
     const allLawIDsInDBSet = new Set(allLawIDsInDB);
 
-    const lawIDsNotInDB = allLawIDsInList.filter(lawID => !allLawIDsInDBSet.has(lawID));
-    const lawIDsNotInList = allLawIDsInDB.filter(lawID => !allLawIDsInListSet.has(lawID));
+    const lawIDsNotInDB =
+        allLawIDsInList
+            .filter(lawID => !allLawIDsInDBSet.has(lawID));
+    const lawIDsNotInList =
+        allLawIDsInDB
+            .filter(lawID => !allLawIDsInListSet.has(lawID));
 
     const lawIDsToProcessSet = new Set([...toUpdateLawIDsInDBInList, ...lawIDsNotInDB]);
-    const lawInfos = allLawInfos.filter(li => lawIDsToProcessSet.has(li.LawID));
+    const lawInfos =
+        allLawInfos
+            .filter(li => lawIDsToProcessSet.has(li.LawID));
 
     console.log("Number of laws to be processed:");
-    console.log(`    now in list     : ${allLawIDsInList.length.toString().padStart(5, " ")}`);
+    console.log(`    now in list     : ${allLawIDsInListSet.size.toString().padStart(5, " ")}`);
+    console.log(`      - duplicated  : ${(allLawIDsInList.length - allLawIDsInListSet.size).toString().padStart(5, " ")}`);
     console.log(`      - to process  : ${lawInfos.length.toString().padStart(5, " ")}`);
     console.log(`        - add to DB : ${lawIDsNotInDB.length.toString().padStart(5, " ")}`);
     console.log(`        - update DB : ${toUpdateLawIDsInDBInList.length.toString().padStart(5, " ")}`);
@@ -377,6 +393,9 @@ interface UpdateArgs {
 export const main = async (args: UpdateArgs): Promise<void> => {
     const db = await connect(config.MONGODB_URI);
     const loader = new FSStoredLoader(config.DATA_PATH);
+
+    console.log(`Start updating law coverage at ${new Date().toISOString()}...`);
+    console.dir(args);
 
     if (process.env.NOTIFICATION_ENDPOINT) {
         console.log("It will notify your ifttt when it finished.");

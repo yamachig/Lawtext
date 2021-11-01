@@ -24,7 +24,7 @@ export const saveListJson = async (
         infos = await storedLoader.loadBaseLawInfosFromCSV();
     } catch (e) {
         console.error("CSV list cannot be fetched.");
-        console.error(e.message, e.stack);
+        console.error((e as Error).message, (e as Error).stack);
         return null;
     }
 

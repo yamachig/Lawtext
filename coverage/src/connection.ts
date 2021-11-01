@@ -12,9 +12,9 @@ export const connect = async (uri: string): Promise<ConnectionInfo> => {
     const connection = await mongoose.createConnection(
         uri,
         {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
+            // useNewUrlParser: true,
+            // useUnifiedTopology: true,
+            // useCreateIndex: true,
         },
     );
     const lawCoverage = connection.model<LawCoverage>("LawCoverage", lawCoverageSchema);

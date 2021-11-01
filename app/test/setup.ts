@@ -3,8 +3,18 @@ require("dotenv").config();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require("source-map-support").install();
+const fetch:
+    (typeof import("node-fetch/@types/index"))["default"]
+= (
+    (...args) =>
+        import("node-fetch")
+            .then(
+                ({ default: fetch }) =>
+                    (fetch)(...args),
+            )
+);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(global as any).fetch = require("node-fetch");
+(global as any).fetch = fetch;
 
 import { after, before } from "mocha";
 
