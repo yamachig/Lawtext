@@ -1,8 +1,8 @@
-const fs = require("fs");
-const path = require("path");
-const { promisify } = require ("util");
-const nunjucks = require("nunjucks");
-const { defaultBasePath } = require("./defaultBasePath");
+import fs from "fs";
+import path from "path";
+import { promisify } from "util";
+import nunjucks from "nunjucks";
+import { defaultBasePath } from "./defaultBasePath.js";
 
 /**
  * @param {string} basePath
@@ -33,7 +33,8 @@ if(exports) exports.nunjucksPrecompiled = window.nunjucksPrecompiled;
         { encoding: "utf-8" },
     );
 };
-exports.buildTemplates = buildTemplates;
+const _buildTemplates = buildTemplates;
+export { _buildTemplates as buildTemplates };
 
 if (typeof require !== "undefined" && require.main === module) {
     buildTemplates().catch(console.error);

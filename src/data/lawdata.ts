@@ -108,7 +108,7 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
         const error = new Error(`読み込んだ法令データにエラーがあります: ${origError}`);
         error.stack = `${error.stack}
     Original Error:
-    ${origError.stack}
+    ${(origError as Error).stack}
     `;
         return {
             ok: false,

@@ -3,7 +3,7 @@ import nodeExternals from "webpack-node-externals";
 import { build } from "./bin/build";
 
 export class BuildPlugin {
-    apply (compiler: webpack.Compiler): void {
+    apply(compiler: webpack.Compiler): void {
         compiler.hooks.run.tapPromise("BuildPlugin", async () => {
             await build();
         });
@@ -18,8 +18,7 @@ export default {
         filename: "lawtext.js",
         path: __dirname + "/dist-dev",
     },
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    externals: [nodeExternals()],
+    externals: [nodeExternals() as unknown],
     resolve: {
         extensions: [".ts", ".js"],
     },

@@ -4,7 +4,7 @@ import { LawInfo } from "./lawinfo";
 import { Loader } from "./loaders/common";
 import { FetchElawsLoader } from "./loaders/FetchElawsLoader";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
-const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;
+const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;
 const domParser = new DOMParser();
 
 interface CoreQueryCriteria<TItem> {

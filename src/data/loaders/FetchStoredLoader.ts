@@ -3,7 +3,17 @@ import { csvTextToLawInfos, jsonTextToLawInfos, LawInfosStruct, Loader } from ".
 import { BaseLawInfo } from "../lawinfo";
 import * as data_paths from "../paths";
 import path from "path";
-const fetch: typeof window.fetch = (global["window"] && window.fetch) || require("node-fetch");
+const nodeFetch:
+    (typeof import("node-fetch/@types/index"))["default"]
+= (
+    (...args) =>
+        import("node-fetch")
+            .then(
+                ({ default: fetch }) =>
+                    (fetch)(...args),
+            )
+);
+const fetch: typeof window.fetch = (global["window"] && window.fetch) || nodeFetch;
 
 const fetchText = async (textPath: string) => {
     try {

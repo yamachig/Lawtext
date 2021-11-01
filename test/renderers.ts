@@ -8,7 +8,7 @@ import path from "path";
 // @ts-ignore
 import prettifyXml from "prettify-xml";
 import { promisify } from "util";
-import xmldom from "xmldom";
+import xmldom from "@xmldom/xmldom";
 import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "@coresrc/diff/law_diff";
 import { analyze, parse } from "@coresrc/parser_wrapper";
 import { render as renderLawtext } from "@coresrc/renderers/lawtext";

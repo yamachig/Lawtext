@@ -1,5 +1,7 @@
 "use strict";
 
+import { ParseError } from "generic-parser/lib/core";
+import { StringPos } from "generic-parser";
 import * as analyzer from "./analyzer";
 import * as parser from "./parser";
 import * as util from "./util";
@@ -97,7 +99,8 @@ export const parse = (text: string, options: Record<string, unknown> = {}): util
         // console.error(`/////  parse end  /////`);
         // console.error(`( ${Math.round((t1 - t0) / lines_count * 1000)} μs/line  =  ${t1 - t0} ms / ${lines_count} lines )`);
         return parsed;
-    } catch (e) {
+    } catch (_e) {
+        const e = _e as ParseError<StringPos>;
         // console.error("##### parse error #####");
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (e.location) {

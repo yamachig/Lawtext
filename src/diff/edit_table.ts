@@ -12,7 +12,7 @@ export const compare = <T>(A: T[], B: T[], maxD = MAX_D): EditTable<T> => {
     const N = B.length;
     const V = new Array(M + N + 1) as number[];
     const E = new Array(M + N + 1) as boolean[];
-    const S = new Array(M + N + 1) as  Array<Array<[number, number]>>;
+    const S = new Array(M + N + 1) as Array<Array<[number, number]>>;
     const offset = M;
 
     for (let D = 0; D <= Math.min(M + N, maxD); D++) {

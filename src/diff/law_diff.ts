@@ -123,6 +123,10 @@ const warningAttrKey = new Set([
     "Type",
     "Function",
     "DataInfo",
+    "AmendLawId",
+    "AmendmentId",
+    "AmendmentNum",
+    "Id",
 ]);
 
 export class ComparableEL implements util.JsonEL {

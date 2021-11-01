@@ -1,5 +1,6 @@
 import * as std from "@coresrc/std_law";
-import { ValueOfRule } from "generic-parser/lib/core";
+import { ValueOfRule, ParseError as _ParseError } from "generic-parser/lib/core";
+import { StringPos } from "generic-parser";
 import { factory, initializer, ValueRule } from "./common";
 import { rules as inlineRules } from "./inline";
 import { $NEWLINE, rules as lexicalRules } from "./lexical";
@@ -81,6 +82,8 @@ const rules = {
     ...appdxTable.rules,
 };
     type Rules = typeof rules;
+
+export type ParseError = _ParseError<StringPos>;
 
 export const parse = <TRuleKey extends (keyof Rules) = "start">(text: string, options: {startRule?: TRuleKey} & Record<string | number | symbol, unknown>): ValueOfRule<Rules[TRuleKey]> => {
     let rule: ValueRule<unknown> = $start;

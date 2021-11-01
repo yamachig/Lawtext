@@ -1,9 +1,19 @@
 import { decodeBase64 } from "./util";
-const fetch: typeof window.fetch = (global["window"] && window.fetch) || require("node-fetch");
+const nodeFetch:
+    (typeof import("node-fetch/@types/index"))["default"]
+= (
+    (...args) =>
+        import("node-fetch")
+            .then(
+                ({ default: fetch }) =>
+                    (fetch)(...args),
+            )
+);
+const fetch: typeof window.fetch = (global["window"] && window.fetch) || nodeFetch;
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
-const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("xmldom").DOMParser;
+const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
-const XMLSerializer: typeof window.XMLSerializer = (global["window"] && window.XMLSerializer) || require("xmldom").XMLSerializer;
+const XMLSerializer: typeof window.XMLSerializer = (global["window"] && window.XMLSerializer) || require("@xmldom/xmldom").XMLSerializer;
 const domParser = new DOMParser();
 const xmlSerializer = new XMLSerializer();
 

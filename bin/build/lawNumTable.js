@@ -1,10 +1,10 @@
-const fs = require("fs");
-const sha512 = require( "hash.js/lib/hash/sha/512");
-const path = require( "path");
-const { promisify } = require( "util");
-const { DOMParser } = require( "xmldom");
-const fetch = require( "node-fetch");
-const { defaultBasePath } = require("./defaultBasePath");
+import fs from "fs";
+import sha512 from "hash.js/lib/hash/sha/512.js";
+import path from "path";
+import { promisify } from "util";
+import { DOMParser } from "@xmldom/xmldom";
+import fetch from "node-fetch";
+import { defaultBasePath } from "./defaultBasePath.js";
 
 const KEY_LENGTH = 7;
 const LEN_LENGTH = 2;
@@ -22,7 +22,7 @@ const pad16 = (num, size) => {
 /**
  * @param {string} basePath
  */
-const buildLawNumTable = async (basePath = defaultBasePath) => {
+export const buildLawNumTable = async (basePath = defaultBasePath) => {
     const srcPath = path.join(basePath, "src");
     const response = await fetch(
         "https://elaws.e-gov.go.jp/api/1/lawlists/1",
@@ -84,7 +84,6 @@ for(let i = 0; i < LAWNUM_TABLE_RAW.length; i += KEY_LENGTH + LEN_LENGTH) {
 }
 `.trimLeft());
 };
-exports.buildLawNumTable = buildLawNumTable;
 
 if (typeof require !== "undefined" && require.main === module) {
     buildLawNumTable().catch(console.error);

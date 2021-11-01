@@ -1,6 +1,6 @@
 "use strict";
 
-import { DOMParser } from "xmldom";
+import { DOMParser } from "@xmldom/xmldom";
 import * as std from "./std_law";
 
 export const wait = (ms: number): Promise<void> => {

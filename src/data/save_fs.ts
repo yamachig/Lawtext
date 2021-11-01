@@ -3,7 +3,16 @@ import path from "path";
 import { allXMLZipURL } from "../elaws_api";
 import os from "os";
 import fs from "fs";
-import fetch from "node-fetch";
+const fetch:
+    (typeof import("node-fetch/@types/index"))["default"]
+= (
+    (...args) =>
+        import("node-fetch")
+            .then(
+                ({ default: fetch }) =>
+                    (fetch)(...args),
+            )
+);
 import fsExtra from "fs-extra";
 import { promisify } from "util";
 import { FSStoredLoader } from "./loaders/FSStoredLoader";
@@ -36,13 +45,14 @@ export const download = async (
         allXMLZipURL,
     );
     if (!res.ok) throw new Error(res.statusText);
+    const body = res.body as NodeJS.ReadableStream;
     const contentLength = Number(res.headers.get("Content-Length"));
     const totalBytesStr = contentLength.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     console.log(`Total ${totalBytesStr} bytes`);
-    await new Promise(r => res.body.once("readable", r));
+    await new Promise(r => body.once("readable", r));
 
     let currentLength = 0;
-    for await (const chunk of res.body) {
+    for await (const chunk of body) {
         if (!chunk) break;
         tempZipStream.write(chunk);
         currentLength += chunk.length;
