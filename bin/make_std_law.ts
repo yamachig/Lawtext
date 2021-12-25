@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { EL, xmlToJson } from "@coresrc/util";
+import { EL, xmlToJson } from "../src/util";
 import path from "path";
 
 // const Node = {

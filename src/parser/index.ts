@@ -1,4 +1,4 @@
-import * as std from "@coresrc/std_law";
+import * as std from "../std_law";
 import { ValueOfRule, ParseError as _ParseError } from "generic-parser/lib/core";
 import { StringPos } from "generic-parser";
 import { factory, initializer, ValueRule } from "./common";

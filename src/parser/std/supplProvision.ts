@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "@coresrc/std_law";
-import { __Text, setItemNum } from "@coresrc/util";
+import { newStdEL } from "../../std_law";
+import { __Text, setItemNum } from "../../util";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $_, $NEWLINE, $__ } from "../lexical";

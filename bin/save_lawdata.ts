@@ -1,7 +1,7 @@
 
 import yargs from "yargs";
-import { ProgressBar } from "@coresrc/term_util";
-import * as save_fs from "@coresrc/data/save_fs";
+import { ProgressBar } from "../src/term_util";
+import * as save_fs from "../src/data/save_fs";
 import { FSStoredLoader } from "./data/loaders/FSStoredLoader";
 
 const bar = new ProgressBar();

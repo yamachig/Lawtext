@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { EL, __Parentheses, __Text } from "@coresrc/util";
+import { EL, __Parentheses, __Text } from "../util";
 import { factory, ValueRule } from "./common";
 import { $INDENT, $DEDENT, $__, $NEWLINE } from "./lexical";
 import { $xml_element } from "./xml";

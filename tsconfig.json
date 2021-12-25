@@ -14,7 +14,7 @@
 
         "baseUrl": "./",
         "outDir": "dist",
-        "paths": {"@coresrc/*": ["src/*"]},
+        // "paths": {"@coresrc/*": ["src/*"]},
         "rootDirs": ["src", "bin", "test"],
 
         "skipLibCheck": true,

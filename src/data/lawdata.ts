@@ -1,7 +1,7 @@
-import * as std from "@coresrc/std_law";
-import * as analyzer from "@coresrc/analyzer";
-import * as util from "@coresrc/util";
-import { parse } from "@coresrc/parser_wrapper";
+import * as std from "../std_law";
+import * as analyzer from "../analyzer";
+import * as util from "../util";
+import { parse } from "../parser_wrapper";
 
 
 export interface LawDataCore {el: std.Law, analysis: analyzer.Analysis}

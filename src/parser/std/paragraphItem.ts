@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL, Paragraph, Item, Subitem1, Subitem2, Subitem3, Subitem4, Subitem5, Subitem6, Subitem7, Subitem8, Subitem9, Subitem10 } from "@coresrc/std_law";
-import { paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags, setItemNum } from "@coresrc/util";
+import { newStdEL, Paragraph, Item, Subitem1, Subitem2, Subitem3, Subitem4, Subitem5, Subitem6, Subitem7, Subitem8, Subitem9, Subitem10 } from "../../std_law";
+import { paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags, setItemNum } from "../../util";
 import { factory, ValueRule } from "../common";
 import { $DEDENT, $INDENT, $NEWLINE, $__ } from "../lexical";
 import { $amend_provision } from "./amendProvision";

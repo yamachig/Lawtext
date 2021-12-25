@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { Chapter, Division, newStdEL, Part, Section, Subsection } from "@coresrc/std_law";
-import { __Text, EL, articleGroupTypeChars, articleGroupType, articleGroupTitleTag, parseNamedNum } from "@coresrc/util";
+import { Chapter, Division, newStdEL, Part, Section, Subsection } from "../../std_law";
+import { __Text, EL, articleGroupTypeChars, articleGroupType, articleGroupTitleTag, parseNamedNum } from "../../util";
 import { factory, ValueRule } from "../common";
 import { $INLINE } from "../inline";
 import { $NEWLINE, $__ } from "../lexical";

@@ -1,5 +1,5 @@
-import { Law, newStdEL } from "@coresrc/std_law";
-import { parseLawNum } from "@coresrc/util";
+import { Law, newStdEL } from "../../std_law";
+import { parseLawNum } from "../../util";
 import { factory, ValueRule } from "../common";
 import { $INLINE, $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $INDENT, $DEDENT, $__, $NEWLINE } from "../lexical";

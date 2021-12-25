@@ -1,5 +1,5 @@
-import { fetchLawData } from "@coresrc/elaws_api";
-import { assertNever, EL, elementToJson } from "@coresrc/util";
+import { fetchLawData } from "../elaws_api";
+import { assertNever, EL, elementToJson } from "../util";
 import { LawInfo } from "./lawinfo";
 import { Loader } from "./loaders/common";
 import { FetchElawsLoader } from "./loaders/FetchElawsLoader";
@@ -125,7 +125,7 @@ export class Query<
         func: (item: TItem) => T | Promise<T>,
         criteria: QueryCriteria<TRet> | null = null,
         options?: Partial<QueryOptions>,
-    ): Query<TRet> {
+    ): Query<Awaited<TRet>> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
         return new Query(
@@ -298,7 +298,7 @@ export class Query<
      * @param key - the key of a property to be picked<br/>抜き出すプロパティのキー
      * @returns - a new `Query` that yields the picked property<br/>抜き出したプロパティの内容を列挙する新しい `Query`
      */
-    public property<K extends keyof TItem>(key: K): Query<TItem[K]> {
+    public property<K extends keyof TItem>(key: K): Query<Awaited<TItem[K]>> {
         return this.map(item => item[key]);
     }
 
@@ -310,7 +310,7 @@ export class Query<
      * @param keys - the keys of properties to be picked<br/>抜き出すプロパティのキー
      * @returns - a new `Query` that yields the objects with the picked properties<br/>プロパティを抜き出した新しいオブジェクトの内容を列挙する新しい `Query`
      */
-    public pick<K extends keyof TItem>(...keys: K[]): Query<Pick<TItem, K>> {
+    public pick<K extends keyof TItem>(...keys: K[]): Query<Awaited<Pick<TItem, K>>> {
         return this.map(item => {
             const picked = {} as Pick<TItem, K>;
             for (const key of keys) {

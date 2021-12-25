@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import { promisify } from "util";
-import { download, saveList } from "@coresrc/data/save_fs";
-import { ProgressBar } from "@coresrc/term_util";
-import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
+import { download, saveList } from "../src/data/save_fs";
+import { ProgressBar } from "../src/term_util";
+import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader";
 // import { before } from "mocha";
 
 export const loader = new FSStoredLoader(path.join(__dirname, "../data"));

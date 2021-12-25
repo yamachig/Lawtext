@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "@coresrc/std_law";
+import { newStdEL } from "../../std_law";
 import { factory } from "../common";
 import { $INLINE } from "../inline";
 import { $NEWLINE } from "../lexical";

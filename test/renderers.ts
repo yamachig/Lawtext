@@ -9,11 +9,11 @@ import path from "path";
 import prettifyXml from "prettify-xml";
 import { promisify } from "util";
 import xmldom from "@xmldom/xmldom";
-import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "@coresrc/diff/law_diff";
-import { analyze, parse } from "@coresrc/parser_wrapper";
-import { render as renderLawtext } from "@coresrc/renderers/lawtext";
-import { TERMC, toTableText } from "@coresrc/term_util";
-import * as util from "@coresrc/util";
+import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
+import { analyze, parse } from "../src/parser_wrapper";
+import { render as renderLawtext } from "../src/renderers/lawtext";
+import { TERMC, toTableText } from "../src/term_util";
+import * as util from "../src/util";
 import { loader } from "./prepare_test";
 
 const domParser = new xmldom.DOMParser();

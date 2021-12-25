@@ -811,8 +811,10 @@ const renderParagraphItem = (el: std.Paragraph | std.Item | std.Subitem1 | std.S
     for (const child of el.children) {
 
         if (child.tag === "ParagraphCaption") {
-            ParagraphCaption = renderRun(child.children);
-
+            ParagraphCaption = renderRun(child.children); }
+        else if (std.isArticleCaption(child)) {
+            console.error("Unexpected ArticleCaption in MainProvision!");
+            ParagraphCaption = renderRun((child as std.ArticleCaption).children);
         } else if (child.tag === "ParagraphNum" || child.tag === "ItemTitle" || child.tag ===
             "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
             "Subitem5Title" || child.tag === "Subitem6Title" || child.tag === "Subitem7Title" || child.tag === "Subitem8Title" || child.tag ===
