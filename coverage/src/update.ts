@@ -177,9 +177,7 @@ const getParsedLaw = async (lawtext: string): Promise<{
 };
 
 
-const MAX_DIFF_LENGTH = 20;
-
-const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsedEL: EL): Promise<{
+const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsedEL: EL, max_diff_length: number): Promise<{
     lawDiff: Required<LawCoverage>["lawDiff"],
 }> => {
     try {
@@ -206,10 +204,10 @@ const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsed
 
         let slicedDiffData = diffData;
 
-        if (diffData.length > MAX_DIFF_LENGTH) {
+        if (diffData.length > max_diff_length) {
             const iSerious = Math.max(diffData.findIndex(diff => diff.mostSeriousStatus === d.mostSeriousStatus), 0);
-            const iStart = Math.min(iSerious, diffData.length - MAX_DIFF_LENGTH);
-            slicedDiffData = diffData.slice(iStart, iStart + MAX_DIFF_LENGTH);
+            const iStart = Math.min(iSerious, diffData.length - max_diff_length);
+            slicedDiffData = diffData.slice(iStart, iStart + max_diff_length);
         }
 
         return {
@@ -274,12 +272,17 @@ const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo) => {
 
 const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
 
-    const { lawInfos: allLawInfos } = await loader.cacheLawListStruct();
+    const { lawInfos: allLawInfosBeforeFilter } = await loader.cacheLawListStruct();
 
-    const allLawIDsInList =
+    const allLawInfos =
+        allLawInfosBeforeFilter
+            .filter(lawInfo => args.lawID ? new RegExp(args.lawID).test(lawInfo.LawID) : true);
+
+    const allLawIDsInListWithDup =
         allLawInfos
             .map(li => li.LawID);
-    const allLawIDsInListSet = new Set(allLawIDsInList);
+    const allLawIDsInListSet = new Set(allLawIDsInListWithDup);
+    const allLawIDsInList = Array.from(allLawIDsInListSet);
 
     const toUpdateLawIDsInDB = await getToUpdateLawIDsOnDB(args, db);
     const toUpdateLawIDsInDBInList =
@@ -301,13 +304,16 @@ const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
             .filter(lawID => !allLawIDsInListSet.has(lawID));
 
     const lawIDsToProcessSet = new Set([...toUpdateLawIDsInDBInList, ...lawIDsNotInDB]);
-    const lawInfos =
-        allLawInfos
-            .filter(li => lawIDsToProcessSet.has(li.LawID));
+    const lawIDsToProcess = Array.from(lawIDsToProcessSet);
+    const lawInfos: LawInfo[] = [];
+    for (const lawID of lawIDsToProcess) {
+        const lawInfo = await loader.getLawInfoByLawID(lawID);
+        if (lawInfo) lawInfos.push(lawInfo);
+    }
 
     console.log("Number of laws to be processed:");
     console.log(`    now in list     : ${allLawIDsInListSet.size.toString().padStart(5, " ")}`);
-    console.log(`      - duplicated  : ${(allLawIDsInList.length - allLawIDsInListSet.size).toString().padStart(5, " ")}`);
+    console.log(`      - duplicated  : ${(allLawIDsInListWithDup.length - allLawIDsInList.length).toString().padStart(5, " ")}`);
     console.log(`      - to process  : ${lawInfos.length.toString().padStart(5, " ")}`);
     console.log(`        - add to DB : ${lawIDsNotInDB.length.toString().padStart(5, " ")}`);
     console.log(`        - update DB : ${toUpdateLawIDsInDBInList.length.toString().padStart(5, " ")}`);
@@ -333,7 +339,7 @@ const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
             : { parsedEL: undefined, parsedXML: undefined, parsedLaw: undefined };
 
         const { lawDiff } = (origXML && origEL && parsedXML && parsedEL)
-            ? await getLawDiff(origXML, origEL, parsedXML, parsedEL)
+            ? await getLawDiff(origXML, origEL, parsedXML, parsedEL, args.maxDiffLength)
             : { lawDiff: undefined };
 
         const lawNumStruct = lawNumStructFromXML ?? parseLawNum(lawInfo.LawNum);
@@ -364,14 +370,10 @@ const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
 
 };
 
-const notify = async (title: string, message: string) => {
-
-    if (!process.env.NOTIFICATION_ENDPOINT) {
-        return;
-    }
+const notify = async (endpoint: string, title: string, message: string) => {
 
     await fetch(
-        process.env.NOTIFICATION_ENDPOINT,
+        endpoint,
         {
             method: "POST",
             body: JSON.stringify({ value1: title, value2: message }),
@@ -387,7 +389,10 @@ interface UpdateArgs {
     force: boolean,
     retry: boolean,
     dryRun: boolean,
+    maxDiffLength: number,
     before?: Date,
+    lawID?: string,
+    notificationEndpoint?: string,
 }
 
 export const main = async (args: UpdateArgs): Promise<void> => {
@@ -397,11 +402,17 @@ export const main = async (args: UpdateArgs): Promise<void> => {
     console.log(`Start updating law coverage at ${new Date().toISOString()}...`);
     console.dir(args);
 
-    if (process.env.NOTIFICATION_ENDPOINT) {
+    if (args.notificationEndpoint) {
         console.log("It will notify your ifttt when it finished.");
     }
     await update(args, db, loader);
-    await notify("updating finished!", `"${process.argv.join(" ")}" has just been finished.`);
+    if (args.notificationEndpoint) {
+        await notify(
+            args.notificationEndpoint,
+            "updating finished!",
+            `"${process.argv.join(" ")}" has just been finished.`,
+        );
+    }
 
     db.connection.close();
 };

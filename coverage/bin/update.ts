@@ -6,6 +6,8 @@
 import * as yargs from "yargs";
 import update from "../src/update";
 
+const DEFAULT_MAX_DIFF_LENGTH = 20;
+
 if (typeof require !== "undefined" && require.main === module) {
     process.on("unhandledRejection", (listener) => {
         throw listener;
@@ -35,6 +37,10 @@ if (typeof require !== "undefined" && require.main === module) {
                     type: "boolean",
                     default: false,
                 })
+                .option("maxDiffLength", {
+                    type: "number",
+                    default: DEFAULT_MAX_DIFF_LENGTH,
+                })
                 .option("before", {
                     alias: "b",
                     type: "string",
@@ -45,6 +51,10 @@ if (typeof require !== "undefined" && require.main === module) {
 
             async _argv => {
                 await update({
+                    ...{
+                        lawID: process.env.FILTER_LAW_ID,
+                        notificationEndpoint: process.env.NOTIFICATION_ENDPOINT,
+                    },
                     ..._argv,
                 });
                 // setTimeout(WINR, 1000);
