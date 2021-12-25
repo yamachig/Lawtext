@@ -1,21 +1,16 @@
 // import formatXML from "xml-formatter";
-import { DOMParser } from "@xmldom/xmldom";
 import * as law_diff from "@coresrc/diff/law_diff";
-import * as parser_wrapper from "@coresrc/parser_wrapper";
-import { render as renderLawtext } from "@coresrc/renderers/lawtext";
 import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
 import { Loader } from "@coresrc/data/loaders/common";
-import { EL, parseLawNum, xmlToJson } from "@coresrc/util";
 import mongoose from "mongoose";
 import { Bar, Presets } from "cli-progress";
-import { LawInfo } from "@coresrc/data/lawinfo";
+import { BaseLawInfo, LawInfo } from "@coresrc/data/lawinfo";
 import { fetch } from "./node-fetch";
-import { Era, LawCoverage, LawType } from "./lawCoverage";
+import { LawCoverage } from "./lawCoverage";
 import { connect, ConnectionInfo } from "./connection";
 import config from "./config";
-import { Law } from "./std_law";
-
-const domParser = new DOMParser();
+import { Worker } from "worker_threads";
+import { range } from "@coresrc/util";
 
 class ProgressBar {
     public bar: Bar;
@@ -26,10 +21,10 @@ class ProgressBar {
             }, Presets.rect,
         );
     }
-    public progress(ratio?: number, message?: string): void {
+    public progress(current?: number, message?: string): void {
         const payload = { message: (typeof message !== "string") ? "" : message.length > 30 ? message.slice(0, 30) + " ..." : message };
-        if (ratio) {
-            this.bar.update(ratio, payload);
+        if (current) {
+            this.bar.update(current, payload);
         } else if (payload) {
             this.bar.update(payload);
         }
@@ -43,194 +38,6 @@ class ProgressBar {
 }
 const bar = new ProgressBar();
 export const progress = bar.progress.bind(bar);
-
-
-class Lap {
-    date: Date;
-    constructor() {
-        this.date = new Date();
-    }
-    lapms() {
-        const now = new Date();
-        const ms = now.getTime() - this.date.getTime();
-        this.date = now;
-        return ms;
-    }
-}
-
-
-const getOriginalLaw = async (lawInfo: LawInfo, loader: Loader): Promise<{
-    origEL?: EL,
-    origXML?: string,
-    lawNumStruct?: {
-        Era: Era | null,
-        Year: number | null,
-        LawType: LawType | null,
-        Num: number | null,
-    },
-    originalLaw: Required<LawCoverage>["originalLaw"],
-}> => {
-    try {
-        const requiredms = new Map<string, number>();
-        const lap = new Lap();
-
-        const origXML = await loader.loadLawXMLByInfo(lawInfo);
-        requiredms.set("loadXML", lap.lapms());
-
-        const origEL = xmlToJson(origXML) as Law;
-        requiredms.set("xmlToJson", lap.lapms());
-
-        const Year = Number(origEL.attr.Year);
-        const Num = Number(origEL.attr.Num);
-
-        return {
-            origEL,
-            origXML,
-            lawNumStruct: {
-                Era: origEL.attr.Era as Era,
-                Year: Number.isNaN(Year) ? null : Year,
-                Num: Number.isNaN(Num) ? null : Num,
-                LawType: origEL.attr.LawType as LawType,
-            },
-            originalLaw: {
-                ok: {
-                    requiredms,
-                },
-                info: {},
-            },
-        };
-    } catch (e) {
-        return {
-            originalLaw: {
-                info: { error: (e as Error).stack },
-            },
-        };
-    }
-};
-
-
-const getRenderedLawtext = async (origEL: EL): Promise<{
-    lawtext?: string,
-    renderedLawtext: Required<LawCoverage>["renderedLawtext"],
-}> => {
-    try {
-        const requiredms = new Map<string, number>();
-        const lap = new Lap();
-
-        const lawtext = renderLawtext(origEL);
-        requiredms.set("renderLawtext", lap.lapms());
-
-        return {
-            lawtext,
-            renderedLawtext: {
-                ok: {
-                    requiredms,
-                },
-                info: {},
-            },
-        };
-    } catch (e) {
-        return {
-            renderedLawtext: {
-                info: { error: (e as Error).stack },
-            },
-        };
-    }
-};
-
-
-const getParsedLaw = async (lawtext: string): Promise<{
-    parsedEL?: EL,
-    parsedXML?: string,
-    parsedLaw: Required<LawCoverage>["parsedLaw"],
-}> => {
-    try {
-        const requiredms = new Map<string, number>();
-        const lap = new Lap();
-
-        const parsedEL = parser_wrapper.parse(lawtext);
-        requiredms.set("parseLawtext", lap.lapms());
-
-        parser_wrapper.analyze(parsedEL);
-        requiredms.set("analyze", lap.lapms());
-
-        const parsedXML = parsedEL.outerXML(false);
-        requiredms.set("parsedELToXML", lap.lapms());
-
-        return {
-            parsedEL,
-            parsedXML,
-            parsedLaw: {
-                ok: {
-                    requiredms,
-                },
-                info: {},
-            },
-        };
-    } catch (e) {
-        return {
-            parsedLaw: {
-                info: { error: (e as Error).stack },
-            },
-        };
-    }
-};
-
-
-const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsedEL: EL, max_diff_length: number): Promise<{
-    lawDiff: Required<LawCoverage>["lawDiff"],
-}> => {
-    try {
-        const requiredms = new Map<string, number>();
-        const lap = new Lap();
-
-        const origJson = origEL.json(false);
-        requiredms.set("origELToJson", lap.lapms());
-
-        const parsedJson = parsedEL.json(false);
-        requiredms.set("parsedELToJson", lap.lapms());
-
-        const d = law_diff.lawDiff(origJson, parsedJson, law_diff.LawDiffMode.NoProblemAsNoDiff);
-        requiredms.set("lawDiff", lap.lapms());
-
-        const origDOM = domParser.parseFromString(origXML);
-        requiredms.set("parseLawtext", lap.lapms());
-
-        const parsedDOM = domParser.parseFromString(parsedXML);
-        requiredms.set("parseLawtext", lap.lapms());
-
-        const diffData = law_diff.makeDiffData(d, origDOM, parsedDOM);
-        requiredms.set("parseLawtext", lap.lapms());
-
-        let slicedDiffData = diffData;
-
-        if (diffData.length > max_diff_length) {
-            const iSerious = Math.max(diffData.findIndex(diff => diff.mostSeriousStatus === d.mostSeriousStatus), 0);
-            const iStart = Math.min(iSerious, diffData.length - max_diff_length);
-            slicedDiffData = diffData.slice(iStart, iStart + max_diff_length);
-        }
-
-        return {
-            lawDiff: {
-                ok: {
-                    mostSeriousStatus: d.mostSeriousStatus,
-                    result: {
-                        items: slicedDiffData,
-                        totalCount: diffData.length,
-                    },
-                    requiredms,
-                },
-                info: {},
-            },
-        };
-    } catch (e) {
-        return {
-            lawDiff: {
-                info: { error: (e as Error).stack },
-            },
-        };
-    }
-};
 
 
 const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo) => {
@@ -270,7 +77,7 @@ const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo) => {
     return lawIDs;
 };
 
-const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
+const getToProcessLawInfos = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
 
     const { lawInfos: allLawInfosBeforeFilter } = await loader.cacheLawListStruct();
 
@@ -320,53 +127,100 @@ const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
     console.log(`    now in DB       : ${allLawIDsInDB.length.toString().padStart(5, " ")}`);
     console.log(`      - not in list : ${lawIDsNotInList.length.toString().padStart(5, " ")}`);
 
-    if (lawInfos.length === 0 || args.dryRun) return;
+    return lawInfos;
+};
+
+const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_count: number) => {
+    console.log(`Initializing ${workers_count} workers...`);
+
+    const workers: Map<number, Worker> = new Map(await Promise.all(Array.from(range(0, workers_count)).map(workerIndex => new Promise<[number, Worker]>((resolve, reject) => {
+        const worker = new Worker(__dirname + "/update-worker", { workerData: { maxDiffLength: args.maxDiffLength } });
+        worker.once("error", reject);
+        worker.once("exit", (code) => {
+            if (code !== 0) reject(new Error("Worker stopped with error"));
+        });
+        worker.once("message", msg => {
+            if (!msg.ready) console.error(`Unknown message from worker: ${JSON.stringify(msg)}`);
+            resolve([workerIndex, worker]);
+        });
+    }))));
+
+    console.log("Initializing workers completed.");
+
+    for (const worker of workers.values()) {
+        worker.once("error", err => { throw err; });
+        worker.once("exit", (code) => {
+            if (code !== 0) throw new Error("Worker stopped with error");
+        });
+    }
+
+    const runWorkerPromises: Map<number, Promise<number>> = new Map();
+
+    const runWorker = (worker: Worker, lawInfo: BaseLawInfo) => new Promise<void>((resolve) => {
+        worker.postMessage({ lawInfo });
+        worker.once("message", msg => {
+            if (!msg.finished) console.error(`Unknown message from worker: ${JSON.stringify(msg)}`);
+            resolve();
+        });
+    });
 
     bar.start(lawInfos.length, 0);
-    for (const [i, lawInfo] of lawInfos.entries()) {
-        bar.progress(i, lawInfo.LawID);
+    let progressCount = 0;
 
-        const updateDate = new Date();
-
-        const { origEL, origXML, lawNumStruct: lawNumStructFromXML, originalLaw } = await getOriginalLaw(lawInfo, loader);
-
-        const { lawtext, renderedLawtext } = origEL
-            ? await getRenderedLawtext(origEL)
-            : { lawtext: undefined, renderedLawtext: undefined };
-
-        const { parsedEL, parsedXML, parsedLaw } = lawtext
-            ? await getParsedLaw(lawtext)
-            : { parsedEL: undefined, parsedXML: undefined, parsedLaw: undefined };
-
-        const { lawDiff } = (origXML && origEL && parsedXML && parsedEL)
-            ? await getLawDiff(origXML, origEL, parsedXML, parsedEL, args.maxDiffLength)
-            : { lawDiff: undefined };
-
-        const lawNumStruct = lawNumStructFromXML ?? parseLawNum(lawInfo.LawNum);
-
-        const doc: LawCoverage = {
-            ...lawInfo.toBaseLawInfo(),
-            Era: (lawNumStruct.Era ?? undefined) as Era | undefined,
-            Year: lawNumStruct.Year ?? undefined,
-            LawType: (lawNumStruct.LawType ?? undefined) as LawType | undefined,
-            Num: lawNumStruct.Num ?? undefined,
-            updateDate,
-            originalLaw,
-            renderedLawtext,
-            parsedLaw,
-            lawDiff,
-        };
-
-        await db.lawCoverage.updateOne(
-            { LawID: lawInfo.LawID },
-            doc,
-            {
-                upsert: true,
-            },
-        );
+    for (const lawInfo of lawInfos) {
+        if (runWorkerPromises.size >= workers_count) {
+            const workerIndex = await Promise.race(runWorkerPromises.values());
+            runWorkerPromises.delete(workerIndex);
+        }
+        const [workerIndex, worker] = Array.from(workers.entries())
+            .filter(([workerIndex]) => !runWorkerPromises.has(workerIndex))[0];
+        const promise = runWorker(worker, lawInfo).then(() => {
+            progressCount++;
+            bar.progress(progressCount, `${lawInfo.LawID} on #${workerIndex}`);
+            return workerIndex;
+        });
+        runWorkerPromises.set(workerIndex, promise);
     }
+
+    await Promise.all(runWorkerPromises.values());
+    for (const worker of workers.values()) worker.unref();
+
     bar.progress(lawInfos.length);
     bar.stop();
+};
+
+const updateSerial = async (args: UpdateArgs, lawInfos: LawInfo[], db: ConnectionInfo, loader: Loader) => {
+    const updateWorker = await import("./update-worker");
+
+    bar.start(lawInfos.length, 0);
+    let progressCount = 0;
+
+    for (const lawInfo of lawInfos) {
+        await updateWorker.update(lawInfo, args.maxDiffLength, db, loader);
+        progressCount++;
+        bar.progress(progressCount, `${lawInfo.LawID}`);
+    }
+
+    bar.progress(lawInfos.length);
+    bar.stop();
+};
+
+const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
+
+    const lawInfos = await getToProcessLawInfos(args, db, loader);
+
+    if (lawInfos.length === 0 || args.dryRun) return;
+
+    const workers_count = parseInt(process.env.WORKERS_COUNT || "1");
+    const minimum_parallel_count = parseInt(process.env.MINIMUM_PARALLEL_COUNT || "0");
+
+    if (workers_count > 1 && lawInfos.length >= minimum_parallel_count) {
+        console.log(`Running in parallel with ${workers_count} workers...`);
+        await updateParallel(args, lawInfos, workers_count);
+    } else {
+        console.log("Running in serial...");
+        await updateSerial(args, lawInfos, db, loader);
+    }
 
 };
 
@@ -414,7 +268,7 @@ export const main = async (args: UpdateArgs): Promise<void> => {
         );
     }
 
-    db.connection.close();
+    await db.connection.close();
 };
 
 export default main;
