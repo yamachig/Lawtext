@@ -10,18 +10,19 @@
         "lib": ["es2017", "dom", "scripthost"],
         
         // "composite": true,
-        // "declaration": true,
+        "allowJs": true,
+        "declaration": true,
 
         "jsx": "react",
 
         "baseUrl": "./",
         "outDir": "dist",
-        "paths": {
-            "@coveragesrc/*": ["src/*"],
-            "@coresrc/*": ["../core/src/*"]
-        },
-        "rootDir": "../",
-        "rootDirs": ["src", "../core/src", "bin", "test"],
+        // "paths": {
+        //     "@coveragesrc/*": ["src/*"],
+        //     "@coresrc/*": ["../core/src/*"]
+        // },
+        "rootDir": "./",
+        "rootDirs": ["src", "bin", "test"],
 
         "skipLibCheck": true,
 
@@ -43,9 +44,12 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
     },
-    // "include": [
-    //     "src/**/*",
-    //     "test/**/*",
-    //     "bin/**/*",
-    // ],
+    "include": [
+        "src/**/*",
+        "test/**/*",
+        "bin/**/*",
+    ],
+    "exclude": [
+        "src/client/**/*",
+    ],
 }

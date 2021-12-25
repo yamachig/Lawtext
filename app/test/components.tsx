@@ -11,7 +11,13 @@ import path from "path";
 import { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "./components/LawtextAppPageState";
 import { createMemoryHistory } from "history";
 
-const dataPath = path.join(__dirname, "../../core/data");
+import dotenv from "dotenv";
+dotenv.config();
+
+const DATA_PATH = process.env["DATA_PATH"];
+if (!DATA_PATH) throw new Error("Environment variable DATA_PATH not set");
+
+const dataPath = path.join(DATA_PATH);
 const loader = new FSStoredLoader(dataPath);
 
 const renderAllLaws = async () => {

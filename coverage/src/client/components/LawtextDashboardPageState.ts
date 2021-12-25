@@ -1,6 +1,6 @@
 import { LawCoverage, LawType } from "../../lawCoverage";
-import { ComparableEL, TagType } from "@coresrc/diff/law_diff";
-import { EL, xmlToJson } from "@coresrc/util";
+import { ComparableEL, TagType } from "lawtext/dist/src/diff/law_diff";
+import { EL, xmlToJson } from "lawtext/dist/src/util";
 import React from "react";
 import { useHistory } from "react-router";
 import { filtered, FilterInfo, LawDiffStatus, OriginalLawStatus, ParsedLawStatus, RenderedLawtextStatus, SortDirection, sorted, SortKey } from "./FilterInfo";

@@ -1,4 +1,4 @@
-import { LawCoverage } from "@coveragesrc/lawCoverage";
+import { LawCoverage } from "../../lawCoverage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";

@@ -1,6 +1,6 @@
 import { Era, LawCoverage, LawType } from "../../lawCoverage";
-import { ProblemStatus } from "@coresrc/diff/law_diff";
-import { assertNever } from "@coresrc/util";
+import { ProblemStatus } from "lawtext/dist/src/diff/law_diff";
+import { assertNever } from "lawtext/dist/src/util";
 
 
 export enum SortKey {

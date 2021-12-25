@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as law_diff from "@coresrc/diff/law_diff";
-import { assertNever } from "@coresrc/util";
+import * as law_diff from "lawtext/dist/src/diff/law_diff";
+import { assertNever } from "lawtext/dist/src/util";
 import * as React from "react";
 import styled from "styled-components";
 import LawCoverageInfoCard, { LawCoverageInfoCardStatus } from "./LawCoverageInfoCard";

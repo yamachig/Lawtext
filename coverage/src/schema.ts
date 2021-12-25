@@ -1,4 +1,4 @@
-import * as law_diff from "@coresrc/diff/law_diff";
+import * as law_diff from "lawtext/dist/src/diff/law_diff";
 import mongoose from "mongoose";
 import { Era, LawCoverage, LawType } from "./lawCoverage";
 

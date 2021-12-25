@@ -16,11 +16,12 @@
         "test": "test"
     },
     "scripts": {
-        "ts-node": "node -r ts-node/register -r tsconfig-paths/register --trace-warnings",
-        "update": "npm run ts-node bin/update.ts --",
-        "build": "npx webpack --mode development --color --config ./webpack-configs/client.ts",
-        "build:prod": "npx webpack --mode production --color --config ./webpack-configs/client.ts",
-        "serve": "npm run ts-node bin/server.ts --"
+        "build": "npx tsc",
+        "watch": "npx tsc --watch",
+        "update": "node --enable-source-maps dist/bin/update.js",
+        "serve": "node --enable-source-maps dist/bin/server.js",
+        "build-client": "npx webpack --mode development --color --config ./webpack-configs/client.ts",
+        "build-client:prod": "npx webpack --mode production --color --config ./webpack-configs/client.ts"
     },
     "devDependencies": {
         "@types/bootstrap": "^5.1.6",
@@ -56,7 +57,6 @@
         "source-map-support": "^0.5.20",
         "style-loader": "^3.3.1",
         "ts-loader": "^9.2.6",
-        "tsconfig-paths": "^3.11.0",
         "webpack": "^5.61.0",
         "webpack-cli": "^4.9.1",
         "webpack-dev-server": "^4.4.0"
@@ -71,6 +71,7 @@
         "cli-progress": "^3.9.1",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
+        "lawtext": "file:../core",
         "moment": "^2.29.1",
         "mongoose": "^6.0.12",
         "node-fetch": "^3.0.0",
@@ -79,7 +80,6 @@
         "react-router-dom": "^5.3.0",
         "react-sortable-hoc": "^2.0.0",
         "styled-components": "^5.3.3",
-        "ts-node": "^10.4.0",
         "typescript": "^4.4.4",
         "webpack-dev-middleware": "^5.2.1",
         "why-is-node-running": "^2.2.0",

@@ -1,20 +1,19 @@
 // import formatXML from "xml-formatter";
 import { DOMParser } from "@xmldom/xmldom";
-import * as law_diff from "@coresrc/diff/law_diff";
-import * as parser_wrapper from "@coresrc/parser_wrapper";
-import { render as renderLawtext } from "@coresrc/renderers/lawtext";
-import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
-import { Loader } from "@coresrc/data/loaders/common";
-import { EL, parseLawNum, xmlToJson } from "@coresrc/util";
-import { BaseLawInfo } from "@coresrc/data/lawinfo";
+import * as law_diff from "lawtext/dist/src/diff/law_diff";
+import * as parser_wrapper from "lawtext/dist/src/parser_wrapper";
+import { render as renderLawtext } from "lawtext/dist/src/renderers/lawtext";
+import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
+import { Loader } from "lawtext/dist/src/data/loaders/common";
+import { EL, parseLawNum, xmlToJson } from "lawtext/dist/src/util";
+import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { Era, LawCoverage, LawType } from "./lawCoverage";
 import { connect, ConnectionInfo } from "./connection";
 import config from "./config";
-import { Law } from "./std_law";
+import { Law } from "lawtext/dist/src/std_law";
 import { isMainThread, workerData, parentPort } from "worker_threads";
 
 const domParser = new DOMParser();
-
 
 class Lap {
     date: Date;

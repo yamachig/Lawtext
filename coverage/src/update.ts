@@ -1,16 +1,16 @@
 // import formatXML from "xml-formatter";
-import * as law_diff from "@coresrc/diff/law_diff";
-import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
-import { Loader } from "@coresrc/data/loaders/common";
+import * as law_diff from "lawtext/dist/src/diff/law_diff";
+import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
+import { Loader } from "lawtext/dist/src/data/loaders/common";
 import mongoose from "mongoose";
 import { Bar, Presets } from "cli-progress";
-import { BaseLawInfo, LawInfo } from "@coresrc/data/lawinfo";
+import { BaseLawInfo, LawInfo } from "lawtext/dist/src/data/lawinfo";
 import { fetch } from "./node-fetch";
 import { LawCoverage } from "./lawCoverage";
 import { connect, ConnectionInfo } from "./connection";
 import config from "./config";
 import { Worker } from "worker_threads";
-import { range } from "@coresrc/util";
+import { range } from "lawtext/dist/src/util";
 
 class ProgressBar {
     public bar: Bar;

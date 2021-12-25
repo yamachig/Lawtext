@@ -1,5 +1,5 @@
-import * as law_diff from "@coresrc/diff/law_diff";
-import { BaseLawInfo } from "@coresrc/data/lawinfo";
+import * as law_diff from "lawtext/dist/src/diff/law_diff";
+import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 
 export enum Era {
     Meiji = "Meiji",

@@ -2,11 +2,17 @@ import HtmlWebPackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
+import fs from "fs";
 import webpack from "webpack";
 import webpack_dev_server from "webpack-dev-server";
 import WatchMessagePlugin from "./WatchMessagePlugin";
 
-const rootDir = path.dirname(__dirname);
+let rootDir = path.dirname(__dirname);
+while (!fs.existsSync(path.join(rootDir, "package.json"))) {
+    const newRootDir = path.dirname(rootDir);
+    if (newRootDir === rootDir) break;
+    rootDir = newRootDir;
+}
 
 export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration & { devServer: webpack_dev_server.Configuration } => {
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev"), "client");
@@ -21,8 +27,8 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
             alias: {
-                "@coveragesrc": path.resolve(rootDir, "./src"),
-                "@coresrc": path.resolve(rootDir, "../core/src"),
+                // "@coveragesrc": path.resolve(rootDir, "./src"),
+                // "@coresrc": path.resolve(rootDir, "../core/src"),
                 "node-fetch": false,
             },
             fallback: {

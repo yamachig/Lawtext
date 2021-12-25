@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { assertNever } from "@coresrc/util";
+import { assertNever } from "lawtext/dist/src/util";
 import moment from "moment";
 import * as React from "react";
 import styled from "styled-components";
