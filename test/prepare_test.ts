@@ -1,12 +1,16 @@
 import fs from "fs";
-import path from "path";
 import { promisify } from "util";
 import { download, saveList } from "../src/data/save_fs";
 import { ProgressBar } from "../src/term_util";
 import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader";
 // import { before } from "mocha";
+import dotenv from "dotenv";
+dotenv.config();
 
-export const loader = new FSStoredLoader(path.join(__dirname, "../data"));
+const DATA_PATH = process.env["DATA_PATH"];
+if (!DATA_PATH) throw new Error("Environment variable DATA_PATH not set");
+
+export const loader = new FSStoredLoader(DATA_PATH);
 
 // before("Run prepare_test", async function() {
 //     this.timeout(3600_000);
@@ -44,6 +48,5 @@ if (typeof require !== "undefined" && require.main === module) {
         // console.error(newErr);
         process.exit(1);
     });
-    const loader = new FSStoredLoader(path.join(__dirname, "../data"));
     prepare(loader);
 }

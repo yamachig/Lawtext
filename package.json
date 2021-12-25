@@ -19,11 +19,11 @@
     "test": "test"
   },
   "scripts": {
-    "ts-node": "node -r ts-node/register -r tsconfig-paths/register --trace-warnings",
     "emitBinDeclarations": "tsc -p bin/build/tsconfig.json",
     "build": "node --trace-deprecation --trace-warnings bin/build/ && tsc",
+    "watch": "node --trace-deprecation --trace-warnings bin/build/ && tsc --watch",
     "prepare": "npm run build",
-    "test": "node --max_old_space_size=2048 -r ts-node/register -r tsconfig-paths/register ./test/prepare_test.ts && mocha --exit --timeout 10000 -r ts-node/register -r tsconfig-paths/register test/**/*.ts"
+    "test": "node --max_old_space_size=2048 ./dist/test/prepare_test.js && mocha --exit --timeout 10000 ./dist/test/**/*.js"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.8.0",
@@ -42,9 +42,6 @@
     "pre-build-webpack": "^0.1.0",
     "prettify-xml": "^1.2.0",
     "source-map-loader": "^3.0.0",
-    "ts-loader": "^9.2.6",
-    "ts-node": "^10.4.0",
-    "ts-pegjs": "^1.2.1",
     "tsconfig-paths": "^3.12.0",
     "typescript": "^4.5.4",
     "webpack": "^5.65.0",
@@ -71,6 +68,7 @@
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
     "chai": "^4.3.4",
+    "dotenv": "^10.0.0",
     "eslint": "^8.5.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-tsdoc": "^0.2.14",

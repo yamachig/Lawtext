@@ -128,7 +128,7 @@ export class ProgressBar {
         const payload = { message: (typeof message !== "string") ? "" : message.length > 30 ? message.slice(0, 30) + " ..." : message };
         if (ratio) {
             this.bar.update(ratio, payload);
-        } else if(payload) {
+        } else if (payload) {
             this.bar.update(payload);
         }
     }

@@ -90,11 +90,11 @@ export const innerXML = (el: JsonEL, withControlEl = false): string => {
 
 let currentID = 0;
 export class EL implements JsonEL {
-    public tag: string
-    public attr: { [key: string]: string | undefined }
-    public children: Array<EL | string>
-    public textCache: string | null
-    public id: number
+    public tag: string;
+    public attr: { [key: string]: string | undefined };
+    public children: Array<EL | string>;
+    public textCache: string | null;
+    public id: number;
 
     constructor(tag: string, attr: { [key: string]: string | undefined } = {}, children: Array<EL | string> = []) {
         // if(!tag) {
@@ -252,14 +252,14 @@ interface IterableIterator<T> extends Iterator<T, void, undefined> {
     [Symbol.iterator](): IterableIterator<T>;
 }
 export class Container {
-    public el: EL
-    public type: ContainerType
-    public spanRange: [number, number] // half open
-    public parent: Container | null
-    public children: Container[]
+    public el: EL;
+    public type: ContainerType;
+    public spanRange: [number, number]; // half open
+    public parent: Container | null;
+    public children: Container[];
 
-    public subParent: Container | null
-    public subChildren: Container[]
+    public subParent: Container | null;
+    public subChildren: Container[];
 
     constructor(
         el: EL,
@@ -439,10 +439,10 @@ export class Container {
 }
 
 export class Env {
-    public lawType: string
-    public parents: EL[]
+    public lawType: string;
+    public parents: EL[];
 
-    private containerCache: Container | null
+    private containerCache: Container | null;
 
     constructor(
         lawType: string,
@@ -480,10 +480,10 @@ export class Env {
 }
 
 export class Span {
-    public index: number
-    public el: EL
-    public env: Env
-    public text: string
+    public index: number;
+    public el: EL;
+    public env: Env;
+    public text: string;
     constructor(index: number, el: EL, env: Env) {
         this.index = index;
         this.el = el;
@@ -511,7 +511,7 @@ export const loadEl = (rawLaw: JsonEL | string): EL | string => {
 
 export class __Parentheses extends EL {
 
-    public content: string
+    public content: string;
 
     constructor(type: string, depth: number, start: string, end: string, content: Array<string | EL>, text: string) {
         super("__Parentheses");
@@ -878,11 +878,11 @@ export const isRelPos = (object: unknown): object is RelPos => {
 };
 
 export class PointerFragment {
-    public relPos: RelPos
-    public tag: string
-    public name: string
-    public num: string | null
-    public locatedContainer: Container | null
+    public relPos: RelPos;
+    public tag: string;
+    public name: string;
+    public num: string | null;
+    public locatedContainer: Container | null;
 
     constructor(
         relPos: RelPos,
