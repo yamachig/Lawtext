@@ -1,10 +1,10 @@
 // import * as compression from "compression"
 import express from "express";
 // import path from "path";
-import config from "./config";
-import { connect, ConnectionInfo } from "./connection";
+import config from "../config";
+import { connect, ConnectionInfo } from "../connection";
 import webpackDevMiddleware from "webpack-dev-middleware";
-import webpackConfigFn from "../webpack-configs/client";
+import webpackConfigFn from "../../webpack-configs/client";
 import webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
 

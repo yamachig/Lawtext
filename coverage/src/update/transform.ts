@@ -3,15 +3,11 @@ import { DOMParser } from "@xmldom/xmldom";
 import * as law_diff from "lawtext/dist/src/diff/law_diff";
 import * as parser_wrapper from "lawtext/dist/src/parser_wrapper";
 import { render as renderLawtext } from "lawtext/dist/src/renderers/lawtext";
-import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
-import { EL, parseLawNum, xmlToJson } from "lawtext/dist/src/util";
+import { EL, xmlToJson } from "lawtext/dist/src/util";
 import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
-import { Era, LawCoverage, LawType } from "./lawCoverage";
-import { connect, ConnectionInfo } from "./connection";
-import config from "./config";
+import { Era, LawCoverage, LawType } from "../lawCoverage";
 import { Law } from "lawtext/dist/src/std_law";
-import { isMainThread, workerData, parentPort } from "worker_threads";
 
 const domParser = new DOMParser();
 
@@ -29,7 +25,7 @@ class Lap {
 }
 
 
-const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Promise<{
+export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Promise<{
     origEL?: EL,
     origXML?: string,
     lawNumStruct?: {
@@ -79,7 +75,7 @@ const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Promise<{
 };
 
 
-const getRenderedLawtext = async (origEL: EL): Promise<{
+export const getRenderedLawtext = async (origEL: EL): Promise<{
     lawtext?: string,
     renderedLawtext: Required<LawCoverage>["renderedLawtext"],
 }> => {
@@ -109,7 +105,7 @@ const getRenderedLawtext = async (origEL: EL): Promise<{
 };
 
 
-const getParsedLaw = async (lawtext: string): Promise<{
+export const getParsedLaw = async (lawtext: string): Promise<{
     parsedEL?: EL,
     parsedXML?: string,
     parsedLaw: Required<LawCoverage>["parsedLaw"],
@@ -147,7 +143,7 @@ const getParsedLaw = async (lawtext: string): Promise<{
 };
 
 
-const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsedEL: EL, max_diff_length: number): Promise<{
+export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsedEL: EL, max_diff_length: number): Promise<{
     lawDiff: Required<LawCoverage>["lawDiff"],
 }> => {
     try {
@@ -201,63 +197,3 @@ const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsed
         };
     }
 };
-
-export const update = async (lawInfo: BaseLawInfo, maxDiffLength: number, db: ConnectionInfo, loader: Loader) => {
-
-    const updateDate = new Date();
-
-    const { origEL, origXML, lawNumStruct: lawNumStructFromXML, originalLaw } = await getOriginalLaw(lawInfo, loader);
-
-    const { lawtext, renderedLawtext } = origEL
-        ? await getRenderedLawtext(origEL)
-        : { lawtext: undefined, renderedLawtext: undefined };
-
-    const { parsedEL, parsedXML, parsedLaw } = lawtext
-        ? await getParsedLaw(lawtext)
-        : { parsedEL: undefined, parsedXML: undefined, parsedLaw: undefined };
-
-    const { lawDiff } = (origXML && origEL && parsedXML && parsedEL)
-        ? await getLawDiff(origXML, origEL, parsedXML, parsedEL, maxDiffLength)
-        : { lawDiff: undefined };
-
-    const lawNumStruct = lawNumStructFromXML ?? parseLawNum(lawInfo.LawNum);
-
-    const doc: LawCoverage = {
-        ...lawInfo,
-        Era: (lawNumStruct.Era ?? undefined) as Era | undefined,
-        Year: lawNumStruct.Year ?? undefined,
-        LawType: (lawNumStruct.LawType ?? undefined) as LawType | undefined,
-        Num: lawNumStruct.Num ?? undefined,
-        updateDate,
-        originalLaw,
-        renderedLawtext,
-        parsedLaw,
-        lawDiff,
-    };
-
-    await db.lawCoverage.updateOne(
-        { LawID: lawInfo.LawID },
-        doc,
-        {
-            upsert: true,
-        },
-    );
-
-};
-
-const run = async (): Promise<void> => {
-    const db = await connect(config.MONGODB_URI);
-    const loader = new FSStoredLoader(config.DATA_PATH);
-    const maxDiffLength = workerData.maxDiffLength as number;
-
-    parentPort?.on("message", async (msg) => {
-        const lawInfo = msg.lawInfo as BaseLawInfo;
-        await update(lawInfo, maxDiffLength, db, loader);
-        parentPort?.postMessage({ finished: true });
-    });
-
-    parentPort?.postMessage({ ready: true });
-};
-
-if (!isMainThread) run();
-
