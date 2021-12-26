@@ -10,12 +10,13 @@
         "lib": ["es2017", "scripthost"],
         
         "composite": true,
+        "allowJs": true,
         "declaration": true,
 
         "baseUrl": "./",
         "outDir": "dist",
         // "paths": {"@coresrc/*": ["src/*"]},
-        "rootDirs": ["src", "bin", "test"],
+        // "rootDirs": ["src", "bin", "test"],
 
         "skipLibCheck": true,
 

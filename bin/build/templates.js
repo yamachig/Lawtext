@@ -9,7 +9,7 @@ import { defaultBasePath } from "./defaultBasePath.js";
  */
 const buildTemplates = async (basePath = defaultBasePath) => {
     const srcPath = path.join(basePath, "src");
-    const distPath = path.join(basePath, "dist");
+    // const distPath = path.join(basePath, "dist/src");
 
     let templates = nunjucks.precompile(
         path.join(srcPath, "templates"),
@@ -26,12 +26,12 @@ if(exports) exports.nunjucksPrecompiled = window.nunjucksPrecompiled;
         templates,
         { encoding: "utf-8" },
     );
-    await promisify(fs.mkdir)(distPath, { recursive: true });
-    await promisify(fs.writeFile)(
-        path.join(distPath, "templates.js"),
-        templates,
-        { encoding: "utf-8" },
-    );
+    // await promisify(fs.mkdir)(distPath, { recursive: true });
+    // await promisify(fs.writeFile)(
+    //     path.join(distPath, "templates.js"),
+    //     templates,
+    //     { encoding: "utf-8" },
+    // );
 };
 const _buildTemplates = buildTemplates;
 export { _buildTemplates as buildTemplates };

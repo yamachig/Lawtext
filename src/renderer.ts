@@ -85,7 +85,7 @@ const restructureTable = (table: JsonEL): JsonEL => {
 
 class Context {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public data: { [key: string]: any }
+    public data: { [key: string]: any };
     constructor() {
         this.data = {};
     }
