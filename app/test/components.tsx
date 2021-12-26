@@ -2,14 +2,13 @@ import React from "react";
 import chai from "chai";
 import { it } from "mocha";
 import ReactDOMServer from "react-dom/server";
-import { analyze } from "@coresrc/analyzer";
-import * as std from "@coresrc/std_law";
-import * as util from "@coresrc/util";
+import { analyze } from "lawtext/dist/src/analyzer";
+import * as std from "lawtext/dist/src/std_law";
+import * as util from "lawtext/dist/src/util";
 import { LawView } from "@appsrc/components/LawView";
-import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
+import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 import path from "path";
-import { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "./components/LawtextAppPageState";
-import { createMemoryHistory } from "history";
+import { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "../src/components/LawtextAppPageState";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -65,7 +64,7 @@ const renderAllLaws = async () => {
                     origState={currentState}
                     setState={setState}
                     origSetState={origSetState}
-                    history={createMemoryHistory({ initialEntries: ["/"] })}
+                    navigate={() => { /* */ }}
                     lawSearchKey={currentState.navigatedLawSearchKey}
                 />,
             );

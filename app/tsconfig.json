@@ -17,11 +17,10 @@
         "baseUrl": "./",
         "outDir": "dist",
         "paths": {
-            "@appsrc/*": ["src/*"],
-            "@coresrc/*": ["../core/src/*"]
+            "@appsrc/*": ["src/*"]
         },
-        "rootDir": "../",
-        "rootDirs": ["src", "../core/src", "bin", "test"],
+        "rootDir": "./",
+        // "rootDirs": ["src", "bin", "test"],
 
         "skipLibCheck": true,
 

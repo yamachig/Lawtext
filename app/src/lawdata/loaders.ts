@@ -1,6 +1,6 @@
 
-import { FetchElawsLoader } from "@coresrc/data/loaders/FetchElawsLoader";
-import { FetchStoredLoader } from "@coresrc/data/loaders/FetchStoredLoader";
+import { FetchElawsLoader } from "lawtext/dist/src/data/loaders/FetchElawsLoader";
+import { FetchStoredLoader } from "lawtext/dist/src/data/loaders/FetchStoredLoader";
 
 const _dataPath = "./data";
 export const elawsLoader = new FetchElawsLoader();

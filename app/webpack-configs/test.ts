@@ -22,7 +22,6 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             extensions: [".ts", ".tsx", ".js", ".json"],
             alias: {
                 "@appsrc": path.resolve(rootDir, "./src"),
-                "@coresrc": path.resolve(rootDir, "../core/src"),
             },
             fallback: {
                 "path": require.resolve("path-browserify"),

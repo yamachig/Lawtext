@@ -1,4 +1,4 @@
-import { LawInfo } from "@coresrc/data/lawinfo";
+import { LawInfo } from "lawtext/dist/src/data/lawinfo";
 import levenshtein from "js-levenshtein";
 import { storedLoader } from "./loaders";
 

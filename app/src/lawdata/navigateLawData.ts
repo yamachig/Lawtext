@@ -1,12 +1,12 @@
 import { getTempLaw } from "../actions/temp_law";
-import { fetchLawData } from "@coresrc/elaws_api";
+import { fetchLawData } from "lawtext/dist/src/elaws_api";
 import JSZip from "jszip";
 import path from "path";
 import { ElawsLawDataProps, StoredLawDataProps, TempXMLLawDataProps, TempLawtextLawDataProps } from "./common";
 import { storedLoader } from "./loaders";
 import { searchLawnum } from "./searchLawNum";
-import * as util from "@coresrc/util";
-import { LawDataResult, Timing, toLawData } from "@coresrc/data/lawdata";
+import * as util from "lawtext/dist/src/util";
+import { LawDataResult, Timing, toLawData } from "lawtext/dist/src/data/lawdata";
 
 const pictMimeDict = {
     ".jpeg": "image/jpeg",

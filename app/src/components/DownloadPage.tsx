@@ -7,7 +7,7 @@ export const DownloadPage: React.FC = () => {
 
     return (
         <div className="container" style={{ paddingTop: "1em" }}>
-            <div className="jumbotron">
+            <div className="p-5 mb-4 bg-light rounded-3">
                 <h1 className="display-3">Lawtext<small>をダウンロード</small></h1>
                 <p className="lead">LawtextのWebアプリをダウンロードすることで、インターネット接続がない環境でも法令ファイル表示などの機能を利用できます。</p>
                 <p className="lead">

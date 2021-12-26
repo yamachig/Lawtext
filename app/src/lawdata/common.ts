@@ -1,4 +1,4 @@
-import { BaseLawtextLawDataProps, BaseXMLLawDataProps, LawDataCore } from "@coresrc/data/lawdata";
+import { BaseLawtextLawDataProps, BaseXMLLawDataProps, LawDataCore } from "lawtext/dist/src/data/lawdata";
 
 export interface StoredLawDataProps extends BaseXMLLawDataProps {
     source: "stored",

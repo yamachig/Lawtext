@@ -8,13 +8,19 @@ import "./index.scss";
 import { LawtextAppPage } from "./components/LawtextAppPage";
 import { DownloadPage } from "./components/DownloadPage";
 
+const App = () => {
+    return (
+        <HashRouter hashType="noslash">
+            <Switch>
+                <Route path="/download/" component={DownloadPage} />
+                <Route path="/:lawSearchKey?" component={LawtextAppPage} />
+            </Switch>
+        </HashRouter>
+    );
+};
+
 ReactDOM.render(
-    <HashRouter hashType="noslash">
-        <Switch>
-            <Route path="/download/" component={DownloadPage} />
-            <Route path="/:lawSearchKey?" component={LawtextAppPage} />
-        </Switch>
-    </HashRouter>
+    <App />
     ,
     document.getElementById("root"),
 );

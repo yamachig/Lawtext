@@ -1,8 +1,8 @@
 import $ from "jquery";
-import * as std from "@coresrc/std_law";
-import * as util from "@coresrc/util";
-import * as renderer from "@coresrc/renderer";
-import render_lawtext from "@coresrc/renderers/lawtext";
+import * as std from "lawtext/dist/src/std_law";
+import * as util from "lawtext/dist/src/util";
+import * as renderer from "lawtext/dist/src/renderer";
+import render_lawtext from "lawtext/dist/src/renderers/lawtext";
 import { saveAs } from "file-saver";
 import { getLawTitleWithNum } from "@appsrc/law_util";
 

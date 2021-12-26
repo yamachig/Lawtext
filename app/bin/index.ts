@@ -1,15 +1,20 @@
 import { renderToString } from "react-dom/server";
 import yargs from "yargs";
-import { analyze } from "@coresrc/analyzer";
-import * as std from "@coresrc/std_law";
-import * as util from "@coresrc/util";
+import { analyze } from "lawtext/dist/src/analyzer";
+import * as std from "lawtext/dist/src/std_law";
+import * as util from "lawtext/dist/src/util";
 import { LawView } from "@appsrc/components/LawView";
 import path from "path";
-import { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "./components/LawtextAppPageState";
-import { FSStoredLoader } from "@coresrc/data/loaders/FSStoredLoader";
-import { createMemoryHistory } from "history";
+import { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "../src/components/LawtextAppPageState";
+import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 
-const dataPath = path.join(__dirname, "../../core/data");
+import dotenv from "dotenv";
+dotenv.config();
+
+const DATA_PATH = process.env["DATA_PATH"];
+if (!DATA_PATH) throw new Error("Environment variable DATA_PATH not set");
+
+const dataPath = path.join(DATA_PATH);
 const loader = new FSStoredLoader(dataPath);
 
 const render = async (lawNum: string) => {
@@ -47,7 +52,7 @@ const render = async (lawNum: string) => {
         origState: currentState,
         setState,
         origSetState,
-        history: createMemoryHistory({ initialEntries: ["/"] }),
+        navigate: (() => { /* */ }),
         lawSearchKey: currentState.navigatedLawSearchKey,
     }) as JSX.Element;
 

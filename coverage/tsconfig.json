@@ -22,7 +22,7 @@
         //     "@coresrc/*": ["../core/src/*"]
         // },
         "rootDir": "./",
-        "rootDirs": ["src", "bin", "test"],
+        // "rootDirs": ["src", "bin", "test"],
 
         "skipLibCheck": true,
 

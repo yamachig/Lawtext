@@ -4,12 +4,12 @@
  */
 
 import * as temp_law from "@appsrc/actions/temp_law";
-import * as coreQuery from "@coresrc/data/query";
+import * as coreQuery from "./coreQuery";
 import * as law_util from "@appsrc/law_util";
 import { elawsLoader, storedLoader } from "@appsrc/lawdata/loaders";
-import { LawInfo } from "@coresrc/data/lawinfo";
-import * as _coreUtil from "@coresrc/util";
-import { Loader } from "@coresrc/data/loaders/common";
+import { LawInfo } from "lawtext/dist/src/data/lawinfo";
+import * as _coreUtil from "lawtext/dist/src/util";
+import { Loader } from "lawtext/dist/src/data/loaders/common";
 
 /**
  * `core.util` モジュールの内容。

@@ -1,6 +1,6 @@
 import { OrigSetLawtextAppPageState } from "../components/LawtextAppPageState";
-import * as util from "@coresrc/util";
-import { LawDataResult, Timing, toLawData } from "@coresrc/data/lawdata";
+import * as util from "lawtext/dist/src/util";
+import { LawDataResult, Timing, toLawData } from "lawtext/dist/src/data/lawdata";
 import { navigateLawData } from "@appsrc/lawdata/navigateLawData";
 import { downloadLawtext } from "./download";
 import $ from "jquery";

@@ -7,7 +7,7 @@ import { onNavigated } from "@appsrc/actions/onNavigated";
 import { OpenFileInputName, readFileInput } from "@appsrc/actions/openFile";
 import { ErrorModalID } from "@appsrc/actions/showErrorModal";
 import { storeTempLaw } from "@appsrc/actions/temp_law";
-import { omit } from "@coresrc/util";
+import { omit } from "lawtext/dist/src/util";
 
 
 const SideBarDiv = styled.div`
@@ -32,7 +32,7 @@ const HiddenInput = styled.input`
 export const LawtextAppPage: React.FC = () => {
 
     const stateStruct = useLawtextAppPageState();
-    const { history, lawSearchKey, origSetState } = stateStruct;
+    const { navigate, lawSearchKey, origSetState } = stateStruct;
 
     React.useEffect(() => {
         document.title = "Lawtext";
@@ -62,7 +62,7 @@ export const LawtextAppPage: React.FC = () => {
             return;
         }
         const id = storeTempLaw(text);
-        history.push(`/${id}`);
+        navigate(`/${id}`);
     };
 
     return (

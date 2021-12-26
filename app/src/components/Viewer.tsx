@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { LawView } from "./LawView";
-import { ResolvedType } from "@coresrc/util";
+import { ResolvedType } from "lawtext/dist/src/util";
 import { saveListJson } from "@appsrc/lawdata/saveListJson";
 import { ensureFetch, storedLoader } from "@appsrc/lawdata/loaders";
 import { openFile } from "@appsrc/actions/openFile";
@@ -45,7 +45,7 @@ const ViewerWelcomeDiv = styled.div`
 `;
 
 const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
-    const { history, lawSearchKey } = props;
+    const { navigate, lawSearchKey } = props;
 
     const [editingKey, setEditingKey] = React.useState(lawSearchKey);
 
@@ -53,7 +53,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        history.push(`/${editingKey}`);
+        navigate(`/${editingKey}`);
     };
 
     const [fetchAbility, setFetchAbility] = React.useState<ResolvedType<ReturnType<typeof ensureFetch>> | null>(null);
@@ -80,7 +80,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
 
     const downloadSampleLawtextOnClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        history.push("/(sample)");
+        navigate("/(sample)");
     };
 
     return (
@@ -195,7 +195,7 @@ const ListJsonDownloader: React.FC = () => {
                 progress: 1,
                 message: "完了しました",
                 blob,
-                blobURL: URL.createObjectURL(blob),
+                blobURL: blob && URL.createObjectURL(blob),
             }));
         })();
         return () => {

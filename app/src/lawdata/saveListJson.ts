@@ -1,4 +1,4 @@
-import { BaseLawInfo } from "@coresrc/data/lawinfo";
+import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { storedLoader } from "./loaders";
 
 

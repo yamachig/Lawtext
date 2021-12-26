@@ -1,4 +1,4 @@
-import { LawQueryItem } from "@coresrc/data/query";
+import { LawQueryItem } from "lawtext/dist/src/data/query";
 
 export const storeTempLaw = (text: string): string => {
     const id = `temp_law_${Math.floor(Math.random() * 1000000000)}`;

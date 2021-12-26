@@ -1,7 +1,6 @@
 import React from "react";
 import { LawData } from "@appsrc/lawdata/common";
-import { useHistory } from "react-router";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router-dom";
 
 export interface BaseLawtextAppPageState {
     law: LawData | null;
@@ -27,11 +26,12 @@ export interface LawtextAppPageStateStruct {
     origState: Readonly<BaseLawtextAppPageState>,
     origSetState: OrigSetLawtextAppPageState,
     setState: SetLawtextAppPageState,
-    history: ReturnType<typeof useHistory>,
+    navigate: ReturnType<typeof useHistory>["push"],
     lawSearchKey: string,
 }
 interface RouteParams {
     lawSearchKey: string | undefined,
+    [key: string]: string | undefined,
 }
 
 export const useLawtextAppPageState = (): LawtextAppPageStateStruct => {
@@ -47,12 +47,13 @@ export const useLawtextAppPageState = (): LawtextAppPageStateStruct => {
         [origSetState],
     );
     const history = useHistory();
+    const navigate = React.useCallback((path: string) => history.push(path), [history]);
 
     return {
         origState: state,
         origSetState,
         setState,
-        history,
+        navigate,
         lawSearchKey: lawSearchKey ?? "",
     };
 };

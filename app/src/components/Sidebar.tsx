@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import * as std from "@coresrc/std_law";
-import { assertNever, EL } from "@coresrc/util";
+import * as std from "lawtext/dist/src/std_law";
+import { assertNever, EL } from "lawtext/dist/src/util";
 import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { downloadDocx, downloadLawtext, downloadXml } from "@appsrc/actions/download";
 import { openFile } from "@appsrc/actions/openFile";
@@ -20,13 +20,13 @@ const SidebarHeadDiv = styled.div`
 `;
 
 const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
-    const { origState, history, lawSearchKey } = props;
+    const { origState, navigate, lawSearchKey } = props;
 
     const [editingKey, setEditingKey] = React.useState(lawSearchKey);
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        history.push(`/${editingKey}`);
+        navigate(`/${editingKey}`);
     };
 
     const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
