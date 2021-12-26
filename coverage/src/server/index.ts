@@ -7,6 +7,11 @@ import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackConfigFn from "../../webpack-configs/client";
 import webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
+import { Loader } from "lawtext/dist/src/data/loaders/common";
+import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
+import { getOriginalLaw, getParsedLaw, getRenderedLawtext } from "../update/transform";
+import JSZip from "jszip";
+
 
 const asyncMiddleware = (fn: express.RequestHandler): express.RequestHandler =>
     (req, res, next) => {
@@ -31,6 +36,13 @@ const getDB = async () => {
     const db = _db ?? await connect(config.MONGODB_URI);
     _db = db;
     return db;
+};
+
+let _loader: Loader | null;
+const getLoader = () => {
+    const loader = _loader ?? new FSStoredLoader(config.DATA_PATH);
+    _loader = loader;
+    return loader;
 };
 
 app.get(
@@ -78,6 +90,41 @@ app.get(
             response.status(404);
         }
         response.end();
+    }),
+);
+
+app.get(
+    "/intermediateData/:lawID",
+    asyncMiddleware(async (request: express.Request, response: express.Response) => {
+        const loader = getLoader();
+        const lawID = request.params.lawID;
+        const lawInfo = await loader.getLawInfoByLawID(lawID);
+
+        const { origEL, origXML } = lawInfo
+            ? await getOriginalLaw(lawInfo, loader)
+            : { origEL: undefined, origXML: undefined };
+
+        const { lawtext } = origEL
+            ? await getRenderedLawtext(origEL)
+            : { lawtext: undefined };
+
+        const { parsedXML } = lawtext
+            ? await getParsedLaw(lawtext)
+            : { parsedXML: undefined };
+
+        const zip = new JSZip();
+        if (origXML) zip.file("origXML.xml", origXML);
+        if (lawtext) zip.file("lawtext.law.txt", lawtext);
+        if (parsedXML) zip.file("parsedXML.xml", parsedXML);
+
+        response.contentType("application/zip");
+
+        await new Promise((resolve, reject) => {
+            zip.generateNodeStream({ type: "nodebuffer", streamFiles: true })
+                .pipe(response)
+                .on("finish", resolve)
+                .on("error", reject);
+        });
     }),
 );
 

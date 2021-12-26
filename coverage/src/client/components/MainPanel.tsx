@@ -533,7 +533,21 @@ export const LawCoverageInfoDetail: React.FC<{
             <LawCoverageInfoDetailTag>
                 <div className="bg-light" style={{ borderBottom: "1px solid #d6d8db", padding: "1em" }}>
                     <div className="text-secondary">
-                                #{lawCoverage.LawID} {lawCoverage.LawNum} <small><a href={`https://elaws.e-gov.go.jp/document?lawid=${encodeURI(lawCoverage.LawID)}`} target="_blank" rel="noreferrer">e-Gov <FontAwesomeIcon icon="external-link-alt" /></a></small> <small><a href={`https://yamachig.github.io/lawtext-app/#${lawCoverage.LawNum}`} target="_blank" rel="noreferrer">Lawtext <FontAwesomeIcon icon="external-link-alt" /></a></small>
+                        <span>#{lawCoverage.LawID}</span>
+                        {" "}
+                        <span>{lawCoverage.LawNum}</span>
+                        {" "}
+                        <small>
+                            <a href={`https://elaws.e-gov.go.jp/document?lawid=${encodeURI(lawCoverage.LawID)}`} target="_blank" rel="noreferrer">e-Gov <FontAwesomeIcon icon="external-link-alt" /></a>
+                        </small>
+                        {" "}
+                        <small>
+                            <a href={`https://yamachig.github.io/lawtext-app/#${lawCoverage.LawNum}`} target="_blank" rel="noreferrer">Lawtext <FontAwesomeIcon icon="external-link-alt" /></a>
+                        </small>
+                        {" "}
+                        <small>
+                            <a href={`/intermediateData/${lawCoverage.LawID}`} target="_blank" rel="noreferrer">中間データ <FontAwesomeIcon icon="external-link-alt" /></a>
+                        </small>
                     </div>
                     <div className="text-secondary">
                         <strong>{lawCoverage.LawTitle}</strong>
