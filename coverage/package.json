@@ -19,9 +19,10 @@
         "build": "npx tsc",
         "watch": "npx tsc --watch",
         "update": "node --enable-source-maps dist/bin/update.js",
-        "serve": "node --enable-source-maps dist/bin/server.js",
-        "build-client": "npx webpack --mode development --color --config ./webpack-configs/client.ts",
-        "build-client:prod": "npx webpack --mode production --color --config ./webpack-configs/client.ts"
+        "start": "node --enable-source-maps dist/bin/server.js ./dist-dev/client/",
+        "build-client": "npx webpack --mode development --color --config ./dist/webpack-configs/client.js",
+        "watch-client": "npx webpack --watch --progress --mode development --color --config ./dist/webpack-configs/client.js",
+        "build-client:prod": "npx webpack --mode production --color --config ./dist/webpack-configs/client.js"
     },
     "devDependencies": {
         "@types/bootstrap": "^5.1.6",
@@ -50,6 +51,7 @@
         "html-webpack-plugin": "^5.5.0",
         "mini-css-extract-plugin": "^2.4.3",
         "node-sass": "^6.0.1",
+        "nodemon": "^2.0.15",
         "path-browserify": "^1.0.1",
         "postcss-loader": "^6.2.0",
         "raw-loader": "^4.0.2",

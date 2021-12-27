@@ -1,0 +1,8 @@
+{
+    "ignoreRoot": [],
+    "watch": [
+      "./dist/",
+      "./node_modules/lawtext/"
+    ],
+    "ext": "js"
+}

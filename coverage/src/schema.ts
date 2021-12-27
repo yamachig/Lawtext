@@ -2,6 +2,8 @@ import * as law_diff from "lawtext/dist/src/diff/law_diff";
 import mongoose from "mongoose";
 import { Era, LawCoverage, LawType } from "./lawCoverage";
 
+type DeNull<T> = T extends null ? never : T;
+
 export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
     LawID: { type: String, required: true, unique: true },
     LawNum: { type: String, required: true },
@@ -13,24 +15,28 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
     Era: {
         type: String,
         enum: Object.values(Era),
-        required: false,
+        required: true,
+        nullable: true,
     },
-    Year: { type: Number, required: false },
-    Num: { type: Number, required: false },
+    Year: { type: Number, required: true, nullable: true },
+    Num: { type: Number, required: true, nullable: true },
     LawType: {
         type: String,
         enum: Object.values(LawType),
-        required: false,
+        required: true,
+        nullable: true,
     },
     updateDate: { type: Date, required: true },
 
     originalLaw: {
-        required: false,
+        required: true,
+        nullable: true,
         type: new mongoose.Schema<LawCoverage["originalLaw"]>({
             ok: {
-                required: false,
-                type: new mongoose.Schema<Required<LawCoverage>["originalLaw"]["ok"]>({
-                    requiredms: { type: Map, of: Number, required: true },
+                required: true,
+                nullable: true,
+                type: new mongoose.Schema<DeNull<DeNull<LawCoverage["originalLaw"]>["ok"]>>({
+                    requiredms: { type: mongoose.Schema.Types.Map, of: Number, required: true },
                 }, { minimize: false }),
             },
             info: { type: Object, required: true },
@@ -38,12 +44,14 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
     },
 
     renderedLawtext: {
-        required: false,
+        required: true,
+        nullable: true,
         type: new mongoose.Schema<LawCoverage["renderedLawtext"]>({
             ok: {
-                required: false,
-                type: new mongoose.Schema<Required<LawCoverage>["renderedLawtext"]["ok"]>({
-                    requiredms: { type: Map, of: Number, required: true },
+                required: true,
+                nullable: true,
+                type: new mongoose.Schema<DeNull<DeNull<LawCoverage["renderedLawtext"]>["ok"]>>({
+                    requiredms: { type: mongoose.Schema.Types.Map, of: Number, required: true },
                 }, { minimize: false }),
             },
             info: { type: Object, required: true },
@@ -51,12 +59,14 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
     },
 
     parsedLaw: {
-        required: false,
+        required: true,
+        nullable: true,
         type: new mongoose.Schema<LawCoverage["parsedLaw"]>({
             ok: {
-                required: false,
-                type: new mongoose.Schema<Required<LawCoverage>["parsedLaw"]["ok"]>({
-                    requiredms: { type: Map, of: Number, required: true },
+                required: true,
+                nullable: true,
+                type: new mongoose.Schema<DeNull<DeNull<LawCoverage["parsedLaw"]>["ok"]>>({
+                    requiredms: { type: mongoose.Schema.Types.Map, of: Number, required: true },
                 }, { minimize: false }),
             },
             info: { type: Object, required: true },
@@ -64,11 +74,13 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
     },
 
     lawDiff: {
-        required: false,
+        required: true,
+        nullable: true,
         type: new mongoose.Schema<LawCoverage["lawDiff"]>({
             ok: {
-                required: false,
-                type: new mongoose.Schema<Required<LawCoverage>["lawDiff"]["ok"]>({
+                required: true,
+                nullable: true,
+                type: new mongoose.Schema<DeNull<DeNull<LawCoverage["lawDiff"]>["ok"]>>({
                     mostSeriousStatus: {
                         type: Number,
                         enum: Object.values(law_diff.ProblemStatus),
@@ -76,7 +88,7 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
                     },
                     result: {
                         required: true,
-                        type: new mongoose.Schema<Required<Required<LawCoverage>["lawDiff"]>["ok"]["result"]>(
+                        type: new mongoose.Schema<DeNull<DeNull<LawCoverage["lawDiff"]>["ok"]>["result"]>(
                             {
                                 items: {
                                     type: [],
@@ -88,7 +100,7 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
                             { minimize: false },
                         ),
                     },
-                    requiredms: { type: Map, of: Number, required: true },
+                    requiredms: { type: mongoose.Schema.Types.Map, of: Number, required: true },
                 }, { minimize: false }),
             },
             info: { type: Object, required: true },

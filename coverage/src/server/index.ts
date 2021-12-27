@@ -3,10 +3,10 @@ import express from "express";
 // import path from "path";
 import config from "../config";
 import { connect, ConnectionInfo } from "../connection";
-import webpackDevMiddleware from "webpack-dev-middleware";
+// import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackConfigFn from "../../webpack-configs/client";
-import webpack from "webpack";
-import WebpackDevServer from "webpack-dev-server";
+// import webpack from "webpack";
+// import WebpackDevServer from "webpack-dev-server";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
 import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 import { getOriginalLaw, getParsedLaw, getRenderedLawtext } from "../update/transform";
@@ -23,13 +23,16 @@ const app = express();
 
 const webpackConfig = webpackConfigFn({ DEV_SERVER: "DEV_SERVER" }, { mode: "development" });
 
-const webpackCompiler = webpack(webpackConfig);
-app.use(webpackDevMiddleware(webpackCompiler, {
-    publicPath: (webpackConfig.devServer.static as WebpackDevServer.Static).publicPath as string,
-}));
+// const webpackCompiler = webpack(webpackConfig);
+// app.use(webpackDevMiddleware(webpackCompiler, {
+//     publicPath: (webpackConfig.devServer.static as WebpackDevServer.Static).publicPath as string,
+// }));
 
 // app.use(express.static(path.join(process.cwd(), "public")));
 // app.use(compression());
+
+const static_root = process.argv[2];
+app.use(express.static(static_root));
 
 let _db: ConnectionInfo | null;
 const getDB = async () => {
@@ -102,15 +105,15 @@ app.get(
 
         const { origEL, origXML } = lawInfo
             ? await getOriginalLaw(lawInfo, loader)
-            : { origEL: undefined, origXML: undefined };
+            : { origEL: null, origXML: null };
 
         const { lawtext } = origEL
             ? await getRenderedLawtext(origEL)
-            : { lawtext: undefined };
+            : { lawtext: null };
 
         const { parsedXML } = lawtext
             ? await getParsedLaw(lawtext)
-            : { parsedXML: undefined };
+            : { parsedXML: null };
 
         const zip = new JSZip();
         if (origXML) zip.file("origXML.xml", origXML);
@@ -128,14 +131,15 @@ app.get(
     }),
 );
 
-async function main(): Promise<void> {
+const main = () => {
     const port = webpackConfig.devServer.port;
     app.listen(
         port,
         () => {
+            console.log(`Serving static files from ${static_root}`);
             console.log(`Serving at http://localhost:${port}/`);
         },
     );
-}
+};
 
 export default main;

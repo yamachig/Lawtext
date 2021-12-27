@@ -21,38 +21,38 @@ export enum LawType {
 export interface LawCoverage extends BaseLawInfo {
     updateDate: Date,
 
-    Era?: Era;
-    Year?: number;
-    LawType?: LawType;
-    Num?: number;
+    Era: Era | null;
+    Year: number | null;
+    LawType: LawType | null;
+    Num: number | null;
 
-    originalLaw?: {
-        ok?: {
+    originalLaw: {
+        ok: {
             requiredms: Map<string, number>,
-        },
+        } | null,
         info: Record<string, unknown>,
-    },
-    renderedLawtext?: {
-        ok?: {
+    } | null,
+    renderedLawtext: {
+        ok: {
             requiredms: Map<string, number>,
-        },
+        } | null,
         info: Record<string, unknown>,
-    },
-    parsedLaw?: {
-        ok?: {
+    } | null,
+    parsedLaw: {
+        ok: {
             requiredms: Map<string, number>,
-        },
+        } | null,
         info: Record<string, unknown>,
-    },
-    lawDiff?: {
-        ok?: {
+    } | null,
+    lawDiff: {
+        ok: {
             mostSeriousStatus: law_diff.ProblemStatus,
             result: {
                 items: law_diff.LawDiffResultItemData[],
                 totalCount: number,
             },
             requiredms: Map<string, number>,
-        },
+        } | null,
         info: Record<string, unknown>,
-    },
+    } | null,
 }

@@ -1,5 +1,5 @@
 // import formatXML from "xml-formatter";
-import * as law_diff from "lawtext/dist/src/diff/law_diff";
+// import * as law_diff from "lawtext/dist/src/diff/law_diff";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
 import mongoose from "mongoose";
 import { LawInfo } from "lawtext/dist/src/data/lawinfo";
@@ -20,18 +20,18 @@ export const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo
         //
     } else {
         const orConditions: mongoose.FilterQuery<LawCoverage>[] = [
-            { originalLaw: undefined },
-            { "originalLaw.ok": { $ne: undefined }, renderedLawtext: undefined },
-            { "renderedLawtext.ok": { $ne: undefined }, parsedLaw: undefined },
-            { "parsedLaw.ok": { $ne: undefined }, lawDiff: undefined },
+            { originalLaw: null },
+            { "originalLaw.ok": { $ne: null }, renderedLawtext: null },
+            { "renderedLawtext.ok": { $ne: null }, parsedLaw: null },
+            { "parsedLaw.ok": { $ne: null }, lawDiff: null },
         ];
         if (args.retry) {
             orConditions.push(
-                { "originalLaw.ok": undefined },
-                { "renderedLawtext.ok": undefined },
-                { "renderedLawtext.ok.mostSeriousStatus": law_diff.ProblemStatus.Error },
-                { "parsedLaw.ok": undefined },
-                { "lawDiff.ok": undefined },
+                { "originalLaw.ok": null },
+                { "renderedLawtext.ok": null },
+                // { "renderedLawtext.ok.mostSeriousStatus": law_diff.ProblemStatus.Error },
+                { "parsedLaw.ok": null },
+                { "lawDiff.ok": null },
             );
         }
         andConditions.push({ $or: orConditions });

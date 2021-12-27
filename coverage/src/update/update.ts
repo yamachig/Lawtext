@@ -15,24 +15,24 @@ export const update = async (lawInfo: BaseLawInfo, maxDiffLength: number, db: Co
 
     const { lawtext, renderedLawtext } = origEL
         ? await getRenderedLawtext(origEL)
-        : { lawtext: undefined, renderedLawtext: undefined };
+        : { lawtext: null, renderedLawtext: null };
 
     const { parsedEL, parsedXML, parsedLaw } = lawtext
         ? await getParsedLaw(lawtext)
-        : { parsedEL: undefined, parsedXML: undefined, parsedLaw: undefined };
+        : { parsedEL: null, parsedXML: null, parsedLaw: null };
 
     const { lawDiff } = (origXML && origEL && parsedXML && parsedEL)
         ? await getLawDiff(origXML, origEL, parsedXML, parsedEL, maxDiffLength)
-        : { lawDiff: undefined };
+        : { lawDiff: null };
 
     const lawNumStruct = lawNumStructFromXML ?? parseLawNum(lawInfo.LawNum);
 
     const doc: LawCoverage = {
         ...lawInfo,
-        Era: (lawNumStruct.Era ?? undefined) as Era | undefined,
-        Year: lawNumStruct.Year ?? undefined,
-        LawType: (lawNumStruct.LawType ?? undefined) as LawType | undefined,
-        Num: lawNumStruct.Num ?? undefined,
+        Era: (lawNumStruct.Era ?? null) as Era | null,
+        Year: lawNumStruct.Year ?? null,
+        LawType: (lawNumStruct.LawType ?? null) as LawType | null,
+        Num: lawNumStruct.Num ?? null,
         updateDate,
         originalLaw,
         renderedLawtext,

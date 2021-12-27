@@ -10,6 +10,7 @@ import { Era, LawCoverage, LawType } from "../lawCoverage";
 import { Law } from "lawtext/dist/src/std_law";
 
 const domParser = new DOMParser();
+type DeNull<T> = T extends null ? never : T;
 
 class Lap {
     date: Date;
@@ -26,15 +27,15 @@ class Lap {
 
 
 export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Promise<{
-    origEL?: EL,
-    origXML?: string,
-    lawNumStruct?: {
+    origEL: EL | null,
+    origXML: string | null,
+    lawNumStruct: {
         Era: Era | null,
         Year: number | null,
         LawType: LawType | null,
         Num: number | null,
-    },
-    originalLaw: Required<LawCoverage>["originalLaw"],
+    } | null,
+    originalLaw: DeNull<LawCoverage["originalLaw"]>,
 }> => {
     try {
         const requiredms = new Map<string, number>();
@@ -67,7 +68,11 @@ export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Prom
         };
     } catch (e) {
         return {
+            origEL: null,
+            origXML: null,
+            lawNumStruct: null,
             originalLaw: {
+                ok: null,
                 info: { error: (e as Error).stack },
             },
         };
@@ -76,8 +81,8 @@ export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Prom
 
 
 export const getRenderedLawtext = async (origEL: EL): Promise<{
-    lawtext?: string,
-    renderedLawtext: Required<LawCoverage>["renderedLawtext"],
+    lawtext: string | null,
+    renderedLawtext: DeNull<LawCoverage["renderedLawtext"]>,
 }> => {
     try {
         const requiredms = new Map<string, number>();
@@ -97,7 +102,9 @@ export const getRenderedLawtext = async (origEL: EL): Promise<{
         };
     } catch (e) {
         return {
+            lawtext: null,
             renderedLawtext: {
+                ok: null,
                 info: { error: (e as Error).stack },
             },
         };
@@ -106,9 +113,9 @@ export const getRenderedLawtext = async (origEL: EL): Promise<{
 
 
 export const getParsedLaw = async (lawtext: string): Promise<{
-    parsedEL?: EL,
-    parsedXML?: string,
-    parsedLaw: Required<LawCoverage>["parsedLaw"],
+    parsedEL: EL | null,
+    parsedXML: string | null,
+    parsedLaw: DeNull<LawCoverage["parsedLaw"]>,
 }> => {
     try {
         const requiredms = new Map<string, number>();
@@ -135,7 +142,10 @@ export const getParsedLaw = async (lawtext: string): Promise<{
         };
     } catch (e) {
         return {
+            parsedEL: null,
+            parsedXML: null,
             parsedLaw: {
+                ok: null,
                 info: { error: (e as Error).stack },
             },
         };
@@ -144,7 +154,7 @@ export const getParsedLaw = async (lawtext: string): Promise<{
 
 
 export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsedEL: EL, max_diff_length: number): Promise<{
-    lawDiff: Required<LawCoverage>["lawDiff"],
+    lawDiff: DeNull<LawCoverage["lawDiff"]>,
 }> => {
     try {
         const requiredms = new Map<string, number>();
@@ -192,6 +202,7 @@ export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string,
     } catch (e) {
         return {
             lawDiff: {
+                ok: null,
                 info: { error: (e as Error).stack },
             },
         };

@@ -97,3 +97,38 @@ void (async () => { //[md-ignore]
     //[md]```
 
 }); //[md-ignore]
+
+void (async () => { //[md-ignore]
+
+    //[md]### 項番号がなくOldNum属性がtrueでない2以上の項のみからなる条を含む法律を順不同で10件検索し、見つかり次第条のタグの内容を出力
+    //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
+    //[md]```ts
+    lawtext
+        .queryViaAPI({ LawNum: /^.{3,5}年法律/ })
+        .assignDocument()
+        .assign(law => {
+            const articles = Array.from(law.document.getElementsByTagName("Article"));
+            const noNumPhsArticles = [];
+            for (const article of articles) {
+                const paragraphs = Array.from(article.querySelectorAll(":scope > Paragraph"));
+                if (paragraphs.length >= 2 && paragraphs.every(p => {
+                    const num = p.querySelector(":scope > ParagraphNum");
+                    return p.getAttribute("OldNum") !== "true" && (!num || !num.innerHTML);
+                })) noNumPhsArticles.push(article);
+            }
+            return { noNumPhsArticles };
+        })
+        .filter(law => law.noNumPhsArticles.length > 0)
+        .limit(10)
+        .forEach(law => {
+            console.group(`📘 ${law.LawTitle}（${law.LawNum}）`);
+            for (const article of law.noNumPhsArticles) {
+                console.log(article.outerHTML);
+            }
+            console.log(lawtext.getLawtextAppUrl(law));
+            console.groupEnd();
+        })
+        .then(() => "✓ completed.");
+    //[md]```
+
+}); //[md-ignore]
