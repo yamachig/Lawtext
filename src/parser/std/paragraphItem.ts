@@ -49,7 +49,12 @@ export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 |
                                         .oneOrMore(r => r.regExp(/^[^ 　\t\r\n条<]/)),
                                     )
                                 , "title")
-                                .and(() => $__)
+                                .and(r => r
+                                    .choice(c => c
+                                        .or(() => $__)
+                                        .or(r => r.nextIs(() => $NEWLINE)),
+                                    ),
+                                )
                                 .action(({ title }) => {
                                     return { title };
                                 }),
@@ -78,7 +83,9 @@ export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 |
                 }),
             )
         , "title_struct")
-        .and(() => $columns_or_sentences, "inline_contents")
+        .and(r => r
+            .zeroOrOne(() => $columns_or_sentences)
+        , "inline_contents")
         .and(r => r.oneOrMore(() => $NEWLINE))
         .and(r => r
             .zeroOrOne(r => r
@@ -193,7 +200,7 @@ export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 |
             //     paragraph_item.attr.Num = num;
             // }
 
-            paragraph_item.append(newStdEL(paragraphItemSentenceTags[indent], {}, inline_contents));
+            paragraph_item.append(newStdEL(paragraphItemSentenceTags[indent], {}, inline_contents ?? []));
 
             if (children) {
                 setItemNum(children);
