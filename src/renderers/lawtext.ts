@@ -1085,8 +1085,9 @@ ${_____}${bullet}[header]${attr}${renderRun(el.children)}
 `/* ========================= */);
 
     } else if (el.tag === "TableColumn") {
-        for (let i = 0; i < el.children.length; i++) {
-            const child = el.children[i];
+        const childrenWithChildren = el.children.filter(child => child.children.length > 0);
+        for (let i = 0; i < childrenWithChildren.length; i++) {
+            const child = childrenWithChildren[i];
 
             if (child.tag === "Sentence" || child.tag === "Column") {
                 blocks.push((i === 0)
