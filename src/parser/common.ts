@@ -20,6 +20,11 @@ export const initializer = (options: Record<string | number | symbol, unknown>) 
 
     return {
         offsetToPos,
+        getStack: () => "",
+        toStringOptions: {
+            fullToString: true,
+            maxToStringDepth: 5,
+        },
         registerCurrentRangeTarget,
         options,
         state,

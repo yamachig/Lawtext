@@ -1,9 +1,37 @@
 /* eslint-disable no-irregular-whitespace */
 import { newStdEL } from "../../std_law";
 import { __Text, EL } from "../../util";
-import { factory } from "../common";
+import { factory, ValueRule } from "../common";
 import { $INLINE, $PERIOD_SENTENCE_FRAGMENT } from "../inline";
 import { $__ } from "../lexical";
+
+
+export const makeSquareAttr = (lazyNameRule: (f: typeof factory) => ValueRule<string>) => {
+    return factory
+        .withName("square_attr")
+        .sequence(c => c
+            .and(r => r.seqEqual("["))
+            .and(lazyNameRule, "name")
+            .and(r => r.seqEqual("=\""))
+            .and(r => r
+                .asSlice(r => r
+                    .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
+                )
+            , "value")
+            .and(r => r.seqEqual("\"]"))
+            .action(({ name, value }) => {
+                return [name, value] as [name: string, value: string];
+            }),
+        );
+};
+
+export const $square_attr = makeSquareAttr(r => r
+    .asSlice(r => r
+        .oneOrMore(r => r
+            .regExp(/^[^ 　\t\r\n\]=]/),
+        ),
+    ),
+);
 
 export const $columns_or_sentences = factory
     .withName("columns_or_sentences")
@@ -17,28 +45,7 @@ export const $columns_or_sentences = factory
                         .action(r => r
                             .sequence(c => c
                                 .and(r => r
-                                    .zeroOrMore(r => r
-                                        .action(r => r
-                                            .sequence(c => c
-                                                .and(r => r.seqEqual("["))
-                                                .and(r => r
-                                                    .asSlice(r => r
-                                                        .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]=]/)),
-                                                    )
-                                                , "name")
-                                                .and(r => r.seqEqual("=\""))
-                                                .and(r => r
-                                                    .asSlice(r => r
-                                                        .oneOrMore(r => r.regExp(/^[^ 　\t\r\n\]"]/)),
-                                                    )
-                                                , "value")
-                                                .and(r => r.seqEqual("\"]")),
-                                            )
-                                        , (({ name, value }) => {
-                                            return [name, value];
-                                        }),
-                                        ),
-                                    )
+                                    .zeroOrMore(() => $square_attr)
                                 , "target"),
                             )
                         , (({ target }) => {

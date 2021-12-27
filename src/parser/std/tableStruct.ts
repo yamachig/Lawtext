@@ -155,6 +155,7 @@ export const $table: ValueRule<Table> = factory
     ;
 
 export const $table_column_attr_name = factory
+    .withName("table_column_attr_name")
     .choice(c => c
         .or(r => r.seqEqual("BorderTop"))
         .or(r => r.seqEqual("BorderBottom"))

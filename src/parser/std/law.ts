@@ -11,12 +11,13 @@ import { $appdx_style } from "./appdxStyle";
 import { $appdx_table } from "./appdxTable";
 import { $article, $article_title } from "./article";
 import { $article_group } from "./articleGroup";
-import { $no_name_paragraph_item } from "./paragraphItem";
+import { $no_name_paragraph_item, $paragraph_item } from "./paragraphItem";
 import { $suppl_provision } from "./supplProvision";
 import { $toc, $toc_label } from "./toc";
 
 
 export const $law: ValueRule<Law> = factory
+    .withName("law")
     .action(r => r
         .sequence(c => c
             .and(r => r.zeroOrOne(() => $law_title), "law_title")
@@ -197,32 +198,39 @@ export const $enact_statement = factory
 
 
 export const $main_provision = factory
+    .withName("main_provision")
     .choice(c => c
         .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .choice(c => c
-                                .or(() => $article)
-                                .or(() => $article_group),
-                            ),
-                        )
-                    , "children"),
-                )
-            , (({ children }) => {
-                return newStdEL("MainProvision", {}, children);
-            }),
+            .sequence(c => c
+                .and(r => r
+                    .oneOrMore(r => r
+                        .choice(c => c
+                            .or(() => $article)
+                            .or(() => $article_group),
+                        ),
+                    )
+                , "children")
+                .action(({ children }) => {
+                    return newStdEL("MainProvision", {}, children);
+                }),
             ),
         )
         .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(() => $no_name_paragraph_item, "paragraph"),
-                )
-            , (({ paragraph }) => {
-                return newStdEL("MainProvision", {}, [paragraph]);
-            }),
+            .sequence(c => c
+                .and(r => r
+                    .oneOrMore(() => $paragraph_item)
+                , "children")
+                .action(({ children }) => {
+                    return newStdEL("MainProvision", {}, children);
+                }),
+            ),
+        )
+        .or(r => r
+            .sequence(c => c
+                .and(() => $no_name_paragraph_item, "paragraph")
+                .action(({ paragraph }) => {
+                    return newStdEL("MainProvision", {}, [paragraph]);
+                }),
             ),
         ),
     )
@@ -230,6 +238,7 @@ export const $main_provision = factory
 
 
 export const $appdx_item = factory
+    .withName("appdx_item")
     .choice(c => c
         .or(() => $appdx)
         .or(() => $appdx_table)

@@ -3,11 +3,11 @@ import { articleGroupType, parseNamedNum, PointerFragment, RelPos } from "../uti
 import { factory, ValueRule } from "./common";
 import { $iroha_char, $kanji_digit, $roman_digit } from "./lexical";
 
-export const $ranges: ValueRule<[PointerFragment[], PointerFragment[]][]> = factory
-    .withName("ranges")
-    .choice(c => c
-        .or(r => r
-            .action(r => r
+export const makeRangesRule = (lazyPointerRule: () => ValueRule<PointerFragment[]>) => {
+    const $ranges: ValueRule<[PointerFragment[], PointerFragment[]][]> = factory
+        .withName("ranges")
+        .choice(c => c
+            .or(r => r
                 .sequence(c => c
                     .and(() => $range, "first")
                     .and(r => r
@@ -17,54 +17,53 @@ export const $ranges: ValueRule<[PointerFragment[], PointerFragment[]][]> = fact
                             .or(r => r.seqEqual("並びに")),
                         ),
                     )
-                    .and(() => $ranges, "rest"),
-                )
-            , (({ first, rest }) => {
-                return [first].concat(rest);
-            }),
+                    .and(() => $ranges, "rest")
+                    .action(({ first, rest }) => {
+                        return [first].concat(rest);
+                    }),
+                ),
+            )
+            .or(r => r
+                .sequence(c => c
+                    .and(() => $range, "range")
+                    .action(({ range }) => {
+                        return [range];
+                    }),
+                ),
             ),
         )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(() => $range, "range"),
-                )
-            , (({ range }) => {
-                return [range];
-            }),
-            ),
-        ),
-    )
-    ;
+        ;
 
-export const $range = factory
-    .withName("range")
-    .choice(c => c
-        .or(r => r
-            .action(r => r
+    const $range = factory
+        .withName("range")
+        .choice(c => c
+            .or(r => r
                 .sequence(c => c
-                    .and(() => $pointer, "from")
+                    .and(lazyPointerRule, "from")
                     .and(r => r.seqEqual("から"))
-                    .and(() => $pointer, "to")
-                    .and(r => r.seqEqual("まで")),
-                )
-            , (({ from, to }) => {
-                return [from, to] as [PointerFragment[], PointerFragment[]];
-            }),
+                    .and(lazyPointerRule, "to")
+                    .and(r => r.seqEqual("まで"))
+                    .action(({ from, to }) => {
+                        return [from, to] as [PointerFragment[], PointerFragment[]];
+                    }),
+                ),
+            )
+            .or(r => r
+                .sequence(c => c
+                    .and(lazyPointerRule, "pointer")
+                    .action(({ pointer }) => {
+                        return [pointer, pointer] as [PointerFragment[], PointerFragment[]];
+                    }),
+                ),
             ),
         )
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(() => $pointer, "pointer"),
-                )
-            , (({ pointer }) => {
-                return [pointer, pointer] as [PointerFragment[], PointerFragment[]];
-            }),
-            ),
-        ),
-    )
-    ;
+        ;
+
+    return { $ranges, $range };
+};
+
+export const { $ranges, $range } = makeRangesRule(() => $pointer);
+
 
 export const $pointer = factory
     .withName("pointer")

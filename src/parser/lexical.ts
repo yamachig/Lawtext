@@ -23,6 +23,7 @@ export const $DEDENT = factory
 ;
 
 export const $_ = factory
+    .withName("OPTIONAL_WHITESPACES")
     .zeroOrMore(r => r.regExp(/^[ 　\t]/))
 ;
 
@@ -32,6 +33,7 @@ export const $__ = factory
 ;
 
 export const $CHAR = factory
+    .withName("CHAR")
     .regExp(/^[^ 　\t\r\n]/)
 ;
 

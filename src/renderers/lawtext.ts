@@ -800,7 +800,7 @@ ${BLANK}
 };
 
 
-const renderParagraphItem = (el: std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, indent: number, ArticleCaption?: string): string => {
+const renderParagraphItem = (el: std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, indent: number, ArticleTitle?: string): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
 
@@ -843,9 +843,13 @@ ${_____}${INDENT}${ParagraphCaption}
     }
 
     let Title = ParagraphItemTitle;
-    if (ArticleCaption) Title += ArticleCaption;
+    if (ArticleTitle) Title += ArticleTitle;
+
+    const OldNum = (Title === "" && el.tag === "Paragraph" && el.attr.OldNum === "true") ? "true" : undefined;
+    const MissingNum = (indent === 0 && Title === "" && el.tag === "Paragraph" && el.attr.OldNum !== "true") ? "true" : undefined;
+
     const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
-    blocks.push(renderBlockSentence(SentenceChildren, indent, Title));
+    blocks.push(renderBlockSentence(SentenceChildren, indent, Title, OldNum, MissingNum));
 
     for (const [i, child] of Children.entries()) {
         if (child.tag === "Item" || child.tag === "Subitem1" || child.tag === "Subitem2" || child.tag === "Subitem3" || child.tag === "Subitem4" || child.tag === "Subitem5" || child.tag === "Subitem6" || child.tag === "Subitem7" || child.tag === "Subitem8" || child.tag === "Subitem9" || child.tag === "Subitem10") {
@@ -1415,7 +1419,7 @@ ${_____}:SupplNote:${renderRun(el.children)}
 };
 
 
-const renderBlockSentence = (els: Array<std.Sentence | std.Column | std.Table>, indent: number, Title?: string): string => {
+const renderBlockSentence = (els: Array<std.Sentence | std.Column | std.Table>, indent: number, Title?: string, OldNum?: "true", MissingNum?: "true"): string => {
     const _____ = INDENT.repeat(indent);
     // let blocks: string[] = [];
     const runs: string[] = [];
@@ -1424,6 +1428,9 @@ const renderBlockSentence = (els: Array<std.Sentence | std.Column | std.Table>, 
         runs.push(/* $$$$$$ */Title/* $$$$$$ */);
         runs.push(/* $$$$$$ */MARGIN/* $$$$$$ */);
     }
+
+    if (OldNum) runs.push(/* $$$$$$ */`[OldNum="${OldNum}"]`/* $$$$$$ */);
+    if (MissingNum) runs.push(/* $$$$$$ */`[MissingNum="${MissingNum}"]`/* $$$$$$ */);
 
     for (let i = 0; i < els.length; i++) {
         const el = els[i];
