@@ -50,6 +50,16 @@ export const makeRangesRule = (lazyPointerRule: () => ValueRule<PointerFragment[
             )
             .or(r => r
                 .sequence(c => c
+                    .and(lazyPointerRule, "from")
+                    .and(r => r.oneOf("・～"))
+                    .and(lazyPointerRule, "to")
+                    .action(({ from, to }) => {
+                        return [from, to] as [PointerFragment[], PointerFragment[]];
+                    }),
+                ),
+            )
+            .or(r => r
+                .sequence(c => c
                     .and(lazyPointerRule, "pointer")
                     .action(({ pointer }) => {
                         return [pointer, pointer] as [PointerFragment[], PointerFragment[]];

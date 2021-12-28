@@ -3,7 +3,7 @@ import { newStdEL, StdEL } from "../../std_law";
 import { articleGroupType, parseNamedNum, PointerFragment, RelPos } from "../../util";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";
-import { $_, $NEWLINE, $__, $INDENT, $DEDENT, $kanji_digit } from "../lexical";
+import { $_, $NEWLINE, $__, $INDENT, $DEDENT } from "../lexical";
 import { makeRangesRule } from "../range";
 import { $columns_or_sentences } from "./columnsOrSentences";
 import { $list } from "./list";
@@ -37,13 +37,13 @@ export const $article_pointer = factory
     .withName("article_pointer")
     .sequence(c => c
         .and(r => r.seqEqual("第"))
-        .and(r => r.oneOrMore(() => $kanji_digit))
+        .and(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
         .and(r => r.seqEqual("条"))
         .and(r => r
             .zeroOrMore(r => r
                 .sequence(c => c
                     .and(r => r.regExp(/^[のノ]/))
-                    .and(r => r.oneOrMore(() => $kanji_digit)),
+                    .and(r => r.regExp(/^[〇一二三四五六七八九十百千]+/)),
                 ),
             ),
         )
@@ -77,29 +77,54 @@ export const $article = factory
             )
         , "article_ranges_struct")
         .and(r => r
-            .choice(c => c
-                .or(r => r
-                    .sequence(c => c
-                        .and(() => $__)
-                        .and(() => $columns_or_sentences, "target")
-                        .action(({ target }) => {
-                            return target;
-                        }),
-                    ),
-                )
-                .or(r => r
-                    .action(r => r
-                        .ref(() => $_)
-                    , (() => {
-                        return [newStdEL("Sentence")];
-                    }),
-                    ),
+            .sequence(s => s
+                .and(r => r
+                    .choice(c => c
+                        .or(r => r
+                            .sequence(c => c
+                                .and(() => $__)
+                                .and(() => $columns_or_sentences, "target")
+                                .action(({ target }) => {
+                                    return target;
+                                }),
+                            ),
+                        )
+                        .or(r => r
+                            .action(r => r
+                                .ref(() => $_)
+                            , (() => {
+                                return [newStdEL("Sentence")];
+                            }),
+                            ),
+                        ),
+                    )
+                , "inline_contents")
+                .and(r => r.oneOrMore(() => $NEWLINE))
+                .action(
+                    ({ inline_contents }) => {
+                        return inline_contents;
+                    },
+                    // ({ result, prevEnv, range, target, factory }) => {
+                    //     const [start] = range();
+                    //     const newResult = factory.sequence(s => s
+                    //         .and(r => r.asSlice(() => $INLINE), "inline")
+                    //         .and(() => $NEWLINE)
+                    //         .action(({ inline }) => inline),
+                    //     ).match(start, target(), prevEnv);
+                    //     if (!newResult.ok) return result;
+                    //     const inline_contents = [new __MatchFail(result, [newResult.value])];
+                    //     return {
+                    //         ...newResult,
+                    //         env: {
+                    //             ...prevEnv,
+                    //             inline_contents,
+                    //         },
+                    //         value: inline_contents,
+                    //     };
+                    // },
                 ),
             )
         , "inline_contents")
-        .and(r => r
-            .oneOrMore(() => $NEWLINE),
-        )
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(c => c

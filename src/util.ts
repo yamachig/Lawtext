@@ -1,6 +1,7 @@
 "use strict";
 
 import { DOMParser } from "@xmldom/xmldom";
+import { MatchFail } from "generic-parser/lib/core";
 import * as std from "./std_law";
 
 export const wait = (ms: number): Promise<void> => {
@@ -531,6 +532,24 @@ export class __Text extends EL {
 
     constructor(text: string) {
         super("__Text", {}, [text]);
+    }
+}
+
+
+export class __MatchFail extends EL {
+
+    constructor(matchFail: MatchFail, children: (string | EL)[]) {
+        super("__MatchFail", {}, children);
+        this.matchFail = matchFail;
+    }
+
+    get matchFail(): MatchFail {
+        if (!this.attr.matchFail) throw new Error();
+        return JSON.parse(this.attr.matchFail);
+    }
+
+    set matchFail(matchFail: MatchFail) {
+        this.attr.matchFail = JSON.stringify(matchFail);
     }
 }
 

@@ -76,62 +76,58 @@ export const $article_group_title = factory
 
 export const $article_group: ValueRule<Part | Chapter | Section | Subsection | Division> = factory
     .withName("article_group")
-    .action(r => r
-        .sequence(c => c
-            .and(() => $article_group_title, "article_group_title")
-            .and(r => r
-                .oneOrMore(r => r
-                    .choice(c => c
-                        .or(() => $article)
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .nextIs(r => r
-                                            .sequence(c => c
-                                                .and(() => $article_group_title, "next_title")
-                                                .and(r => r
-                                                    .assert(({ article_group_title, next_title }) => {
-                                                        const current_level = articleGroupTypeChars.indexOf(article_group_title.type_char);
-                                                        const next_level = articleGroupTypeChars.indexOf(next_title.type_char);
-                                                        return current_level < next_level;
-                                                    }),
-                                                ),
-                                            ),
+    .sequence(c => c
+        .and(() => $article_group_title, "article_group_title")
+        .and(r => r
+            .oneOrMore(r => r
+                .choice(c => c
+                    .or(() => $article)
+                    .or(r => r
+                        .sequence(c => c
+                            .and(r => r
+                                .nextIs(r => r
+                                    .sequence(c => c
+                                        .and(() => $article_group_title, "next_title")
+                                        .and(r => r
+                                            .assert(({ article_group_title, next_title }) => {
+                                                const current_level = articleGroupTypeChars.indexOf(article_group_title.type_char);
+                                                const next_level = articleGroupTypeChars.indexOf(next_title.type_char);
+                                                return current_level < next_level;
+                                            }),
                                         ),
-                                    )
-                                    .and(() => $article_group, "article_group"),
-                                )
-                            , (({ article_group }) => {
+                                    ),
+                                ),
+                            )
+                            .and(() => $article_group, "article_group")
+                            .action(({ article_group }) => {
                                 return article_group;
                             }),
-                            ),
                         ),
                     ),
-                )
-            , "children"),
-        )
-    , (({ article_group_title, children }) => {
-        const article_group = newStdEL(
-            articleGroupType[article_group_title.type_char as keyof typeof articleGroupType] as "Part" | "Chapter" | "Section" | "Subsection" | "Division",
-            { Delete: "false", Hide: "false" },
-        );
+                ),
+            )
+        , "children")
+        .action(({ article_group_title, children }) => {
+            const article_group = newStdEL(
+                    articleGroupType[article_group_title.type_char as keyof typeof articleGroupType] as "Part" | "Chapter" | "Section" | "Subsection" | "Division",
+                    { Delete: "false", Hide: "false" },
+            );
 
-        article_group.append(newStdEL(
-            articleGroupTitleTag[article_group_title.type_char as keyof typeof articleGroupTitleTag],
-            {},
-            article_group_title.content,
-        ));
+            article_group.append(newStdEL(
+                articleGroupTitleTag[article_group_title.type_char as keyof typeof articleGroupTitleTag],
+                {},
+                article_group_title.content,
+            ));
 
-        const num = parseNamedNum(article_group_title.num);
-        if (num) {
-            article_group.attr.Num = num;
-        }
+            const num = parseNamedNum(article_group_title.num);
+            if (num) {
+                article_group.attr.Num = num;
+            }
 
-        article_group.extend(children);
+            article_group.extend(children);
 
-        return article_group;
-    }),
+            return article_group;
+        }),
     )
     ;
 

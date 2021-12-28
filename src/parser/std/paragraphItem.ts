@@ -1,8 +1,9 @@
 /* eslint-disable no-irregular-whitespace */
 import { newStdEL, Paragraph, Item, Subitem1, Subitem2, Subitem3, Subitem4, Subitem5, Subitem6, Subitem7, Subitem8, Subitem9, Subitem10 } from "../../std_law";
-import { paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags, setItemNum } from "../../util";
+import { aiuChars, articleGroupType, irohaChars, paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags, parseNamedNum, PointerFragment, RelPos, setItemNum } from "../../util";
 import { factory, ValueRule } from "../common";
 import { $DEDENT, $INDENT, $NEWLINE, $__ } from "../lexical";
+import { makeRangesRule } from "../range";
 import { $amend_provision } from "./amendProvision";
 import { $appdx_title } from "./appdx";
 import { $appdx_fig_title } from "./appdxFig";
@@ -23,32 +24,135 @@ $old_num_attr.name = "old_num_attr";
 const $missing_num_attr = makeSquareAttr(r => r.seqEqual("MissingNum"));
 $missing_num_attr.name = "missing_num_attr";
 
+export const $paragraph_num_pointer_fragment: ValueRule<string> = factory
+    .withName("paragraph_item_title_fragment")
+    .asSlice(r => r
+        .sequence(s => s
+            .and(r => r
+                .choice(c => c
+                    .or(r => r.regExp(/^[0123456789]+/))
+                    .or(r => r.regExp(/^[０１２３４５６７８９]+/)),
+                ),
+            )
+            .and(r => r
+                .zeroOrMore(r => r
+                    .sequence(s => s
+                        .and(r => r.seqEqual("の"))
+                        .and(() => $paragraph_num_pointer_fragment),
+                    ),
+                ),
+            ),
+        ),
+    );
+
+export const $item_num_pointer_fragment: ValueRule<string> = factory
+    .withName("item_num_pointer_fragment")
+    .asSlice(r => r
+        .sequence(s => s
+            .and(r => r
+                .choice(c => c
+                    .or(r => r.regExp(/^[0123456789]+/))
+                    .or(r => r.regExp(/^[０１２３４５６７８９]+/))
+                    .or(r => r.oneOf(irohaChars))
+                    .or(r => r.oneOf(aiuChars))
+                    .or(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
+                    .or(r => r.regExp(/^[iIｉＩvVｖＶxXｘＸ]+/))
+                    .orSequence(s => s
+                        .and(r => r.oneOf("(（"))
+                        .and(r => r
+                            .choice(c => c
+                                .or(r => r.regExp(/^[0123456789]+/))
+                                .or(r => r.regExp(/^[０１２３４５６７８９]+/))
+                                .or(r => r.oneOf(irohaChars))
+                                .or(r => r.oneOf(aiuChars))
+                                .or(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
+                                .or(r => r.regExp(/^[iIｉＩvVｖＶxXｘＸ]+/)),
+                            ),
+                        )
+                        .and(r => r.oneOf(")）")),
+                    )
+                    .or(r => r.oneOf("⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿"))
+                    .or(r => r.oneOf("⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇")),
+                ),
+            )
+            .and(r => r
+                .zeroOrMore(r => r
+                    .sequence(s => s
+                        .and(r => r.seqEqual("の"))
+                        .and(() => $item_num_pointer_fragment),
+                    ),
+                ),
+            ),
+        ),
+    );
+
+export const $paragraph_item_title_pointer = factory
+    .withName("paragraph_item_title_pointer")
+    .choice(c => c
+        .orSequence(s => s
+            .and(() => $paragraph_num_pointer_fragment)
+            .action(({ text }) => {
+                return [
+                    new PointerFragment(
+                        RelPos.NAMED,
+                        articleGroupType.項,
+                        text(),
+                        parseNamedNum(text()),
+                    ),
+                ];
+            }),
+        )
+        .orSequence(s => s
+            .and(() => $item_num_pointer_fragment)
+            .action(({ text }) => {
+                return [
+                    new PointerFragment(
+                        RelPos.NAMED,
+                        articleGroupType.号,
+                        text(),
+                        parseNamedNum(text()),
+                    ),
+                ];
+            }),
+        ),
+    );
+
+export const { $ranges: $paragraph_item_title_ranges } = makeRangesRule(() => $paragraph_item_title_pointer);
+$paragraph_item_title_ranges.name = "paragraph_item_title_ranges";
+
+export const $paragraph_item_title = factory
+    .withName("paragraph_item_title")
+    .asSlice(r => r
+        .sequence(s => s
+            .and(r => r
+                .zeroOrOne(r => r.seqEqual("○")),
+            )
+            .and(() => $paragraph_item_title_ranges),
+        ),
+    );
+
 export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 | Subitem3 | Subitem4 | Subitem5 | Subitem6 | Subitem7 | Subitem8 | Subitem9 | Subitem10> = factory
     .withName("paragraph_item")
     .sequence(c => c
         .and(r => r.zeroOrOne(() => $article_paragraph_caption), "paragraph_caption")
         .and(r => r
             .sequence(c => c
-                .and(r => r.nextIsNot(() => $article_title))
-                .and(r => r.nextIsNot(() => $appdx_table_title))
-                .and(r => r.nextIsNot(() => $appdx_style_title))
-                .and(r => r.nextIsNot(() => $appdx_format_title))
-                .and(r => r.nextIsNot(() => $appdx_fig_title))
-                .and(r => r.nextIsNot(() => $appdx_note_title))
-                .and(r => r.nextIsNot(() => $appdx_title))
-                .and(r => r.nextIsNot(() => $suppl_provision_label))
-                .and(r => r
-                    .nextIsNot(r => r.seqEqual(":SupplNote:")),
-                )
+                // .and(r => r.nextIsNot(() => $article_title))
+                // .and(r => r.nextIsNot(() => $appdx_table_title))
+                // .and(r => r.nextIsNot(() => $appdx_style_title))
+                // .and(r => r.nextIsNot(() => $appdx_format_title))
+                // .and(r => r.nextIsNot(() => $appdx_fig_title))
+                // .and(r => r.nextIsNot(() => $appdx_note_title))
+                // .and(r => r.nextIsNot(() => $appdx_title))
+                // .and(r => r.nextIsNot(() => $suppl_provision_label))
+                // .and(r => r
+                //     .nextIsNot(r => r.seqEqual(":SupplNote:")),
+                // )
                 .and(r => r
                     .choice(c => c
                         .or(r => r
                             .sequence(s => s
-                                .and(r => r
-                                    .asSlice(r => r
-                                        .oneOrMore(r => r.regExp(/^[^ 　\t\r\n条<]/)),
-                                    )
-                                , "title")
+                                .and(() => $paragraph_item_title, "title")
                                 .and(r => r
                                     .choice(c => c
                                         .or(() => $__)
@@ -84,9 +188,36 @@ export const $paragraph_item: ValueRule<Paragraph | Item | Subitem1 | Subitem2 |
             )
         , "title_struct")
         .and(r => r
-            .zeroOrOne(() => $columns_or_sentences)
+            .sequence(s => s
+                .and(r => r
+                    .zeroOrOne(() => $columns_or_sentences)
+                , "inline_contents")
+                .and(r => r.oneOrMore(() => $NEWLINE))
+                .action(
+                    ({ inline_contents }) => {
+                        return inline_contents;
+                    },
+                    // ({ result, prevEnv, range, target, factory }) => {
+                    //     const [start] = range();
+                    //     const newResult = factory.sequence(s => s
+                    //         .and(r => r.asSlice(() => $INLINE), "inline")
+                    //         .and(() => $NEWLINE)
+                    //         .action(({ inline }) => inline),
+                    //     ).match(start, target(), prevEnv);
+                    //     if (!newResult.ok) return result;
+                    //     const inline_contents = [new __MatchFail(result, [newResult.value])];
+                    //     return {
+                    //         ...newResult,
+                    //         env: {
+                    //             ...prevEnv,
+                    //             inline_contents,
+                    //         },
+                    //         value: inline_contents,
+                    //     };
+                    // },
+                ),
+            )
         , "inline_contents")
-        .and(r => r.oneOrMore(() => $NEWLINE))
         .and(r => r
             .zeroOrOne(r => r
                 .choice(c => c

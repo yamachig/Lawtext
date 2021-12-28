@@ -14,7 +14,7 @@ const lex = (text: string): [string, { [key: number]: number }, number] => {
     let indentDepth = 0;
     const indentMemo: { [key: number]: number } = {};
     // eslint-disable-next-line no-irregular-whitespace
-    const reIndent = /^(?: {2}|　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章]([^。]|。[^。])*$|[附付]\s+則[^。]*$|別表[^。]*$))/;
+    const reIndent = /^(?: {2}|　|\t)(?!- |-$|[ 　\t]*(?:第[一二三四五六七八九十百千]+[編章節款目章]([^。]|。[^。])*$|[附付]\s*則[^。]*$|別表[^。]*$))/;
     // eslint-disable-next-line no-irregular-whitespace
     const reForceDedentParentheses = /^(?: {2}|　|\t)[(（][^)）]*[)）][ 　\t]*$/;
     // eslint-disable-next-line no-irregular-whitespace

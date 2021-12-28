@@ -1,7 +1,7 @@
 import * as std from "../std_law";
-import { ValueOfRule, ParseError as _ParseError, MatchFail } from "generic-parser/lib/core";
-import { StringPos, stringOffsetToPos } from "generic-parser";
-import { factory, initializer, ValueRule } from "./common";
+import { ValueOfRule, ParseError as _ParseError } from "generic-parser/lib/core";
+import { StringPos } from "generic-parser";
+import { factory, initializer, makeMatchFailString, ValueRule } from "./common";
 import { rules as inlineRules } from "./inline";
 import { $NEWLINE, rules as lexicalRules } from "./lexical";
 import { rules as rangeRules } from "./range";
@@ -84,16 +84,6 @@ const rules = {
     type Rules = typeof rules;
 
 export type ParseError = _ParseError<StringPos>;
-
-const makeMatchFailString = (result: MatchFail, target: string): string => {
-    const { offset, expected, prevFail } = result;
-    const pos = stringOffsetToPos(target, offset);
-    const prevFails: MatchFail[] =
-        prevFail === null ? [] :
-            Array.isArray(prevFail) ? prevFail :
-                [prevFail];
-    return `${JSON.stringify(pos)}\r\n${expected}\r\n\r\n${prevFails.map(_result => makeMatchFailString(_result, target)).join("\r\n\r\n")}`;
-};
 
 export const parse = <TRuleKey extends (keyof Rules) = "start">(target: string, options: {startRule?: TRuleKey} & Record<string | number | symbol, unknown>): ValueOfRule<Rules[TRuleKey]> => {
     let rule: ValueRule<unknown> = $start;

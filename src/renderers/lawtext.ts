@@ -784,7 +784,12 @@ ${_____}${INDENT}${ArticleCaption}
 
     for (let i = 0; i < Paragraphs.length; i++) {
         const Paragraph = Paragraphs[i];
-        blocks.push(renderParagraphItem(Paragraph, indent, (i === 0 && ArticleTitle) ? ArticleTitle : undefined));
+        blocks.push(renderParagraphItem(
+            Paragraph,
+            indent,
+            i >= 1,
+            (i === 0 && ArticleTitle) ? ArticleTitle : undefined,
+        ));
     }
 
     for (const SupplNote of SupplNotes) {
@@ -800,7 +805,7 @@ ${BLANK}
 };
 
 
-const renderParagraphItem = (el: std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, indent: number, ArticleTitle?: string): string => {
+const renderParagraphItem = (el: std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, indent: number, secondaryArticleParagraph = false, ArticleTitle?: string): string => {
     const _____ = INDENT.repeat(indent);
     const blocks: string[] = [];
 
@@ -846,7 +851,7 @@ ${_____}${INDENT}${ParagraphCaption}
     if (ArticleTitle) Title += ArticleTitle;
 
     const OldNum = (Title === "" && el.tag === "Paragraph" && el.attr.OldNum === "true") ? "true" : undefined;
-    const MissingNum = (indent === 0 && Title === "" && el.tag === "Paragraph" && el.attr.OldNum !== "true") ? "true" : undefined;
+    const MissingNum = (secondaryArticleParagraph && Title === "" && el.tag === "Paragraph" && el.attr.OldNum !== "true") ? "true" : undefined;
 
     const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
     blocks.push(renderBlockSentence(SentenceChildren, indent, Title, OldNum, MissingNum));
