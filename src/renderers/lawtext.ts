@@ -1473,9 +1473,9 @@ const renderRun = (els: Array<string | std.Line | std.QuoteStruct | std.ArithFor
 
     for (const el of els) {
         if (typeof el === "string") {
-            runs.push(/* $$$$$$ */el.replace(/\r|\n/, "")/* $$$$$$ */);
+            runs.push(/* $$$$$$ */el.replace(/\r|\n/g, "")/* $$$$$$ */);
         } else if (el.isControl) {
-            runs.push(/* $$$$$$ */el.text.replace(/\r|\n/, "")/* $$$$$$ */);
+            runs.push(/* $$$$$$ */el.text.replace(/\r|\n/g, "")/* $$$$$$ */);
 
         } else if (el.tag === "Ruby" || el.tag === "Sub" || el.tag === "Sup" || el.tag === "QuoteStruct") {
             runs.push(/* $$$$$$ */el.outerXML()/* $$$$$$ */);

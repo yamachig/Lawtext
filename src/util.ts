@@ -557,7 +557,9 @@ export const elementToJson = (el: Element): EL => {
     const children: Array<EL | string> = [];
     for (const node of Array.from(el.childNodes)) {
         if (node.nodeType === NodeType.TEXT_NODE) {
-            const text = (node.nodeValue || "").trim();
+            const text = (node.nodeValue || "")
+                .replace(/^[ \r\n\t]+/, "")
+                .replace(/[ \r\n\t]+$/, "");
             if (text) {
                 children.push(text);
             }
