@@ -1,7 +1,7 @@
 import * as std from "../std_law";
 import { ValueOfRule, ParseError as _ParseError } from "generic-parser/lib/core";
 import { StringPos } from "generic-parser";
-import { factory, initializer, makeMatchFailString, ValueRule } from "./common";
+import { factory, initializer, makeMatchContextString, ValueRule } from "./common";
 import { rules as inlineRules } from "./inline";
 import { $NEWLINE, rules as lexicalRules } from "./lexical";
 import { rules as rangeRules } from "./range";
@@ -97,5 +97,9 @@ export const parse = <TRuleKey extends (keyof Rules) = "start">(target: string, 
         env,
     );
     if (result.ok) return result.value as ValueOfRule<Rules[TRuleKey]>;
-    throw new Error(`Expected:\r\n\r\n${makeMatchFailString(result, target)}`);
+    throw new Error(`
+MatchFail at max offset:
+
+${env.state.maxOffsetMatchContext && makeMatchContextString(env.state.maxOffsetMatchContext, target)}
+`);
 };
