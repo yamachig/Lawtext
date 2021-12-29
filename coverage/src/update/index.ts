@@ -40,7 +40,7 @@ export const progress = bar.progress.bind(bar);
 
 
 const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_count: number) => {
-    console.log(`Initializing ${workers_count} workers...`);
+    console.log(`[${new Date().toISOString()}] Initializing ${workers_count} workers...`);
 
     const workers: Map<number, Worker> = new Map(await Promise.all(Array.from(range(0, workers_count)).map(workerIndex => new Promise<[number, Worker]>((resolve, reject) => {
         const worker = new Worker(__dirname + "/worker", { workerData: { maxDiffLength: args.maxDiffLength } });
@@ -49,12 +49,12 @@ const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_cou
             if (code !== 0) reject(new Error("Worker stopped with error"));
         });
         worker.once("message", msg => {
-            if (!msg.ready) console.error(`Unknown message from worker: ${JSON.stringify(msg)}`);
+            if (!msg.ready) console.error(`[${new Date().toISOString()}] Unknown message from worker: ${JSON.stringify(msg)}`);
             resolve([workerIndex, worker]);
         });
     }))));
 
-    console.log("Initializing workers completed.");
+    console.log(`[${new Date().toISOString()}] Initializing workers completed.`);
 
     for (const worker of workers.values()) {
         worker.once("error", err => { throw err; });
@@ -68,7 +68,7 @@ const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_cou
     const runWorker = (worker: Worker, lawInfo: BaseLawInfo) => new Promise<void>((resolve) => {
         worker.postMessage({ lawInfo });
         worker.once("message", msg => {
-            if (!msg.finished) console.error(`Unknown message from worker: ${JSON.stringify(msg)}`);
+            if (!msg.finished) console.error(`[${new Date().toISOString()}] Unknown message from worker: ${JSON.stringify(msg)}`);
             resolve();
         });
     });
@@ -96,6 +96,8 @@ const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_cou
 
     bar.progress(lawInfos.length);
     bar.stop();
+
+    console.log(`[${new Date().toISOString()}] Update completed.`);
 };
 
 const updateSerial = async (args: UpdateArgs, lawInfos: LawInfo[], db: ConnectionInfo, loader: Loader) => {
@@ -153,7 +155,7 @@ export const main = async (args: UpdateArgs): Promise<void> => {
     const db = await connect(config.MONGODB_URI);
     const loader = new FSStoredLoader(config.DATA_PATH);
 
-    console.log(`Start updating law coverage at ${new Date().toISOString()}...`);
+    console.log(`[${new Date().toISOString()}] Start updating law coverage...`);
     console.dir(args);
 
     if (args.notificationEndpoint) {
@@ -164,7 +166,7 @@ export const main = async (args: UpdateArgs): Promise<void> => {
         await notify(
             args.notificationEndpoint,
             "updating finished!",
-            `"${process.argv.join(" ")}" has just been finished.`,
+            `[${new Date().toISOString()}] "${process.argv.join(" ")}" has just been finished.`,
         );
     }
 
