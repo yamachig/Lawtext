@@ -11,6 +11,8 @@ import { Loader } from "lawtext/dist/src/data/loaders/common";
 import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 import { getOriginalLaw, getParsedLaw, getRenderedLawtext } from "../update/transform";
 import JSZip from "jszip";
+import { LawCoveragesManager } from "./lawCoverages";
+import { fromSortStirng } from "../lawCoverage";
 
 
 const asyncMiddleware = (fn: express.RequestHandler): express.RequestHandler =>
@@ -48,33 +50,35 @@ const getLoader = () => {
     return loader;
 };
 
+let _lawCoveragesManager: LawCoveragesManager | null;
+const getLawCoveragesManager = async () => {
+    const lawCoveragesManager = _lawCoveragesManager ?? new LawCoveragesManager(await getDB());
+    _lawCoveragesManager = lawCoveragesManager;
+    return lawCoveragesManager;
+};
+
 app.get(
-    "/lawCoverages",
+    "/lawCoverages/index/:from-:to/sort/:sort",
     asyncMiddleware(async (request: express.Request, response: express.Response) => {
-        const db = await getDB();
-        const lawCoverages = await db.lawCoverage
-            .find()
-            .select([
-                "LawID",
-                "LawNum",
-                "LawTitle",
-                "Enforced",
-                "Path",
-                "XmlName",
-                "Era",
-                "Year",
-                "LawType",
-                "Num",
-                "updateDate",
-                "originalLaw.ok.requiredms",
-                "renderedLawtext.ok.requiredms",
-                "parsedLaw.ok.requiredms",
-                "lawDiff.ok.requiredms",
-                "lawDiff.ok.mostSeriousStatus",
-            ]);
-        // response.setHeader("Cache-Control", "public, max-age=2592000");
-        // response.setHeader("Expires", new Date(Date.now() + 2592000000).toUTCString());
+        const sort = fromSortStirng(request.params.sort);
+        const lawCoveragesManager = await getLawCoveragesManager();
+        const lawCoverages = await lawCoveragesManager.slice(
+            parseInt(request.params.from),
+            parseInt(request.params.to) + 1,
+            sort,
+        );
         response.json(lawCoverages);
+        response.end();
+        // db.connection.close();
+    }),
+);
+
+app.get(
+    "/lawCoverageCounts",
+    asyncMiddleware(async (request: express.Request, response: express.Response) => {
+        const lawCoveragesManager = await getLawCoveragesManager();
+        const counts = await lawCoveragesManager.counts();
+        response.json(counts);
         response.end();
         // db.connection.close();
     }),

@@ -4,7 +4,7 @@ import { assertNever } from "lawtext/dist/src/util";
 import * as React from "react";
 import styled from "styled-components";
 import LawCoverageInfoCard, { LawCoverageInfoCardStatus } from "./LawCoverageInfoCard";
-import { LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState";
+import { LawtextDashboardPageStateStruct, useDetailLawCoverageStruct } from "./LawtextDashboardPageState";
 import { LawCoverage } from "../../lawCoverage";
 import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedLawtextStatus, OriginalLawStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus } from "./FilterInfo";
 
@@ -636,11 +636,12 @@ position: relative;
 `;
 
 const MainPanel: React.FC<LawtextDashboardPageStateStruct> = props => {
+    const detailLawCoverageStruct = useDetailLawCoverageStruct(props);
     return (
         <MainPanelTag>
             <LawCoverageInfoDetail
-                detailLawCoverage={props.origState.detailLawCoverage}
-                LawID={props.routeParams.LawID}
+                detailLawCoverage={detailLawCoverageStruct?.lawCoverage ?? null}
+                LawID={detailLawCoverageStruct?.LawID}
             />
         </MainPanelTag>
     );

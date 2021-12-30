@@ -1,9 +1,9 @@
-import { LawCoverage, LawType } from "../../lawCoverage";
+import { LawCoverage, LawCoverageCounts, toSortString } from "../../lawCoverage";
 import { ComparableEL, TagType } from "lawtext/dist/src/diff/law_diff";
 import { EL, xmlToJson } from "lawtext/dist/src/util";
 import React from "react";
 import { useHistory } from "react-router";
-import { filtered, FilterInfo, LawDiffStatus, OriginalLawStatus, ParsedLawStatus, RenderedLawtextStatus, SortDirection, sorted, SortKey } from "./FilterInfo";
+import { FilterInfo, filterInfoEqual, SortDirection, SortKey } from "./FilterInfo";
 import { useParams } from "react-router-dom";
 
 const domParser = new DOMParser();
@@ -21,24 +21,48 @@ export class LawXMLData {
     }
 }
 
-export interface BaseLawtextDashboardPageState {
-    loading: boolean,
-    allLawCoveragesLoaded: boolean,
-    allLawCoverages: LawCoverage[],
-    lawCoverages: LawCoverage[],
-    detailLawCoverage: LawCoverage | null,
-    page: number,
+export interface LawCoveragesStruct {
     filterInfo: FilterInfo,
+    lawCoverages: LawCoverage[]
 }
 
+export interface BaseLawtextDashboardPageState {
+    loading: number,
+    fetchingStatus: {
+        lawCoverageCounts: boolean,
+        lawCoverages: FilterInfo | null,
+        detailLawCoverage: string | null,
+    },
+
+    lawCoverageCounts: LawCoverageCounts | null,
+
+    lawCoveragesStruct: LawCoveragesStruct | null,
+    itemsPerPage: number,
+    filterInfo: FilterInfo,
+
+    detailLawCoverageStruct: {
+        LawID: string,
+        lawCoverage: LawCoverage,
+    } | null,
+}
+
+const ITEMS_PER_PAGE = 5;
+
 const getInitialState = (): BaseLawtextDashboardPageState => ({
-    loading: true,
-    allLawCoveragesLoaded: false,
-    allLawCoverages: [],
-    lawCoverages: [],
-    detailLawCoverage: null,
-    page: 0,
+    loading: 0,
+    fetchingStatus: {
+        lawCoverageCounts: false,
+        lawCoverages: null,
+        detailLawCoverage: null,
+    },
+
+    lawCoverageCounts: null,
+
+    lawCoveragesStruct: null,
+    itemsPerPage: ITEMS_PER_PAGE,
     filterInfo: {
+        from: 0,
+        to: ITEMS_PER_PAGE - 1,
         sort: [
             [SortKey.RenderedLawtextStatus, SortDirection.Asc],
             [SortKey.ParsedLawStatus, SortDirection.Asc],
@@ -46,14 +70,17 @@ const getInitialState = (): BaseLawtextDashboardPageState => ({
             [SortKey.LawType, SortDirection.Asc],
             [SortKey.LawNum, SortDirection.Desc],
         ],
-        filter: {
-            lawType: new Set(Object.values(LawType)),
-            originalLawStatus: new Set(Object.values(OriginalLawStatus)),
-            renderedLawtextStatus: new Set(Object.values(RenderedLawtextStatus)),
-            parsedLawStatus: new Set(Object.values(ParsedLawStatus)),
-            lawDiffStatus: new Set(Object.values(LawDiffStatus)),
-        },
+        // filter: {
+        //     lawType: new Set(Object.values(LawType)),
+        //     originalLawStatus: new Set(Object.values(OriginalLawStatus)),
+        //     renderedLawtextStatus: new Set(Object.values(RenderedLawtextStatus)),
+        //     parsedLawStatus: new Set(Object.values(ParsedLawStatus)),
+        //     lawDiffStatus: new Set(Object.values(LawDiffStatus)),
+        // },
     },
+
+    detailLawCoverageStruct: null,
+
 });
 export type SetLawtextDashboardPageState = (newState: Partial<BaseLawtextDashboardPageState>) => void;
 export type OrigSetLawtextDashboardPageState = React.Dispatch<React.SetStateAction<BaseLawtextDashboardPageState>>;
@@ -68,93 +95,176 @@ export interface LawtextDashboardPageStateStruct {
     setState: SetLawtextDashboardPageState,
     history: ReturnType<typeof useHistory>,
     onNavigated: () => void,
-    modifyFilterInfo: (filterInfo: FilterInfo) => void,
     routeParams: RouteParams,
 }
 
+export const useLawCoverageCounts = (stateStruct: LawtextDashboardPageStateStruct) => {
+    const { origSetState, origState } = stateStruct;
+    const { lawCoverageCounts } = origState;
 
-const ensureAllLawCoverages = async (stateStruct: LawtextDashboardPageStateStruct) => {
-    if (!stateStruct.origState.allLawCoveragesLoaded) {
+    React.useEffect(() => {
+        if (lawCoverageCounts) return;
 
-        stateStruct.origSetState(s => ({
-            ...s,
-            loading: true,
-        }));
+        origSetState(stateBeforeJob => {
+            if (stateBeforeJob.fetchingStatus.lawCoverageCounts) return stateBeforeJob;
+            job();
+            return {
+                ...stateBeforeJob,
+                fetchingStatus: {
+                    ...stateBeforeJob.fetchingStatus,
+                    lawCoverageCounts: true,
+                },
+                lawCoverageCounts: null,
+                loading: stateBeforeJob.loading + 1,
+            };
+        });
 
-        const response = await fetch("./lawCoverages");
-        const allLawCoverages = await response.json() as LawCoverage[];
+        const job = async () => {
+            console.log(`[${new Date().toISOString()}] fetching lawCoverageCounts...`);
 
-        stateStruct.origSetState(s => ({
-            ...s,
-            lawCoverages: _filterLawCoverages(allLawCoverages, stateStruct.origState.filterInfo),
-            allLawCoverages,
-            allLawCoveragesLoaded: true,
-            loading: false,
-        }));
+            const response = await fetch("./lawCoverageCounts");
+            const lawCoverageCounts = await response.json() as LawCoverageCounts;
 
-    }
+            origSetState(stateAfterJob => ({
+                ...stateAfterJob,
+                fetchingStatus: {
+                    ...stateAfterJob.fetchingStatus,
+                    lawCoverageCounts: false,
+                },
+                lawCoverageCounts,
+                loading: stateAfterJob.loading - 1,
+            }));
+
+            console.log(`[${new Date().toISOString()}] fetching lawCoverageCounts finished.`);
+        };
+
+    }, [lawCoverageCounts, origSetState, origState.fetchingStatus.lawCoverageCounts]);
+
+    return lawCoverageCounts;
 };
 
-const _filterLawCoverages = (
-    allLawCoverages: LawCoverage[],
-    filterInfo: FilterInfo,
-): LawCoverage[] => {
-    const lawCoverages = sorted(
-        filtered(
-            allLawCoverages,
-            filterInfo.filter,
-        ),
-        filterInfo.sort,
-    );
+export const useLawCoveragesStruct = (stateStruct: LawtextDashboardPageStateStruct) => {
 
-    return lawCoverages;
+    React.useEffect(() => {
+        const { origSetState } = stateStruct;
+
+        origSetState(stateBeforeJob => {
+            if (
+                stateBeforeJob.lawCoveragesStruct
+                && filterInfoEqual(stateBeforeJob.filterInfo, stateBeforeJob.lawCoveragesStruct.filterInfo)
+            ) return stateBeforeJob;
+            if (
+                stateBeforeJob.fetchingStatus.lawCoverages
+                && filterInfoEqual(stateBeforeJob.filterInfo, stateBeforeJob.fetchingStatus.lawCoverages)
+            ) return stateBeforeJob;
+
+            (async () => {
+                console.log(`[${new Date().toISOString()}] fetching lawCoverages...`);
+
+                const response = await fetch(`./lawCoverages/index/${stateBeforeJob.filterInfo.from}-${stateBeforeJob.filterInfo.to}/sort/${toSortString(stateBeforeJob.filterInfo.sort)}`);
+                const lawCoverages = await response.json() as LawCoverage[];
+
+                origSetState(stateAfterJob => {
+                    if (stateAfterJob.fetchingStatus.lawCoverages && filterInfoEqual(stateBeforeJob.filterInfo, stateAfterJob.fetchingStatus.lawCoverages)) {
+                        console.log(`[${new Date().toISOString()}] fetching lawCoverages finished.`);
+                        return {
+                            ...stateAfterJob,
+                            fetchingStatus: {
+                                ...stateAfterJob.fetchingStatus,
+                                lawCoverages: null,
+                            },
+                            lawCoveragesStruct: {
+                                filterInfo: stateBeforeJob.filterInfo,
+                                lawCoverages,
+                            },
+                            loading: stateAfterJob.loading - 1,
+                        };
+                    } else {
+                        console.log(`[${new Date().toISOString()}] fetching lawCoverages finished. (ignored)`);
+                        return {
+                            ...stateAfterJob,
+                            loading: stateAfterJob.loading - 1,
+                        };
+                    }
+                });
+            })();
+
+            return {
+                ...stateBeforeJob,
+                fetchingStatus: {
+                    ...stateBeforeJob.fetchingStatus,
+                    lawCoverages: stateBeforeJob.filterInfo,
+                },
+                lawCoveragesStruct: null,
+                loading: stateBeforeJob.loading + 1,
+            };
+        });
+    }, [stateStruct, stateStruct.origSetState, stateStruct.origState.filterInfo]);
+
+    return stateStruct.origState.lawCoveragesStruct;
 };
 
+export const useDetailLawCoverageStruct = (stateStruct: LawtextDashboardPageStateStruct) => {
 
-const _modifyFilterInfo = (
-    origState: BaseLawtextDashboardPageState,
-    origSetState: OrigSetLawtextDashboardPageState,
-    filterInfo: FilterInfo,
-) => {
-    origSetState(s => ({
-        ...s,
-        filterInfo,
-        lawCoverages: _filterLawCoverages(origState.allLawCoverages, filterInfo),
-    }));
-};
+    React.useEffect(() => {
+        const { origSetState } = stateStruct;
+        const { LawID } = stateStruct.routeParams;
 
-const ensureDetailLawCoverage = async (stateStruct: LawtextDashboardPageStateStruct) => {
+        origSetState(stateBeforeJob => {
+            if (!LawID) return stateBeforeJob;
+            if (stateBeforeJob.detailLawCoverageStruct && stateBeforeJob.detailLawCoverageStruct.LawID === LawID) return stateBeforeJob;
+            if (stateBeforeJob.fetchingStatus.detailLawCoverage === LawID) return stateBeforeJob;
 
-    if (stateStruct.routeParams.LawID !== null) {
-        if (!stateStruct.origState.detailLawCoverage || stateStruct.origState.detailLawCoverage.LawID !== stateStruct.routeParams.LawID) {
+            (async () => {
+                console.log(`[${new Date().toISOString()}] fetching detailLawCoverage...`);
 
-            stateStruct.origSetState(s => ({
-                ...s,
+                const response = await fetch(`./lawCoverage/${stateStruct.routeParams.LawID}`);
+                const lawCoverage = await response.json() as LawCoverage;
+
+                origSetState(stateAfterJob => {
+                    if (stateAfterJob.fetchingStatus.detailLawCoverage === LawID) {
+                        console.log(`[${new Date().toISOString()}] fetching detailLawCoverage finished.`);
+                        return {
+                            ...stateAfterJob,
+                            fetchingStatus: {
+                                ...stateAfterJob.fetchingStatus,
+                                detailLawCoverage: null,
+                            },
+                            detailLawCoverageStruct: {
+                                LawID,
+                                lawCoverage,
+                            },
+                            loading: stateAfterJob.loading - 1,
+                        };
+
+                    } else {
+                        console.log(`[${new Date().toISOString()}] fetching detailLawCoverage finished. (ignored)`);
+                        return {
+                            ...stateAfterJob,
+                            loading: stateAfterJob.loading - 1,
+                        };
+                    }
+                });
+            })();
+
+            return {
+                ...stateBeforeJob,
+                fetchingStatus: {
+                    ...stateBeforeJob.fetchingStatus,
+                    detailLawCoverage: LawID,
+                },
                 detailLawCoverage: null,
-                loading: true,
-            }));
+                loading: stateBeforeJob.loading + 1,
+            };
+        });
 
-            const response = await fetch(`./lawCoverage/${stateStruct.routeParams.LawID}`);
-            let lawCoverage: LawCoverage | null = null;
-            if (response.ok) {
-                lawCoverage = await response.json() as LawCoverage;
-            }
+    }, [stateStruct, stateStruct.routeParams.LawID]);
 
-            stateStruct.origSetState(s => ({
-                ...s,
-                detailLawCoverage: lawCoverage,
-                loading: false,
-            }));
-        }
-    }
+    return stateStruct.origState.detailLawCoverageStruct;
 };
 
 const _onNavigated = async (stateStruct: LawtextDashboardPageStateStruct) => {
     console.log(`states.onNavigate(${JSON.stringify(stateStruct.routeParams)})`);
-
-    await ensureAllLawCoverages(stateStruct);
-
-    await ensureDetailLawCoverage(stateStruct);
 };
 
 export const useLawtextDashboardPageState = (): LawtextDashboardPageStateStruct => {
@@ -172,18 +282,14 @@ export const useLawtextDashboardPageState = (): LawtextDashboardPageStateStruct 
 
     const onNavigated = () => _onNavigated(stateStruct);
 
-    const modifyFilterInfo = (filterInfo: FilterInfo) => _modifyFilterInfo(state, origSetState, filterInfo);
-
     const stateStruct = {
         origState: state,
         origSetState,
         setState,
         history,
         onNavigated,
-        modifyFilterInfo,
         routeParams,
     };
-
 
     return stateStruct;
 };

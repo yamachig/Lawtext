@@ -5,8 +5,8 @@ import { Era, LawCoverage, LawType } from "./lawCoverage";
 type DeNull<T> = T extends null ? never : T;
 
 export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
-    LawID: { type: String, required: true, unique: true },
-    LawNum: { type: String, required: true },
+    LawID: { type: String, required: true, unique: true, index: true },
+    LawNum: { type: String, required: true, index: true },
     LawTitle: { type: String, required: true },
     Enforced: { type: Boolean, required: true },
     Path: { type: String, required: true },

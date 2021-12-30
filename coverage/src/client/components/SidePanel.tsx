@@ -5,7 +5,7 @@ import { arrayMove, SortableContainer, SortableElement } from "react-sortable-ho
 import styled from "styled-components";
 import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedLawtextStatus, LawDiffStatus, OriginalLawStatus, ParsedLawStatus, RenderedLawtextStatus, SortDirection, SortKey } from "./FilterInfo";
 import LawCoverageInfoCard from "./LawCoverageInfoCard";
-import { LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState";
+import { LawCoveragesStruct, LawtextDashboardPageStateStruct, useLawCoverageCounts, useLawCoveragesStruct } from "./LawtextDashboardPageState";
 import { convertStatus } from "./MainPanel";
 
 
@@ -189,91 +189,70 @@ export const FilterInfoSortContainer = SortableContainer((props: FilterInfoSortC
 });
 
 
-class FilterInfoFilterContainerCounter<K> {
-        public map: Map<K, number>;
-        constructor() {
-            this.map = new Map();
-        }
-        public add(key: K, n: number) {
-            this.map.set(key, this.get(key) + n);
-        }
-        public get(key: K) {
-            return this.map.get(key) ?? 0;
-        }
-}
-
-const FilterInfoFilterContainer: React.FC<{allLawCoveragesLoaded: boolean, allLawCoverages: LawCoverage[]}> = props => {
-    const OriginalLawStatusCounter = new FilterInfoFilterContainerCounter<OriginalLawStatus>();
-    const RenderedLawtextStatusCounter = new FilterInfoFilterContainerCounter<RenderedLawtextStatus>();
-    const ParsedLawStatusCounter = new FilterInfoFilterContainerCounter<ParsedLawStatus>();
-    const LawDiffStatusCounter = new FilterInfoFilterContainerCounter<LawDiffStatus>();
-    for (const lawCoverage of props.allLawCoverages) {
-        OriginalLawStatusCounter.add(getOriginalLawStatus(lawCoverage), 1);
-        RenderedLawtextStatusCounter.add(getRenderedLawtextStatus(lawCoverage), 1);
-        ParsedLawStatusCounter.add(getParsedLawStatus(lawCoverage), 1);
-        LawDiffStatusCounter.add(getLawDiffStatus(lawCoverage), 1);
-    }
+export const FilterInfoFilterContainer: React.FC<LawtextDashboardPageStateStruct> = props => {
+    const counts = useLawCoverageCounts(props);
+    if (!counts) return null;
     return (
         <>
             <div>
                 <small style={{ verticalAlign: "middle" }}>
                     Orig:{" "}
-                    {OriginalLawStatusCounter.get(OriginalLawStatus.Fail) !== 0 &&
-                        <><span className="badge bg-dark">{OriginalLawStatusCounter.get(OriginalLawStatus.Fail)} Fails</span>&nbsp;</>
+                    {counts.OriginalLawStatus[OriginalLawStatus.Fail] !== 0 &&
+                        <><span className="badge bg-dark">{counts.OriginalLawStatus[OriginalLawStatus.Fail]} Fails</span>&nbsp;</>
                     }
-                    {OriginalLawStatusCounter.get(OriginalLawStatus.Success) !== 0 &&
-                        <><span className="badge bg-success">{OriginalLawStatusCounter.get(OriginalLawStatus.Success)} Success</span>&nbsp;</>
+                    {counts.OriginalLawStatus[OriginalLawStatus.Success] !== 0 &&
+                        <><span className="badge bg-success">{counts.OriginalLawStatus[OriginalLawStatus.Success]} Success</span>&nbsp;</>
                     }
-                    {OriginalLawStatusCounter.get(OriginalLawStatus.Null) !== 0 &&
-                        <><span className="badge bg-light text-dark">{OriginalLawStatusCounter.get(OriginalLawStatus.Null)} Null</span>&nbsp;</>
+                    {counts.OriginalLawStatus[OriginalLawStatus.Null] !== 0 &&
+                        <><span className="badge bg-light text-dark">{counts.OriginalLawStatus[OriginalLawStatus.Null]} Null</span>&nbsp;</>
                     }
                 </small>
             </div>
             <div>
                 <small style={{ verticalAlign: "middle" }}>
                     Rendered:{" "}
-                    {RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Fail) !== 0 &&
-                        <><span className="badge bg-dark">{RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Fail)} Fails</span>&nbsp;</>
+                    {counts.RenderedLawtextStatus[RenderedLawtextStatus.Fail] !== 0 &&
+                        <><span className="badge bg-dark">{counts.RenderedLawtextStatus[RenderedLawtextStatus.Fail]} Fails</span>&nbsp;</>
                     }
-                    {RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Success) !== 0 &&
-                        <><span className="badge bg-success">{RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Success)} Success</span>&nbsp;</>
+                    {counts.RenderedLawtextStatus[RenderedLawtextStatus.Success] !== 0 &&
+                        <><span className="badge bg-success">{counts.RenderedLawtextStatus[RenderedLawtextStatus.Success]} Success</span>&nbsp;</>
                     }
-                    {RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Null) !== 0 &&
-                        <><span className="badge bg-light text-dark">{RenderedLawtextStatusCounter.get(RenderedLawtextStatus.Null)} Null</span>&nbsp;</>
+                    {counts.RenderedLawtextStatus[RenderedLawtextStatus.Null] !== 0 &&
+                        <><span className="badge bg-light text-dark">{counts.RenderedLawtextStatus[RenderedLawtextStatus.Null]} Null</span>&nbsp;</>
                     }
                 </small>
             </div>
             <div>
                 <small style={{ verticalAlign: "middle" }}>
                     Parsed:{" "}
-                    {ParsedLawStatusCounter.get(ParsedLawStatus.Fail) !== 0 &&
-                        <><span className="badge bg-dark">{ParsedLawStatusCounter.get(ParsedLawStatus.Fail)} Fails</span>&nbsp;</>
+                    {counts.ParsedLawStatus[ParsedLawStatus.Fail] !== 0 &&
+                        <><span className="badge bg-dark">{counts.ParsedLawStatus[ParsedLawStatus.Fail]} Fails</span>&nbsp;</>
                     }
-                    {ParsedLawStatusCounter.get(ParsedLawStatus.Success) !== 0 &&
-                        <><span className="badge bg-success">{ParsedLawStatusCounter.get(ParsedLawStatus.Success)} Success</span>&nbsp;</>
+                    {counts.ParsedLawStatus[ParsedLawStatus.Success] !== 0 &&
+                        <><span className="badge bg-success">{counts.ParsedLawStatus[ParsedLawStatus.Success]} Success</span>&nbsp;</>
                     }
-                    {ParsedLawStatusCounter.get(ParsedLawStatus.Null) !== 0 &&
-                        <><span className="badge bg-light text-dark">{ParsedLawStatusCounter.get(ParsedLawStatus.Null)} Null</span>&nbsp;</>
+                    {counts.ParsedLawStatus[ParsedLawStatus.Null] !== 0 &&
+                        <><span className="badge bg-light text-dark">{counts.ParsedLawStatus[ParsedLawStatus.Null]} Null</span>&nbsp;</>
                     }
                 </small>
             </div>
             <div>
                 <small style={{ verticalAlign: "middle" }}>
                     Diff:{" "}
-                    {LawDiffStatusCounter.get(LawDiffStatus.Fail) !== 0 &&
-                        <><span className="badge bg-dark">{LawDiffStatusCounter.get(LawDiffStatus.Fail)} Fails</span>&nbsp;</>
+                    {counts.LawDiffStatus[LawDiffStatus.Fail] !== 0 &&
+                        <><span className="badge bg-dark">{counts.LawDiffStatus[LawDiffStatus.Fail]} Fails</span>&nbsp;</>
                     }
-                    {LawDiffStatusCounter.get(LawDiffStatus.Error) !== 0 &&
-                        <><span className="badge bg-danger">{LawDiffStatusCounter.get(LawDiffStatus.Error)} Error</span>&nbsp;</>
+                    {counts.LawDiffStatus[LawDiffStatus.Error] !== 0 &&
+                        <><span className="badge bg-danger">{counts.LawDiffStatus[LawDiffStatus.Error]} Error</span>&nbsp;</>
                     }
-                    {LawDiffStatusCounter.get(LawDiffStatus.Warning) !== 0 &&
-                        <><span className="badge bg-warning text-dark">{LawDiffStatusCounter.get(LawDiffStatus.Warning)} Warning</span>&nbsp;</>
+                    {counts.LawDiffStatus[LawDiffStatus.Warning] !== 0 &&
+                        <><span className="badge bg-warning text-dark">{counts.LawDiffStatus[LawDiffStatus.Warning]} Warning</span>&nbsp;</>
                     }
-                    {LawDiffStatusCounter.get(LawDiffStatus.NoProblem) !== 0 &&
-                        <><span className="badge bg-success">{LawDiffStatusCounter.get(LawDiffStatus.NoProblem)} NoProblem</span>&nbsp;</>
+                    {counts.LawDiffStatus[LawDiffStatus.NoProblem] !== 0 &&
+                        <><span className="badge bg-success">{counts.LawDiffStatus[LawDiffStatus.NoProblem]} NoProblem</span>&nbsp;</>
                     }
-                    {LawDiffStatusCounter.get(LawDiffStatus.Null) !== 0 &&
-                        <><span className="badge bg-light text-dark">{LawDiffStatusCounter.get(LawDiffStatus.Null)} Null</span>&nbsp;</>
+                    {counts.LawDiffStatus[LawDiffStatus.Null] !== 0 &&
+                        <><span className="badge bg-light text-dark">{counts.LawDiffStatus[LawDiffStatus.Null]} Null</span>&nbsp;</>
                     }
                 </small>
             </div>
@@ -344,10 +323,13 @@ const onFilterControlSortEnd = (
         ],
     }));
 
-    stateStruct.modifyFilterInfo({
-        filter: stateStruct.origState.filterInfo.filter,
-        sort: newActiveSort,
-    });
+    stateStruct.origSetState(s => ({
+        ...s,
+        filterInfo: {
+            ...s.filterInfo,
+            sort: newActiveSort,
+        },
+    }));
 
 };
 
@@ -387,10 +369,13 @@ const filterControlDirectionButtonClick = (
         lastDirection: newLastDirection,
     }));
 
-    stateStruct.modifyFilterInfo({
-        filter: stateStruct.origState.filterInfo.filter,
-        sort: newActiveSort,
-    });
+    stateStruct.origSetState(s => ({
+        ...s,
+        filterInfo: {
+            ...s.filterInfo,
+            sort: newActiveSort,
+        },
+    }));
 };
 
 const FilterControl: React.FC<LawtextDashboardPageStateStruct> = props => {
@@ -432,10 +417,7 @@ const FilterControl: React.FC<LawtextDashboardPageStateStruct> = props => {
                     />
                 </div>
             </div>
-            <FilterInfoFilterContainer
-                allLawCoveragesLoaded={props.origState.allLawCoveragesLoaded}
-                allLawCoverages={props.origState.allLawCoverages}
-            />
+            <FilterInfoFilterContainer {...props} />
         </FilterControlTag>
     );
 };
@@ -537,20 +519,17 @@ const LawCoverageListItemWrapperTag = styled.div`
     }
 `;
 
-const LawCoverageList: React.FC<LawtextDashboardPageStateStruct & {itemsPerPage: number}> = props => {
+const LawCoverageList: React.FC<LawtextDashboardPageStateStruct & {lawCoveragesStruct: LawCoveragesStruct}> = props => {
+
+    const { lawCoveragesStruct } = props;
 
     const listItemOnClick = React.useMemo(() => (lawCoverage: LawCoverage) => {
         location.hash = `${lawCoverage.LawID}`;
     }, []);
 
-    const lawCoverages = props.origState.lawCoverages.slice(
-        props.origState.page * props.itemsPerPage,
-        props.origState.page * props.itemsPerPage + props.itemsPerPage,
-    );
-
     return (
         <LawCoverageListTag className="d-flex flex-column">
-            {lawCoverages.map((lawCoverage, i) =>
+            {lawCoveragesStruct.lawCoverages.map((lawCoverage, i) =>
                 <LawCoverageListItemWrapperTag key={i} onClick={() => listItemOnClick(lawCoverage)}>
                     <LawCoverageListItem
                         lawCoverage={lawCoverage} {...props} />
@@ -566,26 +545,40 @@ const LawCoverageListPaginatorTag = styled.div`
     height: 2.5em;
 `;
 
-const LawCoverageListPaginator: React.FC<LawtextDashboardPageStateStruct & {itemsPerPage: number}> = props => {
+const LawCoverageListPaginator: React.FC<LawtextDashboardPageStateStruct & {lawCoveragesStruct: LawCoveragesStruct | null}> = props => {
 
     const { origSetState } = props;
+    const counts = useLawCoverageCounts(props);
 
     const onClickLeft = React.useMemo(() => () => {
-        origSetState(s => ({
-            ...s,
-            page: Math.max(0, s.page - 1),
-        }));
+        origSetState(s => {
+            const from = Math.max(0, s.filterInfo.from - s.itemsPerPage);
+            const to = from + s.itemsPerPage - 1;
+            return {
+                ...s,
+                filterInfo: {
+                    ...s.filterInfo,
+                    from,
+                    to,
+                },
+            };
+        });
     }, [origSetState]);
 
     const onClickRight = React.useMemo(() => () => {
-        origSetState(s => ({
-            ...s,
-            page: Math.min(
-                s.page + 1,
-                Math.floor(s.lawCoverages.length / props.itemsPerPage),
-            ),
-        }));
-    }, [origSetState, props.itemsPerPage]);
+        origSetState(s => {
+            const from = s.filterInfo.from + s.itemsPerPage;
+            const to = from + s.itemsPerPage - 1;
+            return {
+                ...s,
+                filterInfo: {
+                    ...s.filterInfo,
+                    from,
+                    to,
+                },
+            };
+        });
+    }, [origSetState]);
 
     return (
         <LawCoverageListPaginatorTag className="d-flex flex-row">
@@ -598,9 +591,11 @@ const LawCoverageListPaginator: React.FC<LawtextDashboardPageStateStruct & {item
             </button>
 
             <div style={{ padding: "0 1em 0 1em", textAlign: "center", lineHeight: "1em", flex: "0 0 7em" }}>
-                <small>{props.origState.page * props.itemsPerPage + 1} ～ {(props.origState.page + 1) * props.itemsPerPage}</small>
-                <hr style={{ margin: 0 }} />
-                <small>{props.origState.lawCoverages.length}</small>
+                <small>{props.origState.filterInfo.from} ～ {props.origState.filterInfo.to}</small>
+                {counts && <>
+                    <hr style={{ margin: 0 }} />
+                    <small>{Object.values(counts.OriginalLawStatus).reduce((a, b) => a + b, 0)}</small>
+                </>}
             </div>
 
             <button
@@ -635,25 +630,20 @@ const SidePanelBottom = styled.div`
     flex: 0 0;
 `;
 
-const ITEMS_PER_PAGE = 5;
-
 export const SidePanel: React.FC<LawtextDashboardPageStateStruct> = props => {
+    const lawCoveragesStruct = useLawCoveragesStruct(props);
     return (
         <SidePanelTag>
             <SidePanelTop>
-                {props.origState.allLawCoveragesLoaded && <>
-                    <FilterControl {...props} />
-                </>}
+                <FilterControl {...props} />
             </SidePanelTop>
             <Scroll>
-                {props.origState.allLawCoveragesLoaded &&
-                    <LawCoverageList {...props} itemsPerPage={ITEMS_PER_PAGE} />
+                {lawCoveragesStruct &&
+                    <LawCoverageList {...props} lawCoveragesStruct={lawCoveragesStruct} />
                 }
             </Scroll>
             <SidePanelBottom>
-                {props.origState.allLawCoveragesLoaded &&
-                    <LawCoverageListPaginator {...props} itemsPerPage={ITEMS_PER_PAGE} />
-                }
+                <LawCoverageListPaginator {...props} lawCoveragesStruct={lawCoveragesStruct} />
             </SidePanelBottom>
         </SidePanelTag>
     );
