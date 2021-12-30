@@ -59,7 +59,7 @@ export const LawtextDashboardPage: React.FC = () => {
 
     return (
         <div>
-            {origState.loading &&
+            {(origState.loading > 0) &&
                 <ViewerLoading />
             }
             <ViewerInitial {...stateStruct} />
