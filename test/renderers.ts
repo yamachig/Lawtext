@@ -15,6 +15,7 @@ import { render as renderLawtext } from "../src/renderers/lawtext";
 import { TERMC, toTableText } from "../src/term_util";
 import * as util from "../src/util";
 import { loader } from "./prepare_test";
+import { outerXML, xmlToJson } from "../src/node/el";
 
 const domParser = new xmldom.DOMParser();
 
@@ -268,7 +269,7 @@ it("Render and Parse Lawtext", async () => {
     const origDOM = domParser.parseFromString(origXML);
     await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
 
-    const origEL = util.xmlToJson(origXML);
+    const origEL = xmlToJson(origXML);
 
     let lawtext;
     try {
@@ -300,7 +301,7 @@ it("Render and Parse Lawtext", async () => {
     analyze(parsedEL);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const parsedXML = prettifyXml(util.outerXML(parsedEL)) as string;
+    const parsedXML = prettifyXml(outerXML(parsedEL)) as string;
     const parsedDOM = domParser.parseFromString(parsedXML);
     await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });
 

@@ -1,6 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
 import { newStdEL } from "../../std_law";
-import { EL, articleGroupTitleTag, parseNamedNum, articleGroupType, __Parentheses } from "../../util";
+import { EL } from "../../node/el";
+import { articleGroupTitleTag, parseNamedNum, articleGroupType } from "../../lawUtil";
+import { __Parentheses } from "../../node/control";
 import { factory, ValueRule } from "../common";
 import { $OUTSIDE_ROUND_PARENTHESES_INLINE, $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $NEWLINE, $DEDENT, $INDENT } from "../lexical";

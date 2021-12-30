@@ -1,4 +1,4 @@
-import { EL } from "./util";
+import { EL } from "./node/el";
 
 export interface __EL extends EL {
     isControl: true

@@ -2,6 +2,7 @@ import * as std from "../std_law";
 import * as analyzer from "../analyzer";
 import * as util from "../util";
 import { parse } from "../parser_wrapper";
+import { xmlToJson } from "../node/el";
 
 
 export interface LawDataCore {el: std.Law, analysis: analyzer.Analysis}
@@ -56,7 +57,7 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
             onMessage("法令XMLをパースしています...");
             // console.log("toLawData: parsing law xml...");
             await util.wait(30);
-            const [parseXMLOrLawtextTime, el] = await util.withTime(util.xmlToJson)(_props.xml);
+            const [parseXMLOrLawtextTime, el] = await util.withTime(xmlToJson)(_props.xml);
             timing.parseXMLOrLawtext = parseXMLOrLawtextTime;
 
             onMessage("制御タグを追加しています...");

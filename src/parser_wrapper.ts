@@ -4,7 +4,7 @@ import { ParseError } from "generic-parser/lib/core";
 import { StringPos } from "generic-parser";
 import * as analyzer from "./analyzer";
 import * as parser from "./parser";
-import * as util from "./util";
+import { EL } from "./node/el";
 
 const lex = (text: string): [string, { [key: number]: number }, number] => {
 
@@ -84,7 +84,7 @@ const lex = (text: string): [string, { [key: number]: number }, number] => {
 };
 
 
-export const parse = (text: string, options: Record<string, unknown> = {}): util.EL => {
+export const parse = (text: string, options: Record<string, unknown> = {}): EL => {
 
     // console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
     // let t0 = (new Date()).getTime();
@@ -112,7 +112,7 @@ export const parse = (text: string, options: Record<string, unknown> = {}): util
     }
 };
 
-export const analyze = (law: util.EL): analyzer.Analysis => {
+export const analyze = (law: EL): analyzer.Analysis => {
 
     // console.error("\\\\\\\\\\ analyze start \\\\\\\\\\");
     // let t0 = (new Date()).getTime();

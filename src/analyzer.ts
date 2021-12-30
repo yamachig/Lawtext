@@ -4,8 +4,13 @@
 import sha512 from "hash.js/lib/hash/sha/512";
 import { LAWNUM_TABLE, KEY_LENGTH } from "./lawnum_table";
 import * as parser from "./parser";
-import * as util from "./util";
-import { Container, ContainerType, EL, Env, RelPos, Span, throwError } from "./util";
+import { throwError } from "./util";
+import { Container, ContainerType } from "./node/container";
+import { Env } from "./node/env";
+import { Span } from "./node/span";
+import { EL, isJsonEL } from "./node/el";
+import { RelPos, Pointer, Ranges } from "./node/pointer";
+import { lawTypes, paragraphItemSentenceTags } from "./lawUtil";
 
 export const getLawNameLength = (lawNum: string): number => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -253,7 +258,7 @@ export class Declarations {
     }
 }
 
-const parseRanges = (text: string): util.Ranges => { // closed
+const parseRanges = (text: string): Ranges => { // closed
     if (text === "") return [];
     try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -265,12 +270,12 @@ const parseRanges = (text: string): util.Ranges => { // closed
 };
 
 const locatePointer = (
-    origPointer: util.Pointer,
-    prevPointer: util.Pointer | null,
+    origPointer: Pointer,
+    prevPointer: Pointer | null,
     currentSpan: Span,
-): util.Pointer => {
+): Pointer => {
 
-    let locatedPointer: util.Pointer;
+    let locatedPointer: Pointer;
 
     const head = origPointer[0];
     const headType = getContainerType(head.tag);
@@ -382,14 +387,14 @@ const locatePointer = (
     return locatedPointer;
 };
 
-const locateRanges = (origRanges: util.Ranges, currentSpan: Span) => {
-    const ranges: util.Ranges = [];
+const locateRanges = (origRanges: Ranges, currentSpan: Span) => {
+    const ranges: Ranges = [];
 
-    let prevPointer: util.Pointer | null = null;
+    let prevPointer: Pointer | null = null;
     for (const [origFrom, origTo] of origRanges) {
         const from = locatePointer(origFrom, prevPointer, currentSpan);
         prevPointer = from;
-        let to: util.Pointer | null;
+        let to: Pointer | null;
         if (origFrom === origTo) {
             to = from;
         } else {
@@ -606,8 +611,8 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
 
     const paragraph = spans[spanIndex].env.container;
     for (const item of paragraph.parent?.children ?? []) {
-        const sentence = item.el.children.find(el => util.isJsonEL(el) && (util.paragraphItemSentenceTags as unknown as string[]).includes(el.tag));
-        if (!sentence || !util.isJsonEL(sentence)) continue;
+        const sentence = item.el.children.find(el => isJsonEL(el) && (paragraphItemSentenceTags as unknown as string[]).includes(el.tag));
+        if (!sentence || !isJsonEL(sentence)) continue;
 
         let nameSpan: Span|null = null;
         let name: string|null = null;
@@ -616,7 +621,7 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
             if (sentence.children.length < 2) continue;
 
             const [nameCol, valCol] = sentence.children;
-            if (!util.isJsonEL(nameCol) || !util.isJsonEL(valCol)) continue;
+            if (!isJsonEL(nameCol) || !isJsonEL(valCol)) continue;
 
             name = nameCol.text;
             value = valCol.text;
@@ -660,7 +665,7 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
 
         const scope = !scopeText
             ? [new ScopeRange(spanIndex, 0, spans.length, 0)]
-            : util.lawTypes.some(([ptn]) => {
+            : lawTypes.some(([ptn]) => {
                 const re = new RegExp(`^この${ptn}`);
                 return re.exec(scopeText);
             })

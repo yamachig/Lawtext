@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { EL, __Text } from "../util";
+import { EL } from "../node/el";
+import { __Text } from "../node/control";
 import { factory, ValueRule } from "./common";
 import { $DEDENT, $INDENT, $_ } from "./lexical";
 

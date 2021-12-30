@@ -1,5 +1,6 @@
 import * as xpath from "xpath";
 import * as util from "../util";
+import { JsonEL } from "../node/el"
 import { compare, EditTable } from "./edit_table";
 
 export enum TagType {
@@ -129,7 +130,7 @@ const warningAttrKey = new Set([
     "Id",
 ]);
 
-export class ComparableEL implements util.JsonEL {
+export class ComparableEL implements JsonEL {
     public tag = "";
     public attr: { [key: string]: string | undefined } = {};
     public children: ComparableEL[] = [];
@@ -139,7 +140,7 @@ export class ComparableEL implements util.JsonEL {
     public parent?: ComparableEL;
     public textCache: string | null = null;
 
-    constructor(el: util.JsonEL | string, parent?: ComparableEL, index = 0) {
+    constructor(el: JsonEL | string, parent?: ComparableEL, index = 0) {
         this.index = index;
         this.parent = parent;
         this.nextIndex = index + 1;
@@ -215,7 +216,7 @@ export enum LawDiffMode {
     WarningAsNoDiff = "WarningAsNoDiff",
 }
 
-export const lawDiff = (oldJson: util.JsonEL, newJson: util.JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll): LawDiffResult<string> => {
+export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll): LawDiffResult<string> => {
 
     const oldRoot = new ComparableEL(oldJson);
     const oldELs = [...oldRoot.allList()];

@@ -1,5 +1,6 @@
 import * as std from "../std_law";
-import { assertNever, EL, NotImplementedError } from "../util";
+import { EL } from "../node/el";
+import { assertNever, NotImplementedError } from "../util";
 
 const INDENT = "  ";
 const MARGIN = "　";

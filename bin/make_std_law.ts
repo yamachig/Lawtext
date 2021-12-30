@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { EL, xmlToJson } from "../src/util";
+import { EL, xmlToJson } from "../src/node/el";
 import path from "path";
 
 // const Node = {
@@ -24,7 +24,7 @@ function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
 }
 
 elementIfs.push(`\
-import { EL } from "./util";
+import { EL } from "./node/el";
 `);
 elementIfs.push(`\
 export interface __EL extends EL {

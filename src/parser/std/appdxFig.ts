@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { AppdxFig, newStdEL } from "../../std_law";
-import { __Text } from "../../util";
+import { __Text } from "../../node/control";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";
 import { $_, $NEWLINE, $INDENT, $DEDENT } from "../lexical";

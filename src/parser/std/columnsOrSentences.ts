@@ -1,6 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 import { newStdEL } from "../../std_law";
-import { __Text, EL } from "../../util";
+import { __Text } from "../../node/control";
+import { EL } from "../../node/el";
 import { factory, ValueRule } from "../common";
 import { $INLINE, $PERIOD_SENTENCE_FRAGMENT } from "../inline";
 import { $__ } from "../lexical";

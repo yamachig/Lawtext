@@ -1,6 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 import { newStdEL } from "../../std_law";
-import { __Text, setItemNum } from "../../util";
+import { __Text } from "../../node/control";
+import { setItemNum } from "../../lawUtil";
 import { factory, ValueRule } from "../common";
 import { $INLINE } from "../inline";
 import { $DEDENT, $INDENT, $NEWLINE, $__ } from "../lexical";

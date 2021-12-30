@@ -6,7 +6,7 @@ import * as analyzer from "./analyzer";
 import { parse } from "./parser_wrapper";
 import * as renderer from "./renderer";
 import renderLawtext from "./renderers/lawtext";
-import * as util from "./util";
+import { EL, JsonEL, xmlToJson, loadEl } from "./node/el";
 
 
 interface Args {
@@ -62,7 +62,7 @@ export const main = (args: Args): void => {
         }
     }
 
-    let law: util.EL | null = null;
+    let law: EL | null = null;
     // let analysis: {} | null = null;
 
     void new Promise<string>((resolve /**/) => {
@@ -85,14 +85,14 @@ export const main = (args: Args): void => {
     }).then((intext: string) => {
 
         if (intype === "xml") {
-            law = util.xmlToJson(intext);
+            law = xmlToJson(intext);
             if (!noanalyze) {
                 analyzer.stdxmlToExt(law);
             }
         } else if (intype === "json") {
-            const rawLaw = JSON.parse(intext) as util.JsonEL;
+            const rawLaw = JSON.parse(intext) as JsonEL;
             try {
-                law = util.loadEl(rawLaw) as util.EL;
+                law = loadEl(rawLaw) as EL;
             } catch (e) {
                 console.error("[loading json at main]", e);
                 throw e;
@@ -105,7 +105,7 @@ export const main = (args: Args): void => {
                 throw e;
             }
             if (noanalyze) {
-                law = util.loadEl(law.json()) as util.EL;
+                law = loadEl(law.json()) as EL;
             }
         }
 

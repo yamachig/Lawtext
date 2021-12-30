@@ -1,6 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 import { newStdEL, Paragraph, Item, Subitem1, Subitem2, Subitem3, Subitem4, Subitem5, Subitem6, Subitem7, Subitem8, Subitem9, Subitem10 } from "../../std_law";
-import { aiuChars, articleGroupType, irohaChars, paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags, parseNamedNum, PointerFragment, RelPos, setItemNum } from "../../util";
+import { aiuChars, articleGroupType, irohaChars, paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags, parseNamedNum, setItemNum } from "../../lawUtil";
+import { PointerFragment, RelPos } from "../../node/pointer";
 import { factory, ValueRule } from "../common";
 import { $DEDENT, $INDENT, $NEWLINE, $__ } from "../lexical";
 import { makeRangesRule } from "../range";

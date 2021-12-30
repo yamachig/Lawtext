@@ -1,5 +1,6 @@
 import { fetchLawData } from "../elaws_api";
-import { assertNever, EL, elementToJson } from "../util";
+import { assertNever } from "../util";
+import { EL, elementToJson } from "../node/el";
 import { LawInfo } from "./lawinfo";
 import { Loader } from "./loaders/common";
 import { FetchElawsLoader } from "./loaders/FetchElawsLoader";
