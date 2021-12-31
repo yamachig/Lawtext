@@ -79,7 +79,7 @@ void (async () => { //[md-ignore]
             .assignDocument()
             .while(() => set.size < 10)
             .forEach(law => {
-                for (const tag of lawtext.coreUtil.paragraphItemSentenceTags) {
+                for (const tag of lawtext.lawUtil.paragraphItemSentenceTags) {
                     for (const el of Array.from(law.document.getElementsByTagName(tag))) {
                         const text = (el.textContent ?? "").trim();
                         if (/の意[義味].*に定めるところによる/.exec(text) && !set.has(text)) {

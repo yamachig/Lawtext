@@ -1,8 +1,8 @@
 import $ from "jquery";
-import * as std from "lawtext/dist/src/std_law";
-import * as util from "lawtext/dist/src/util";
+import * as std from "lawtext/dist/src/law/std";
+import { EL } from "lawtext/dist/src/node/el";
 import * as renderer from "lawtext/dist/src/renderer";
-import render_lawtext from "lawtext/dist/src/renderers/lawtext";
+import render_lawtext from "lawtext/dist/src/renderer/lawtext";
 import { saveAs } from "file-saver";
 import { getLawTitleWithNum } from "@appsrc/law_util";
 
@@ -60,7 +60,7 @@ const tobeDownloadedRange = (): SelectionRange | null => {
     };
 };
 
-export const containerInfoOf = (el: util.EL | string): {tag: string, id: string | number} => {
+export const containerInfoOf = (el: EL | string): {tag: string, id: string | number} => {
     if (typeof el === "string") {
         return { tag: "", id: "" };
     } else {
@@ -68,22 +68,22 @@ export const containerInfoOf = (el: util.EL | string): {tag: string, id: string 
     }
 };
 
-const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
+const getLawRange = (origLaw: EL, range: SelectionRange) => {
     const sPos = range.start;
     const ePos = range.end;
 
-    const law = new util.EL(
+    const law = new EL(
         origLaw.tag,
         origLaw.attr,
     );
 
-    const origLawNum = origLaw.children.find((el) => typeof el !== "string" && el.tag === "LawNum") as util.EL;
+    const origLawNum = origLaw.children.find((el) => typeof el !== "string" && el.tag === "LawNum") as EL;
     if (origLawNum) {
         law.append(origLawNum);
     }
 
-    const origLawBody = origLaw.children.find((el) => typeof el !== "string" && el.tag === "LawBody") as util.EL;
-    const lawBody = new util.EL(
+    const origLawBody = origLaw.children.find((el) => typeof el !== "string" && el.tag === "LawBody") as EL;
+    const lawBody = new EL(
         origLawBody.tag,
         origLawBody.attr,
     );
@@ -98,10 +98,10 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
     let inContainerRange = false;
     let inItemRange = false;
 
-    const findEls = (el: util.EL | string, tag: string) => {
-        if (!(el instanceof util.EL)) return [];
+    const findEls = (el: EL | string, tag: string) => {
+        if (!(el instanceof EL)) return [];
         if (el.tag === tag) return [el];
-        let ret: util.EL[] = [];
+        let ret: EL[] = [];
         for (const child of el.children) {
             ret = ret.concat(findEls(child, tag));
         }
@@ -119,7 +119,7 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
             inContainerRange = true;
         }
 
-        const containerChildren: Array<util.EL | string> = [];
+        const containerChildren: Array<EL | string> = [];
 
         // if (
         //     inContainerRange &&
@@ -179,7 +179,7 @@ const getLawRange = (origLaw: util.EL, range: SelectionRange) => {
         if (containerChildren.length > 0) {
             const supplProvisionLabel = toplevel.children.find((el) => typeof el !== "string" && el.tag === "SupplProvisionLabel");
             if (supplProvisionLabel) containerChildren.unshift(supplProvisionLabel);
-            lawBody.append(new util.EL(
+            lawBody.append(new EL(
                 toplevel.tag,
                 toplevel.attr,
                 containerChildren,

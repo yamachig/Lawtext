@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import * as std from "lawtext/dist/src/std_law";
-import { assertNever, EL } from "lawtext/dist/src/util";
+import * as std from "lawtext/dist/src/law/std";
+import { assertNever } from "lawtext/dist/src/util";
+import { EL } from "lawtext/dist/src/node/el";
 import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { downloadDocx, downloadLawtext, downloadXml } from "@appsrc/actions/download";
 import { openFile } from "@appsrc/actions/openFile";

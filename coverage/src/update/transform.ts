@@ -2,12 +2,12 @@
 import { DOMParser } from "@xmldom/xmldom";
 import * as law_diff from "lawtext/dist/src/diff/law_diff";
 import * as parser_wrapper from "lawtext/dist/src/parser_wrapper";
-import { render as renderLawtext } from "lawtext/dist/src/renderers/lawtext";
+import { render as renderLawtext } from "lawtext/dist/src/renderer/lawtext";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
-import { EL, xmlToJson } from "lawtext/dist/src/util";
+import { EL, xmlToJson } from "lawtext/dist/src/node/el";
 import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { Era, LawCoverage, LawType } from "../lawCoverage";
-import { Law } from "lawtext/dist/src/std_law";
+import { Law } from "lawtext/dist/src/law/std";
 
 const domParser = new DOMParser();
 type DeNull<T> = T extends null ? never : T;

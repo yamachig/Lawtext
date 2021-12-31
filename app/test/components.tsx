@@ -3,8 +3,8 @@ import chai from "chai";
 import { it } from "mocha";
 import ReactDOMServer from "react-dom/server";
 import { analyze } from "lawtext/dist/src/analyzer";
-import * as std from "lawtext/dist/src/std_law";
-import * as util from "lawtext/dist/src/util";
+import * as std from "lawtext/dist/src/law/std";
+import { xmlToJson } from "lawtext/dist/src/node/el";
 import { LawView } from "@appsrc/components/LawView";
 import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 import path from "path";
@@ -34,7 +34,7 @@ const renderAllLaws = async () => {
             const origXML = await loader.loadLawXMLByInfo(lawInfo);
             if (origXML === null) throw Error("XML not found");
 
-            const origEL = util.xmlToJson(origXML);
+            const origEL = xmlToJson(origXML);
             const analysis = analyze(origEL);
 
             let currentState: BaseLawtextAppPageState = {

@@ -1,4 +1,4 @@
-import * as std from "lawtext/dist/src/std_law";
+import * as std from "lawtext/dist/src/law/std";
 import { LawInfo } from "lawtext/dist/src/data/lawinfo";
 
 export const traceTitles = (el: Element, _titles: string[] = []): string[] => {

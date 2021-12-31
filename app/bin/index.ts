@@ -1,8 +1,8 @@
 import { renderToString } from "react-dom/server";
 import yargs from "yargs";
 import { analyze } from "lawtext/dist/src/analyzer";
-import * as std from "lawtext/dist/src/std_law";
-import * as util from "lawtext/dist/src/util";
+import * as std from "lawtext/dist/src/law/std";
+import { xmlToJson } from "lawtext/dist/src/node/el";
 import { LawView } from "@appsrc/components/LawView";
 import path from "path";
 import { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "../src/components/LawtextAppPageState";
@@ -24,7 +24,7 @@ const render = async (lawNum: string) => {
     const origXML = await loader.loadLawXMLByInfo(lawInfo);
     if (origXML === null) throw Error("XML not found");
 
-    const origEL = util.xmlToJson(origXML);
+    const origEL = xmlToJson(origXML);
     const analysis = analyze(origEL);
 
     let currentState: BaseLawtextAppPageState = {

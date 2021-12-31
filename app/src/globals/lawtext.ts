@@ -8,13 +8,13 @@ import * as coreQuery from "./coreQuery";
 import * as law_util from "@appsrc/law_util";
 import { elawsLoader, storedLoader } from "@appsrc/lawdata/loaders";
 import { LawInfo } from "lawtext/dist/src/data/lawinfo";
-import * as _coreUtil from "lawtext/dist/src/util";
+import * as _lawUtil from "lawtext/dist/src/law/lawUtil";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
 
 /**
- * `core.util` モジュールの内容。
+ * `lawtext.law.lawUtil` モジュールの内容。
  */
-export const coreUtil = _coreUtil;
+export const lawUtil = _lawUtil;
 
 /**
  * `Element` の親をさかのぼって条番号や項番号などの階層を取得します。
