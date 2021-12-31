@@ -86,11 +86,11 @@ const rules = {
 export type ParseError = _ParseError<StringPos>;
 
 export const parse = <TRuleKey extends (keyof Rules) = "start">(
-    target: string,
+    lawtext: string,
     options: {startRule?: TRuleKey} & Record<string | number | symbol, unknown> = {},
 ): ValueOfRule<Rules[TRuleKey]> => {
 
-    const [lexed, indentMemo /**/] = lex(target);
+    const [lexed, indentMemo /**/] = lex(lawtext);
 
     let rule: ValueRule<unknown> = $start;
     if ("startRule" in options) {
@@ -113,6 +113,6 @@ export const parse = <TRuleKey extends (keyof Rules) = "start">(
     throw new Error(`Parse error:
 MatchFail at max offset:
 
-${env.state.maxOffsetMatchContext && makeMatchContextString(env.state.maxOffsetMatchContext, target)}
+${env.state.maxOffsetMatchContext && makeMatchContextString(env.state.maxOffsetMatchContext, lexed)}
 `);
 };
