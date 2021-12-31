@@ -1,4 +1,4 @@
-import * as std from "../std_law";
+import * as std from "../law/std";
 import { EL } from "../node/el";
 import { assertNever, NotImplementedError } from "../util";
 

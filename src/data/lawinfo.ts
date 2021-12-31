@@ -1,4 +1,4 @@
-import { reLawnum } from "../lawUtil";
+import { reLawnum } from "../law/lawUtil";
 
 export type LawInfoListItem = [
     LawID: string,

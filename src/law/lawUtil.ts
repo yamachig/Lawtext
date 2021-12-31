@@ -1,6 +1,6 @@
-import { EL } from "./node/el";
-import * as std from "./std_law";
-import { assertNever } from "./util";
+import { EL } from "../node/el";
+import * as std from "./std";
+import { assertNever } from "../util";
 
 export const paragraphItemTags = [
     "Paragraph",

@@ -12,7 +12,7 @@ const buildTemplates = async (basePath = defaultBasePath) => {
     // const distPath = path.join(basePath, "dist/src");
 
     let templates = nunjucks.precompile(
-        path.join(srcPath, "templates"),
+        path.join(srcPath, "renderer/templates"),
         {
             include: [".+"],
         },
@@ -22,7 +22,7 @@ ${templates}
 if(exports) exports.nunjucksPrecompiled = window.nunjucksPrecompiled;
 `;
     await promisify(fs.writeFile)(
-        path.join(srcPath, "templates.js"),
+        path.join(srcPath, "renderer/templates.js"),
         templates,
         { encoding: "utf-8" },
     );

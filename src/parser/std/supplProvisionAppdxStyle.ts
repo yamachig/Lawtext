@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../std_law";
+import { newStdEL } from "../../law/std";
 import { __Text } from "../../node/control";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";

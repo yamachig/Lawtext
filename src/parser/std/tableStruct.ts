@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL, StdEL, Table } from "../../std_law";
+import { newStdEL, StdEL, Table } from "../../law/std";
 import { __Text } from "../../node/control";
 import { factory, ValueRule } from "../common";
 import { $INLINE } from "../inline";

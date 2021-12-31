@@ -21,7 +21,7 @@ MANIFEST
 /dist
 /dist-dev
 /dist-prod
-/src/templates.js
-/src/lawnum_table.ts
+/src/renderer/templates.js
+/src/law/lawNumTable.ts
 /test/lawdata
 /data

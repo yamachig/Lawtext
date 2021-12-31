@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL, List, Sublist1, Sublist2, Sublist3 } from "../../std_law";
-import { listTags } from "../../lawUtil";
+import { newStdEL, List, Sublist1, Sublist2, Sublist3 } from "../../law/std";
+import { listTags } from "../../law/lawUtil";
 import { factory, ValueRule } from "../common";
 import { $DEDENT, $INDENT, $NEWLINE } from "../lexical";
 import { $columns_or_sentences } from "./columnsOrSentences";

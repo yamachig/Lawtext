@@ -1,6 +1,6 @@
 
 import yargs from "yargs";
-import { ProgressBar } from "../src/term_util";
+import { ProgressBar } from "../src/util/term";
 import * as save_fs from "../src/data/save_fs";
 import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader";
 

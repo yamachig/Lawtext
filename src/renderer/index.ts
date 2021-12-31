@@ -5,7 +5,7 @@ import * as nunjucks from "nunjucks";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { nunjucksPrecompiled } from "./templates";
-import { JsonEL } from "./node/el";
+import { JsonEL } from "../node/el";
 
 
 const restructureTable = (table: JsonEL): JsonEL => {

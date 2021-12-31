@@ -1,7 +1,7 @@
 import fs from "fs";
 import { promisify } from "util";
 import { download, saveList } from "../src/data/save_fs";
-import { ProgressBar } from "../src/term_util";
+import { ProgressBar } from "../src/util/term";
 import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader";
 // import { before } from "mocha";
 import dotenv from "dotenv";

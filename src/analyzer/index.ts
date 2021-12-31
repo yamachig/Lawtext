@@ -2,15 +2,15 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import sha512 from "hash.js/lib/hash/sha/512";
-import { LAWNUM_TABLE, KEY_LENGTH } from "./lawnum_table";
-import * as parser from "./parser";
-import { throwError } from "./util";
-import { Container, ContainerType } from "./node/container";
-import { Env } from "./node/env";
-import { Span } from "./node/span";
-import { EL, isJsonEL } from "./node/el";
-import { RelPos, Pointer, Ranges } from "./node/pointer";
-import { lawTypes, paragraphItemSentenceTags } from "./lawUtil";
+import { LAWNUM_TABLE, KEY_LENGTH } from "../law/lawNumTable";
+import * as parser from "../parser";
+import { throwError } from "../util";
+import { Container, ContainerType } from "../node/container";
+import { Env } from "../node/env";
+import { Span } from "../node/span";
+import { EL, isJsonEL } from "../node/el";
+import { RelPos, Pointer, Ranges } from "../node/pointer";
+import { lawTypes, paragraphItemSentenceTags } from "../law/lawUtil";
 
 export const getLawNameLength = (lawNum: string): number => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -145,11 +145,11 @@ const extractSpans = (law: EL): [Span[], Container[], Container] => {
 };
 
 class Pos {
-    public span: Span
-    public spanIndex: number
-    public textIndex: number
-    public length: number
-    public env: Env
+    public span: Span;
+    public spanIndex: number;
+    public textIndex: number;
+    public length: number;
+    public env: Env;
     constructor(span: Span, spanIndex: number, textIndex: number, length: number, env: Env) {
         this.span = span;
         this.spanIndex = spanIndex;
@@ -160,11 +160,11 @@ class Pos {
 }
 
 export class ____Declaration extends EL {
-    public type: string
-    public name: string
-    public scope: ScopeRange[]
-    public value: string | null
-    public namePos: Pos
+    public type: string;
+    public name: string;
+    public scope: ScopeRange[];
+    public value: string | null;
+    public namePos: Pos;
     constructor(type: string, name: string, value: string | null, scope: ScopeRange[], namePos: Pos) {
         super("____Declaration");
 
@@ -189,10 +189,10 @@ export class ____Declaration extends EL {
 }
 
 class ScopeRange {
-    public startSpanIndex: number
-    public startTextIndex: number
-    public endSpanIndex: number
-    public endTextIndex: number
+    public startSpanIndex: number;
+    public startTextIndex: number;
+    public endSpanIndex: number;
+    public endTextIndex: number;
     constructor(
         startSpanIndex: number,
         startTextIndex: number,
@@ -207,9 +207,9 @@ class ScopeRange {
 }
 
 class ____VarRef extends EL {
-    public refName: string
-    public declaration: ____Declaration
-    public refPos: Pos
+    public refName: string;
+    public declaration: ____Declaration;
+    public refPos: Pos;
     constructor(refName: string, declaration: ____Declaration, refPos: Pos) {
         super("____VarRef");
 
@@ -224,7 +224,7 @@ class ____VarRef extends EL {
 }
 
 export class Declarations {
-    public declarations: ____Declaration[]
+    public declarations: ____Declaration[];
     constructor() {
         this.declarations = [];
     }

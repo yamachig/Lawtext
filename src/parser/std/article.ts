@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL, StdEL } from "../../std_law";
-import { articleGroupType, parseNamedNum } from "../../lawUtil";
+import { newStdEL, StdEL } from "../../law/std";
+import { articleGroupType, parseNamedNum } from "../../law/lawUtil";
 import { PointerFragment, RelPos } from "../../node/pointer";
 import { factory } from "../common";
 import { $ROUND_PARENTHESES_INLINE } from "../inline";

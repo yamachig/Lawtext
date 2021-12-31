@@ -1,12 +1,4 @@
-"use strict";
-
-import { ParseError } from "generic-parser/lib/core";
-import { StringPos } from "generic-parser";
-import * as analyzer from "./analyzer";
-import * as parser from "./parser";
-import { EL } from "./node/el";
-
-const lex = (text: string): [string, { [key: number]: number }, number] => {
+export const lex = (text: string): [string, { [key: number]: number }, number] => {
 
     const lines = text.split(/\r?\n/);
     const linesCount = lines.length;
@@ -81,44 +73,4 @@ const lex = (text: string): [string, { [key: number]: number }, number] => {
     const replacedText = replacedLines.join("\n");
 
     return [replacedText, indentMemo, linesCount];
-};
-
-
-export const parse = (text: string, options: Record<string, unknown> = {}): EL => {
-
-    // console.error("\\\\\\\\\\ parse start \\\\\\\\\\");
-    // let t0 = (new Date()).getTime();
-
-    const [lexed, indentMemo /**/] = lex(text);
-    // console.error(lexed);
-    try {
-        options = Object.assign({ indentMemo, startRule: "start" }, options);
-        const parsed = parser.parse(lexed, options);
-
-        // let t1 = (new Date()).getTime();
-        // console.error(`/////  parse end  /////`);
-        // console.error(`( ${Math.round((t1 - t0) / lines_count * 1000)} μs/line  =  ${t1 - t0} ms / ${lines_count} lines )`);
-        return parsed;
-    } catch (_e) {
-        const e = _e as ParseError<StringPos>;
-        // console.error("##### parse error #####");
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (e.location) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
-            console.error(`${e.name} at line ${e.location.start.line} column ${e.location.start.column}: ${e.message}`);
-            // console.error(`${JSON.stringify(e, null, 4)}`);
-        }
-        throw (e);
-    }
-};
-
-export const analyze = (law: EL): analyzer.Analysis => {
-
-    // console.error("\\\\\\\\\\ analyze start \\\\\\\\\\");
-    // let t0 = (new Date()).getTime();
-    const analysis = analyzer.analyze(law);
-    // let t1 = (new Date()).getTime();
-    // console.error(`/////  analyze end  /////`);
-    // console.error(`(${t1 - t0} ms total)`);
-    return analysis;
 };

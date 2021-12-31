@@ -66,7 +66,7 @@ export const buildLawNumTable = async (basePath = defaultBasePath) => {
         table += value;
     }
 
-    await promisify(fs.writeFile)(path.join(srcPath, "lawnum_table.ts"), `
+    await promisify(fs.writeFile)(path.join(srcPath, "law/lawNumTable.ts"), `
 "use strict";
 
 export const LAWNUM_TABLE: { [key: string]: number } = {};
@@ -77,12 +77,12 @@ export const KEY_LENGTH = ${KEY_LENGTH};
 
 const LEN_LENGTH = ${LEN_LENGTH};
 
-for(let i = 0; i < LAWNUM_TABLE_RAW.length; i += KEY_LENGTH + LEN_LENGTH) {
+for (let i = 0; i < LAWNUM_TABLE_RAW.length; i += KEY_LENGTH + LEN_LENGTH) {
     const key = parseInt(LAWNUM_TABLE_RAW.slice(i, i + KEY_LENGTH), 16);
     const length = parseInt(LAWNUM_TABLE_RAW.slice(i + KEY_LENGTH, i + KEY_LENGTH + LEN_LENGTH), 16);
     LAWNUM_TABLE[key] = length;
 }
-`.trimLeft());
+`.trimStart());
 };
 
 if (typeof require !== "undefined" && require.main === module) {

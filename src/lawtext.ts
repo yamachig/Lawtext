@@ -3,9 +3,9 @@
 import * as argparse from "argparse";
 import * as fs from "fs";
 import * as analyzer from "./analyzer";
-import { parse } from "./parser_wrapper";
+import { parse } from "./parser";
 import * as renderer from "./renderer";
-import renderLawtext from "./renderers/lawtext";
+import renderLawtext from "./renderer/lawtext";
 import { EL, JsonEL, xmlToJson, loadEl } from "./node/el";
 
 

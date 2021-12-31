@@ -1,4 +1,4 @@
-import * as std from "../std_law";
+import * as std from "../law/std";
 import { ValueOfRule, ParseError as _ParseError } from "generic-parser/lib/core";
 import { StringPos } from "generic-parser";
 import { factory, initializer, makeMatchContextString, ValueRule } from "./common";
@@ -6,7 +6,7 @@ import { rules as inlineRules } from "./inline";
 import { $NEWLINE, rules as lexicalRules } from "./lexical";
 import { rules as rangeRules } from "./range";
 import { rules as xmlRules } from "./xml";
-import { $law } from "./std/law";
+import { lex } from "./lex";
 
 import * as law from "./std/law";
 import * as toc from "./std/toc";
@@ -39,7 +39,7 @@ const $start: ValueRule<std.Law> = factory
         .and(r => r
             .zeroOrMore(() => $NEWLINE),
         )
-        .and(() => $law, "law")
+        .and(() => law.$law, "law")
         .and(r => r
             .nextIsNot(r => r.anyOne()),
         )
@@ -85,19 +85,32 @@ const rules = {
 
 export type ParseError = _ParseError<StringPos>;
 
-export const parse = <TRuleKey extends (keyof Rules) = "start">(target: string, options: {startRule?: TRuleKey} & Record<string | number | symbol, unknown>): ValueOfRule<Rules[TRuleKey]> => {
+export const parse = <TRuleKey extends (keyof Rules) = "start">(
+    target: string,
+    options: {startRule?: TRuleKey} & Record<string | number | symbol, unknown> = {},
+): ValueOfRule<Rules[TRuleKey]> => {
+
+    const [lexed, indentMemo /**/] = lex(target);
+
     let rule: ValueRule<unknown> = $start;
     if ("startRule" in options) {
         rule = rules[options.startRule as keyof typeof rules];
     }
-    const env = initializer(options);
+
+    const env = initializer({
+        ...options,
+        indentMemo,
+    });
+
     const result = rule.match(
         0,
-        target,
+        lexed,
         env,
     );
+
     if (result.ok) return result.value as ValueOfRule<Rules[TRuleKey]>;
-    throw new Error(`
+
+    throw new Error(`Parse error:
 MatchFail at max offset:
 
 ${env.state.maxOffsetMatchContext && makeMatchContextString(env.state.maxOffsetMatchContext, target)}
