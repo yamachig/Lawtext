@@ -9,7 +9,7 @@ import { $_EOL } from "../../../parser/lexical";
 export const $tocHeadLine = factory
     .withName("tocHeadLine")
     .sequence(s => s
-        .and(() => $indents, "indentStruct")
+        .and(() => $indents, "indentsStruct")
         .and(r => r
             .sequence(s => s
                 .and(r => r.regExp(/^目\s*次/), "label")
@@ -26,11 +26,11 @@ export const $tocHeadLine = factory
             )
         , "contentStruct")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentStruct, contentStruct, lineEndText, text }) => {
+        .action(({ indentsStruct, contentStruct, lineEndText, text }) => {
             return {
                 type: LineType.TOC,
                 text: text(),
-                ...indentStruct,
+                ...indentsStruct,
                 ...contentStruct,
                 lineEndText,
             } as TOCHeadLine;

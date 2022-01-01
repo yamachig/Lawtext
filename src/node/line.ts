@@ -19,7 +19,7 @@ interface BaseLine {
     text: string;
 }
 
-interface IndentLine extends BaseLine {
+interface IndentsLine extends BaseLine {
     indentDepth: number;
     indentTexts: string[];
     contentText: string;
@@ -30,14 +30,14 @@ export interface BlankLine extends BaseLine {
     type: LineType.BNK;
 }
 
-export interface TOCHeadLine extends IndentLine {
+export interface TOCHeadLine extends IndentsLine {
     type: LineType.TOC;
     content:
         | std.TOC
         ;
 }
 
-export interface ArticleGroupHeadLine extends IndentLine {
+export interface ArticleGroupHeadLine extends IndentsLine {
     type: LineType.ARG;
     content:
         | std.Part
@@ -48,7 +48,7 @@ export interface ArticleGroupHeadLine extends IndentLine {
         ;
 }
 
-export interface AppdxItemHeadLine extends IndentLine {
+export interface AppdxItemHeadLine extends IndentsLine {
     type: LineType.APP;
     content:
         | std.Appdx
@@ -60,7 +60,7 @@ export interface AppdxItemHeadLine extends IndentLine {
         ;
 }
 
-export interface SupplProvisionHeadLine extends IndentLine {
+export interface SupplProvisionHeadLine extends IndentsLine {
     type: LineType.SPR;
     content:
         | std.SupplProvision
@@ -70,7 +70,7 @@ export interface SupplProvisionHeadLine extends IndentLine {
         ;
 }
 
-export interface SupplProvisionAppdxItemHeadLine extends IndentLine {
+export interface SupplProvisionAppdxItemHeadLine extends IndentsLine {
     type: LineType.SPA;
     content:
         | std.SupplProvisionAppdx
@@ -79,12 +79,12 @@ export interface SupplProvisionAppdxItemHeadLine extends IndentLine {
         ;
 }
 
-export interface ArticleLine extends IndentLine {
+export interface ArticleLine extends IndentsLine {
     type: LineType.ART;
     content: std.Article;
 }
 
-export interface ParagraphItemLine extends IndentLine {
+export interface ParagraphItemLine extends IndentsLine {
     type: LineType.PIT;
     content:
         | std.Paragraph
@@ -102,16 +102,16 @@ export interface ParagraphItemLine extends IndentLine {
         ;
 }
 
-export interface TableColumnLine extends IndentLine {
+export interface TableColumnLine extends IndentsLine {
     type: LineType.TBL;
     content: std.TableColumn;
 }
 
-export interface ControlLine extends IndentLine {
+export interface ControlLine extends IndentsLine {
     type: LineType.CTL;
 }
 
-export interface OtherLine extends IndentLine {
+export interface OtherLine extends IndentsLine {
     type: LineType.OTH;
 }
 

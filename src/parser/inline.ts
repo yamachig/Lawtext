@@ -27,6 +27,28 @@ export const $INLINE = factory
     )
 ;
 
+export const $INLINE_EXCLUDE_TRAILING_SPACES = factory
+    .withName("INLINE_EXCLUDE_TRAILING_SPACES")
+    .action(r => r
+        .sequence(c => c
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
+            .and(r => r
+                .oneOrMore(r => r
+                    .choice(c => c
+                        .or(() => $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES)
+                        .or(() => $PARENTHESES_INLINE)
+                        .or(() => $MISMATCH_END_PARENTHESIS),
+                    ),
+                )
+            , "texts"),
+        )
+    , (({ texts }) => {
+        return texts;
+    }),
+    )
+;
+
 export const $NEXTINLINE = factory
     .withName("NEXTINLINE")
     .action(r => r
@@ -180,6 +202,22 @@ export const $OUTSIDE_PARENTHESES_INLINE = factory
     )
 ;
 
+export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES = factory
+    .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES")
+    .action(r => r
+        .sequence(c => c
+            .and(r => r.nextIsNot(() => $INDENT))
+            .and(r => r.nextIsNot(() => $DEDENT))
+            .and(r => r
+                .regExp(/^((?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」])+/)
+            , "plain"),
+        )
+    , (({ plain }) => {
+        return new __Text(plain);
+    }),
+    )
+;
+
 export const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
     .withName("OUTSIDE_ROUND_PARENTHESES_INLINE")
     .action(r => r
@@ -242,7 +280,7 @@ export const $MISMATCH_END_PARENTHESIS = factory
     )
 ;
 
-export const $PARENTHESES_INLINE: ValueRule<EL> = factory
+export const $PARENTHESES_INLINE: ValueRule<__Parentheses | EL> = factory
     .withName("PARENTHESES_INLINE")
     .choice(c => c
         .or(r => r
@@ -299,7 +337,7 @@ export const $PARENTHESES_INLINE: ValueRule<EL> = factory
     )
 ;
 
-export const $PARENTHESES_INLINE_INNER: ValueRule<EL> = factory
+export const $PARENTHESES_INLINE_INNER: ValueRule<__Parentheses | EL> = factory
     .withName("PARENTHESES_INLINE_INNER")
     .choice(c => c
         .or(() => $ROUND_PARENTHESES_INLINE)

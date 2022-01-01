@@ -34,7 +34,7 @@ export const $EOL = factory
 
 export const $_EOL = factory
     .withName("OPTIONAL_WHITESPACES_AND_EOL")
-    .regExp(/^\s*\r?\n/)
+    .regExp(/^[ 　\t]*\r?\n/)
 ;
 
 export const $__ = factory

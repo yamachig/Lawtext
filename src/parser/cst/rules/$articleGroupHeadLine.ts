@@ -1,64 +1,43 @@
 import factory from "../factory";
 import { articleGroupTitleTag, articleGroupType, parseNamedNum } from "../../../law/lawUtil";
-import { $INLINE } from "../../inline";
+import { $INLINE_EXCLUDE_TRAILING_SPACES } from "../../inline";
 import { newStdEL } from "../../../law/std";
 import $articleGroupNum from "./$articleGroupNum";
 import $indents from "./$indents";
 import { ArticleGroupHeadLine, LineType } from "../../../node/line";
-import { $__, $EOL } from "../../lexical";
-import { __Text } from "../../../node/control";
-import { EL } from "../../../node/el";
+import { $__, $_EOL } from "../../lexical";
+import { mergeAdjacentTexts } from "../util";
 
 
 export const $articleGroupHeadLine = factory
     .withName("articleGroupHeadLine")
     .sequence(s => s
-        .and(() => $indents, "indentStruct")
+        .and(() => $indents, "indentsStruct")
         .and( () => $articleGroupNum, "articleGroupNum")
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(c => c
                     .and(() => $__, "space")
-                    .and(() => $INLINE, "inline")
+                    .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "inline")
                     .action(({ space, inline }) => {
                         return { space, inline };
                     })
                 )
             )
         , "tail")
-        .and(() => $EOL, "eol")
-        .action(({ indentStruct, articleGroupNum, tail, eol, text }) => {
-            const headText = [articleGroupNum.text];
-            const tailChildren: (__Text | EL)[] = [];
-            const lineEndText = [eol];
-            if (tail) {
-                headText.push(tail.space);
-                if (tail.inline[0]?.tag === "__Text") {
-                    headText.push(tail.inline[0].text);
-                    tailChildren.push(...tail.inline.slice(1));
-                } else {
-                    tailChildren.push(...tail.inline);
-                }
-                if (tailChildren.slice(-1)[0]?.tag === "__Text") {
-                    const m = /^(.*?)(\s+)/.exec(tailChildren.slice(-1)[0].text);
-                    if (m) {
-                        const replacedTailChildrenTail: (__Text | EL)[] = [];
-                        if (m[1] !== "") {
-                            replacedTailChildrenTail.push(new __Text(m[1]));
-                        }
-                        tailChildren.splice(-1, 1);
-                        tailChildren.push(...replacedTailChildrenTail);
-                        lineEndText.unshift(m[2]);
-                    }
-                }
-            }
+        .and(() => $_EOL, "lineEndText")
+        .action(({ indentsStruct, articleGroupNum, tail, lineEndText, text }) => {
+            const inline = mergeAdjacentTexts([
+                articleGroupNum.text,
+                ...(tail ? [
+                    tail.space,
+                    ...tail.inline,
+                ] : []),
+            ]);
             const articleGroupTitle = newStdEL(
                 articleGroupTitleTag[articleGroupNum.typeChar],
                 {},
-                [
-                    new __Text(headText.join("")),
-                    ...tailChildren,
-                ],
+                inline,
             );
             const articleGroup = newStdEL(
                 articleGroupType[articleGroupNum.typeChar],
@@ -72,10 +51,10 @@ export const $articleGroupHeadLine = factory
             return {
                 type: LineType.ARG,
                 text: text(),
-                ...indentStruct,
+                ...indentsStruct,
                 content: articleGroup,
                 contentText: articleGroup.text,
-                lineEndText: lineEndText.join(""),
+                lineEndText,
             } as ArticleGroupHeadLine;
         })
     )
