@@ -1,0 +1,10 @@
+{
+    "extension": ["js"],
+    "exit": true,
+    "timeout": 10000,
+    "enable-source-maps": true,
+    "spec": [
+        "dist/src/**/*.spec.js",
+        "dist/test/**/*.js"
+    ]
+}

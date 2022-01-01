@@ -22,16 +22,16 @@ export const isRelPos = (object: unknown): object is RelPos => {
     );
 };
 
-export class PointerFragment {
+export class PointerFragment<TTag extends string = string> {
     public relPos: RelPos;
-    public tag: string;
+    public tag: TTag;
     public name: string;
     public num: string | null;
     public locatedContainer: Container | null;
 
     constructor(
         relPos: RelPos,
-        tag: string,
+        tag: TTag,
         name: string,
         num: string | null,
         locatedContainer: Container | null = null,
@@ -43,7 +43,7 @@ export class PointerFragment {
         this.locatedContainer = locatedContainer;
     }
 
-    public copy(): PointerFragment {
+    public copy(): PointerFragment<TTag> {
         return new PointerFragment(
             this.relPos,
             this.tag,
@@ -54,6 +54,6 @@ export class PointerFragment {
     }
 }
 
-export type Pointer = PointerFragment[];
-export type Range = [Pointer, Pointer]; // closed
-export type Ranges = Range[];
+export type Pointer<TTag extends string = string> = PointerFragment<TTag>[];
+export type Range<TTag extends string = string> = [Pointer<TTag>, Pointer<TTag>]; // closed
+export type Ranges<TTag extends string = string> = Range<TTag>[];

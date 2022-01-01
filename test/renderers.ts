@@ -252,101 +252,104 @@ const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
     return table;
 };
 
-it("Render and Parse Lawtext", async () => {
-    // const [list, listByLawnum] = await getLawList();
+describe("Test Renderes", () => {
 
-    const lawNum = "平成二十六年政令第三百九十四号";
+    it("Render and Parse Lawtext", async () => {
+        // const [list, listByLawnum] = await getLawList();
 
-    const lawInfo = await loader.getLawInfoByLawNum(lawNum);
-    if (lawInfo === null) throw Error("LawInfo not found");
-    const origXML = await loader.loadLawXMLByInfo(lawInfo);
-    if (origXML === null) throw new Error(`XML cannot be fetched: ${lawNum}`);
-    console.log(`Temporary directory: "${tempDir}"`);
-    const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
-    const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);
-    const tempParsedXml = path.join(tempDir, `${lawNum}.parsed.xml`);
-    await promisify(fsExtra.ensureDir)(tempDir);
+        const lawNum = "平成二十六年政令第三百九十四号";
 
-    const origDOM = domParser.parseFromString(origXML);
-    await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
+        const lawInfo = await loader.getLawInfoByLawNum(lawNum);
+        if (lawInfo === null) throw Error("LawInfo not found");
+        const origXML = await loader.loadLawXMLByInfo(lawInfo);
+        if (origXML === null) throw new Error(`XML cannot be fetched: ${lawNum}`);
+        console.log(`Temporary directory: "${tempDir}"`);
+        const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
+        const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);
+        const tempParsedXml = path.join(tempDir, `${lawNum}.parsed.xml`);
+        await promisify(fsExtra.ensureDir)(tempDir);
 
-    const origEL = xmlToJson(origXML);
+        const origDOM = domParser.parseFromString(origXML);
+        await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
 
-    let lawtext;
-    try {
-        lawtext = renderLawtext(origEL);
-    } catch (e) {
-        const msg = [
-            `Original XML: "${tempOrigXml}"`,
-            "",
-        ].join("\r\n");
-        console.error(msg);
-        throw e;
-    }
+        const origEL = xmlToJson(origXML);
 
-    await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });
+        let lawtext;
+        try {
+            lawtext = renderLawtext(origEL);
+        } catch (e) {
+            const msg = [
+                `Original XML: "${tempOrigXml}"`,
+                "",
+            ].join("\r\n");
+            console.error(msg);
+            throw e;
+        }
 
-    let parsedEL;
-    try {
-        parsedEL = parse(lawtext);
-    } catch (e) {
-        const msg = [
-            `Original XML: "${tempOrigXml}"`,
-            `Rendered Lawtext: "${tempRenderedLawtext}"`,
-            "",
-        ].join("\r\n");
-        console.error(msg);
-        throw e;
-    }
+        await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });
 
-    analyze(parsedEL);
+        let parsedEL;
+        try {
+            parsedEL = parse(lawtext);
+        } catch (e) {
+            const msg = [
+                `Original XML: "${tempOrigXml}"`,
+                `Rendered Lawtext: "${tempRenderedLawtext}"`,
+                "",
+            ].join("\r\n");
+            console.error(msg);
+            throw e;
+        }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const parsedXML = prettifyXml(outerXML(parsedEL)) as string;
-    const parsedDOM = domParser.parseFromString(parsedXML);
-    await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });
+        analyze(parsedEL);
 
-    const d = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.WarningAsNoDiff);
-    const table: string[][] = [];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const parsedXML = prettifyXml(outerXML(parsedEL)) as string;
+        const parsedDOM = domParser.parseFromString(parsedXML);
+        await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });
 
-    const diffData = makeDiffData(d, origDOM, parsedDOM);
+        const d = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.WarningAsNoDiff);
+        const table: string[][] = [];
 
-    for (const ditem of diffData) {
-        if (ditem.type === LawDiffType.ElementMismatch) {
-            table.push(...makeElementMismatchTable(ditem));
+        const diffData = makeDiffData(d, origDOM, parsedDOM);
 
-        } else if (ditem.type === LawDiffType.ElementChange) {
-            table.push(...makeElementChangeTable(ditem));
+        for (const ditem of diffData) {
+            if (ditem.type === LawDiffType.ElementMismatch) {
+                table.push(...makeElementMismatchTable(ditem));
 
-        } else if (ditem.type === LawDiffType.NoDiff) {
-            table.push(...makeElementNoDiffTable(ditem));
+            } else if (ditem.type === LawDiffType.ElementChange) {
+                table.push(...makeElementChangeTable(ditem));
 
-        } else { util.assertNever(ditem); }
-    }
+            } else if (ditem.type === LawDiffType.NoDiff) {
+                table.push(...makeElementNoDiffTable(ditem));
 
-    if (d.mostSeriousStatus !== ProblemStatus.NoProblem) {
-        const legend = `Legend: Error(${TERMC.YELLOW}*Change${TERMC.DEFAULT}, ${TERMC.GREEN}+Add${TERMC.DEFAULT}, ${TERMC.MAGENTA}-Remove${TERMC.DEFAULT}), ${TERMC.CYAN}Warning${TERMC.DEFAULT}, ${TERMC.BLUE}NoProblem${TERMC.DEFAULT}`;
-        const mssStr = (d.mostSeriousStatus === ProblemStatus.Error)
-            ? `${TERMC.RED}Error${TERMC.DEFAULT}`
-            : (d.mostSeriousStatus === ProblemStatus.Warning)
-                ? `${TERMC.CYAN}Warning${TERMC.DEFAULT}`
-                : util.assertNever(d.mostSeriousStatus);
-        const msg = [
-            legend,
-            `Original XML: "${tempOrigXml}"`,
-            `Rendered Lawtext: "${tempRenderedLawtext}"`,
-            `Parsed XML: "${tempParsedXml}"`,
-            `Most serious status: ${mssStr}`,
-            toTableText(table, LIMIT_WIDTH),
-            legend,
-            `View XML: "${tempOrigXml}"`,
-            `Rendered Lawtext: "${tempRenderedLawtext}"`,
-            `Parsed XML: "${tempParsedXml}"`,
-            `Most serious status: ${mssStr}`,
-            "",
-        ].join("\r\n");
+            } else { util.assertNever(ditem); }
+        }
 
-        chai.assert(false, `\x1b\r\n\r\n[39m${msg}`);
-    }
+        if (d.mostSeriousStatus !== ProblemStatus.NoProblem) {
+            const legend = `Legend: Error(${TERMC.YELLOW}*Change${TERMC.DEFAULT}, ${TERMC.GREEN}+Add${TERMC.DEFAULT}, ${TERMC.MAGENTA}-Remove${TERMC.DEFAULT}), ${TERMC.CYAN}Warning${TERMC.DEFAULT}, ${TERMC.BLUE}NoProblem${TERMC.DEFAULT}`;
+            const mssStr = (d.mostSeriousStatus === ProblemStatus.Error)
+                ? `${TERMC.RED}Error${TERMC.DEFAULT}`
+                : (d.mostSeriousStatus === ProblemStatus.Warning)
+                    ? `${TERMC.CYAN}Warning${TERMC.DEFAULT}`
+                    : util.assertNever(d.mostSeriousStatus);
+            const msg = [
+                legend,
+                `Original XML: "${tempOrigXml}"`,
+                `Rendered Lawtext: "${tempRenderedLawtext}"`,
+                `Parsed XML: "${tempParsedXml}"`,
+                `Most serious status: ${mssStr}`,
+                toTableText(table, LIMIT_WIDTH),
+                legend,
+                `View XML: "${tempOrigXml}"`,
+                `Rendered Lawtext: "${tempRenderedLawtext}"`,
+                `Parsed XML: "${tempParsedXml}"`,
+                `Most serious status: ${mssStr}`,
+                "",
+            ].join("\r\n");
 
+            chai.assert(false, `\x1b\r\n\r\n[39m${msg}`);
+        }
+
+    });
 });

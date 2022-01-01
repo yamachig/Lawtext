@@ -23,7 +23,7 @@
     "build": "node --trace-deprecation --trace-warnings bin/build/ && tsc",
     "watch": "node --trace-deprecation --trace-warnings bin/build/ && tsc --watch",
     "prepare": "npm run build",
-    "test": "node --max_old_space_size=2048 ./dist/test/prepare_test.js && mocha --exit --timeout 10000 ./dist/test/**/*.js"
+    "test": "node --max_old_space_size=2048 ./dist/test/prepare_test.js && npx mocha"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.8.0",

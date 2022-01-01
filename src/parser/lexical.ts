@@ -24,12 +24,22 @@ export const $DEDENT = factory
 
 export const $_ = factory
     .withName("OPTIONAL_WHITESPACES")
-    .zeroOrMore(r => r.regExp(/^[ 　\t]/))
+    .regExp(/^[ 　\t]*/)
+;
+
+export const $EOL = factory
+    .withName("EOL")
+    .regExp(/^\r?\n/)
+;
+
+export const $_EOL = factory
+    .withName("OPTIONAL_WHITESPACES_AND_EOL")
+    .regExp(/^\s*\r?\n/)
 ;
 
 export const $__ = factory
     .withName("WHITESPACES")
-    .oneOrMore(r => r.regExp(/^[ 　\t]/))
+    .regExp(/^[ 　\t]+/)
 ;
 
 export const $CHAR = factory
@@ -56,6 +66,11 @@ export const $NEWLINE: ValueRule<unknown> = factory
         ),
     )
 ;
+
+export const $kanjiDigits = factory
+    .withName("kanjiDigits")
+    .regExp(/^[〇一二三四五六七八九十百千]+/)
+    ;
 
 export const $kanji_digit = factory
     .withName("kanji_digit")
