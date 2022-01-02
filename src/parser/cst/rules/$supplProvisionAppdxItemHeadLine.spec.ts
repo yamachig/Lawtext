@@ -11,22 +11,22 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-:suppl-provision-appdx:附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+:suppl-provision-appdx:　附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 
   .. figure:: ./pict/001.jpg
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 54,
+            nextOffset: 55,
         } as const;
         const expectedValue = {
             type: LineType.SPA,
             text: `\
-:suppl-provision-appdx:附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+:suppl-provision-appdx:　附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 `,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":suppl-provision-appdx:附則付録第一（第二十六条、第四十五条、第四十六条の五関係）",
+            contentText: ":suppl-provision-appdx:　附則付録第一（第二十六条、第四十五条、第四十六条の五関係）",
             lineEndText: `　
 `,
         } as const;

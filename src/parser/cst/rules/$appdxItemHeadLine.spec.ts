@@ -429,6 +429,54 @@ describe("Test $appdxItemHeadLine", () => {
         }
     });
 
+    it("Success case (:appdx-style:)", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+:appdx-style:別記様式　
+
+  .. figure:: ./pict/001.pdf
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 19,
+        } as const;
+        const expectedValue = {
+            type: LineType.APP,
+            text: `\
+:appdx-style:別記様式　
+`,
+            indentDepth: 0,
+            indentTexts: [] as string[],
+            contentText: ":appdx-style:別記様式",
+            lineEndText: `　
+`,
+        } as const;
+        const expectedContent = {
+            tag: "AppdxStyle",
+            attr: {},
+            children: [
+                {
+                    tag: "AppdxStyleTitle",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "__Text",
+                            attr: {},
+                            children: ["別記様式"],
+                        },
+                    ],
+                },
+            ],
+        };
+        const result = $appdxItemHeadLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value, expectedValue);
+            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+        }
+    });
+
     it("Success case (w/o :appdx-style:)", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
@@ -685,22 +733,22 @@ describe("Test $appdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-:appdx-fig:別図第十一（第１９条第１項の表の６の項関係）　
+:appdx-fig:　別図第十一（第１９条第１項の表の６の項関係）　
 
   .. figure:: ./pict/011.jpg
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 35,
+            nextOffset: 36,
         } as const;
         const expectedValue = {
             type: LineType.APP,
             text: `\
-:appdx-fig:別図第十一（第１９条第１項の表の６の項関係）　
+:appdx-fig:　別図第十一（第１９条第１項の表の６の項関係）　
 `,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":appdx-fig:別図第十一（第１９条第１項の表の６の項関係）",
+            contentText: ":appdx-fig:　別図第十一（第１９条第１項の表の６の項関係）",
             lineEndText: `　
 `,
         } as const;
