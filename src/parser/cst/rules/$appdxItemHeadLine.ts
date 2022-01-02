@@ -14,7 +14,8 @@ export const $appdxItemHeadLine = factory
         .and(r => r
             .choice(c => c
                 .orSequence(s => s
-                    .and(r => r.seqEqual(":appdx:"), "control")
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:appdx:[ 　\t]*/), "control")
                     .action(({ control }) => {
                         return {
                             mainTag: "Appdx",
@@ -25,7 +26,8 @@ export const $appdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.seqEqual(":appdx-table:"), "control")
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:appdx-table:[ 　\t]*/), "control")
                     .action(({ control }) => {
                         return {
                             mainTag: "AppdxTable",
@@ -36,7 +38,8 @@ export const $appdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.seqEqual(":appdx-style:"), "control")
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:appdx-style:[ 　\t]*/), "control")
                     .action(({ control }) => {
                         return {
                             mainTag: "AppdxStyle",
@@ -47,7 +50,8 @@ export const $appdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.seqEqual(":appdx-format:"), "control")
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:appdx-format:[ 　\t]*/), "control")
                     .action(({ control }) => {
                         return {
                             mainTag: "AppdxFormat",
@@ -58,7 +62,8 @@ export const $appdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.seqEqual(":appdx-fig:"), "control")
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:appdx-fig:[ 　\t]*/), "control")
                     .action(({ control }) => {
                         return {
                             mainTag: "AppdxFig",
@@ -69,7 +74,8 @@ export const $appdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.seqEqual(":appdx-note:"), "control")
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:appdx-note:[ 　\t]*/), "control")
                     .action(({ control }) => {
                         return {
                             mainTag: "AppdxNote",
@@ -91,7 +97,7 @@ export const $appdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.regExp(/^(?![付附]則)(?:[別付附]表)?[^(（]*[書様]式/), "head")
+                    .and(r => r.regExp(/^(?![付附]則)(?:[別付附]表)?[^(（]*様式/), "head")
                     .action(({ head }) => {
                         return {
                             mainTag: "AppdxStyle",
@@ -102,11 +108,44 @@ export const $appdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
+                    .and(r => r.regExp(/^(?![付附]則)(?:[別付附]表)?[^(（]*書式/), "head")
+                    .action(({ head }) => {
+                        return {
+                            mainTag: "AppdxFormat",
+                            titleTag: "AppdxFormatTitle",
+                            control: "",
+                            head,
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
                     .and(r => r.regExp(/^[別付附]表/), "head")
                     .action(({ head }) => {
                         return {
-                            mainTag: "AppdxTableTitle",
-                            titleTag: "AppdxTableTitleTitle",
+                            mainTag: "AppdxTable",
+                            titleTag: "AppdxTableTitle",
+                            control: "",
+                            head,
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.regExp(/^別[記紙]/), "head")
+                    .action(({ head }) => {
+                        return {
+                            mainTag: "AppdxNote",
+                            titleTag: "AppdxNoteTitle",
+                            control: "",
+                            head,
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.regExp(/^[付附]録/), "head")
+                    .action(({ head }) => {
+                        return {
+                            mainTag: "Appdx",
+                            titleTag: "ArithFormulaNum",
                             control: "",
                             head,
                         } as const;

@@ -14,7 +14,8 @@ export const $supplProvisionAppdxItemHeadLine = factory
         .and(r => r
             .choice(c => c
                 .orSequence(s => s
-                    .and(r => r.seqEqual(":suppl-provision-appdx:"), "control")
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:suppl-provision-appdx:[ 　\t]*/), "control")
                     .action(({ control }) => {
                         return {
                             mainTag: "SupplProvisionAppdx",
@@ -25,7 +26,8 @@ export const $supplProvisionAppdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.seqEqual(":suppl-provision-appdx-table:"), "control")
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:suppl-provision-appdx-table:[ 　\t]*/), "control")
                     .action(({ control }) => {
                         return {
                             mainTag: "SupplProvisionAppdxTable",
@@ -36,7 +38,8 @@ export const $supplProvisionAppdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.seqEqual(":suppl-provision-appdx-style:"), "control")
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:suppl-provision-appdx-style:[ 　\t]*/), "control")
                     .action(({ control }) => {
                         return {
                             mainTag: "SupplProvisionAppdxStyle",
