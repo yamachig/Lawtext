@@ -7,26 +7,26 @@ const env = initialEnv({});
 
 describe("Test $appdxItemHeadLine", () => {
 
-    it("Success case $appdxHeadLine", () => {
+    it("Success case (:appdx:)", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+:appdx:付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 
   .. figure:: ./pict/001.jpg
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 29,
+            nextOffset: 36,
         } as const;
         const expectedValue = {
             type: LineType.APP,
             text: `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+:appdx:付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 `,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "付録第一（第二十六条、第四十五条、第四十六条の五関係）",
+            contentText: ":appdx:付録第一（第二十六条、第四十五条、第四十六条の五関係）",
             lineEndText: `　
 `,
         } as const;
@@ -91,27 +91,27 @@ describe("Test $appdxItemHeadLine", () => {
         }
     });
 
-    it("Success case $appdxTableHeadLine", () => {
+    it("Success case (:appdx-table:)", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-別表第二（第十九条、第二十一条関係）　
+:appdx-table:別表第二（第十九条、第二十一条関係）　
 
   * - 情報照会者
     - 事務
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 20,
+            nextOffset: 33,
         } as const;
         const expectedValue = {
             type: LineType.APP,
             text: `\
-別表第二（第十九条、第二十一条関係）　
+:appdx-table:別表第二（第十九条、第二十一条関係）　
 `,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "別表第二（第十九条、第二十一条関係）",
+            contentText: ":appdx-table:別表第二（第十九条、第二十一条関係）",
             lineEndText: `　
 `,
         } as const;

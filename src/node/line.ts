@@ -62,11 +62,7 @@ export interface AppdxItemHeadLine extends IndentsLine {
 
 export interface SupplProvisionHeadLine extends IndentsLine {
     type: LineType.SPR;
-    content:
-        | std.SupplProvision
-        | std.SupplProvisionAppdx
-        | std.SupplProvisionAppdxTable
-        | std.SupplProvisionAppdxStyle
+    content: std.SupplProvision
         ;
 }
 

@@ -7,70 +7,134 @@ import { $_EOL } from "../../lexical";
 import { mergeAdjacentTexts } from "../util";
 
 
-export const $appdxHeadLine = factory
-    .withName("appdxHeadLine")
-    .sequence(s => s
-        .and(() => $indents, "indentsStruct")
-        .and(r => r.regExp(/^付\s*録/), "head")
-        .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "tail")
-        .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, head, tail, lineEndText, text }) => {
-            const appdx = newStdEL("Appdx");
-            const inline = mergeAdjacentTexts([head, ...tail]);
-            if (inline.slice(-1)[0]?.tag === "__Parentheses" && inline.slice(-1)[0].attr.type === "round") {
-                const numInline = inline.splice(-1, 1);
-                appdx.append(newStdEL("ArithFormulaNum", {}, inline));
-                appdx.append(newStdEL("RelatedArticleNum", {}, numInline));
-            } else {
-                appdx.append(newStdEL("ArithFormulaNum", {}, inline));
-            }
-            return {
-                type: LineType.APP,
-                text: text(),
-                ...indentsStruct,
-                content: appdx,
-                contentText: appdx.text,
-                lineEndText,
-            } as AppdxItemHeadLine;
-        })
-    )
-    ;
-
-
-export const $appdxTableHeadLine = factory
-    .withName("appdxTableHeadLine")
-    .sequence(s => s
-        .and(() => $indents, "indentsStruct")
-        .and(r => r.regExp(/^別\s*表/), "head")
-        .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "tail")
-        .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, head, tail, lineEndText, text }) => {
-            const appdxTable = newStdEL("AppdxTable");
-            const inline = mergeAdjacentTexts([head, ...tail]);
-            if (inline.slice(-1)[0]?.tag === "__Parentheses" && inline.slice(-1)[0].attr.type === "round") {
-                const numInline = inline.splice(-1, 1);
-                appdxTable.append(newStdEL("AppdxTableTitle", {}, inline));
-                appdxTable.append(newStdEL("RelatedArticleNum", {}, numInline));
-            } else {
-                appdxTable.append(newStdEL("AppdxTableTitle", {}, inline));
-            }
-            return {
-                type: LineType.APP,
-                text: text(),
-                ...indentsStruct,
-                content: appdxTable,
-                contentText: appdxTable.text,
-                lineEndText,
-            } as AppdxItemHeadLine;
-        })
-    )
-    ;
-
 export const $appdxItemHeadLine = factory
     .withName("appdxItemHeadLine")
-    .choice(c => c
-        .or(() => $appdxHeadLine)
-        .or(() => $appdxTableHeadLine)
+    .sequence(s => s
+        .and(() => $indents, "indentsStruct")
+        .and(r => r
+            .choice(c => c
+                .orSequence(s => s
+                    .and(r => r.seqEqual(":appdx:"), "control")
+                    .action(({ control }) => {
+                        return {
+                            mainTag: "Appdx",
+                            titleTag: "ArithFormulaNum",
+                            control,
+                            head: "",
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.seqEqual(":appdx-table:"), "control")
+                    .action(({ control }) => {
+                        return {
+                            mainTag: "AppdxTable",
+                            titleTag: "AppdxTableTitle",
+                            control,
+                            head: "",
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.seqEqual(":appdx-style:"), "control")
+                    .action(({ control }) => {
+                        return {
+                            mainTag: "AppdxStyle",
+                            titleTag: "AppdxStyleTitle",
+                            control,
+                            head: "",
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.seqEqual(":appdx-format:"), "control")
+                    .action(({ control }) => {
+                        return {
+                            mainTag: "AppdxFormat",
+                            titleTag: "AppdxFormatTitle",
+                            control,
+                            head: "",
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.seqEqual(":appdx-fig:"), "control")
+                    .action(({ control }) => {
+                        return {
+                            mainTag: "AppdxFig",
+                            titleTag: "AppdxFigTitle",
+                            control,
+                            head: "",
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.seqEqual(":appdx-note:"), "control")
+                    .action(({ control }) => {
+                        return {
+                            mainTag: "AppdxNote",
+                            titleTag: "AppdxNoteTitle",
+                            control,
+                            head: "",
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.regExp(/^[別付附]?図/), "head")
+                    .action(({ head }) => {
+                        return {
+                            mainTag: "AppdxFig",
+                            titleTag: "AppdxFigTitle",
+                            control: "",
+                            head,
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.regExp(/^(?![付附]則)(?:[別付附]表)?[^(（]*[書様]式/), "head")
+                    .action(({ head }) => {
+                        return {
+                            mainTag: "AppdxStyle",
+                            titleTag: "AppdxStyleTitle",
+                            control: "",
+                            head,
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.regExp(/^[別付附]表/), "head")
+                    .action(({ head }) => {
+                        return {
+                            mainTag: "AppdxTableTitle",
+                            titleTag: "AppdxTableTitleTitle",
+                            control: "",
+                            head,
+                        } as const;
+                    })
+                )
+            )
+        , "headStruct")
+        .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "tail")
+        .and(() => $_EOL, "lineEndText")
+        .action(({ indentsStruct, headStruct, tail, lineEndText, text }) => {
+            const el = newStdEL(headStruct.mainTag);
+            const inline = mergeAdjacentTexts([headStruct.head, ...tail]);
+            if (inline.slice(-1)[0]?.tag === "__Parentheses" && inline.slice(-1)[0].attr.type === "round") {
+                const numInline = inline.splice(-1, 1);
+                el.append(newStdEL(headStruct.titleTag, {}, inline));
+                el.append(newStdEL("RelatedArticleNum", {}, numInline));
+            } else {
+                el.append(newStdEL(headStruct.titleTag, {}, inline));
+            }
+            return {
+                type: LineType.APP,
+                text: text(),
+                ...indentsStruct,
+                content: el,
+                contentText: headStruct.control + el.text,
+                lineEndText,
+            } as AppdxItemHeadLine;
+        })
     )
     ;
 
