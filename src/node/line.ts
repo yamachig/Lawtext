@@ -78,27 +78,14 @@ export interface SupplProvisionAppdxItemHeadLine extends IndentsLine {
 
 export interface ArticleLine extends IndentsLine {
     type: LineType.ART;
-    content: std.Article;
-    inline: EL[];
+    contentHead: std.Article;
+    contentTail: EL[];
 }
 
 export interface ParagraphItemLine extends IndentsLine {
     type: LineType.PIT;
-    content:
-        | std.Paragraph
-        | std.Item
-        | std.Subitem1
-        | std.Subitem2
-        | std.Subitem3
-        | std.Subitem4
-        | std.Subitem5
-        | std.Subitem6
-        | std.Subitem7
-        | std.Subitem8
-        | std.Subitem9
-        | std.Subitem10
-        ;
-    inlineText: string;
+    contentHead: string;
+    contentTail: EL[];
 }
 
 export interface TableColumnLine extends IndentsLine {
@@ -112,6 +99,7 @@ export interface ControlLine extends IndentsLine {
 
 export interface OtherLine extends IndentsLine {
     type: LineType.OTH;
+    content: EL[];
 }
 
 export type Line =

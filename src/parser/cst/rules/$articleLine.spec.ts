@@ -29,7 +29,7 @@ describe("Test $articleLine", () => {
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
+        const expectedContentHead = {
             tag: "Article",
             attr: {
                 Num: "2",
@@ -52,7 +52,7 @@ describe("Test $articleLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.deepStrictEqual(result.value.contentHead.json(true), expectedContentHead);
         }
     });
 
@@ -79,7 +79,7 @@ describe("Test $articleLine", () => {
             lineEndText: `
 `,
         } as const;
-        const expectedContent = {
+        const expectedContentHead = {
             tag: "Article",
             attr: {
                 Num: "36_3",
@@ -102,7 +102,7 @@ describe("Test $articleLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.deepStrictEqual(result.value.contentHead.json(true), expectedContentHead);
         }
     });
 
@@ -127,7 +127,7 @@ describe("Test $articleLine", () => {
             lineEndText: `
 `,
         } as const;
-        const expectedContent = {
+        const expectedContentHead = {
             tag: "Article",
             attr: {
                 Num: "198:209",
@@ -150,7 +150,7 @@ describe("Test $articleLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.deepStrictEqual(result.value.contentHead.json(true), expectedContentHead);
         }
     });
 

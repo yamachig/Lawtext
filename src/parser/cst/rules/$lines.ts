@@ -5,6 +5,8 @@ import $articleGroupHeadLine from "./$articleGroupHeadLine";
 import $appdxItemHeadLine from "./$appdxItemHeadLine";
 import $supplProvisionAppdxItemHeadLine from "./$supplProvisionAppdxItemHeadLine";
 import $supplProvisionHeadLine from "./$supplProvisionHeadLine";
+import $articleLine from "./$articleLine";
+import $paragraphItemLine from "./$paragraphItemLine";
 
 export const $lines = factory.withName("lines")
     .zeroOrMore(r => r
@@ -15,6 +17,8 @@ export const $lines = factory.withName("lines")
             .or(() => $appdxItemHeadLine)
             .or(() => $supplProvisionAppdxItemHeadLine)
             .or(() => $supplProvisionHeadLine)
+            .or(() => $articleLine)
+            .or(() => $paragraphItemLine)
         )
     )
     ;

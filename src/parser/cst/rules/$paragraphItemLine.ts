@@ -1,24 +1,21 @@
 import factory from "../factory";
-import { parseNamedNum } from "../../../law/lawUtil";
-import { newStdEL } from "../../../law/std";
 import $indents from "./$indents";
-import { ArticleLine, LineType } from "../../../node/line";
+import { ParagraphItemLine, LineType } from "../../../node/line";
 import { $__, $_EOL } from "../../lexical";
-import $articleTitle from "./$articleTitle";
 import $columnsOrSentences from "./$columnsOrSentences";
-import { __Text } from "../../../node/control";
 import makeRangesRule from "./makeRangesRule";
+import $paragraphItemTitle from "./$paragraphItemTitle";
 
-const { $ranges: $articleRanges } = makeRangesRule(() => $articleTitle);
+const { $ranges: $paragraphItemRanges } = makeRangesRule(() => $paragraphItemTitle);
 
 
-export const $articleLine = factory
-    .withName("articleLine")
+export const $paragraphItemLine = factory
+    .withName("paragraphItemLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
         .and(r => r
             .sequence(s => s
-                .and( r => r.asSlice(() => $articleRanges), "articleTitleText")
+                .and( r => r.asSlice(() => $paragraphItemRanges), "paragraphItemTitleText")
                 .and(r => r
                     .zeroOrOne(r => r
                         .sequence(c => c
@@ -30,23 +27,9 @@ export const $articleLine = factory
                         )
                     )
                 , "inline")
-                .action(({ articleTitleText, inline, text }) => {
-                    const articleTitle = newStdEL(
-                        "ArticleTitle",
-                        {},
-                        [new __Text(articleTitleText)],
-                    );
-                    const article = newStdEL(
-                        "Article",
-                        {},
-                        [articleTitle]
-                    );
-                    const num = parseNamedNum(articleTitleText);
-                    if (num) {
-                        article.attr.Num = num;
-                    }
+                .action(({ paragraphItemTitleText, inline, text }) => {
                     return {
-                        contentHead: article,
+                        contentHead: paragraphItemTitleText,
                         contentTail: inline ?? [],
                         contentText: text(),
                     };
@@ -56,14 +39,14 @@ export const $articleLine = factory
         .and(() => $_EOL, "lineEndText")
         .action(({ indentsStruct, contentStruct, lineEndText, text }) => {
             return {
-                type: LineType.ART,
+                type: LineType.PIT,
                 text: text(),
                 ...indentsStruct,
                 ...contentStruct,
                 lineEndText,
-            } as ArticleLine;
+            } as ParagraphItemLine;
         })
     )
     ;
 
-export default $articleLine;
+export default $paragraphItemLine;
