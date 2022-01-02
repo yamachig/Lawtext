@@ -1,4 +1,5 @@
 import * as std from "src/law/std";
+import { EL } from "./el";
 
 export enum LineType {
     BNK = "BNK",
@@ -78,6 +79,7 @@ export interface SupplProvisionAppdxItemHeadLine extends IndentsLine {
 export interface ArticleLine extends IndentsLine {
     type: LineType.ART;
     content: std.Article;
+    inline: EL[];
 }
 
 export interface ParagraphItemLine extends IndentsLine {
@@ -96,6 +98,7 @@ export interface ParagraphItemLine extends IndentsLine {
         | std.Subitem9
         | std.Subitem10
         ;
+    inlineText: string;
 }
 
 export interface TableColumnLine extends IndentsLine {
