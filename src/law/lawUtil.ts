@@ -113,8 +113,8 @@ export const kanjiDigits = {
 export const reNamedNum = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
 export const irohaChars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
 export const reIrohaChar = /[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]/;
-export const aiuChars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨララリルレロワヲン";
-export const reAiuChar = /[アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨララリルレロワヲン]/;
+export const aiuChars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+export const reAiuChar = /[アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン]/;
 export const reItemNum = /^\D*(\d+)\D*$/;
 
 export const parseRomanNum = (text: string): number => {
@@ -123,8 +123,11 @@ export const parseRomanNum = (text: string): number => {
         const char = text[i];
         const nextChar = text[i + 1] || "";
         if (/[iIｉＩ]/.exec(char)) {
-            if (/[xXｘＸ]/.exec(nextChar)) num -= 1;
+            if (/[vVｖＶxXｘＸ]/.exec(nextChar)) num -= 1;
             else num += 1;
+        }
+        if (/[vVｖＶ]/.exec(char)) {
+            num += 5;
         }
         if (/[xXｘＸ]/.exec(char)) {
             num += 10;

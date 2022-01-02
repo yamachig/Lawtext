@@ -513,4 +513,22 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         }
     });
 
+    it("Fail case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+別表第二（第十九条、第二十一条関係）
+
+  * - 情報照会者
+    - 事務
+`;
+        const expectedResult = {
+            ok: false,
+            offset: 0,
+            expected: "supplProvisionAppdxItemHeadLine",
+        } as const;
+        const result = $supplProvisionAppdxItemHeadLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+    });
+
 });

@@ -1064,4 +1064,22 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepStrictEqual(result.value.content.json(true), expectedContent);
         }
     });
+
+    it("Fail case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+附則別表第二（第十九条、第二十一条関係）
+
+  * - 情報照会者
+    - 事務
+`;
+        const expectedResult = {
+            ok: false,
+            offset: 0,
+            expected: "appdxItemHeadLine",
+        } as const;
+        const result = $appdxItemHeadLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+    });
 });

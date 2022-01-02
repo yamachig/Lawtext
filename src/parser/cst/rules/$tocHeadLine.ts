@@ -12,7 +12,8 @@ export const $tocHeadLine = factory
         .and(() => $indents, "indentsStruct")
         .and(r => r
             .sequence(s => s
-                .and(r => r.regExp(/^目\s*次/), "label")
+                // eslint-disable-next-line no-irregular-whitespace
+                .and(r => r.regExp(/^目[ 　\t]*次/), "label")
                 .action(({ label }) => {
                     return {
                         content: newStdEL(

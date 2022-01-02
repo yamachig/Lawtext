@@ -79,7 +79,7 @@ export const $kanji_digit = factory
 
 export const $roman_digit = factory
     .withName("roman_digit")
-    .regExp(/^[iIｉＩxXｘＸ]/)
+    .regExp(/^[iIｉＩvVｖＶxXｘＸ]/)
     ;
 
 export const $iroha_char = factory
