@@ -97,7 +97,7 @@ export const $appdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.regExp(/^(?![付附]則)(?:[別付附]表)?[^(（]*様式/), "head")
+                    .and(r => r.regExp(/^(?![付附]則)[^(（]*様式/), "head")
                     .action(({ head }) => {
                         return {
                             mainTag: "AppdxStyle",
@@ -108,7 +108,7 @@ export const $appdxItemHeadLine = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.regExp(/^(?![付附]則)(?:[別付附]表)?[^(（]*書式/), "head")
+                    .and(r => r.regExp(/^(?![付附]則)[^(（]*書式/), "head")
                     .action(({ head }) => {
                         return {
                             mainTag: "AppdxFormat",

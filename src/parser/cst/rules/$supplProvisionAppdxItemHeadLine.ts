@@ -19,7 +19,7 @@ export const $supplProvisionAppdxItemHeadLine = factory
                     .action(({ control }) => {
                         return {
                             mainTag: "SupplProvisionAppdx",
-                            titleTag: "SupplProvisionAppdxTitle",
+                            titleTag: "ArithFormulaNum",
                             control,
                             head: "",
                         } as const;
@@ -46,6 +46,39 @@ export const $supplProvisionAppdxItemHeadLine = factory
                             titleTag: "SupplProvisionAppdxStyleTitle",
                             control,
                             head: "",
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.regExp(/^[付附]則[^(（]*様式/), "head")
+                    .action(({ head }) => {
+                        return {
+                            mainTag: "SupplProvisionAppdxStyle",
+                            titleTag: "SupplProvisionAppdxStyleTitle",
+                            control: "",
+                            head,
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.regExp(/^[付附]則[別付附]表/), "head")
+                    .action(({ head }) => {
+                        return {
+                            mainTag: "SupplProvisionAppdxTable",
+                            titleTag: "SupplProvisionAppdxTableTitle",
+                            control: "",
+                            head,
+                        } as const;
+                    })
+                )
+                .orSequence(s => s
+                    .and(r => r.regExp(/^[付附]則[付附]録/), "head")
+                    .action(({ head }) => {
+                        return {
+                            mainTag: "SupplProvisionAppdx",
+                            titleTag: "ArithFormulaNum",
+                            control: "",
+                            head,
                         } as const;
                     })
                 )
