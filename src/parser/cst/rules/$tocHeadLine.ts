@@ -3,7 +3,7 @@ import { newStdEL } from "../../../law/std";
 import $indents from "./$indents";
 import { TOCHeadLine } from "../../../node/cst/line";
 import { __Text } from "../../../node/control";
-import { $_EOL } from "../../../parser/lexical";
+import { $_EOL } from "./lexical";
 
 
 export const $tocHeadLine = factory

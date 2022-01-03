@@ -1,7 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
-import { EL } from "../node/el";
-import { __Text } from "../node/control";
-import { factory, ValueRule } from "./common";
+import { EL } from "../../../node/el";
+import { __Text } from "../../../node/control";
+import { factory } from "../factory";
+import { ValueRule } from "../util";
 import { $DEDENT, $INDENT, $_ } from "./lexical";
 
 export const $xml = factory

@@ -1,11 +1,11 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../law/std";
-import { EL } from "../../node/el";
-import { articleGroupTitleTag, parseNamedNum, articleGroupType } from "../../law/lawUtil";
-import { __Parentheses } from "../../node/control";
+import { newStdEL } from "../../../law/std";
+import { EL } from "../../../node/el";
+import { articleGroupTitleTag, parseNamedNum, articleGroupType } from "../../../law/lawUtil";
+import { __Parentheses } from "../../../node/control";
 import { factory, ValueRule } from "../common";
-import { $OUTSIDE_ROUND_PARENTHESES_INLINE, $ROUND_PARENTHESES_INLINE } from "../inline";
-import { $NEWLINE, $DEDENT, $INDENT } from "../lexical";
+import { $OUTSIDE_ROUND_PARENTHESES_INLINE, $ROUND_PARENTHESES_INLINE } from "../../cst/rules/inline";
+import { $NEWLINE, $DEDENT, $INDENT } from "../../cst/rules/lexical";
 
 
 export const $toc_label = factory

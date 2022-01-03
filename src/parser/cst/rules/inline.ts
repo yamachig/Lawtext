@@ -1,7 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
-import { __Parentheses, __Text } from "../node/control";
-import { EL } from "../node/el";
-import { factory, ValueRule } from "./common";
+import { __Parentheses, __Text } from "../../../node/control";
+import { EL } from "../../../node/el";
+import { factory } from "../factory";
+import { ValueRule } from "../util";
 import { $INDENT, $DEDENT, $__, $NEWLINE } from "./lexical";
 import { $xml_element } from "./xml";
 

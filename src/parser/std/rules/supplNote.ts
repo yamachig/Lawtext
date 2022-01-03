@@ -1,8 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../law/std";
+import { newStdEL } from "../../../law/std";
 import { factory } from "../common";
-import { $INLINE } from "../inline";
-import { $_, $NEWLINE } from "../lexical";
+import { $INLINE } from "../../cst/rules/inline";
+import { $_, $NEWLINE } from "../../cst/rules/lexical";
 
 
 export const $suppl_note = factory

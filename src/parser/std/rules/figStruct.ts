@@ -1,8 +1,8 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../law/std";
+import { newStdEL } from "../../../law/std";
 import { factory } from "../common";
-import { $INLINE } from "../inline";
-import { $_, $NEWLINE, $__ } from "../lexical";
+import { $INLINE } from "../../cst/rules/inline";
+import { $_, $NEWLINE, $__ } from "../../cst/rules/lexical";
 import { $remarks } from "./remarks";
 
 

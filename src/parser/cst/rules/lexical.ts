@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { factory, ValueRule } from "./common";
+import { factory } from "../factory";
+import { ValueRule } from "../util";
 
 export const $INDENT = factory
     .withName("INDENT")

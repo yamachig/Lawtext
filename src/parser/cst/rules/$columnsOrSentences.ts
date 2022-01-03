@@ -1,8 +1,8 @@
 import { newStdEL } from "../../../law/std";
 import { __Text } from "../../../node/control";
 import { factory } from "../factory";
-import { $INLINE_EXCLUDE_TRAILING_SPACES, $PERIOD_SENTENCE_FRAGMENT } from "../../inline";
-import { $_, $__ } from "../../lexical";
+import { $INLINE_EXCLUDE_TRAILING_SPACES, $PERIOD_SENTENCE_FRAGMENT } from "./inline";
+import { $_, $__ } from "./lexical";
 import { ValueRule } from "../util";
 import { Columns } from "../../../node/cst/inline";
 import * as std from "../../../law/std";

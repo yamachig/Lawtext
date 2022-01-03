@@ -1,7 +1,7 @@
 import factory from "../factory";
 import $indents from "./$indents";
 import { SupplProvisionHeadLine } from "../../../node/cst/line";
-import { $_EOL } from "../../../parser/lexical";
+import { $_EOL } from "./lexical";
 
 
 export const $supplProvisionHeadLine = factory

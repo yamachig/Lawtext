@@ -1,5 +1,5 @@
 import factory from "../factory";
-import { $kanjiDigits } from "../../lexical";
+import { $kanjiDigits } from "./lexical";
 
 
 export const $articleTitle = factory

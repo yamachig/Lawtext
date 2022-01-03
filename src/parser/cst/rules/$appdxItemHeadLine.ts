@@ -1,8 +1,8 @@
 import factory from "../factory";
-import { $INLINE_EXCLUDE_TRAILING_SPACES } from "../../inline";
+import { $INLINE_EXCLUDE_TRAILING_SPACES } from "./inline";
 import $indents from "./$indents";
 import { AppdxItemHeadLine } from "../../../node/cst/line";
-import { $_, $_EOL } from "../../lexical";
+import { $_, $_EOL } from "./lexical";
 import { mergeAdjacentTexts } from "../util";
 
 

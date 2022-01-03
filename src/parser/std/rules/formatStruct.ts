@@ -1,9 +1,9 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../law/std";
-import { __Text } from "../../node/control";
+import { newStdEL } from "../../../law/std";
+import { __Text } from "../../../node/control";
 import { factory } from "../common";
-import { $INLINE } from "../inline";
-import { $_, $NEWLINE, $INDENT, $DEDENT } from "../lexical";
+import { $INLINE } from "../../cst/rules/inline";
+import { $_, $NEWLINE, $INDENT, $DEDENT } from "../../cst/rules/lexical";
 import { $columns_or_sentences } from "./columnsOrSentences";
 import { $fig } from "./figStruct";
 import { $remarks } from "./remarks";

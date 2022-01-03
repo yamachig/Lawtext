@@ -1,11 +1,11 @@
 /* eslint-disable no-irregular-whitespace */
-import { Chapter, Division, newStdEL, Part, Section, Subsection } from "../../law/std";
-import { articleGroupTypeChars, articleGroupType, articleGroupTitleTag, parseNamedNum } from "../../law/lawUtil";
-import { __Text } from "../../node/control";
-import { EL } from "../../node/el";
+import { Chapter, Division, newStdEL, Part, Section, Subsection } from "../../../law/std";
+import { articleGroupTypeChars, articleGroupType, articleGroupTitleTag, parseNamedNum } from "../../../law/lawUtil";
+import { __Text } from "../../../node/control";
+import { EL } from "../../../node/el";
 import { factory, ValueRule } from "../common";
-import { $INLINE } from "../inline";
-import { $NEWLINE, $__ } from "../lexical";
+import { $INLINE } from "../../cst/rules/inline";
+import { $NEWLINE, $__ } from "../../cst/rules/lexical";
 import { $article } from "./article";
 
 

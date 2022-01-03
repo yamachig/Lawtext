@@ -1,9 +1,9 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../law/std";
+import { newStdEL } from "../../../law/std";
 import { factory } from "../common";
-import { $INLINE } from "../inline";
-import { $NEWLINE } from "../lexical";
-import { $xml_element } from "../xml";
+import { $INLINE } from "../../cst/rules/inline";
+import { $NEWLINE } from "../../cst/rules/lexical";
+import { $xml_element } from "../../cst/rules/xml";
 
 
 export const $amend_provision = factory

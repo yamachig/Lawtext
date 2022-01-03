@@ -1,10 +1,10 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../law/std";
-import { __Text } from "../../node/control";
+import { newStdEL } from "../../../law/std";
+import { __Text } from "../../../node/control";
 import { factory } from "../common";
-import { $INLINE } from "../inline";
-import { $_, $NEWLINE, $INDENT, $DEDENT } from "../lexical";
-import { $xml_element } from "../xml";
+import { $INLINE } from "../../cst/rules/inline";
+import { $_, $NEWLINE, $INDENT, $DEDENT } from "../../cst/rules/lexical";
+import { $xml_element } from "../../cst/rules/xml";
 import { $fig } from "./figStruct";
 import { $list } from "./list";
 import { $paragraph_item } from "./paragraphItem";

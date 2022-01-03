@@ -3,7 +3,7 @@
 // @ts-ignore
 import sha512 from "hash.js/lib/hash/sha/512";
 import { LAWNUM_TABLE, KEY_LENGTH } from "../law/lawNumTable";
-import * as parser from "../parser";
+import * as parser from "../parser/std";
 import { throwError } from "../util";
 import { Container, ContainerType } from "../node/container";
 import { Env } from "../node/env";

@@ -3,7 +3,7 @@
 import * as argparse from "argparse";
 import * as fs from "fs";
 import * as analyzer from "./analyzer";
-import { parse } from "./parser";
+import { parse } from "./parser/std";
 import * as renderer from "./renderer";
 import renderLawtext from "./renderer/lawtext";
 import { EL, JsonEL, xmlToJson, loadEl } from "./node/el";

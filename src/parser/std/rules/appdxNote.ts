@@ -1,16 +1,18 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../law/std";
-import { __Text } from "../../node/control";
-import { setItemNum } from "../../law/lawUtil";
+import { newStdEL } from "../../../law/std";
+import { __Text } from "../../../node/control";
+import { setItemNum } from "../../../law/lawUtil";
 import { factory } from "../common";
-import { $ROUND_PARENTHESES_INLINE } from "../inline";
-import { $_, $NEWLINE, $DEDENT, $INDENT } from "../lexical";
+import { $ROUND_PARENTHESES_INLINE } from "../../cst/rules/inline";
+import { $_, $NEWLINE, $INDENT, $DEDENT } from "../../cst/rules/lexical";
+import { $fig_struct } from "./figStruct";
+import { $note_struct } from "./noteStruct";
 import { $remarks } from "./remarks";
 import { $table_struct } from "./tableStruct";
 
 
-export const $suppl_provision_appdx_table_title = factory
-    .withName("suppl_provision_appdx_table_title")
+export const $appdx_note_title = factory
+    .withName("appdx_note_title")
     .action(r => r
         .sequence(c => c
             .and(r => r
@@ -58,28 +60,16 @@ export const $suppl_provision_appdx_table_title = factory
                                 .sequence(c => c
                                     .and(r => r
                                         .asSlice(r => r
-                                            .choice(c => c
-                                                .or(r => r
-                                                    .sequence(c => c
-                                                        .and(r => r.regExp(/^[附付]/))
-                                                        .and(r => r.seqEqual("則別表"))
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
-                                                        ),
+                                            .sequence(c => c
+                                                .and(r => r
+                                                    .choice(c => c
+                                                        .or(r => r.seqEqual("別記"))
+                                                        .or(r => r.seqEqual("付録"))
+                                                        .or(r => r.seqEqual("（別紙）")),
                                                     ),
                                                 )
-                                                .or(r => r
-                                                    .sequence(c => c
-                                                        .and(r => r.regExp(/^[附付]/))
-                                                        .and(r => r.seqEqual("則"))
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（様]/)),
-                                                        )
-                                                        .and(r => r.seqEqual("様式"))
-                                                        .and(r => r
-                                                            .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
-                                                        ),
-                                                    ),
+                                                .and(r => r
+                                                    .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                                 ),
                                             ),
                                         )
@@ -129,59 +119,87 @@ export const $suppl_provision_appdx_table_title = factory
     )
     ;
 
-export const $suppl_provision_appdx_table = factory
-    .withName("suppl_provision_appdx_table")
+export const $appdx_note = factory
+    .withName("appdx_note")
     .action(r => r
         .sequence(c => c
-            .and(() => $suppl_provision_appdx_table_title, "title_struct")
+            .and(() => $appdx_note_title, "title_struct")
             .and(r => r.oneOrMore(() => $NEWLINE))
             .and(r => r
                 .zeroOrOne(r => r
                     .action(r => r
                         .sequence(c => c
                             .and(() => $INDENT)
-                            .and(r => r.oneOrMore(() => $suppl_provision_appdx_table_children), "target")
+                            .and(r => r
+                                .zeroOrOne(r => r
+                                    .action(r => r
+                                        .sequence(c => c
+                                            .and(() => $appdx_note_children, "first")
+                                            .and(r => r
+                                                .zeroOrMore(r => r
+                                                    .action(r => r
+                                                        .sequence(c => c
+                                                            .and(r => r.oneOrMore(() => $NEWLINE))
+                                                            .and(() => $appdx_note_children, "_target"),
+                                                        )
+                                                    , (({ _target }) => {
+                                                        return _target;
+                                                    }),
+                                                    ),
+                                                )
+                                            , "rest"),
+                                        )
+                                    , (({ first, rest }) => {
+                                        return [first].concat(rest);
+                                    }),
+                                    ),
+                                )
+                            , "target")
                             .and(r => r.zeroOrMore(() => $remarks), "remarkses")
                             .and(r => r.zeroOrMore(() => $NEWLINE))
                             .and(() => $DEDENT),
                         )
                     , (({ target, remarkses }) => {
-                        return [...target, ...remarkses];
+                        return [...(target ?? []), ...remarkses];
                     }),
                     ),
                 )
             , "children"),
         )
     , (({ title_struct, children }) => {
-        const suppl_provision_appdx_table = newStdEL("SupplProvisionAppdxTable");
+        const appdx_note = newStdEL("AppdxNote");
         if (title_struct.table_struct_title !== "") {
-            // console.warn(`### line ${location().start.line}: Maybe irregular SupplProvisionAppdxTableTitle!`);
-            suppl_provision_appdx_table.append(newStdEL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text( title_struct.text)]));
+            // console.warn(`### line ${location().start.line}: Maybe irregular AppdxNoteTitle!`);
+            appdx_note.append(newStdEL("AppdxNoteTitle", title_struct.attr, [new __Text( title_struct.text)]));
         } else {
-            suppl_provision_appdx_table.append(newStdEL("SupplProvisionAppdxTableTitle", title_struct.attr, [new __Text(title_struct.title)]));
+            appdx_note.append(newStdEL("AppdxNoteTitle", title_struct.attr, [new __Text(title_struct.title)]));
             if (title_struct.related_article_num) {
-                suppl_provision_appdx_table.append(newStdEL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+                appdx_note.append(newStdEL("RelatedArticleNum", {}, [title_struct.related_article_num]));
             }
         }
 
         if (children) {
             setItemNum(children);
         }
-        suppl_provision_appdx_table.extend(children || []);
+        appdx_note.extend(children || []);
 
-        return suppl_provision_appdx_table;
+        return appdx_note;
     }),
     )
     ;
 
-export const $suppl_provision_appdx_table_children = factory
-    .withName("suppl_provision_appdx_table_children")
-    .ref(() => $table_struct)
+export const $appdx_note_children = factory
+    .withName("appdx_note_children")
+    .choice(c => c
+        .or(() => $fig_struct)
+        .or(() => $note_struct)
+        .or(() => $table_struct),
+    )
     ;
 
 
 export const rules = {
-    suppl_provision_appdx_table_title: $suppl_provision_appdx_table_title,
-    suppl_provision_appdx_table: $suppl_provision_appdx_table,
-    suppl_provision_appdx_table_children: $suppl_provision_appdx_table_children,
+    appdx_note_title: $appdx_note_title,
+    appdx_note: $appdx_note,
+    appdx_note_children: $appdx_note_children,
 };

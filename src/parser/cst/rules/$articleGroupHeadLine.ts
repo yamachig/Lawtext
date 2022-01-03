@@ -1,10 +1,10 @@
 import factory from "../factory";
 import { articleGroupType } from "../../../law/lawUtil";
-import { $INLINE_EXCLUDE_TRAILING_SPACES } from "../../inline";
+import { $INLINE_EXCLUDE_TRAILING_SPACES } from "./inline";
 import $articleGroupNum from "./$articleGroupNum";
 import $indents from "./$indents";
 import { ArticleGroupHeadLine } from "../../../node/cst/line";
-import { $__, $_EOL } from "../../lexical";
+import { $__, $_EOL } from "./lexical";
 
 
 export const $articleGroupHeadLine = factory

@@ -1,16 +1,16 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../law/std";
-import { __Text } from "../../node/control";
-import { setItemNum } from "../../law/lawUtil";
+import { newStdEL } from "../../../law/std";
+import { __Text } from "../../../node/control";
+import { setItemNum } from "../../../law/lawUtil";
 import { factory } from "../common";
-import { $ROUND_PARENTHESES_INLINE } from "../inline";
-import { $_, $NEWLINE, $INDENT, $DEDENT } from "../lexical";
-import { $xml_element } from "../xml";
+import { $ROUND_PARENTHESES_INLINE } from "../../cst/rules/inline";
+import { $_, $NEWLINE, $INDENT, $DEDENT } from "../../cst/rules/lexical";
+import { $xml_element } from "../../cst/rules/xml";
 import { $remarks } from "./remarks";
 
 
-export const $suppl_provision_appdx_title = factory
-    .withName("suppl_provision_appdx_title")
+export const $appdx_title = factory
+    .withName("appdx_title")
     .action(r => r
         .sequence(c => c
             .and(r => r
@@ -59,8 +59,7 @@ export const $suppl_provision_appdx_title = factory
                                     .and(r => r
                                         .asSlice(r => r
                                             .sequence(c => c
-                                                .and(r => r.regExp(/^[附付]/))
-                                                .and(r => r.seqEqual("則付録"))
+                                                .and(r => r.seqEqual("付録"))
                                                 .and(r => r
                                                     .zeroOrMore(r => r.regExp(/^[^\r\n(（]/)),
                                                 ),
@@ -106,11 +105,11 @@ export const $suppl_provision_appdx_title = factory
     )
     ;
 
-export const $suppl_provision_appdx = factory
-    .withName("suppl_provision_appdx")
+export const $appdx = factory
+    .withName("appdx")
     .action(r => r
         .sequence(c => c
-            .and(() => $suppl_provision_appdx_title, "title_struct")
+            .and(() => $appdx_title, "title_struct")
             .and(r => r.oneOrMore(() => $NEWLINE))
             .and(r => r
                 .action(r => r
@@ -140,24 +139,23 @@ export const $suppl_provision_appdx = factory
             , "children"),
         )
     , (({ title_struct, children }) => {
-        const suppl_provision_appdx = newStdEL("SupplProvisionAppdx");
-        suppl_provision_appdx.append(newStdEL("ArithFormulaNum", title_struct.attr, [new __Text(title_struct.title)]));
+        const appdx = newStdEL("Appdx");
+        appdx.append(newStdEL("ArithFormulaNum", title_struct.attr, [new __Text(title_struct.title)]));
         if (title_struct.related_article_num) {
-            suppl_provision_appdx.append(newStdEL("RelatedArticleNum", {}, [title_struct.related_article_num]));
+            appdx.append(newStdEL("RelatedArticleNum", {}, [title_struct.related_article_num]));
         }
 
         if (children) {
             setItemNum(children);
         }
-        suppl_provision_appdx.extend(children || []);
+        appdx.extend(children || []);
 
-        return suppl_provision_appdx;
+        return appdx;
     }),
     )
     ;
 
-
 export const rules = {
-    suppl_provision_appdx_title: $suppl_provision_appdx_title,
-    suppl_provision_appdx: $suppl_provision_appdx,
+    appdx_title: $appdx_title,
+    appdx: $appdx,
 };

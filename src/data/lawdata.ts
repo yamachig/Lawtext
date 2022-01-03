@@ -1,7 +1,7 @@
 import * as std from "../law/std";
 import * as analyzer from "../analyzer";
 import * as util from "../util";
-import { parse } from "../parser";
+import { parse } from "../parser/std";
 import { xmlToJson } from "../node/el";
 
 

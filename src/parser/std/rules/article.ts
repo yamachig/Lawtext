@@ -1,10 +1,10 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL, StdEL } from "../../law/std";
-import { articleGroupType, parseNamedNum } from "../../law/lawUtil";
-import { PointerFragment, RelPos } from "../../node/pointer";
+import { newStdEL, StdEL } from "../../../law/std";
+import { articleGroupType, parseNamedNum } from "../../../law/lawUtil";
+import { PointerFragment, RelPos } from "../../../node/pointer";
 import { factory } from "../common";
-import { $ROUND_PARENTHESES_INLINE } from "../inline";
-import { $_, $NEWLINE, $__, $INDENT, $DEDENT } from "../lexical";
+import { $ROUND_PARENTHESES_INLINE } from "../../cst/rules/inline";
+import { $_, $NEWLINE, $__, $INDENT, $DEDENT } from "../../cst/rules/lexical";
 import { makeRangesRule } from "../range";
 import { $columns_or_sentences } from "./columnsOrSentences";
 import { $list } from "./list";

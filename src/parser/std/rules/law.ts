@@ -1,8 +1,8 @@
-import { Law, newStdEL } from "../../law/std";
-import { parseLawNum } from "../../law/lawUtil";
+import { Law, newStdEL } from "../../../law/std";
+import { parseLawNum } from "../../../law/lawUtil";
 import { factory, ValueRule } from "../common";
-import { $INLINE, $ROUND_PARENTHESES_INLINE } from "../inline";
-import { $INDENT, $DEDENT, $__, $NEWLINE } from "../lexical";
+import { $INLINE, $ROUND_PARENTHESES_INLINE } from "../../cst/rules/inline";
+import { $INDENT, $DEDENT, $__, $NEWLINE } from "../../cst/rules/lexical";
 import { $appdx } from "./appdx";
 import { $appdx_fig } from "./appdxFig";
 import { $appdx_format } from "./appdxFormat";

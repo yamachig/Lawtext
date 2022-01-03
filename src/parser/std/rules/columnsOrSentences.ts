@@ -1,10 +1,10 @@
 /* eslint-disable no-irregular-whitespace */
-import { newStdEL } from "../../law/std";
-import { __Text } from "../../node/control";
-import { EL } from "../../node/el";
+import { newStdEL } from "../../../law/std";
+import { __Text } from "../../../node/control";
+import { EL } from "../../../node/el";
 import { factory, ValueRule } from "../common";
-import { $INLINE, $PERIOD_SENTENCE_FRAGMENT } from "../inline";
-import { $__ } from "../lexical";
+import { $INLINE, $PERIOD_SENTENCE_FRAGMENT } from "../../cst/rules/inline";
+import { $__ } from "../../cst/rules/lexical";
 
 
 export const makeSquareAttr = (lazyNameRule: (f: typeof factory) => ValueRule<string>) => {
