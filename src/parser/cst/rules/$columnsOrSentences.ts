@@ -3,7 +3,7 @@ import { __Text } from "../../../node/control";
 import { EL } from "../../../node/el";
 import { factory } from "../factory";
 import { $INLINE_EXCLUDE_TRAILING_SPACES, $PERIOD_SENTENCE_FRAGMENT } from "../../inline";
-import { $__ } from "../../lexical";
+import { $_, $__ } from "../../lexical";
 import $squareAttr from "./$squareAttr";
 
 
@@ -17,15 +17,15 @@ export const $columnsOrSentences = factory
                 .and(r => r
                     .sequence(c => c
                         .and(r => r
-                            .zeroOrMore(() => $squareAttr)
-                        , "target")
-                        .action(({ target }) => {
-                            const ret = {} as Record<string, string>;
-                            for (const [name, value] of target) {
-                                ret[name] = value;
-                            }
-                            return ret;
-                        })
+                            .zeroOrMore(r => r
+                                .sequence(s => s
+                                    .and(() => $squareAttr, "entry")
+                                    .and(() => $_)
+                                    .action(({ entry }) => entry)
+                                )
+                            )
+                        , "entries")
+                        .action(({ entries }) => Object.fromEntries(entries))
                     )
                 , "attr")
                 .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "inline")

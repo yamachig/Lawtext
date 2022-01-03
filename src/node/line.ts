@@ -78,8 +78,7 @@ export interface SupplProvisionAppdxItemHeadLine extends IndentsLine {
 
 export interface ArticleLine extends IndentsLine {
     type: LineType.ART;
-    contentHead: std.Article;
-    contentTail: EL[];
+    content: std.Article;
 }
 
 export interface ParagraphItemLine extends IndentsLine {
@@ -91,6 +90,7 @@ export interface ParagraphItemLine extends IndentsLine {
 export interface TableColumnLine extends IndentsLine {
     type: LineType.TBL;
     content: std.TableColumn;
+    isFirstColumn: boolean;
 }
 
 export interface ControlLine extends IndentsLine {

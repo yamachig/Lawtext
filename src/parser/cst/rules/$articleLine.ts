@@ -45,9 +45,21 @@ export const $articleLine = factory
                     if (num) {
                         article.attr.Num = num;
                     }
+                    if (inline) {
+                        const paragraph = newStdEL(
+                            "Paragraph",
+                            {
+                                Num: "1"
+                            },
+                            [
+                                newStdEL("ParagraphNum"),
+                                newStdEL("ParagraphSentence", {}, inline),
+                            ],
+                        );
+                        article.append(paragraph);
+                    }
                     return {
-                        contentHead: article,
-                        contentTail: inline ?? [],
+                        content: article,
                         contentText: text(),
                     };
                 })

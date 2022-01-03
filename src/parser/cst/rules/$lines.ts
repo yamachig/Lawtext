@@ -7,6 +7,7 @@ import $supplProvisionAppdxItemHeadLine from "./$supplProvisionAppdxItemHeadLine
 import $supplProvisionHeadLine from "./$supplProvisionHeadLine";
 import $articleLine from "./$articleLine";
 import $paragraphItemLine from "./$paragraphItemLine";
+import $tableColumnLine from "./$tableColumnLine";
 
 export const $lines = factory.withName("lines")
     .zeroOrMore(r => r
@@ -19,6 +20,7 @@ export const $lines = factory.withName("lines")
             .or(() => $supplProvisionHeadLine)
             .or(() => $articleLine)
             .or(() => $paragraphItemLine)
+            .or(() => $tableColumnLine)
         )
     )
     ;

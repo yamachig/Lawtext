@@ -29,7 +29,7 @@ describe("Test $articleLine", () => {
             lineEndText: `　
 `,
         } as const;
-        const expectedContentHead = {
+        const expectedContent = {
             tag: "Article",
             attr: {
                 Num: "2",
@@ -46,13 +46,43 @@ describe("Test $articleLine", () => {
                         },
                     ],
                 },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        Num: "1",
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: [],
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。"],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
             ],
         };
         const result = $articleLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.contentHead.json(true), expectedContentHead);
+            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
         }
     });
 
@@ -60,26 +90,26 @@ describe("Test $articleLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-第三十六条の三　何人も、法令に違反する事実がある場合において、その是正のためにされるべき処分又は行政指導（その根拠となる規定が法律に置かれているものに限る。）がされていないと思料するときは、当該処分をする権限を有する行政庁又は当該行政指導をする権限を有する行政機関に対し、その旨を申し出て、当該処分又は行政指導をすることを求めることができる。
+第三十六条の三　何人も、法令に違反する事実がある場合において、
 ２　前項の申出は、次に掲げる事項を記載した申出書を提出してしなければならない。
   一　申出をする者の氏名又は名称及び住所又は居所
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 172,
+            nextOffset: 32,
         } as const;
         const expectedValue = {
             type: LineType.ART,
             text: `\
-第三十六条の三　何人も、法令に違反する事実がある場合において、その是正のためにされるべき処分又は行政指導（その根拠となる規定が法律に置かれているものに限る。）がされていないと思料するときは、当該処分をする権限を有する行政庁又は当該行政指導をする権限を有する行政機関に対し、その旨を申し出て、当該処分又は行政指導をすることを求めることができる。
+第三十六条の三　何人も、法令に違反する事実がある場合において、
 `,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "第三十六条の三　何人も、法令に違反する事実がある場合において、その是正のためにされるべき処分又は行政指導（その根拠となる規定が法律に置かれているものに限る。）がされていないと思料するときは、当該処分をする権限を有する行政庁又は当該行政指導をする権限を有する行政機関に対し、その旨を申し出て、当該処分又は行政指導をすることを求めることができる。",
+            contentText: "第三十六条の三　何人も、法令に違反する事実がある場合において、",
             lineEndText: `
 `,
         } as const;
-        const expectedContentHead = {
+        const expectedContent = {
             tag: "Article",
             attr: {
                 Num: "36_3",
@@ -96,13 +126,43 @@ describe("Test $articleLine", () => {
                         },
                     ],
                 },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        Num: "1",
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: [],
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["何人も、法令に違反する事実がある場合において、"],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
             ],
         };
         const result = $articleLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.contentHead.json(true), expectedContentHead);
+            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
         }
     });
 
@@ -127,7 +187,7 @@ describe("Test $articleLine", () => {
             lineEndText: `
 `,
         } as const;
-        const expectedContentHead = {
+        const expectedContent = {
             tag: "Article",
             attr: {
                 Num: "198:209",
@@ -144,13 +204,43 @@ describe("Test $articleLine", () => {
                         },
                     ],
                 },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        Num: "1",
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: [],
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["削除"],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
             ],
         };
         const result = $articleLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.contentHead.json(true), expectedContentHead);
+            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
         }
     });
 
