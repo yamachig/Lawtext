@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { EL } from "../../../node/el";
 import { LineType } from "../../../node/line";
 import { initialEnv } from "../env";
 import $paragraphItemLine from "./$paragraphItemLine";
@@ -34,6 +35,37 @@ describe("Test $paragraphItemLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+  八
+    イ　法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 4,
+        } as const;
+        const expectedValue = {
+            type: LineType.PIT,
+            text: `\
+  八
+`,
+            indentDepth: 1,
+            indentTexts: ["  "] as string[],
+            contentText: "八",
+            contentHead: "八",
+            contentTail: [] as EL[],
+            lineEndText: `
+`,
+        } as const;
+        const result = $paragraphItemLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepStrictEqual(result.value, expectedValue);
         }
     });
 

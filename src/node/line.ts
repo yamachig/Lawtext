@@ -11,7 +11,6 @@ export enum LineType {
     ART = "ART",
     PIT = "PIT",
     TBL = "TBL",
-    CTL = "CTL",
     OTH = "OTH",
 }
 
@@ -93,12 +92,9 @@ export interface TableColumnLine extends IndentsLine {
     isFirstColumn: boolean;
 }
 
-export interface ControlLine extends IndentsLine {
-    type: LineType.CTL;
-}
-
 export interface OtherLine extends IndentsLine {
     type: LineType.OTH;
+    controls: string[];
     content: EL[];
 }
 
@@ -112,7 +108,6 @@ export type Line =
     | ArticleLine
     | ParagraphItemLine
     | TableColumnLine
-    | ControlLine
     | OtherLine
     ;
 
