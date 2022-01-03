@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { LineType } from "../../../node/line";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $articleLine from "./$articleLine";
 
@@ -18,71 +18,49 @@ describe("Test $articleLine", () => {
             ok: true,
             nextOffset: 45,
         } as const;
+        const expectedText = `\
+第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。　
+`;
         const expectedValue = {
             type: LineType.ART,
-            text: `\
-第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。",
+            title: "第二条",
+            midSpace: "　",
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "Article",
-            attr: {
-                Num: "2",
-            },
-            children: [
-                {
-                    tag: "ArticleTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["第二条"],
-                        },
-                    ],
-                },
-                {
-                    tag: "Paragraph",
-                    attr: {
-                        Num: "1",
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。"],
+                            },
+                        ],
                     },
-                    children: [
-                        {
-                            tag: "ParagraphNum",
-                            attr: {},
-                            children: [],
-                        },
-                        {
-                            tag: "ParagraphSentence",
-                            attr: {},
-                            children: [
-                                {
-                                    tag: "Sentence",
-                                    attr: {},
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。"],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                ],
+            },
+        ];
         const result = $articleLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 
@@ -98,71 +76,49 @@ describe("Test $articleLine", () => {
             ok: true,
             nextOffset: 32,
         } as const;
+        const expectedText = `\
+第三十六条の三　何人も、法令に違反する事実がある場合において、
+`;
         const expectedValue = {
             type: LineType.ART,
-            text: `\
-第三十六条の三　何人も、法令に違反する事実がある場合において、
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "第三十六条の三　何人も、法令に違反する事実がある場合において、",
+            title: "第三十六条の三",
+            midSpace: "　",
             lineEndText: `
 `,
         } as const;
-        const expectedContent = {
-            tag: "Article",
-            attr: {
-                Num: "36_3",
-            },
-            children: [
-                {
-                    tag: "ArticleTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["第三十六条の三"],
-                        },
-                    ],
-                },
-                {
-                    tag: "Paragraph",
-                    attr: {
-                        Num: "1",
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["何人も、法令に違反する事実がある場合において、"],
+                            },
+                        ],
                     },
-                    children: [
-                        {
-                            tag: "ParagraphNum",
-                            attr: {},
-                            children: [],
-                        },
-                        {
-                            tag: "ParagraphSentence",
-                            attr: {},
-                            children: [
-                                {
-                                    tag: "Sentence",
-                                    attr: {},
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["何人も、法令に違反する事実がある場合において、"],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                ],
+            },
+        ];
         const result = $articleLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 
@@ -176,71 +132,49 @@ describe("Test $articleLine", () => {
             ok: true,
             nextOffset: 19,
         } as const;
+        const expectedText = `\
+第百九十八条から第二百九条まで　削除
+`;
         const expectedValue = {
             type: LineType.ART,
-            text: `\
-第百九十八条から第二百九条まで　削除
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "第百九十八条から第二百九条まで　削除",
+            title: "第百九十八条から第二百九条まで",
+            midSpace: "　",
             lineEndText: `
 `,
         } as const;
-        const expectedContent = {
-            tag: "Article",
-            attr: {
-                Num: "198:209",
-            },
-            children: [
-                {
-                    tag: "ArticleTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["第百九十八条から第二百九条まで"],
-                        },
-                    ],
-                },
-                {
-                    tag: "Paragraph",
-                    attr: {
-                        Num: "1",
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["削除"],
+                            },
+                        ],
                     },
-                    children: [
-                        {
-                            tag: "ParagraphNum",
-                            attr: {},
-                            children: [],
-                        },
-                        {
-                            tag: "ParagraphSentence",
-                            attr: {},
-                            children: [
-                                {
-                                    tag: "Sentence",
-                                    attr: {},
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["削除"],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                ],
+            },
+        ];
         const result = $articleLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 

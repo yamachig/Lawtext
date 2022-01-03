@@ -1,14 +1,11 @@
 import factory from "../factory";
-import { LineType, BlankLine } from "../../../node/line";
+import { BlankLine } from "../../../node/cst/line";
 
 export const $blankLine = factory
     .withName("blankLine")
     .sequence(s => s
         .and(r => r.regExp(/^\s*\r?\n$/), "text")
-        .action(({ text }) => ({
-            type: LineType.BNK,
-            text,
-        } as BlankLine))
+        .action(({ text }) => new BlankLine(text))
     )
     ;
 

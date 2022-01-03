@@ -1,7 +1,7 @@
 import factory from "../factory";
 import { newStdEL } from "../../../law/std";
 import $indents from "./$indents";
-import { TOCHeadLine, LineType } from "../../../node/line";
+import { TOCHeadLine } from "../../../node/cst/line";
 import { __Text } from "../../../node/control";
 import { $_EOL } from "../../../parser/lexical";
 
@@ -27,14 +27,13 @@ export const $tocHeadLine = factory
             )
         , "contentStruct")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, contentStruct, lineEndText, text }) => {
-            return {
-                type: LineType.TOC,
-                text: text(),
-                ...indentsStruct,
-                ...contentStruct,
+        .action(({ indentsStruct, contentStruct, lineEndText }) => {
+            return new TOCHeadLine(
+                indentsStruct.indentDepth,
+                indentsStruct.indentTexts,
+                contentStruct.contentText,
                 lineEndText,
-            } as TOCHeadLine;
+            );
         })
     )
     ;

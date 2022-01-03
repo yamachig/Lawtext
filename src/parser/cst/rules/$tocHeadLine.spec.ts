@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { LineType } from "../../../node/line";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $tocHeadLine from "./$tocHeadLine";
 
@@ -17,39 +17,22 @@ describe("Test $tocHeadLine", () => {
             ok: true,
             nextOffset: 3,
         } as const;
+        const expectedText = `\
+目次
+`;
         const expectedValue = {
             type: LineType.TOC,
-            text: `\
-目次
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "目次",
+            _contentText: "目次",
             lineEndText: `
 `,
         } as const;
-        const expectedContent = {
-            tag: "TOC",
-            attr: {},
-            children: [
-                {
-                    tag: "TOCLabel",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["目次"],
-                        },
-                    ],
-                },
-            ],
-        };
         const result = $tocHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 
@@ -63,39 +46,22 @@ describe("Test $tocHeadLine", () => {
             ok: true,
             nextOffset: 13,
         } as const;
+        const expectedText = `\
+        目　次　
+`;
         const expectedValue = {
             type: LineType.TOC,
-            text: `\
-        目　次　
-`,
             indentDepth: 4,
             indentTexts: ["  ", "  ", "  ", "  "] as string[],
-            contentText: "目　次",
+            _contentText: "目　次",
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "TOC",
-            attr: {},
-            children: [
-                {
-                    tag: "TOCLabel",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["目　次"],
-                        },
-                    ],
-                },
-            ],
-        };
         const result = $tocHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 

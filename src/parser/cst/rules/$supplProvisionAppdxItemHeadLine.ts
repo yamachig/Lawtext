@@ -1,9 +1,8 @@
 import factory from "../factory";
 import { $INLINE_EXCLUDE_TRAILING_SPACES } from "../../inline";
-import { newStdEL } from "../../../law/std";
 import $indents from "./$indents";
-import { SupplProvisionAppdxItemHeadLine, LineType } from "../../../node/line";
-import { $_EOL } from "../../lexical";
+import { SupplProvisionAppdxItemHeadLine } from "../../../node/cst/line";
+import { $_, $_EOL } from "../../lexical";
 import { mergeAdjacentTexts } from "../util";
 
 
@@ -14,37 +13,46 @@ export const $supplProvisionAppdxItemHeadLine = factory
         .and(r => r
             .choice(c => c
                 .orSequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .and(r => r.regExp(/^:suppl-provision-appdx:[ 　\t]*/), "control")
-                    .action(({ control }) => {
+                    .and(r => r.regExp(/^:suppl-provision-appdx:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => {
                         return {
                             mainTag: "SupplProvisionAppdx",
                             titleTag: "ArithFormulaNum",
-                            control,
+                            control: {
+                                control,
+                                trailingSpace,
+                            },
                             head: "",
                         } as const;
                     })
                 )
                 .orSequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .and(r => r.regExp(/^:suppl-provision-appdx-table:[ 　\t]*/), "control")
-                    .action(({ control }) => {
+                    .and(r => r.regExp(/^:suppl-provision-appdx-table:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => {
                         return {
                             mainTag: "SupplProvisionAppdxTable",
                             titleTag: "SupplProvisionAppdxTableTitle",
-                            control,
+                            control: {
+                                control,
+                                trailingSpace,
+                            },
                             head: "",
                         } as const;
                     })
                 )
                 .orSequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .and(r => r.regExp(/^:suppl-provision-appdx-style:[ 　\t]*/), "control")
-                    .action(({ control }) => {
+                    .and(r => r.regExp(/^:suppl-provision-appdx-style:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => {
                         return {
                             mainTag: "SupplProvisionAppdxStyle",
                             titleTag: "SupplProvisionAppdxStyleTitle",
-                            control,
+                            control: {
+                                control,
+                                trailingSpace,
+                            },
                             head: "",
                         } as const;
                     })
@@ -55,7 +63,7 @@ export const $supplProvisionAppdxItemHeadLine = factory
                         return {
                             mainTag: "SupplProvisionAppdxStyle",
                             titleTag: "SupplProvisionAppdxStyleTitle",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -66,7 +74,7 @@ export const $supplProvisionAppdxItemHeadLine = factory
                         return {
                             mainTag: "SupplProvisionAppdxTable",
                             titleTag: "SupplProvisionAppdxTableTitle",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -77,7 +85,7 @@ export const $supplProvisionAppdxItemHeadLine = factory
                         return {
                             mainTag: "SupplProvisionAppdx",
                             titleTag: "ArithFormulaNum",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -88,7 +96,7 @@ export const $supplProvisionAppdxItemHeadLine = factory
                         return {
                             mainTag: "SupplProvisionAppdxTable",
                             titleTag: "SupplProvisionAppdxTableTitle",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -97,24 +105,16 @@ export const $supplProvisionAppdxItemHeadLine = factory
         , "headStruct")
         .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "tail")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, headStruct, tail, lineEndText, text }) => {
-            const el = newStdEL(headStruct.mainTag);
+        .action(({ indentsStruct, headStruct, tail, lineEndText }) => {
             const inline = mergeAdjacentTexts([headStruct.head, ...tail]);
-            if (inline.slice(-1)[0]?.tag === "__Parentheses" && inline.slice(-1)[0].attr.type === "round") {
-                const numInline = inline.splice(-1, 1);
-                el.append(newStdEL(headStruct.titleTag, {}, inline));
-                el.append(newStdEL("RelatedArticleNum", {}, numInline));
-            } else {
-                el.append(newStdEL(headStruct.titleTag, {}, inline));
-            }
-            return {
-                type: LineType.SPA,
-                text: text(),
-                ...indentsStruct,
-                content: el,
-                contentText: headStruct.control + el.text,
+            return new SupplProvisionAppdxItemHeadLine(
+                indentsStruct.indentDepth,
+                indentsStruct.indentTexts,
+                headStruct.mainTag,
+                headStruct.control ? [headStruct.control] : [],
+                inline,
                 lineEndText,
-            } as SupplProvisionAppdxItemHeadLine;
+            );
         })
     )
     ;

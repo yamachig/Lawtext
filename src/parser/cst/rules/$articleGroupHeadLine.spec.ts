@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { LineType } from "../../../node/line";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $articleGroupHeadLine from "./$articleGroupHeadLine";
 
@@ -20,39 +20,32 @@ describe("Test $articleGroupHeadLine", () => {
             ok: true,
             nextOffset: 13,
         } as const;
+        const expectedText = `\
+      第一章　総則
+`;
         const expectedValue = {
             type: LineType.ARG,
-            text: `\
-      第一章　総則
-`,
             indentDepth: 3,
             indentTexts: ["  ", "  ", "  "] as string[],
-            contentText: "第一章　総則",
+            mainTag: "Chapter",
+            num: "第一章",
+            midSpace: "　",
             lineEndText: `
 `,
         } as const;
-        const expectedContent = {
-            tag: "Chapter",
-            attr: { Num: "1" },
-            children: [
-                {
-                    tag: "ChapterTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["第一章　総則"],
-                        },
-                    ],
-                },
-            ],
-        };
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["総則"],
+            },
+        ];
         const result = $articleGroupHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -67,69 +60,59 @@ describe("Test $articleGroupHeadLine", () => {
             ok: true,
             nextOffset: 25,
         } as const;
+        const expectedText = `\
+  第四章の二　処分等の求め（第三十六条の三）　
+`;
         const expectedValue = {
             type: LineType.ARG,
-            text: `\
-  第四章の二　処分等の求め（第三十六条の三）　
-`,
             indentDepth: 1,
             indentTexts: ["  "] as string[],
-            contentText: "第四章の二　処分等の求め（第三十六条の三）",
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "Chapter",
-            attr: { Num: "4_2" },
-            children: [
-                {
-                    tag: "ChapterTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["第四章の二　処分等の求め"],
-                        },
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
-                            },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第三十六条の三"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["処分等の求め"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-            ],
-        };
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第三十六条の三"],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $articleGroupHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 

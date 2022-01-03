@@ -1,6 +1,6 @@
 import factory from "../factory";
 import $indents from "./$indents";
-import { OtherLine, LineType } from "../../../node/line";
+import { OtherLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "../../../parser/lexical";
 import $columnsOrSentences from "./$columnsOrSentences";
 
@@ -10,44 +10,27 @@ export const $otherLine = factory
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
         .and(r => r
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(() => $_)
-                            // eslint-disable-next-line no-irregular-whitespace
-                            .and(r => r.regExp(/^:[^:\r\n]+:/), "control")
-                            .action(({ control }) => control)
-                        )
-                    )
-                , "controls")
-                .and(r => r
-                    .zeroOrOne(r => r
-                        .sequence(s => s
-                            .and(() => $_)
-                            .and(() => $columnsOrSentences, "inline")
-                            .action(({ inline }) => inline)
-                        )
-                    )
-                , "inline")
-                .action(({ controls, inline, text }) => {
-                    return {
-                        content: inline ?? [],
-                        contentText: text(),
-                        controls,
-                    };
-                })
+            .zeroOrMore(r => r
+                .sequence(s => s
+                    // eslint-disable-next-line no-irregular-whitespace
+                    .and(r => r.regExp(/^:[^:\r\n]+:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => ({ control, trailingSpace }))
+                )
             )
-        , "contentStruct")
+        , "controls")
+        .and(r => r
+            .zeroOrOne(() => $columnsOrSentences)
+        , "columns")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, contentStruct, lineEndText, text }) => {
-            return {
-                type: LineType.OTH,
-                text: text(),
-                ...indentsStruct,
-                ...contentStruct,
+        .action(({ indentsStruct, controls, columns, lineEndText }) => {
+            return new OtherLine(
+                indentsStruct.indentDepth,
+                indentsStruct.indentTexts,
+                controls,
+                columns ?? [],
                 lineEndText,
-            } as OtherLine;
+            );
         })
     )
     ;

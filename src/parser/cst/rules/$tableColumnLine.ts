@@ -1,7 +1,6 @@
 import factory from "../factory";
-import { newStdEL } from "../../../law/std";
 import $indents from "./$indents";
-import { TableColumnLine, LineType } from "../../../node/line";
+import { TableColumnLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "../../../parser/lexical";
 import $squareAttr from "./$squareAttr";
 import $columnsOrSentences from "./$columnsOrSentences";
@@ -11,55 +10,47 @@ export const $tableColumnLine = factory
     .withName("tableColumnLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
+        // eslint-disable-next-line no-irregular-whitespace
         .and(r => r
-            .sequence(s => s
-                // eslint-disable-next-line no-irregular-whitespace
-                .and(r => r.regExp(/^(?:\*[ 　\t]*)?-/), "head")
-                .and(r => r
-                    .sequence(c => c
-                        .and(r => r
-                            .zeroOrMore(r => r
-                                .sequence(s => s
-                                    .and(() => $_)
-                                    .and(() => $squareAttr, "entry")
-                                    .action(({ entry }) => entry)
-                                )
-                            )
-                        , "entries")
-                        .action(({ entries }) => Object.fromEntries(entries))
-                    )
-                , "attr")
-                .and(r => r
-                    .zeroOrOne(r => r
-                        .sequence(s => s
-                            .and(() => $_)
-                            .and(() => $columnsOrSentences, "inline")
-                            .action(({ inline }) => inline)
-                        )
-                    )
-                , "inline")
-                .action(({ head, attr, inline, text }) => {
-                    return {
-                        content: newStdEL(
-                            "TableColumn",
-                            attr,
-                            inline ?? [],
-                        ),
-                        contentText: text(),
-                        isFirstColumn: head.startsWith("*"),
-                    };
-                })
+            .zeroOrOne(r => r
+                .sequence(s => s
+                    .and(r => r.seqEqual("*" as const), "firstColumnIndicator")
+                    .and(() => $_, "midIndicatorsSpace")
+                    .action(({ firstColumnIndicator, midIndicatorsSpace }) => ({ firstColumnIndicator, midIndicatorsSpace }))
+                )
             )
-        , "contentStruct")
+        , "firstColumnIndicatorStruct")
+        .and(r => r.seqEqual("-" as const), "columnIndicator")
+        .and(() => $_, "midSpace")
+        .and(r => r
+            .zeroOrMore(r => r
+                .sequence(s => s
+                    .and(() => $squareAttr, "entry")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ entry, trailingSpace }) => ({ ...entry, trailingSpace }))
+                )
+            )
+        , "attrEntries")
+        .and(r => r
+            .zeroOrOne(r => r
+                .sequence(s => s
+                    .and(() => $columnsOrSentences, "columns")
+                )
+            )
+        , "columns")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, contentStruct, lineEndText, text }) => {
-            return {
-                type: LineType.TBL,
-                text: text(),
-                ...indentsStruct,
-                ...contentStruct,
+        .action(({ indentsStruct, firstColumnIndicatorStruct, columnIndicator, midSpace, attrEntries, columns, lineEndText }) => {
+            return new TableColumnLine(
+                indentsStruct.indentDepth,
+                indentsStruct.indentTexts,
+                firstColumnIndicatorStruct?.firstColumnIndicator ?? "",
+                firstColumnIndicatorStruct?.midIndicatorsSpace ?? "",
+                columnIndicator,
+                midSpace,
+                attrEntries,
+                columns ?? [],
                 lineEndText,
-            } as TableColumnLine;
+            );
         })
     )
     ;

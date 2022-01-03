@@ -1,53 +1,41 @@
 import factory from "../factory";
-import { newStdEL } from "../../../law/std";
 import $indents from "./$indents";
-import { SupplProvisionHeadLine, LineType } from "../../../node/line";
+import { SupplProvisionHeadLine } from "../../../node/cst/line";
 import { $_EOL } from "../../../parser/lexical";
-import { $ROUND_PARENTHESES_INLINE } from "../../../parser/inline";
-import { __Text } from "../../../node/control";
 
 
 export const $supplProvisionHeadLine = factory
     .withName("supplProvisionHeadLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
+        // eslint-disable-next-line no-irregular-whitespace
+        .and(r => r.regExp(/^[附付][ 　\t]*則/), "head")
         .and(r => r
-            .sequence(s => s
-                // eslint-disable-next-line no-irregular-whitespace
-                .and(r => r.regExp(/^[附付][ 　\t]*則/), "head")
-                .and(r => r.zeroOrOne(() => $ROUND_PARENTHESES_INLINE), "amendLawNum")
-                .and(r => r
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .zeroOrOne(r => r.regExp(/^[ 　\t]*抄/))
-                , "extract")
-                .action(({ head, amendLawNum, extract, text }) => {
-                    const supplProvision = newStdEL(
-                        "SupplProvision",
-                        {},
-                        [newStdEL("SupplProvisionLabel", {}, [new __Text(head)])],
-                    );
-                    if (amendLawNum) {
-                        supplProvision.attr.AmendLawNum = amendLawNum.content;
-                    }
-                    if (extract) {
-                        supplProvision.attr.Extract = "true";
-                    }
-                    return {
-                        content: supplProvision,
-                        contentText: text(),
-                    };
-                })
+            .zeroOrOne(r => r
+                .sequence(s => s
+                    .and(r => r.oneOf("(（"), "openParen")
+                    .and(r => r.regExp(/^[^)）\r\n]+/), "amendLawNum")
+                    .and(r => r.oneOf(")）"), "closeParen")
+                    .action(({ openParen, amendLawNum, closeParen }) => ({ openParen, amendLawNum, closeParen }))
+                )
             )
-        , "contentStruct")
+        , "amendLawNumStruct")
+        .and(r => r
+            // eslint-disable-next-line no-irregular-whitespace
+            .zeroOrOne(r => r.regExp(/^[ 　\t]*抄/))
+        , "extract")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, contentStruct, lineEndText, text }) => {
-            return {
-                type: LineType.SPR,
-                text: text(),
-                ...indentsStruct,
-                ...contentStruct,
+        .action(({ indentsStruct, head, amendLawNumStruct, extract, lineEndText }) => {
+            return new SupplProvisionHeadLine(
+                indentsStruct.indentDepth,
+                indentsStruct.indentTexts,
+                head,
+                amendLawNumStruct?.openParen ?? "",
+                amendLawNumStruct?.amendLawNum ?? "",
+                amendLawNumStruct?.closeParen ?? "",
+                extract ?? "",
                 lineEndText,
-            } as SupplProvisionHeadLine;
+            );
         })
     )
     ;

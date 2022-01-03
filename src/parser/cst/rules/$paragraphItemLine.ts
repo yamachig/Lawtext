@@ -1,6 +1,6 @@
 import factory from "../factory";
 import $indents from "./$indents";
-import { ParagraphItemLine, LineType } from "../../../node/line";
+import { ParagraphItemLine } from "../../../node/cst/line";
 import { $__, $_EOL } from "../../lexical";
 import $columnsOrSentences from "./$columnsOrSentences";
 import makeRangesRule from "./makeRangesRule";
@@ -13,38 +13,28 @@ export const $paragraphItemLine = factory
     .withName("paragraphItemLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
+        .and( r => r.asSlice(() => $paragraphItemRanges), "title")
         .and(r => r
-            .sequence(s => s
-                .and( r => r.asSlice(() => $paragraphItemRanges), "paragraphItemTitleText")
-                .and(r => r
-                    .zeroOrOne(r => r
-                        .sequence(c => c
-                            .and(() => $__)
-                            .and(() => $columnsOrSentences, "inline")
-                            .action(({ inline }) => {
-                                return inline;
-                            })
-                        )
-                    )
-                , "inline")
-                .action(({ paragraphItemTitleText, inline, text }) => {
-                    return {
-                        contentHead: paragraphItemTitleText,
-                        contentTail: inline ?? [],
-                        contentText: text(),
-                    };
-                })
+            .zeroOrOne(r => r
+                .sequence(c => c
+                    .and(() => $__, "midSpace")
+                    .and(() => $columnsOrSentences, "columns")
+                    .action(({ midSpace, columns }) => {
+                        return { midSpace, columns };
+                    })
+                )
             )
         , "contentStruct")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, contentStruct, lineEndText, text }) => {
-            return {
-                type: LineType.PIT,
-                text: text(),
-                ...indentsStruct,
-                ...contentStruct,
+        .action(({ indentsStruct, title, contentStruct, lineEndText }) => {
+            return new ParagraphItemLine(
+                indentsStruct.indentDepth,
+                indentsStruct.indentTexts,
+                title,
+                contentStruct?.midSpace ?? "",
+                contentStruct?.columns ?? [],
                 lineEndText,
-            } as ParagraphItemLine;
+            );
         })
     )
     ;

@@ -1,3 +1,4 @@
+import { AttrEntry } from "../../../node/cst/inline";
 import { factory } from "../factory";
 import { ValueRule } from "../util";
 
@@ -15,8 +16,12 @@ export const makeSquareAttrRule = (lazyNameRule: (f: typeof factory) => ValueRul
                 )
             , "value")
             .and(r => r.seqEqual("\"]"))
-            .action(({ name, value }) => {
-                return [name, value] as [name: string, value: string];
+            .action(({ name, value, text }) => {
+                return {
+                    text: text(),
+                    entry: [name, value],
+                    trailingSpace: "",
+                } as AttrEntry;
             })
         );
 };

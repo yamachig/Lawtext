@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { LineType } from "../../../node/line";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $blankLine from "./$blankLine";
 
@@ -17,16 +17,17 @@ describe("Test $blankLine", () => {
             ok: true,
             nextOffset: 1,
         } as const;
+        const expectedText = `\
+
+`;
         const expectedValue = {
             type: LineType.BNK,
-            text: `\
-
-`,
         } as const;
         const result = $blankLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 
@@ -41,16 +42,17 @@ describe("Test $blankLine", () => {
             ok: true,
             nextOffset: 2,
         } as const;
+        const expectedText = `\
+　
+`;
         const expectedValue = {
             type: LineType.BNK,
-            text: `\
-　
-`,
         } as const;
         const result = $blankLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 

@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { LineType } from "../../../node/line";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $supplProvisionHeadLine from "./$supplProvisionHeadLine";
 
@@ -20,39 +20,26 @@ describe("Test $supplProvisionHeadLine", () => {
             ok: true,
             nextOffset: 11,
         } as const;
+        const expectedText = `\
+      附　則　
+`;
         const expectedValue = {
             type: LineType.SPR,
-            text: `\
-      附　則　
-`,
             indentDepth: 3,
             indentTexts: ["  ", "  ", "  "] as string[],
-            contentText: "附　則",
+            head: "附　則",
+            openParen: "",
+            amendLawNum: "",
+            closeParen: "",
+            extractText: "",
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "SupplProvision",
-            attr: {},
-            children: [
-                {
-                    tag: "SupplProvisionLabel",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["附　則"],
-                        },
-                    ],
-                },
-            ],
-        };
         const result = $supplProvisionHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 
@@ -69,42 +56,26 @@ describe("Test $supplProvisionHeadLine", () => {
             ok: true,
             nextOffset: 30,
         } as const;
+        const expectedText = `\
+      附　則（平成二六年六月一三日法律第七〇号）　抄
+`;
         const expectedValue = {
             type: LineType.SPR,
-            text: `\
-      附　則（平成二六年六月一三日法律第七〇号）　抄
-`,
             indentDepth: 3,
             indentTexts: ["  ", "  ", "  "] as string[],
-            contentText: "附　則（平成二六年六月一三日法律第七〇号）　抄",
+            head: "附　則",
+            openParen: "（",
+            amendLawNum: "平成二六年六月一三日法律第七〇号",
+            closeParen: "）",
+            extractText: "　抄",
             lineEndText: `
 `,
         } as const;
-        const expectedContent = {
-            tag: "SupplProvision",
-            attr: {
-                AmendLawNum: "平成二六年六月一三日法律第七〇号",
-                Extract: "true",
-            },
-            children: [
-                {
-                    tag: "SupplProvisionLabel",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["附　則"],
-                        },
-                    ],
-                },
-            ],
-        };
         const result = $supplProvisionHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 
@@ -121,41 +92,26 @@ describe("Test $supplProvisionHeadLine", () => {
             ok: true,
             nextOffset: 29,
         } as const;
+        const expectedText = `\
+      附　則（平成二六年六月一三日法律第七〇号）　
+`;
         const expectedValue = {
             type: LineType.SPR,
-            text: `\
-      附　則（平成二六年六月一三日法律第七〇号）　
-`,
             indentDepth: 3,
             indentTexts: ["  ", "  ", "  "] as string[],
-            contentText: "附　則（平成二六年六月一三日法律第七〇号）",
+            head: "附　則",
+            openParen: "（",
+            amendLawNum: "平成二六年六月一三日法律第七〇号",
+            closeParen: "）",
+            extractText: "",
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "SupplProvision",
-            attr: {
-                AmendLawNum: "平成二六年六月一三日法律第七〇号",
-            },
-            children: [
-                {
-                    tag: "SupplProvisionLabel",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["附　則"],
-                        },
-                    ],
-                },
-            ],
-        };
         const result = $supplProvisionHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 

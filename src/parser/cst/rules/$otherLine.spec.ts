@@ -1,8 +1,8 @@
 import { assert } from "chai";
-import { EL } from "../../../node/el";
-import { LineType } from "../../../node/line";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $otherLine from "./$otherLine";
+import { Columns, Controls } from "../../../node/cst/inline";
 
 const env = initialEnv({});
 
@@ -19,55 +19,60 @@ describe("Test $otherLine", () => {
             ok: true,
             nextOffset: 10,
         } as const;
+        const expectedText = `\
+  （施行期日）　
+`;
         const expectedValue = {
             type: LineType.OTH,
-            text: `\
-  （施行期日）　
-`,
             indentDepth: 1,
             indentTexts: ["  "] as string[],
-            contentText: "（施行期日）",
-            controls: [] as string[],
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = [
+        const expectedColumns = [
             {
-                tag: "Sentence",
-                attr: {},
-                children: [
+                leadingSpace: "",
+                attrEntries: [],
+                sentences: [
                     {
-                        tag: "__Parentheses",
-                        attr: {
-                            depth: "1",
-                            type: "round",
-                        },
+                        tag: "Sentence",
+                        attr: {},
                         children: [
                             {
-                                tag: "__PStart",
+                                tag: "__Parentheses",
                                 attr: {
+                                    depth: "1",
                                     type: "round",
                                 },
-                                children: ["（"],
-                            },
-                            {
-                                tag: "__PContent",
-                                attr: { type: "round" },
                                 children: [
                                     {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["施行期日"],
+                                        tag: "__PStart",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: ["（"],
+                                    },
+                                    {
+                                        tag: "__PContent",
+                                        attr: { type: "round" },
+                                        children: [
+                                            {
+                                                tag: "__Text",
+                                                attr: {},
+                                                children: ["施行期日"],
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        tag: "__PEnd",
+                                        attr: { "type": "round" },
+                                        children: ["）"],
                                     },
                                 ],
-                            },
-                            {
-                                tag: "__PEnd",
-                                attr: { "type": "round" },
-                                children: ["）"],
-                            },
+                            }
                         ],
-                    }
+                    },
                 ],
             },
         ];
@@ -75,7 +80,14 @@ describe("Test $otherLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.map(c => c.json(true)), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 
@@ -90,27 +102,32 @@ describe("Test $otherLine", () => {
             ok: true,
             nextOffset: 22,
         } as const;
+        const expectedText = `\
+この法律は、会社法の施行の日から施行する。
+`;
         const expectedValue = {
             type: LineType.OTH,
-            text: `\
-この法律は、会社法の施行の日から施行する。
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "この法律は、会社法の施行の日から施行する。",
-            controls: [] as string[],
+            controls: [] as Controls,
             lineEndText: `
 `,
         } as const;
-        const expectedContent = [
+        const expectedColumns = [
             {
-                tag: "Sentence",
-                attr: {},
-                children: [
+                leadingSpace: "",
+                attrEntries: [],
+                sentences: [
                     {
-                        tag: "__Text",
+                        tag: "Sentence",
                         attr: {},
-                        children: ["この法律は、会社法の施行の日から施行する。"],
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["この法律は、会社法の施行の日から施行する。"],
+                            },
+                        ],
                     },
                 ],
             },
@@ -119,7 +136,14 @@ describe("Test $otherLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.map(c => c.json(true)), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 
@@ -134,27 +158,37 @@ describe("Test $otherLine", () => {
             ok: true,
             nextOffset: 31,
         } as const;
+        const expectedText = `\
+    :style-struct-title:  様式第一
+`;
         const expectedValue = {
             type: LineType.OTH,
-            text: `\
-    :style-struct-title:  様式第一
-`,
             indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
-            contentText: ":style-struct-title:  様式第一",
-            controls: [":style-struct-title:"] as string[],
+            controls: [
+                {
+                    control: ":style-struct-title:",
+                    trailingSpace: "  ",
+                }
+            ] as Controls,
             lineEndText: `
 `,
         } as const;
-        const expectedContent = [
+        const expectedColumns = [
             {
-                tag: "Sentence",
-                attr: {},
-                children: [
+                leadingSpace: "",
+                attrEntries: [],
+                sentences: [
                     {
-                        tag: "__Text",
+                        tag: "Sentence",
                         attr: {},
-                        children: ["様式第一"],
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["様式第一"],
+                            },
+                        ],
                     },
                 ],
             },
@@ -163,7 +197,14 @@ describe("Test $otherLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.map(c => c.json(true)), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 
@@ -178,23 +219,39 @@ describe("Test $otherLine", () => {
             ok: true,
             nextOffset: 30,
         } as const;
+        const expectedText = `\
+    :control-1:  :control-2:　
+`;
         const expectedValue = {
             type: LineType.OTH,
-            text: `\
-    :control-1:  :control-2:　
-`,
             indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
-            contentText: ":control-1:  :control-2:",
-            controls: [":control-1:", ":control-2:"] as string[],
-            content: [] as EL[],
-            lineEndText: `　
+            controls: [
+                {
+                    control: ":control-1:",
+                    trailingSpace: "  ",
+                },
+                {
+                    control: ":control-2:",
+                    trailingSpace: "　",
+                },
+            ] as Controls,
+            lineEndText: `
 `,
         } as const;
+        const expectedColumns: Columns = [];
         const result = $otherLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
-            assert.deepStrictEqual(result.value, expectedValue);
+            assert.deepInclude(result.value, expectedValue);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 

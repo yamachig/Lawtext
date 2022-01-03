@@ -1,5 +1,6 @@
 import { assert } from "chai";
-import { LineType } from "../../../node/line";
+import { Controls } from "../../../node/cst/inline";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $supplProvisionAppdxItemHeadLine from "./$supplProvisionAppdxItemHeadLine";
 
@@ -19,75 +20,66 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             ok: true,
             nextOffset: 55,
         } as const;
+        const expectedText = `\
+:suppl-provision-appdx:　附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+`;
         const expectedValue = {
             type: LineType.SPA,
-            text: `\
-:suppl-provision-appdx:　附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":suppl-provision-appdx:　附則付録第一（第二十六条、第四十五条、第四十六条の五関係）",
+            mainTag: "SupplProvisionAppdx",
+            controls: [
+                {
+                    control: ":suppl-provision-appdx:",
+                    trailingSpace: "　",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "SupplProvisionAppdx",
-            attr: {},
-            children: [
-                {
-                    tag: "ArithFormulaNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["附則付録第一"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["附則付録第一"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第二十六条、第四十五条、第四十六条の五関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第二十六条、第四十五条、第四十六条の五関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $supplProvisionAppdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -103,75 +95,61 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             ok: true,
             nextOffset: 31,
         } as const;
+        const expectedText = `\
+附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+`;
         const expectedValue = {
             type: LineType.SPA,
-            text: `\
-附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "附則付録第一（第二十六条、第四十五条、第四十六条の五関係）",
+            mainTag: "SupplProvisionAppdx",
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "SupplProvisionAppdx",
-            attr: {},
-            children: [
-                {
-                    tag: "ArithFormulaNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["附則付録第一"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["附則付録第一"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第二十六条、第四十五条、第四十六条の五関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第二十六条、第四十五条、第四十六条の五関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $supplProvisionAppdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -188,75 +166,66 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             ok: true,
             nextOffset: 51,
         } as const;
+        const expectedText = `\
+:suppl-provision-appdx-table:附則別表第二（第十九条、第二十一条関係）　
+`;
         const expectedValue = {
             type: LineType.SPA,
-            text: `\
-:suppl-provision-appdx-table:附則別表第二（第十九条、第二十一条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":suppl-provision-appdx-table:附則別表第二（第十九条、第二十一条関係）",
+            mainTag: "SupplProvisionAppdxTable",
+            controls: [
+                {
+                    control: ":suppl-provision-appdx-table:",
+                    trailingSpace: "",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "SupplProvisionAppdxTable",
-            attr: {},
-            children: [
-                {
-                    tag: "SupplProvisionAppdxTableTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["附則別表第二"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["附則別表第二"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第十九条、第二十一条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第十九条、第二十一条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $supplProvisionAppdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -273,75 +242,61 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             ok: true,
             nextOffset: 22,
         } as const;
+        const expectedText = `\
+附則別表第二（第十九条、第二十一条関係）　
+`;
         const expectedValue = {
             type: LineType.SPA,
-            text: `\
-附則別表第二（第十九条、第二十一条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "附則別表第二（第十九条、第二十一条関係）",
+            mainTag: "SupplProvisionAppdxTable",
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "SupplProvisionAppdxTable",
-            attr: {},
-            children: [
-                {
-                    tag: "SupplProvisionAppdxTableTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["附則別表第二"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["附則別表第二"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第十九条、第二十一条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第十九条、第二十一条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $supplProvisionAppdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -357,75 +312,66 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             ok: true,
             nextOffset: 45,
         } as const;
+        const expectedText = `\
+:suppl-provision-appdx-style:附則別記様式（第十四条関係）　
+`;
         const expectedValue = {
             type: LineType.SPA,
-            text: `\
-:suppl-provision-appdx-style:附則別記様式（第十四条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":suppl-provision-appdx-style:附則別記様式（第十四条関係）",
+            mainTag: "SupplProvisionAppdxStyle",
+            controls: [
+                {
+                    control: ":suppl-provision-appdx-style:",
+                    trailingSpace: "",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "SupplProvisionAppdxStyle",
-            attr: {},
-            children: [
-                {
-                    tag: "SupplProvisionAppdxStyleTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["附則別記様式"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["附則別記様式"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第十四条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第十四条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $supplProvisionAppdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -441,75 +387,60 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             ok: true,
             nextOffset: 16,
         } as const;
+        const expectedText = `\
+附則別記様式（第十四条関係）　
+`;
         const expectedValue = {
             type: LineType.SPA,
-            text: `\
-附則別記様式（第十四条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "附則別記様式（第十四条関係）",
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "SupplProvisionAppdxStyle",
-            attr: {},
-            children: [
-                {
-                    tag: "SupplProvisionAppdxStyleTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["附則別記様式"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["附則別記様式"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第十四条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第十四条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $supplProvisionAppdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 

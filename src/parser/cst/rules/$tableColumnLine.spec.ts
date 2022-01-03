@@ -1,5 +1,6 @@
 import { assert } from "chai";
-import { LineType } from "../../../node/line";
+import { AttrEntries } from "../../../node/cst/inline";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $tableColumnLine from "./$tableColumnLine";
 
@@ -18,43 +19,63 @@ describe("Test $tableColumnLine", () => {
             ok: true,
             nextOffset: 40,
         } as const;
+        const expectedText = `\
+  * - [Valign="top"][rowspan="2"]前条第一項　
+`;
         const expectedValue = {
             type: LineType.TBL,
-            text: `\
-  * - [Valign="top"][rowspan="2"]前条第一項　
-`,
             indentDepth: 1,
             indentTexts: ["  "] as string[],
-            contentText: "* - [Valign=\"top\"][rowspan=\"2\"]前条第一項",
-            isFirstColumn: true,
+            firstColumnIndicator: "*",
+            midIndicatorsSpace: " ",
+            columnIndicator: "-",
+            midSpace: " ",
+            attrEntries: [
+                {
+                    text: "[Valign=\"top\"]",
+                    entry: ["Valign", "top"],
+                    trailingSpace: "",
+                },
+                {
+                    text: "[rowspan=\"2\"]",
+                    entry: ["rowspan", "2"],
+                    trailingSpace: "",
+                },
+            ] as AttrEntries,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "TableColumn",
-            attr: {
-                Valign: "top",
-                rowspan: "2",
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["前条第一項"],
+                            },
+                        ],
+                    },
+                ],
             },
-            children: [
-                {
-                    tag: "Sentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["前条第一項"],
-                        },
-                    ],
-                },
-            ],
-        };
+        ];
         const result = $tableColumnLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 
@@ -68,42 +89,58 @@ describe("Test $tableColumnLine", () => {
             ok: true,
             nextOffset: 29,
         } as const;
+        const expectedText = `\
+    -   [Valign="top"]  又は他の
+`;
         const expectedValue = {
             type: LineType.TBL,
-            text: `\
-    -   [Valign="top"]  又は他の
-`,
             indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
-            contentText: "-   [Valign=\"top\"]  又は他の",
-            isFirstColumn: false,
+            firstColumnIndicator: "",
+            midIndicatorsSpace: "",
+            columnIndicator: "-",
+            midSpace: "   ",
+            attrEntries: [
+                {
+                    text: "[Valign=\"top\"]",
+                    entry: ["Valign", "top"],
+                    trailingSpace: "  ",
+                },
+            ] as AttrEntries,
             lineEndText: `
 `,
         } as const;
-        const expectedContent = {
-            tag: "TableColumn",
-            attr: {
-                Valign: "top",
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["又は他の"],
+                            },
+                        ],
+                    },
+                ],
             },
-            children: [
-                {
-                    tag: "Sentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["又は他の"],
-                        },
-                    ],
-                },
-            ],
-        };
+        ];
         const result = $tableColumnLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 
@@ -117,40 +154,52 @@ describe("Test $tableColumnLine", () => {
             ok: true,
             nextOffset: 11,
         } as const;
+        const expectedText = `\
+    - 又は他の
+`;
         const expectedValue = {
             type: LineType.TBL,
-            text: `\
-    - 又は他の
-`,
             indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
-            contentText: "- 又は他の",
-            isFirstColumn: false,
+            firstColumnIndicator: "",
+            midIndicatorsSpace: "",
+            columnIndicator: "-",
+            midSpace: " ",
+            attrEntries: [] as AttrEntries,
             lineEndText: `
 `,
         } as const;
-        const expectedContent = {
-            tag: "TableColumn",
-            attr: {},
-            children: [
-                {
-                    tag: "Sentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["又は他の"],
-                        },
-                    ],
-                },
-            ],
-        };
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["又は他の"],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
         const result = $tableColumnLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.columns.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
         }
     });
 

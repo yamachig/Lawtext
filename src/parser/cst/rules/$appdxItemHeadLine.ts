@@ -1,9 +1,8 @@
 import factory from "../factory";
 import { $INLINE_EXCLUDE_TRAILING_SPACES } from "../../inline";
-import { newStdEL } from "../../../law/std";
 import $indents from "./$indents";
-import { AppdxItemHeadLine, LineType } from "../../../node/line";
-import { $_EOL } from "../../lexical";
+import { AppdxItemHeadLine } from "../../../node/cst/line";
+import { $_, $_EOL } from "../../lexical";
 import { mergeAdjacentTexts } from "../util";
 
 
@@ -14,73 +13,91 @@ export const $appdxItemHeadLine = factory
         .and(r => r
             .choice(c => c
                 .orSequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .and(r => r.regExp(/^:appdx:[ 　\t]*/), "control")
-                    .action(({ control }) => {
+                    .and(r => r.regExp(/^:appdx:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => {
                         return {
                             mainTag: "Appdx",
                             titleTag: "ArithFormulaNum",
-                            control,
+                            control: {
+                                control,
+                                trailingSpace,
+                            },
                             head: "",
                         } as const;
                     })
                 )
                 .orSequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .and(r => r.regExp(/^:appdx-table:[ 　\t]*/), "control")
-                    .action(({ control }) => {
+                    .and(r => r.regExp(/^:appdx-table:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => {
                         return {
                             mainTag: "AppdxTable",
                             titleTag: "AppdxTableTitle",
-                            control,
+                            control: {
+                                control,
+                                trailingSpace,
+                            },
                             head: "",
                         } as const;
                     })
                 )
                 .orSequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .and(r => r.regExp(/^:appdx-style:[ 　\t]*/), "control")
-                    .action(({ control }) => {
+                    .and(r => r.regExp(/^:appdx-style:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => {
                         return {
                             mainTag: "AppdxStyle",
                             titleTag: "AppdxStyleTitle",
-                            control,
+                            control: {
+                                control,
+                                trailingSpace,
+                            },
                             head: "",
                         } as const;
                     })
                 )
                 .orSequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .and(r => r.regExp(/^:appdx-format:[ 　\t]*/), "control")
-                    .action(({ control }) => {
+                    .and(r => r.regExp(/^:appdx-format:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => {
                         return {
                             mainTag: "AppdxFormat",
                             titleTag: "AppdxFormatTitle",
-                            control,
+                            control: {
+                                control,
+                                trailingSpace,
+                            },
                             head: "",
                         } as const;
                     })
                 )
                 .orSequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .and(r => r.regExp(/^:appdx-fig:[ 　\t]*/), "control")
-                    .action(({ control }) => {
+                    .and(r => r.regExp(/^:appdx-fig:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => {
                         return {
                             mainTag: "AppdxFig",
                             titleTag: "AppdxFigTitle",
-                            control,
+                            control: {
+                                control,
+                                trailingSpace,
+                            },
                             head: "",
                         } as const;
                     })
                 )
                 .orSequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
-                    .and(r => r.regExp(/^:appdx-note:[ 　\t]*/), "control")
-                    .action(({ control }) => {
+                    .and(r => r.regExp(/^:appdx-note:/), "control")
+                    .and(() => $_, "trailingSpace")
+                    .action(({ control, trailingSpace }) => {
                         return {
                             mainTag: "AppdxNote",
                             titleTag: "AppdxNoteTitle",
-                            control,
+                            control: {
+                                control,
+                                trailingSpace,
+                            },
                             head: "",
                         } as const;
                     })
@@ -91,7 +108,7 @@ export const $appdxItemHeadLine = factory
                         return {
                             mainTag: "AppdxFig",
                             titleTag: "AppdxFigTitle",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -102,7 +119,7 @@ export const $appdxItemHeadLine = factory
                         return {
                             mainTag: "AppdxStyle",
                             titleTag: "AppdxStyleTitle",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -113,7 +130,7 @@ export const $appdxItemHeadLine = factory
                         return {
                             mainTag: "AppdxFormat",
                             titleTag: "AppdxFormatTitle",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -124,7 +141,7 @@ export const $appdxItemHeadLine = factory
                         return {
                             mainTag: "AppdxTable",
                             titleTag: "AppdxTableTitle",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -135,7 +152,7 @@ export const $appdxItemHeadLine = factory
                         return {
                             mainTag: "AppdxNote",
                             titleTag: "AppdxNoteTitle",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -146,7 +163,7 @@ export const $appdxItemHeadLine = factory
                         return {
                             mainTag: "Appdx",
                             titleTag: "ArithFormulaNum",
-                            control: "",
+                            control: null,
                             head,
                         } as const;
                     })
@@ -155,24 +172,16 @@ export const $appdxItemHeadLine = factory
         , "headStruct")
         .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "tail")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, headStruct, tail, lineEndText, text }) => {
-            const el = newStdEL(headStruct.mainTag);
+        .action(({ indentsStruct, headStruct, tail, lineEndText }) => {
             const inline = mergeAdjacentTexts([headStruct.head, ...tail]);
-            if (inline.slice(-1)[0]?.tag === "__Parentheses" && inline.slice(-1)[0].attr.type === "round") {
-                const numInline = inline.splice(-1, 1);
-                el.append(newStdEL(headStruct.titleTag, {}, inline));
-                el.append(newStdEL("RelatedArticleNum", {}, numInline));
-            } else {
-                el.append(newStdEL(headStruct.titleTag, {}, inline));
-            }
-            return {
-                type: LineType.APP,
-                text: text(),
-                ...indentsStruct,
-                content: el,
-                contentText: headStruct.control + el.text,
+            return new AppdxItemHeadLine(
+                indentsStruct.indentDepth,
+                indentsStruct.indentTexts,
+                headStruct.mainTag,
+                headStruct.control ? [headStruct.control] : [],
+                inline,
                 lineEndText,
-            } as AppdxItemHeadLine;
+            );
         })
     )
     ;

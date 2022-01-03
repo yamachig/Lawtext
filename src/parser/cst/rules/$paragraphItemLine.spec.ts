@@ -1,8 +1,8 @@
 import { assert } from "chai";
-import { EL } from "../../../node/el";
-import { LineType } from "../../../node/line";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $paragraphItemLine from "./$paragraphItemLine";
+import { Columns } from "../../../node/cst/inline";
 
 const env = initialEnv({});
 
@@ -19,15 +19,15 @@ describe("Test $paragraphItemLine", () => {
             ok: true,
             nextOffset: 33,
         } as const;
+        const expectedText = `\
+  八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+`;
         const expectedValue = {
             type: LineType.PIT,
-            text: `\
-  八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
-`,
             indentDepth: 1,
             indentTexts: ["  "] as string[],
-            contentText: "八　命令等　内閣又は行政機関が定める次に掲げるものをいう。",
-            contentHead: "八",
+            title: "八",
+            midSpace: "　",
             lineEndText: `　
 `,
         } as const;
@@ -35,6 +35,7 @@ describe("Test $paragraphItemLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 
@@ -49,23 +50,24 @@ describe("Test $paragraphItemLine", () => {
             ok: true,
             nextOffset: 4,
         } as const;
+        const expectedText = `\
+  八
+`;
         const expectedValue = {
             type: LineType.PIT,
-            text: `\
-  八
-`,
             indentDepth: 1,
             indentTexts: ["  "] as string[],
-            contentText: "八",
-            contentHead: "八",
-            contentTail: [] as EL[],
+            title: "八",
+            midSpace: "",
+            columns: [] as Columns,
             lineEndText: `
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
-            assert.deepStrictEqual(result.value, expectedValue);
+            assert.deepInclude(result.value, expectedValue);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 
@@ -80,15 +82,15 @@ describe("Test $paragraphItemLine", () => {
             ok: true,
             nextOffset: 24,
         } as const;
+        const expectedText = `\
+    ロ　地方公共団体の機関（議会を除く。）
+`;
         const expectedValue = {
             type: LineType.PIT,
-            text: `\
-    ロ　地方公共団体の機関（議会を除く。）
-`,
             indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
-            contentText: "ロ　地方公共団体の機関（議会を除く。）",
-            contentHead: "ロ",
+            title: "ロ",
+            midSpace: "　",
             lineEndText: `
 `,
         } as const;
@@ -96,6 +98,7 @@ describe("Test $paragraphItemLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 
@@ -109,15 +112,15 @@ describe("Test $paragraphItemLine", () => {
             ok: true,
             nextOffset: 10,
         } as const;
+        const expectedText = `\
+    イ～ハ　略
+`;
         const expectedValue = {
             type: LineType.PIT,
-            text: `\
-    イ～ハ　略
-`,
             indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
-            contentText: "イ～ハ　略",
-            contentHead: "イ～ハ",
+            title: "イ～ハ",
+            midSpace: "　",
             lineEndText: `
 `,
         } as const;
@@ -125,6 +128,7 @@ describe("Test $paragraphItemLine", () => {
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
+            assert.strictEqual(result.value.text(), expectedText);
         }
     });
 

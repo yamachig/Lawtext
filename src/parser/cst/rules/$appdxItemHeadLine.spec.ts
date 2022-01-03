@@ -1,5 +1,6 @@
 import { assert } from "chai";
-import { LineType } from "../../../node/line";
+import { Controls } from "../../../node/cst/inline";
+import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $appdxItemHeadLine from "./$appdxItemHeadLine";
 
@@ -19,75 +20,66 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 36,
         } as const;
+        const expectedText = `\
+:appdx:付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-:appdx:付録第一（第二十六条、第四十五条、第四十六条の五関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":appdx:付録第一（第二十六条、第四十五条、第四十六条の五関係）",
+            mainTag: "Appdx",
+            controls: [
+                {
+                    control: ":appdx:",
+                    trailingSpace: "",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "Appdx",
-            attr: {},
-            children: [
-                {
-                    tag: "ArithFormulaNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["付録第一"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["付録第一"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第二十六条、第四十五条、第四十六条の五関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第二十六条、第四十五条、第四十六条の五関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -103,75 +95,66 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 38,
         } as const;
+        const expectedText = `\
+:appdx:  付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-:appdx:  付録第一（第二十六条、第四十五条、第四十六条の五関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":appdx:  付録第一（第二十六条、第四十五条、第四十六条の五関係）",
+            mainTag: "Appdx",
+            controls: [
+                {
+                    control: ":appdx:",
+                    trailingSpace: "  ",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "Appdx",
-            attr: {},
-            children: [
-                {
-                    tag: "ArithFormulaNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["付録第一"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["付録第一"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第二十六条、第四十五条、第四十六条の五関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第二十六条、第四十五条、第四十六条の五関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -187,75 +170,61 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 29,
         } as const;
+        const expectedText = `\
+付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "付録第一（第二十六条、第四十五条、第四十六条の五関係）",
+            mainTag: "Appdx",
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "Appdx",
-            attr: {},
-            children: [
-                {
-                    tag: "ArithFormulaNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["付録第一"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["付録第一"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第二十六条、第四十五条、第四十六条の五関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第二十六条、第四十五条、第四十六条の五関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -272,75 +241,66 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 33,
         } as const;
+        const expectedText = `\
+:appdx-table:別表第二（第十九条、第二十一条関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-:appdx-table:別表第二（第十九条、第二十一条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":appdx-table:別表第二（第十九条、第二十一条関係）",
+            mainTag: "AppdxTable",
+            controls: [
+                {
+                    control: ":appdx-table:",
+                    trailingSpace: "",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxTable",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxTableTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別表第二"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別表第二"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第十九条、第二十一条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第十九条、第二十一条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -357,75 +317,61 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 20,
         } as const;
+        const expectedText = `\
+別表第二（第十九条、第二十一条関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-別表第二（第十九条、第二十一条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "別表第二（第十九条、第二十一条関係）",
+            mainTag: "AppdxTable",
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxTable",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxTableTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別表第二"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別表第二"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第十九条、第二十一条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第十九条、第二十一条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -441,75 +387,66 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 27,
         } as const;
+        const expectedText = `\
+:appdx-style:別記様式（第十四条関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-:appdx-style:別記様式（第十四条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":appdx-style:別記様式（第十四条関係）",
+            mainTag: "AppdxStyle",
+            controls: [
+                {
+                    control: ":appdx-style:",
+                    trailingSpace: "",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxStyle",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxStyleTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別記様式"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別記様式"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第十四条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第十四条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -525,39 +462,36 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 19,
         } as const;
+        const expectedText = `\
+:appdx-style:別記様式　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-:appdx-style:別記様式　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":appdx-style:別記様式",
+            mainTag: "AppdxStyle",
+            controls: [
+                {
+                    control: ":appdx-style:",
+                    trailingSpace: "",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxStyle",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxStyleTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別記様式"],
-                        },
-                    ],
-                },
-            ],
-        };
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別記様式"],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -573,75 +507,61 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 14,
         } as const;
+        const expectedText = `\
+別記様式（第十四条関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-別記様式（第十四条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "別記様式（第十四条関係）",
+            mainTag: "AppdxStyle",
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxStyle",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxStyleTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別記様式"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別記様式"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第十四条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第十四条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -657,75 +577,66 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 30,
         } as const;
+        const expectedText = `\
+:appdx-format:別紙第一号書式（第三条関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-:appdx-format:別紙第一号書式（第三条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":appdx-format:別紙第一号書式（第三条関係）",
+            mainTag: "AppdxFormat",
+            controls: [
+                {
+                    control: ":appdx-format:",
+                    trailingSpace: "",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxFormat",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxFormatTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別紙第一号書式"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別紙第一号書式"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第三条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第三条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -741,75 +652,61 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 16,
         } as const;
+        const expectedText = `\
+別紙第一号書式（第三条関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-別紙第一号書式（第三条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "別紙第一号書式（第三条関係）",
+            mainTag: "AppdxFormat",
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxFormat",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxFormatTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別紙第一号書式"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別紙第一号書式"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第三条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第三条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -825,75 +722,66 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 36,
         } as const;
+        const expectedText = `\
+:appdx-fig:　別図第十一（第１９条第１項の表の６の項関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-:appdx-fig:　別図第十一（第１９条第１項の表の６の項関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":appdx-fig:　別図第十一（第１９条第１項の表の６の項関係）",
+            mainTag: "AppdxFig",
+            controls: [
+                {
+                    control: ":appdx-fig:",
+                    trailingSpace: "　",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxFig",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxFigTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別図第十一"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別図第十一"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第１９条第１項の表の６の項関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第１９条第１項の表の６の項関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -909,75 +797,61 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 24,
         } as const;
+        const expectedText = `\
+別図第十一（第１９条第１項の表の６の項関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-別図第十一（第１９条第１項の表の６の項関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "別図第十一（第１９条第１項の表の６の項関係）",
+            mainTag: "AppdxFig",
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxFig",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxFigTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別図第十一"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別図第十一"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第１９条第１項の表の６の項関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第１９条第１項の表の６の項関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -993,75 +867,66 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 33,
         } as const;
+        const expectedText = `\
+:appdx-note:別記第二号（第一条第一項、第九条関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-:appdx-note:別記第二号（第一条第一項、第九条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: ":appdx-note:別記第二号（第一条第一項、第九条関係）",
+            mainTag: "AppdxNote",
+            controls: [
+                {
+                    control: ":appdx-note:",
+                    trailingSpace: "",
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxNote",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxNoteTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別記第二号"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別記第二号"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第一条第一項、第九条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第一条第一項、第九条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -1077,75 +942,61 @@ describe("Test $appdxItemHeadLine", () => {
             ok: true,
             nextOffset: 21,
         } as const;
+        const expectedText = `\
+別記第二号（第一条第一項、第九条関係）　
+`;
         const expectedValue = {
             type: LineType.APP,
-            text: `\
-別記第二号（第一条第一項、第九条関係）　
-`,
             indentDepth: 0,
             indentTexts: [] as string[],
-            contentText: "別記第二号（第一条第一項、第九条関係）",
+            mainTag: "AppdxNote",
+            controls: [] as Controls,
             lineEndText: `　
 `,
         } as const;
-        const expectedContent = {
-            tag: "AppdxNote",
-            attr: {},
-            children: [
-                {
-                    tag: "AppdxNoteTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["別記第二号"],
-                        },
-                    ],
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別記第二号"],
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    depth: "1",
+                    type: "round",
                 },
-                {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Parentheses",
-                            attr: {
-                                depth: "1",
-                                type: "round",
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: { type: "round" },
+                        children: ["（"],
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: { type: "round" },
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["第一条第一項、第九条関係"],
                             },
-                            children: [
-                                {
-                                    tag: "__PStart",
-                                    attr: { type: "round" },
-                                    children: ["（"],
-                                },
-                                {
-                                    tag: "__PContent",
-                                    attr: { type: "round" },
-                                    children: [
-                                        {
-                                            tag: "__Text",
-                                            attr: {},
-                                            children: ["第一条第一項、第九条関係"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__PEnd",
-                                    attr: { "type": "round" },
-                                    children: ["）"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
+                        ],
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: { "type": "round" },
+                        children: ["）"],
+                    },
+                ],
+            },
+        ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
-            assert.deepStrictEqual(result.value.content.json(true), expectedContent);
+            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
         }
     });
 
