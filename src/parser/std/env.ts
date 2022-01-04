@@ -1,9 +1,8 @@
-import { stringOffsetToPos, MatchFail, MatchContext, StringPos, BaseEnv } from "generic-parser/lib/core";
+import { MatchFail, MatchContext, BasePos, BaseEnv } from "generic-parser/lib/core";
+import { VirtualLine } from "./virtualLine";
 
-export interface Env extends BaseEnv<string, StringPos> {
-    currentIndentDepth: number;
+export interface Env extends BaseEnv<VirtualLine[], BasePos> {
     state: {
-        parenthesesDepth: number;
         maxOffsetMatchFail: MatchFail | null;
         maxOffsetMatchContext: MatchContext | null;
     };
@@ -11,10 +10,9 @@ export interface Env extends BaseEnv<string, StringPos> {
 
 export const initialEnv = (options: Record<string | number | symbol, unknown>): Env => {
     const registerCurrentRangeTarget = () => { /**/ };
-    const offsetToPos = stringOffsetToPos;
+    const offsetToPos = (_: VirtualLine[], offset: number) => ({ offset });
 
     const state = {
-        parenthesesDepth: 0,
         maxOffsetMatchFail: null as null | MatchFail,
         maxOffsetMatchContext: null as null | MatchContext,
     };
@@ -27,7 +25,6 @@ export const initialEnv = (options: Record<string | number | symbol, unknown>): 
     };
 
     return {
-        currentIndentDepth: 0,
         offsetToPos,
         toStringOptions: {
             fullToString: true,

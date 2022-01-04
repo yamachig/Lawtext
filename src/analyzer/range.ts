@@ -1,77 +1,10 @@
 /* eslint-disable no-irregular-whitespace */
-import { articleGroupType, parseNamedNum } from "../../law/lawUtil";
-import { PointerFragment, RelPos } from "../../node/pointer";
-import { factory, ValueRule } from "./common";
-import { $iroha_char, $kanji_digit, $roman_digit } from "../cst/rules/lexical";
+import { articleGroupType, parseNamedNum } from "../law/lawUtil";
+import { PointerFragment, RelPos } from "../node/pointer";
+import { factory } from "../parser/cst/factory";
+import { $iroha_char, $kanji_digit, $roman_digit } from "../parser/cst/rules/lexical";
+import makeRangesRule from "../parser/cst/rules/makeRangesRule";
 
-export const makeRangesRule = (lazyPointerRule: () => ValueRule<PointerFragment[]>) => {
-    const $ranges: ValueRule<[PointerFragment[], PointerFragment[]][]> = factory
-        .withName("ranges")
-        .choice(c => c
-            .or(r => r
-                .sequence(c => c
-                    .and(() => $range, "first")
-                    .and(r => r
-                        .choice(c => c
-                            .or(r => r.seqEqual("、"))
-                            .or(r => r.seqEqual("及び"))
-                            .or(r => r.seqEqual("並びに")),
-                        ),
-                    )
-                    .and(() => $ranges, "rest")
-                    .action(({ first, rest }) => {
-                        return [first].concat(rest);
-                    }),
-                ),
-            )
-            .or(r => r
-                .sequence(c => c
-                    .and(() => $range, "range")
-                    .action(({ range }) => {
-                        return [range];
-                    }),
-                ),
-            ),
-        )
-        ;
-
-    const $range = factory
-        .withName("range")
-        .choice(c => c
-            .or(r => r
-                .sequence(c => c
-                    .and(lazyPointerRule, "from")
-                    .and(r => r.seqEqual("から"))
-                    .and(lazyPointerRule, "to")
-                    .and(r => r.seqEqual("まで"))
-                    .action(({ from, to }) => {
-                        return [from, to] as [PointerFragment[], PointerFragment[]];
-                    }),
-                ),
-            )
-            .or(r => r
-                .sequence(c => c
-                    .and(lazyPointerRule, "from")
-                    .and(r => r.oneOf("・～"))
-                    .and(lazyPointerRule, "to")
-                    .action(({ from, to }) => {
-                        return [from, to] as [PointerFragment[], PointerFragment[]];
-                    }),
-                ),
-            )
-            .or(r => r
-                .sequence(c => c
-                    .and(lazyPointerRule, "pointer")
-                    .action(({ pointer }) => {
-                        return [pointer, pointer] as [PointerFragment[], PointerFragment[]];
-                    }),
-                ),
-            ),
-        )
-        ;
-
-    return { $ranges, $range };
-};
 
 export const { $ranges, $range } = makeRangesRule(() => $pointer);
 

@@ -10,7 +10,7 @@ import prettifyXml from "prettify-xml";
 import { promisify } from "util";
 import xmldom from "@xmldom/xmldom";
 import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
-import { parse } from "../src/parser/std";
+import { parse } from "../src/parser/lawtext";
 import { analyze } from "../src/analyzer";
 import { render as renderLawtext } from "../src/renderer/lawtext";
 import { TERMC, toTableText } from "../src/util/term";
@@ -291,6 +291,7 @@ describe("Test Renderes", () => {
         let parsedEL;
         try {
             parsedEL = parse(lawtext);
+            if (parsedEL === undefined) return;
         } catch (e) {
             const msg = [
                 `Original XML: "${tempOrigXml}"`,

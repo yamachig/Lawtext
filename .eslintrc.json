@@ -33,6 +33,7 @@
         "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
         "no-trailing-spaces": "error",
         "eol-last": ["error", "always"],
+        "no-sequences": "error",
         "keyword-spacing": "error"
     },
     "ignorePatterns": ["/dist/*"],

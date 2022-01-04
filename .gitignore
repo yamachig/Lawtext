@@ -25,3 +25,4 @@ MANIFEST
 /src/law/lawNumTable.ts
 /test/lawdata
 /data
+/mochawesome-report

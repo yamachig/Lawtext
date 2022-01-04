@@ -3,7 +3,6 @@
 // @ts-ignore
 import sha512 from "hash.js/lib/hash/sha/512";
 import { LAWNUM_TABLE, KEY_LENGTH } from "../law/lawNumTable";
-import * as parser from "../parser/std";
 import { throwError } from "../util";
 import { Container, ContainerType } from "../node/container";
 import { Env } from "../node/env";
@@ -11,6 +10,9 @@ import { Span } from "../node/span";
 import { EL, isJsonEL } from "../node/el";
 import { RelPos, Pointer, Ranges } from "../node/pointer";
 import { lawTypes, paragraphItemSentenceTags } from "../law/lawUtil";
+import { $ranges } from "./range";
+import { initialEnv } from "../parser/cst/env";
+import { $INLINE } from "../parser/cst/rules/inline";
 
 export const getLawNameLength = (lawNum: string): number => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -260,13 +262,9 @@ export class Declarations {
 
 const parseRanges = (text: string): Ranges => { // closed
     if (text === "") return [];
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return parser.parse(text, { startRule: "ranges" });
-    } catch (e) {
-        // console.warn(text, e);
-        return [];
-    }
+    const result = $ranges.match(0, text, initialEnv({}));
+    if (result.ok) return result.value;
+    else return [];
 };
 
 const locatePointer = (
@@ -798,12 +796,12 @@ export const stdxmlToExt = (el: EL): EL => {
     if (["LawNum", "QuoteStruct"].indexOf(el.tag) < 0) {
         const isMixed = el.children.some(child => typeof child === "string" || child instanceof String);
         if (isMixed) {
-            try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                el.children = parser.parse(el.innerXML().replace(/\r|\n/, ""), { startRule: "INLINE" });
-            } catch (e) {
-                console.log("stdxml_to_ext: Error", el.innerXML());
-                throw e;
+            const result = $INLINE.match(0, el.innerXML().replace(/\r|\n/, ""), initialEnv({}));
+            if (result.ok) {
+                el.children = result.value;
+            } else {
+                const message = `stdxml_to_ext: Error: ${el.innerXML()}`;
+                throw new Error(message);
             }
         } else {
             el.children = (el.children as EL[]).map(stdxmlToExt);

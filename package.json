@@ -72,6 +72,7 @@
     "eslint": "^8.5.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-tsdoc": "^0.2.14",
-    "mocha": "^9.1.3"
+    "mocha": "^9.1.3",
+    "mochawesome": "^7.0.1"
   }
 }

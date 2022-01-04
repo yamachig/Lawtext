@@ -1,7 +1,10 @@
 import { stringOffsetToPos } from "generic-parser";
 import { MatchContext } from "generic-parser/lib/core";
+import { Line } from "../../node/cst/line";
 import { initialEnv } from "./env";
+import factory from "./factory";
 import $lines from "./rules/$lines";
+import { ValueRule } from "./util";
 
 const makeMatchContextString = (context: MatchContext, target: string): string => {
     const { offset, ruleToString, prevContext } = context;
@@ -18,6 +21,17 @@ ${subString}
 ${prevContext ? makeMatchContextString(prevContext, target) : ""}`;
 };
 
+const $start: ValueRule<Line[]> = factory
+    .sequence(c => c
+        .and(() => $lines, "lines")
+        .and(r => r
+            .nextIsNot(r => r.anyOne()),
+        )
+        .action((({ lines }) => {
+            return lines;
+        })),
+    );
+
 export const parse = (
     lawtext: string,
     options: Record<string | number | symbol, unknown> = {},
@@ -27,7 +41,7 @@ export const parse = (
 
     const target = lawtext.endsWith("\n") ? lawtext : lawtext + "\r\n";
 
-    const result = $lines.match(
+    const result = $start.match(
         0,
         target,
         env,
