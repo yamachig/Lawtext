@@ -6,7 +6,7 @@ export const $blankLine = factory
     .sequence(s => s
         // eslint-disable-next-line no-irregular-whitespace
         .and(r => r.regExp(/^[ 　\t]*\r?\n/), "text")
-        .action(({ text }) => new BlankLine(text))
+        .action(({ range, text }) => new BlankLine(range(), text))
     )
     ;
 

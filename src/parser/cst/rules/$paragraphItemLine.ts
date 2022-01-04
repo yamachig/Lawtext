@@ -26,8 +26,9 @@ export const $paragraphItemLine = factory
             )
         , "contentStruct")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, title, contentStruct, lineEndText }) => {
+        .action(({ range, indentsStruct, title, contentStruct, lineEndText }) => {
             return new ParagraphItemLine(
+                range(),
                 indentsStruct.indentDepth,
                 indentsStruct.indentTexts,
                 title,

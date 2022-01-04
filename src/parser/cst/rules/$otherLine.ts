@@ -23,8 +23,9 @@ export const $otherLine = factory
             .zeroOrOne(() => $columnsOrSentences)
         , "columns")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, controls, columns, lineEndText }) => {
+        .action(({ range, indentsStruct, controls, columns, lineEndText }) => {
             return new OtherLine(
+                range(),
                 indentsStruct.indentDepth,
                 indentsStruct.indentTexts,
                 controls,

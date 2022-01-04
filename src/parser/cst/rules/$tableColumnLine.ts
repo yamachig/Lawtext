@@ -39,8 +39,9 @@ export const $tableColumnLine = factory
             )
         , "columns")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, firstColumnIndicatorStruct, columnIndicator, midSpace, attrEntries, columns, lineEndText }) => {
+        .action(({ range, indentsStruct, firstColumnIndicatorStruct, columnIndicator, midSpace, attrEntries, columns, lineEndText }) => {
             return new TableColumnLine(
+                range(),
                 indentsStruct.indentDepth,
                 indentsStruct.indentTexts,
                 firstColumnIndicatorStruct?.firstColumnIndicator ?? "",

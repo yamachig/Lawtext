@@ -27,8 +27,9 @@ export const $tocHeadLine = factory
             )
         , "contentStruct")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, contentStruct, lineEndText }) => {
+        .action(({ range, indentsStruct, contentStruct, lineEndText }) => {
             return new TOCHeadLine(
+                range(),
                 indentsStruct.indentDepth,
                 indentsStruct.indentTexts,
                 contentStruct.contentText,

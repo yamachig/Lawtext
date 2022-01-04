@@ -24,8 +24,9 @@ export const $articleGroupHeadLine = factory
             )
         , "tail")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, articleGroupNum, tail, lineEndText }) => {
+        .action(({ range, indentsStruct, articleGroupNum, tail, lineEndText }) => {
             return new ArticleGroupHeadLine(
+                range(),
                 indentsStruct.indentDepth,
                 indentsStruct.indentTexts,
                 articleGroupType[articleGroupNum.typeChar],

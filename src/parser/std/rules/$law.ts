@@ -9,8 +9,8 @@ export const $lawTitle = factory
         .and(r => r
             .oneMatch(({ item }) => {
                 if (
-                    item.type === "PhysicalLine"
-                    && item.line?.type === LineType.OTH
+                    item.type === LineType.OTH
+                    && item.line.type === LineType.OTH
                     && item.virtualIndentDepth === 0
                 ) {
                     return item;
@@ -23,7 +23,8 @@ export const $lawTitle = factory
             .zeroOrOne(r => r
                 .oneMatch(({ item }) => {
                     if (
-                        item.type === "PhysicalLine"
+                        item.type === LineType.OTH
+                        && item.line.type === LineType.OTH
                         && item.virtualIndentDepth === 0
                         && isSingleParentheses(item)
                     ) {

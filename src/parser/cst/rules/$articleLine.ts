@@ -27,8 +27,9 @@ export const $articleLine: ValueRule<ArticleLine> = factory
             )
         , "contentStruct")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, title, contentStruct, lineEndText }) => {
+        .action(({ range, indentsStruct, title, contentStruct, lineEndText }) => {
             return new ArticleLine(
+                range(),
                 indentsStruct.indentDepth,
                 indentsStruct.indentTexts,
                 title,

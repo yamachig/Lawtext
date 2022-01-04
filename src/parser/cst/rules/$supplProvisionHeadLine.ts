@@ -25,8 +25,9 @@ export const $supplProvisionHeadLine = factory
             .zeroOrOne(r => r.regExp(/^[ 　\t]*抄/))
         , "extract")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, head, amendLawNumStruct, extract, lineEndText }) => {
+        .action(({ range, indentsStruct, head, amendLawNumStruct, extract, lineEndText }) => {
             return new SupplProvisionHeadLine(
+                range(),
                 indentsStruct.indentDepth,
                 indentsStruct.indentTexts,
                 head,

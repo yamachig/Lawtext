@@ -1,19 +1,40 @@
 import { Line, LineType } from "../../node/cst/line";
 import { isSingleParentheses } from "./util";
 
+export enum VirtualOnlyLineType {
+    IND = "IND", // Indent
+    DED = "DED", // Dedent
+    TAG = "TAG", // TOC ArticleGroup
+    TSP = "TSP", // TOC SupplProvision
+    TTL = "TTL", // Title
+}
+
+export type VirtualLineType = LineType | VirtualOnlyLineType;
+
 export interface PhysicalLine {
-    type: "PhysicalLine";
+    type: LineType | VirtualOnlyLineType.TAG | VirtualOnlyLineType.TSP | VirtualOnlyLineType.TTL;
+    virtualRange: [start: number, end: number];
     virtualIndentDepth: number;
     line: Line;
 }
 
 export interface Indent {
-    type: "Indent";
+    type: VirtualOnlyLineType.IND;
+    virtualRange: [start: number, end: number];
 }
 
 export interface Dedent {
-    type: "Dedent";
+    type: VirtualOnlyLineType.DED;
+    virtualRange: [start: number, end: number];
 }
+
+export const isVirtualLine = (line: Line | VirtualLine): line is VirtualLine => {
+    return (
+        line.type === VirtualOnlyLineType.IND
+        || line.type === VirtualOnlyLineType.DED
+        || "virtualRange" in line
+    );
+};
 
 export type VirtualLine = PhysicalLine | Indent | Dedent;
 
@@ -113,6 +134,7 @@ export const toVirtualLines = (lines: Line[]) => {
     let virtualIndentDepth = 0;
     let inTOCDepth: number | null = null;
     for (const [i, line] of lines.entries()) {
+        let type: VirtualLineType;
         let currentDepth = virtualIndentDepth;
         if (
             inTOCDepth !== null
@@ -121,48 +143,93 @@ export const toVirtualLines = (lines: Line[]) => {
             inTOCDepth = null;
         }
         if (line.type === LineType.BNK) {
-            /**/
+            type = line.type;
         } else if (line.type === LineType.TOC) {
             inTOCDepth = line.indentDepth;
             currentDepth = line.indentDepth;
+            type = line.type;
         } else if (line.type === LineType.ARG || line.type === LineType.SPR) {
-            currentDepth = inTOCDepth === null ? 0 : line.indentDepth;
+            if (inTOCDepth === null) {
+                currentDepth = 0;
+                type = line.type;
+            } else {
+                currentDepth = line.indentDepth;
+                type = line.type === LineType.ARG ? VirtualOnlyLineType.TAG : VirtualOnlyLineType.TSP;
+            }
         } else {
             currentDepth = line.indentDepth;
+            type = line.type;
             if (isSingleParentheses(line)) {
                 for (let currentOffset = i + 1; currentOffset < lines.length; currentOffset++) {
                     const nextLine = lines[currentOffset];
                     if (nextLine.type === LineType.BNK) continue;
-                    if (nextLine.indentDepth <= line.indentDepth) {
+                    if (
+                        nextLine.indentDepth <= line.indentDepth
+                        && (nextLine.type === LineType.ART || nextLine.type === LineType.PIT)
+                    ) {
                         currentDepth = nextLine.indentDepth;
+                        type = VirtualOnlyLineType.TTL;
                     }
                     break;
                 }
             }
         }
-        while (virtualIndentDepth < currentDepth) {
-            virtualLines.push({
-                type: "Indent",
-            });
-            virtualIndentDepth++;
+
+        const indentTextLengths = "indentTexts" in line ? line.indentTexts.map(s => s.length) : [];
+        const indentLength = indentTextLengths.reduce((a, b) => a + b, 0);
+
+        if (virtualIndentDepth < currentDepth) {
+            const indentTextRanges: [start: number, end: number][] = [];
+            for (const [i, len] of indentTextLengths.entries()) {
+                if (i === 0) {
+                    const start = line.range ? line.range[0] : 0;
+                    indentTextRanges.push([start, start + len]);
+                } else {
+                    const start = indentTextRanges[i - 1][1];
+                    indentTextRanges.push([start, start + len]);
+                }
+            }
+            while (virtualIndentDepth < currentDepth) {
+                virtualLines.push({
+                    type: VirtualOnlyLineType.IND,
+                    virtualRange: indentTextRanges[virtualIndentDepth],
+                });
+                virtualIndentDepth++;
+            }
         }
-        while (currentDepth < virtualIndentDepth) {
-            virtualLines.push({
-                type: "Dedent",
-            });
-            virtualIndentDepth--;
+
+        if (currentDepth < virtualIndentDepth) {
+            while (currentDepth < virtualIndentDepth) {
+                virtualLines.push({
+                    type: VirtualOnlyLineType.DED,
+                    virtualRange: line.range
+                        ? [line.range[0], line.range[0] + indentLength]
+                        : [0, indentLength],
+                });
+                virtualIndentDepth--;
+            }
         }
+
         virtualLines.push({
-            type: "PhysicalLine",
+            type,
+            virtualRange: line.range
+                ? [line.range[0] + indentLength, line.range[1]]
+                : [indentLength, line.text().length],
             virtualIndentDepth,
             line,
         });
     }
-    while (0 < virtualIndentDepth) {
-        virtualLines.push({
-            type: "Dedent",
-        });
-        virtualIndentDepth--;
+
+    if (0 < virtualIndentDepth) {
+        const lastRange = lines.slice(-1)[0]?.range ?? [0, 0];
+        while (0 < virtualIndentDepth) {
+            virtualLines.push({
+                type: VirtualOnlyLineType.DED,
+                virtualRange: [lastRange[1], lastRange[1]],
+            });
+            virtualIndentDepth--;
+        }
     }
+
     return virtualLines;
 };

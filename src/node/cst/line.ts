@@ -17,6 +17,7 @@ export enum LineType {
 abstract class BaseLine<TType extends LineType = LineType> {
     public constructor(
         public type: TType,
+        public range: [start: number, end: number] | null,
         public lineEndText: string,
     ) { }
     public abstract text(): string;
@@ -25,11 +26,12 @@ abstract class BaseLine<TType extends LineType = LineType> {
 abstract class IndentsLine<TType extends LineType = LineType> extends BaseLine<TType> {
     public constructor(
         type: TType,
+        range: [start: number, end: number] | null,
         public indentDepth: number,
         public indentTexts: string[],
         lineEndText: string,
     ) {
-        super(type, lineEndText);
+        super(type, range, lineEndText);
     }
     public abstract contentText(): string;
     public text(): string {
@@ -39,9 +41,10 @@ abstract class IndentsLine<TType extends LineType = LineType> extends BaseLine<T
 
 export class BlankLine extends BaseLine<LineType.BNK> {
     public constructor(
+        range: [start: number, end: number] | null,
         lineEndText: string,
     ) {
-        super(LineType.BNK, lineEndText);
+        super(LineType.BNK, range, lineEndText);
     }
     public text(): string {
         return this.lineEndText;
@@ -50,12 +53,13 @@ export class BlankLine extends BaseLine<LineType.BNK> {
 
 export class TOCHeadLine extends IndentsLine<LineType.TOC> {
     public constructor(
+        range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
         public _contentText: string,
         lineEndText: string,
     ) {
-        super(LineType.TOC, indentDepth, indentTexts, lineEndText);
+        super(LineType.TOC, range, indentDepth, indentTexts, lineEndText);
     }
     public contentText(): string {
         return this._contentText;
@@ -64,6 +68,7 @@ export class TOCHeadLine extends IndentsLine<LineType.TOC> {
 
 export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
     public constructor(
+        range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
         public mainTag: "Part" | "Chapter" | "Section" | "Subsection" | "Division",
@@ -72,7 +77,7 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
         public inline: EL[],
         lineEndText: string,
     ) {
-        super(LineType.ARG, indentDepth, indentTexts, lineEndText);
+        super(LineType.ARG, range, indentDepth, indentTexts, lineEndText);
     }
     public contentText(): string {
         return [
@@ -85,6 +90,7 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
 
 export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
     public constructor(
+        range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
         public mainTag: "Appdx" | "AppdxTable" | "AppdxStyle" | "AppdxFormat" | "AppdxFig" | "AppdxNote",
@@ -92,7 +98,7 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
         public inline: EL[],
         lineEndText: string,
     ) {
-        super(LineType.APP, indentDepth, indentTexts, lineEndText);
+        super(LineType.APP, range, indentDepth, indentTexts, lineEndText);
     }
     public contentText(): string {
         return [
@@ -104,6 +110,7 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
 
 export class SupplProvisionHeadLine extends IndentsLine<LineType.SPR> {
     public constructor(
+        range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
         public head: string,
@@ -113,7 +120,7 @@ export class SupplProvisionHeadLine extends IndentsLine<LineType.SPR> {
         public extractText: string,
         lineEndText: string,
     ) {
-        super(LineType.SPR, indentDepth, indentTexts, lineEndText);
+        super(LineType.SPR, range, indentDepth, indentTexts, lineEndText);
     }
     public contentText(): string {
         return [
@@ -128,6 +135,7 @@ export class SupplProvisionHeadLine extends IndentsLine<LineType.SPR> {
 
 export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
     public constructor(
+        range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
         public mainTag: "SupplProvisionAppdx" | "SupplProvisionAppdxTable" | "SupplProvisionAppdxStyle",
@@ -135,7 +143,7 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
         public inline: EL[],
         lineEndText: string,
     ) {
-        super(LineType.SPA, indentDepth, indentTexts, lineEndText);
+        super(LineType.SPA, range, indentDepth, indentTexts, lineEndText);
     }
     public contentText(): string {
         return [
@@ -147,6 +155,7 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
 
 export class ArticleLine extends IndentsLine<LineType.ART> {
     public constructor(
+        range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
         public title: string,
@@ -154,7 +163,7 @@ export class ArticleLine extends IndentsLine<LineType.ART> {
         public columns: Columns,
         lineEndText: string,
     ) {
-        super(LineType.ART, indentDepth, indentTexts, lineEndText);
+        super(LineType.ART, range, indentDepth, indentTexts, lineEndText);
     }
     public contentText(): string {
         return [
@@ -171,6 +180,7 @@ export class ArticleLine extends IndentsLine<LineType.ART> {
 
 export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
     public constructor(
+        range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
         public title: string,
@@ -178,7 +188,7 @@ export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
         public columns: Columns,
         lineEndText: string,
     ) {
-        super(LineType.PIT, indentDepth, indentTexts, lineEndText);
+        super(LineType.PIT, range, indentDepth, indentTexts, lineEndText);
     }
     public contentText(): string {
         return [
@@ -195,6 +205,7 @@ export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
 
 export class TableColumnLine extends IndentsLine<LineType.TBL> {
     public constructor(
+        range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
         public firstColumnIndicator: "*" | "",
@@ -205,7 +216,7 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
         public columns: Columns,
         lineEndText: string,
     ) {
-        super(LineType.TBL, indentDepth, indentTexts, lineEndText);
+        super(LineType.TBL, range, indentDepth, indentTexts, lineEndText);
     }
     public contentText(): string {
         return [
@@ -225,13 +236,14 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
 
 export class OtherLine extends IndentsLine<LineType.OTH> {
     public constructor(
+        range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
         public controls: Controls,
         public columns: Columns,
         lineEndText: string,
     ) {
-        super(LineType.OTH, indentDepth, indentTexts, lineEndText);
+        super(LineType.OTH, range, indentDepth, indentTexts, lineEndText);
     }
     public contentText(): string {
         return [

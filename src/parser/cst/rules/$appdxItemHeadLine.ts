@@ -172,9 +172,10 @@ export const $appdxItemHeadLine = factory
         , "headStruct")
         .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "tail")
         .and(() => $_EOL, "lineEndText")
-        .action(({ indentsStruct, headStruct, tail, lineEndText }) => {
+        .action(({ range, indentsStruct, headStruct, tail, lineEndText }) => {
             const inline = mergeAdjacentTexts([headStruct.head, ...tail]);
             return new AppdxItemHeadLine(
+                range(),
                 indentsStruct.indentDepth,
                 indentsStruct.indentTexts,
                 headStruct.mainTag,

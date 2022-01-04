@@ -13,7 +13,7 @@ const $preambleChildren = factory
             .and(r => r
                 .oneMatch(({ item }) => {
                     if (
-                        item.type === "PhysicalLine"
+                        item.type === LineType.OTH
                         && item.line.type === LineType.OTH
                         && item.line.columns.length > 0
                     ) {
@@ -52,7 +52,7 @@ export const $preamble: ValueRule<std.Preamble> = factory
         .and(r => r
             .oneMatch(({ item }) => {
                 if (
-                    item.type === "PhysicalLine"
+                    item.type === LineType.OTH
                     && item.line.type === LineType.OTH
                     && item.virtualIndentDepth === 0
                     && item.line.columns.length === 0
@@ -68,7 +68,28 @@ export const $preamble: ValueRule<std.Preamble> = factory
         .and(r => r.zeroOrMore(() => $blankLine))
         .and(() => $optBNK_INDENT)
         .and(() => $preambleChildren, "children")
-        .and(() => $optBNK_DEDENT)
+        .and(r => r
+            .choice(c => c
+                .or(() => $optBNK_DEDENT)
+                .or(r => r
+                    .nextIs(r => r
+                        .sequence(s => s
+                            .and(r => r.zeroOrMore(() => $blankLine))
+                            .and(r => r.anyOne(), "unexpected")
+                            .and(r => r
+                                .assert(({ addError, unexpected }) => {
+                                    addError({
+                                        message: "$preamble: この前にある前文の終了時にインデント解除が必要です。",
+                                        range: unexpected.virtualRange,
+                                    });
+                                    return true;
+                                })
+                            )
+                        )
+                    )
+                )
+            )
+        )
         .action(({ children }) => {
             for (let i = 0; i < children.length; i++) {
                 children[i].attr.Num = `${i + 1}`;
