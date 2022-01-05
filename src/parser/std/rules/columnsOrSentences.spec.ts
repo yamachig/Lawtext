@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { initialEnv as cstInitialEnv } from "../../cst/env";
 import { loadEl } from "../../../node/el";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import $sentencesArray, { sentencesArrayToString } from "../../cst/rules/$sencencesArray";
+import $sentencesArray, { sentencesArrayToString } from "../../cst/rules/$sentencesArray";
 import * as std from "../../../law/std";
 
 const cstEnv = cstInitialEnv({});

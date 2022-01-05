@@ -2,7 +2,7 @@
 import { articleGroupType, parseNamedNum } from "../law/lawUtil";
 import { PointerFragment, RelPos } from "../node/pointer";
 import { factory } from "../parser/cst/factory";
-import { $iroha_char, $kanji_digit, $roman_digit } from "../parser/cst/rules/lexical";
+import { $irohaChar, $kanjiDigits, $romanDigits } from "../parser/cst/rules/lexical";
 import makeRangesRule from "../parser/cst/rules/makeRangesRule";
 
 
@@ -21,13 +21,13 @@ export const $pointer_fragment = factory
             .action(r => r
                 .sequence(c => c
                     .and(r => r.seqEqual("第"))
-                    .and(r => r.oneOrMore(() => $kanji_digit))
+                    .and(() => $kanjiDigits)
                     .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号"] as const), "type_char")
                     .and(r => r
                         .zeroOrMore(r => r
                             .sequence(c => c
                                 .and(r => r.seqEqual("の"))
-                                .and(r => r.oneOrMore(() => $kanji_digit)),
+                                .and(() => $kanjiDigits),
                             ),
                         ),
                     ),
@@ -143,7 +143,7 @@ export const $pointer_fragment = factory
                         .zeroOrOne(r => r
                             .sequence(c => c
                                 .and(r => r.seqEqual("第"))
-                                .and(r => r.oneOrMore(() => $kanji_digit)),
+                                .and(() => $kanjiDigits),
                             ),
                         ),
                     ),
@@ -200,8 +200,8 @@ export const $pointer_fragment = factory
         .or(r => r
             .action(r => r
                 .choice(c => c
-                    .or(() => $iroha_char)
-                    .or(r => r.oneOrMore(() => $roman_digit)),
+                    .or(() => $irohaChar)
+                    .or(() => $romanDigits),
                 )
             , (({ text }) => {
                 return new PointerFragment(

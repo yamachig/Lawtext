@@ -3,7 +3,7 @@ import $indents from "./$indents";
 import { ArticleLine } from "../../../node/cst/line";
 import { $__, $_EOL } from "./lexical";
 import $articleTitle from "./$articleTitle";
-import $columnsOrSentences from "./$sencencesArray";
+import $columnsOrSentences from "./$sentencesArray";
 import makeRangesRule from "./makeRangesRule";
 import { ValueRule } from "../util";
 

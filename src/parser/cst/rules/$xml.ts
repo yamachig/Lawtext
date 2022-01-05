@@ -3,7 +3,7 @@ import { EL } from "../../../node/el";
 import { __Text } from "../../../node/control";
 import { factory } from "../factory";
 import { ValueRule } from "../util";
-import { $DEDENT, $INDENT, $_ } from "./lexical";
+import { $_ } from "./lexical";
 
 export const $xml = factory
     .withName("xml")
@@ -23,19 +23,19 @@ export const $xml = factory
                 }),
                 ),
             )
-            .or(() => $xml_element),
+            .or(() => $xmlElement),
         ),
     )
 ;
 
-export const $xml_element: ValueRule<EL> = factory
-    .withName("xml_element")
+export default $xml;
+
+export const $xmlElement: ValueRule<EL> = factory
+    .withName("xmlElement")
     .choice(c => c
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r.nextIsNot(() => $INDENT))
-                    .and(r => r.nextIsNot(() => $DEDENT))
                     .and(r => r.seqEqual("<"))
                     .and(r => r
                         .nextIsNot(r => r.seqEqual("/")),
@@ -104,8 +104,6 @@ export const $xml_element: ValueRule<EL> = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r.nextIsNot(() => $INDENT))
-                    .and(r => r.nextIsNot(() => $DEDENT))
                     .and(r => r.seqEqual("<"))
                     .and(r => r
                         .nextIsNot(r => r.seqEqual("/")),
@@ -154,8 +152,3 @@ export const $xml_element: ValueRule<EL> = factory
         ),
     )
 ;
-
-export const rules = {
-    xml: $xml,
-    xml_element: $xml_element,
-};

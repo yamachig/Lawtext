@@ -1,7 +1,7 @@
 import { newStdEL } from "../../../law/std";
 import { __Text } from "../../../node/control";
 import { factory } from "../factory";
-import { $INLINE_EXCLUDE_TRAILING_SPACES, $PERIOD_SENTENCE_FRAGMENT, inlineToString } from "./inline";
+import $sentenceChildren, { $PERIOD_SENTENCE_FRAGMENT, sentenceChildrenToString } from "./$sentenceChildren";
 import { $_, $__ } from "./lexical";
 import { ValueRule } from "../util";
 import { SentencesArray } from "../../../node/cst/inline";
@@ -20,7 +20,7 @@ export const sentencesArrayToString = (
             runs.push(attrEntry.text);
         }
         for (const sentence of sentences.sentences) {
-            runs.push(inlineToString(sentence.children));
+            runs.push(sentenceChildrenToString(sentence.children));
         }
     }
 
@@ -46,7 +46,7 @@ export const $sentencesArray: ValueRule<SentencesArray> = factory
                 .choice(c => c
                     .or(() => $periodSentences)
                     .orSequence(s => s
-                        .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "inline")
+                        .and(() => $sentenceChildren, "inline")
                         .action(({ inline }) => [
                             newStdEL(
                                 "Sentence",

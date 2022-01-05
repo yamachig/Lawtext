@@ -1,9 +1,8 @@
 import { assert } from "chai";
 import { initialEnv } from "../env";
-import { $INLINE_EXCLUDE_TRAILING_SPACES } from "./inline";
 import { loadEl } from "../../../node/el";
 import * as std from "../../../law/std";
-import $sentencesArray, { sentencesArrayToString } from "./$sencencesArray";
+import $sentencesArray, { sentencesArrayToString } from "./$sentencesArray";
 
 const env = initialEnv({});
 
@@ -95,9 +94,9 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
         const expectedResult = {
             ok: false,
             offset: 0,
-            expected: "INLINE_EXCLUDE_TRAILING_SPACES",
+            expected: "sentencesArray",
         } as const;
-        const result = $INLINE_EXCLUDE_TRAILING_SPACES.abstract().match(offset, target, env);
+        const result = $sentencesArray.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
     });
 });

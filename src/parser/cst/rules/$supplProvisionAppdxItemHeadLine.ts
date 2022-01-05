@@ -1,5 +1,5 @@
 import factory from "../factory";
-import { $INLINE_EXCLUDE_TRAILING_SPACES } from "./inline";
+import $sentenceChildren from "./$sentenceChildren";
 import $indents from "./$indents";
 import { SupplProvisionAppdxItemHeadLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
@@ -103,7 +103,7 @@ export const $supplProvisionAppdxItemHeadLine = factory
                 )
             )
         , "headStruct")
-        .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "tail")
+        .and(() => $sentenceChildren, "tail")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, headStruct, tail, lineEndText }) => {
             const inline = mergeAdjacentTexts([headStruct.head, ...tail]);

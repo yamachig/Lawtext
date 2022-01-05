@@ -5,11 +5,11 @@ import { EL } from "../../../node/el";
 import { NotImplementedError } from "../../../util";
 import { factory } from "../factory";
 import { ValueRule } from "../util";
-import { $INDENT, $DEDENT, $__, $NEWLINE } from "./lexical";
-import { $xml_element } from "./xml";
+import { $_EOL, $__ } from "./lexical";
+import { $xmlElement } from "./$xml";
 
 
-export const inlineToString = ( els: (string | EL)[]): string => {
+export const sentenceChildrenToString = ( els: (string | EL)[]): string => {
     const runs: string[] = [];
 
     for (const el of els) {
@@ -36,34 +36,30 @@ export const inlineToString = ( els: (string | EL)[]): string => {
     return /* $$$$$$ */`${runs.join("")}`/* $$$$$$ */;
 };
 
-export const $INLINE = factory
-    .withName("INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r.nextIsNot(() => $INDENT))
-            .and(r => r.nextIsNot(() => $DEDENT))
-            .and(r => r
-                .oneOrMore(r => r
-                    .choice(c => c
-                        .or(() => $OUTSIDE_PARENTHESES_INLINE)
-                        .or(() => $PARENTHESES_INLINE)
-                        .or(() => $MISMATCH_END_PARENTHESIS),
-                    ),
-                )
-            , "texts"),
-        )
-    , (({ texts }) => {
-        return texts;
-    }),
-    )
-;
+// export const $INLINE = factory
+//     .withName("INLINE")
+//     .action(r => r
+//         .sequence(c => c
+//             .and(r => r
+//                 .oneOrMore(r => r
+//                     .choice(c => c
+//                         .or(() => $OUTSIDE_PARENTHESES_INLINE)
+//                         .or(() => $PARENTHESES_INLINE)
+//                         .or(() => $MISMATCH_END_PARENTHESIS),
+//                     ),
+//                 )
+//             , "texts"),
+//         )
+//     , (({ texts }) => {
+//         return texts;
+//     }),
+//     )
+// ;
 
-export const $INLINE_EXCLUDE_TRAILING_SPACES = factory
-    .withName("INLINE_EXCLUDE_TRAILING_SPACES")
+export const $sentenceChildren = factory
+    .withName("sentenceChildren")
     .action(r => r
         .sequence(c => c
-            .and(r => r.nextIsNot(() => $INDENT))
-            .and(r => r.nextIsNot(() => $DEDENT))
             .and(r => r
                 .oneOrMore(r => r
                     .choice(c => c
@@ -80,29 +76,7 @@ export const $INLINE_EXCLUDE_TRAILING_SPACES = factory
     )
 ;
 
-export const $NEXTINLINE = factory
-    .withName("NEXTINLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(() => $INDENT)
-                        .or(() => $DEDENT)
-                        .or(r => r.regExp(/^[\r\n]/)),
-                    ),
-                ),
-            )
-            .and(() => $INLINE, "inline"),
-        )
-    , (({ text, inline }) => {
-        return {
-            text: text(),
-            inline: inline,
-        };
-    }),
-    )
-;
+export default $sentenceChildren;
 
 export const $NOT_PARENTHESIS_CHAR = factory
     .withName("NOT_PARENTHESIS_CHAR")
@@ -113,8 +87,6 @@ export const $INLINE_FRAGMENT = factory
     .withName("INLINE_FRAGMENT")
     .action(r => r
         .sequence(c => c
-            .and(r => r.nextIsNot(() => $INDENT))
-            .and(r => r.nextIsNot(() => $DEDENT))
             .and(r => r
                 .oneOrMore(r => r
                     .choice(c => c
@@ -150,8 +122,6 @@ export const $PERIOD_SENTENCE_FRAGMENT: ValueRule<__Text[]> = factory
         .or(r => r
             .action(r => r
                 .sequence(c => c
-                    .and(r => r.nextIsNot(() => $INDENT))
-                    .and(r => r.nextIsNot(() => $DEDENT))
                     .and(r => r
                         .oneOrMore(r => r
                             .action(r => r
@@ -187,7 +157,7 @@ export const $PERIOD_SENTENCE_FRAGMENT: ValueRule<__Text[]> = factory
                         .choice(c => c
                             .or(r => r.seqEqual("。"))
                             .or(r => r.nextIs(() => $__))
-                            .or(r => r.nextIs(() => $NEWLINE)),
+                            .or(r => r.nextIs(() => $_EOL)),
                         )
                     , "tail"),
                 )
@@ -221,8 +191,6 @@ export const $OUTSIDE_PARENTHESES_INLINE = factory
     .withName("OUTSIDE_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
-            .and(r => r.nextIsNot(() => $INDENT))
-            .and(r => r.nextIsNot(() => $DEDENT))
             .and(r => r
                 .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
             , "plain"),
@@ -237,8 +205,6 @@ export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES = factory
     .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES")
     .action(r => r
         .sequence(c => c
-            .and(r => r.nextIsNot(() => $INDENT))
-            .and(r => r.nextIsNot(() => $DEDENT))
             .and(r => r
                 .regExp(/^((?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」])+/)
             , "plain"),
@@ -253,8 +219,6 @@ export const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
     .withName("OUTSIDE_ROUND_PARENTHESES_INLINE")
     .action(r => r
         .sequence(c => c
-            .and(r => r.nextIsNot(() => $INDENT))
-            .and(r => r.nextIsNot(() => $DEDENT))
             .and(r => r
                 .oneOrMore(r => r
                     .action(r => r
@@ -375,7 +339,7 @@ export const $PARENTHESES_INLINE_INNER: ValueRule<__Parentheses | EL> = factory
         .or(() => $SQUARE_BRACKETS_INLINE)
         .or(() => $CURLY_BRACKETS_INLINE)
         .or(() => $SQUARE_PARENTHESES_INLINE)
-        .or(() => $xml_element)
+        .or(() => $xmlElement)
         .or(() => $MISMATCH_START_PARENTHESIS),
     )
 ;
@@ -523,7 +487,7 @@ export const $SQUARE_PARENTHESES_INLINE: ValueRule<__Parentheses> = factory
             .and(r => r
                 .zeroOrMore(r => r
                     .choice(c => c
-                        .or(() => $xml_element)
+                        .or(() => $xmlElement)
                         .or(r => r
                             .action(r => r
                                 .sequence(c => c
@@ -555,8 +519,7 @@ export const $SQUARE_PARENTHESES_INLINE: ValueRule<__Parentheses> = factory
 ;
 
 export const rules = {
-    INLINE: $INLINE,
-    NEXTINLINE: $NEXTINLINE,
+    INLINE: $sentenceChildren,
     NOT_PARENTHESIS_CHAR: $NOT_PARENTHESIS_CHAR,
     INLINE_FRAGMENT: $INLINE_FRAGMENT,
     PERIOD_SENTENCE_FRAGMENT: $PERIOD_SENTENCE_FRAGMENT,

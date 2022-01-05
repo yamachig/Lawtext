@@ -79,7 +79,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -154,7 +154,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -224,7 +224,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -300,7 +300,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -371,7 +371,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -446,7 +446,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -491,7 +491,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -561,7 +561,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -636,7 +636,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -706,7 +706,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -781,7 +781,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -851,7 +851,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -926,7 +926,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -996,7 +996,7 @@ describe("Test $appdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.inline.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 

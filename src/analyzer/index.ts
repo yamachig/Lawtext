@@ -12,7 +12,7 @@ import { RelPos, Pointer, Ranges } from "../node/pointer";
 import { lawTypes, paragraphItemSentenceTags } from "../law/lawUtil";
 import { $ranges } from "./range";
 import { initialEnv } from "../parser/cst/env";
-import { $INLINE } from "../parser/cst/rules/inline";
+import { $sentenceChildren } from "../parser/cst/rules/$sentenceChildren";
 
 export const getLawNameLength = (lawNum: string): number => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -796,7 +796,7 @@ export const stdxmlToExt = (el: EL): EL => {
     if (["LawNum", "QuoteStruct"].indexOf(el.tag) < 0) {
         const isMixed = el.children.some(child => typeof child === "string" || child instanceof String);
         if (isMixed) {
-            const result = $INLINE.match(0, el.innerXML().replace(/\r|\n/, ""), initialEnv({}));
+            const result = $sentenceChildren.match(0, el.innerXML().replace(/\r|\n/, ""), initialEnv({}));
             if (result.ok) {
                 el.children = result.value;
             } else {

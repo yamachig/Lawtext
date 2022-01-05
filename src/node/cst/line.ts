@@ -1,4 +1,4 @@
-import { inlineToString } from "../../parser/cst/rules/inline";
+import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
 import { EL } from "../el";
 import { AttrEntries, SentencesArray, Controls } from "./inline";
 
@@ -75,7 +75,7 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
         public mainTag: "Part" | "Chapter" | "Section" | "Subsection" | "Division",
         public num: string,
         public midSpace: string,
-        public inline: EL[],
+        public sentenceChildren: EL[],
         lineEndText: string,
     ) {
         super(LineType.ARG, range, indentDepth, indentTexts, lineEndText);
@@ -84,7 +84,7 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
         return [
             this.num,
             this.midSpace,
-            ...inlineToString(this.inline),
+            ...sentenceChildrenToString(this.sentenceChildren),
         ].join("");
     }
 }
@@ -96,7 +96,7 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
         indentTexts: string[],
         public mainTag: "Appdx" | "AppdxTable" | "AppdxStyle" | "AppdxFormat" | "AppdxFig" | "AppdxNote",
         public controls: Controls,
-        public inline: EL[],
+        public sentenceChildren: EL[],
         lineEndText: string,
     ) {
         super(LineType.APP, range, indentDepth, indentTexts, lineEndText);
@@ -104,7 +104,7 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
     public contentText(): string {
         return [
             ...this.controls.map(c => c.control + c.trailingSpace),
-            ...this.inline.map(el => el.text),
+            ...this.sentenceChildren.map(el => el.text),
         ].join("");
     }
 }
@@ -141,7 +141,7 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
         indentTexts: string[],
         public mainTag: "SupplProvisionAppdx" | "SupplProvisionAppdxTable" | "SupplProvisionAppdxStyle",
         public controls: Controls,
-        public inline: EL[],
+        public sentenceChildren: EL[],
         lineEndText: string,
     ) {
         super(LineType.SPA, range, indentDepth, indentTexts, lineEndText);
@@ -149,7 +149,7 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
     public contentText(): string {
         return [
             ...this.controls.map(c => c.control + c.trailingSpace),
-            ...this.inline.map(el => el.text),
+            ...this.sentenceChildren.map(el => el.text),
         ].join("");
     }
 }

@@ -1,11 +1,11 @@
 import { assert } from "chai";
 import { initialEnv } from "../env";
-import { $INLINE_EXCLUDE_TRAILING_SPACES, inlineToString } from "./inline";
+import $sentenceChildren, { sentenceChildrenToString } from "./$sentenceChildren";
 import { loadEl } from "../../../node/el";
 
 const env = initialEnv({});
 
-describe("Test $INLINE_EXCLUDE_TRAILING_SPACES and inlineToString", () => {
+describe("Test $sentenceChildren and sentenceChildrenToString", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
@@ -319,13 +319,13 @@ describe("Test $INLINE_EXCLUDE_TRAILING_SPACES and inlineToString", () => {
             },
         ];
 
-        const result = $INLINE_EXCLUDE_TRAILING_SPACES.abstract().match(0, target, env);
+        const result = $sentenceChildren.abstract().match(0, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
             assert.deepStrictEqual(result.value.map(el => el.json(true)), expectedCST);
         }
 
-        const text = inlineToString(expectedCST.map(loadEl));
+        const text = sentenceChildrenToString(expectedCST.map(loadEl));
         assert.strictEqual(text, expectedRendered);
     });
 
@@ -381,13 +381,13 @@ describe("Test $INLINE_EXCLUDE_TRAILING_SPACES and inlineToString", () => {
             },
         ];
 
-        const result = $INLINE_EXCLUDE_TRAILING_SPACES.abstract().match(0, target, env);
+        const result = $sentenceChildren.abstract().match(0, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
             assert.deepStrictEqual(result.value.map(el => el.json(true)), expectedCST);
         }
 
-        const text = inlineToString(expectedCST.map(loadEl));
+        const text = sentenceChildrenToString(expectedCST.map(loadEl));
         assert.strictEqual(text, expectedRendered);
     });
 
@@ -470,13 +470,13 @@ describe("Test $INLINE_EXCLUDE_TRAILING_SPACES and inlineToString", () => {
             },
         ];
 
-        const result = $INLINE_EXCLUDE_TRAILING_SPACES.abstract().match(0, target, env);
+        const result = $sentenceChildren.abstract().match(0, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
             assert.deepStrictEqual(result.value.map(el => el.json(true)), expectedCST);
         }
 
-        const text = inlineToString(expectedCST.map(loadEl));
+        const text = sentenceChildrenToString(expectedCST.map(loadEl));
         assert.strictEqual(text, expectedRendered);
     });
 
@@ -489,9 +489,9 @@ describe("Test $INLINE_EXCLUDE_TRAILING_SPACES and inlineToString", () => {
         const expectedResult = {
             ok: false,
             offset: 0,
-            expected: "INLINE_EXCLUDE_TRAILING_SPACES",
+            expected: "sentenceChildren",
         } as const;
-        const result = $INLINE_EXCLUDE_TRAILING_SPACES.abstract().match(offset, target, env);
+        const result = $sentenceChildren.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
     });
 });

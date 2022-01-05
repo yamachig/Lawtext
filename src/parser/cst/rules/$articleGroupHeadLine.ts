@@ -1,6 +1,6 @@
 import factory from "../factory";
 import { articleGroupType } from "../../../law/lawUtil";
-import { $INLINE_EXCLUDE_TRAILING_SPACES } from "./inline";
+import $sentenceChildren from "./$sentenceChildren";
 import $articleGroupNum from "./$articleGroupNum";
 import $indents from "./$indents";
 import { ArticleGroupHeadLine } from "../../../node/cst/line";
@@ -16,7 +16,7 @@ export const $articleGroupHeadLine = factory
             .zeroOrOne(r => r
                 .sequence(c => c
                     .and(() => $__, "space")
-                    .and(() => $INLINE_EXCLUDE_TRAILING_SPACES, "inline")
+                    .and(() => $sentenceChildren, "inline")
                     .action(({ space, inline }) => {
                         return { space, inline };
                     })
