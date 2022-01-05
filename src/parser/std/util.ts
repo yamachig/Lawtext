@@ -6,6 +6,13 @@ import factory from "./factory";
 import { Dedent, Indent, isVirtualLine, PhysicalLine, VirtualLine, VirtualOnlyLineType } from "./virtualLine";
 
 export type ValueRule<TValue> = Rule<VirtualLine[], TValue, Env, Empty>
+export type WithErrorRule<TValue> = Rule<VirtualLine[], { value: TValue, errors: ErrorMessage[] }, Env, Empty>
+export class ErrorMessage {
+    public constructor(
+        public message: string,
+        public range: [start: number, end: number],
+    ) {}
+}
 
 export const $INDENT: ValueRule<Indent> = factory
     .withName("INDENT")

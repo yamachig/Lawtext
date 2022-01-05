@@ -1,6 +1,6 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, ValueRule } from "../util";
+import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, ErrorMessage, WithErrorRule } from "../util";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
@@ -82,7 +82,7 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
     return lines;
 };
 
-export const $preamble: ValueRule<std.Preamble> = factory
+export const $preamble: WithErrorRule<std.Preamble> = factory
     .withName("preamble")
     .sequence(s => s
         .and(r => r
@@ -108,29 +108,29 @@ export const $preamble: ValueRule<std.Preamble> = factory
             .choice(c => c
                 .or(() => $optBNK_DEDENT)
                 .or(r => r
-                    .nextIs(r => r
+                    .noConsumeRef(r => r
                         .sequence(s => s
                             .and(r => r.zeroOrMore(() => $blankLine))
                             .and(r => r.anyOne(), "unexpected")
-                            .and(r => r
-                                .assert(({ addError, unexpected }) => {
-                                    addError({
-                                        message: "$preamble: この前にある前文の終了時にインデント解除が必要です。",
-                                        range: unexpected.virtualRange,
-                                    });
-                                    return true;
-                                })
-                            )
+                            .action(({ unexpected }) => {
+                                return new ErrorMessage(
+                                    "$preamble: この前にある前文の終了時にインデント解除が必要です。",
+                                    unexpected.virtualRange,
+                                );
+                            })
                         )
                     )
                 )
             )
-        )
-        .action(({ children }) => {
+        , "error")
+        .action(({ children, error }) => {
             for (let i = 0; i < children.length; i++) {
                 children[i].attr.Num = `${i + 1}`;
             }
-            return newStdEL("Preamble", {}, children);
+            return {
+                value: newStdEL("Preamble", {}, children),
+                errors: error instanceof ErrorMessage ? [error] : [],
+            };
         })
     )
     ;

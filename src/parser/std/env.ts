@@ -6,8 +6,6 @@ export interface Env extends BaseEnv<VirtualLine[], BasePos> {
         maxOffsetMatchFail: MatchFail | null;
         maxOffsetMatchContext: MatchContext | null;
     };
-    errors: {message: string, range: [start: number, end: number]}[];
-    addError: (error: {message: string, range: [start: number, end: number]}) => void;
 }
 
 export const initialEnv = (options: Record<string | number | symbol, unknown>): Env => {
@@ -26,11 +24,6 @@ export const initialEnv = (options: Record<string | number | symbol, unknown>): 
         maxOffsetMatchContext: null as null | MatchContext,
     };
 
-    const errors: {message: string, range: [start: number, end: number]}[] = [];
-    const addError = (error: {message: string, range: [start: number, end: number]}) => {
-        errors.push(error);
-    };
-
     return {
         options,
         toStringOptions: {
@@ -41,8 +34,6 @@ export const initialEnv = (options: Record<string | number | symbol, unknown>): 
         offsetToPos,
         onMatchFail,
         state,
-        errors,
-        addError,
     };
 };
 
