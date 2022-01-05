@@ -1,10 +1,12 @@
 import { assert } from "chai";
+import * as std from "../../../law/std";
+import { loadEl } from "../../../node/el";
 import parse from "../../cst/parse";
 import { initialEnv } from "../env";
 import { toVirtualLines } from "../virtualLine";
-import $preamble from "./$preamble";
+import $preamble, { preambleToLines } from "./$preamble";
 
-describe("Test $preamble", () => {
+describe("Test $preamble and preambleToLines", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
@@ -21,10 +23,13 @@ describe("Test $preamble", () => {
   （成年）
 第四条　年齢二十歳をもって、成年とする。
 `;
-        const expectedResult = {
-            ok: true,
-            nextOffset: 10,
-        } as const;
+        const expectedRendered = `\
+:前文:
+  私権は、公共の福祉に適合しなければならない。権利の行使及び義務の履行は、信義に従い誠実に行わなければならない。権利の濫用は、これを許さない。
+  この法律は、個人の尊厳と両性の本質的平等を旨として、解釈しなければならない。
+  私権の享有は、出生に始まる。外国人は、法令又は条約の規定により禁止される場合を除き、私権を享有する。
+  法律行為の当事者が意思表示をした時に意思能力を有しなかったときは、その法律行為は、無効とする。
+`.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Preamble",
             attr: {},
@@ -138,10 +143,14 @@ describe("Test $preamble", () => {
         const vls = toVirtualLines(lines);
 
         const result = $preamble.match(0, vls, env);
-        assert.deepInclude(result, expectedResult);
+        assert.isTrue(result.ok);
         if (result.ok) {
             assert.deepStrictEqual(result.value.json(), expectedValue);
         }
+
+        const renderedLines = preambleToLines(loadEl(expectedValue) as std.Preamble, []);
+        const renderedText = renderedLines.map(l => l.text()).join("");
+        assert.strictEqual(renderedText, expectedRendered);
     });
 
     it("Success with errors case", () => {

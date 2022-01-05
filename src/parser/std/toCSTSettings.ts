@@ -1,4 +1,5 @@
 export default {
-    INDENT: "  ",
-    MARGIN: "　",
+    INDENT: "  " as const,
+    MARGIN: "　" as const,
+    EOL: "\r\n" as const,
 };

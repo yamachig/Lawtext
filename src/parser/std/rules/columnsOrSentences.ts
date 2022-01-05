@@ -12,7 +12,7 @@ export const columnsOrSentencesToSentencesArray = (
 
     for (let i = 0; i < els.length; i++) {
         const sentences: Sentences = {
-            leadingSpace: i === 0 ? "" : CST.MARGIN,
+            leadingSpace: "",
             attrEntries: [],
             sentences: [],
         };
@@ -29,6 +29,7 @@ export const columnsOrSentencesToSentencesArray = (
             sentences.sentences.push(el);
 
         } else if (el.tag === "Column") {
+            sentences.leadingSpace = i === 0 ? "" : CST.MARGIN;
             if (el.attr.LineBreak === "true") {
                 sentences.attrEntries.push({
                     text: "[LineBreak=\"true\"]",

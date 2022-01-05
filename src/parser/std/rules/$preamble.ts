@@ -1,9 +1,10 @@
 import { factory } from "../factory";
-import { LineType } from "../../../node/cst/line";
+import { Line, LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, ValueRule } from "../util";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
-import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
+import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
+import CST from "../toCSTSettings";
 
 
 const $preambleChildren = factory
@@ -38,6 +39,48 @@ const $preambleChildren = factory
             )
         )
     );
+
+export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): Line[] => {
+    const lines: Line[] = [];
+
+    lines.push(new OtherLine(
+        null,
+        indentTexts.length,
+        indentTexts,
+        [
+            {
+                control: ":前文:",
+                trailingSpace: "",
+            },
+        ],
+        [],
+        CST.EOL,
+    ));
+
+    const childrenIndentTexts = [...indentTexts, CST.INDENT];
+
+    for (const paragraph of preamble.children) {
+        // TODO: Change to paragraphToCST
+        const line = new OtherLine(
+            null,
+            childrenIndentTexts.length,
+            childrenIndentTexts,
+            [],
+            [],
+            CST.EOL,
+        );
+        for (const el of paragraph.children) {
+            if (el.tag === "ParagraphSentence") {
+                const columnsOrSentences = el.children;
+                const sentencesArray = columnsOrSentencesToSentencesArray(columnsOrSentences);
+                line.sentencesArray.push(...sentencesArray);
+            }
+        }
+        lines.push(line);
+    }
+
+    return lines;
+};
 
 export const $preamble: ValueRule<std.Preamble> = factory
     .withName("preamble")
