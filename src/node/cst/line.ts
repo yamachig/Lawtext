@@ -1,5 +1,6 @@
+import { inlineToString } from "../../parser/cst/rules/inline";
 import { EL } from "../el";
-import { AttrEntries, Columns, Controls } from "./inline";
+import { AttrEntries, SentencesArray, Controls } from "./inline";
 
 export enum LineType {
     BNK = "BNK",
@@ -83,7 +84,7 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
         return [
             this.num,
             this.midSpace,
-            ...this.inline.map(el => el.text),
+            ...inlineToString(this.inline),
         ].join("");
     }
 }
@@ -160,7 +161,7 @@ export class ArticleLine extends IndentsLine<LineType.ART> {
         indentTexts: string[],
         public title: string,
         public midSpace: string,
-        public columns: Columns,
+        public sentencesArray: SentencesArray,
         lineEndText: string,
     ) {
         super(LineType.ART, range, indentDepth, indentTexts, lineEndText);
@@ -169,7 +170,7 @@ export class ArticleLine extends IndentsLine<LineType.ART> {
         return [
             this.title,
             this.midSpace,
-            ...this.columns.map(c => [
+            ...this.sentencesArray.map(c => [
                 c.leadingSpace,
                 ...c.attrEntries.map(a => a.text + a.trailingSpace),
                 ...c.sentences.map(s => s.text),
@@ -185,7 +186,7 @@ export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
         indentTexts: string[],
         public title: string,
         public midSpace: string,
-        public columns: Columns,
+        public sentencesArray: SentencesArray,
         lineEndText: string,
     ) {
         super(LineType.PIT, range, indentDepth, indentTexts, lineEndText);
@@ -194,7 +195,7 @@ export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
         return [
             this.title,
             this.midSpace,
-            ...this.columns.map(c => [
+            ...this.sentencesArray.map(c => [
                 c.leadingSpace,
                 ...c.attrEntries.map(a => a.text + a.trailingSpace),
                 ...c.sentences.map(s => s.text),
@@ -213,7 +214,7 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
         public columnIndicator: "-",
         public midSpace: string,
         public attrEntries: AttrEntries,
-        public columns: Columns,
+        public sentencesArray: SentencesArray,
         lineEndText: string,
     ) {
         super(LineType.TBL, range, indentDepth, indentTexts, lineEndText);
@@ -225,7 +226,7 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
             this.columnIndicator,
             this.midSpace,
             ...this.attrEntries.map(e => e.text + e.trailingSpace),
-            ...this.columns.map(c => [
+            ...this.sentencesArray.map(c => [
                 c.leadingSpace,
                 ...c.attrEntries.map(a => a.text + a.trailingSpace),
                 ...c.sentences.map(s => s.text),
@@ -240,7 +241,7 @@ export class OtherLine extends IndentsLine<LineType.OTH> {
         indentDepth: number,
         indentTexts: string[],
         public controls: Controls,
-        public columns: Columns,
+        public sentencesArray: SentencesArray,
         lineEndText: string,
     ) {
         super(LineType.OTH, range, indentDepth, indentTexts, lineEndText);
@@ -248,7 +249,7 @@ export class OtherLine extends IndentsLine<LineType.OTH> {
     public contentText(): string {
         return [
             ...this.controls.map(c => c.control + c.trailingSpace),
-            ...this.columns.map(c => [
+            ...this.sentencesArray.map(c => [
                 c.leadingSpace,
                 ...c.attrEntries.map(a => a.text + a.trailingSpace),
                 ...c.sentences.map(s => s.text),

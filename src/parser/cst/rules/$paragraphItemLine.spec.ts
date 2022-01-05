@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $paragraphItemLine from "./$paragraphItemLine";
-import { Columns } from "../../../node/cst/inline";
+import { SentencesArray } from "../../../node/cst/inline";
 
 const env = initialEnv({});
 
@@ -59,7 +59,7 @@ describe("Test $paragraphItemLine", () => {
             indentTexts: ["  "] as string[],
             title: "八",
             midSpace: "",
-            columns: [] as Columns,
+            sentencesArray: [] as SentencesArray,
             lineEndText: `
 `,
         } as const;

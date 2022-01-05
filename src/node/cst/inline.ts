@@ -15,10 +15,10 @@ export interface AttrEntry {
 
 export type AttrEntries = AttrEntry[];
 
-export interface Column {
+export interface Sentences {
     leadingSpace: string,
     attrEntries: AttrEntries,
     sentences: std.Sentence[],
 }
 
-export type Columns = Column[];
+export type SentencesArray = Sentences[];

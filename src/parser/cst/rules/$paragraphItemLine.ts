@@ -2,7 +2,7 @@ import factory from "../factory";
 import $indents from "./$indents";
 import { ParagraphItemLine } from "../../../node/cst/line";
 import { $__, $_EOL } from "./lexical";
-import $columnsOrSentences from "./$columnsOrSentences";
+import $columnsOrSentences from "./$sencencesArray";
 import makeRangesRule from "./makeRangesRule";
 import $paragraphItemTitle from "./$paragraphItemTitle";
 

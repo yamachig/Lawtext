@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $otherLine from "./$otherLine";
-import { Columns, Controls } from "../../../node/cst/inline";
+import { SentencesArray, Controls } from "../../../node/cst/inline";
 
 const env = initialEnv({});
 
@@ -82,7 +82,7 @@ describe("Test $otherLine", () => {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.columns.map(c => ({
+                result.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),
@@ -138,7 +138,7 @@ describe("Test $otherLine", () => {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.columns.map(c => ({
+                result.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),
@@ -199,7 +199,7 @@ describe("Test $otherLine", () => {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.columns.map(c => ({
+                result.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),
@@ -239,14 +239,14 @@ describe("Test $otherLine", () => {
             lineEndText: `
 `,
         } as const;
-        const expectedColumns: Columns = [];
+        const expectedColumns: SentencesArray = [];
         const result = $otherLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.columns.map(c => ({
+                result.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),

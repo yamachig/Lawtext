@@ -70,7 +70,7 @@ describe("Test $tableColumnLine", () => {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.columns.map(c => ({
+                result.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),
@@ -135,7 +135,7 @@ describe("Test $tableColumnLine", () => {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.columns.map(c => ({
+                result.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),
@@ -194,7 +194,7 @@ describe("Test $tableColumnLine", () => {
             assert.deepInclude(result.value, expectedValue);
             assert.strictEqual(result.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.columns.map(c => ({
+                result.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),

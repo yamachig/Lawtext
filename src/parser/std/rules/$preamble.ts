@@ -3,6 +3,7 @@ import { LineType } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, ValueRule } from "../util";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
+import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 
 
 const $preambleChildren = factory
@@ -15,17 +16,9 @@ const $preambleChildren = factory
                     if (
                         item.type === LineType.OTH
                         && item.line.type === LineType.OTH
-                        && item.line.columns.length > 0
+                        && item.line.sentencesArray.length > 0
                     ) {
-                        const inline = item.line.columns.length === 1
-                            ? item.line.columns[0].sentences
-                            : item.line.columns.map(c =>
-                                newStdEL(
-                                    "Column",
-                                    Object.fromEntries(c.attrEntries.map(e => e.entry)),
-                                    c.sentences,
-                                )
-                            );
+                        const inline = sentencesArrayToColumnsOrSentences(item.line.sentencesArray);
                         return newStdEL(
                             "Paragraph",
                             {},
@@ -55,7 +48,7 @@ export const $preamble: ValueRule<std.Preamble> = factory
                     item.type === LineType.OTH
                     && item.line.type === LineType.OTH
                     && item.virtualIndentDepth === 0
-                    && item.line.columns.length === 0
+                    && item.line.sentencesArray.length === 0
                     && item.line.controls.length === 1
                     && item.line.controls.some(c => /^(?::前文:|:Preamble:|:preamble:)$/.exec(c.control))
                 ) {

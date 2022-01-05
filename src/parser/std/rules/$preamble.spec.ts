@@ -144,7 +144,7 @@ describe("Test $preamble", () => {
         }
     });
 
-    it("Fail case", () => {
+    it("Success with errors case", () => {
         /* eslint-disable no-irregular-whitespace */
         const env = initialEnv({});
         const lawtext = `\

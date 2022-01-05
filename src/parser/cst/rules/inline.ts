@@ -1,10 +1,40 @@
 /* eslint-disable no-irregular-whitespace */
+import { __EL } from "../../../law/std";
 import { __Parentheses, __Text } from "../../../node/control";
 import { EL } from "../../../node/el";
+import { NotImplementedError } from "../../../util";
 import { factory } from "../factory";
 import { ValueRule } from "../util";
 import { $INDENT, $DEDENT, $__, $NEWLINE } from "./lexical";
 import { $xml_element } from "./xml";
+
+
+export const inlineToString = ( els: (string | EL)[]): string => {
+    const runs: string[] = [];
+
+    for (const el of els) {
+        if (typeof el === "string") {
+            runs.push(/* $$$$$$ */el.replace(/\r|\n/g, "")/* $$$$$$ */);
+        } else if (el.isControl) {
+            runs.push(/* $$$$$$ */el.text.replace(/\r|\n/g, "")/* $$$$$$ */);
+
+        } else if (el.tag === "Ruby" || el.tag === "Sub" || el.tag === "Sup" || el.tag === "QuoteStruct") {
+            runs.push(/* $$$$$$ */el.outerXML()/* $$$$$$ */);
+
+        } else if (el.tag === "ArithFormula") {
+            runs.push(/* $$$$$$ */el.outerXML()/* $$$$$$ */);
+
+        } else if (el.tag === "Line") {
+            throw new NotImplementedError(el.tag);
+
+        } else {
+            throw new NotImplementedError(el.tag);
+
+        }
+    }
+
+    return /* $$$$$$ */`${runs.join("")}`/* $$$$$$ */;
+};
 
 export const $INLINE = factory
     .withName("INLINE")
@@ -114,7 +144,7 @@ export const $INLINE_FRAGMENT = factory
     )
 ;
 
-export const $PERIOD_SENTENCE_FRAGMENT = factory
+export const $PERIOD_SENTENCE_FRAGMENT: ValueRule<__Text[]> = factory
     .withName("PERIOD_SENTENCE_FRAGMENT")
     .choice(c => c
         .or(r => r
@@ -251,7 +281,7 @@ export const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
     )
 ;
 
-export const $MISMATCH_START_PARENTHESIS = factory
+export const $MISMATCH_START_PARENTHESIS: ValueRule<__EL> = factory
     .withName("MISMATCH_START_PARENTHESIS")
     .action(r => r
         .sequence(c => c
@@ -261,12 +291,12 @@ export const $MISMATCH_START_PARENTHESIS = factory
         )
     , (({ mismatch }) => {
     // console.error(`### line ${location().start.line}: Mismatch start parenthesis!`);
-        return new EL("__MismatchStartParenthesis", {}, [mismatch]);
+        return new EL("__MismatchStartParenthesis", {}, [mismatch]) as __EL;
     }),
     )
 ;
 
-export const $MISMATCH_END_PARENTHESIS = factory
+export const $MISMATCH_END_PARENTHESIS: ValueRule<__EL> = factory
     .withName("MISMATCH_END_PARENTHESIS")
     .action(r => r
         .sequence(c => c
@@ -276,7 +306,7 @@ export const $MISMATCH_END_PARENTHESIS = factory
         )
     , (({ mismatch }) => {
     // console.error(`### line ${location().start.line}: Mismatch end parenthesis!`);
-        return new EL("__MismatchEndParenthesis", {}, [mismatch]);
+        return new EL("__MismatchEndParenthesis", {}, [mismatch]) as __EL;
     }),
     )
 ;

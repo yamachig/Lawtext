@@ -1,5 +1,5 @@
 import { Rule, Empty } from "generic-parser/lib/core";
-import { Columns } from "../../node/cst/inline";
+import { SentencesArray } from "../../node/cst/inline";
 import { Line, LineType } from "../../node/cst/line";
 import { Env } from "./env";
 import factory from "./factory";
@@ -36,14 +36,14 @@ export const $blankLine = factory
     .oneMatch(({ item }) => item.type === LineType.BNK ? item : null);
 
 
-export const isSingleParentheses = (line: VirtualLine | Line | Columns): boolean => {
-    let columns: Columns = [];
+export const isSingleParentheses = (line: VirtualLine | Line | SentencesArray): boolean => {
+    let columns: SentencesArray = [];
     if (Array.isArray(line)){
         columns = line;
     } else if (isVirtualLine(line) && "line" in line && line.line.type === LineType.OTH) {
-        columns = line.line.columns;
+        columns = line.line.sentencesArray;
     } else if (!isVirtualLine(line) && line.type === LineType.OTH) {
-        columns = line.columns;
+        columns = line.sentencesArray;
     }
     return (
         columns.length === 1

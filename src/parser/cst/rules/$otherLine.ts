@@ -2,7 +2,7 @@ import factory from "../factory";
 import $indents from "./$indents";
 import { OtherLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
-import $columnsOrSentences from "./$columnsOrSentences";
+import $columnsOrSentences from "./$sencencesArray";
 
 
 export const $otherLine = factory

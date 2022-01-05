@@ -3,7 +3,7 @@ import $indents from "./$indents";
 import { TableColumnLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
 import $squareAttr from "./$squareAttr";
-import $columnsOrSentences from "./$columnsOrSentences";
+import $columnsOrSentences from "./$sencencesArray";
 
 
 export const $tableColumnLine = factory

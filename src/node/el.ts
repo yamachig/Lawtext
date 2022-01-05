@@ -192,9 +192,9 @@ export class EL implements JsonEL {
     }
 }
 
-export const loadEl = (rawLaw: JsonEL | string): EL | string => {
+export const loadEl = <T extends JsonEL | string>(rawLaw: T): T extends string ? string : EL => {
     if (typeof rawLaw === "string") {
-        return rawLaw;
+        return rawLaw as unknown as T extends string ? string : EL;
     } else {
         if (!rawLaw.children) {
             console.error("[load_el]", rawLaw);
@@ -203,7 +203,7 @@ export const loadEl = (rawLaw: JsonEL | string): EL | string => {
             rawLaw.tag,
             rawLaw.attr,
             rawLaw.children.map(loadEl),
-        );
+        ) as unknown as T extends string ? string : EL;
     }
 };
 

@@ -1,16 +1,35 @@
 import { newStdEL } from "../../../law/std";
 import { __Text } from "../../../node/control";
 import { factory } from "../factory";
-import { $INLINE_EXCLUDE_TRAILING_SPACES, $PERIOD_SENTENCE_FRAGMENT } from "./inline";
+import { $INLINE_EXCLUDE_TRAILING_SPACES, $PERIOD_SENTENCE_FRAGMENT, inlineToString } from "./inline";
 import { $_, $__ } from "./lexical";
 import { ValueRule } from "../util";
-import { Columns } from "../../../node/cst/inline";
+import { SentencesArray } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $squareAttr from "./$squareAttr";
 
 
-export const $columnsOrSentences: ValueRule<Columns> = factory
-    .withName("columnsOrSentences")
+export const sentencesArrayToString = (
+    sentencesArray: SentencesArray,
+): string => {
+    const runs: string[] = [];
+
+    for (const sentences of sentencesArray) {
+        runs.push(sentences.leadingSpace);
+        for (const attrEntry of sentences.attrEntries) {
+            runs.push(attrEntry.text);
+        }
+        for (const sentence of sentences.sentences) {
+            runs.push(inlineToString(sentence.children));
+        }
+    }
+
+    return runs.join("");
+};
+
+
+export const $sentencesArray: ValueRule<SentencesArray> = factory
+    .withName("sentencesArray")
     .choice(c => c
         .or(() => $columns)
         .orSequence(c => c
@@ -51,7 +70,7 @@ export const $columnsOrSentences: ValueRule<Columns> = factory
     )
     ;
 
-export default $columnsOrSentences;
+export default $sentencesArray;
 
 export const $periodSentences: ValueRule<std.Sentence[]> = factory
     .withName("periodSentences")
@@ -88,7 +107,7 @@ export const $periodSentences: ValueRule<std.Sentence[]> = factory
     )
     ;
 
-export const $columns: ValueRule<Columns> = factory
+export const $columns: ValueRule<SentencesArray> = factory
     .withName("columns")
     .sequence(c => c
         .and(() => $column, "firstColumn")
