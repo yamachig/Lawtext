@@ -3,10 +3,10 @@ import $sentenceChildren from "./$sentenceChildren";
 import $indents from "./$indents";
 import { SupplProvisionAppdxItemHeadLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
-import { mergeAdjacentTexts } from "../util";
+import { mergeAdjacentTexts, WithErrorRule } from "../util";
 
 
-export const $supplProvisionAppdxItemHeadLine = factory
+export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdxItemHeadLine> = factory
     .withName("supplProvisionAppdxItemHeadLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
@@ -106,16 +106,20 @@ export const $supplProvisionAppdxItemHeadLine = factory
         .and(() => $sentenceChildren, "tail")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, headStruct, tail, lineEndText }) => {
-            const inline = mergeAdjacentTexts([headStruct.head, ...tail]);
-            return new SupplProvisionAppdxItemHeadLine(
-                range(),
-                indentsStruct.indentDepth,
-                indentsStruct.indentTexts,
-                headStruct.mainTag,
-                headStruct.control ? [headStruct.control] : [],
-                inline,
-                lineEndText,
-            );
+            const inline = mergeAdjacentTexts([headStruct.head, ...tail.value]);
+            const errors = [...indentsStruct.errors, ...tail.errors];
+            return {
+                value: new SupplProvisionAppdxItemHeadLine(
+                    range(),
+                    indentsStruct.value.indentDepth,
+                    indentsStruct.value.indentTexts,
+                    headStruct.mainTag,
+                    headStruct.control ? [headStruct.control] : [],
+                    inline,
+                    lineEndText,
+                ),
+                errors,
+            };
         })
     )
     ;

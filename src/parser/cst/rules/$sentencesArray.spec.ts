@@ -3,6 +3,7 @@ import { initialEnv } from "../env";
 import { loadEl } from "../../../node/el";
 import * as std from "../../../law/std";
 import $sentencesArray, { sentencesArrayToString } from "./$sentencesArray";
+import { ErrorMessage } from "../error";
 
 const env = initialEnv({});
 
@@ -69,11 +70,13 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                 ],
             },
         ];
+        const expectedErrors: ErrorMessage[] = [];
 
         const result = $sentencesArray.abstract().match(0, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            assert.deepStrictEqual(result.value.map(col => ({ ...col, sentences: col.sentences.map(s => s.json(true)) })), expectedCST);
+            assert.deepStrictEqual(result.value.value.map(col => ({ ...col, sentences: col.sentences.map(s => s.json(true)) })), expectedCST);
+            assert.deepStrictEqual(result.value.errors, expectedErrors);
         }
 
         const text = sentencesArrayToString(

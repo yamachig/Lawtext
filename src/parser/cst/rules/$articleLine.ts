@@ -5,16 +5,26 @@ import { $__, $_EOL } from "./lexical";
 import $articleTitle from "./$articleTitle";
 import $columnsOrSentences from "./$sentencesArray";
 import makeRangesRule from "./makeRangesRule";
-import { ValueRule } from "../util";
+import { WithErrorRule } from "../util";
 
 const { $ranges: $articleRanges } = makeRangesRule(() => $articleTitle);
 
 
-export const $articleLine: ValueRule<ArticleLine> = factory
+export const $articleLine: WithErrorRule<ArticleLine> = factory
     .withName("articleLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
-        .and( r => r.asSlice(() => $articleRanges), "title")
+        .and( r => r
+            .sequence(s => s
+                .and(() => $articleRanges, "title")
+                .action(({ title, text }) => {
+                    return {
+                        value: text(),
+                        errors: title.errors,
+                    };
+                })
+            )
+        , "title")
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(c => c
@@ -28,15 +38,23 @@ export const $articleLine: ValueRule<ArticleLine> = factory
         , "contentStruct")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, title, contentStruct, lineEndText }) => {
-            return new ArticleLine(
-                range(),
-                indentsStruct.indentDepth,
-                indentsStruct.indentTexts,
-                title,
-                contentStruct?.midSpace ?? "",
-                contentStruct?.columns ?? [],
-                lineEndText,
-            );
+            const errors = [
+                ...indentsStruct.errors,
+                ...title.errors,
+                ...(contentStruct?.columns.errors ?? []),
+            ];
+            return {
+                value: new ArticleLine(
+                    range(),
+                    indentsStruct.value.indentDepth,
+                    indentsStruct.value.indentTexts,
+                    title.value,
+                    contentStruct?.midSpace ?? "",
+                    contentStruct?.columns.value ?? [],
+                    lineEndText,
+                ),
+                errors,
+            };
         })
     )
     ;

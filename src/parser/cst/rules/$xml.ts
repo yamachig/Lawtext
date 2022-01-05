@@ -2,7 +2,7 @@
 import { EL } from "../../../node/el";
 import { __Text } from "../../../node/control";
 import { factory } from "../factory";
-import { ValueRule } from "../util";
+import { WithErrorRule } from "../util";
 import { $_ } from "./lexical";
 
 export const $xml = factory
@@ -19,7 +19,7 @@ export const $xml = factory
                         , "text"),
                     )
                 , (({ text }) => {
-                    return new __Text(text);
+                    return { value: new __Text(text), errors: [] };
                 }),
                 ),
             )
@@ -30,7 +30,7 @@ export const $xml = factory
 
 export default $xml;
 
-export const $xmlElement: ValueRule<EL> = factory
+export const $xmlElement: WithErrorRule<EL> = factory
     .withName("xmlElement")
     .choice(c => c
         .or(r => r
@@ -97,7 +97,10 @@ export const $xmlElement: ValueRule<EL> = factory
                     ),
                 )
             , (({ tag, attr, children }) => {
-                return new EL(tag, Object.assign({}, ...attr), children);
+                return {
+                    value: new EL(tag, Object.assign({}, ...attr), children.map(c => c.value )),
+                    errors: children.map(c => c.errors).flat(),
+                };
             }),
             ),
         )
@@ -146,7 +149,7 @@ export const $xmlElement: ValueRule<EL> = factory
                     .and(r => r.seqEqual("/>")),
                 )
             , (({ tag, attr }) => {
-                return new EL(tag, Object.assign({}, ...attr));
+                return { value: new EL(tag, Object.assign({}, ...attr)), errors: [] };
             }),
             ),
         ),

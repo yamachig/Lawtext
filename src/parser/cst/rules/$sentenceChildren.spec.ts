@@ -2,6 +2,7 @@ import { assert } from "chai";
 import { initialEnv } from "../env";
 import $sentenceChildren, { sentenceChildrenToString } from "./$sentenceChildren";
 import { loadEl } from "../../../node/el";
+import { ErrorMessage } from "../error";
 
 const env = initialEnv({});
 
@@ -318,11 +319,13 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                 children: ["に対して提供する業務を行うときは、当該卸先電気通信事業者ごとの次に掲げる事項について、様式第二十三の九により、当該事項に関する契約書その他の書面の写しを添えて、遅滞なく、書面等により総務大臣に提出しなければならない。"],
             },
         ];
+        const expectedErrors: ErrorMessage[] = [];
 
         const result = $sentenceChildren.abstract().match(0, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            assert.deepStrictEqual(result.value.map(el => el.json(true)), expectedCST);
+            assert.deepStrictEqual(result.value.value.map(el => el.json(true)), expectedCST);
+            assert.deepStrictEqual(result.value.errors, expectedErrors);
         }
 
         const text = sentenceChildrenToString(expectedCST.map(loadEl));
@@ -380,11 +383,13 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                 children: ["とあるのは"],
             },
         ];
+        const expectedErrors: ErrorMessage[] = [];
 
         const result = $sentenceChildren.abstract().match(0, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            assert.deepStrictEqual(result.value.map(el => el.json(true)), expectedCST);
+            assert.deepStrictEqual(result.value.value.map(el => el.json(true)), expectedCST);
+            assert.deepStrictEqual(result.value.errors, expectedErrors);
         }
 
         const text = sentenceChildrenToString(expectedCST.map(loadEl));
@@ -469,11 +474,13 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                 children: ["その他これに類する物をその接地部に固定したタイヤをいう。"],
             },
         ];
+        const expectedErrors: ErrorMessage[] = [];
 
         const result = $sentenceChildren.abstract().match(0, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            assert.deepStrictEqual(result.value.map(el => el.json(true)), expectedCST);
+            assert.deepStrictEqual(result.value.value.map(el => el.json(true)), expectedCST);
+            assert.deepStrictEqual(result.value.errors, expectedErrors);
         }
 
         const text = sentenceChildrenToString(expectedCST.map(loadEl));

@@ -74,7 +74,7 @@ describe("Test sentencesArrayToColumnsOrSentences and columnsOrSentencesToSenten
         const result = $sentencesArray.abstract().match(0, target, cstEnv);
         assert.isTrue(result.ok);
         if (result.ok) {
-            const sentencesArray = sentencesArrayToColumnsOrSentences(result.value);
+            const sentencesArray = sentencesArrayToColumnsOrSentences(result.value.value);
             assert.deepStrictEqual(sentencesArray.map(s => s.json(true)), expectedSTD);
         }
 
@@ -125,7 +125,7 @@ describe("Test sentencesArrayToColumnsOrSentences and columnsOrSentencesToSenten
         const result = $sentencesArray.abstract().match(0, target, cstEnv);
         assert.isTrue(result.ok);
         if (result.ok) {
-            const sentencesArray = sentencesArrayToColumnsOrSentences(result.value);
+            const sentencesArray = sentencesArrayToColumnsOrSentences(result.value.value);
             assert.deepStrictEqual(sentencesArray.map(s => s.json(true)), expectedSTD);
         }
 

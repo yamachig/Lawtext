@@ -1,8 +1,12 @@
 import factory from "../factory";
+import { WithErrorRule } from "../util";
 import { $kanjiDigits } from "./lexical";
 
 
-export const $articleGroupNum = factory
+export const $articleGroupNum: WithErrorRule<{
+    typeChar: "編" | "章" | "節" | "款" | "目",
+    text: string,
+}> = factory
     .withName("articleGroupNum")
     .choice(c => c
         .or(r => r
@@ -20,8 +24,11 @@ export const $articleGroupNum = factory
                 )
                 .action(({ text, typeChar }) => {
                     return {
-                        typeChar,
-                        text: text(),
+                        value: {
+                            typeChar,
+                            text: text(),
+                        },
+                        errors: [],
                     };
                 })
             )

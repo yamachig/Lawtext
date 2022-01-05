@@ -5,9 +5,10 @@ import $articleGroupNum from "./$articleGroupNum";
 import $indents from "./$indents";
 import { ArticleGroupHeadLine } from "../../../node/cst/line";
 import { $__, $_EOL } from "./lexical";
+import { WithErrorRule } from "../util";
 
 
-export const $articleGroupHeadLine = factory
+export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factory
     .withName("articleGroupHeadLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
@@ -25,16 +26,24 @@ export const $articleGroupHeadLine = factory
         , "tail")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, articleGroupNum, tail, lineEndText }) => {
-            return new ArticleGroupHeadLine(
-                range(),
-                indentsStruct.indentDepth,
-                indentsStruct.indentTexts,
-                articleGroupType[articleGroupNum.typeChar],
-                articleGroupNum.text,
-                tail?.space ?? "",
-                tail?.inline ?? [],
-                lineEndText,
-            );
+            const errors = [
+                ...indentsStruct.errors,
+                ...articleGroupNum.errors,
+                ...(tail?.inline.errors ?? []),
+            ];
+            return {
+                value: new ArticleGroupHeadLine(
+                    range(),
+                    indentsStruct.value.indentDepth,
+                    indentsStruct.value.indentTexts,
+                    articleGroupType[articleGroupNum.value.typeChar],
+                    articleGroupNum.value.text,
+                    tail?.space ?? "",
+                    tail?.inline.value ?? [],
+                    lineEndText,
+                ),
+                errors,
+            };
         })
     )
     ;

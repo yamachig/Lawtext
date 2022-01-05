@@ -1,9 +1,9 @@
 import { assert } from "chai";
 import * as std from "../../../law/std";
 import { loadEl } from "../../../node/el";
+import { ErrorMessage } from "../../cst/error";
 import parse from "../../cst/parse";
 import { initialEnv } from "../env";
-import { ErrorMessage } from "../util";
 import { toVirtualLines } from "../virtualLine";
 import $preamble, { preambleToLines } from "./$preamble";
 
@@ -141,14 +141,15 @@ describe("Test $preamble and preambleToLines", () => {
             ],
         };
         const expectedErrors: ErrorMessage[] = [];
+
         const lines = parse(lawtext);
-        const vls = toVirtualLines(lines);
+        const vls = toVirtualLines(lines.value);
 
         const result = $preamble.match(0, vls, env);
         assert.isTrue(result.ok);
         if (result.ok) {
             assert.deepStrictEqual(result.value.value.json(), expectedValue);
-            assert.deepStrictEqual(result.value.errors, expectedErrors);
+            assert.deepStrictEqual([...lines.errors, ...result.value.errors], expectedErrors);
         }
 
         const renderedLines = preambleToLines(loadEl(expectedValue) as std.Preamble, []);
@@ -291,13 +292,13 @@ describe("Test $preamble and preambleToLines", () => {
             },
         ];
         const lines = parse(lawtext);
-        const vls = toVirtualLines(lines);
+        const vls = toVirtualLines(lines.value);
 
         const result = $preamble.match(0, vls, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepStrictEqual(result.value.value.json(), expectedValue);
-            assert.deepStrictEqual(result.value.errors, expectedErrors);
+            assert.deepStrictEqual([...lines.errors, ...result.value.errors], expectedErrors);
         }
     });
 });

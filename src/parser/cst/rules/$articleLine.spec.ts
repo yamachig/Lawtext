@@ -52,10 +52,10 @@ describe("Test $articleLine", () => {
         const result = $articleLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
-            assert.deepInclude(result.value, expectedValue);
-            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.sentencesArray.map(c => ({
+                result.value.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),
@@ -110,10 +110,10 @@ describe("Test $articleLine", () => {
         const result = $articleLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
-            assert.deepInclude(result.value, expectedValue);
-            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.sentencesArray.map(c => ({
+                result.value.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),
@@ -166,10 +166,10 @@ describe("Test $articleLine", () => {
         const result = $articleLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
-            assert.deepInclude(result.value, expectedValue);
-            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(
-                result.value.sentencesArray.map(c => ({
+                result.value.value.sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),

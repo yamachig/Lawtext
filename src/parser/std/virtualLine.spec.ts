@@ -82,7 +82,7 @@ describe("Test virtualLine", () => {
 
         const lawtext = target.map(([, input]) => input + "\r\n").join("");
 
-        const lines = parse(lawtext);
+        const lines = parse(lawtext).value;
 
         for (let i = 0; i < Math.max(lines.length, target.length); i += 5) {
             assert.deepStrictEqual(

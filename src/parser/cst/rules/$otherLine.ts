@@ -3,9 +3,10 @@ import $indents from "./$indents";
 import { OtherLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
 import $columnsOrSentences from "./$sentencesArray";
+import { WithErrorRule } from "../util";
 
 
-export const $otherLine = factory
+export const $otherLine: WithErrorRule<OtherLine> = factory
     .withName("otherLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
@@ -24,14 +25,21 @@ export const $otherLine = factory
         , "columns")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, controls, columns, lineEndText }) => {
-            return new OtherLine(
-                range(),
-                indentsStruct.indentDepth,
-                indentsStruct.indentTexts,
-                controls,
-                columns ?? [],
-                lineEndText,
-            );
+            const errors = [
+                ...indentsStruct.errors,
+                ...(columns?.errors ?? []),
+            ];
+            return {
+                value: new OtherLine(
+                    range(),
+                    indentsStruct.value.indentDepth,
+                    indentsStruct.value.indentTexts,
+                    controls,
+                    columns?.value ?? [],
+                    lineEndText,
+                ),
+                errors,
+            };
         })
     )
     ;

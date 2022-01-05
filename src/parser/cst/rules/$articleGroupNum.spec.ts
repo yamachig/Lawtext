@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { initialEnv } from "../env";
+import { ErrorMessage } from "../error";
 import $articleGroupNum from "./$articleGroupNum";
 
 const env = initialEnv({});
@@ -14,8 +15,11 @@ describe("Test $articleGroupNum", () => {
             ok: true,
             nextOffset: 3,
             value: {
-                typeChar: "章",
-                text: "第一章",
+                value: {
+                    typeChar: "章",
+                    text: "第一章",
+                },
+                errors: [] as ErrorMessage[],
             },
         } as const;
         const result = $articleGroupNum.abstract().match(offset, target, env);
@@ -30,8 +34,11 @@ describe("Test $articleGroupNum", () => {
             ok: true,
             nextOffset: 5,
             value: {
-                typeChar: "章",
-                text: "第四章の二",
+                value: {
+                    typeChar: "章",
+                    text: "第四章の二",
+                },
+                errors: [] as ErrorMessage[],
             },
         } as const;
         const result = $articleGroupNum.abstract().match(offset, target, env);

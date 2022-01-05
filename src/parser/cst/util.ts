@@ -2,8 +2,11 @@ import { Rule, Empty } from "generic-parser/lib/core";
 import { __Text } from "../../node/control";
 import { EL } from "../../node/el";
 import { Env } from "./env";
+import { ErrorMessage } from "./error";
 
 export type ValueRule<TValue> = Rule<string, TValue, Env, Empty>
+export type WithErrorRule<TValue> = Rule<string, { value: TValue, errors: ErrorMessage[] }, Env, Empty>
+
 
 export const mergeAdjacentTexts = (inline: (string | EL)[]): EL[] => {
     const result: EL[] = [];

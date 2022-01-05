@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { initialEnv } from "../env";
+import { ErrorMessage } from "../error";
 import $articleTitle from "./$articleTitle";
 
 const env = initialEnv({});
@@ -13,7 +14,7 @@ describe("Test $articleTitle", () => {
         const expectedResult = {
             ok: true,
             nextOffset: 3,
-            value: "第二条",
+            value: { value: "第二条", errors: [] as ErrorMessage[] },
         } as const;
         const result = $articleTitle.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
@@ -26,7 +27,7 @@ describe("Test $articleTitle", () => {
         const expectedResult = {
             ok: true,
             nextOffset: 7,
-            value: "第三十六条の三",
+            value: { value: "第三十六条の三", errors: [] as ErrorMessage[] },
         } as const;
         const result = $articleTitle.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);

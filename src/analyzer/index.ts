@@ -263,7 +263,7 @@ export class Declarations {
 const parseRanges = (text: string): Ranges => { // closed
     if (text === "") return [];
     const result = $ranges.match(0, text, initialEnv({}));
-    if (result.ok) return result.value;
+    if (result.ok) return result.value.value;
     else return [];
 };
 
@@ -798,7 +798,7 @@ export const stdxmlToExt = (el: EL): EL => {
         if (isMixed) {
             const result = $sentenceChildren.match(0, el.innerXML().replace(/\r|\n/, ""), initialEnv({}));
             if (result.ok) {
-                el.children = result.value;
+                el.children = result.value.value;
             } else {
                 const message = `stdxml_to_ext: Error: ${el.innerXML()}`;
                 throw new Error(message);

@@ -2,9 +2,10 @@ import factory from "../factory";
 import $indents from "./$indents";
 import { SupplProvisionHeadLine } from "../../../node/cst/line";
 import { $_EOL } from "./lexical";
+import { WithErrorRule } from "../util";
 
 
-export const $supplProvisionHeadLine = factory
+export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = factory
     .withName("supplProvisionHeadLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
@@ -26,17 +27,21 @@ export const $supplProvisionHeadLine = factory
         , "extract")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, head, amendLawNumStruct, extract, lineEndText }) => {
-            return new SupplProvisionHeadLine(
-                range(),
-                indentsStruct.indentDepth,
-                indentsStruct.indentTexts,
-                head,
-                amendLawNumStruct?.openParen ?? "",
-                amendLawNumStruct?.amendLawNum ?? "",
-                amendLawNumStruct?.closeParen ?? "",
-                extract ?? "",
-                lineEndText,
-            );
+            const errors = indentsStruct.errors;
+            return {
+                value: new SupplProvisionHeadLine(
+                    range(),
+                    indentsStruct.value.indentDepth,
+                    indentsStruct.value.indentTexts,
+                    head,
+                    amendLawNumStruct?.openParen ?? "",
+                    amendLawNumStruct?.amendLawNum ?? "",
+                    amendLawNumStruct?.closeParen ?? "",
+                    extract ?? "",
+                    lineEndText,
+                ),
+                errors,
+            };
         })
     )
     ;

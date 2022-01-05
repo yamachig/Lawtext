@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { initialEnv } from "../env";
+import { ErrorMessage } from "../error";
 import $indents from "./$indents";
 
 const env = initialEnv({});
@@ -16,8 +17,11 @@ describe("Test $indents", () => {
             ok: true,
             nextOffset: 2,
             value: {
-                indentDepth: 1,
-                indentTexts: ["  "] as string[],
+                value: {
+                    indentDepth: 1,
+                    indentTexts: ["  "] as string[],
+                },
+                errors: [] as ErrorMessage[],
             },
         } as const;
         const result = $indents.abstract().match(offset, target, env);
@@ -34,8 +38,11 @@ describe("Test $indents", () => {
             ok: true,
             nextOffset: 0,
             value: {
-                indentDepth: 0,
-                indentTexts: [] as string[],
+                value: {
+                    indentDepth: 0,
+                    indentTexts: [] as string[],
+                },
+                errors: [] as ErrorMessage[],
             },
         } as const;
         const result = $indents.abstract().match(offset, target, env);
@@ -52,8 +59,11 @@ describe("Test $indents", () => {
             ok: true,
             nextOffset: 3,
             value: {
-                indentDepth: 2,
-                indentTexts: ["　", "  "] as string[],
+                value: {
+                    indentDepth: 2,
+                    indentTexts: ["　", "  "] as string[],
+                },
+                errors: [] as ErrorMessage[],
             },
         } as const;
         const result = $indents.abstract().match(offset, target, env);

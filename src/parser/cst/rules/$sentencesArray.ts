@@ -3,10 +3,11 @@ import { __Text } from "../../../node/control";
 import { factory } from "../factory";
 import $sentenceChildren, { $PERIOD_SENTENCE_FRAGMENT, sentenceChildrenToString } from "./$sentenceChildren";
 import { $_, $__ } from "./lexical";
-import { ValueRule } from "../util";
-import { SentencesArray } from "../../../node/cst/inline";
+import { WithErrorRule } from "../util";
+import { Sentences, SentencesArray } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $squareAttr from "./$squareAttr";
+import { ErrorMessage } from "../error";
 
 
 export const sentencesArrayToString = (
@@ -28,7 +29,7 @@ export const sentencesArrayToString = (
 };
 
 
-export const $sentencesArray: ValueRule<SentencesArray> = factory
+export const $sentencesArray: WithErrorRule<SentencesArray> = factory
     .withName("sentencesArray")
     .choice(c => c
         .or(() => $columns)
@@ -38,7 +39,15 @@ export const $sentencesArray: ValueRule<SentencesArray> = factory
                     .sequence(s => s
                         .and(() => $squareAttr, "entry")
                         .and(() => $_, "trailingSpace")
-                        .action(({ entry, trailingSpace }) => ({ ...entry, trailingSpace }))
+                        .action(({ entry, trailingSpace }) => {
+                            return {
+                                value: {
+                                    ...entry.value,
+                                    trailingSpace
+                                },
+                                errors: entry.errors,
+                            };
+                        })
                     )
                 )
             , "attrEntries")
@@ -47,24 +56,36 @@ export const $sentencesArray: ValueRule<SentencesArray> = factory
                     .or(() => $periodSentences)
                     .orSequence(s => s
                         .and(() => $sentenceChildren, "inline")
-                        .action(({ inline }) => [
-                            newStdEL(
-                                "Sentence",
-                                {},
-                                inline,
-                            )
-                        ])
+                        .action(({ inline }) => {
+                            return {
+                                value: [
+                                    newStdEL(
+                                        "Sentence",
+                                        {},
+                                        inline.value,
+                                    )
+                                ],
+                                errors: inline.errors,
+                            };
+                        })
                     )
                 )
             , "sentences")
             .action(({ attrEntries, sentences }) => {
-                return [
-                    {
-                        leadingSpace: "",
-                        attrEntries,
-                        sentences,
-                    }
+                const errors = [
+                    ...attrEntries.map(e => e.errors).flat(),
+                    ...sentences.errors,
                 ];
+                return {
+                    value: [
+                        {
+                            leadingSpace: "",
+                            attrEntries: attrEntries.map(e => e.value).flat(),
+                            sentences: sentences.value,
+                        },
+                    ],
+                    errors,
+                };
             })
         )
     )
@@ -72,15 +93,17 @@ export const $sentencesArray: ValueRule<SentencesArray> = factory
 
 export default $sentencesArray;
 
-export const $periodSentences: ValueRule<std.Sentence[]> = factory
+export const $periodSentences: WithErrorRule<std.Sentence[]> = factory
     .withName("periodSentences")
     .sequence(c => c
         .and(r => r.oneOrMore(() => $PERIOD_SENTENCE_FRAGMENT), "fragments")
         .action(({ fragments }) => {
             const sentences: Array<std.Sentence> = [];
+            const errors: ErrorMessage[] = [];
             const proviso_indices: Array<number> = [];
             for (let i = 0; i < fragments.length; i++) {
-                const sentence_content = fragments[i];
+                const sentence_content = fragments[i].value;
+                errors.push(...fragments[i].errors);
                 const sentence = newStdEL(
                     "Sentence",
                     {},
@@ -102,12 +125,12 @@ export const $periodSentences: ValueRule<std.Sentence[]> = factory
                             "proviso" : "main";
                 }
             }
-            return sentences;
+            return { value: sentences, errors };
         })
     )
     ;
 
-export const $columns: ValueRule<SentencesArray> = factory
+export const $columns: WithErrorRule<SentencesArray> = factory
     .withName("columns")
     .sequence(c => c
         .and(() => $column, "firstColumn")
@@ -118,20 +141,27 @@ export const $columns: ValueRule<SentencesArray> = factory
                     .and(() => $column, "column")
                     .action(({ column, leadingSpace }) => {
                         return {
-                            ...column,
-                            leadingSpace,
+                            value: {
+                                ...column.value,
+                                leadingSpace,
+                            },
+                            errors: column.errors,
                         };
                     })
                 )
             )
         , "restColumns")
         .action(({ firstColumn, restColumns }) => {
-            return [firstColumn, ...restColumns];
+            const columns = [firstColumn, ...restColumns];
+            return {
+                value: columns.map(c => c.value),
+                errors: columns.map(c => c.errors).flat(),
+            };
         })
     )
     ;
 
-export const $column = factory
+export const $column: WithErrorRule<Sentences> = factory
     .withName("column")
     .sequence(c => c
         .and(r => r
@@ -139,16 +169,31 @@ export const $column = factory
                 .sequence(s => s
                     .and(() => $squareAttr, "entry")
                     .and(() => $_, "trailingSpace")
-                    .action(({ entry, trailingSpace }) => ({ ...entry, trailingSpace }))
+                    .action(({ entry, trailingSpace }) => {
+                        return {
+                            value: {
+                                ...entry.value,
+                                trailingSpace
+                            },
+                            errors: entry.errors,
+                        };
+                    })
                 )
             )
         , "attrEntries")
         .and(() => $periodSentences, "sentences")
         .action(({ attrEntries, sentences }) => {
+            const errors = [
+                ...attrEntries.map(e => e.errors).flat(),
+                ...sentences.errors,
+            ];
             return {
-                leadingSpace: "",
-                attrEntries,
-                sentences,
+                value: {
+                    leadingSpace: "",
+                    attrEntries: attrEntries.map(e => e.value).flat(),
+                    sentences: sentences.value,
+                },
+                errors,
             };
         })
     )

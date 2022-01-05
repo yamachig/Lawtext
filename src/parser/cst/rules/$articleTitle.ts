@@ -1,8 +1,9 @@
 import factory from "../factory";
+import { WithErrorRule } from "../util";
 import { $kanjiDigits } from "./lexical";
 
 
-export const $articleTitle = factory
+export const $articleTitle: WithErrorRule<string> = factory
     .withName("articleTitle")
     .choice(c => c
         .or(r => r
@@ -19,7 +20,7 @@ export const $articleTitle = factory
                     )
                 )
                 .action(({ text }) => {
-                    return text();
+                    return { value: text(), errors: [] };
                 })
             )
         )

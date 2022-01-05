@@ -1,7 +1,7 @@
 import factory from "../factory";
 import { $kanjiDigits } from "./lexical";
 import { irohaChars } from "../../../law/lawUtil";
-import { ValueRule } from "../util";
+import { WithErrorRule } from "../util";
 
 export const $stdParagraphNum = factory
     .withName("stdParagraphNum")
@@ -65,42 +65,46 @@ export const $stdSubitem3Title = factory
     )
     ;
 
-export const $paragraphItemTitle: ValueRule<string> = factory
+export const $paragraphItemTitle: WithErrorRule<string> = factory
     .withName("paragraphItemTitle")
-    .asSlice(r => r
-        .sequence(s => s
-            .and(r => r.zeroOrOne(r => r.seqEqual("○")))
-            .and(r => r
-                .choice(c => c
-                    .or(r => r.regExp(/^[0123456789０１２３４５６７８９]+/))
-                    .or(r => r.oneOf(irohaChars))
-                    .or(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
-                    .or(r => r.regExp(/^[a-zA-Zａ-ｚＡ-Ｚ]+/))
-                    .orSequence(s => s
-                        .and(r => r.oneOf("(（"))
-                        .and(r => r
-                            .choice(c => c
-                                .or(r => r.regExp(/^[0123456789０１２３４５６７８９]+/))
-                                .or(r => r.oneOf(irohaChars))
-                                .or(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
-                                .or(r => r.regExp(/^[a-zA-Zａ-ｚＡ-Ｚ]+/)),
-                            ),
-                        )
-                        .and(r => r.oneOf(")）")),
+    .sequence(s => s
+        .and(r => r.zeroOrOne(r => r.seqEqual("○")))
+        .and(r => r
+            .choice(c => c
+                .or(r => r.regExp(/^[0123456789０１２３４５６７８９]+/))
+                .or(r => r.oneOf(irohaChars))
+                .or(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
+                .or(r => r.regExp(/^[a-zA-Zａ-ｚＡ-Ｚ]+/))
+                .orSequence(s => s
+                    .and(r => r.oneOf("(（"))
+                    .and(r => r
+                        .choice(c => c
+                            .or(r => r.regExp(/^[0123456789０１２３４５６７８９]+/))
+                            .or(r => r.oneOf(irohaChars))
+                            .or(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
+                            .or(r => r.regExp(/^[a-zA-Zａ-ｚＡ-Ｚ]+/)),
+                        ),
                     )
-                    .or(r => r.oneOf("⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿"))
-                    .or(r => r.oneOf("⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇")),
-                ),
-            )
-            .and(r => r
-                .zeroOrMore(r => r
-                    .sequence(s => s
-                        .and(r => r.seqEqual("の"))
-                        .and(() => $paragraphItemTitle),
-                    ),
+                    .and(r => r.oneOf(")）")),
+                )
+                .or(r => r.oneOf("⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿"))
+                .or(r => r.oneOf("⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇")),
+            ),
+        )
+        .and(r => r
+            .zeroOrMore(r => r
+                .sequence(s => s
+                    .and(r => r.seqEqual("の"))
+                    .and(() => $paragraphItemTitle),
                 ),
             ),
         )
+        .action(({ text }) => {
+            return {
+                value: text(),
+                errors: [],
+            };
+        })
     )
     ;
 

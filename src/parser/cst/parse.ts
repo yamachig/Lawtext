@@ -4,7 +4,7 @@ import { Line } from "../../node/cst/line";
 import { initialEnv } from "./env";
 import factory from "./factory";
 import $lines from "./rules/$lines";
-import { ValueRule } from "./util";
+import { WithErrorRule } from "./util";
 
 const makeMatchContextString = (context: MatchContext, target: string): string => {
     const { offset, ruleToString, prevContext } = context;
@@ -21,7 +21,7 @@ ${subString}
 ${prevContext ? makeMatchContextString(prevContext, target) : ""}`;
 };
 
-const $start: ValueRule<Line[]> = factory
+const $start: WithErrorRule<Line[]> = factory
     .sequence(c => c
         .and(() => $lines, "lines")
         .and(r => r

@@ -4,9 +4,10 @@ import { TableColumnLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
 import $squareAttr from "./$squareAttr";
 import $columnsOrSentences from "./$sentencesArray";
+import { WithErrorRule } from "../util";
 
 
-export const $tableColumnLine = factory
+export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
     .withName("tableColumnLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
@@ -27,7 +28,15 @@ export const $tableColumnLine = factory
                 .sequence(s => s
                     .and(() => $squareAttr, "entry")
                     .and(() => $_, "trailingSpace")
-                    .action(({ entry, trailingSpace }) => ({ ...entry, trailingSpace }))
+                    .action(({ entry, trailingSpace }) => {
+                        return {
+                            value: {
+                                ...entry.value,
+                                trailingSpace
+                            },
+                            errors: entry.errors,
+                        };
+                    })
                 )
             )
         , "attrEntries")
@@ -40,18 +49,26 @@ export const $tableColumnLine = factory
         , "columns")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, firstColumnIndicatorStruct, columnIndicator, midSpace, attrEntries, columns, lineEndText }) => {
-            return new TableColumnLine(
-                range(),
-                indentsStruct.indentDepth,
-                indentsStruct.indentTexts,
-                firstColumnIndicatorStruct?.firstColumnIndicator ?? "",
-                firstColumnIndicatorStruct?.midIndicatorsSpace ?? "",
-                columnIndicator,
-                midSpace,
-                attrEntries,
-                columns ?? [],
-                lineEndText,
-            );
+            const errors = [
+                ...indentsStruct.errors,
+                ...attrEntries.map(e => e.errors).flat(),
+                ...(columns?.errors ?? []),
+            ];
+            return {
+                value: new TableColumnLine(
+                    range(),
+                    indentsStruct.value.indentDepth,
+                    indentsStruct.value.indentTexts,
+                    firstColumnIndicatorStruct?.firstColumnIndicator ?? "",
+                    firstColumnIndicatorStruct?.midIndicatorsSpace ?? "",
+                    columnIndicator,
+                    midSpace,
+                    attrEntries.map(e => e.value),
+                    columns?.value ?? [],
+                    lineEndText,
+                ),
+                errors,
+            };
         })
     )
     ;

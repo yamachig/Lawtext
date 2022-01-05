@@ -43,9 +43,9 @@ describe("Test $articleGroupHeadLine", () => {
         const result = $articleGroupHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
-            assert.deepInclude(result.value, expectedValue);
-            assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -110,9 +110,9 @@ describe("Test $articleGroupHeadLine", () => {
         const result = $articleGroupHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
-            assert.deepInclude(result.value, expectedValue);
-            assert.strictEqual(result.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
         }
     });
 

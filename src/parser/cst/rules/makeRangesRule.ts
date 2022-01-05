@@ -1,8 +1,8 @@
 import factory from "../factory";
-import { ValueRule } from "../util";
+import { ValueRule, WithErrorRule } from "../util";
 
 export const makeRangesRule = <TPointer>(lazyPointerRule: () => ValueRule<TPointer>) => {
-    const $ranges: ValueRule<[TPointer, TPointer][]> = factory
+    const $ranges: WithErrorRule<[TPointer, TPointer][]> = factory
         .withName("ranges")
         .choice(c => c
             .or(r => r
@@ -17,7 +17,10 @@ export const makeRangesRule = <TPointer>(lazyPointerRule: () => ValueRule<TPoint
                     )
                     .and(() => $ranges, "rest")
                     .action(({ first, rest }) => {
-                        return [first].concat(rest);
+                        return {
+                            value: [first.value, ...rest.value],
+                            errors: [...first.errors, ...rest.errors],
+                        };
                     })
                 )
             )
@@ -25,14 +28,14 @@ export const makeRangesRule = <TPointer>(lazyPointerRule: () => ValueRule<TPoint
                 .sequence(c => c
                     .and(() => $range, "range")
                     .action(({ range }) => {
-                        return [range];
+                        return { value: [range.value], errors: range.errors };
                     })
                 )
             )
         )
         ;
 
-    const $range = factory
+    const $range: WithErrorRule<[TPointer, TPointer]> = factory
         .withName("range")
         .choice(c => c
             .or(r => r
@@ -42,7 +45,7 @@ export const makeRangesRule = <TPointer>(lazyPointerRule: () => ValueRule<TPoint
                     .and(lazyPointerRule, "to")
                     .and(r => r.seqEqual("まで"))
                     .action(({ from, to }) => {
-                        return [from, to] as [TPointer, TPointer];
+                        return { value: [from, to] as [TPointer, TPointer], errors: [] };
                     })
                 )
             )
@@ -52,7 +55,7 @@ export const makeRangesRule = <TPointer>(lazyPointerRule: () => ValueRule<TPoint
                     .and(r => r.oneOf("・～"))
                     .and(lazyPointerRule, "to")
                     .action(({ from, to }) => {
-                        return [from, to] as [TPointer, TPointer];
+                        return { value: [from, to] as [TPointer, TPointer], errors: [] };
                     })
                 )
             )
@@ -60,7 +63,7 @@ export const makeRangesRule = <TPointer>(lazyPointerRule: () => ValueRule<TPoint
                 .sequence(c => c
                     .and(lazyPointerRule, "pointer")
                     .action(({ pointer }) => {
-                        return [pointer, pointer] as [TPointer, TPointer];
+                        return { value: [pointer, pointer] as [TPointer, TPointer], errors: [] };
                     })
                 )
             )

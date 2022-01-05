@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { initialEnv } from "../env";
+import { ErrorMessage } from "../error";
 import $paragraphItemTitle from "./$paragraphItemTitle";
 
 const env = initialEnv({});
@@ -13,7 +14,7 @@ describe("Test $paragraphItemTitle", () => {
         const expectedResult = {
             ok: true,
             nextOffset: 2,
-            value: "２３",
+            value: { value: "２３", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
@@ -26,7 +27,7 @@ describe("Test $paragraphItemTitle", () => {
         const expectedResult = {
             ok: true,
             nextOffset: 2,
-            value: "十一",
+            value: { value: "十一", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
@@ -39,7 +40,7 @@ describe("Test $paragraphItemTitle", () => {
         const expectedResult = {
             ok: true,
             nextOffset: 1,
-            value: "ニ",
+            value: { value: "ニ", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
@@ -52,7 +53,7 @@ describe("Test $paragraphItemTitle", () => {
         const expectedResult = {
             ok: true,
             nextOffset: 3,
-            value: "（１）",
+            value: { value: "（１）", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
@@ -65,7 +66,7 @@ describe("Test $paragraphItemTitle", () => {
         const expectedResult = {
             ok: true,
             nextOffset: 4,
-            value: "（ｖｉ）",
+            value: { value: "（ｖｉ）", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);

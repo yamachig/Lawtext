@@ -26,8 +26,8 @@ describe("Test $blankLine", () => {
         const result = $blankLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
-            assert.deepInclude(result.value, expectedValue);
-            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
         }
     });
 
@@ -51,8 +51,8 @@ describe("Test $blankLine", () => {
         const result = $blankLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
-            assert.deepInclude(result.value, expectedValue);
-            assert.strictEqual(result.value.text(), expectedText);
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
         }
     });
 
