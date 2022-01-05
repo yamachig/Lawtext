@@ -267,7 +267,7 @@ export const $MISMATCH_START_PARENTHESIS: WithErrorRule<__EL> = factory
         , "mismatch")
         .action(({ mismatch, range }) => {
             const error = new ErrorMessage(
-                "$MISMATCH_START_PARENTHESIS: この括弧は閉じられていません。",
+                "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
                 range(),
             );
             return {
@@ -286,7 +286,7 @@ export const $MISMATCH_END_PARENTHESIS: WithErrorRule<__EL> = factory
         , "mismatch")
         .action(({ mismatch, range }) => {
             const error = new ErrorMessage(
-                "$MISMATCH_START_PARENTHESIS: この括弧は閉じられていません。",
+                "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
                 range(),
             );
             return {

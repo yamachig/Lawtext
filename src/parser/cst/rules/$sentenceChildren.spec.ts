@@ -487,6 +487,52 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
         assert.strictEqual(text, expectedRendered);
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const target = `\
+技術基準（」
+`;
+        const expectedRendered = `\
+技術基準（」`;
+        const expectedCST = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["技術基準"],
+            },
+            {
+                tag: "__MismatchStartParenthesis",
+                attr: {},
+                children: ["（"],
+            },
+            {
+                tag: "__MismatchEndParenthesis",
+                attr: {},
+                children: ["」"],
+            },
+        ];
+        const expectedErrors: ErrorMessage[] = [
+            {
+                message: "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
+                range: [4, 5],
+            },
+            {
+                message: "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
+                range: [ 5, 6],
+            },
+        ];
+
+        const result = $sentenceChildren.abstract().match(0, target, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+            assert.deepStrictEqual(result.value.value.map(el => el.json(true)), expectedCST);
+            assert.deepStrictEqual(result.value.errors, expectedErrors);
+        }
+
+        const text = sentenceChildrenToString(expectedCST.map(loadEl));
+        assert.strictEqual(text, expectedRendered);
+    });
+
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
