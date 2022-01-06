@@ -2,15 +2,17 @@
 import { __EL } from "../../../law/std";
 import { __Parentheses, __Text } from "../../../node/control";
 import { EL } from "../../../node/el";
-import { NotImplementedError } from "../../../util";
+import { assertNever, NotImplementedError } from "../../../util";
 import { factory } from "../factory";
 import { ValueRule, WithErrorRule } from "../util";
 import { $_EOL, $__ } from "./lexical";
 import { $xmlElement } from "./$xml";
 import { ErrorMessage } from "../error";
+import { SentenceChildEL } from "../../../node/cst/inline";
+import * as std from "../../../law/std";
 
 
-export const sentenceChildrenToString = ( els: (string | EL)[]): string => {
+export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): string => {
     const runs: string[] = [];
 
     for (const el of els) {
@@ -29,8 +31,7 @@ export const sentenceChildrenToString = ( els: (string | EL)[]): string => {
             throw new NotImplementedError(el.tag);
 
         } else {
-            throw new NotImplementedError(el.tag);
-
+            throw assertNever(el);
         }
     }
 
@@ -57,7 +58,7 @@ export const sentenceChildrenToString = ( els: (string | EL)[]): string => {
 //     )
 // ;
 
-export const $sentenceChildren: WithErrorRule<(__Parentheses | __Text | __EL | EL)[]> = factory
+export const $sentenceChildren: WithErrorRule<SentenceChildEL[]> = factory
     .withName("sentenceChildren")
     .action(r => r
         .sequence(c => c
@@ -87,7 +88,7 @@ export const $NOT_PARENTHESIS_CHAR = factory
     .regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」]/)
 ;
 
-export const $INLINE_FRAGMENT: WithErrorRule<(__Parentheses | __Text | __EL | EL)[]> = factory
+export const $INLINE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
     .withName("INLINE_FRAGMENT")
     .sequence(c => c
         .and(r => r
@@ -122,7 +123,7 @@ export const $INLINE_FRAGMENT: WithErrorRule<(__Parentheses | __Text | __EL | EL
     )
 ;
 
-export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<__Text[]> = factory
+export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
     .withName("PERIOD_SENTENCE_FRAGMENT")
     .choice(c => c
         .or(r => r
@@ -297,7 +298,7 @@ export const $MISMATCH_END_PARENTHESIS: WithErrorRule<__EL> = factory
     )
 ;
 
-export const $PARENTHESES_INLINE: WithErrorRule<__Parentheses | EL> = factory
+export const $PARENTHESES_INLINE: WithErrorRule<SentenceChildEL> = factory
     .withName("PARENTHESES_INLINE")
     .choice(c => c
         .or(r => r
@@ -354,14 +355,36 @@ export const $PARENTHESES_INLINE: WithErrorRule<__Parentheses | EL> = factory
     )
 ;
 
-export const $PARENTHESES_INLINE_INNER: WithErrorRule<__Parentheses | EL> = factory
+export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
     .withName("PARENTHESES_INLINE_INNER")
     .choice(c => c
         .or(() => $ROUND_PARENTHESES_INLINE)
         .or(() => $SQUARE_BRACKETS_INLINE)
         .or(() => $CURLY_BRACKETS_INLINE)
         .or(() => $SQUARE_PARENTHESES_INLINE)
-        .or(() => $xmlElement)
+        .orSequence(s => s
+            .and(() => $xmlElement, "elWithError")
+            .action(({ elWithError, range }) => {
+                const el = elWithError.value;
+                if (std.isLine(el) || std.isQuoteStruct(el) || std.isArithFormula(el) || std.isRuby(el) || std.isSup(el) || std.isControl(el)) {
+                    return {
+                        value: el,
+                        errors: elWithError.errors,
+                    };
+                } else {
+                    return {
+                        value: new EL("__UnexpectedXML", {}, [el]) as __EL,
+                        errors: [
+                            ...elWithError.errors,
+                            new ErrorMessage(
+                                `$PARENTHESES_INLINE_INNER: タグ <${el.tag}> はこの場所では使用できません。`,
+                                range(),
+                            ),
+                        ],
+                    };
+                }
+            })
+        )
         .or(() => $MISMATCH_START_PARENTHESIS),
     )
 ;

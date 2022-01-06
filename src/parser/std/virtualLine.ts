@@ -1,4 +1,4 @@
-import { Line, LineType } from "../../node/cst/line";
+import { AppdxItemHeadLine, ArticleGroupHeadLine, ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine, SupplProvisionAppdxItemHeadLine, SupplProvisionHeadLine, TableColumnLine, TOCHeadLine } from "../../node/cst/line";
 import { isSingleParentheses } from "./util";
 
 export enum VirtualOnlyLineType {
@@ -11,12 +11,67 @@ export enum VirtualOnlyLineType {
 
 export type VirtualLineType = LineType | VirtualOnlyLineType;
 
-export interface PhysicalLine {
-    type: LineType | VirtualOnlyLineType.TAG | VirtualOnlyLineType.TSP | VirtualOnlyLineType.TTL;
-    virtualRange: [start: number, end: number];
-    virtualIndentDepth: number;
-    line: Line;
-}
+export type PhysicalLine =
+    | {
+        type: LineType.BNK;
+        line: BlankLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
+    | {
+        type: LineType.TOC;
+        line: TOCHeadLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
+    | {
+        type: LineType.ARG | VirtualOnlyLineType.TAG;
+        line: ArticleGroupHeadLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
+    | {
+        type: LineType.APP;
+        line: AppdxItemHeadLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
+    | {
+        type: LineType.SPR | VirtualOnlyLineType.TSP;
+        line: SupplProvisionHeadLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
+    | {
+        type: LineType.SPA;
+        line: SupplProvisionAppdxItemHeadLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
+    | {
+        type: LineType.ART;
+        line: ArticleLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
+    | {
+        type: LineType.PIT;
+        line: ParagraphItemLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
+    | {
+        type: LineType.TBL;
+        line: TableColumnLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
+    | {
+        type: LineType.OTH | VirtualOnlyLineType.TTL;
+        line: OtherLine;
+        virtualRange: [start: number, end: number];
+        virtualIndentDepth: number;
+    }
 
 export interface Indent {
     type: VirtualOnlyLineType.IND;
@@ -166,6 +221,7 @@ export const toVirtualLines = (lines: Line[]) => {
                     if (
                         nextLine.indentDepth <= line.indentDepth
                         && (nextLine.type === LineType.ART || nextLine.type === LineType.PIT)
+                        && nextLine.indentDepth === 0
                     ) {
                         currentDepth = nextLine.indentDepth;
                         type = VirtualOnlyLineType.TTL;
@@ -217,7 +273,7 @@ export const toVirtualLines = (lines: Line[]) => {
                 : [indentLength, line.text().length],
             virtualIndentDepth,
             line,
-        });
+        } as VirtualLine);
     }
 
     if (0 < virtualIndentDepth) {

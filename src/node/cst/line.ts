@@ -1,6 +1,5 @@
 import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
-import { EL } from "../el";
-import { AttrEntries, SentencesArray, Controls } from "./inline";
+import { AttrEntries, SentencesArray, Controls, SentenceChildEL } from "./inline";
 
 export enum LineType {
     BNK = "BNK",
@@ -75,7 +74,7 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
         public mainTag: "Part" | "Chapter" | "Section" | "Subsection" | "Division",
         public num: string,
         public midSpace: string,
-        public sentenceChildren: EL[],
+        public sentenceChildren: SentenceChildEL[],
         lineEndText: string,
     ) {
         super(LineType.ARG, range, indentDepth, indentTexts, lineEndText);
@@ -96,7 +95,7 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
         indentTexts: string[],
         public mainTag: "Appdx" | "AppdxTable" | "AppdxStyle" | "AppdxFormat" | "AppdxFig" | "AppdxNote",
         public controls: Controls,
-        public sentenceChildren: EL[],
+        public sentenceChildren: SentenceChildEL[],
         lineEndText: string,
     ) {
         super(LineType.APP, range, indentDepth, indentTexts, lineEndText);
@@ -141,7 +140,7 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
         indentTexts: string[],
         public mainTag: "SupplProvisionAppdx" | "SupplProvisionAppdxTable" | "SupplProvisionAppdxStyle",
         public controls: Controls,
-        public sentenceChildren: EL[],
+        public sentenceChildren: SentenceChildEL[],
         lineEndText: string,
     ) {
         super(LineType.SPA, range, indentDepth, indentTexts, lineEndText);

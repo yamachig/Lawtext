@@ -3,6 +3,7 @@ import { initialEnv } from "../env";
 import $sentenceChildren, { sentenceChildrenToString } from "./$sentenceChildren";
 import { loadEl } from "../../../node/el";
 import { ErrorMessage } from "../error";
+import { SentenceChildEL } from "../../../node/cst/inline";
 
 const env = initialEnv({});
 
@@ -328,7 +329,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
             assert.deepStrictEqual(result.value.errors, expectedErrors);
         }
 
-        const text = sentenceChildrenToString(expectedCST.map(loadEl));
+        const text = sentenceChildrenToString(expectedCST.map(loadEl) as SentenceChildEL[]);
         assert.strictEqual(text, expectedRendered);
     });
 
@@ -392,7 +393,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
             assert.deepStrictEqual(result.value.errors, expectedErrors);
         }
 
-        const text = sentenceChildrenToString(expectedCST.map(loadEl));
+        const text = sentenceChildrenToString(expectedCST.map(loadEl) as SentenceChildEL[]);
         assert.strictEqual(text, expectedRendered);
     });
 
@@ -483,7 +484,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
             assert.deepStrictEqual(result.value.errors, expectedErrors);
         }
 
-        const text = sentenceChildrenToString(expectedCST.map(loadEl));
+        const text = sentenceChildrenToString(expectedCST.map(loadEl) as SentenceChildEL[]);
         assert.strictEqual(text, expectedRendered);
     });
 
@@ -529,7 +530,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
             assert.deepStrictEqual(result.value.errors, expectedErrors);
         }
 
-        const text = sentenceChildrenToString(expectedCST.map(loadEl));
+        const text = sentenceChildrenToString(expectedCST.map(loadEl) as SentenceChildEL[]);
         assert.strictEqual(text, expectedRendered);
     });
 

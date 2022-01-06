@@ -5,6 +5,9 @@ import { EL } from "./el";
 export class __Parentheses extends EL {
 
     public content: string;
+    public get isControl(): true {
+        return true;
+    }
 
     constructor(type: string, depth: number, start: string, end: string, content: Array<string | EL>, text: string) {
         super("__Parentheses");
@@ -21,6 +24,9 @@ export class __Parentheses extends EL {
 
 
 export class __Text extends EL {
+    public get isControl(): true {
+        return true;
+    }
 
     constructor(text: string) {
         super("__Text", {}, [text]);
@@ -29,6 +35,9 @@ export class __Text extends EL {
 
 
 export class __MatchFail extends EL {
+    public get isControl(): true {
+        return true;
+    }
 
     constructor(matchFail: MatchFail, children: (string | EL)[]) {
         super("__MatchFail", {}, children);

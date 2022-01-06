@@ -1,5 +1,5 @@
 import { factory } from "../factory";
-import { Line, LineType, OtherLine } from "../../../node/cst/line";
+import { LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
@@ -41,8 +41,8 @@ const $preambleChildren = factory
         )
     );
 
-export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): Line[] => {
-    const lines: Line[] = [];
+export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): OtherLine[] => {
+    const lines: OtherLine[] = [];
 
     lines.push(new OtherLine(
         null,

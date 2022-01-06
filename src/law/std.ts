@@ -4,6 +4,10 @@ export interface __EL extends EL {
     isControl: true
 }
 
+export const isControl = (obj: EL): obj is __EL => {
+    return obj.isControl;
+};
+
 export interface StdEL extends EL {
     isControl: false
 }

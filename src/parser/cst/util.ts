@@ -8,11 +8,16 @@ export type ValueRule<TValue> = Rule<string, TValue, Env, Empty>
 export type WithErrorRule<TValue> = Rule<string, { value: TValue, errors: ErrorMessage[] }, Env, Empty>
 
 
-export const mergeAdjacentTexts = (inline: (string | EL)[]): EL[] => {
-    const result: EL[] = [];
+export const mergeAdjacentTexts = <T extends EL>(inline: (string | T)[]): (T | __Text)[] => {
+    const result: (T | __Text)[] = [];
     for (const item of inline) {
-        if (result.slice(-1)[0]?.tag === "__Text" && (typeof item === "string" || item.tag === "__Text")) {
-            const replacedTail = new __Text(result.slice(-1)[0].text + (typeof item === "string" ? item : item.text));
+        const lawtItem = result.slice(-1)[0] as T | undefined;
+        if (
+            (typeof lawtItem !== "string")
+            && lawtItem?.tag === "__Text"
+            && (typeof item === "string" || item.tag === "__Text")
+        ) {
+            const replacedTail = new __Text(lawtItem.text + (typeof item === "string" ? item : item.text));
             result.splice(-1, 1);
             result.push(replacedTail);
         } else if (typeof item === "string") {

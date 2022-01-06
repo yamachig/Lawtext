@@ -30,6 +30,10 @@ elementIfs.push(`\
 export interface __EL extends EL {
     isControl: true
 }
+
+export const isControl = (obj: EL): obj is __EL => {
+    return obj.isControl;
+};
 `);
 elementIfs.push(`\
 export interface StdEL extends EL {
