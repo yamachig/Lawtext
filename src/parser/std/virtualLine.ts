@@ -6,7 +6,7 @@ export enum VirtualOnlyLineType {
     DED = "DED", // Dedent
     TAG = "TAG", // TOC ArticleGroup
     TSP = "TSP", // TOC SupplProvision
-    TTL = "TTL", // Title
+    CAP = "CAP", // Caption
 }
 
 export type VirtualLineType = LineType | VirtualOnlyLineType;
@@ -67,7 +67,7 @@ export type PhysicalLine =
         virtualIndentDepth: number;
     }
     | {
-        type: LineType.OTH | VirtualOnlyLineType.TTL;
+        type: LineType.OTH | VirtualOnlyLineType.CAP;
         line: OtherLine;
         virtualRange: [start: number, end: number];
         virtualIndentDepth: number;
@@ -224,7 +224,7 @@ export const toVirtualLines = (lines: Line[]) => {
                         && nextLine.indentDepth === 0
                     ) {
                         currentDepth = nextLine.indentDepth;
-                        type = VirtualOnlyLineType.TTL;
+                        type = VirtualOnlyLineType.CAP;
                     }
                     break;
                 }

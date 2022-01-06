@@ -195,7 +195,7 @@ export const $paragraphItem: WithErrorRule<std.Paragraph | std.Item | std.Subite
                     .and(r => r
                         .oneMatch(({ item }) => {
                             if (
-                                item.type === VirtualOnlyLineType.TTL
+                                item.type === VirtualOnlyLineType.CAP
                             ) {
                                 return item;
                             } else {
@@ -203,29 +203,10 @@ export const $paragraphItem: WithErrorRule<std.Paragraph | std.Item | std.Subite
                             }
                         })
                     )
-                    // .andOmit(r => r
-                    //     .nextIs(r => r
-                    //         .sequence(s => s
-                    //             .and(r => r.zeroOrMore(() => $blankLine))
-                    //             .and(r => r
-                    //                 .oneMatch(({ item }) => {
-                    //                     if (
-                    //                         item.type === LineType.PIT
-                    //                         && item.virtualIndentDepth === 0
-                    //                     ) {
-                    //                         return item;
-                    //                     } else {
-                    //                         return null;
-                    //                     }
-                    //                 })
-                    //             )
-                    //         )
-                    //     )
-                    // )
                     .andOmit(r => r.zeroOrMore(() => $blankLine))
                 )
             )
-        , "titleLine")
+        , "captionLine")
         .and(r => r
             .oneMatch(({ item }) => {
                 if (
@@ -273,7 +254,7 @@ export const $paragraphItem: WithErrorRule<std.Paragraph | std.Item | std.Subite
                 )
             )
         , "tailChildren")
-        .action(({ titleLine, firstParagraphItemLine, tailChildren }) => {
+        .action(({ captionLine, firstParagraphItemLine, tailChildren }) => {
             const paragraphItem = newStdEL(
                 paragraphItemTags[firstParagraphItemLine.virtualIndentDepth],
             );
@@ -300,11 +281,11 @@ export const $paragraphItem: WithErrorRule<std.Paragraph | std.Item | std.Subite
             firstParagraphItemLine.line.sentencesArray[0].attrEntries.push(...replacedAttrEntries);
 
 
-            if (titleLine) {
+            if (captionLine) {
                 paragraphItem.append(
                     newStdEL("ParagraphCaption",
                         {},
-                        titleLine.line.sentencesArray
+                        captionLine.line.sentencesArray
                             .map(sa =>
                                 sa.sentences.map(s => s.children)
                             )

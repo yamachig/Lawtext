@@ -7,10 +7,18 @@ import path from "path";
 //     ELEMENT_NODE: 1,
 // };
 
-const schema = xmlToJson(fs.readFileSync(__dirname + "/std_law.xsd", "utf-8"));
+let rootDir = path.dirname(__dirname);
+while (!fs.existsSync(path.join(rootDir, "package.json"))) {
+    const newRootDir = path.dirname(rootDir);
+    if (newRootDir === rootDir) break;
+    rootDir = newRootDir;
+}
+
+const schema = xmlToJson(fs.readFileSync(path.join(rootDir, "/bin/stdLaw.xsd"), "utf-8"));
 
 const elementIfs: string[] = [];
 const newStdELConditions: string[] = [];
+const stdElTags: string[] = [];
 
 function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
     for (const child of el.children) {
@@ -24,7 +32,7 @@ function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
 }
 
 elementIfs.push(`\
-import { EL } from "./node/el";
+import { EL } from "../node/el";
 `);
 elementIfs.push(`\
 export interface __EL extends EL {
@@ -36,13 +44,14 @@ export const isControl = (obj: EL): obj is __EL => {
 };
 `);
 elementIfs.push(`\
-export interface StdEL extends EL {
+export interface _StdEL extends EL {
     isControl: false
 }
 `);
 
 for (const element of schema.children.filter(el => typeof el !== "string" && el.tag === "xs:element")) {
     if (typeof element === "string") continue;
+    if (element.attr.name) stdElTags.push(element.attr.name);
 
     newStdELConditions.push(`\
     TName extends "${element.attr.name}" ? ${element.attr.name} :
@@ -50,7 +59,7 @@ for (const element of schema.children.filter(el => typeof el !== "string" && el.
 
     if (element.attr.type === "xs:string") {
         elementIfs.push(`\
-export interface ${element.attr.name ?? ""} extends StdEL {
+export interface ${element.attr.name ?? ""} extends _StdEL {
     tag: "${element.attr.name ?? ""}"
     children: Array<__EL | string>
 }
@@ -65,7 +74,7 @@ export const is${element.attr.name ?? ""} = (obj: EL): obj is ${element.attr.nam
             ? "EL | string"
             : element.attr.type;
         elementIfs.push(`\
-export interface ${element.attr.name ?? ""} extends StdEL {
+export interface ${element.attr.name ?? ""} extends _StdEL {
     tag: "${element.attr.name ?? ""}"
     children: Array<${childrenType}>
 }
@@ -99,7 +108,7 @@ export const is${element.attr.name ?? ""} = (obj: EL): obj is ${element.attr.nam
         const childrenType = childTags.size === 0 ? "never[]" : `Array<(${[...childTags].join(" | ")})>`;
 
         elementIfs.push(`\
-export interface ${element.attr.name ?? ""} extends StdEL {
+export interface ${element.attr.name ?? ""} extends _StdEL {
     tag: "${element.attr.name ?? ""}"
     attr: ${attrsType}
     children: ${childrenType}
@@ -116,6 +125,10 @@ elementIfs.push(`\
 export type StdELType<TName extends string> =
 ${newStdELConditions.join("").trimEnd()}
     never
+
+export type StdEL =
+${stdElTags.map(tag => `    | ${tag}`).join("\r\n")}
+    ;
 
 export const newStdEL = <
     TName extends string,
@@ -134,4 +147,4 @@ export const newStdEL = <
 const out = elementIfs.join(`
 `);
 
-fs.writeFileSync(path.join(__dirname, "../src/law/std.ts"), out, { encoding: "utf-8" });
+fs.writeFileSync(path.join(rootDir, "/src/law/std.ts"), out, { encoding: "utf-8" });
