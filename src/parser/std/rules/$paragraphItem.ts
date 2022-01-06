@@ -112,8 +112,8 @@ export const paragraphItemToLines = (
             null,
             indentTexts.length,
             indentTexts,
-            sentenceChildrenToString(ParagraphItemTitle),
-            CST.MARGIN,
+            sentenceChildrenToString(Title),
+            Title.length === 0 ? "" : CST.MARGIN,
             sentencesArray,
             CST.EOL,
         ));
@@ -124,23 +124,28 @@ export const paragraphItemToLines = (
             lines.push(...paragraphItemToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "TableStruct") {
+            // TODO: Implement
             throw new NotImplementedError(child.tag);
             // const isFirstTableStruct = !(0 < i && Children[i - 1].tag === "TableStruct");
             // blocks.push(renderTableStruct(child, indent + 1, !isFirstTableStruct)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "FigStruct") {
+            // TODO: Implement
             throw new NotImplementedError(child.tag);
             // blocks.push(renderFigStruct(child, indent + 1)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "StyleStruct") {
+            // TODO: Implement
             throw new NotImplementedError(child.tag);
             // blocks.push(renderStyleStruct(child, indent + 1)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "List") {
+            // TODO: Implement
             throw new NotImplementedError(child.tag);
             // blocks.push(renderList(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
         } else if (child.tag === "AmendProvision") {
+            // TODO: Implement
             throw new NotImplementedError(child.tag);
             // blocks.push(renderAmendProvision(child, indent + 1)); /* >>>> INDENT >>>> */
 

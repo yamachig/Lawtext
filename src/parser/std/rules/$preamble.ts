@@ -1,11 +1,12 @@
 import { factory } from "../factory";
-import { LineType, OtherLine } from "../../../node/cst/line";
+import { Line, LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
-import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
+import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
+import { paragraphItemToLines } from "./$paragraphItem";
 
 
 const $preambleChildren = factory
@@ -41,8 +42,8 @@ const $preambleChildren = factory
         )
     );
 
-export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): OtherLine[] => {
-    const lines: OtherLine[] = [];
+export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): Line[] => {
+    const lines: Line[] = [];
 
     lines.push(new OtherLine(
         null,
@@ -61,23 +62,8 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
     for (const paragraph of preamble.children) {
-        // TODO: Change to paragraphToCST
-        const line = new OtherLine(
-            null,
-            childrenIndentTexts.length,
-            childrenIndentTexts,
-            [],
-            [],
-            CST.EOL,
-        );
-        for (const el of paragraph.children) {
-            if (el.tag === "ParagraphSentence") {
-                const columnsOrSentences = el.children;
-                const sentencesArray = columnsOrSentencesToSentencesArray(columnsOrSentences);
-                line.sentencesArray.push(...sentencesArray);
-            }
-        }
-        lines.push(line);
+        const paragraphLines = paragraphItemToLines(paragraph, childrenIndentTexts);
+        lines.push(...paragraphLines);
     }
 
     return lines;
