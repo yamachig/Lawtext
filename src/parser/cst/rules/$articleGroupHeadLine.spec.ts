@@ -28,8 +28,6 @@ describe("Test $articleGroupHeadLine", () => {
             indentDepth: 3,
             indentTexts: ["  ", "  ", "  "] as string[],
             mainTag: "Chapter",
-            num: "第一章",
-            midSpace: "　",
             lineEndText: `
 `,
         } as const;
@@ -37,7 +35,7 @@ describe("Test $articleGroupHeadLine", () => {
             {
                 tag: "__Text",
                 attr: {},
-                children: ["総則"],
+                children: ["第一章　総則"],
             },
         ];
         const result = $articleGroupHeadLine.abstract().match(offset, target, env);
@@ -74,7 +72,7 @@ describe("Test $articleGroupHeadLine", () => {
             {
                 tag: "__Text",
                 attr: {},
-                children: ["処分等の求め"],
+                children: ["第四章の二　処分等の求め"],
             },
             {
                 tag: "__Parentheses",

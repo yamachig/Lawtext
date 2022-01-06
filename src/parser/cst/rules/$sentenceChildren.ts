@@ -38,26 +38,6 @@ export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): st
     return /* $$$$$$ */`${runs.join("")}`/* $$$$$$ */;
 };
 
-// export const $INLINE = factory
-//     .withName("INLINE")
-//     .action(r => r
-//         .sequence(c => c
-//             .and(r => r
-//                 .oneOrMore(r => r
-//                     .choice(c => c
-//                         .or(() => $OUTSIDE_PARENTHESES_INLINE)
-//                         .or(() => $PARENTHESES_INLINE)
-//                         .or(() => $MISMATCH_END_PARENTHESIS),
-//                     ),
-//                 )
-//             , "texts"),
-//         )
-//     , (({ texts }) => {
-//         return texts;
-//     }),
-//     )
-// ;
-
 export const $sentenceChildren: WithErrorRule<SentenceChildEL[]> = factory
     .withName("sentenceChildren")
     .action(r => r
@@ -101,9 +81,9 @@ export const $INLINE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
                                     .oneOrMore(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t]/)),
                                 )
                             , "plain")
-                            .action(({ plain }) => {
+                            .action(({ plain, range }) => {
                                 return {
-                                    value: new __Text(plain),
+                                    value: new __Text(plain, range()),
                                     errors: [],
                                 };
                             })
@@ -140,9 +120,9 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                                                     .oneOrMore(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/)),
                                                 )
                                             , "plain")
-                                            .action(({ plain }) => {
+                                            .action(({ plain, range }) => {
                                                 return {
-                                                    value: new __Text(plain),
+                                                    value: new __Text(plain, range()),
                                                     errors: [],
                                                 };
                                             })
@@ -160,7 +140,10 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                 , "texts")
                 .and(r => r
                     .choice(c => c
-                        .or(r => r.seqEqual("。"))
+                        .orSequence(s => s
+                            .and(r => r.seqEqual("。"), "period")
+                            .action(({ period, range }) => ({ text: period, range: range() }))
+                        )
                         .or(r => r.nextIs(() => $__))
                         .or(r => r.nextIs(() => $_EOL)),
                     )
@@ -169,9 +152,9 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                     const last = texts[texts.length - 1];
                     if (tail) {
                         if (last.value instanceof __Text) {
-                            last.value.text += tail;
+                            last.value.text += tail.text;
                         } else {
-                            texts.push({ value: new __Text(tail), errors: [] });
+                            texts.push({ value: new __Text(tail.text, tail.range), errors: [] });
                         }
                     }
                     return {
@@ -186,8 +169,8 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                 .sequence(c => c
                     .and(r => r.seqEqual("。"), "plain"),
                 )
-            , (({ plain }) => {
-                return { value: [new __Text(plain)], errors: [] };
+            , (({ plain, range }) => {
+                return { value: [new __Text(plain, range())], errors: [] };
             }),
             ),
         ),
@@ -200,9 +183,9 @@ export const $OUTSIDE_PARENTHESES_INLINE: WithErrorRule<__Text> = factory
         .and(r => r
             .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
         , "plain")
-        .action(({ plain }) => {
+        .action(({ plain, range }) => {
             return {
-                value: new __Text(plain),
+                value: new __Text(plain, range()),
                 errors: [],
             };
         })
@@ -217,9 +200,9 @@ export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<
                 .regExp(/^((?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」])+/)
             , "plain"),
         )
-    , (({ plain }) => {
+    , (({ plain, range }) => {
         return {
-            value: new __Text(plain),
+            value: new __Text(plain, range()),
             errors: [],
         };
     }),
@@ -389,191 +372,120 @@ export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
     )
 ;
 
-export const $ROUND_PARENTHESES_INLINE: WithErrorRule<__Parentheses> = factory
-    .withName("ROUND_PARENTHESES_INLINE")
-    .action(r => r
+export const makeParenthesesInline = (
+    parenthesisType: string,
+    startPtn: RegExp,
+    endPtn: RegExp,
+): WithErrorRule<__Parentheses> => {
+    return factory
         .sequence(c => c
-            .and(r => r.regExp(/^[(（]/), "start")
             .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
-                                    , "plain"),
-                                )
-                            , (({ plain }) => {
-                                return {
-                                    value: new __Text(plain),
-                                    errors: [],
-                                };
-                            }),
-                            ),
-                        )
-                        .or(() => $PARENTHESES_INLINE)
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .nextIsNot(r => r.regExp(/^[)）]/)),
+                .sequence(s => s
+                    .and(r => r.regExp(startPtn))
+                    .action(({ text, range }) => ({ text: text(), range: range() }))
+                )
+            , "start")
+            .and(r => r
+                .sequence(s => s
+                    .and(r => r
+                        .zeroOrMore(r => r
+                            .choice(c => c
+                                .or(r => r
+                                    .sequence(c => c
+                                        .and(r => r
+                                            .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
+                                        , "plain")
+                                        .action(({ plain, range }) => {
+                                            return {
+                                                value: new __Text(plain, range()),
+                                                errors: [],
+                                            };
+                                        })
                                     )
-                                    .and(() => $MISMATCH_END_PARENTHESIS, "target"),
                                 )
-                            , (({ target }) => {
-                                return target;
-                            }),
-                            ),
-                        ),
-                    ),
+                                .or(() => $PARENTHESES_INLINE)
+                                .or(r => r
+                                    .sequence(c => c
+                                        .and(r => r
+                                            .nextIsNot(r => r.regExp(endPtn)),
+                                        )
+                                        .and(() => $MISMATCH_END_PARENTHESIS, "target")
+                                        .action(({ target }) => {
+                                            return target;
+                                        })
+                                    )
+                                )
+                            )
+                        )
+                    , "value")
+                    .action(({ value, range }) => ({ value, range: range() }))
                 )
             , "content")
-            .and(r => r.regExp(/^[)）]/), "end"),
-        )
-    , (({ text, start, content, end, state }) => {
-        return {
-            value: new __Parentheses(
-                "round",
-                state.parenthesesDepth,
-                start,
-                end,
-                content.map(c => c.value),
-                text(),
-            ),
-            errors: content.map(c => c.errors).flat(),
-        };
-    }),
-    )
-;
+            .and(r => r
+                .sequence(s => s
+                    .and(r => r.regExp(endPtn))
+                    .action(({ text, range }) => ({ text: text(), range: range() }))
+                )
+            , "end")
+            .action(({ text, start, content, end, state }) => {
+                return {
+                    value: new __Parentheses(
+                        parenthesisType,
+                        state.parenthesesDepth,
+                        start.text,
+                        end.text,
+                        content.value.map(c => c.value),
+                        text(),
+                        {
+                            start: start.range,
+                            end: end.range,
+                            content: content.range,
+                        },
+                    ),
+                    errors: content.value.map(c => c.errors).flat(),
+                };
+            })
+        );
+};
 
-export const $SQUARE_BRACKETS_INLINE: WithErrorRule<__Parentheses> = factory
-    .withName("SQUARE_BRACKETS_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r.regExp(/^[[［]/), "start")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
-                                    , "plain"),
-                                )
-                            , (({ plain }) => {
-                                return {
-                                    value: new __Text(plain),
-                                    errors: [],
-                                };
-                            }),
-                            ),
-                        )
-                        .or(() => $PARENTHESES_INLINE)
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .nextIsNot(r => r.regExp(/^[\]］]/)),
-                                    )
-                                    .and(() => $MISMATCH_END_PARENTHESIS, "target"),
-                                )
-                            , (({ target }) => {
-                                return target;
-                            }),
-                            ),
-                        ),
-                    ),
-                )
-            , "content")
-            .and(r => r.regExp(/^[\]］]/), "end"),
-        )
-    , (({ text, start, content, end, state }) => {
-        return {
-            value: new __Parentheses(
-                "squareb",
-                state.parenthesesDepth,
-                start,
-                end,
-                content.map(c => c.value),
-                text(),
-            ),
-            errors: content.map(c => c.errors).flat(),
-        };
-    }),
-    )
-;
+export const $ROUND_PARENTHESES_INLINE = makeParenthesesInline(
+    "round",
+    /^[(（]/,
+    /^[)）]/,
+);
+$ROUND_PARENTHESES_INLINE.name = "ROUND_PARENTHESES_INLINE";
 
-export const $CURLY_BRACKETS_INLINE: WithErrorRule<__Parentheses> = factory
-    .withName("CURLY_BRACKETS_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r.regExp(/^[{｛]/), "start")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
-                                    , "plain"),
-                                )
-                            , (({ plain }) => {
-                                return {
-                                    value: new __Text(plain),
-                                    errors: [],
-                                };
-                            }),
-                            ),
-                        )
-                        .or(() => $PARENTHESES_INLINE)
-                        .or(r => r
-                            .action(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .nextIsNot(r => r.regExp(/^[}｝]/)),
-                                    )
-                                    .and(() => $MISMATCH_END_PARENTHESIS, "target"),
-                                )
-                            , (({ target }) => {
-                                return target;
-                            }),
-                            ),
-                        ),
-                    ),
-                )
-            , "content")
-            .and(r => r.regExp(/^[}｝]/), "end"),
-        )
-    , (({ text, start, content, end, state }) => {
-        return {
-            value: new __Parentheses(
-                "curly",
-                state.parenthesesDepth,
-                start,
-                end,
-                content.map(c => c.value),
-                text(),
-            ),
-            errors: content.map(c => c.errors).flat(),
-        };
-    }),
-    )
-;
+export const $SQUARE_BRACKETS_INLINE = makeParenthesesInline(
+    "round",
+    /^[[［]/,
+    /^[\]］]/,
+);
+$SQUARE_BRACKETS_INLINE.name = "SQUARE_BRACKETS_INLINE";
+
+export const $CURLY_BRACKETS_INLINE = makeParenthesesInline(
+    "round",
+    /^[{｛]/,
+    /^[}｝]/,
+);
+$CURLY_BRACKETS_INLINE.name = "CURLY_BRACKETS_INLINE";
+
 
 export const $SQUARE_PARENTHESES_INLINE: WithErrorRule<__Parentheses> = factory
     .withName("SQUARE_PARENTHESES_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r.regExp(/^[「]/), "start")
-            .and(r => r
-                .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(() => $xmlElement)
-                        .or(r => r
-                            .action(r => r
+    .sequence(c => c
+        .and(r => r
+            .sequence(s => s
+                .and(r => r.regExp(/^[「]/))
+                .action(({ text, range }) => ({ text: text(), range: range() }))
+            )
+        , "start")
+        .and(r => r
+            .sequence(s => s
+                .and(r => r
+                    .zeroOrMore(r => r
+                        .choice(c => c
+                            .or(() => $xmlElement)
+                            .or(r => r
                                 .sequence(c => c
                                     .and(r => r
                                         .asSlice(r => r
@@ -584,34 +496,45 @@ export const $SQUARE_PARENTHESES_INLINE: WithErrorRule<__Parentheses> = factory
                                                 .or(() => $SQUARE_PARENTHESES_INLINE),
                                             ),
                                         )
-                                    , "text"),
+                                    , "text")
+                                    .action(({ text, range }) => {
+                                        return {
+                                            value: new __Text(text, range()),
+                                            errors: [],
+                                        };
+                                    })
                                 )
-                            , (({ text }) => {
-                                return {
-                                    value: new __Text(text),
-                                    errors: [],
-                                };
-                            }),
                             ),
                         ),
-                    ),
-                )
-            , "content")
-            .and(r => r.regExp(/^[」]/), "end"),
-        )
-    , (({ text, start, content, end, state }) => {
-        return {
-            value: new __Parentheses(
-                "square",
-                state.parenthesesDepth,
-                start,
-                end,
-                content.map(c => c.value),
-                text(),
-            ),
-            errors: content.map(c => c.errors).flat(),
-        };
-    }),
+                    )
+                , "value")
+                .action(({ value, range }) => ({ value, range: range() }))
+            )
+        , "content")
+        .and(r => r
+            .sequence(s => s
+                .and(r => r.regExp(/^[」]/))
+                .action(({ text, range }) => ({ text: text(), range: range() }))
+            )
+        , "end")
+        .action(({ text, start, content, end, state }) => {
+            return {
+                value: new __Parentheses(
+                    "square",
+                    state.parenthesesDepth,
+                    start.text,
+                    end.text,
+                    content.value.map(c => c.value),
+                    text(),
+                    {
+                        start: start.range,
+                        end: end.range,
+                        content: content.range,
+                    },
+                ),
+                errors: content.value.map(c => c.errors).flat(),
+            };
+        })
     )
 ;
 

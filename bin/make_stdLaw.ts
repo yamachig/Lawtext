@@ -139,8 +139,9 @@ export const newStdEL = <
         tag: TName,
         attr?: TAttr,
         children?: TChildren,
+        range: [start: number, end: number] | null = null,
     ): StdELType<TName> => {
-    return new EL(tag, attr, children) as StdELType<TName>;
+    return new EL(tag, attr, children, range) as StdELType<TName>;
 };
 `);
 

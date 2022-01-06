@@ -31,7 +31,9 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":suppl-provision-appdx:",
+                    controlRange: [0, 23],
                     trailingSpace: "　",
+                    trailingSpaceRange: [23, 24],
                 }
             ] as Controls,
             lineEndText: `　
@@ -177,7 +179,9 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":suppl-provision-appdx-table:",
+                    controlRange: [0, 29],
                     trailingSpace: "",
+                    trailingSpaceRange: [29, 29],
                 }
             ] as Controls,
             lineEndText: `　
@@ -323,7 +327,9 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":suppl-provision-appdx-style:",
+                    controlRange: [0, 29],
                     trailingSpace: "",
+                    trailingSpaceRange: [29, 29],
                 }
             ] as Controls,
             lineEndText: `　

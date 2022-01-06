@@ -4,6 +4,49 @@ import $indents from "./$indents";
 import { SupplProvisionAppdxItemHeadLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
 import { mergeAdjacentTexts, WithErrorRule } from "../util";
+import { Control } from "../../../node/cst/inline";
+
+const makeControlRule = <
+    TMainTag extends string,
+    TTitleTag extends string,
+>(
+        controlPtn: RegExp,
+        mainTag: TMainTag,
+        titleTag: TTitleTag,
+    ) => {
+    return factory
+        .sequence(s => s
+            .and(r => r
+                .sequence(s => s
+                    .and(r => r.regExp(controlPtn), "value")
+                    .action(({ value, range }) => ({ value, range: range() }))
+                )
+            , "control")
+            .and(r => r
+                .sequence(s => s
+                    .and(() => $_, "value")
+                    .action(({ value, range }) => ({ value, range: range() }))
+                )
+            , "trailingSpace")
+            .action(({ control, trailingSpace }) => {
+                return {
+                    mainTag,
+                    titleTag,
+                    control: new Control(
+                        control.value,
+                        control.range,
+                        trailingSpace.value,
+                        trailingSpace.range,
+                    ),
+                    head: "",
+                } as const;
+            })
+        );
+};
+
+const $supplProvisionAppdxControl = makeControlRule(/^:suppl-provision-appdx:/, "SupplProvisionAppdx", "ArithFormulaNum");
+const $supplProvisionAppdxTableControl = makeControlRule(/^:suppl-provision-appdx-table:/, "SupplProvisionAppdxTable", "SupplProvisionAppdxTableTitle");
+const $supplProvisionAppdxStyleControl = makeControlRule(/^:suppl-provision-appdx-style:/, "SupplProvisionAppdxStyle", "SupplProvisionAppdxTableTitle");
 
 
 export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdxItemHeadLine> = factory
@@ -12,51 +55,9 @@ export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdx
         .and(() => $indents, "indentsStruct")
         .and(r => r
             .choice(c => c
-                .orSequence(s => s
-                    .and(r => r.regExp(/^:suppl-provision-appdx:/), "control")
-                    .and(() => $_, "trailingSpace")
-                    .action(({ control, trailingSpace }) => {
-                        return {
-                            mainTag: "SupplProvisionAppdx",
-                            titleTag: "ArithFormulaNum",
-                            control: {
-                                control,
-                                trailingSpace,
-                            },
-                            head: "",
-                        } as const;
-                    })
-                )
-                .orSequence(s => s
-                    .and(r => r.regExp(/^:suppl-provision-appdx-table:/), "control")
-                    .and(() => $_, "trailingSpace")
-                    .action(({ control, trailingSpace }) => {
-                        return {
-                            mainTag: "SupplProvisionAppdxTable",
-                            titleTag: "SupplProvisionAppdxTableTitle",
-                            control: {
-                                control,
-                                trailingSpace,
-                            },
-                            head: "",
-                        } as const;
-                    })
-                )
-                .orSequence(s => s
-                    .and(r => r.regExp(/^:suppl-provision-appdx-style:/), "control")
-                    .and(() => $_, "trailingSpace")
-                    .action(({ control, trailingSpace }) => {
-                        return {
-                            mainTag: "SupplProvisionAppdxStyle",
-                            titleTag: "SupplProvisionAppdxStyleTitle",
-                            control: {
-                                control,
-                                trailingSpace,
-                            },
-                            head: "",
-                        } as const;
-                    })
-                )
+                .or(() => $supplProvisionAppdxControl)
+                .or(() => $supplProvisionAppdxTableControl)
+                .or(() => $supplProvisionAppdxStyleControl)
                 .orSequence(s => s
                     .and(r => r.regExp(/^[付附]則[^(（]*様式/), "head")
                     .action(({ head }) => {

@@ -5,7 +5,7 @@ import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences 
 import CST from "../toCSTSettings";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { assertNever, Diff, NotImplementedError } from "../../../util";
-import { AttrEntries, SentenceChildEL } from "../../../node/cst/inline";
+import { AttrEntries, AttrEntry, SentenceChildEL, Sentences } from "../../../node/cst/inline";
 import { WithErrorRule } from "../util";
 import factory from "../factory";
 import { VirtualOnlyLineType } from "../virtualLine";
@@ -55,11 +55,12 @@ export const paragraphItemToLines = (
             newIndentTexts,
             [],
             [
-                {
-                    leadingSpace: "",
-                    attrEntries: [],
-                    sentences: [newStdEL("Sentence", {}, ParagraphCaption)]
-                }
+                new Sentences(
+                    "",
+                    null,
+                    [],
+                    [newStdEL("Sentence", {}, ParagraphCaption)]
+                ),
             ],
             CST.EOL,
         ));
@@ -77,18 +78,26 @@ export const paragraphItemToLines = (
     const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
     const sentencesArray = columnsOrSentencesToSentencesArray(SentenceChildren);
     if (OldNum) {
-        sentencesArray[0].attrEntries.unshift({
-            text: `[OldNum="${OldNum}"]`,
-            entry: ["OldNum", "${OldNum}"],
-            trailingSpace: "",
-        });
+        sentencesArray[0].attrEntries.unshift(
+            new AttrEntry(
+                `[OldNum="${OldNum}"]`,
+                ["OldNum", "${OldNum}"],
+                null,
+                "",
+                null,
+            )
+        );
     }
     if (MissingNum) {
-        sentencesArray[0].attrEntries.unshift({
-            text: `[MissingNum="${MissingNum}"]`,
-            entry: ["MissingNum", "${MissingNum}"],
-            trailingSpace: "",
-        });
+        sentencesArray[0].attrEntries.unshift(
+            new AttrEntry(
+                `[MissingNum="${MissingNum}"]`,
+                ["MissingNum", "${MissingNum}"],
+                null,
+                "",
+                null,
+            )
+        );
     }
 
     if (firstArticleParagraphArticleTitle) {

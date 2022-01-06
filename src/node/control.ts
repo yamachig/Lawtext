@@ -9,14 +9,29 @@ export class __Parentheses extends EL {
         return true;
     }
 
-    constructor(type: string, depth: number, start: string, end: string, content: Array<string | EL>, text: string) {
+    constructor(
+        type: string,
+        depth: number,
+        start: string,
+        end: string,
+        content: Array<string | EL>,
+        text: string,
+        range: {
+            start: [start: number, end: number],
+            content: [start: number, end: number],
+            end: [start: number, end: number],
+        } | null = null,
+    ) {
         super("__Parentheses");
+        if (range){
+            this.range = [range.start[0], range.end[1]];
+        }
 
         this.attr.type = type;
         this.attr.depth = `${depth}`;
-        this.append(new EL("__PStart", { type }, [start]));
-        this.extend([new EL("__PContent", { type }, content)]);
-        this.append(new EL("__PEnd", { type }, [end]));
+        this.append(new EL("__PStart", { type }, [start], range && range.start));
+        this.extend([new EL("__PContent", { type }, content, range && range.content)]);
+        this.append(new EL("__PEnd", { type }, [end], range && range.end));
 
         this.content = text.slice(start.length, text.length - end.length);
     }
@@ -28,8 +43,11 @@ export class __Text extends EL {
         return true;
     }
 
-    constructor(text: string) {
-        super("__Text", {}, [text]);
+    constructor(
+        text: string,
+        range: [start: number, end: number] | null = null,
+    ) {
+        super("__Text", {}, [text], range);
     }
 }
 
@@ -39,8 +57,12 @@ export class __MatchFail extends EL {
         return true;
     }
 
-    constructor(matchFail: MatchFail, children: (string | EL)[]) {
-        super("__MatchFail", {}, children);
+    constructor(
+        matchFail: MatchFail,
+        children: (string | EL)[],
+        range: [start: number, end: number] | null = null,
+    ) {
+        super("__MatchFail", {}, children, range);
         this.matchFail = matchFail;
     }
 

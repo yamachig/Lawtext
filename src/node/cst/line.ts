@@ -72,8 +72,8 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
         indentDepth: number,
         indentTexts: string[],
         public mainTag: "Part" | "Chapter" | "Section" | "Subsection" | "Division",
-        public num: string,
-        public midSpace: string,
+        // public num: string,
+        // public midSpace: string,
         public sentenceChildren: SentenceChildEL[],
         lineEndText: string,
     ) {
@@ -81,8 +81,8 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
     }
     public contentText(): string {
         return [
-            this.num,
-            this.midSpace,
+            // this.num,
+            // this.midSpace,
             ...sentenceChildrenToString(this.sentenceChildren),
         ].join("");
     }

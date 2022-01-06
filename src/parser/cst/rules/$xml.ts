@@ -18,8 +18,8 @@ export const $xml = factory
                             )
                         , "text"),
                     )
-                , (({ text }) => {
-                    return { value: new __Text(text), errors: [] };
+                , (({ text, range }) => {
+                    return { value: new __Text(text, range()), errors: [] };
                 }),
                 ),
             )
@@ -96,9 +96,14 @@ export const $xmlElement: WithErrorRule<EL> = factory
                         ),
                     ),
                 )
-            , (({ tag, attr, children }) => {
+            , (({ tag, attr, children, range }) => {
                 return {
-                    value: new EL(tag, Object.assign({}, ...attr), children.map(c => c.value )),
+                    value: new EL(
+                        tag,
+                        Object.assign({}, ...attr),
+                        children.map(c => c.value ),
+                        range(),
+                    ),
                     errors: children.map(c => c.errors).flat(),
                 };
             }),
@@ -148,8 +153,16 @@ export const $xmlElement: WithErrorRule<EL> = factory
                     .and(() => $_)
                     .and(r => r.seqEqual("/>")),
                 )
-            , (({ tag, attr }) => {
-                return { value: new EL(tag, Object.assign({}, ...attr)), errors: [] };
+            , (({ tag, attr, range }) => {
+                return {
+                    value: new EL(
+                        tag,
+                        Object.assign({}, ...attr),
+                        [],
+                        range(),
+                    ),
+                    errors: [],
+                };
             }),
             ),
         ),

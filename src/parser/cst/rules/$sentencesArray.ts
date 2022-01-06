@@ -39,12 +39,17 @@ export const $sentencesArray: WithErrorRule<SentencesArray> = factory
                     .sequence(s => s
                         .and(() => $squareAttr, "entry")
                         .and(() => $_, "trailingSpace")
-                        .action(({ entry, trailingSpace }) => {
+                        .action(({ entry, trailingSpace, range }) => {
+                            const r = range();
+                            entry.value.trailingSpace = trailingSpace;
+                            if (entry.value.entryRange) {
+                                entry.value.trailingSpaceRange = [
+                                    entry.value.entryRange[1],
+                                    r[1],
+                                ];
+                            }
                             return {
-                                value: {
-                                    ...entry.value,
-                                    trailingSpace
-                                },
+                                value: entry.value,
                                 errors: entry.errors,
                             };
                         })
@@ -56,13 +61,14 @@ export const $sentencesArray: WithErrorRule<SentencesArray> = factory
                     .or(() => $periodSentences)
                     .orSequence(s => s
                         .and(() => $sentenceChildren, "inline")
-                        .action(({ inline }) => {
+                        .action(({ inline, range }) => {
                             return {
                                 value: [
                                     newStdEL(
                                         "Sentence",
                                         {},
                                         inline.value,
+                                        range(),
                                     )
                                 ],
                                 errors: inline.errors,
@@ -71,18 +77,20 @@ export const $sentencesArray: WithErrorRule<SentencesArray> = factory
                     )
                 )
             , "sentences")
-            .action(({ attrEntries, sentences }) => {
+            .action(({ attrEntries, sentences, range }) => {
+                const r = range();
                 const errors = [
                     ...attrEntries.map(e => e.errors).flat(),
                     ...sentences.errors,
                 ];
                 return {
                     value: [
-                        {
-                            leadingSpace: "",
-                            attrEntries: attrEntries.map(e => e.value).flat(),
-                            sentences: sentences.value,
-                        },
+                        new Sentences(
+                            "",
+                            [r[0], r[0]],
+                            attrEntries.map(e => e.value).flat(),
+                            sentences.value,
+                        )
                     ],
                     errors,
                 };
@@ -96,18 +104,26 @@ export default $sentencesArray;
 export const $periodSentences: WithErrorRule<std.Sentence[]> = factory
     .withName("periodSentences")
     .sequence(c => c
-        .and(r => r.oneOrMore(() => $PERIOD_SENTENCE_FRAGMENT), "fragments")
+        .and(r => r
+            .oneOrMore(r => r
+                .sequence(s => s
+                    .and(() => $PERIOD_SENTENCE_FRAGMENT, "value")
+                    .action(({ value, range }) => ({ value, range: range() }))
+                )
+            )
+        , "fragments")
         .action(({ fragments }) => {
             const sentences: Array<std.Sentence> = [];
             const errors: ErrorMessage[] = [];
             const proviso_indices: Array<number> = [];
             for (let i = 0; i < fragments.length; i++) {
-                const sentence_content = fragments[i].value;
-                errors.push(...fragments[i].errors);
+                const sentence_content = fragments[i].value.value;
+                errors.push(...fragments[i].value.errors);
                 const sentence = newStdEL(
                     "Sentence",
                     {},
                     sentence_content,
+                    fragments[i].range,
                 );
                 if (fragments.length >= 2) sentence.attr.Num = "" + (i + 1);
                 if (
@@ -137,14 +153,18 @@ export const $columns: WithErrorRule<SentencesArray> = factory
         .and(r => r
             .oneOrMore(r => r
                 .sequence(c => c
-                    .and(() => $__, "leadingSpace")
+                    .and(r => r
+                        .sequence(s => s
+                            .and(() => $__, "value")
+                            .action(({ value, range }) => ({ value, range: range() }))
+                        )
+                    , "leadingSpace")
                     .and(() => $column, "column")
-                    .action(({ column, leadingSpace }) => {
+                    .action(({ leadingSpace, column }) => {
+                        column.value.leadingSpace = leadingSpace.value;
+                        column.value.leadingSpaceRange = leadingSpace.range;
                         return {
-                            value: {
-                                ...column.value,
-                                leadingSpace,
-                            },
+                            value: column.value,
                             errors: column.errors,
                         };
                     })
@@ -182,17 +202,19 @@ export const $column: WithErrorRule<Sentences> = factory
             )
         , "attrEntries")
         .and(() => $periodSentences, "sentences")
-        .action(({ attrEntries, sentences }) => {
+        .action(({ attrEntries, sentences, range }) => {
+            const r = range();
             const errors = [
                 ...attrEntries.map(e => e.errors).flat(),
                 ...sentences.errors,
             ];
             return {
-                value: {
-                    leadingSpace: "",
-                    attrEntries: attrEntries.map(e => e.value).flat(),
-                    sentences: sentences.value,
-                },
+                value: new Sentences(
+                    "",
+                    [r[0], r[0]],
+                    attrEntries.map(e => e.value).flat(),
+                    sentences.value,
+                ),
                 errors,
             };
         })

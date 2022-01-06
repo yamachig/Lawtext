@@ -34,12 +34,16 @@ describe("Test $tableColumnLine", () => {
                 {
                     text: "[Valign=\"top\"]",
                     entry: ["Valign", "top"],
+                    entryRange: [6, 20],
                     trailingSpace: "",
+                    trailingSpaceRange: [20, 20],
                 },
                 {
                     text: "[rowspan=\"2\"]",
                     entry: ["rowspan", "2"],
+                    entryRange: [20, 33],
                     trailingSpace: "",
+                    trailingSpaceRange: [33, 33],
                 },
             ] as AttrEntries,
             lineEndText: `　
@@ -48,6 +52,7 @@ describe("Test $tableColumnLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [33, 33] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {
@@ -104,7 +109,9 @@ describe("Test $tableColumnLine", () => {
                 {
                     text: "[Valign=\"top\"]",
                     entry: ["Valign", "top"],
+                    entryRange: [8, 22],
                     trailingSpace: "  ",
+                    trailingSpaceRange: [22, 22],
                 },
             ] as AttrEntries,
             lineEndText: `
@@ -113,6 +120,7 @@ describe("Test $tableColumnLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [24, 24] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {
@@ -172,6 +180,7 @@ describe("Test $tableColumnLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [6, 6] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {

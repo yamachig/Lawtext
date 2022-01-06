@@ -33,6 +33,7 @@ describe("Test $articleLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [4, 4] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {
@@ -91,6 +92,7 @@ describe("Test $articleLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [8, 8] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {
@@ -147,6 +149,7 @@ describe("Test $articleLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [16, 16] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {

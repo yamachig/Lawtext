@@ -5,7 +5,7 @@ import $articleGroupNum from "./$articleGroupNum";
 import $indents from "./$indents";
 import { ArticleGroupHeadLine } from "../../../node/cst/line";
 import { $__, $_EOL } from "./lexical";
-import { WithErrorRule } from "../util";
+import { mergeAdjacentTexts, WithErrorRule } from "../util";
 
 
 export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factory
@@ -37,9 +37,11 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
                     indentsStruct.value.indentDepth,
                     indentsStruct.value.indentTexts,
                     articleGroupType[articleGroupNum.value.typeChar],
-                    articleGroupNum.value.text,
-                    tail?.space ?? "",
-                    tail?.inline.value ?? [],
+                    mergeAdjacentTexts([
+                        articleGroupNum.value.text,
+                        tail?.space ?? "",
+                        ...(tail?.inline.value ?? []),
+                    ]),
                     lineEndText,
                 ),
                 errors,

@@ -1,4 +1,4 @@
-import { Sentences, SentencesArray } from "../../../node/cst/inline";
+import { AttrEntry, Sentences, SentencesArray } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { assertNever, NotImplementedError } from "../../../util";
@@ -11,31 +11,40 @@ export const columnsOrSentencesToSentencesArray = (
     const sentencesArray: SentencesArray = [];
 
     for (let i = 0; i < els.length; i++) {
-        const sentences: Sentences = {
-            leadingSpace: "",
-            attrEntries: [],
-            sentences: [],
-        };
+        const sentences = new Sentences(
+            "",
+            null,
+            [],
+            [],
+        );
         const el = els[i];
 
         if (el.tag === "Sentence") {
             if (el.attr.WritingMode === "horizontal") {
-                sentences.attrEntries.push({
-                    text: "[WritingMode=\"horizontal\"]",
-                    entry: ["WritingMode", "horizontal"],
-                    trailingSpace: "",
-                });
+                sentences.attrEntries.unshift(
+                    new AttrEntry(
+                        "[WritingMode=\"horizontal\"]",
+                        ["WritingMode", "horizontal"],
+                        null,
+                        "",
+                        null,
+                    )
+                );
             }
             sentences.sentences.push(el);
 
         } else if (el.tag === "Column") {
             sentences.leadingSpace = i === 0 ? "" : CST.MARGIN;
             if (el.attr.LineBreak === "true") {
-                sentences.attrEntries.push({
-                    text: "[LineBreak=\"true\"]",
-                    entry: ["LineBreak", "true"],
-                    trailingSpace: "",
-                });
+                sentences.attrEntries.unshift(
+                    new AttrEntry(
+                        "[LineBreak=\"true\"]",
+                        ["LineBreak", "true"],
+                        null,
+                        "",
+                        null,
+                    )
+                );
             }
             sentences.sentences.push(...el.children);
 

@@ -52,13 +52,21 @@ export class EL implements JsonEL {
     public textCache: string | null;
     public id: number;
 
-    constructor(tag: string, attr: { [key: string]: string | undefined } = {}, children: Array<EL | string> = []) {
+    public range: [start: number, end: number] | null;
+
+    constructor(
+        tag: string,
+        attr: { [key: string]: string | undefined } = {},
+        children: Array<EL | string> = [],
+        range: [start: number, end: number] | null = null,
+    ) {
         // if(!tag) {
         //     error(`${JSON.stringify(tag)} is invalid tag.`);
         // }
         this.tag = tag;
         this.attr = attr;
         this.children = children;
+        this.range = range;
 
         this.textCache = null;
         this.id = ++currentID;

@@ -20,6 +20,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
         const expectedCST = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [0, 0] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {
@@ -37,6 +38,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
             },
             {
                 leadingSpace: "　",
+                leadingSpaceRange: [5, 6] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {

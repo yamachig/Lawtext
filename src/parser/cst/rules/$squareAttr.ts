@@ -16,13 +16,16 @@ export const makeSquareAttrRule = (lazyNameRule: (f: typeof factory) => ValueRul
                 )
             , "value")
             .and(r => r.seqEqual("\"]"))
-            .action(({ name, value, text }) => {
+            .action(({ name, value, text, range }) => {
+                const r = range();
                 return {
-                    value: {
-                        text: text(),
-                        entry: [name, value],
-                        trailingSpace: "",
-                    } as AttrEntry,
+                    value: new AttrEntry(
+                        text(),
+                        [name, value],
+                        r,
+                        "",
+                        [r[1], r[1]],
+                    ),
                     errors: [],
                 };
             })

@@ -33,6 +33,7 @@ describe("Test $otherLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [2, 2] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {
@@ -116,6 +117,7 @@ describe("Test $otherLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [0, 0] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {
@@ -168,7 +170,9 @@ describe("Test $otherLine", () => {
             controls: [
                 {
                     control: ":style-struct-title:",
+                    controlRange: [4, 24],
                     trailingSpace: "  ",
+                    trailingSpaceRange: [24, 26],
                 }
             ] as Controls,
             lineEndText: `
@@ -177,6 +181,7 @@ describe("Test $otherLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
+                leadingSpaceRange: [26, 26] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {
@@ -229,11 +234,15 @@ describe("Test $otherLine", () => {
             controls: [
                 {
                     control: ":control-1:",
+                    controlRange: [4, 15],
                     trailingSpace: "  ",
+                    trailingSpaceRange: [15, 17],
                 },
                 {
                     control: ":control-2:",
+                    controlRange: [17, 28],
                     trailingSpace: "　",
+                    trailingSpaceRange: [28, 29],
                 },
             ] as Controls,
             lineEndText: `

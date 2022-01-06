@@ -7,6 +7,7 @@ import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
 import { paragraphItemToLines } from "./$paragraphItem";
+import { Control } from "../../../node/cst/inline";
 
 
 const $preambleChildren = factory
@@ -50,10 +51,12 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
         indentTexts.length,
         indentTexts,
         [
-            {
-                control: ":前文:",
-                trailingSpace: "",
-            },
+            new Control(
+                ":前文:",
+                null,
+                "",
+                null,
+            ),
         ],
         [],
         CST.EOL,

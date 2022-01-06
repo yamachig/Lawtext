@@ -4,7 +4,7 @@ import * as std from "../../../law/std";
 import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { assertNever } from "../../../util";
-import { SentenceChildEL } from "../../../node/cst/inline";
+import { SentenceChildEL, Sentences } from "../../../node/cst/inline";
 import { WithErrorRule } from "../util";
 import factory from "../factory";
 import { VirtualOnlyLineType } from "../virtualLine";
@@ -46,11 +46,12 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
             newIndentTexts,
             [],
             [
-                {
-                    leadingSpace: "",
-                    attrEntries: [],
-                    sentences: [newStdEL("Sentence", {}, ArticleCaption)]
-                }
+                new Sentences(
+                    "",
+                    null,
+                    [],
+                    [newStdEL("Sentence", {}, ArticleCaption)]
+                )
             ],
             CST.EOL,
         ));

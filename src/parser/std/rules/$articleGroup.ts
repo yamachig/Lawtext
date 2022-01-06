@@ -10,7 +10,6 @@ import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import { ArticleGroup, articleGroupTags, articleGroupTitleTags, isArticleGroup, isArticleGroupTitle, parseNamedNum } from "../../../law/lawUtil";
 import { mergeAdjacentTexts } from "../../cst/util";
 import $article, { articleToLines } from "./$article";
-import { SentenceChildEL } from "../../../node/cst/inline";
 
 export const articleGroupToLines = (el: ArticleGroup, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -24,30 +23,28 @@ export const articleGroupToLines = (el: ArticleGroup, indentTexts: string[]): Li
                 ...indentTexts,
                 ...[...range(0, titleIndentDepth)].map(() => CST.INDENT)
             ];
-            const contentStruct = {
-                num: "",
-                midSpace: "",
-                sentenceChildren: [] as SentenceChildEL[],
-            };
-            const [firstChild, ...restChildren] = child.children;
-            if (typeof firstChild === "string") {
-                // eslint-disable-next-line no-irregular-whitespace
-                const [, num, midSpace, rest] = /^([^ 　\t]*)([ 　\t]*)(.*)$/.exec(firstChild) ?? ["", "", "", ""];
-                contentStruct.num = num;
-                contentStruct.midSpace = midSpace;
-                contentStruct.sentenceChildren.push(...mergeAdjacentTexts([rest, ...restChildren]));
-            } else {
-                contentStruct.sentenceChildren.push(...mergeAdjacentTexts(child.children));
-            }
+            // const contentStruct = {
+            //     num: "",
+            //     midSpace: "",
+            //     sentenceChildren: [] as SentenceChildEL[],
+            // };
+            // const [firstChild, ...restChildren] = child.children;
+            // if (typeof firstChild === "string") {
+            // eslint-disable-next-line no-irregular-whitespace
+            //     const [, num, midSpace, rest] = /^([^ 　\t]*)([ 　\t]*)(.*)$/.exec(firstChild) ?? ["", "", "", ""];
+            //     contentStruct.num = num;
+            //     contentStruct.midSpace = midSpace;
+            //     contentStruct.sentenceChildren.push(...mergeAdjacentTexts([rest, ...restChildren]));
+            // } else {
+            //     contentStruct.sentenceChildren.push(...mergeAdjacentTexts(child.children));
+            // }
 
             lines.push(new ArticleGroupHeadLine(
                 null,
                 titleIndentDepth,
                 titleIndentTexts,
                 el.tag,
-                contentStruct.num,
-                contentStruct.midSpace,
-                contentStruct.sentenceChildren,
+                mergeAdjacentTexts(child.children),
                 CST.EOL,
             ));
             lines.push(new BlankLine(null, CST.EOL));
@@ -135,14 +132,14 @@ export const $articleGroup: WithErrorRule<ArticleGroup> = factory
             articleGroup.append(newStdEL(
                 articleGroupTitleTags[articleGroupTags.indexOf(headLine.line.mainTag)],
                 {},
-                mergeAdjacentTexts([
-                    headLine.line.num,
-                    headLine.line.midSpace,
-                    ...headLine.line.sentenceChildren,
-                ]),
+                headLine.line.sentenceChildren,
             ));
 
-            const num = parseNamedNum(headLine.line.num);
+            const num = parseNamedNum(
+                typeof headLine.line.sentenceChildren[0] === "string"
+                    ? headLine.line.sentenceChildren[0]
+                    : headLine.line.sentenceChildren[0]?.text
+            );
             if (num) {
                 articleGroup.attr.Num = num;
             }

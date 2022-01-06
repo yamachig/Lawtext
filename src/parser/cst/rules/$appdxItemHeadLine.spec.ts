@@ -31,7 +31,9 @@ describe("Test $appdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":appdx:",
+                    controlRange: [0, 7],
                     trailingSpace: "",
+                    trailingSpaceRange: [7, 7],
                 }
             ] as Controls,
             lineEndText: `　
@@ -106,7 +108,9 @@ describe("Test $appdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":appdx:",
+                    controlRange: [0, 7],
                     trailingSpace: "  ",
+                    trailingSpaceRange: [7, 9],
                 }
             ] as Controls,
             lineEndText: `　
@@ -252,7 +256,9 @@ describe("Test $appdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":appdx-table:",
+                    controlRange: [0, 13],
                     trailingSpace: "",
+                    trailingSpaceRange: [13, 13],
                 }
             ] as Controls,
             lineEndText: `　
@@ -398,7 +404,9 @@ describe("Test $appdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":appdx-style:",
+                    controlRange: [0, 13],
                     trailingSpace: "",
+                    trailingSpaceRange: [13, 13],
                 }
             ] as Controls,
             lineEndText: `　
@@ -473,7 +481,9 @@ describe("Test $appdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":appdx-style:",
+                    controlRange: [0, 13],
                     trailingSpace: "",
+                    trailingSpaceRange: [13, 13],
                 }
             ] as Controls,
             lineEndText: `　
@@ -588,7 +598,9 @@ describe("Test $appdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":appdx-format:",
+                    controlRange: [0, 14],
                     trailingSpace: "",
+                    trailingSpaceRange: [14, 14],
                 }
             ] as Controls,
             lineEndText: `　
@@ -733,7 +745,9 @@ describe("Test $appdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":appdx-fig:",
+                    controlRange: [0, 11],
                     trailingSpace: "　",
+                    trailingSpaceRange: [11, 12],
                 }
             ] as Controls,
             lineEndText: `　
@@ -878,7 +892,9 @@ describe("Test $appdxItemHeadLine", () => {
             controls: [
                 {
                     control: ":appdx-note:",
+                    controlRange: [0, 12],
                     trailingSpace: "",
+                    trailingSpaceRange: [12, 12],
                 }
             ] as Controls,
             lineEndText: `　
