@@ -123,7 +123,7 @@ export const $article: WithErrorRule<std.Article> = factory
                                         .and(r => r.anyOne(), "unexpected")
                                         .action(({ unexpected }) => {
                                             return new ErrorMessage(
-                                                "$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。",
+                                                "$article: この前にある項または号の終了時にインデント解除が必要です。",
                                                 unexpected.virtualRange,
                                             );
                                         })

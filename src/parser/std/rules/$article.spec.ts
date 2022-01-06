@@ -254,14 +254,16 @@ describe("Test $article and articleToLines", () => {
   （定義）
 
 第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+  一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
 
   !  !（国の機関等に対する処分等の適用除外）
   第四条　国の機関又は地方公共団体若しくはその機関に対する処分
 `;
-        const expectedErrorMessages: string[] = [];
+        const expectedErrorMessages: string[] = ["$article: この前にある項または号の終了時にインデント解除が必要です。"];
         const expectedRendered = `\
   （定義）
 第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+  一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
@@ -299,6 +301,47 @@ describe("Test $article and articleToLines", () => {
                                     tag: "Sentence",
                                     attr: {},
                                     children: ["この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "Item",
+                            attr: {
+                                Delete: "false"
+                            },
+                            children: [
+                                {
+                                    tag: "ItemTitle",
+                                    attr: {},
+                                    children: ["一"]
+                                },
+                                {
+                                    tag: "ItemSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Column",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: ["法令"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            tag: "Column",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: ["法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。"]
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ]
                         },
