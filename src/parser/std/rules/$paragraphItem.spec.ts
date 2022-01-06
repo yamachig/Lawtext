@@ -1,18 +1,11 @@
-import { assert } from "chai";
-import * as std from "../../../law/std";
-import { loadEl } from "../../../node/el";
-import { ErrorMessage } from "../../cst/error";
-import parse from "../../cst/parse";
-import { initialEnv } from "../env";
-import { toVirtualLines } from "../virtualLine";
+import { testLawtextToStd } from "../testHelper";
 import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 
 describe("Test $paragraphItem and paragraphItemToLines", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const env = initialEnv({});
-        const lawtext = `\
+        const lawtextWithMarker = `\
   （定義）
 
 ２　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
@@ -30,6 +23,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
   （適用除外）
 ３　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
 `;
+        const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
   （定義）
 ２　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
@@ -342,27 +336,19 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 }
             ]
         };
-        const expectedErrors: ErrorMessage[] = [];
 
-        const lines = parse(lawtext);
-        const vls = toVirtualLines(lines.value);
-
-        const result = $paragraphItem.match(0, vls, env);
-        assert.isTrue(result.ok);
-        if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.json(), undefined, 2));
-            assert.deepStrictEqual(result.value.value.json(), expectedValue);
-            assert.deepStrictEqual([...lines.errors, ...result.value.errors], expectedErrors);
-        }
-
-        const renderedLines = paragraphItemToLines(loadEl(expectedValue) as std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, []);
-        const renderedText = renderedLines.map(l => l.text()).join("");
-        assert.strictEqual(renderedText, expectedRendered);
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => $paragraphItem.match(0, vlines, env),
+            el => paragraphItemToLines(el, []),
+        );
     });
 
-    it("Success  with errors case", () => {
+    it("Success with errors case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const env = initialEnv({});
         const lawtextWithMarker = `\
   （定義）
 
@@ -372,15 +358,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
   !  !（適用除外）
   ３　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
 `;
-        const lawtext = lawtextWithMarker.replace(/[!]/g, "");
-        const markerPositions: number[] = [];
-        for (let i = 0; i < lawtextWithMarker.length; i++) {
-            const index = lawtextWithMarker.indexOf("!", i);
-            if (index !== -1) {
-                markerPositions.push(index - markerPositions.length);
-                i = index;
-            } else break;
-        }
+        const expectedErrorMessages = ["$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。" ];
         const expectedRendered = `\
   （定義）
 ２　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
@@ -456,26 +434,14 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
             ]
         };
-        const expectedErrors = [
-            {
-                message: "$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。",
-                range: markerPositions.slice(0, 2),
-            },
-        ];
 
-        const lines = parse(lawtext);
-        const vls = toVirtualLines(lines.value);
-
-        const result = $paragraphItem.match(0, vls, env);
-        assert.isTrue(result.ok);
-        if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.json(), undefined, 2));
-            assert.deepStrictEqual(result.value.value.json(), expectedValue);
-            assert.deepStrictEqual([...lines.errors, ...result.value.errors], expectedErrors);
-        }
-
-        const renderedLines = paragraphItemToLines(loadEl(expectedValue) as std.Paragraph | std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10, []);
-        const renderedText = renderedLines.map(l => l.text()).join("");
-        assert.strictEqual(renderedText, expectedRendered);
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => $paragraphItem.match(0, vlines, env),
+            el => paragraphItemToLines(el, []),
+        );
     });
 });
