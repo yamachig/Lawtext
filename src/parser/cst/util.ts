@@ -1,6 +1,6 @@
 import { Rule, Empty } from "generic-parser/lib/core";
 import { __Text } from "../../node/control";
-import { EL } from "../../node/el";
+import { SentenceChildEL } from "../../node/cst/inline";
 import { Env } from "./env";
 import { ErrorMessage } from "./error";
 
@@ -8,7 +8,7 @@ export type ValueRule<TValue> = Rule<string, TValue, Env, Empty>
 export type WithErrorRule<TValue> = Rule<string, { value: TValue, errors: ErrorMessage[] }, Env, Empty>
 
 
-export const mergeAdjacentTexts = <T extends EL>(inline: (string | T)[]): (T | __Text)[] => {
+export const mergeAdjacentTexts = <T extends SentenceChildEL>(inline: (string | T)[]): (T | __Text)[] => {
     const result: (T | __Text)[] = [];
     for (const item of inline) {
         const lawtItem = result.slice(-1)[0] as T | undefined;
@@ -29,8 +29,8 @@ export const mergeAdjacentTexts = <T extends EL>(inline: (string | T)[]): (T | _
     return result;
 };
 
-export const separateTrailingSpaces = (inline: EL[]): { inline: EL[], spaces: string} => {
-    const ret = { inline: [...inline], spaces: "" };
+export const separateTrailingSpaces = <T extends SentenceChildEL>(inline: (string | T)[]): { inline: (T | __Text)[], spaces: string} => {
+    const ret = { inline: inline.map(s => typeof s === "string" ? new __Text(s) : s), spaces: "" };
     if (ret.inline.slice(-1)[0]?.tag === "__Text") {
         const m = /^(.*?)(\s+)/.exec(ret.inline.slice(-1)[0].text);
         if (m) {

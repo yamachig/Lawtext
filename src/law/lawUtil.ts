@@ -1,6 +1,6 @@
 import { EL } from "../node/el";
 import * as std from "./std";
-import { assertNever } from "../util";
+import { assertNever, Diff } from "../util";
 
 export const paragraphItemTags = [
     "Paragraph",
@@ -17,6 +17,24 @@ export const paragraphItemTags = [
     "Subitem10",
 ] as const;
 
+export type ParagraphItem =
+    | std.Paragraph
+    | std.Item
+    | std.Subitem1
+    | std.Subitem2
+    | std.Subitem3
+    | std.Subitem4
+    | std.Subitem5
+    | std.Subitem6
+    | std.Subitem7
+    | std.Subitem8
+    | std.Subitem9
+    | std.Subitem10
+    ;
+
+export const isParagraphItem = (el: EL): el is ParagraphItem =>
+    (paragraphItemTags as readonly string[]).includes(el.tag);
+
 export const paragraphItemTitleTags = [
     "ParagraphNum",
     "ItemTitle",
@@ -32,6 +50,24 @@ export const paragraphItemTitleTags = [
     "Subitem10Title",
 ] as const;
 
+export type ParagraphItemTitle =
+    | std.ParagraphNum
+    | std.ItemTitle
+    | std.Subitem1Title
+    | std.Subitem2Title
+    | std.Subitem3Title
+    | std.Subitem4Title
+    | std.Subitem5Title
+    | std.Subitem6Title
+    | std.Subitem7Title
+    | std.Subitem8Title
+    | std.Subitem9Title
+    | std.Subitem10Title
+    ;
+
+export const isParagraphItemTitle = (el: EL): el is ParagraphItemTitle =>
+    (paragraphItemTitleTags as readonly string[]).includes(el.tag);
+
 export const paragraphItemSentenceTags = [
     "ParagraphSentence",
     "ItemSentence",
@@ -46,6 +82,24 @@ export const paragraphItemSentenceTags = [
     "Subitem9Sentence",
     "Subitem10Sentence",
 ] as const;
+
+export type ParagraphItemSentence =
+    | std.ParagraphSentence
+    | std.ItemSentence
+    | std.Subitem1Sentence
+    | std.Subitem2Sentence
+    | std.Subitem3Sentence
+    | std.Subitem4Sentence
+    | std.Subitem5Sentence
+    | std.Subitem6Sentence
+    | std.Subitem7Sentence
+    | std.Subitem8Sentence
+    | std.Subitem9Sentence
+    | std.Subitem10Sentence
+    ;
+
+export const isParagraphItemSentence = (el: EL): el is ParagraphItemSentence =>
+    (paragraphItemSentenceTags as readonly string[]).includes(el.tag);
 
 
 export const listTags = ["List", "Sublist1", "Sublist2", "Sublist3"] as const;
@@ -78,6 +132,44 @@ export const eras = {
 
 
 export const articleGroupTypeChars = ["編", "章", "節", "款", "目"] as const;
+
+export const articleGroupTags = [
+    "Part",
+    "Chapter",
+    "Section",
+    "Subsection",
+    "Division",
+] as const;
+
+export type ArticleGroup =
+    | std.Part
+    | std.Chapter
+    | std.Section
+    | std.Subsection
+    | std.Division
+    ;
+
+export const isArticleGroup = (el: EL): el is ArticleGroup =>
+    (articleGroupTags as readonly string[]).includes(el.tag);
+
+export const articleGroupTitleTags = [
+    "PartTitle",
+    "ChapterTitle",
+    "SectionTitle",
+    "SubsectionTitle",
+    "DivisionTitle",
+] as const;
+
+export type ArticleGroupTitle =
+    | std.PartTitle
+    | std.ChapterTitle
+    | std.SectionTitle
+    | std.SubsectionTitle
+    | std.DivisionTitle
+    ;
+
+export const isArticleGroupTitle = (el: EL): el is ArticleGroupTitle =>
+    (articleGroupTitleTags as readonly string[]).includes(el.tag);
 
 export const articleGroupType = {
     "編": "Part", "章": "Chapter", "節": "Section",
@@ -254,10 +346,10 @@ export const parseLawNum = (lawNum: string): LawNumStruct => {
 
 
 export const setItemNum = (els: EL[]): void => {
-    const items: Array<std.Item | std.Subitem1 | std.Subitem2 | std.Subitem3 | std.Subitem4 | std.Subitem5 | std.Subitem6 | std.Subitem7 | std.Subitem8 | std.Subitem9 | std.Subitem10> = [];
+    const items: Array<Diff<ParagraphItem, std.Paragraph>> = [];
 
     for (const el of els) {
-        if (std.isItem(el) || std.isSubitem1(el) || std.isSubitem2(el) || std.isSubitem3(el) || std.isSubitem4(el) || std.isSubitem5(el) || std.isSubitem6(el) || std.isSubitem7(el) || std.isSubitem8(el) || std.isSubitem9(el) || std.isSubitem10(el)) {
+        if (isParagraphItem(el) && el.tag !== "Paragraph") {
             items.push(el);
         }
     }
@@ -265,10 +357,7 @@ export const setItemNum = (els: EL[]): void => {
     if (items.length) {
         let kanaMode = KanaMode.Iroha;
         for (const child of items[0].children) {
-            if (child.tag === "ItemTitle" || child.tag ===
-                "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
-                "Subitem5Title" || child.tag === "Subitem6Title" || child.tag === "Subitem7Title" || child.tag === "Subitem8Title" || child.tag ===
-                "Subitem9Title" || child.tag === "Subitem10Title") {
+            if (isParagraphItemTitle(child)) {
                 if (/ア/.exec(child.text)) {
                     kanaMode = KanaMode.Aiu;
                     break;
@@ -278,10 +367,7 @@ export const setItemNum = (els: EL[]): void => {
         for (const item of items) {
             let paragraphItemTitle = "";
             for (const child of item.children) {
-                if (child.tag === "ItemTitle" || child.tag ===
-                    "Subitem1Title" || child.tag === "Subitem2Title" || child.tag === "Subitem3Title" || child.tag === "Subitem4Title" || child.tag ===
-                    "Subitem5Title" || child.tag === "Subitem6Title" || child.tag === "Subitem7Title" || child.tag === "Subitem8Title" || child.tag ===
-                    "Subitem9Title" || child.tag === "Subitem10Title") {
+                if (isParagraphItemTitle(child)) {
                     paragraphItemTitle = child.text;
                     break;
                 }

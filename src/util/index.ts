@@ -51,3 +51,5 @@ export const throwError = (): never => {
 export const assertNever = (x: never): never => {
     throw new Error(`Unexpected ${typeof x} object: \r\n${JSON.stringify(x, undefined, 2)}`);
 };
+
+export type Diff<T, U> = T extends U ? never : T;

@@ -77,7 +77,7 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
 
 
 export const $article: WithErrorRule<std.Article> = factory
-    .withName("paragraphItem")
+    .withName("article")
     .sequence(s => s
         .and(r => r
             .zeroOrOne(r => r
