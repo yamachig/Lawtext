@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { articleGroupType, parseNamedNum } from "../law/lawUtil";
+import { articleGroupType, parseNamedNum } from "../law/num";
 import { PointerFragment, RelPos } from "../node/pointer";
 import { factory } from "../parser/cst/factory";
 import { $irohaChar, $kanjiDigits, $romanDigits } from "../parser/cst/rules/lexical";

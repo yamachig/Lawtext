@@ -9,10 +9,11 @@ import { Env } from "../node/env";
 import { Span } from "../node/span";
 import { EL, isJsonEL } from "../node/el";
 import { RelPos, Pointer, Ranges } from "../node/pointer";
-import { lawTypes, paragraphItemSentenceTags } from "../law/lawUtil";
 import { $ranges } from "./range";
 import { initialEnv } from "../parser/cst/env";
 import { $sentenceChildren } from "../parser/cst/rules/$sentenceChildren";
+import * as std from "../law/std";
+import { lawTypes } from "../law/num";
 
 export const getLawNameLength = (lawNum: string): number => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -609,7 +610,7 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
 
     const paragraph = spans[spanIndex].env.container;
     for (const item of paragraph.parent?.children ?? []) {
-        const sentence = item.el.children.find(el => isJsonEL(el) && (paragraphItemSentenceTags as unknown as string[]).includes(el.tag));
+        const sentence = item.el.children.find(el => isJsonEL(el) && (std.paragraphItemSentenceTags as unknown as string[]).includes(el.tag));
         if (!sentence || !isJsonEL(sentence)) continue;
 
         let nameSpan: Span|null = null;

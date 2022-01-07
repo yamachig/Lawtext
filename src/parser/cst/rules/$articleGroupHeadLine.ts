@@ -1,11 +1,11 @@
 import factory from "../factory";
-import { articleGroupType } from "../../../law/lawUtil";
 import $sentenceChildren from "./$sentenceChildren";
 import $articleGroupNum from "./$articleGroupNum";
 import $indents from "./$indents";
 import { ArticleGroupHeadLine } from "../../../node/cst/line";
 import { $__, $_EOL } from "./lexical";
 import { mergeAdjacentTexts, WithErrorRule } from "../util";
+import { articleGroupType } from "../../../law/num";
 
 
 export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factory

@@ -11,12 +11,11 @@ import factory from "../factory";
 import { VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT } from "../util";
 import { ErrorMessage } from "../../cst/error";
-import { isParagraphItem, isParagraphItemSentence, isParagraphItemTitle, ParagraphItem, ParagraphItemSentence, paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags } from "../../../law/lawUtil";
 import { rangeOfELs } from "../../../node/el";
 
 
 export const paragraphItemToLines = (
-    el: ParagraphItem,
+    el: std.ParagraphItem,
     indentTexts: string[],
     firstArticleParagraphArticleTitle?: (string | SentenceChildEL)[],
     secondaryArticleParagraph = false,
@@ -25,8 +24,8 @@ export const paragraphItemToLines = (
 
     const ParagraphCaption: (string | SentenceChildEL)[] = [];
     const ParagraphItemTitle: (string | SentenceChildEL)[] = [];
-    let ParagraphItemSentence: ParagraphItemSentence | undefined;
-    const Children: Array<Diff<ParagraphItem, std.Paragraph> | std.AmendProvision | std.Class | std.TableStruct | std.FigStruct | std.StyleStruct | std.List> = [];
+    let ParagraphItemSentence: std.ParagraphItemSentence | undefined;
+    const Children: Array<Diff<std.ParagraphItem, std.Paragraph> | std.AmendProvision | std.Class | std.TableStruct | std.FigStruct | std.StyleStruct | std.List> = [];
     for (const child of el.children) {
 
         if (child.tag === "ParagraphCaption") {
@@ -34,13 +33,13 @@ export const paragraphItemToLines = (
         } else if (std.isArticleCaption(child)) {
             console.error(`Unexpected ${el.tag} in ${el.tag}!`);
             ParagraphCaption.push(...(child as std.ArticleCaption).children);
-        } else if (isParagraphItemTitle(child)) {
+        } else if (std.isParagraphItemTitle(child)) {
             ParagraphItemTitle.push(...child.children);
 
-        } else if (isParagraphItemSentence(child)) {
+        } else if (std.isParagraphItemSentence(child)) {
             ParagraphItemSentence = child;
 
-        } else if (isParagraphItem(child) || child.tag === "AmendProvision" || child.tag === "Class" || child.tag === "TableStruct" || child.tag === "FigStruct" || child.tag === "StyleStruct" || child.tag === "List") {
+        } else if (std.isParagraphItem(child) || child.tag === "AmendProvision" || child.tag === "Class" || child.tag === "TableStruct" || child.tag === "FigStruct" || child.tag === "StyleStruct" || child.tag === "List") {
             Children.push(child);
 
         }
@@ -124,7 +123,7 @@ export const paragraphItemToLines = (
     }
 
     for (const child of Children) {
-        if (isParagraphItem(child)) {
+        if (std.isParagraphItem(child)) {
             lines.push(...paragraphItemToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "TableStruct") {
@@ -163,7 +162,7 @@ export const paragraphItemToLines = (
     return lines;
 };
 
-export const $paragraphItemChildren: WithErrorRule<Diff<ParagraphItem, std.Paragraph>[]> = factory
+export const $paragraphItemChildren: WithErrorRule<Diff<std.ParagraphItem, std.Paragraph>[]> = factory
     .withName("paragraphItemChildren")
     .sequence(s => s
         .and(r => r
@@ -174,7 +173,7 @@ export const $paragraphItemChildren: WithErrorRule<Diff<ParagraphItem, std.Parag
                         .and(r => r.assert(({ elWithErrors }) => !std.isParagraph(elWithErrors.value)))
                         .action(({ elWithErrors }) => {
                             return elWithErrors as {
-                        value: Diff<ParagraphItem, std.Paragraph>,
+                        value: Diff<std.ParagraphItem, std.Paragraph>,
                         errors: ErrorMessage[],
                     };
                         })
@@ -190,7 +189,7 @@ export const $paragraphItemChildren: WithErrorRule<Diff<ParagraphItem, std.Parag
         })
     );
 
-export const $paragraphItem: WithErrorRule<ParagraphItem> = factory
+export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
     .withName("paragraphItem")
     .sequence(s => s
         .and(r => r
@@ -261,14 +260,14 @@ export const $paragraphItem: WithErrorRule<ParagraphItem> = factory
         .action(({ captionLine, firstParagraphItemLine, tailChildren }) => {
 
             const paragraphItem = newStdEL(
-                paragraphItemTags[firstParagraphItemLine.virtualIndentDepth],
+                std.paragraphItemTags[firstParagraphItemLine.virtualIndentDepth],
             );
             const errors = tailChildren?.errors ?? [];
 
             if (firstParagraphItemLine.virtualIndentDepth === 0) {
                 (paragraphItem as std.Paragraph).attr.OldStyle = "false";
             } else {
-                (paragraphItem as Diff<ParagraphItem, std.Paragraph>).attr.Delete = "false";
+                (paragraphItem as Diff<std.ParagraphItem, std.Paragraph>).attr.Delete = "false";
             }
 
             const replacedAttrEntries: AttrEntries = [];
@@ -303,7 +302,7 @@ export const $paragraphItem: WithErrorRule<ParagraphItem> = factory
 
             if (firstParagraphItemLine.line.title) {
                 paragraphItem.append(
-                    newStdEL(paragraphItemTitleTags[firstParagraphItemLine.virtualIndentDepth],
+                    newStdEL(std.paragraphItemTitleTags[firstParagraphItemLine.virtualIndentDepth],
                         {},
                         [firstParagraphItemLine.line.title],
                         firstParagraphItemLine.line.titleRange,
@@ -312,7 +311,7 @@ export const $paragraphItem: WithErrorRule<ParagraphItem> = factory
             }
 
             paragraphItem.append(
-                newStdEL(paragraphItemSentenceTags[firstParagraphItemLine.virtualIndentDepth],
+                newStdEL(std.paragraphItemSentenceTags[firstParagraphItemLine.virtualIndentDepth],
                     {},
                     sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
                     firstParagraphItemLine.line.sentencesArrayRange,

@@ -7,38 +7,23 @@ import { WithErrorRule } from "../util";
 import factory from "../factory";
 import { $blankLine } from "../util";
 import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
-import { ArticleGroup, articleGroupTags, articleGroupTitleTags, isArticleGroup, isArticleGroupTitle, parseNamedNum } from "../../../law/lawUtil";
 import { mergeAdjacentTexts } from "../../cst/util";
 import $article, { articleToLines } from "./$article";
 import { rangeOfELs } from "../../../node/el";
+import { parseNamedNum } from "../../../law/num";
 
-export const articleGroupToLines = (el: ArticleGroup, indentTexts: string[]): Line[] => {
+export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    const ChildItems: Array<Diff<ArticleGroup, std.Part> | std.Article | std.Paragraph> = [];
+    const ChildItems: Array<Diff<std.ArticleGroup, std.Part> | std.Article | std.Paragraph> = [];
     for (const child of el.children) {
 
-        if (isArticleGroupTitle(child)) {
-            const titleIndentDepth = indentTexts.length + articleGroupTitleTags.indexOf(child.tag) + 2;
+        if (std.isArticleGroupTitle(child)) {
+            const titleIndentDepth = indentTexts.length + std.articleGroupTitleTags.indexOf(child.tag) + 2;
             const titleIndentTexts = [
                 ...indentTexts,
                 ...[...range(0, titleIndentDepth)].map(() => CST.INDENT)
             ];
-            // const contentStruct = {
-            //     num: "",
-            //     midSpace: "",
-            //     sentenceChildren: [] as SentenceChildEL[],
-            // };
-            // const [firstChild, ...restChildren] = child.children;
-            // if (typeof firstChild === "string") {
-            // eslint-disable-next-line no-irregular-whitespace
-            //     const [, num, midSpace, rest] = /^([^ 　\t]*)([ 　\t]*)(.*)$/.exec(firstChild) ?? ["", "", "", ""];
-            //     contentStruct.num = num;
-            //     contentStruct.midSpace = midSpace;
-            //     contentStruct.sentenceChildren.push(...mergeAdjacentTexts([rest, ...restChildren]));
-            // } else {
-            //     contentStruct.sentenceChildren.push(...mergeAdjacentTexts(child.children));
-            // }
 
             lines.push(new ArticleGroupHeadLine(
                 null,
@@ -63,7 +48,7 @@ export const articleGroupToLines = (el: ArticleGroup, indentTexts: string[]): Li
         } else if (child.tag === "Paragraph") {
             lines.push(...paragraphItemToLines(child, indentTexts));
 
-        } else if (isArticleGroup(child)) {
+        } else if (std.isArticleGroup(child)) {
             lines.push(...articleGroupToLines(child, indentTexts));
 
         } else if (std.isAppdxStyle(child)) {
@@ -79,7 +64,7 @@ export const articleGroupToLines = (el: ArticleGroup, indentTexts: string[]): Li
 };
 
 
-export const $articleGroup: WithErrorRule<ArticleGroup> = factory
+export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
     .withName("articleGroup")
     .sequence(s => s
         .and(r => r
@@ -107,7 +92,7 @@ export const $articleGroup: WithErrorRule<ArticleGroup> = factory
                                         .oneMatch(({ item, headLine }) => {
                                             if (
                                                 item.type === LineType.ARG
-                                                && articleGroupTags.indexOf(headLine.line.mainTag) < articleGroupTags.indexOf(item.line.mainTag)
+                                                && std.articleGroupTags.indexOf(headLine.line.mainTag) < std.articleGroupTags.indexOf(item.line.mainTag)
                                             ) {
                                                 return item;
                                             } else {
@@ -131,7 +116,7 @@ export const $articleGroup: WithErrorRule<ArticleGroup> = factory
             );
 
             articleGroup.append(newStdEL(
-                articleGroupTitleTags[articleGroupTags.indexOf(headLine.line.mainTag)],
+                std.articleGroupTitleTags[std.articleGroupTags.indexOf(headLine.line.mainTag)],
                 {},
                 headLine.line.sentenceChildren,
                 headLine.line.contentRange,

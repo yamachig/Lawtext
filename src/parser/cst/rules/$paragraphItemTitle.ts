@@ -1,7 +1,7 @@
 import factory from "../factory";
 import { $kanjiDigits } from "./lexical";
-import { irohaChars } from "../../../law/lawUtil";
 import { WithErrorRule } from "../util";
+import { irohaChars } from "../../../law/num";
 
 export const $stdParagraphNum = factory
     .withName("stdParagraphNum")

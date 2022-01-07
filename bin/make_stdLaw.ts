@@ -148,4 +148,4 @@ export const newStdEL = <
 const out = elementIfs.join(`
 `);
 
-fs.writeFileSync(path.join(rootDir, "/src/law/std.ts"), out, { encoding: "utf-8" });
+fs.writeFileSync(path.join(rootDir, "/src/law/std/stdEL.ts"), out, { encoding: "utf-8" });
