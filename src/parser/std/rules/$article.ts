@@ -11,6 +11,7 @@ import { VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT } from "../util";
 import { ErrorMessage } from "../../cst/error";
 import $paragraphItem, { $paragraphItemChildren, paragraphItemToLines } from "./$paragraphItem";
+import { rangeOfELs } from "../../../node/el";
 
 export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -165,13 +166,15 @@ export const $article: WithErrorRule<std.Article> = factory
 
             if (captionLine) {
                 article.append(
-                    newStdEL("ArticleCaption",
+                    newStdEL(
+                        "ArticleCaption",
                         {},
                         captionLine.line.sentencesArray
                             .map(sa =>
                                 sa.sentences.map(s => s.children)
                             )
-                            .flat(2)
+                            .flat(2),
+                        captionLine.line.sentencesArrayRange,
                     ));
             }
 
@@ -180,7 +183,8 @@ export const $article: WithErrorRule<std.Article> = factory
                     newStdEL(
                         "ArticleTitle",
                         {},
-                        [firstParagraphLine.line.title]
+                        [firstParagraphLine.line.title],
+                        firstParagraphLine.line.titleRange,
                     ));
             }
 
@@ -194,6 +198,7 @@ export const $article: WithErrorRule<std.Article> = factory
                     "ParagraphSentence",
                     {},
                     sentencesArrayToColumnsOrSentences(firstParagraphLine.line.sentencesArray),
+                    firstParagraphLine.line.sentencesArrayRange
                 )
             );
 
@@ -201,7 +206,11 @@ export const $article: WithErrorRule<std.Article> = factory
                 firstParagraph.extend(firstParagraphChildren.value);
             }
 
+            firstParagraph.range = rangeOfELs(firstParagraph.children);
+
             article.extend(otherParagraphs.map(p => p.value));
+
+            article.range = rangeOfELs(article.children);
 
             return {
                 value: article,

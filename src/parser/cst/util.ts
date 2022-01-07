@@ -11,17 +11,24 @@ export type WithErrorRule<TValue> = Rule<string, { value: TValue, errors: ErrorM
 export const mergeAdjacentTexts = <T extends SentenceChildEL>(inline: (string | T)[]): (T | __Text)[] => {
     const result: (T | __Text)[] = [];
     for (const item of inline) {
-        const lawtItem = result.slice(-1)[0] as T | undefined;
+        const lastItem = result.slice(-1)[0] as T | undefined;
         if (
-            (typeof lawtItem !== "string")
-            && lawtItem?.tag === "__Text"
+            (typeof lastItem !== "string")
+            && lastItem?.tag === "__Text"
             && (typeof item === "string" || item.tag === "__Text")
         ) {
-            const replacedTail = new __Text(lawtItem.text + (typeof item === "string" ? item : item.text));
+            const itemText = typeof item === "string" ? item : item.text;
+            const replacedTail = new __Text(
+                lastItem.text + itemText,
+                (lastItem.range ? [lastItem.range[0], lastItem.range[1] + itemText.length] : null)
+            );
             result.splice(-1, 1);
             result.push(replacedTail);
         } else if (typeof item === "string") {
-            result.push(new __Text(item));
+            result.push(new __Text(
+                item,
+                (lastItem && lastItem.range ? [lastItem.range[0], lastItem.range[1] + item.length] : null)
+            ));
         } else {
             result.push(item);
         }
@@ -30,7 +37,7 @@ export const mergeAdjacentTexts = <T extends SentenceChildEL>(inline: (string | 
 };
 
 export const separateTrailingSpaces = <T extends SentenceChildEL>(inline: (string | T)[]): { inline: (T | __Text)[], spaces: string} => {
-    const ret = { inline: inline.map(s => typeof s === "string" ? new __Text(s) : s), spaces: "" };
+    const ret = { inline: mergeAdjacentTexts(inline), spaces: "" };
     if (ret.inline.slice(-1)[0]?.tag === "__Text") {
         const m = /^(.*?)(\s+)/.exec(ret.inline.slice(-1)[0].text);
         if (m) {

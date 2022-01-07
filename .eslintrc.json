@@ -34,6 +34,7 @@
         "no-trailing-spaces": "error",
         "eol-last": ["error", "always"],
         "no-sequences": "error",
+        "no-implicit-coercion": "error",
         "keyword-spacing": "error"
     },
     "ignorePatterns": ["/dist/*"],

@@ -200,6 +200,21 @@ export class EL implements JsonEL {
     }
 }
 
+export const rangeOfELs = (els: unknown[]): [start: number, end: number] | null => {
+    let start = null as number | null;
+    let end = null as number | null;
+    for (const el of els) {
+        if (el instanceof EL) {
+            const r = el.range ?? rangeOfELs(el.children);
+            if (r) {
+                start = Math.min(r[0], start ?? r[0]);
+                end = Math.max(r[1], end ?? r[1]);
+            }
+        }
+    }
+    return (start !== null && end !== null) ? [start, end] : null;
+};
+
 export const loadEl = <T extends JsonEL | string>(rawLaw: T): T extends string ? string : EL => {
     if (typeof rawLaw === "string") {
         return rawLaw as unknown as T extends string ? string : EL;

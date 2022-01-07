@@ -12,6 +12,7 @@ import { VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT } from "../util";
 import { ErrorMessage } from "../../cst/error";
 import { isParagraphItem, isParagraphItemSentence, isParagraphItemTitle, ParagraphItem, ParagraphItemSentence, paragraphItemSentenceTags, paragraphItemTags, paragraphItemTitleTags } from "../../../law/lawUtil";
+import { rangeOfELs } from "../../../node/el";
 
 
 export const paragraphItemToLines = (
@@ -258,6 +259,7 @@ export const $paragraphItem: WithErrorRule<ParagraphItem> = factory
             )
         , "tailChildren")
         .action(({ captionLine, firstParagraphItemLine, tailChildren }) => {
+
             const paragraphItem = newStdEL(
                 paragraphItemTags[firstParagraphItemLine.virtualIndentDepth],
             );
@@ -286,32 +288,41 @@ export const $paragraphItem: WithErrorRule<ParagraphItem> = factory
 
             if (captionLine) {
                 paragraphItem.append(
-                    newStdEL("ParagraphCaption",
+                    newStdEL(
+                        "ParagraphCaption",
                         {},
                         captionLine.line.sentencesArray
                             .map(sa =>
                                 sa.sentences.map(s => s.children)
                             )
-                            .flat(2)
-                    ));
+                            .flat(2),
+                        captionLine.line.sentencesArrayRange,
+                    )
+                );
             }
 
             if (firstParagraphItemLine.line.title) {
                 paragraphItem.append(
                     newStdEL(paragraphItemTitleTags[firstParagraphItemLine.virtualIndentDepth],
                         {},
-                        [firstParagraphItemLine.line.title]
-                    ));
+                        [firstParagraphItemLine.line.title],
+                        firstParagraphItemLine.line.titleRange,
+                    )
+                );
             }
+
             paragraphItem.append(
                 newStdEL(paragraphItemSentenceTags[firstParagraphItemLine.virtualIndentDepth],
                     {},
-                    sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray)
+                    sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
+                    firstParagraphItemLine.line.sentencesArrayRange,
                 ));
 
             if (tailChildren) {
                 paragraphItem.extend(tailChildren.value);
             }
+
+            paragraphItem.range = rangeOfELs(paragraphItem.children);
 
             return {
                 value: paragraphItem,

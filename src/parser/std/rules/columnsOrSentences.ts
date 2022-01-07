@@ -65,11 +65,14 @@ export const sentencesArrayToColumnsOrSentences = (
 ): (std.Sentence | std.Column)[] => {
     return sentencesArray.length === 1
         ? sentencesArray[0].sentences
-        : sentencesArray.map(c =>
-            std.newStdEL(
+        : sentencesArray.map(c => {
+            const leadingSpaceRange = c.leadingSpaceRange;
+            const lastSentenceRange = c.sentences.slice(-1)[0].range;
+            return std.newStdEL(
                 "Column",
                 Object.fromEntries(c.attrEntries.map(e => e.entry)),
                 c.sentences,
-            )
-        );
+                (leadingSpaceRange && lastSentenceRange ? [leadingSpaceRange[0], lastSentenceRange[1]] : null),
+            );
+        });
 };

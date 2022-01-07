@@ -10,6 +10,7 @@ import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import { ArticleGroup, articleGroupTags, articleGroupTitleTags, isArticleGroup, isArticleGroupTitle, parseNamedNum } from "../../../law/lawUtil";
 import { mergeAdjacentTexts } from "../../cst/util";
 import $article, { articleToLines } from "./$article";
+import { rangeOfELs } from "../../../node/el";
 
 export const articleGroupToLines = (el: ArticleGroup, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -133,6 +134,7 @@ export const $articleGroup: WithErrorRule<ArticleGroup> = factory
                 articleGroupTitleTags[articleGroupTags.indexOf(headLine.line.mainTag)],
                 {},
                 headLine.line.sentenceChildren,
+                headLine.line.contentRange,
             ));
 
             const num = parseNamedNum(
@@ -145,6 +147,8 @@ export const $articleGroup: WithErrorRule<ArticleGroup> = factory
             }
 
             articleGroup.extend(children.map(c => c.value));
+
+            articleGroup.range = rangeOfELs(articleGroup.children);
 
             return {
                 value: articleGroup,

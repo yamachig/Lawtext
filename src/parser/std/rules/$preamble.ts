@@ -23,17 +23,24 @@ const $preambleChildren = factory
                         && item.line.sentencesArray.length > 0
                     ) {
                         const inline = sentencesArrayToColumnsOrSentences(item.line.sentencesArray);
+                        const firstRange = inline[0].range;
+                        const lastRange = inline.slice(-1)[0].range;
+                        const range = firstRange && lastRange
+                            ? [firstRange[0], lastRange[1]] as [number, number]
+                            : null;
                         return newStdEL(
                             "Paragraph",
                             {},
                             [
-                                newStdEL("ParagraphNum"),
+                                newStdEL("ParagraphNum", {}, [], range ? [range[0], range[0]] : null),
                                 newStdEL(
                                     "ParagraphSentence",
                                     {},
                                     inline,
+                                    range,
                                 ),
                             ],
+                            range,
                         );
                     } else {
                         return null;
