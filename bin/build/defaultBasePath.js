@@ -1,3 +1,7 @@
-import url from "url";
+const path = require("path");
 
-export const defaultBasePath = url.fileURLToPath(new URL("../../", import.meta.url));
+const defaultBasePath = path.dirname(path.dirname(__dirname));
+
+module.exports = {
+    defaultBasePath,
+};

@@ -1,10 +1,10 @@
-import fs from "fs";
-import sha512 from "hash.js/lib/hash/sha/512.js";
-import path from "path";
-import { promisify } from "util";
-import { DOMParser } from "@xmldom/xmldom";
-import fetch from "node-fetch";
-import { defaultBasePath } from "./defaultBasePath.js";
+const fs = require("fs");
+const sha512 = require("hash.js/lib/hash/sha/512.js");
+const path = require("path");
+const { promisify } = require("util");
+const { DOMParser } = require("@xmldom/xmldom");
+const { fetch } = require("../../src/util/node-fetch");
+const { defaultBasePath } = require("./defaultBasePath.js");
 
 const KEY_LENGTH = 7;
 const LEN_LENGTH = 2;
@@ -22,8 +22,10 @@ const pad16 = (num, size) => {
 /**
  * @param {string} basePath
  */
-export const buildLawNumTable = async (basePath = defaultBasePath) => {
+const buildLawNumTable = async (basePath = defaultBasePath) => {
     const srcPath = path.join(basePath, "src");
+    const destPath = path.join(srcPath, "law/lawNumTable.ts");
+    if (fs.existsSync(destPath)) return;
     const response = await fetch(
         "https://elaws.e-gov.go.jp/api/1/lawlists/1",
         {
@@ -66,7 +68,7 @@ export const buildLawNumTable = async (basePath = defaultBasePath) => {
         table += value;
     }
 
-    await promisify(fs.writeFile)(path.join(srcPath, "law/lawNumTable.ts"), `
+    await promisify(fs.writeFile)(destPath, `
 "use strict";
 
 export const LAWNUM_TABLE: { [key: string]: number } = {};
@@ -83,6 +85,10 @@ for (let i = 0; i < LAWNUM_TABLE_RAW.length; i += KEY_LENGTH + LEN_LENGTH) {
     LAWNUM_TABLE[key] = length;
 }
 `.trimStart());
+};
+
+module.exports = {
+    buildLawNumTable,
 };
 
 if (typeof require !== "undefined" && require.main === module) {

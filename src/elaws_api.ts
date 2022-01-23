@@ -1,14 +1,5 @@
 import { decodeBase64 } from "./util";
-const nodeFetch:
-    (typeof import("node-fetch/@types/index"))["default"]
-= (
-    (...args) =>
-        import("node-fetch")
-            .then(
-                ({ default: fetch }) =>
-                    (fetch)(...args),
-            )
-);
+import { fetch as nodeFetch } from "./util/node-fetch";
 const fetch: typeof window.fetch = (global["window"] && window.fetch) || nodeFetch;
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;

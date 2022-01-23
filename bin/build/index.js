@@ -1,20 +1,27 @@
-import { buildTemplates as _buildTemplates } from "./templates.js";
-import { buildLawNumTable as _buildLawNumTable } from "./lawNumTable.js";
-import { defaultBasePath as _defaultBasePath } from "./defaultBasePath.js";
+const { buildTemplates: _buildTemplates } = require("./templates.js");
+const { buildLawNumTable: _buildLawNumTable } = require("./lawNumTable.js");
+const { defaultBasePath: _defaultBasePath } = require("./defaultBasePath.js");
 
-export const buildTemplates = _buildTemplates;
-export const buildLawNumTable = _buildLawNumTable;
-export const defaultBasePath = _defaultBasePath;
+const buildTemplates = _buildTemplates;
+const buildLawNumTable = _buildLawNumTable;
+const defaultBasePath = _defaultBasePath;
 
 /**
  * @param {string} basePath
  */
-export const build = async (basePath = defaultBasePath) => {
-    console.log("Compiling templates...");
+const build = async (basePath = defaultBasePath) => {
+    // console.log("Compiling templates...");
     await buildTemplates(basePath);
 
-    console.log("Compiling lawnum_table...");
+    // console.log("Compiling lawnum_table...");
     await buildLawNumTable(basePath);
+};
+
+module.exports = {
+    buildTemplates,
+    buildLawNumTable,
+    defaultBasePath,
+    build,
 };
 
 if (typeof require !== "undefined" && require.main === module) {

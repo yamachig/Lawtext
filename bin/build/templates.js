@@ -1,14 +1,16 @@
-import fs from "fs";
-import path from "path";
-import { promisify } from "util";
-import nunjucks from "nunjucks";
-import { defaultBasePath } from "./defaultBasePath.js";
+const fs = require("fs");
+const path = require("path");
+const { promisify } = require("util");
+const nunjucks = require("nunjucks");
+const { defaultBasePath } = require("./defaultBasePath.js");
 
 /**
  * @param {string} basePath
  */
 const buildTemplates = async (basePath = defaultBasePath) => {
     const srcPath = path.join(basePath, "src");
+    const destPath = path.join(srcPath, "renderer/templates.js");
+    if (fs.existsSync(destPath)) return;
     // const distPath = path.join(basePath, "dist/src");
 
     let templates = nunjucks.precompile(
@@ -22,7 +24,7 @@ ${templates}
 if(exports) exports.nunjucksPrecompiled = window.nunjucksPrecompiled;
 `;
     await promisify(fs.writeFile)(
-        path.join(srcPath, "renderer/templates.js"),
+        destPath,
         templates,
         { encoding: "utf-8" },
     );
@@ -33,8 +35,7 @@ if(exports) exports.nunjucksPrecompiled = window.nunjucksPrecompiled;
     //     { encoding: "utf-8" },
     // );
 };
-const _buildTemplates = buildTemplates;
-export { _buildTemplates as buildTemplates };
+module.exports = { buildTemplates };
 
 if (typeof require !== "undefined" && require.main === module) {
     buildTemplates().catch(console.error);
