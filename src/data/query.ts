@@ -4,6 +4,7 @@ import { EL, elementToJson } from "../node/el";
 import { LawInfo } from "./lawinfo";
 import { Loader } from "./loaders/common";
 import { FetchElawsLoader } from "./loaders/FetchElawsLoader";
+import { WorkersPool } from "./workersPool";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;
 const domParser = new DOMParser();
@@ -135,6 +136,27 @@ export class Query<
                     const value = await func(item);
                     if (value === undefined) {
                         throw TypeError(`Query.map: the mapped function (${func}) returned an undefined. Please check the definition of the function. (First occurance: ${item})`);
+                    }
+                    yield value as unknown as TRet;
+                }
+            })(),
+            criteria,
+            options,
+        );
+    }
+
+    public mapWorkers<T, TRet=T extends(void | undefined) ? never : T>(
+        workersPool: WorkersPool<TItem, TRet>,
+        criteria: QueryCriteria<TRet> | null = null,
+        options?: Partial<QueryOptions>,
+    ): Query<Awaited<TRet>> {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        return new Query(
+            (async function *() {
+                for await (const [, item, value] of workersPool.run(self)) {
+                    if (value === undefined) {
+                        throw TypeError(`Query.mapWorkers: the WorkersPool returned an undefined. Please check the definition of the function. (First occurance: ${item})`);
                     }
                     yield value as unknown as TRet;
                 }
@@ -362,7 +384,7 @@ export class Query<
                 if (this.options.showProgress) console.info(`Query progress:\t⌛ running...\t(${matchCount.toString().padStart(4, " ")} matches\tin ${now.getTime() - startTime.getTime()} msec)`);
                 lastMessageTime = now;
             }
-            if (typeof item === "object" && symbolFinalyzeQueryItem in item) {
+            if (item && typeof item === "object" && symbolFinalyzeQueryItem in item) {
                 (item as unknown as QueryItem)[symbolFinalyzeQueryItem]();
             }
         }
