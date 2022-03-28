@@ -8,9 +8,8 @@ import { SentenceChildEL, Sentences } from "../../../node/cst/inline";
 import { WithErrorRule } from "../util";
 import factory from "../factory";
 import { VirtualOnlyLineType } from "../virtualLine";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT } from "../util";
-import { ErrorMessage } from "../../cst/error";
-import $paragraphItem, { $paragraphItemChildren, paragraphItemToLines } from "./$paragraphItem";
+import { $blankLine } from "../util";
+import $paragraphItem, { $paragraphItemChildrenOuter, paragraphItemToLines } from "./$paragraphItem";
 import { rangeOfELs } from "../../../node/el";
 
 export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] => {
@@ -109,42 +108,9 @@ export const $article: WithErrorRule<std.Article> = factory
                     return null;
                 }
             })
-        , "firstParagraphLine")
+        , "firstParagraphItemLine")
         .and(r => r
-            .zeroOrOne(r => r
-                .sequence(s => s
-                    .and(() => $optBNK_INDENT)
-                    .and(() => $paragraphItemChildren, "children")
-                    .and(r => r
-                        .choice(c => c
-                            .or(() => $optBNK_DEDENT)
-                            .or(r => r
-                                .noConsumeRef(r => r
-                                    .sequence(s => s
-                                        .and(r => r.zeroOrMore(() => $blankLine))
-                                        .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected }) => {
-                                            return new ErrorMessage(
-                                                "$article: この前にある項または号の終了時にインデント解除が必要です。",
-                                                unexpected.virtualRange,
-                                            );
-                                        })
-                                    )
-                                )
-                            )
-                        )
-                    , "error")
-                    .action(({ children, error }) => {
-                        return {
-                            value: children.value,
-                            errors: [
-                                ...children.errors,
-                                ...(error instanceof ErrorMessage ? [error] : []),
-                            ],
-                        };
-                    })
-                )
-            )
+            .zeroOrOne(() => $paragraphItemChildrenOuter)
         , "firstParagraphChildren")
         .and(r => r
             .zeroOrMore(r => r
@@ -154,7 +120,7 @@ export const $article: WithErrorRule<std.Article> = factory
                 )
             )
         , "otherParagraphs")
-        .action(({ captionLine, firstParagraphLine, firstParagraphChildren, otherParagraphs }) => {
+        .action(({ captionLine, firstParagraphItemLine, firstParagraphChildren, otherParagraphs }) => {
             const article = newStdEL("Article");
             const errors = [
                 ...(firstParagraphChildren?.errors ?? []),
@@ -178,13 +144,13 @@ export const $article: WithErrorRule<std.Article> = factory
                     ));
             }
 
-            if (firstParagraphLine.line.title) {
+            if (firstParagraphItemLine.line.title) {
                 article.append(
                     newStdEL(
                         "ArticleTitle",
                         {},
-                        [firstParagraphLine.line.title],
-                        firstParagraphLine.line.titleRange,
+                        [firstParagraphItemLine.line.title],
+                        firstParagraphItemLine.line.titleRange,
                     ));
             }
 
@@ -197,8 +163,8 @@ export const $article: WithErrorRule<std.Article> = factory
                 newStdEL(
                     "ParagraphSentence",
                     {},
-                    sentencesArrayToColumnsOrSentences(firstParagraphLine.line.sentencesArray),
-                    firstParagraphLine.line.sentencesArrayRange
+                    sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
+                    firstParagraphItemLine.line.sentencesArrayRange
                 )
             );
 

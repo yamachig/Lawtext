@@ -1,9 +1,17 @@
 import { factory } from "../factory";
 import { LineType } from "../../../node/cst/line";
-import { isSingleParentheses } from "../util";
+import { isSingleParentheses, WithErrorRule } from "../util";
+import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
 
 
-export const $lawTitle = factory
+export const $lawTitle: WithErrorRule<{
+    lawNameLine: VirtualLine & {
+        type: LineType.OTH | VirtualOnlyLineType.CAP;
+    };
+    lawNumLine: VirtualLine & {
+        type: LineType.OTH | VirtualOnlyLineType.CAP;
+    } | null;
+}> = factory
     .withName("lawTitle")
     .sequence(s => s
         .and(r => r
@@ -35,7 +43,12 @@ export const $lawTitle = factory
                 })
             )
         , "lawNumLine")
-        .action(({ lawNameLine, lawNumLine }) => ({ lawNameLine, lawNumLine }))
+        .action(({ lawNameLine, lawNumLine }) => {
+            return {
+                value: { lawNameLine, lawNumLine },
+                errors: [],
+            };
+        })
     )
     ;
 

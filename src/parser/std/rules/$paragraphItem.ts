@@ -7,11 +7,13 @@ import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { assertNever, Diff, NotImplementedError } from "../../../util";
 import { AttrEntries, AttrEntry, SentenceChildEL, Sentences } from "../../../node/cst/inline";
 import { WithErrorRule } from "../util";
-import factory from "../factory";
-import { VirtualOnlyLineType } from "../virtualLine";
+import factory, { VirtualLineRuleFactory } from "../factory";
+import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT } from "../util";
 import { ErrorMessage } from "../../cst/error";
 import { rangeOfELs } from "../../../node/el";
+import $amendProvision, { amendProvisionToLines } from "./$amendProvision";
+import { Env } from "../env";
 
 
 export const paragraphItemToLines = (
@@ -148,9 +150,7 @@ export const paragraphItemToLines = (
             // blocks.push(renderList(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
 
         } else if (child.tag === "AmendProvision") {
-            // TODO: Implement
-            throw new NotImplementedError(child.tag);
-            // blocks.push(renderAmendProvision(child, indent + 1)); /* >>>> INDENT >>>> */
+            lines.push(...amendProvisionToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "Class") {
             throw new NotImplementedError(child.tag);
@@ -189,6 +189,79 @@ export const $paragraphItemChildren: WithErrorRule<Diff<std.ParagraphItem, std.P
         })
     );
 
+export const $paragraphItemChildrenOuter: WithErrorRule<
+    (Diff<std.ParagraphItem, std.Paragraph> | std.AmendProvision)[]
+> = (
+    factory as VirtualLineRuleFactory<
+        Env & {
+            firstParagraphItemLine: VirtualLine & {
+                type: LineType.ART | LineType.PIT;
+            }
+        }
+    >
+)
+    .withName("paragraphItemChildrenOuter")
+    .sequence(s => s
+        .and(() => $optBNK_INDENT)
+        .and(r => r
+            .choice(c => c
+                .orSequence(s => s
+                    .andOmit(r => r.assert(({ firstParagraphItemLine }) => {
+                        const lastText = firstParagraphItemLine.line
+                            .sentencesArray.slice(-1)[0]
+                            .sentences.slice(-1)[0]
+                            .text;
+                        const m = /.*?の一部を次のように(?:改正す|改め)る。$/.exec(lastText);
+                        return m !== null;
+                    }))
+                    .and(r => r
+                        .oneOrMore(r => r
+                            .sequence(s => s
+                                .andOmit(r => r.zeroOrMore(() => $blankLine))
+                                .and(() => $amendProvision)
+                            )
+                        )
+                    , "amendProvisions")
+                    .action(({ amendProvisions }) => {
+                        return {
+                            value: amendProvisions.map(c => c.value),
+                            errors: amendProvisions.map(c => c.errors).flat(),
+                        };
+                    })
+                )
+                .or(() => $paragraphItemChildren)
+            )
+        , "children")
+        .and(r => r
+            .choice(c => c
+                .or(() => $optBNK_DEDENT)
+                .or(r => r
+                    .noConsumeRef(r => r
+                        .sequence(s => s
+                            .and(r => r.zeroOrMore(() => $blankLine))
+                            .and(r => r.anyOne(), "unexpected")
+                            .action(({ unexpected }) => {
+                                return new ErrorMessage(
+                                    "$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。",
+                                    unexpected.virtualRange,
+                                );
+                            })
+                        )
+                    )
+                )
+            )
+        , "error")
+        .action(({ children, error }) => {
+            return {
+                value: children.value,
+                errors: [
+                    ...children.errors,
+                    ...(error instanceof ErrorMessage ? [error] : []),
+                ],
+            };
+        })
+    );
+
 export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
     .withName("paragraphItem")
     .sequence(s => s
@@ -222,40 +295,7 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
             })
         , "firstParagraphItemLine")
         .and(r => r
-            .zeroOrOne(r => r
-                .sequence(s => s
-                    .and(() => $optBNK_INDENT)
-                    .and(() => $paragraphItemChildren, "children")
-                    .and(r => r
-                        .choice(c => c
-                            .or(() => $optBNK_DEDENT)
-                            .or(r => r
-                                .noConsumeRef(r => r
-                                    .sequence(s => s
-                                        .and(r => r.zeroOrMore(() => $blankLine))
-                                        .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected }) => {
-                                            return new ErrorMessage(
-                                                "$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。",
-                                                unexpected.virtualRange,
-                                            );
-                                        })
-                                    )
-                                )
-                            )
-                        )
-                    , "error")
-                    .action(({ children, error }) => {
-                        return {
-                            value: children.value,
-                            errors: [
-                                ...children.errors,
-                                ...(error instanceof ErrorMessage ? [error] : []),
-                            ],
-                        };
-                    })
-                )
-            )
+            .zeroOrOne(() => $paragraphItemChildrenOuter)
         , "tailChildren")
         .action(({ captionLine, firstParagraphItemLine, tailChildren }) => {
 

@@ -221,7 +221,7 @@ export const toVirtualLines = (lines: Line[]) => {
                     if (
                         nextLine.indentDepth <= line.indentDepth
                         && (nextLine.type === LineType.ART || nextLine.type === LineType.PIT)
-                        && nextLine.indentDepth === 0
+                        // && nextLine.indentDepth === 0
                     ) {
                         currentDepth = nextLine.indentDepth;
                         type = VirtualOnlyLineType.CAP;

@@ -156,8 +156,8 @@ describe("Test $preamble and preambleToLines", () => {
 
   法律行為の当事者が意思表示をした時に意思能力を有しなかったときは、その法律行為は、無効とする。
 
-  !  !（成年）
-  第四条　年齢二十歳をもって、成年とする。
+    !（成年）
+!  第四条　年齢二十歳をもって、成年とする。
 `;
         const expectedErrorMessages = ["$preamble: この前にある前文の終了時にインデント解除が必要です。" ];
         const expectedRendered = `\
