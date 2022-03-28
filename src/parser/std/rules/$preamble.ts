@@ -8,6 +8,7 @@ import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
 import { paragraphItemToLines } from "./$paragraphItem";
 import { Control } from "../../../node/cst/inline";
+import { rangeOfELs } from "../../../node/el";
 
 
 const $preambleChildren = factory
@@ -87,7 +88,7 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
                 if (
                     item.type === LineType.OTH
                     && item.line.type === LineType.OTH
-                    && item.virtualIndentDepth === 0
+                    // && item.virtualIndentDepth === 0
                     && item.line.sentencesArray.length === 0
                     && item.line.controls.length === 1
                     && item.line.controls.some(c => /^(?::前文:|:Preamble:|:preamble:)$/.exec(c.control))
@@ -124,8 +125,10 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
             for (let i = 0; i < children.length; i++) {
                 children[i].attr.Num = `${i + 1}`;
             }
+            const preamble = newStdEL("Preamble", {}, children);
+            preamble.range = rangeOfELs(preamble.children);
             return {
-                value: newStdEL("Preamble", {}, children),
+                value: preamble,
                 errors: error instanceof ErrorMessage ? [error] : [],
             };
         })
