@@ -17,11 +17,12 @@ export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
                 .sequence(s => s
                     .and(r => r.seqEqual("*" as const), "firstColumnIndicator")
                     .and(() => $_, "midIndicatorsSpace")
+                    .and(r => r.nextIs(r => r.oneOf(["-", "*"] as const)))
                     .action(({ firstColumnIndicator, midIndicatorsSpace }) => ({ firstColumnIndicator, midIndicatorsSpace }))
                 )
             )
         , "firstColumnIndicatorStruct")
-        .and(r => r.seqEqual("-" as const), "columnIndicator")
+        .and(r => r.oneOf(["-", "*"] as const), "columnIndicator")
         .and(() => $_, "midSpace")
         .and(r => r
             .zeroOrMore(r => r

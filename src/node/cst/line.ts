@@ -320,7 +320,7 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
         indentTexts: string[],
         public firstColumnIndicator: "*" | "",
         public midIndicatorsSpace: string,
-        public columnIndicator: "-",
+        public columnIndicator: "-" | "*",
         public midSpace: string,
         public attrEntries: AttrEntries,
         public sentencesArray: SentencesArray,

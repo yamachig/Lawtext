@@ -212,6 +212,186 @@ describe("Test $tableColumnLine", () => {
         }
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+    * 又は他の
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 11,
+        } as const;
+        const expectedText = `\
+    * 又は他の
+`;
+        const expectedValue = {
+            type: LineType.TBL,
+            indentDepth: 2,
+            indentTexts: ["  ", "  "] as string[],
+            firstColumnIndicator: "",
+            midIndicatorsSpace: "",
+            columnIndicator: "*",
+            midSpace: " ",
+            attrEntries: [] as AttrEntries,
+            lineEndText: `
+`,
+        } as const;
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                leadingSpaceRange: [6, 6] as [number, number],
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["又は他の"],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const result = $tableColumnLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.value.sentencesArray.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+    * * 又は他の
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 13,
+        } as const;
+        const expectedText = `\
+    * * 又は他の
+`;
+        const expectedValue = {
+            type: LineType.TBL,
+            indentDepth: 2,
+            indentTexts: ["  ", "  "] as string[],
+            firstColumnIndicator: "*",
+            midIndicatorsSpace: " ",
+            columnIndicator: "*",
+            midSpace: " ",
+            attrEntries: [] as AttrEntries,
+            lineEndText: `
+`,
+        } as const;
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                leadingSpaceRange: [8, 8] as [number, number],
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["又は他の"],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const result = $tableColumnLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.value.sentencesArray.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+    * - 又は他の
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 13,
+        } as const;
+        const expectedText = `\
+    * - 又は他の
+`;
+        const expectedValue = {
+            type: LineType.TBL,
+            indentDepth: 2,
+            indentTexts: ["  ", "  "] as string[],
+            firstColumnIndicator: "*",
+            midIndicatorsSpace: " ",
+            columnIndicator: "-",
+            midSpace: " ",
+            attrEntries: [] as AttrEntries,
+            lineEndText: `
+`,
+        } as const;
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                leadingSpaceRange: [8, 8] as [number, number],
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["又は他の"],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const result = $tableColumnLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.value.sentencesArray.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
+        }
+    });
+
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;

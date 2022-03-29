@@ -229,6 +229,19 @@ export const toVirtualLines = (lines: Line[]) => {
                     break;
                 }
             }
+            if (line.type === LineType.TBL && line.firstColumnIndicator === "") {
+                for (let currentOffset = i - 1; currentOffset > 0; currentOffset--) {
+                    const prevLine = lines[currentOffset];
+                    if (prevLine.type === LineType.BNK) continue;
+                    if (prevLine.type === LineType.TBL && prevLine.firstColumnIndicator === "") continue;
+                    if (
+                        prevLine.type === LineType.TBL && prevLine.firstColumnIndicator === "*"
+                    ) {
+                        currentDepth = prevLine.indentDepth;
+                    }
+                    break;
+                }
+            }
         }
 
         const indentTextLengths = "indentTexts" in line ? line.indentTexts.map(s => s.length) : [];
