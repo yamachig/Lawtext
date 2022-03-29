@@ -131,7 +131,6 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
                 if (
                     item.type === LineType.OTH
                     && item.line.type === LineType.OTH
-                    && item.virtualIndentDepth === 0
                     && item.line.sentencesArray.length === 0
                     && item.line.controls.some(c => /^:arith-formula:$/.exec(c.control))
                 ) {

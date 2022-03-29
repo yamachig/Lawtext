@@ -126,7 +126,6 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                 if (
                     item.type === LineType.OTH
                     && item.line.type === LineType.OTH
-                    && item.virtualIndentDepth === 0
                     && (
                         (
                             item.line.controls.some(c => /^:remarks:$/.exec(c.control))

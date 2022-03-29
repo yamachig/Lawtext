@@ -246,10 +246,13 @@ export const $tableStruct: WithErrorRule<std.TableStruct> = factory
                     }
                 })
             , "titleLine")
-            .and(r => r.zeroOrMore(() => $blankLine))
             .and(() => $optBNK_INDENT)
             .and(r => r.zeroOrOne(() => $remarks), "remarks1")
             .and(r => r.zeroOrMore(() => $blankLine))
+            // .andOmit(r => r.assert(({ remarks1 }) => {
+            //     console.log(`⚠️here: ${remarks1?.value}`);
+            //     return true;
+            // }))
             .and(() => $table, "table")
             .and(r => r.zeroOrMore(() => $blankLine))
             .and(r => r.zeroOrOne(() => $remarks), "remarks2")
