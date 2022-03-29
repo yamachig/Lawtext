@@ -47,24 +47,12 @@ describe("Test $tableStruct and tableStructToLines", () => {
                                 {
                                     tag: "TableHeaderColumn",
                                     attr: {},
-                                    children: [
-                                        {
-                                            tag: "Sentence",
-                                            attr: {},
-                                            children: ["項"]
-                                        }
-                                    ]
+                                    children: ["項"]
                                 },
                                 {
                                     tag: "TableHeaderColumn",
                                     attr: {},
-                                    children: [
-                                        {
-                                            tag: "Sentence",
-                                            attr: {},
-                                            children: ["種名"]
-                                        }
-                                    ]
+                                    children: ["種名"]
                                 }
                             ]
                         },
@@ -189,24 +177,12 @@ describe("Test $tableStruct and tableStructToLines", () => {
                                 {
                                     tag: "TableHeaderColumn",
                                     attr: {},
-                                    children: [
-                                        {
-                                            tag: "Sentence",
-                                            attr: {},
-                                            children: ["項"]
-                                        }
-                                    ]
+                                    children: ["項"]
                                 },
                                 {
                                     tag: "TableHeaderColumn",
                                     attr: {},
-                                    children: [
-                                        {
-                                            tag: "Sentence",
-                                            attr: {},
-                                            children: ["種名"]
-                                        }
-                                    ]
+                                    children: ["種名"]
                                 }
                             ]
                         },
@@ -267,24 +243,12 @@ describe("Test $tableStruct and tableStructToLines", () => {
                                 {
                                     tag: "TableHeaderColumn",
                                     attr: {},
-                                    children: [
-                                        {
-                                            tag: "Sentence",
-                                            attr: {},
-                                            children: ["項"]
-                                        }
-                                    ]
+                                    children: ["項"]
                                 },
                                 {
                                     tag: "TableHeaderColumn",
                                     attr: {},
-                                    children: [
-                                        {
-                                            tag: "Sentence",
-                                            attr: {},
-                                            children: ["種名"]
-                                        }
-                                    ]
+                                    children: ["種名"]
                                 }
                             ]
                         },

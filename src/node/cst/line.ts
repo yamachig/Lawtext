@@ -125,7 +125,7 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
     public contentText(): string {
         return [
             ...this.controls.map(c => c.control + c.trailingSpace),
-            ...this.sentenceChildren.map(el => el.text),
+            sentenceChildrenToString(this.sentenceChildren),
         ].join("");
     }
     public get controlsRange(): [number, number] | null {
@@ -202,7 +202,7 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
     public contentText(): string {
         return [
             ...this.controls.map(c => c.control + c.trailingSpace),
-            ...this.sentenceChildren.map(el => el.text),
+            ...sentenceChildrenToString(this.sentenceChildren),
         ].join("");
     }
     public get controlsRange(): [number, number] | null {
@@ -240,7 +240,7 @@ export class ArticleLine extends IndentsLine<LineType.ART> {
             ...this.sentencesArray.map(c => [
                 c.leadingSpace,
                 ...c.attrEntries.map(a => a.text + a.trailingSpace),
-                ...c.sentences.map(s => s.text),
+                ...c.sentences.map(s => sentenceChildrenToString(s.children)),
             ]).flat(),
         ].join("");
     }
@@ -286,7 +286,7 @@ export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
             ...this.sentencesArray.map(c => [
                 c.leadingSpace,
                 ...c.attrEntries.map(a => a.text + a.trailingSpace),
-                ...c.sentences.map(s => s.text),
+                ...c.sentences.map(s => sentenceChildrenToString(s.children)),
             ]).flat(),
         ].join("");
     }
@@ -338,7 +338,7 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
             ...this.sentencesArray.map(c => [
                 c.leadingSpace,
                 ...c.attrEntries.map(a => a.text + a.trailingSpace),
-                ...c.sentences.map(s => s.text),
+                ...c.sentences.map(s => sentenceChildrenToString(s.children)),
             ]).flat(),
         ].join("");
     }
@@ -392,7 +392,7 @@ export class OtherLine extends IndentsLine<LineType.OTH> {
             ...this.sentencesArray.map(c => [
                 c.leadingSpace,
                 ...c.attrEntries.map(a => a.text + a.trailingSpace),
-                ...c.sentences.map(s => s.text),
+                ...c.sentences.map(s => sentenceChildrenToString(s.children)),
             ]).flat(),
         ].join("");
     }

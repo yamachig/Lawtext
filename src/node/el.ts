@@ -76,6 +76,20 @@ export class EL implements JsonEL {
         return this.tag[0] === "_";
     }
 
+    public copy(deep = true): EL {
+        const el = new EL(
+            this.tag,
+            { ...this.attr },
+            (
+                deep
+                    ? this.children.map(child => child instanceof EL ? child.copy(true) : child)
+                    : [...this.children]
+            ),
+            this.range && [...this.range],
+        );
+        return el;
+    }
+
     public append(child: EL | string): EL {
         if (child !== undefined && child !== null) {
             // if(!(child instanceof EL) && !(child instanceof String || (typeof child === "string"))) {

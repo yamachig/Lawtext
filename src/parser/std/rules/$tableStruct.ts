@@ -22,7 +22,7 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
             if (isTableColumn(cell)) {
                 for (const child of cell.children) {
                     if (typeof child === "string") {
-                        columnsOrSentences.push(newStdEL("Sentence", {}, cell.children));
+                        columnsOrSentences.push(newStdEL("Sentence", {}, child));
                     } else if (isColumn(child) || isSentence(child)) {
                         columnsOrSentences.push(child);
                     } else {
@@ -147,7 +147,7 @@ const $table: WithErrorRule<std.Table> = factory
                                 newStdEL(
                                     "TableHeaderColumn",
                                     Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
-                                    sentencesArrayToColumnsOrSentences(tableColumnLine.line.sentencesArray),
+                                    tableColumnLine.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
                                 ),
                             ],
                         );
@@ -193,7 +193,7 @@ const $table: WithErrorRule<std.Table> = factory
                         tableRow.children.push(newStdEL(
                             "TableHeaderColumn",
                             Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
-                            sentencesArrayToColumnsOrSentences(tableColumnLine.line.sentencesArray),
+                            tableColumnLine.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
                         ));
                     } else if (isTableRow(tableRow)) {
                         tableRow.children.push(newStdEL(

@@ -10,6 +10,35 @@ import { paragraphItemToLines } from "./$paragraphItem";
 import { Control } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 
+export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): Line[] => {
+    const lines: Line[] = [];
+
+    lines.push(new OtherLine(
+        null,
+        indentTexts.length,
+        indentTexts,
+        [
+            new Control(
+                ":前文:",
+                null,
+                "",
+                null,
+            ),
+        ],
+        [],
+        CST.EOL,
+    ));
+
+    const childrenIndentTexts = [...indentTexts, CST.INDENT];
+
+    for (const paragraph of preamble.children) {
+        const paragraphLines = paragraphItemToLines(paragraph, childrenIndentTexts);
+        lines.push(...paragraphLines);
+    }
+
+    return lines;
+};
+
 
 const $preambleChildren = factory
     .withName("preambleChildren")
@@ -50,35 +79,6 @@ const $preambleChildren = factory
             )
         )
     );
-
-export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): Line[] => {
-    const lines: Line[] = [];
-
-    lines.push(new OtherLine(
-        null,
-        indentTexts.length,
-        indentTexts,
-        [
-            new Control(
-                ":前文:",
-                null,
-                "",
-                null,
-            ),
-        ],
-        [],
-        CST.EOL,
-    ));
-
-    const childrenIndentTexts = [...indentTexts, CST.INDENT];
-
-    for (const paragraph of preamble.children) {
-        const paragraphLines = paragraphItemToLines(paragraph, childrenIndentTexts);
-        lines.push(...paragraphLines);
-    }
-
-    return lines;
-};
 
 export const $preamble: WithErrorRule<std.Preamble> = factory
     .withName("preamble")

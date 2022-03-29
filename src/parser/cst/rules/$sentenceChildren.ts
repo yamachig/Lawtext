@@ -18,6 +18,8 @@ export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): st
     for (const el of els) {
         if (typeof el === "string") {
             runs.push(/* $$$$$$ */el.replace(/\r|\n/g, "")/* $$$$$$ */);
+        } else if (el.tag === "__CapturedXML" || el.tag === "__UnexpectedXML") {
+            runs.push(/* $$$$$$ */el.children.map(c => typeof c === "string" ? c : c.outerXML()).join("")/* $$$$$$ */);
         } else if (el.isControl) {
             runs.push(/* $$$$$$ */el.text.replace(/\r|\n/g, "")/* $$$$$$ */);
 
@@ -352,6 +354,12 @@ export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
                 if (std.isLine(el) || std.isQuoteStruct(el) || std.isArithFormula(el) || std.isRuby(el) || std.isSup(el) || std.isControl(el)) {
                     return {
                         value: el,
+                        errors: elWithError.errors,
+                    };
+                } else if (std.isFig(el)) {
+                    // Not a child of Sentence in stdLaw.xsd
+                    return {
+                        value: new EL("__CapturedXML", {}, [el]) as __EL,
                         errors: elWithError.errors,
                     };
                 } else {

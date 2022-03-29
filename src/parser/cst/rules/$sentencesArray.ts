@@ -125,7 +125,7 @@ export const $periodSentences: WithErrorRule<std.Sentence[]> = factory
                     sentence_content,
                     fragments[i].range,
                 );
-                if (fragments.length >= 2) sentence.attr.Num = "" + (i + 1);
+                if (fragments.length >= 2) sentence.attr.Num = String(i + 1);
                 if (
                     sentence_content[0] instanceof __Text &&
                     sentence_content[0].text.match(/^ただし、|但し、/)

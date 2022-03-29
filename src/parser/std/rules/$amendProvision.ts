@@ -32,7 +32,7 @@ export const amendProvisionToLines = (amendProvision: std.AmendProvision, indent
                         "",
                         null,
                         [],
-                        [newStdEL("Sentence", {}, child.children)]
+                        child.children,
                     ),
                 ],
                 CST.EOL,

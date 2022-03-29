@@ -1,4 +1,5 @@
 import * as std from "../../law/std";
+import { Diff } from "../../util";
 
 export class Control {
     public constructor(
@@ -34,4 +35,4 @@ export class Sentences {
 
 export type SentencesArray = Sentences[];
 
-export type SentenceChildEL = std.Line | std.QuoteStruct | std.ArithFormula | std.Ruby | std.Sup | std.Sub | std.__EL;
+export type SentenceChildEL = Diff<std.Sentence["children"][number], string>;

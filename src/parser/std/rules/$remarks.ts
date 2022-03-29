@@ -10,54 +10,6 @@ import { Control, Sentences } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 
-
-const $remarksChildren: WithErrorRule<(std.Sentence | std.ParagraphItem)[]> = factory
-    .withName("remarksChildren")
-    .sequence(s => s
-        .and(r => r
-            .oneOrMore(r => r
-                .sequence(s => s
-                    .andOmit(r => r.zeroOrMore(() => $blankLine))
-                    .and(r => r
-                        .choice(c => c
-                            .orSequence(s => s
-                                .and(() => $paragraphItem, "paragraphItem")
-                                .action(({ paragraphItem }) => {
-                                    return {
-                                        value: [paragraphItem.value],
-                                        errors: paragraphItem.errors,
-                                    };
-                                })
-                            )
-                            .or(r => r
-                                .oneMatch(({ item }) => {
-                                    if (
-                                        item.type === LineType.OTH
-                                && item.line.type === LineType.OTH
-                                && item.line.sentencesArray.length > 0
-                                    ) {
-                                        return {
-                                            value: item.line.sentencesArray.flat().map(ss => ss.sentences).flat(),
-                                            errors: [],
-                                        };
-                                    } else {
-                                        return null;
-                                    }
-                                })
-                            )
-                        )
-                    )
-                )
-            )
-        , "children")
-        .action(({ children }) => {
-            return {
-                value: children.map(c => c.value).flat(),
-                errors: children.map(c => c.errors).flat(),
-            };
-        })
-    );
-
 export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -117,6 +69,54 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
 
     return lines;
 };
+
+
+const $remarksChildren: WithErrorRule<(std.Sentence | std.ParagraphItem)[]> = factory
+    .withName("remarksChildren")
+    .sequence(s => s
+        .and(r => r
+            .oneOrMore(r => r
+                .sequence(s => s
+                    .andOmit(r => r.zeroOrMore(() => $blankLine))
+                    .and(r => r
+                        .choice(c => c
+                            .orSequence(s => s
+                                .and(() => $paragraphItem, "paragraphItem")
+                                .action(({ paragraphItem }) => {
+                                    return {
+                                        value: [paragraphItem.value],
+                                        errors: paragraphItem.errors,
+                                    };
+                                })
+                            )
+                            .or(r => r
+                                .oneMatch(({ item }) => {
+                                    if (
+                                        item.type === LineType.OTH
+                                && item.line.type === LineType.OTH
+                                && item.line.sentencesArray.length > 0
+                                    ) {
+                                        return {
+                                            value: item.line.sentencesArray.flat().map(ss => ss.sentences).flat(),
+                                            errors: [],
+                                        };
+                                    } else {
+                                        return null;
+                                    }
+                                })
+                            )
+                        )
+                    )
+                )
+            )
+        , "children")
+        .action(({ children }) => {
+            return {
+                value: children.map(c => c.value).flat(),
+                errors: children.map(c => c.errors).flat(),
+            };
+        })
+    );
 
 export const $remarks: WithErrorRule<std.Remarks> = factory
     .withName("remarks")
