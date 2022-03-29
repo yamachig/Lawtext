@@ -143,3 +143,37 @@ export type ArticleGroupTitle =
 
 export const isArticleGroupTitle = (el: EL): el is ArticleGroupTitle =>
     (articleGroupTitleTags as readonly string[]).includes(el.tag);
+
+export const listOrSublistTags = [
+    "List",
+    "Sublist1",
+    "Sublist2",
+    "Sublist3",
+] as const;
+
+export type ListOrSublist =
+    | std.List
+    | std.Sublist1
+    | std.Sublist2
+    | std.Sublist3
+    ;
+
+export const isListOrSublist = (el: EL): el is ListOrSublist =>
+    (listOrSublistTags as readonly string[]).includes(el.tag);
+
+export const listOrSublistSentenceTags = [
+    "ListSentence",
+    "Sublist1Sentence",
+    "Sublist2Sentence",
+    "Sublist3Sentence",
+] as const;
+
+export type ListOrSublistSentence =
+    | std.ListSentence
+    | std.Sublist1Sentence
+    | std.Sublist2Sentence
+    | std.Sublist3Sentence
+    ;
+
+export const isListOrSublistSentence = (el: EL): el is ListOrSublistSentence =>
+    (listOrSublistSentenceTags as readonly string[]).includes(el.tag);

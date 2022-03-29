@@ -14,6 +14,7 @@ import { ErrorMessage } from "../../cst/error";
 import { rangeOfELs } from "../../../node/el";
 import $amendProvision, { amendProvisionToLines } from "./$amendProvision";
 import { Env } from "../env";
+import { $listsOuter, listOrSublistToLines } from "./$list";
 
 
 export const paragraphItemToLines = (
@@ -145,9 +146,7 @@ export const paragraphItemToLines = (
             // blocks.push(renderStyleStruct(child, indent + 1)); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "List") {
-            // TODO: Implement
-            throw new NotImplementedError(child.tag);
-            // blocks.push(renderList(child, indent + 2)); /* >>>> INDENT ++++ INDENT >>>> */
+            lines.push(...listOrSublistToLines(child, [...indentTexts, CST.INDENT, CST.INDENT])); /* >>>> INDENT ++++ INDENT >>>> */
 
         } else if (child.tag === "AmendProvision") {
             lines.push(...amendProvisionToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
@@ -169,6 +168,7 @@ export const $paragraphItemChildren: WithErrorRule<Diff<std.ParagraphItem, std.P
             .oneOrMore(r => r
                 .choice(c => c
                     .orSequence(s => s
+                        .andOmit(r => r.zeroOrMore(() => $blankLine))
                         .and(() => $paragraphItem, "elWithErrors")
                         .and(r => r.assert(({ elWithErrors }) => !std.isParagraph(elWithErrors.value)))
                         .action(({ elWithErrors }) => {
@@ -190,7 +190,7 @@ export const $paragraphItemChildren: WithErrorRule<Diff<std.ParagraphItem, std.P
     );
 
 export const $paragraphItemChildrenOuter: WithErrorRule<
-    (Diff<std.ParagraphItem, std.Paragraph> | std.AmendProvision)[]
+    (Diff<std.ParagraphItem, std.Paragraph> | std.AmendProvision | std.List)[]
 > = (
     factory as VirtualLineRuleFactory<
         Env & {
@@ -229,6 +229,7 @@ export const $paragraphItemChildrenOuter: WithErrorRule<
                         };
                     })
                 )
+                .or(() => $listsOuter)
                 .or(() => $paragraphItemChildren)
             )
         , "children")

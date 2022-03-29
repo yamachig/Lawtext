@@ -356,7 +356,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
   一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
 
     !（適用除外）
-!  ３　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
+!  第二条　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
 `;
         const expectedErrorMessages = ["$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。" ];
         const expectedRendered = `\
