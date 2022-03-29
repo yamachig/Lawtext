@@ -343,21 +343,23 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
         ].join("");
     }
     public get firstColumnIndicatorRange(): [number, number] | null {
-        return this.range ? [this.range[0], this.range[0] + 1] : null;
+        if (!this.range) return null;
+        const start = this.range[0] + this.indentTexts.map(s => s.length).reduce((a, b) => a + b, 0);
+        return this.range ? [start, start + this.firstColumnIndicator.length] : null;
     }
     public get midIndicatorsSpaceRange(): [number, number] | null {
         if (!this.range) return null;
-        const start = this.range[0] + 1;
+        const start = this.range[0] + this.indentTexts.map(s => s.length).reduce((a, b) => a + b, 0) + this.firstColumnIndicator.length;
         return [start, start + this.midIndicatorsSpace.length];
     }
     public get columnIndicatorRange(): [number, number] | null {
         if (!this.range) return null;
-        const start = this.range[0] + 1 + this.midIndicatorsSpace.length;
-        return [start, start + 1];
+        const start = this.range[0] + this.indentTexts.map(s => s.length).reduce((a, b) => a + b, 0) + this.firstColumnIndicator.length + this.midIndicatorsSpace.length;
+        return [start, start + this.columnIndicator.length];
     }
     public get midSpaceRange(): [number, number] | null {
         if (!this.range) return null;
-        const start = this.range[0] + 1 + this.midIndicatorsSpace.length + 1;
+        const start = this.range[0] + this.indentTexts.map(s => s.length).reduce((a, b) => a + b, 0) + this.firstColumnIndicator.length + this.midIndicatorsSpace.length + this.columnIndicator.length;
         return [start, start + this.midSpace.length];
     }
     public get attrEntriesRange(): [number, number] | null {

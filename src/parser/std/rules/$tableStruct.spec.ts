@@ -159,8 +159,8 @@ describe("Test $tableStruct and tableStructToLines", () => {
 :table-struct:表一
 
   * * 項
-    !- 種名
-!
+    !-! 種名
+
 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = ["table: Column indicator mismatch"];
@@ -236,8 +236,8 @@ describe("Test $tableStruct and tableStructToLines", () => {
         const lawtextWithMarker = `\
 :table-struct:表一
 
-  !* 項
-!  * 種名
+  !!* 項
+  * 種名
 
 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;

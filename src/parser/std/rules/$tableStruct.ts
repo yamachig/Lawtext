@@ -179,13 +179,13 @@ const $table: WithErrorRule<std.Table> = factory
                     if (tableRowOrNull === null) {
                         errors.push(new ErrorMessage(
                             "table: No first column indicator",
-                            tableColumnLine.virtualRange,
+                            tableColumnLine.line.firstColumnIndicatorRange ?? tableColumnLine.virtualRange,
                         ));
                         tableRows.push(tableRow);
                     } else if (isTableHeaderRow(tableRowOrNull) !== (tableColumnLine.line.columnIndicator === "*")) {
                         errors.push(new ErrorMessage(
                             "table: Column indicator mismatch",
-                            tableColumnLine.virtualRange,
+                            tableColumnLine.line.columnIndicatorRange ?? tableColumnLine.virtualRange,
                         ));
                     }
 
