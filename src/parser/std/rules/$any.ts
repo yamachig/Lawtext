@@ -12,7 +12,7 @@ import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
 import $article, { articleToLines } from "./$article";
 import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import $articleGroup, { articleGroupToLines } from "./$articleGroup";
-import $figStruct, { $fig, figStructToLines, figToLines } from "./$figStruct";
+import $figStruct, { figStructToLines } from "./$figStruct";
 import { $list, listOrSublistToLines } from "./$list";
 import { $format, $formatStruct, $note, $noteStruct, $style, $styleStruct, noteLikeStructToLines, noteLikeToLines } from "./$noteLike";
 import $preamble, { preambleToLines } from "./$preamble";
@@ -43,7 +43,6 @@ export const anyToLines = (any: (std.StdEL | std.__EL | string), indentTexts: st
     else if (std.isArithFormula(any)) { return arithFormulaToLines(any, indentTexts); }
     else if (std.isArticle(any)) { return articleToLines(any, indentTexts); }
     else if (std.isArticleGroup(any)) { return articleGroupToLines(any, indentTexts); }
-    else if (std.isFig(any)) { return figToLines(any, indentTexts); }
     else if (std.isFigStruct(any)) { return figStructToLines(any, indentTexts); }
     else if (std.isListOrSublist(any)) { return listOrSublistToLines(any, indentTexts); }
     else if (std.isNoteLike(any)) { return noteLikeToLines(any, indentTexts); }
@@ -77,7 +76,6 @@ export const $any: WithErrorRule<(std.StdEL | std.__EL | string)[]> = factory
                 .or(() => $arithFormula)
                 .or(() => $article)
                 .or(() => $articleGroup)
-                .or(() => $fig)
                 .or(() => $figStruct)
                 .or(() => $list)
                 .or(() => $note)

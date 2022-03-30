@@ -66,8 +66,7 @@ describe("Test $figStruct and figStructToLines", () => {
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-:fig-struct:
-  <Fig src="./pict/S27F03901000056-005.jpg"/>
+<Fig src="./pict/S27F03901000056-005.jpg"/>
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "FigStruct",
@@ -113,8 +112,7 @@ describe("Test $figStruct and figStructToLines", () => {
 `;
         const expectedErrorMessages: string[] = ["$figStruct: Figタグ に src 属性が設定されていません。"];
         const expectedRendered = `\
-:fig-struct:
-  <Fig src=""/>
+<Fig src=""/>
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "FigStruct",
