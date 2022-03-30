@@ -1,7 +1,7 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
-import { isFormatStruct, isNoteLike, isNoteLikeStructTitle, isNoteStruct, isStyleStruct, newStdEL, noteLikeStructTags, noteLikeStructTitleTags, StdELType } from "../../../law/std";
+import { isNoteLike, isNoteLikeStructTitle, newStdEL, noteLikeStructTags, noteLikeStructTitleTags, StdELType } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
@@ -10,6 +10,12 @@ import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import $any, { anyToLines } from "./$any";
+
+export const noteLikeStructControl = {
+    NoteStruct: ":note-struct:",
+    StyleStruct: ":style-struct:",
+    FormatStruct: ":format-struct:",
+} as const;
 
 export const noteLikeToLines = (noteLike: std.NoteLike, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -36,12 +42,7 @@ export const noteLikeStructToLines = (noteLikeStruct: std.NoteLikeStruct, indent
         indentTexts,
         [
             new Control(
-                (
-                    isNoteStruct(noteLikeStruct) ? ":note-struct:"
-                        : isStyleStruct(noteLikeStruct) ? ":style-struct:"
-                            : isFormatStruct(noteLikeStruct) ? ":format-struct:"
-                                : assertNever(noteLikeStruct)
-                ),
+                noteLikeStructControl[noteLikeStruct.tag],
                 null,
                 "",
                 null,
@@ -101,12 +102,6 @@ const noteLikeRules = {
 } as const;
 
 export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTags)[number]>(tag: TTag): WithErrorRule<StdELType<TTag>> => {
-    const controlPtn = (
-        tag === "NoteStruct" ? /^:note-struct:$/
-            : tag === "StyleStruct" ? /^:style-struct:$/
-                : tag === "FormatStruct" ? /^:format-struct:$/
-                    : assertNever(tag)
-    );
     const noteLikeRule = noteLikeRules[tag] as WithErrorRule<
         TTag extends "NoteStruct" ? std.NoteLike
         : TTag extends "StyleStruct" ? std.Style
@@ -121,7 +116,7 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                     if (
                         item.type === LineType.OTH
                     && item.line.type === LineType.OTH
-                    && item.line.controls.some(c => controlPtn.exec(c.control))
+                    && item.line.controls.some(c => c.control === noteLikeStructControl[tag])
                     ) {
                         return item;
                     } else {

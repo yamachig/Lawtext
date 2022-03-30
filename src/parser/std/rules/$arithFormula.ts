@@ -9,6 +9,7 @@ import { Control } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 import $any, { anyToLines } from "./$any";
 
+export const arithFormulaControl = ":arith-formula:";
 
 export const arithFormulaToLines = (arithFormula: std.ArithFormula, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -19,7 +20,7 @@ export const arithFormulaToLines = (arithFormula: std.ArithFormula, indentTexts:
         indentTexts,
         [
             new Control(
-                ":arith-formula:",
+                arithFormulaControl,
                 null,
                 "",
                 null,
@@ -45,7 +46,7 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
                     item.type === LineType.OTH
                     && item.line.type === LineType.OTH
                     && item.line.sentencesArray.length === 0
-                    && item.line.controls.some(c => /^:arith-formula:$/.exec(c.control))
+                    && item.line.controls.some(c => c.control === arithFormulaControl)
                 ) {
                     return item;
                 } else {

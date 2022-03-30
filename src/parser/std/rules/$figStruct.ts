@@ -10,6 +10,7 @@ import { EL, rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 
+export const figStructControl = ":fig-struct:";
 
 export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -27,7 +28,7 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
             indentTexts,
             [
                 new Control(
-                    ":fig-struct:",
+                    figStructControl,
                     null,
                     "",
                     null,
@@ -137,7 +138,7 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                     if (
                         item.type === LineType.OTH
                         && item.line.type === LineType.OTH
-                        && item.line.controls.some(c => /^:fig-struct:$/.exec(c.control))
+                        && item.line.controls.some(c => c.control === figStructControl)
                     ) {
                         return item;
                     } else {

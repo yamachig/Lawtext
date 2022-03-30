@@ -10,6 +10,8 @@ import { paragraphItemToLines } from "./$paragraphItem";
 import { Control } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 
+export const preambleControl = ":preamble:";
+
 export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -19,7 +21,7 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
         indentTexts,
         [
             new Control(
-                ":前文:",
+                preambleControl,
                 null,
                 "",
                 null,
@@ -91,7 +93,7 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
                     // && item.virtualIndentDepth === 0
                     && item.line.sentencesArray.length === 0
                     && item.line.controls.length === 1
-                    && item.line.controls.some(c => /^(?::前文:|:Preamble:|:preamble:)$/.exec(c.control))
+                    && item.line.controls.some(c => c.control === preambleControl)
                 ) {
                     return item;
                 } else {

@@ -11,15 +11,18 @@ import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 
+export const remarksControl = ":remarks:";
+export const remarksLabelPtn = /^(?:備\s*考|注)\s*$/;
+
 export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
     const remarksLabelTextSentenceChildren = (
         remarks.children.find(el => el.tag === "RemarksLabel") as std.RemarksLabel | undefined
     )?.children;
-    const controls = remarksLabelTextSentenceChildren && /^(?:備\s*考|注)\s*$/.exec(sentenceChildrenToString(remarksLabelTextSentenceChildren)) ? [] : [
+    const controls = remarksLabelTextSentenceChildren && remarksLabelPtn.exec(sentenceChildrenToString(remarksLabelTextSentenceChildren)) ? [] : [
         new Control(
-            ":remarks:",
+            remarksControl,
             null,
             "",
             null,
@@ -131,11 +134,11 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                     && item.line.type === LineType.OTH
                     && (
                         (
-                            item.line.controls.some(c => /^:remarks:$/.exec(c.control))
+                            item.line.controls.some(c => c.control === remarksControl)
                         )
                         || (
                             item.line.sentencesArray.length > 0
-                            && /^(?:備\s*考|注)\s*$/.exec(item.line.sentencesArray[0].sentences[0].text)
+                            && remarksLabelPtn.exec(item.line.sentencesArray[0].sentences[0].text)
                         )
                     )
                 ) {
