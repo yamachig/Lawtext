@@ -7,6 +7,18 @@ import { mergeAdjacentTexts, WithErrorRule } from "../util";
 import { Control } from "../../../node/cst/inline";
 import { __Parentheses } from "../../../node/control";
 
+export const supplProvisionAppdxItemControl = {
+    SupplProvisionAppdx: ":suppl-provision-appdx:",
+    SupplProvisionAppdxTable: ":suppl-provision-appdx-table:",
+    SupplProvisionAppdxStyle: ":suppl-provision-appdx-style:",
+} as const;
+
+export const supplProvisionAppdxItemTitlePtn = {
+    SupplProvisionAppdx: /^[付附]則[付附]録/,
+    SupplProvisionAppdxTable: /^[付附]則[別付附]表/,
+    SupplProvisionAppdxStyle: /^[付附]則[^(（]*様式/,
+} as const;
+
 const makeControlRule = <
     TMainTag extends string,
     TTitleTag extends string,
@@ -45,9 +57,9 @@ const makeControlRule = <
         );
 };
 
-const $supplProvisionAppdxControl = makeControlRule(/^:suppl-provision-appdx:/, "SupplProvisionAppdx", "ArithFormulaNum");
-const $supplProvisionAppdxTableControl = makeControlRule(/^:suppl-provision-appdx-table:/, "SupplProvisionAppdxTable", "SupplProvisionAppdxTableTitle");
-const $supplProvisionAppdxStyleControl = makeControlRule(/^:suppl-provision-appdx-style:/, "SupplProvisionAppdxStyle", "SupplProvisionAppdxTableTitle");
+const $supplProvisionAppdxControl = makeControlRule(new RegExp(`^${supplProvisionAppdxItemControl.SupplProvisionAppdx}`), "SupplProvisionAppdx", "ArithFormulaNum");
+const $supplProvisionAppdxTableControl = makeControlRule(new RegExp(`^${supplProvisionAppdxItemControl.SupplProvisionAppdxTable}`), "SupplProvisionAppdxTable", "SupplProvisionAppdxTableTitle");
+const $supplProvisionAppdxStyleControl = makeControlRule(new RegExp(`^${supplProvisionAppdxItemControl.SupplProvisionAppdxStyle}`), "SupplProvisionAppdxStyle", "SupplProvisionAppdxTableTitle");
 
 
 export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdxItemHeadLine> = factory
@@ -92,17 +104,17 @@ export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdx
                         } as const;
                     })
                 )
-                .orSequence(s => s
-                    .and(r => r.regExp(/^[付附]則(?:別表)/), "head")
-                    .action(({ head }) => {
-                        return {
-                            mainTag: "SupplProvisionAppdxTable",
-                            titleTag: "SupplProvisionAppdxTableTitle",
-                            control: null,
-                            head,
-                        } as const;
-                    })
-                )
+                // .orSequence(s => s
+                //     .and(r => r.regExp(/^[付附]則(?:別表)/), "head")
+                //     .action(({ head }) => {
+                //         return {
+                //             mainTag: "SupplProvisionAppdxTable",
+                //             titleTag: "SupplProvisionAppdxTableTitle",
+                //             control: null,
+                //             head,
+                //         } as const;
+                //     })
+                // )
             )
         , "headStruct")
         .and(() => $sentenceChildren, "tail")

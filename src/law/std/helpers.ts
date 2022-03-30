@@ -264,3 +264,33 @@ export type AppdxItemTitle =
 
 export const isAppdxItemTitle = (el: EL): el is AppdxItemTitle =>
     (appdxItemTitleTags as readonly string[]).includes(el.tag);
+
+export const supplProvisionAppdxItemTags = [
+    "SupplProvisionAppdxTable",
+    "SupplProvisionAppdxStyle",
+    "SupplProvisionAppdx",
+] as const;
+
+export type SupplProvisionAppdxItem =
+    | std.SupplProvisionAppdxTable
+    | std.SupplProvisionAppdxStyle
+    | std.SupplProvisionAppdx
+    ;
+
+export const isSupplProvisionAppdxItem = (el: EL): el is SupplProvisionAppdxItem =>
+    (supplProvisionAppdxItemTags as readonly string[]).includes(el.tag);
+
+export const supplProvisionAppdxItemTitleTags = [
+    "SupplProvisionAppdxTableTitle",
+    "SupplProvisionAppdxStyleTitle",
+    "ArithFormulaNum",
+] as const;
+
+export type SupplProvisionAppdxItemTitle =
+        | std.SupplProvisionAppdxTableTitle
+        | std.SupplProvisionAppdxStyleTitle
+        | std.ArithFormulaNum
+        ;
+
+export const isSupplProvisionAppdxItemTitle = (el: EL): el is SupplProvisionAppdxItemTitle =>
+    (supplProvisionAppdxItemTitleTags as readonly string[]).includes(el.tag);
