@@ -154,11 +154,11 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
             // for (let i = 0; i < children.value.length; i++) {
             //     children.value[i].attr.Num = `${i + 1}`;
             // }
-                const noteLikeStructTitleText = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.text).join("");
-                const noteLikeStructTitle = noteLikeStructTitleText ? newStdEL(
+                const noteLikeStructTitleSentenceChildren = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
+                const noteLikeStructTitle = noteLikeStructTitleSentenceChildren.length > 0 ? newStdEL(
                     std.noteLikeStructTitleTags[std.noteLikeStructTags.indexOf(tag)],
                     {},
-                    [noteLikeStructTitleText],
+                    noteLikeStructTitleSentenceChildren,
                     titleLine.virtualRange,
                 ) : null;
                 const noteLikeStruct = newStdEL(

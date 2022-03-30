@@ -1,7 +1,7 @@
 import factory from "../factory";
 import $indents from "./$indents";
 import { SupplProvisionHeadLine } from "../../../node/cst/line";
-import { $_EOL } from "./lexical";
+import { $_, $_EOL } from "./lexical";
 import { WithErrorRule } from "../util";
 
 
@@ -14,7 +14,14 @@ export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = fa
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(s => s
-                    .and(r => r.oneOf("(（"), "openParen")
+                    .and(r => r
+                        .asSlice(r => r
+                            .sequence(s => s
+                                .and(() => $_)
+                                .and(r => r.oneOf("(（"))
+                            )
+                        )
+                    , "openParen")
                     .and(r => r.regExp(/^[^)）\r\n]+/), "amendLawNum")
                     .and(r => r.oneOf(")）"), "closeParen")
                     .action(({ openParen, amendLawNum, closeParen }) => ({ openParen, amendLawNum, closeParen }))

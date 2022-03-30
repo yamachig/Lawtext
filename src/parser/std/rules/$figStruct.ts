@@ -15,11 +15,11 @@ export const figStructControl = ":fig-struct:";
 export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    const figStructTitleTextSentenceChildren = (
+    const figStructTitleSentenceChildren = (
         figStruct.children.find(el => el.tag === "FigStructTitle") as std.FigStructTitle | undefined
     )?.children;
 
-    const requireControl = Boolean(figStructTitleTextSentenceChildren) || figStruct.children.length !== 1 || figStruct.children[0].tag !== "Fig";
+    const requireControl = Boolean(figStructTitleSentenceChildren) || figStruct.children.length !== 1 || figStruct.children[0].tag !== "Fig";
 
     if (requireControl) {
         lines.push(new OtherLine(
@@ -34,12 +34,12 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
                     null,
                 )
             ],
-            figStructTitleTextSentenceChildren ? [
+            figStructTitleSentenceChildren ? [
                 new Sentences(
                     "",
                     null,
                     [],
-                    [newStdEL("Sentence", {}, figStructTitleTextSentenceChildren)]
+                    [newStdEL("Sentence", {}, figStructTitleSentenceChildren)]
                 )
             ] : [],
             CST.EOL,
@@ -176,11 +176,11 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                 // for (let i = 0; i < children.value.length; i++) {
                 //     children.value[i].attr.Num = `${i + 1}`;
                 // }
-                const figStructTitleText = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.text).join("");
-                const figStructTitle = figStructTitleText ? newStdEL(
+                const figStructTitleSentenceChildren = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
+                const figStructTitle = figStructTitleSentenceChildren.length > 0 ? newStdEL(
                     "FigStructTitle",
                     {},
-                    [figStructTitleText],
+                    figStructTitleSentenceChildren,
                     titleLine.virtualRange,
                 ) : null;
                 const figStruct = newStdEL(

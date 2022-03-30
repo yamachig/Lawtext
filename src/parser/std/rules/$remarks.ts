@@ -17,10 +17,10 @@ export const remarksLabelPtn = /^(?:備\s*考|注)\s*$/;
 export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    const remarksLabelTextSentenceChildren = (
+    const remarksLabelSentenceChildren = (
         remarks.children.find(el => el.tag === "RemarksLabel") as std.RemarksLabel | undefined
     )?.children;
-    const controls = remarksLabelTextSentenceChildren && remarksLabelPtn.exec(sentenceChildrenToString(remarksLabelTextSentenceChildren)) ? [] : [
+    const controls = remarksLabelSentenceChildren && remarksLabelPtn.exec(sentenceChildrenToString(remarksLabelSentenceChildren)) ? [] : [
         new Control(
             remarksControl,
             null,
@@ -34,12 +34,12 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
         indentTexts.length,
         indentTexts,
         controls,
-        remarksLabelTextSentenceChildren ? [
+        remarksLabelSentenceChildren ? [
             new Sentences(
                 "",
                 null,
                 [],
-                [newStdEL("Sentence", {}, remarksLabelTextSentenceChildren)]
+                [newStdEL("Sentence", {}, remarksLabelSentenceChildren)]
             )
         ] : [],
         CST.EOL,
@@ -174,11 +174,11 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
             // for (let i = 0; i < children.value.length; i++) {
             //     children.value[i].attr.Num = `${i + 1}`;
             // }
-            const remarksLabelText = labelLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.text).join("");
-            const remarksLabel = remarksLabelText ? newStdEL(
+            const remarksLabelSentenceChildren = labelLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
+            const remarksLabel = remarksLabelSentenceChildren.length > 0 ? newStdEL(
                 "RemarksLabel",
                 {},
-                [remarksLabelText],
+                remarksLabelSentenceChildren,
                 labelLine.virtualRange,
             ) : null;
             const remarks = newStdEL(
