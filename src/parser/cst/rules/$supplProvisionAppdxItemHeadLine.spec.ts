@@ -14,7 +14,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         const target = `\
 :suppl-provision-appdx:　附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 
-  .. figure:: ./pict/001.jpg
+  <Fig src="./pict/001.jpg"/>
 `;
         const expectedResult = {
             ok: true,
@@ -39,12 +39,14 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             lineEndText: `　
 `,
         } as const;
-        const expectedInline = [
+        const expectedTitle = [
             {
                 tag: "__Text",
                 attr: {},
                 children: ["附則付録第一"],
             },
+        ];
+        const expectedRelatedArticleNum = [
             {
                 tag: "__Parentheses",
                 attr: {
@@ -81,7 +83,8 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
 
@@ -91,7 +94,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         const target = `\
 附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 
-  .. figure:: ./pict/001.jpg
+  <Fig src="./pict/001.jpg"/>
 `;
         const expectedResult = {
             ok: true,
@@ -109,12 +112,14 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             lineEndText: `　
 `,
         } as const;
-        const expectedInline = [
+        const expectedTitle = [
             {
                 tag: "__Text",
                 attr: {},
                 children: ["附則付録第一"],
             },
+        ];
+        const expectedRelatedArticleNum = [
             {
                 tag: "__Parentheses",
                 attr: {
@@ -151,7 +156,8 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
 
@@ -187,12 +193,14 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             lineEndText: `　
 `,
         } as const;
-        const expectedInline = [
+        const expectedTitle = [
             {
                 tag: "__Text",
                 attr: {},
                 children: ["附則別表第二"],
             },
+        ];
+        const expectedRelatedArticleNum = [
             {
                 tag: "__Parentheses",
                 attr: {
@@ -229,7 +237,8 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
 
@@ -258,12 +267,14 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             lineEndText: `　
 `,
         } as const;
-        const expectedInline = [
+        const expectedTitle = [
             {
                 tag: "__Text",
                 attr: {},
                 children: ["附則別表第二"],
             },
+        ];
+        const expectedRelatedArticleNum = [
             {
                 tag: "__Parentheses",
                 attr: {
@@ -300,7 +311,8 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
 
@@ -310,7 +322,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         const target = `\
 :suppl-provision-appdx-style:附則別記様式（第十四条関係）　
 
-  .. figure:: ./pict/001.pdf
+  <Fig src="./pict/001.pdf"/>
 `;
         const expectedResult = {
             ok: true,
@@ -335,12 +347,14 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             lineEndText: `　
 `,
         } as const;
-        const expectedInline = [
+        const expectedTitle = [
             {
                 tag: "__Text",
                 attr: {},
                 children: ["附則別記様式"],
             },
+        ];
+        const expectedRelatedArticleNum = [
             {
                 tag: "__Parentheses",
                 attr: {
@@ -377,7 +391,8 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
 
@@ -387,7 +402,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         const target = `\
 附則別記様式（第十四条関係）　
 
-  .. figure:: ./pict/001.pdf
+  <Fig src="./pict/001.pdf"/>
 `;
         const expectedResult = {
             ok: true,
@@ -404,12 +419,14 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
             lineEndText: `　
 `,
         } as const;
-        const expectedInline = [
+        const expectedTitle = [
             {
                 tag: "__Text",
                 attr: {},
                 children: ["附則別記様式"],
             },
+        ];
+        const expectedRelatedArticleNum = [
             {
                 tag: "__Parentheses",
                 attr: {
@@ -446,7 +463,8 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
 

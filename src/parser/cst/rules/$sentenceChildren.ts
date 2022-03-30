@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { __EL } from "../../../law/std";
-import { __Parentheses, __Text } from "../../../node/control";
+import { ParenthesesType, __Parentheses, __Text } from "../../../node/control";
 import { EL } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
 import { factory } from "../factory";
@@ -381,7 +381,7 @@ export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
 ;
 
 export const makeParenthesesInline = (
-    parenthesisType: string,
+    parenthesisType: ParenthesesType,
     startPtn: RegExp,
     endPtn: RegExp,
 ): WithErrorRule<__Parentheses> => {
@@ -464,14 +464,14 @@ export const $ROUND_PARENTHESES_INLINE = makeParenthesesInline(
 $ROUND_PARENTHESES_INLINE.name = "ROUND_PARENTHESES_INLINE";
 
 export const $SQUARE_BRACKETS_INLINE = makeParenthesesInline(
-    "round",
+    "squareb",
     /^[[［]/,
     /^[\]］]/,
 );
 $SQUARE_BRACKETS_INLINE.name = "SQUARE_BRACKETS_INLINE";
 
 export const $CURLY_BRACKETS_INLINE = makeParenthesesInline(
-    "round",
+    "curly",
     /^[{｛]/,
     /^[}｝]/,
 );

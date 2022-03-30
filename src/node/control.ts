@@ -1,6 +1,13 @@
 import { MatchFail } from "generic-parser/lib/core";
 import { EL } from "./el";
 
+export const parenthesesTypeStrings = [
+    "round",
+    "square",
+    "curly",
+    "squareb",
+] as const;
+export type ParenthesesType = typeof parenthesesTypeStrings[number];
 
 export class __Parentheses extends EL {
 
@@ -8,9 +15,13 @@ export class __Parentheses extends EL {
     public get isControl(): true {
         return true;
     }
+    public attr: {
+        type: ParenthesesType,
+        depth: string,
+    };
 
     constructor(
-        type: string,
+        type: ParenthesesType,
         depth: number,
         start: string,
         end: string,
@@ -23,12 +34,13 @@ export class __Parentheses extends EL {
         } | null = null,
     ) {
         super("__Parentheses");
+        this.attr = {
+            type,
+            depth: `${depth}`,
+        };
         if (range){
             this.range = [range.start[0], range.end[1]];
         }
-
-        this.attr.type = type;
-        this.attr.depth = `${depth}`;
         this.append(new EL("__PStart", { type }, [start], range && range.start));
         this.extend([new EL("__PContent", { type }, content, range && range.content)]);
         this.append(new EL("__PEnd", { type }, [end], range && range.end));

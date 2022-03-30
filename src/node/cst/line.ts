@@ -117,7 +117,8 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
         indentTexts: string[],
         public mainTag: "Appdx" | "AppdxTable" | "AppdxStyle" | "AppdxFormat" | "AppdxFig" | "AppdxNote",
         public controls: Controls,
-        public sentenceChildren: SentenceChildEL[],
+        public title: SentenceChildEL[],
+        public relatedArticleNum: SentenceChildEL[],
         lineEndText: string,
     ) {
         super(LineType.APP, range, indentDepth, indentTexts, lineEndText);
@@ -125,7 +126,8 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
     public contentText(): string {
         return [
             ...this.controls.map(c => c.control + c.trailingSpace),
-            sentenceChildrenToString(this.sentenceChildren),
+            sentenceChildrenToString(this.title),
+            sentenceChildrenToString(this.relatedArticleNum),
         ].join("");
     }
     public get controlsRange(): [number, number] | null {
@@ -139,8 +141,11 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
         }
         return (start !== null && end !== null) ? [start, end] : null;
     }
-    public get sentenceChildrenRange(): [number, number] | null {
-        return rangeOfELs(this.sentenceChildren);
+    public get titleRange(): [number, number] | null {
+        return rangeOfELs(this.title);
+    }
+    public get relatedArticleNumRange(): [number, number] | null {
+        return rangeOfELs(this.relatedArticleNum);
     }
 }
 
@@ -194,7 +199,8 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
         indentTexts: string[],
         public mainTag: "SupplProvisionAppdx" | "SupplProvisionAppdxTable" | "SupplProvisionAppdxStyle",
         public controls: Controls,
-        public sentenceChildren: SentenceChildEL[],
+        public title: SentenceChildEL[],
+        public relatedArticleNum: SentenceChildEL[],
         lineEndText: string,
     ) {
         super(LineType.SPA, range, indentDepth, indentTexts, lineEndText);
@@ -202,7 +208,8 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
     public contentText(): string {
         return [
             ...this.controls.map(c => c.control + c.trailingSpace),
-            ...sentenceChildrenToString(this.sentenceChildren),
+            sentenceChildrenToString(this.title),
+            sentenceChildrenToString(this.relatedArticleNum),
         ].join("");
     }
     public get controlsRange(): [number, number] | null {
@@ -216,8 +223,11 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
         }
         return (start !== null && end !== null) ? [start, end] : null;
     }
-    public get sentenceChildrenRange(): [number, number] | null {
-        return rangeOfELs(this.sentenceChildren);
+    public get titleRange(): [number, number] | null {
+        return rangeOfELs(this.title);
+    }
+    public get relatedArticleNumRange(): [number, number] | null {
+        return rangeOfELs(this.relatedArticleNum);
     }
 }
 

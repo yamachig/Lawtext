@@ -26,7 +26,7 @@ export const noteLikeStructToLines = (noteLikeStruct: std.NoteLikeStruct, indent
     const noteLikeStructTitleTag = noteLikeStructTitleTags[noteLikeStructTags.indexOf(noteLikeStruct.tag)];
 
     const noteLikeStructTitleSentenceChildren = (
-        (noteLikeStruct.children as (std.Remarks | std.NoteLike | std.NoteLikeStructTitle)[])
+        (noteLikeStruct.children as (typeof noteLikeStruct.children)[number][])
             .find(el => el.tag === noteLikeStructTitleTag) as std.NoteLikeStructTitle | undefined
     )?.children;
 

@@ -5,6 +5,7 @@ import { SupplProvisionAppdxItemHeadLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
 import { mergeAdjacentTexts, WithErrorRule } from "../util";
 import { Control } from "../../../node/cst/inline";
+import { __Parentheses } from "../../../node/control";
 
 const makeControlRule = <
     TMainTag extends string,
@@ -108,6 +109,11 @@ export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdx
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, headStruct, tail, lineEndText }) => {
             const inline = mergeAdjacentTexts([headStruct.head, ...tail.value]);
+            const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
+            const [title, relatedArticleNum] = (
+                lastItem instanceof __Parentheses
+                && lastItem.attr.type === "round"
+            ) ? [inline.slice(0, -1), inline.slice(-1)] : [inline, []];
             const errors = [...indentsStruct.errors, ...tail.errors];
             return {
                 value: new SupplProvisionAppdxItemHeadLine(
@@ -116,7 +122,8 @@ export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdx
                     indentsStruct.value.indentTexts,
                     headStruct.mainTag,
                     headStruct.control ? [headStruct.control] : [],
-                    inline,
+                    title,
+                    relatedArticleNum,
                     lineEndText,
                 ),
                 errors,

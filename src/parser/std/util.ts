@@ -1,4 +1,5 @@
 import { Rule, Empty } from "generic-parser/lib/core";
+import { __Parentheses } from "../../node/control";
 import { SentencesArray } from "../../node/cst/inline";
 import { Line, LineType } from "../../node/cst/line";
 import { ErrorMessage } from "../cst/error";
@@ -51,7 +52,9 @@ export const isSingleParentheses = (line: VirtualLine | Line | SentencesArray): 
         columns.length === 1
             && columns[0].sentences.length === 1
             && columns[0].sentences[0].children.length === 1
-            && typeof columns[0].sentences[0].children[0] !== "string"
-            && columns[0].sentences[0].children[0].tag === "__Parentheses"
+            && columns[0].sentences[0].children[0] instanceof __Parentheses
+            && columns[0].sentences[0].children[0].attr.type === "round"
+            // && typeof columns[0].sentences[0].children[0] !== "string"
+            // && columns[0].sentences[0].children[0].tag === "__Parentheses"
     );
 };

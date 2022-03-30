@@ -13,8 +13,8 @@ import $article, { articleToLines } from "./$article";
 import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import $articleGroup, { articleGroupToLines } from "./$articleGroup";
 import $figStruct, { figStructToLines } from "./$figStruct";
-import { $list, listOrSublistToLines } from "./$list";
-import { $format, $formatStruct, $note, $noteStruct, $style, $styleStruct, noteLikeStructToLines, noteLikeToLines } from "./$noteLike";
+import { listOrSublistToLines } from "./$list";
+import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines, noteLikeToLines } from "./$noteLike";
 import $preamble, { preambleToLines } from "./$preamble";
 import $tableStruct, { tableStructToLines, tableToLines } from "./$tableStruct";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
@@ -72,15 +72,15 @@ export const $any: WithErrorRule<(std.StdEL | std.__EL | string)[]> = factory
     .choice(c => c
         .orSequence(s => s
             .and(r => r.choice(c => c
-                // .or(() => $amendProvision)
+                // .or(() => $amendProvision) // Same as (Sentence | Column)[]
                 .or(() => $arithFormula)
                 .or(() => $article)
                 .or(() => $articleGroup)
                 .or(() => $figStruct)
-                .or(() => $list)
-                .or(() => $note)
-                .or(() => $style)
-                .or(() => $format)
+                // .or(() => $list) // Same as (Sentence | Column)[]
+                // .or(() => $note) // Same as $any
+                // .or(() => $style) // Same as $any
+                // .or(() => $format) // Same as $any
                 .or(() => $noteStruct)
                 .or(() => $styleStruct)
                 .or(() => $formatStruct)

@@ -5,6 +5,7 @@ import { AppdxItemHeadLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
 import { mergeAdjacentTexts, WithErrorRule } from "../util";
 import { Control } from "../../../node/cst/inline";
+import { __Parentheses } from "../../../node/control";
 
 const makeControlRule = <
     TMainTag extends string,
@@ -44,12 +45,31 @@ const makeControlRule = <
         );
 };
 
-const $appdxControl = makeControlRule(/^:appdx:/, "Appdx", "ArithFormulaNum");
-const $appdxTableControl = makeControlRule(/^:appdx-table:/, "AppdxTable", "AppdxTableTitle");
-const $appdxStyleControl = makeControlRule(/^:appdx-style:/, "AppdxStyle", "AppdxTableTitle");
-const $appdxFormatControl = makeControlRule(/^:appdx-format:/, "AppdxFormat", "AppdxFormatTitle");
-const $appdxFigControl = makeControlRule(/^:appdx-fig:/, "AppdxFig", "AppdxFigTitle");
-const $appdxNoteControl = makeControlRule(/^:appdx-note:/, "AppdxNote", "AppdxNoteTitle");
+
+export const appdxItemControl = {
+    AppdxFig: ":appdx-fig:",
+    AppdxStyle: ":appdx-style:",
+    AppdxFormat: ":appdx-format:",
+    AppdxTable: ":appdx-table:",
+    AppdxNote: ":appdx-note:",
+    Appdx: ":appdx:",
+} as const;
+
+export const appdxItemTitlePtn = {
+    AppdxFig: /^[別付附]?図/,
+    AppdxStyle: /^(?![付附]則)[^(（]*様式/,
+    AppdxFormat: /^(?![付附]則)[^(（]*書式/,
+    AppdxTable: /^[別付附]表/,
+    AppdxNote: /^別[記紙]/,
+    Appdx: /^[付附]録/,
+} as const;
+
+const $appdxControl = makeControlRule(new RegExp(`^${appdxItemControl.Appdx}`), "Appdx", "ArithFormulaNum");
+const $appdxTableControl = makeControlRule(new RegExp(`^${appdxItemControl.AppdxTable}`), "AppdxTable", "AppdxTableTitle");
+const $appdxStyleControl = makeControlRule(new RegExp(`^${appdxItemControl.AppdxStyle}`), "AppdxStyle", "AppdxTableTitle");
+const $appdxFormatControl = makeControlRule(new RegExp(`^${appdxItemControl.AppdxFormat}`), "AppdxFormat", "AppdxFormatTitle");
+const $appdxFigControl = makeControlRule(new RegExp(`^${appdxItemControl.AppdxFig}`), "AppdxFig", "AppdxFigTitle");
+const $appdxNoteControl = makeControlRule(new RegExp(`^${appdxItemControl.AppdxNote}`), "AppdxNote", "AppdxNoteTitle");
 
 export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
     .withName("appdxItemHeadLine")
@@ -64,7 +84,7 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                 .or(() => $appdxFigControl)
                 .or(() => $appdxNoteControl)
                 .orSequence(s => s
-                    .and(r => r.regExp(/^[別付附]?図/), "head")
+                    .and(r => r.regExp(appdxItemTitlePtn.AppdxFig), "head")
                     .action(({ head }) => {
                         return {
                             mainTag: "AppdxFig",
@@ -75,7 +95,7 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.regExp(/^(?![付附]則)[^(（]*様式/), "head")
+                    .and(r => r.regExp(appdxItemTitlePtn.AppdxStyle), "head")
                     .action(({ head }) => {
                         return {
                             mainTag: "AppdxStyle",
@@ -86,7 +106,7 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.regExp(/^(?![付附]則)[^(（]*書式/), "head")
+                    .and(r => r.regExp(appdxItemTitlePtn.AppdxFormat), "head")
                     .action(({ head }) => {
                         return {
                             mainTag: "AppdxFormat",
@@ -97,7 +117,7 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.regExp(/^[別付附]表/), "head")
+                    .and(r => r.regExp(appdxItemTitlePtn.AppdxTable), "head")
                     .action(({ head }) => {
                         return {
                             mainTag: "AppdxTable",
@@ -108,7 +128,7 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.regExp(/^別[記紙]/), "head")
+                    .and(r => r.regExp(appdxItemTitlePtn.AppdxNote), "head")
                     .action(({ head }) => {
                         return {
                             mainTag: "AppdxNote",
@@ -119,7 +139,7 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                     })
                 )
                 .orSequence(s => s
-                    .and(r => r.regExp(/^[付附]録/), "head")
+                    .and(r => r.regExp(appdxItemTitlePtn.Appdx), "head")
                     .action(({ head }) => {
                         return {
                             mainTag: "Appdx",
@@ -135,6 +155,11 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, headStruct, tail, lineEndText }) => {
             const inline = mergeAdjacentTexts([headStruct.head, ...tail.value]);
+            const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
+            const [title, relatedArticleNum] = (
+                lastItem instanceof __Parentheses
+                && lastItem.attr.type === "round"
+            ) ? [inline.slice(0, -1), inline.slice(-1)] : [inline, []];
             const errors = [...indentsStruct.errors, ...tail.errors];
             return {
                 value: new AppdxItemHeadLine(
@@ -143,7 +168,8 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                     indentsStruct.value.indentTexts,
                     headStruct.mainTag,
                     headStruct.control ? [headStruct.control] : [],
-                    inline,
+                    title,
+                    relatedArticleNum,
                     lineEndText,
                 ),
                 errors,

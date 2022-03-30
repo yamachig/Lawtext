@@ -222,3 +222,45 @@ export type NoteLikeStructTitle =
 
 export const isNoteLikeStructTitle = (el: EL): el is NoteLikeStructTitle =>
     (noteLikeStructTitleTags as readonly string[]).includes(el.tag);
+
+export const appdxItemTags = [
+    "AppdxFig",
+    "AppdxStyle",
+    "AppdxFormat",
+    "AppdxTable",
+    "AppdxNote",
+    "Appdx",
+] as const;
+
+export type AppdxItem =
+    | std.AppdxFig
+    | std.AppdxStyle
+    | std.AppdxFormat
+    | std.AppdxTable
+    | std.AppdxNote
+    | std.Appdx
+    ;
+
+export const isAppdxItem = (el: EL): el is AppdxItem =>
+    (appdxItemTags as readonly string[]).includes(el.tag);
+
+export const appdxItemTitleTags = [
+    "AppdxFigTitle",
+    "AppdxStyleTitle",
+    "AppdxFormatTitle",
+    "AppdxTableTitle",
+    "AppdxNoteTitle",
+    "ArithFormulaNum",
+] as const;
+
+export type AppdxItemTitle =
+        | std.AppdxFigTitle
+        | std.AppdxStyleTitle
+        | std.AppdxFormatTitle
+        | std.AppdxTableTitle
+        | std.AppdxNoteTitle
+        | std.ArithFormulaNum
+        ;
+
+export const isAppdxItemTitle = (el: EL): el is AppdxItemTitle =>
+    (appdxItemTitleTags as readonly string[]).includes(el.tag);
