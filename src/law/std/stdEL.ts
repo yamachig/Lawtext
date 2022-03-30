@@ -4,8 +4,8 @@ export interface __EL extends EL {
     isControl: true
 }
 
-export const isControl = (obj: EL): obj is __EL => {
-    return obj.isControl;
+export const isControl = (obj: EL | string): obj is __EL => {
+    return (typeof obj !== "string") && obj.isControl;
 };
 
 export interface _StdEL extends EL {
@@ -26,8 +26,8 @@ export interface Law extends _StdEL {
     children: Array<(LawNum | LawBody)>
 }
 
-export const isLaw = (obj: EL): obj is Law => {
-    return obj.tag === "Law";
+export const isLaw = (obj: EL | string): obj is Law => {
+    return (typeof obj !== "string") && (obj.tag === "Law");
 };
 
 export interface LawNum extends _StdEL {
@@ -35,8 +35,8 @@ export interface LawNum extends _StdEL {
     children: Array<__EL | string>
 }
 
-export const isLawNum = (obj: EL): obj is LawNum => {
-    return obj.tag === "LawNum";
+export const isLawNum = (obj: EL | string): obj is LawNum => {
+    return (typeof obj !== "string") && (obj.tag === "LawNum");
 };
 
 export interface LawBody extends _StdEL {
@@ -47,8 +47,8 @@ export interface LawBody extends _StdEL {
     children: Array<(LawTitle | EnactStatement | TOC | Preamble | MainProvision | SupplProvision | AppdxTable | AppdxNote | AppdxStyle | Appdx | AppdxFig | AppdxFormat)>
 }
 
-export const isLawBody = (obj: EL): obj is LawBody => {
-    return obj.tag === "LawBody";
+export const isLawBody = (obj: EL | string): obj is LawBody => {
+    return (typeof obj !== "string") && (obj.tag === "LawBody");
 };
 
 export interface LawTitle extends _StdEL {
@@ -61,8 +61,8 @@ export interface LawTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isLawTitle = (obj: EL): obj is LawTitle => {
-    return obj.tag === "LawTitle";
+export const isLawTitle = (obj: EL | string): obj is LawTitle => {
+    return (typeof obj !== "string") && (obj.tag === "LawTitle");
 };
 
 export interface EnactStatement extends _StdEL {
@@ -71,8 +71,8 @@ export interface EnactStatement extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isEnactStatement = (obj: EL): obj is EnactStatement => {
-    return obj.tag === "EnactStatement";
+export const isEnactStatement = (obj: EL | string): obj is EnactStatement => {
+    return (typeof obj !== "string") && (obj.tag === "EnactStatement");
 };
 
 export interface TOC extends _StdEL {
@@ -81,8 +81,8 @@ export interface TOC extends _StdEL {
     children: Array<(TOCLabel | TOCPreambleLabel | TOCPart | TOCChapter | TOCSection | TOCArticle | TOCSupplProvision | TOCAppdxTableLabel)>
 }
 
-export const isTOC = (obj: EL): obj is TOC => {
-    return obj.tag === "TOC";
+export const isTOC = (obj: EL | string): obj is TOC => {
+    return (typeof obj !== "string") && (obj.tag === "TOC");
 };
 
 export interface TOCLabel extends _StdEL {
@@ -91,8 +91,8 @@ export interface TOCLabel extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isTOCLabel = (obj: EL): obj is TOCLabel => {
-    return obj.tag === "TOCLabel";
+export const isTOCLabel = (obj: EL | string): obj is TOCLabel => {
+    return (typeof obj !== "string") && (obj.tag === "TOCLabel");
 };
 
 export interface TOCPreambleLabel extends _StdEL {
@@ -101,8 +101,8 @@ export interface TOCPreambleLabel extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isTOCPreambleLabel = (obj: EL): obj is TOCPreambleLabel => {
-    return obj.tag === "TOCPreambleLabel";
+export const isTOCPreambleLabel = (obj: EL | string): obj is TOCPreambleLabel => {
+    return (typeof obj !== "string") && (obj.tag === "TOCPreambleLabel");
 };
 
 export interface TOCPart extends _StdEL {
@@ -114,8 +114,8 @@ export interface TOCPart extends _StdEL {
     children: Array<(PartTitle | ArticleRange | TOCChapter)>
 }
 
-export const isTOCPart = (obj: EL): obj is TOCPart => {
-    return obj.tag === "TOCPart";
+export const isTOCPart = (obj: EL | string): obj is TOCPart => {
+    return (typeof obj !== "string") && (obj.tag === "TOCPart");
 };
 
 export interface TOCChapter extends _StdEL {
@@ -127,8 +127,8 @@ export interface TOCChapter extends _StdEL {
     children: Array<(ChapterTitle | ArticleRange | TOCSection)>
 }
 
-export const isTOCChapter = (obj: EL): obj is TOCChapter => {
-    return obj.tag === "TOCChapter";
+export const isTOCChapter = (obj: EL | string): obj is TOCChapter => {
+    return (typeof obj !== "string") && (obj.tag === "TOCChapter");
 };
 
 export interface TOCSection extends _StdEL {
@@ -140,8 +140,8 @@ export interface TOCSection extends _StdEL {
     children: Array<(SectionTitle | ArticleRange | TOCSubsection | TOCDivision)>
 }
 
-export const isTOCSection = (obj: EL): obj is TOCSection => {
-    return obj.tag === "TOCSection";
+export const isTOCSection = (obj: EL | string): obj is TOCSection => {
+    return (typeof obj !== "string") && (obj.tag === "TOCSection");
 };
 
 export interface TOCSubsection extends _StdEL {
@@ -153,8 +153,8 @@ export interface TOCSubsection extends _StdEL {
     children: Array<(SubsectionTitle | ArticleRange | TOCDivision)>
 }
 
-export const isTOCSubsection = (obj: EL): obj is TOCSubsection => {
-    return obj.tag === "TOCSubsection";
+export const isTOCSubsection = (obj: EL | string): obj is TOCSubsection => {
+    return (typeof obj !== "string") && (obj.tag === "TOCSubsection");
 };
 
 export interface TOCDivision extends _StdEL {
@@ -166,8 +166,8 @@ export interface TOCDivision extends _StdEL {
     children: Array<(DivisionTitle | ArticleRange)>
 }
 
-export const isTOCDivision = (obj: EL): obj is TOCDivision => {
-    return obj.tag === "TOCDivision";
+export const isTOCDivision = (obj: EL | string): obj is TOCDivision => {
+    return (typeof obj !== "string") && (obj.tag === "TOCDivision");
 };
 
 export interface TOCArticle extends _StdEL {
@@ -179,8 +179,8 @@ export interface TOCArticle extends _StdEL {
     children: Array<(ArticleTitle | ArticleCaption)>
 }
 
-export const isTOCArticle = (obj: EL): obj is TOCArticle => {
-    return obj.tag === "TOCArticle";
+export const isTOCArticle = (obj: EL | string): obj is TOCArticle => {
+    return (typeof obj !== "string") && (obj.tag === "TOCArticle");
 };
 
 export interface TOCSupplProvision extends _StdEL {
@@ -189,8 +189,8 @@ export interface TOCSupplProvision extends _StdEL {
     children: Array<(SupplProvisionLabel | ArticleRange | TOCArticle | TOCChapter)>
 }
 
-export const isTOCSupplProvision = (obj: EL): obj is TOCSupplProvision => {
-    return obj.tag === "TOCSupplProvision";
+export const isTOCSupplProvision = (obj: EL | string): obj is TOCSupplProvision => {
+    return (typeof obj !== "string") && (obj.tag === "TOCSupplProvision");
 };
 
 export interface TOCAppdxTableLabel extends _StdEL {
@@ -199,8 +199,8 @@ export interface TOCAppdxTableLabel extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isTOCAppdxTableLabel = (obj: EL): obj is TOCAppdxTableLabel => {
-    return obj.tag === "TOCAppdxTableLabel";
+export const isTOCAppdxTableLabel = (obj: EL | string): obj is TOCAppdxTableLabel => {
+    return (typeof obj !== "string") && (obj.tag === "TOCAppdxTableLabel");
 };
 
 export interface ArticleRange extends _StdEL {
@@ -209,8 +209,8 @@ export interface ArticleRange extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isArticleRange = (obj: EL): obj is ArticleRange => {
-    return obj.tag === "ArticleRange";
+export const isArticleRange = (obj: EL | string): obj is ArticleRange => {
+    return (typeof obj !== "string") && (obj.tag === "ArticleRange");
 };
 
 export interface Preamble extends _StdEL {
@@ -219,8 +219,8 @@ export interface Preamble extends _StdEL {
     children: Array<(Paragraph)>
 }
 
-export const isPreamble = (obj: EL): obj is Preamble => {
-    return obj.tag === "Preamble";
+export const isPreamble = (obj: EL | string): obj is Preamble => {
+    return (typeof obj !== "string") && (obj.tag === "Preamble");
 };
 
 export interface MainProvision extends _StdEL {
@@ -231,8 +231,8 @@ export interface MainProvision extends _StdEL {
     children: Array<(Part | Chapter | Section | Article | Paragraph)>
 }
 
-export const isMainProvision = (obj: EL): obj is MainProvision => {
-    return obj.tag === "MainProvision";
+export const isMainProvision = (obj: EL | string): obj is MainProvision => {
+    return (typeof obj !== "string") && (obj.tag === "MainProvision");
 };
 
 export interface Part extends _StdEL {
@@ -245,8 +245,8 @@ export interface Part extends _StdEL {
     children: Array<(PartTitle | Article | Chapter)>
 }
 
-export const isPart = (obj: EL): obj is Part => {
-    return obj.tag === "Part";
+export const isPart = (obj: EL | string): obj is Part => {
+    return (typeof obj !== "string") && (obj.tag === "Part");
 };
 
 export interface PartTitle extends _StdEL {
@@ -255,8 +255,8 @@ export interface PartTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isPartTitle = (obj: EL): obj is PartTitle => {
-    return obj.tag === "PartTitle";
+export const isPartTitle = (obj: EL | string): obj is PartTitle => {
+    return (typeof obj !== "string") && (obj.tag === "PartTitle");
 };
 
 export interface Chapter extends _StdEL {
@@ -269,8 +269,8 @@ export interface Chapter extends _StdEL {
     children: Array<(ChapterTitle | Article | Section)>
 }
 
-export const isChapter = (obj: EL): obj is Chapter => {
-    return obj.tag === "Chapter";
+export const isChapter = (obj: EL | string): obj is Chapter => {
+    return (typeof obj !== "string") && (obj.tag === "Chapter");
 };
 
 export interface ChapterTitle extends _StdEL {
@@ -279,8 +279,8 @@ export interface ChapterTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isChapterTitle = (obj: EL): obj is ChapterTitle => {
-    return obj.tag === "ChapterTitle";
+export const isChapterTitle = (obj: EL | string): obj is ChapterTitle => {
+    return (typeof obj !== "string") && (obj.tag === "ChapterTitle");
 };
 
 export interface Section extends _StdEL {
@@ -293,8 +293,8 @@ export interface Section extends _StdEL {
     children: Array<(SectionTitle | Article | Subsection | Division)>
 }
 
-export const isSection = (obj: EL): obj is Section => {
-    return obj.tag === "Section";
+export const isSection = (obj: EL | string): obj is Section => {
+    return (typeof obj !== "string") && (obj.tag === "Section");
 };
 
 export interface SectionTitle extends _StdEL {
@@ -303,8 +303,8 @@ export interface SectionTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSectionTitle = (obj: EL): obj is SectionTitle => {
-    return obj.tag === "SectionTitle";
+export const isSectionTitle = (obj: EL | string): obj is SectionTitle => {
+    return (typeof obj !== "string") && (obj.tag === "SectionTitle");
 };
 
 export interface Subsection extends _StdEL {
@@ -317,8 +317,8 @@ export interface Subsection extends _StdEL {
     children: Array<(SubsectionTitle | Article | Division)>
 }
 
-export const isSubsection = (obj: EL): obj is Subsection => {
-    return obj.tag === "Subsection";
+export const isSubsection = (obj: EL | string): obj is Subsection => {
+    return (typeof obj !== "string") && (obj.tag === "Subsection");
 };
 
 export interface SubsectionTitle extends _StdEL {
@@ -327,8 +327,8 @@ export interface SubsectionTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubsectionTitle = (obj: EL): obj is SubsectionTitle => {
-    return obj.tag === "SubsectionTitle";
+export const isSubsectionTitle = (obj: EL | string): obj is SubsectionTitle => {
+    return (typeof obj !== "string") && (obj.tag === "SubsectionTitle");
 };
 
 export interface Division extends _StdEL {
@@ -341,8 +341,8 @@ export interface Division extends _StdEL {
     children: Array<(DivisionTitle | Article)>
 }
 
-export const isDivision = (obj: EL): obj is Division => {
-    return obj.tag === "Division";
+export const isDivision = (obj: EL | string): obj is Division => {
+    return (typeof obj !== "string") && (obj.tag === "Division");
 };
 
 export interface DivisionTitle extends _StdEL {
@@ -351,8 +351,8 @@ export interface DivisionTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isDivisionTitle = (obj: EL): obj is DivisionTitle => {
-    return obj.tag === "DivisionTitle";
+export const isDivisionTitle = (obj: EL | string): obj is DivisionTitle => {
+    return (typeof obj !== "string") && (obj.tag === "DivisionTitle");
 };
 
 export interface Article extends _StdEL {
@@ -365,8 +365,8 @@ export interface Article extends _StdEL {
     children: Array<(ArticleCaption | ArticleTitle | Paragraph | SupplNote)>
 }
 
-export const isArticle = (obj: EL): obj is Article => {
-    return obj.tag === "Article";
+export const isArticle = (obj: EL | string): obj is Article => {
+    return (typeof obj !== "string") && (obj.tag === "Article");
 };
 
 export interface ArticleTitle extends _StdEL {
@@ -375,8 +375,8 @@ export interface ArticleTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isArticleTitle = (obj: EL): obj is ArticleTitle => {
-    return obj.tag === "ArticleTitle";
+export const isArticleTitle = (obj: EL | string): obj is ArticleTitle => {
+    return (typeof obj !== "string") && (obj.tag === "ArticleTitle");
 };
 
 export interface ArticleCaption extends _StdEL {
@@ -387,8 +387,8 @@ export interface ArticleCaption extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isArticleCaption = (obj: EL): obj is ArticleCaption => {
-    return obj.tag === "ArticleCaption";
+export const isArticleCaption = (obj: EL | string): obj is ArticleCaption => {
+    return (typeof obj !== "string") && (obj.tag === "ArticleCaption");
 };
 
 export interface Paragraph extends _StdEL {
@@ -402,8 +402,8 @@ export interface Paragraph extends _StdEL {
     children: Array<(ParagraphCaption | ParagraphNum | ParagraphSentence | AmendProvision | Class | TableStruct | FigStruct | StyleStruct | Item | List)>
 }
 
-export const isParagraph = (obj: EL): obj is Paragraph => {
-    return obj.tag === "Paragraph";
+export const isParagraph = (obj: EL | string): obj is Paragraph => {
+    return (typeof obj !== "string") && (obj.tag === "Paragraph");
 };
 
 export interface ParagraphCaption extends _StdEL {
@@ -414,8 +414,8 @@ export interface ParagraphCaption extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isParagraphCaption = (obj: EL): obj is ParagraphCaption => {
-    return obj.tag === "ParagraphCaption";
+export const isParagraphCaption = (obj: EL | string): obj is ParagraphCaption => {
+    return (typeof obj !== "string") && (obj.tag === "ParagraphCaption");
 };
 
 export interface ParagraphNum extends _StdEL {
@@ -424,8 +424,8 @@ export interface ParagraphNum extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isParagraphNum = (obj: EL): obj is ParagraphNum => {
-    return obj.tag === "ParagraphNum";
+export const isParagraphNum = (obj: EL | string): obj is ParagraphNum => {
+    return (typeof obj !== "string") && (obj.tag === "ParagraphNum");
 };
 
 export interface ParagraphSentence extends _StdEL {
@@ -434,8 +434,8 @@ export interface ParagraphSentence extends _StdEL {
     children: Array<(Sentence)>
 }
 
-export const isParagraphSentence = (obj: EL): obj is ParagraphSentence => {
-    return obj.tag === "ParagraphSentence";
+export const isParagraphSentence = (obj: EL | string): obj is ParagraphSentence => {
+    return (typeof obj !== "string") && (obj.tag === "ParagraphSentence");
 };
 
 export interface SupplNote extends _StdEL {
@@ -444,8 +444,8 @@ export interface SupplNote extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSupplNote = (obj: EL): obj is SupplNote => {
-    return obj.tag === "SupplNote";
+export const isSupplNote = (obj: EL | string): obj is SupplNote => {
+    return (typeof obj !== "string") && (obj.tag === "SupplNote");
 };
 
 export interface AmendProvision extends _StdEL {
@@ -454,8 +454,8 @@ export interface AmendProvision extends _StdEL {
     children: Array<(AmendProvisionSentence | NewProvision)>
 }
 
-export const isAmendProvision = (obj: EL): obj is AmendProvision => {
-    return obj.tag === "AmendProvision";
+export const isAmendProvision = (obj: EL | string): obj is AmendProvision => {
+    return (typeof obj !== "string") && (obj.tag === "AmendProvision");
 };
 
 export interface AmendProvisionSentence extends _StdEL {
@@ -464,8 +464,8 @@ export interface AmendProvisionSentence extends _StdEL {
     children: Array<(Sentence)>
 }
 
-export const isAmendProvisionSentence = (obj: EL): obj is AmendProvisionSentence => {
-    return obj.tag === "AmendProvisionSentence";
+export const isAmendProvisionSentence = (obj: EL | string): obj is AmendProvisionSentence => {
+    return (typeof obj !== "string") && (obj.tag === "AmendProvisionSentence");
 };
 
 export interface NewProvision extends _StdEL {
@@ -474,8 +474,8 @@ export interface NewProvision extends _StdEL {
     children: Array<(LawTitle | Preamble | TOC | Part | PartTitle | Chapter | ChapterTitle | Section | SectionTitle | Subsection | SubsectionTitle | Division | DivisionTitle | Article | SupplNote | Paragraph | Item | Subitem1 | Subitem2 | Subitem3 | Subitem4 | Subitem5 | Subitem6 | Subitem7 | Subitem8 | Subitem9 | Subitem10 | List | Sentence | AmendProvision | AppdxTable | AppdxNote | AppdxStyle | Appdx | AppdxFig | AppdxFormat | SupplProvisionAppdxStyle | SupplProvisionAppdxTable | SupplProvisionAppdx | TableStruct | TableRow | TableColumn | FigStruct | NoteStruct | StyleStruct | FormatStruct | Remarks | LawBody)>
 }
 
-export const isNewProvision = (obj: EL): obj is NewProvision => {
-    return obj.tag === "NewProvision";
+export const isNewProvision = (obj: EL | string): obj is NewProvision => {
+    return (typeof obj !== "string") && (obj.tag === "NewProvision");
 };
 
 export interface Class extends _StdEL {
@@ -486,8 +486,8 @@ export interface Class extends _StdEL {
     children: Array<(ClassTitle | ClassSentence | Item)>
 }
 
-export const isClass = (obj: EL): obj is Class => {
-    return obj.tag === "Class";
+export const isClass = (obj: EL | string): obj is Class => {
+    return (typeof obj !== "string") && (obj.tag === "Class");
 };
 
 export interface ClassTitle extends _StdEL {
@@ -496,8 +496,8 @@ export interface ClassTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isClassTitle = (obj: EL): obj is ClassTitle => {
-    return obj.tag === "ClassTitle";
+export const isClassTitle = (obj: EL | string): obj is ClassTitle => {
+    return (typeof obj !== "string") && (obj.tag === "ClassTitle");
 };
 
 export interface ClassSentence extends _StdEL {
@@ -506,8 +506,8 @@ export interface ClassSentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isClassSentence = (obj: EL): obj is ClassSentence => {
-    return obj.tag === "ClassSentence";
+export const isClassSentence = (obj: EL | string): obj is ClassSentence => {
+    return (typeof obj !== "string") && (obj.tag === "ClassSentence");
 };
 
 export interface Item extends _StdEL {
@@ -520,8 +520,8 @@ export interface Item extends _StdEL {
     children: Array<(ItemTitle | ItemSentence | Subitem1 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isItem = (obj: EL): obj is Item => {
-    return obj.tag === "Item";
+export const isItem = (obj: EL | string): obj is Item => {
+    return (typeof obj !== "string") && (obj.tag === "Item");
 };
 
 export interface ItemTitle extends _StdEL {
@@ -530,8 +530,8 @@ export interface ItemTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isItemTitle = (obj: EL): obj is ItemTitle => {
-    return obj.tag === "ItemTitle";
+export const isItemTitle = (obj: EL | string): obj is ItemTitle => {
+    return (typeof obj !== "string") && (obj.tag === "ItemTitle");
 };
 
 export interface ItemSentence extends _StdEL {
@@ -540,8 +540,8 @@ export interface ItemSentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isItemSentence = (obj: EL): obj is ItemSentence => {
-    return obj.tag === "ItemSentence";
+export const isItemSentence = (obj: EL | string): obj is ItemSentence => {
+    return (typeof obj !== "string") && (obj.tag === "ItemSentence");
 };
 
 export interface Subitem1 extends _StdEL {
@@ -554,8 +554,8 @@ export interface Subitem1 extends _StdEL {
     children: Array<(Subitem1Title | Subitem1Sentence | Subitem2 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem1 = (obj: EL): obj is Subitem1 => {
-    return obj.tag === "Subitem1";
+export const isSubitem1 = (obj: EL | string): obj is Subitem1 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem1");
 };
 
 export interface Subitem1Title extends _StdEL {
@@ -564,8 +564,8 @@ export interface Subitem1Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem1Title = (obj: EL): obj is Subitem1Title => {
-    return obj.tag === "Subitem1Title";
+export const isSubitem1Title = (obj: EL | string): obj is Subitem1Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem1Title");
 };
 
 export interface Subitem1Sentence extends _StdEL {
@@ -574,8 +574,8 @@ export interface Subitem1Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem1Sentence = (obj: EL): obj is Subitem1Sentence => {
-    return obj.tag === "Subitem1Sentence";
+export const isSubitem1Sentence = (obj: EL | string): obj is Subitem1Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem1Sentence");
 };
 
 export interface Subitem2 extends _StdEL {
@@ -588,8 +588,8 @@ export interface Subitem2 extends _StdEL {
     children: Array<(Subitem2Title | Subitem2Sentence | Subitem3 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem2 = (obj: EL): obj is Subitem2 => {
-    return obj.tag === "Subitem2";
+export const isSubitem2 = (obj: EL | string): obj is Subitem2 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem2");
 };
 
 export interface Subitem2Title extends _StdEL {
@@ -598,8 +598,8 @@ export interface Subitem2Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem2Title = (obj: EL): obj is Subitem2Title => {
-    return obj.tag === "Subitem2Title";
+export const isSubitem2Title = (obj: EL | string): obj is Subitem2Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem2Title");
 };
 
 export interface Subitem2Sentence extends _StdEL {
@@ -608,8 +608,8 @@ export interface Subitem2Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem2Sentence = (obj: EL): obj is Subitem2Sentence => {
-    return obj.tag === "Subitem2Sentence";
+export const isSubitem2Sentence = (obj: EL | string): obj is Subitem2Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem2Sentence");
 };
 
 export interface Subitem3 extends _StdEL {
@@ -622,8 +622,8 @@ export interface Subitem3 extends _StdEL {
     children: Array<(Subitem3Title | Subitem3Sentence | Subitem4 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem3 = (obj: EL): obj is Subitem3 => {
-    return obj.tag === "Subitem3";
+export const isSubitem3 = (obj: EL | string): obj is Subitem3 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem3");
 };
 
 export interface Subitem3Title extends _StdEL {
@@ -632,8 +632,8 @@ export interface Subitem3Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem3Title = (obj: EL): obj is Subitem3Title => {
-    return obj.tag === "Subitem3Title";
+export const isSubitem3Title = (obj: EL | string): obj is Subitem3Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem3Title");
 };
 
 export interface Subitem3Sentence extends _StdEL {
@@ -642,8 +642,8 @@ export interface Subitem3Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem3Sentence = (obj: EL): obj is Subitem3Sentence => {
-    return obj.tag === "Subitem3Sentence";
+export const isSubitem3Sentence = (obj: EL | string): obj is Subitem3Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem3Sentence");
 };
 
 export interface Subitem4 extends _StdEL {
@@ -656,8 +656,8 @@ export interface Subitem4 extends _StdEL {
     children: Array<(Subitem4Title | Subitem4Sentence | Subitem5 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem4 = (obj: EL): obj is Subitem4 => {
-    return obj.tag === "Subitem4";
+export const isSubitem4 = (obj: EL | string): obj is Subitem4 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem4");
 };
 
 export interface Subitem4Title extends _StdEL {
@@ -666,8 +666,8 @@ export interface Subitem4Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem4Title = (obj: EL): obj is Subitem4Title => {
-    return obj.tag === "Subitem4Title";
+export const isSubitem4Title = (obj: EL | string): obj is Subitem4Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem4Title");
 };
 
 export interface Subitem4Sentence extends _StdEL {
@@ -676,8 +676,8 @@ export interface Subitem4Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem4Sentence = (obj: EL): obj is Subitem4Sentence => {
-    return obj.tag === "Subitem4Sentence";
+export const isSubitem4Sentence = (obj: EL | string): obj is Subitem4Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem4Sentence");
 };
 
 export interface Subitem5 extends _StdEL {
@@ -690,8 +690,8 @@ export interface Subitem5 extends _StdEL {
     children: Array<(Subitem5Title | Subitem5Sentence | Subitem6 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem5 = (obj: EL): obj is Subitem5 => {
-    return obj.tag === "Subitem5";
+export const isSubitem5 = (obj: EL | string): obj is Subitem5 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem5");
 };
 
 export interface Subitem5Title extends _StdEL {
@@ -700,8 +700,8 @@ export interface Subitem5Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem5Title = (obj: EL): obj is Subitem5Title => {
-    return obj.tag === "Subitem5Title";
+export const isSubitem5Title = (obj: EL | string): obj is Subitem5Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem5Title");
 };
 
 export interface Subitem5Sentence extends _StdEL {
@@ -710,8 +710,8 @@ export interface Subitem5Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem5Sentence = (obj: EL): obj is Subitem5Sentence => {
-    return obj.tag === "Subitem5Sentence";
+export const isSubitem5Sentence = (obj: EL | string): obj is Subitem5Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem5Sentence");
 };
 
 export interface Subitem6 extends _StdEL {
@@ -724,8 +724,8 @@ export interface Subitem6 extends _StdEL {
     children: Array<(Subitem6Title | Subitem6Sentence | Subitem7 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem6 = (obj: EL): obj is Subitem6 => {
-    return obj.tag === "Subitem6";
+export const isSubitem6 = (obj: EL | string): obj is Subitem6 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem6");
 };
 
 export interface Subitem6Title extends _StdEL {
@@ -734,8 +734,8 @@ export interface Subitem6Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem6Title = (obj: EL): obj is Subitem6Title => {
-    return obj.tag === "Subitem6Title";
+export const isSubitem6Title = (obj: EL | string): obj is Subitem6Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem6Title");
 };
 
 export interface Subitem6Sentence extends _StdEL {
@@ -744,8 +744,8 @@ export interface Subitem6Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem6Sentence = (obj: EL): obj is Subitem6Sentence => {
-    return obj.tag === "Subitem6Sentence";
+export const isSubitem6Sentence = (obj: EL | string): obj is Subitem6Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem6Sentence");
 };
 
 export interface Subitem7 extends _StdEL {
@@ -758,8 +758,8 @@ export interface Subitem7 extends _StdEL {
     children: Array<(Subitem7Title | Subitem7Sentence | Subitem8 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem7 = (obj: EL): obj is Subitem7 => {
-    return obj.tag === "Subitem7";
+export const isSubitem7 = (obj: EL | string): obj is Subitem7 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem7");
 };
 
 export interface Subitem7Title extends _StdEL {
@@ -768,8 +768,8 @@ export interface Subitem7Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem7Title = (obj: EL): obj is Subitem7Title => {
-    return obj.tag === "Subitem7Title";
+export const isSubitem7Title = (obj: EL | string): obj is Subitem7Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem7Title");
 };
 
 export interface Subitem7Sentence extends _StdEL {
@@ -778,8 +778,8 @@ export interface Subitem7Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem7Sentence = (obj: EL): obj is Subitem7Sentence => {
-    return obj.tag === "Subitem7Sentence";
+export const isSubitem7Sentence = (obj: EL | string): obj is Subitem7Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem7Sentence");
 };
 
 export interface Subitem8 extends _StdEL {
@@ -792,8 +792,8 @@ export interface Subitem8 extends _StdEL {
     children: Array<(Subitem8Title | Subitem8Sentence | Subitem9 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem8 = (obj: EL): obj is Subitem8 => {
-    return obj.tag === "Subitem8";
+export const isSubitem8 = (obj: EL | string): obj is Subitem8 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem8");
 };
 
 export interface Subitem8Title extends _StdEL {
@@ -802,8 +802,8 @@ export interface Subitem8Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem8Title = (obj: EL): obj is Subitem8Title => {
-    return obj.tag === "Subitem8Title";
+export const isSubitem8Title = (obj: EL | string): obj is Subitem8Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem8Title");
 };
 
 export interface Subitem8Sentence extends _StdEL {
@@ -812,8 +812,8 @@ export interface Subitem8Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem8Sentence = (obj: EL): obj is Subitem8Sentence => {
-    return obj.tag === "Subitem8Sentence";
+export const isSubitem8Sentence = (obj: EL | string): obj is Subitem8Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem8Sentence");
 };
 
 export interface Subitem9 extends _StdEL {
@@ -826,8 +826,8 @@ export interface Subitem9 extends _StdEL {
     children: Array<(Subitem9Title | Subitem9Sentence | Subitem10 | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem9 = (obj: EL): obj is Subitem9 => {
-    return obj.tag === "Subitem9";
+export const isSubitem9 = (obj: EL | string): obj is Subitem9 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem9");
 };
 
 export interface Subitem9Title extends _StdEL {
@@ -836,8 +836,8 @@ export interface Subitem9Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem9Title = (obj: EL): obj is Subitem9Title => {
-    return obj.tag === "Subitem9Title";
+export const isSubitem9Title = (obj: EL | string): obj is Subitem9Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem9Title");
 };
 
 export interface Subitem9Sentence extends _StdEL {
@@ -846,8 +846,8 @@ export interface Subitem9Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem9Sentence = (obj: EL): obj is Subitem9Sentence => {
-    return obj.tag === "Subitem9Sentence";
+export const isSubitem9Sentence = (obj: EL | string): obj is Subitem9Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem9Sentence");
 };
 
 export interface Subitem10 extends _StdEL {
@@ -860,8 +860,8 @@ export interface Subitem10 extends _StdEL {
     children: Array<(Subitem10Title | Subitem10Sentence | TableStruct | FigStruct | StyleStruct | List)>
 }
 
-export const isSubitem10 = (obj: EL): obj is Subitem10 => {
-    return obj.tag === "Subitem10";
+export const isSubitem10 = (obj: EL | string): obj is Subitem10 => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem10");
 };
 
 export interface Subitem10Title extends _StdEL {
@@ -870,8 +870,8 @@ export interface Subitem10Title extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSubitem10Title = (obj: EL): obj is Subitem10Title => {
-    return obj.tag === "Subitem10Title";
+export const isSubitem10Title = (obj: EL | string): obj is Subitem10Title => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem10Title");
 };
 
 export interface Subitem10Sentence extends _StdEL {
@@ -880,8 +880,8 @@ export interface Subitem10Sentence extends _StdEL {
     children: Array<(Sentence | Column | Table)>
 }
 
-export const isSubitem10Sentence = (obj: EL): obj is Subitem10Sentence => {
-    return obj.tag === "Subitem10Sentence";
+export const isSubitem10Sentence = (obj: EL | string): obj is Subitem10Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Subitem10Sentence");
 };
 
 export interface Sentence extends _StdEL {
@@ -895,8 +895,8 @@ export interface Sentence extends _StdEL {
     children: Array<(Line | QuoteStruct | ArithFormula | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSentence = (obj: EL): obj is Sentence => {
-    return obj.tag === "Sentence";
+export const isSentence = (obj: EL | string): obj is Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Sentence");
 };
 
 export interface Column extends _StdEL {
@@ -909,8 +909,8 @@ export interface Column extends _StdEL {
     children: Array<(Sentence)>
 }
 
-export const isColumn = (obj: EL): obj is Column => {
-    return obj.tag === "Column";
+export const isColumn = (obj: EL | string): obj is Column => {
+    return (typeof obj !== "string") && (obj.tag === "Column");
 };
 
 export interface SupplProvision extends _StdEL {
@@ -923,8 +923,8 @@ export interface SupplProvision extends _StdEL {
     children: Array<(SupplProvisionLabel | Chapter | Article | Paragraph | SupplProvisionAppdxTable | SupplProvisionAppdxStyle | SupplProvisionAppdx)>
 }
 
-export const isSupplProvision = (obj: EL): obj is SupplProvision => {
-    return obj.tag === "SupplProvision";
+export const isSupplProvision = (obj: EL | string): obj is SupplProvision => {
+    return (typeof obj !== "string") && (obj.tag === "SupplProvision");
 };
 
 export interface SupplProvisionLabel extends _StdEL {
@@ -933,8 +933,8 @@ export interface SupplProvisionLabel extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSupplProvisionLabel = (obj: EL): obj is SupplProvisionLabel => {
-    return obj.tag === "SupplProvisionLabel";
+export const isSupplProvisionLabel = (obj: EL | string): obj is SupplProvisionLabel => {
+    return (typeof obj !== "string") && (obj.tag === "SupplProvisionLabel");
 };
 
 export interface SupplProvisionAppdxTable extends _StdEL {
@@ -945,8 +945,8 @@ export interface SupplProvisionAppdxTable extends _StdEL {
     children: Array<(SupplProvisionAppdxTableTitle | RelatedArticleNum | TableStruct)>
 }
 
-export const isSupplProvisionAppdxTable = (obj: EL): obj is SupplProvisionAppdxTable => {
-    return obj.tag === "SupplProvisionAppdxTable";
+export const isSupplProvisionAppdxTable = (obj: EL | string): obj is SupplProvisionAppdxTable => {
+    return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdxTable");
 };
 
 export interface SupplProvisionAppdxTableTitle extends _StdEL {
@@ -957,8 +957,8 @@ export interface SupplProvisionAppdxTableTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSupplProvisionAppdxTableTitle = (obj: EL): obj is SupplProvisionAppdxTableTitle => {
-    return obj.tag === "SupplProvisionAppdxTableTitle";
+export const isSupplProvisionAppdxTableTitle = (obj: EL | string): obj is SupplProvisionAppdxTableTitle => {
+    return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdxTableTitle");
 };
 
 export interface SupplProvisionAppdxStyle extends _StdEL {
@@ -969,8 +969,8 @@ export interface SupplProvisionAppdxStyle extends _StdEL {
     children: Array<(SupplProvisionAppdxStyleTitle | RelatedArticleNum | StyleStruct)>
 }
 
-export const isSupplProvisionAppdxStyle = (obj: EL): obj is SupplProvisionAppdxStyle => {
-    return obj.tag === "SupplProvisionAppdxStyle";
+export const isSupplProvisionAppdxStyle = (obj: EL | string): obj is SupplProvisionAppdxStyle => {
+    return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdxStyle");
 };
 
 export interface SupplProvisionAppdxStyleTitle extends _StdEL {
@@ -981,8 +981,8 @@ export interface SupplProvisionAppdxStyleTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isSupplProvisionAppdxStyleTitle = (obj: EL): obj is SupplProvisionAppdxStyleTitle => {
-    return obj.tag === "SupplProvisionAppdxStyleTitle";
+export const isSupplProvisionAppdxStyleTitle = (obj: EL | string): obj is SupplProvisionAppdxStyleTitle => {
+    return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdxStyleTitle");
 };
 
 export interface SupplProvisionAppdx extends _StdEL {
@@ -993,8 +993,8 @@ export interface SupplProvisionAppdx extends _StdEL {
     children: Array<(ArithFormulaNum | RelatedArticleNum | ArithFormula)>
 }
 
-export const isSupplProvisionAppdx = (obj: EL): obj is SupplProvisionAppdx => {
-    return obj.tag === "SupplProvisionAppdx";
+export const isSupplProvisionAppdx = (obj: EL | string): obj is SupplProvisionAppdx => {
+    return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdx");
 };
 
 export interface AppdxTable extends _StdEL {
@@ -1005,8 +1005,8 @@ export interface AppdxTable extends _StdEL {
     children: Array<(AppdxTableTitle | RelatedArticleNum | TableStruct | Item | Remarks)>
 }
 
-export const isAppdxTable = (obj: EL): obj is AppdxTable => {
-    return obj.tag === "AppdxTable";
+export const isAppdxTable = (obj: EL | string): obj is AppdxTable => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxTable");
 };
 
 export interface AppdxTableTitle extends _StdEL {
@@ -1017,8 +1017,8 @@ export interface AppdxTableTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isAppdxTableTitle = (obj: EL): obj is AppdxTableTitle => {
-    return obj.tag === "AppdxTableTitle";
+export const isAppdxTableTitle = (obj: EL | string): obj is AppdxTableTitle => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxTableTitle");
 };
 
 export interface AppdxNote extends _StdEL {
@@ -1029,8 +1029,8 @@ export interface AppdxNote extends _StdEL {
     children: Array<(AppdxNoteTitle | RelatedArticleNum | NoteStruct | FigStruct | TableStruct | Remarks)>
 }
 
-export const isAppdxNote = (obj: EL): obj is AppdxNote => {
-    return obj.tag === "AppdxNote";
+export const isAppdxNote = (obj: EL | string): obj is AppdxNote => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxNote");
 };
 
 export interface AppdxNoteTitle extends _StdEL {
@@ -1041,8 +1041,8 @@ export interface AppdxNoteTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isAppdxNoteTitle = (obj: EL): obj is AppdxNoteTitle => {
-    return obj.tag === "AppdxNoteTitle";
+export const isAppdxNoteTitle = (obj: EL | string): obj is AppdxNoteTitle => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxNoteTitle");
 };
 
 export interface AppdxStyle extends _StdEL {
@@ -1053,8 +1053,8 @@ export interface AppdxStyle extends _StdEL {
     children: Array<(AppdxStyleTitle | RelatedArticleNum | StyleStruct | Remarks)>
 }
 
-export const isAppdxStyle = (obj: EL): obj is AppdxStyle => {
-    return obj.tag === "AppdxStyle";
+export const isAppdxStyle = (obj: EL | string): obj is AppdxStyle => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxStyle");
 };
 
 export interface AppdxStyleTitle extends _StdEL {
@@ -1065,8 +1065,8 @@ export interface AppdxStyleTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isAppdxStyleTitle = (obj: EL): obj is AppdxStyleTitle => {
-    return obj.tag === "AppdxStyleTitle";
+export const isAppdxStyleTitle = (obj: EL | string): obj is AppdxStyleTitle => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxStyleTitle");
 };
 
 export interface AppdxFormat extends _StdEL {
@@ -1077,8 +1077,8 @@ export interface AppdxFormat extends _StdEL {
     children: Array<(AppdxFormatTitle | RelatedArticleNum | FormatStruct | Remarks)>
 }
 
-export const isAppdxFormat = (obj: EL): obj is AppdxFormat => {
-    return obj.tag === "AppdxFormat";
+export const isAppdxFormat = (obj: EL | string): obj is AppdxFormat => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxFormat");
 };
 
 export interface AppdxFormatTitle extends _StdEL {
@@ -1089,8 +1089,8 @@ export interface AppdxFormatTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isAppdxFormatTitle = (obj: EL): obj is AppdxFormatTitle => {
-    return obj.tag === "AppdxFormatTitle";
+export const isAppdxFormatTitle = (obj: EL | string): obj is AppdxFormatTitle => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxFormatTitle");
 };
 
 export interface Appdx extends _StdEL {
@@ -1099,8 +1099,8 @@ export interface Appdx extends _StdEL {
     children: Array<(ArithFormulaNum | RelatedArticleNum | ArithFormula | Remarks)>
 }
 
-export const isAppdx = (obj: EL): obj is Appdx => {
-    return obj.tag === "Appdx";
+export const isAppdx = (obj: EL | string): obj is Appdx => {
+    return (typeof obj !== "string") && (obj.tag === "Appdx");
 };
 
 export interface ArithFormulaNum extends _StdEL {
@@ -1109,8 +1109,8 @@ export interface ArithFormulaNum extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isArithFormulaNum = (obj: EL): obj is ArithFormulaNum => {
-    return obj.tag === "ArithFormulaNum";
+export const isArithFormulaNum = (obj: EL | string): obj is ArithFormulaNum => {
+    return (typeof obj !== "string") && (obj.tag === "ArithFormulaNum");
 };
 
 export interface ArithFormula extends _StdEL {
@@ -1118,11 +1118,11 @@ export interface ArithFormula extends _StdEL {
     attr: {
         Num?: string,
     }
-    children: Array<(string | EL)>
+    children: Array<(string | StdEL | __EL)>
 }
 
-export const isArithFormula = (obj: EL): obj is ArithFormula => {
-    return obj.tag === "ArithFormula";
+export const isArithFormula = (obj: EL | string): obj is ArithFormula => {
+    return (typeof obj !== "string") && (obj.tag === "ArithFormula");
 };
 
 export interface AppdxFig extends _StdEL {
@@ -1133,8 +1133,8 @@ export interface AppdxFig extends _StdEL {
     children: Array<(AppdxFigTitle | RelatedArticleNum | FigStruct | TableStruct)>
 }
 
-export const isAppdxFig = (obj: EL): obj is AppdxFig => {
-    return obj.tag === "AppdxFig";
+export const isAppdxFig = (obj: EL | string): obj is AppdxFig => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxFig");
 };
 
 export interface AppdxFigTitle extends _StdEL {
@@ -1145,8 +1145,8 @@ export interface AppdxFigTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isAppdxFigTitle = (obj: EL): obj is AppdxFigTitle => {
-    return obj.tag === "AppdxFigTitle";
+export const isAppdxFigTitle = (obj: EL | string): obj is AppdxFigTitle => {
+    return (typeof obj !== "string") && (obj.tag === "AppdxFigTitle");
 };
 
 export interface TableStruct extends _StdEL {
@@ -1155,8 +1155,8 @@ export interface TableStruct extends _StdEL {
     children: Array<(TableStructTitle | Remarks | Table)>
 }
 
-export const isTableStruct = (obj: EL): obj is TableStruct => {
-    return obj.tag === "TableStruct";
+export const isTableStruct = (obj: EL | string): obj is TableStruct => {
+    return (typeof obj !== "string") && (obj.tag === "TableStruct");
 };
 
 export interface TableStructTitle extends _StdEL {
@@ -1167,8 +1167,8 @@ export interface TableStructTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isTableStructTitle = (obj: EL): obj is TableStructTitle => {
-    return obj.tag === "TableStructTitle";
+export const isTableStructTitle = (obj: EL | string): obj is TableStructTitle => {
+    return (typeof obj !== "string") && (obj.tag === "TableStructTitle");
 };
 
 export interface Table extends _StdEL {
@@ -1179,8 +1179,8 @@ export interface Table extends _StdEL {
     children: Array<(TableHeaderRow | TableRow)>
 }
 
-export const isTable = (obj: EL): obj is Table => {
-    return obj.tag === "Table";
+export const isTable = (obj: EL | string): obj is Table => {
+    return (typeof obj !== "string") && (obj.tag === "Table");
 };
 
 export interface TableRow extends _StdEL {
@@ -1189,8 +1189,8 @@ export interface TableRow extends _StdEL {
     children: Array<(TableColumn)>
 }
 
-export const isTableRow = (obj: EL): obj is TableRow => {
-    return obj.tag === "TableRow";
+export const isTableRow = (obj: EL | string): obj is TableRow => {
+    return (typeof obj !== "string") && (obj.tag === "TableRow");
 };
 
 export interface TableHeaderRow extends _StdEL {
@@ -1199,8 +1199,8 @@ export interface TableHeaderRow extends _StdEL {
     children: Array<(TableHeaderColumn)>
 }
 
-export const isTableHeaderRow = (obj: EL): obj is TableHeaderRow => {
-    return obj.tag === "TableHeaderRow";
+export const isTableHeaderRow = (obj: EL | string): obj is TableHeaderRow => {
+    return (typeof obj !== "string") && (obj.tag === "TableHeaderRow");
 };
 
 export interface TableHeaderColumn extends _StdEL {
@@ -1209,8 +1209,8 @@ export interface TableHeaderColumn extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isTableHeaderColumn = (obj: EL): obj is TableHeaderColumn => {
-    return obj.tag === "TableHeaderColumn";
+export const isTableHeaderColumn = (obj: EL | string): obj is TableHeaderColumn => {
+    return (typeof obj !== "string") && (obj.tag === "TableHeaderColumn");
 };
 
 export interface TableColumn extends _StdEL {
@@ -1228,8 +1228,8 @@ export interface TableColumn extends _StdEL {
     children: Array<(Part | Chapter | Section | Subsection | Division | Article | Paragraph | Item | Subitem1 | Subitem2 | Subitem3 | Subitem4 | Subitem5 | Subitem6 | Subitem7 | Subitem8 | Subitem9 | Subitem10 | FigStruct | Remarks | Sentence | Column)>
 }
 
-export const isTableColumn = (obj: EL): obj is TableColumn => {
-    return obj.tag === "TableColumn";
+export const isTableColumn = (obj: EL | string): obj is TableColumn => {
+    return (typeof obj !== "string") && (obj.tag === "TableColumn");
 };
 
 export interface FigStruct extends _StdEL {
@@ -1238,8 +1238,8 @@ export interface FigStruct extends _StdEL {
     children: Array<(FigStructTitle | Remarks | Fig)>
 }
 
-export const isFigStruct = (obj: EL): obj is FigStruct => {
-    return obj.tag === "FigStruct";
+export const isFigStruct = (obj: EL | string): obj is FigStruct => {
+    return (typeof obj !== "string") && (obj.tag === "FigStruct");
 };
 
 export interface FigStructTitle extends _StdEL {
@@ -1248,8 +1248,8 @@ export interface FigStructTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isFigStructTitle = (obj: EL): obj is FigStructTitle => {
-    return obj.tag === "FigStructTitle";
+export const isFigStructTitle = (obj: EL | string): obj is FigStructTitle => {
+    return (typeof obj !== "string") && (obj.tag === "FigStructTitle");
 };
 
 export interface Fig extends _StdEL {
@@ -1260,8 +1260,8 @@ export interface Fig extends _StdEL {
     children: never[]
 }
 
-export const isFig = (obj: EL): obj is Fig => {
-    return obj.tag === "Fig";
+export const isFig = (obj: EL | string): obj is Fig => {
+    return (typeof obj !== "string") && (obj.tag === "Fig");
 };
 
 export interface NoteStruct extends _StdEL {
@@ -1270,8 +1270,8 @@ export interface NoteStruct extends _StdEL {
     children: Array<(NoteStructTitle | Remarks | Note)>
 }
 
-export const isNoteStruct = (obj: EL): obj is NoteStruct => {
-    return obj.tag === "NoteStruct";
+export const isNoteStruct = (obj: EL | string): obj is NoteStruct => {
+    return (typeof obj !== "string") && (obj.tag === "NoteStruct");
 };
 
 export interface NoteStructTitle extends _StdEL {
@@ -1280,17 +1280,17 @@ export interface NoteStructTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isNoteStructTitle = (obj: EL): obj is NoteStructTitle => {
-    return obj.tag === "NoteStructTitle";
+export const isNoteStructTitle = (obj: EL | string): obj is NoteStructTitle => {
+    return (typeof obj !== "string") && (obj.tag === "NoteStructTitle");
 };
 
 export interface Note extends _StdEL {
     tag: "Note"
-    children: Array<EL | string>
+    children: Array<StdEL | __EL | string>
 }
 
-export const isNote = (obj: EL): obj is Note => {
-    return obj.tag === "Note";
+export const isNote = (obj: EL | string): obj is Note => {
+    return (typeof obj !== "string") && (obj.tag === "Note");
 };
 
 export interface StyleStruct extends _StdEL {
@@ -1299,8 +1299,8 @@ export interface StyleStruct extends _StdEL {
     children: Array<(StyleStructTitle | Remarks | Style)>
 }
 
-export const isStyleStruct = (obj: EL): obj is StyleStruct => {
-    return obj.tag === "StyleStruct";
+export const isStyleStruct = (obj: EL | string): obj is StyleStruct => {
+    return (typeof obj !== "string") && (obj.tag === "StyleStruct");
 };
 
 export interface StyleStructTitle extends _StdEL {
@@ -1309,17 +1309,17 @@ export interface StyleStructTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isStyleStructTitle = (obj: EL): obj is StyleStructTitle => {
-    return obj.tag === "StyleStructTitle";
+export const isStyleStructTitle = (obj: EL | string): obj is StyleStructTitle => {
+    return (typeof obj !== "string") && (obj.tag === "StyleStructTitle");
 };
 
 export interface Style extends _StdEL {
     tag: "Style"
-    children: Array<EL | string>
+    children: Array<StdEL | __EL | string>
 }
 
-export const isStyle = (obj: EL): obj is Style => {
-    return obj.tag === "Style";
+export const isStyle = (obj: EL | string): obj is Style => {
+    return (typeof obj !== "string") && (obj.tag === "Style");
 };
 
 export interface FormatStruct extends _StdEL {
@@ -1328,8 +1328,8 @@ export interface FormatStruct extends _StdEL {
     children: Array<(FormatStructTitle | Remarks | Format)>
 }
 
-export const isFormatStruct = (obj: EL): obj is FormatStruct => {
-    return obj.tag === "FormatStruct";
+export const isFormatStruct = (obj: EL | string): obj is FormatStruct => {
+    return (typeof obj !== "string") && (obj.tag === "FormatStruct");
 };
 
 export interface FormatStructTitle extends _StdEL {
@@ -1338,17 +1338,17 @@ export interface FormatStructTitle extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isFormatStructTitle = (obj: EL): obj is FormatStructTitle => {
-    return obj.tag === "FormatStructTitle";
+export const isFormatStructTitle = (obj: EL | string): obj is FormatStructTitle => {
+    return (typeof obj !== "string") && (obj.tag === "FormatStructTitle");
 };
 
 export interface Format extends _StdEL {
     tag: "Format"
-    children: Array<EL | string>
+    children: Array<StdEL | __EL | string>
 }
 
-export const isFormat = (obj: EL): obj is Format => {
-    return obj.tag === "Format";
+export const isFormat = (obj: EL | string): obj is Format => {
+    return (typeof obj !== "string") && (obj.tag === "Format");
 };
 
 export interface RelatedArticleNum extends _StdEL {
@@ -1357,8 +1357,8 @@ export interface RelatedArticleNum extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isRelatedArticleNum = (obj: EL): obj is RelatedArticleNum => {
-    return obj.tag === "RelatedArticleNum";
+export const isRelatedArticleNum = (obj: EL | string): obj is RelatedArticleNum => {
+    return (typeof obj !== "string") && (obj.tag === "RelatedArticleNum");
 };
 
 export interface Remarks extends _StdEL {
@@ -1367,8 +1367,8 @@ export interface Remarks extends _StdEL {
     children: Array<(RemarksLabel | Item | Sentence)>
 }
 
-export const isRemarks = (obj: EL): obj is Remarks => {
-    return obj.tag === "Remarks";
+export const isRemarks = (obj: EL | string): obj is Remarks => {
+    return (typeof obj !== "string") && (obj.tag === "Remarks");
 };
 
 export interface RemarksLabel extends _StdEL {
@@ -1379,8 +1379,8 @@ export interface RemarksLabel extends _StdEL {
     children: Array<(Line | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isRemarksLabel = (obj: EL): obj is RemarksLabel => {
-    return obj.tag === "RemarksLabel";
+export const isRemarksLabel = (obj: EL | string): obj is RemarksLabel => {
+    return (typeof obj !== "string") && (obj.tag === "RemarksLabel");
 };
 
 export interface List extends _StdEL {
@@ -1389,8 +1389,8 @@ export interface List extends _StdEL {
     children: Array<(ListSentence | Sublist1)>
 }
 
-export const isList = (obj: EL): obj is List => {
-    return obj.tag === "List";
+export const isList = (obj: EL | string): obj is List => {
+    return (typeof obj !== "string") && (obj.tag === "List");
 };
 
 export interface ListSentence extends _StdEL {
@@ -1399,8 +1399,8 @@ export interface ListSentence extends _StdEL {
     children: Array<(Sentence | Column)>
 }
 
-export const isListSentence = (obj: EL): obj is ListSentence => {
-    return obj.tag === "ListSentence";
+export const isListSentence = (obj: EL | string): obj is ListSentence => {
+    return (typeof obj !== "string") && (obj.tag === "ListSentence");
 };
 
 export interface Sublist1 extends _StdEL {
@@ -1409,8 +1409,8 @@ export interface Sublist1 extends _StdEL {
     children: Array<(Sublist1Sentence | Sublist2)>
 }
 
-export const isSublist1 = (obj: EL): obj is Sublist1 => {
-    return obj.tag === "Sublist1";
+export const isSublist1 = (obj: EL | string): obj is Sublist1 => {
+    return (typeof obj !== "string") && (obj.tag === "Sublist1");
 };
 
 export interface Sublist1Sentence extends _StdEL {
@@ -1419,8 +1419,8 @@ export interface Sublist1Sentence extends _StdEL {
     children: Array<(Sentence | Column)>
 }
 
-export const isSublist1Sentence = (obj: EL): obj is Sublist1Sentence => {
-    return obj.tag === "Sublist1Sentence";
+export const isSublist1Sentence = (obj: EL | string): obj is Sublist1Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Sublist1Sentence");
 };
 
 export interface Sublist2 extends _StdEL {
@@ -1429,8 +1429,8 @@ export interface Sublist2 extends _StdEL {
     children: Array<(Sublist2Sentence | Sublist3)>
 }
 
-export const isSublist2 = (obj: EL): obj is Sublist2 => {
-    return obj.tag === "Sublist2";
+export const isSublist2 = (obj: EL | string): obj is Sublist2 => {
+    return (typeof obj !== "string") && (obj.tag === "Sublist2");
 };
 
 export interface Sublist2Sentence extends _StdEL {
@@ -1439,8 +1439,8 @@ export interface Sublist2Sentence extends _StdEL {
     children: Array<(Sentence | Column)>
 }
 
-export const isSublist2Sentence = (obj: EL): obj is Sublist2Sentence => {
-    return obj.tag === "Sublist2Sentence";
+export const isSublist2Sentence = (obj: EL | string): obj is Sublist2Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Sublist2Sentence");
 };
 
 export interface Sublist3 extends _StdEL {
@@ -1448,8 +1448,8 @@ export interface Sublist3 extends _StdEL {
     children: Array<Sublist3Sentence>
 }
 
-export const isSublist3 = (obj: EL): obj is Sublist3 => {
-    return obj.tag === "Sublist3";
+export const isSublist3 = (obj: EL | string): obj is Sublist3 => {
+    return (typeof obj !== "string") && (obj.tag === "Sublist3");
 };
 
 export interface Sublist3Sentence extends _StdEL {
@@ -1458,17 +1458,17 @@ export interface Sublist3Sentence extends _StdEL {
     children: Array<(Sentence | Column)>
 }
 
-export const isSublist3Sentence = (obj: EL): obj is Sublist3Sentence => {
-    return obj.tag === "Sublist3Sentence";
+export const isSublist3Sentence = (obj: EL | string): obj is Sublist3Sentence => {
+    return (typeof obj !== "string") && (obj.tag === "Sublist3Sentence");
 };
 
 export interface QuoteStruct extends _StdEL {
     tag: "QuoteStruct"
-    children: Array<EL | string>
+    children: Array<StdEL | __EL | string>
 }
 
-export const isQuoteStruct = (obj: EL): obj is QuoteStruct => {
-    return obj.tag === "QuoteStruct";
+export const isQuoteStruct = (obj: EL | string): obj is QuoteStruct => {
+    return (typeof obj !== "string") && (obj.tag === "QuoteStruct");
 };
 
 export interface Ruby extends _StdEL {
@@ -1477,8 +1477,8 @@ export interface Ruby extends _StdEL {
     children: Array<(Rt | string | __EL)>
 }
 
-export const isRuby = (obj: EL): obj is Ruby => {
-    return obj.tag === "Ruby";
+export const isRuby = (obj: EL | string): obj is Ruby => {
+    return (typeof obj !== "string") && (obj.tag === "Ruby");
 };
 
 export interface Rt extends _StdEL {
@@ -1486,8 +1486,8 @@ export interface Rt extends _StdEL {
     children: Array<__EL | string>
 }
 
-export const isRt = (obj: EL): obj is Rt => {
-    return obj.tag === "Rt";
+export const isRt = (obj: EL | string): obj is Rt => {
+    return (typeof obj !== "string") && (obj.tag === "Rt");
 };
 
 export interface Line extends _StdEL {
@@ -1498,8 +1498,8 @@ export interface Line extends _StdEL {
     children: Array<(QuoteStruct | ArithFormula | Ruby | Sup | Sub | string | __EL)>
 }
 
-export const isLine = (obj: EL): obj is Line => {
-    return obj.tag === "Line";
+export const isLine = (obj: EL | string): obj is Line => {
+    return (typeof obj !== "string") && (obj.tag === "Line");
 };
 
 export interface Sup extends _StdEL {
@@ -1507,8 +1507,8 @@ export interface Sup extends _StdEL {
     children: Array<__EL | string>
 }
 
-export const isSup = (obj: EL): obj is Sup => {
-    return obj.tag === "Sup";
+export const isSup = (obj: EL | string): obj is Sup => {
+    return (typeof obj !== "string") && (obj.tag === "Sup");
 };
 
 export interface Sub extends _StdEL {
@@ -1516,8 +1516,8 @@ export interface Sub extends _StdEL {
     children: Array<__EL | string>
 }
 
-export const isSub = (obj: EL): obj is Sub => {
-    return obj.tag === "Sub";
+export const isSub = (obj: EL | string): obj is Sub => {
+    return (typeof obj !== "string") && (obj.tag === "Sub");
 };
 
 export type StdELType<TName extends string> =
@@ -1794,6 +1794,143 @@ export type StdEL =
     | Sub
     ;
 
+export const stdELTags = [
+    "Law",
+    "LawNum",
+    "LawBody",
+    "LawTitle",
+    "EnactStatement",
+    "TOC",
+    "TOCLabel",
+    "TOCPreambleLabel",
+    "TOCPart",
+    "TOCChapter",
+    "TOCSection",
+    "TOCSubsection",
+    "TOCDivision",
+    "TOCArticle",
+    "TOCSupplProvision",
+    "TOCAppdxTableLabel",
+    "ArticleRange",
+    "Preamble",
+    "MainProvision",
+    "Part",
+    "PartTitle",
+    "Chapter",
+    "ChapterTitle",
+    "Section",
+    "SectionTitle",
+    "Subsection",
+    "SubsectionTitle",
+    "Division",
+    "DivisionTitle",
+    "Article",
+    "ArticleTitle",
+    "ArticleCaption",
+    "Paragraph",
+    "ParagraphCaption",
+    "ParagraphNum",
+    "ParagraphSentence",
+    "SupplNote",
+    "AmendProvision",
+    "AmendProvisionSentence",
+    "NewProvision",
+    "Class",
+    "ClassTitle",
+    "ClassSentence",
+    "Item",
+    "ItemTitle",
+    "ItemSentence",
+    "Subitem1",
+    "Subitem1Title",
+    "Subitem1Sentence",
+    "Subitem2",
+    "Subitem2Title",
+    "Subitem2Sentence",
+    "Subitem3",
+    "Subitem3Title",
+    "Subitem3Sentence",
+    "Subitem4",
+    "Subitem4Title",
+    "Subitem4Sentence",
+    "Subitem5",
+    "Subitem5Title",
+    "Subitem5Sentence",
+    "Subitem6",
+    "Subitem6Title",
+    "Subitem6Sentence",
+    "Subitem7",
+    "Subitem7Title",
+    "Subitem7Sentence",
+    "Subitem8",
+    "Subitem8Title",
+    "Subitem8Sentence",
+    "Subitem9",
+    "Subitem9Title",
+    "Subitem9Sentence",
+    "Subitem10",
+    "Subitem10Title",
+    "Subitem10Sentence",
+    "Sentence",
+    "Column",
+    "SupplProvision",
+    "SupplProvisionLabel",
+    "SupplProvisionAppdxTable",
+    "SupplProvisionAppdxTableTitle",
+    "SupplProvisionAppdxStyle",
+    "SupplProvisionAppdxStyleTitle",
+    "SupplProvisionAppdx",
+    "AppdxTable",
+    "AppdxTableTitle",
+    "AppdxNote",
+    "AppdxNoteTitle",
+    "AppdxStyle",
+    "AppdxStyleTitle",
+    "AppdxFormat",
+    "AppdxFormatTitle",
+    "Appdx",
+    "ArithFormulaNum",
+    "ArithFormula",
+    "AppdxFig",
+    "AppdxFigTitle",
+    "TableStruct",
+    "TableStructTitle",
+    "Table",
+    "TableRow",
+    "TableHeaderRow",
+    "TableHeaderColumn",
+    "TableColumn",
+    "FigStruct",
+    "FigStructTitle",
+    "Fig",
+    "NoteStruct",
+    "NoteStructTitle",
+    "Note",
+    "StyleStruct",
+    "StyleStructTitle",
+    "Style",
+    "FormatStruct",
+    "FormatStructTitle",
+    "Format",
+    "RelatedArticleNum",
+    "Remarks",
+    "RemarksLabel",
+    "List",
+    "ListSentence",
+    "Sublist1",
+    "Sublist1Sentence",
+    "Sublist2",
+    "Sublist2Sentence",
+    "Sublist3",
+    "Sublist3Sentence",
+    "QuoteStruct",
+    "Ruby",
+    "Rt",
+    "Line",
+    "Sup",
+    "Sub",
+] as const;
+
 export const newStdEL = <
     TName extends string,
     TStdEL = StdELType<TName>,
@@ -1806,4 +1943,8 @@ export const newStdEL = <
         range: [start: number, end: number] | null = null,
     ): StdELType<TName> => {
     return new EL(tag, attr, children, range) as StdELType<TName>;
+};
+
+export const isStdEL = (obj: EL | string): obj is StdEL => {
+    return (typeof obj !== "string") && ((stdELTags as readonly string[]).includes(obj.tag));
 };

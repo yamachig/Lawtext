@@ -1,5 +1,7 @@
 import * as std from "../../law/std";
+import { isControl } from "../../law/std";
 import { Diff } from "../../util";
+import { EL } from "../el";
 
 export class Control {
     public constructor(
@@ -36,3 +38,4 @@ export class Sentences {
 export type SentencesArray = Sentences[];
 
 export type SentenceChildEL = Diff<std.Sentence["children"][number], string>;
+export const isSentenceChildEL = (el: EL): el is SentenceChildEL => isControl(el) || ["Line", "QuoteStruct", "ArithFormula", "Ruby", "Sup", "Sub"].includes(el.tag);

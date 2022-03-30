@@ -9,12 +9,15 @@ import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import { Control, Sentences } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
+import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 
 export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    const remarksLabelText = remarks.children.find(el => el.tag === "RemarksLabel")?.text ?? "";
-    const controls = /^(?:備\s*考|注)\s*$/.exec(remarksLabelText) ? [] : [
+    const remarksLabelTextSentenceChildren = (
+        remarks.children.find(el => el.tag === "RemarksLabel") as std.RemarksLabel | undefined
+    )?.children;
+    const controls = remarksLabelTextSentenceChildren && /^(?:備\s*考|注)\s*$/.exec(sentenceChildrenToString(remarksLabelTextSentenceChildren)) ? [] : [
         new Control(
             ":remarks:",
             null,
@@ -28,12 +31,12 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
         indentTexts.length,
         indentTexts,
         controls,
-        remarksLabelText ? [
+        remarksLabelTextSentenceChildren ? [
             new Sentences(
                 "",
                 null,
                 [],
-                [newStdEL("Sentence", {}, [remarksLabelText])]
+                [newStdEL("Sentence", {}, remarksLabelTextSentenceChildren)]
             )
         ] : [],
         CST.EOL,

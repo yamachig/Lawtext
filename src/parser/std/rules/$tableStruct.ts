@@ -66,9 +66,11 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
 export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    const tableStructTitleText = tableStruct.children.find(el => el.tag === "TableStructTitle")?.text ?? "";
+    const tableStructTitleTextSentenceChildren = (
+        tableStruct.children.find(el => el.tag === "TableStructTitle") as std.TableStructTitle | undefined
+    )?.children;
 
-    const requireControl = Boolean(tableStructTitleText) || tableStruct.children[0].tag !== "Table";
+    const requireControl = Boolean(tableStructTitleTextSentenceChildren) || tableStruct.children[0].tag !== "Table";
 
     if (requireControl) {
 
@@ -84,12 +86,12 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
                     null,
                 ),
             ],
-            tableStructTitleText ? [
+            tableStructTitleTextSentenceChildren ? [
                 new Sentences(
                     "",
                     null,
                     [],
-                    [newStdEL("Sentence", {}, [tableStructTitleText])]
+                    [newStdEL("Sentence", {}, tableStructTitleTextSentenceChildren)]
                 )
             ] : [],
             CST.EOL,

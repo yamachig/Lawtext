@@ -177,3 +177,48 @@ export type ListOrSublistSentence =
 
 export const isListOrSublistSentence = (el: EL): el is ListOrSublistSentence =>
     (listOrSublistSentenceTags as readonly string[]).includes(el.tag);
+
+export const noteLikeTags = [
+    "Note",
+    "Style",
+    "Format",
+] as const;
+
+export type NoteLike =
+    | std.Note
+    | std.Style
+    | std.Format
+    ;
+
+export const isNoteLike = (el: EL): el is NoteLike =>
+    (noteLikeTags as readonly string[]).includes(el.tag);
+
+export const noteLikeStructTags = [
+    "NoteStruct",
+    "StyleStruct",
+    "FormatStruct",
+] as const;
+
+export type NoteLikeStruct =
+    | std.NoteStruct
+    | std.StyleStruct
+    | std.FormatStruct
+    ;
+
+export const isNoteLikeStruct = (el: EL): el is NoteLikeStruct =>
+    (noteLikeStructTags as readonly string[]).includes(el.tag);
+
+export const noteLikeStructTitleTags = [
+    "NoteStructTitle",
+    "StyleStructTitle",
+    "FormatStructTitle",
+] as const;
+
+export type NoteLikeStructTitle =
+    | std.NoteStructTitle
+    | std.StyleStructTitle
+    | std.FormatStructTitle
+    ;
+
+export const isNoteLikeStructTitle = (el: EL): el is NoteLikeStructTitle =>
+    (noteLikeStructTitleTags as readonly string[]).includes(el.tag);

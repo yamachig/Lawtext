@@ -32,15 +32,15 @@ function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
 }
 
 elementIfs.push(`\
-import { EL } from "../node/el";
+import { EL } from "../../node/el";
 `);
 elementIfs.push(`\
 export interface __EL extends EL {
     isControl: true
 }
 
-export const isControl = (obj: EL): obj is __EL => {
-    return obj.isControl;
+export const isControl = (obj: EL | string): obj is __EL => {
+    return (typeof obj !== "string") && obj.isControl;
 };
 `);
 elementIfs.push(`\
@@ -64,14 +64,14 @@ export interface ${element.attr.name ?? ""} extends _StdEL {
     children: Array<__EL | string>
 }
 
-export const is${element.attr.name ?? ""} = (obj: EL): obj is ${element.attr.name ?? ""} => {
-    return obj.tag === "${element.attr.name ?? ""}";
+export const is${element.attr.name ?? ""} = (obj: EL | string): obj is ${element.attr.name ?? ""} => {
+    return (typeof obj !== "string") && (obj.tag === "${element.attr.name ?? ""}");
 };
 `);
 
     } else if (element.attr.type) {
         const childrenType = element.attr.type === "any"
-            ? "EL | string"
+            ? "StdEL | __EL | string"
             : element.attr.type;
         elementIfs.push(`\
 export interface ${element.attr.name ?? ""} extends _StdEL {
@@ -79,8 +79,8 @@ export interface ${element.attr.name ?? ""} extends _StdEL {
     children: Array<${childrenType}>
 }
 
-export const is${element.attr.name ?? ""} = (obj: EL): obj is ${element.attr.name ?? ""} => {
-    return obj.tag === "${element.attr.name ?? ""}";
+export const is${element.attr.name ?? ""} = (obj: EL | string): obj is ${element.attr.name ?? ""} => {
+    return (typeof obj !== "string") && (obj.tag === "${element.attr.name ?? ""}");
 };
 `);
 
@@ -93,7 +93,7 @@ export const is${element.attr.name ?? ""} = (obj: EL): obj is ${element.attr.nam
 
         const isMixed2 = [...getByTagName(element, "xs:complexType")].filter(el => [...getByTagName(el, "xs:complexContent")].filter(el => [...getByTagName(el, "xs:extension")].filter(el => el.attr.base === "any").length > 0).length > 0).length > 0;
 
-        if (isMixed2) childTags.add("string").add("EL");
+        if (isMixed2) childTags.add("string").add("StdEL").add("__EL");
 
         const attrLines: string[] = [];
         for (const attr of getByTagName(element, "xs:attribute")) {
@@ -114,8 +114,8 @@ export interface ${element.attr.name ?? ""} extends _StdEL {
     children: ${childrenType}
 }
 
-export const is${element.attr.name ?? ""} = (obj: EL): obj is ${element.attr.name ?? ""} => {
-    return obj.tag === "${element.attr.name ?? ""}";
+export const is${element.attr.name ?? ""} = (obj: EL | string): obj is ${element.attr.name ?? ""} => {
+    return (typeof obj !== "string") && (obj.tag === "${element.attr.name ?? ""}");
 };
 `);
     }
@@ -130,6 +130,10 @@ export type StdEL =
 ${stdElTags.map(tag => `    | ${tag}`).join("\r\n")}
     ;
 
+export const stdELTags = [
+${stdElTags.map(tag => `    "${tag}",`).join("\r\n")}
+] as const;
+
 export const newStdEL = <
     TName extends string,
     TStdEL = StdELType<TName>,
@@ -142,6 +146,10 @@ export const newStdEL = <
         range: [start: number, end: number] | null = null,
     ): StdELType<TName> => {
     return new EL(tag, attr, children, range) as StdELType<TName>;
+};
+
+export const isStdEL = (obj: EL | string): obj is StdEL => {
+    return (typeof obj !== "string") && ((stdELTags as readonly string[]).includes(obj.tag));
 };
 `);
 

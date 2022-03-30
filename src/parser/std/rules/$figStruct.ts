@@ -11,10 +11,35 @@ import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 
 
+export const figToLines = (fig: std.Fig, indentTexts: string[]): Line[] => {
+    const lines: Line[] = [];
+
+    lines.push(new OtherLine(
+        null,
+        indentTexts.length,
+        indentTexts,
+        [],
+        [
+            new Sentences(
+                "",
+                null,
+                [],
+                [newStdEL("Sentence", {}, [new EL("__CapturedXML", {}, [fig])])],
+            ),
+        ],
+        CST.EOL,
+    ));
+
+    return lines;
+};
+
+
 export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    const figStructTitleText = figStruct.children.find(el => el.tag === "FigStructTitle")?.text ?? "";
+    const figStructTitleTextSentenceChildren = (
+        figStruct.children.find(el => el.tag === "FigStructTitle") as std.FigStructTitle | undefined
+    )?.children;
 
     lines.push(new OtherLine(
         null,
@@ -28,12 +53,12 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
                 null,
             )
         ],
-        figStructTitleText ? [
+        figStructTitleTextSentenceChildren ? [
             new Sentences(
                 "",
                 null,
                 [],
-                [newStdEL("Sentence", {}, [figStructTitleText])]
+                [newStdEL("Sentence", {}, figStructTitleTextSentenceChildren)]
             )
         ] : [],
         CST.EOL,
@@ -45,21 +70,9 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
         if (child.tag === "FigStructTitle") continue;
 
         if (child.tag === "Fig") {
-            lines.push(new OtherLine(
-                null,
-                childrenIndentTexts.length,
-                childrenIndentTexts,
-                [],
-                [
-                    new Sentences(
-                        "",
-                        null,
-                        [],
-                        [newStdEL("Sentence", {}, [new EL("__CapturedXML", {}, [child])])],
-                    ),
-                ],
-                CST.EOL,
-            ));
+            const figLines = figToLines(child, childrenIndentTexts);
+            lines.push(...figLines);
+
         } else if (child.tag === "Remarks") {
             const remarksLines = remarksToLines(child, childrenIndentTexts);
             lines.push(...remarksLines);
