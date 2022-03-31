@@ -11,6 +11,7 @@ import { VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine } from "../util";
 import $paragraphItem, { $paragraphItemChildrenOuter, paragraphItemToLines } from "./$paragraphItem";
 import { rangeOfELs } from "../../../node/el";
+import $supplNote, { supplNoteToLines } from "./$supplNote";
 
 export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -68,10 +69,9 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
         lines.push(...paragraphLines);
     }
 
-    // TODO: Implement
-    // for (const SupplNote of SupplNotes) {
-    //     blocks.push(renderSupplNote(SupplNote, indent));
-    // }
+    for (const SupplNote of SupplNotes) {
+        lines.push(...supplNoteToLines(SupplNote, indentTexts));
+    }
 
     return lines;
 };
@@ -109,9 +109,11 @@ export const $article: WithErrorRule<std.Article> = factory
                 }
             })
         , "firstParagraphItemLine")
+        .andOmit(r => r.zeroOrMore(() => $blankLine))
         .and(r => r
             .zeroOrOne(() => $paragraphItemChildrenOuter)
         , "firstParagraphChildren")
+        .andOmit(r => r.zeroOrMore(() => $blankLine))
         .and(r => r
             .zeroOrMore(r => r
                 .sequence(s => s
@@ -120,11 +122,16 @@ export const $article: WithErrorRule<std.Article> = factory
                 )
             )
         , "otherParagraphs")
-        .action(({ captionLine, firstParagraphItemLine, firstParagraphChildren, otherParagraphs }) => {
+        .andOmit(r => r.zeroOrMore(() => $blankLine))
+        .and(r => r
+            .zeroOrMore(() => $supplNote)
+        , "supplNotes")
+        .action(({ captionLine, firstParagraphItemLine, firstParagraphChildren, otherParagraphs, supplNotes }) => {
             const article = newStdEL("Article");
             const errors = [
                 ...(firstParagraphChildren?.errors ?? []),
                 ...otherParagraphs.map(p => p.errors).flat(),
+                ...supplNotes.map(n => n.errors).flat(),
             ];
 
             article.attr.Delete = "false";
@@ -175,6 +182,8 @@ export const $article: WithErrorRule<std.Article> = factory
             firstParagraph.range = rangeOfELs(firstParagraph.children);
 
             article.extend(otherParagraphs.map(p => p.value));
+
+            article.extend(supplNotes.map(n => n.value));
 
             article.range = rangeOfELs(article.children);
 
