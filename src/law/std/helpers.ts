@@ -144,6 +144,44 @@ export type ArticleGroupTitle =
 export const isArticleGroupTitle = (el: EL): el is ArticleGroupTitle =>
     (articleGroupTitleTags as readonly string[]).includes(el.tag);
 
+export const tocArticleGroupTags = [
+    "TOCPart",
+    "TOCChapter",
+    "TOCSection",
+    "TOCSubsection",
+    "TOCDivision",
+] as const;
+
+export type TOCArticleGroup =
+    | std.TOCPart
+    | std.TOCChapter
+    | std.TOCSection
+    | std.TOCSubsection
+    | std.TOCDivision
+    ;
+
+export const isTOCArticleGroup = (el: EL): el is TOCArticleGroup =>
+    (tocArticleGroupTags as readonly string[]).includes(el.tag);
+
+export const tocItemTags = [
+    ...tocArticleGroupTags,
+    "TOCPreambleLabel",
+    "TOCArticle",
+    "TOCSupplProvision",
+    "TOCAppdxTableLabel",
+] as const;
+
+export type TOCItem =
+    | TOCArticleGroup
+    | std.TOCPreambleLabel
+    | std.TOCArticle
+    | std.TOCSupplProvision
+    | std.TOCAppdxTableLabel
+    ;
+
+export const isTOCItem = (el: EL): el is TOCItem =>
+    (tocItemTags as readonly string[]).includes(el.tag);
+
 export const listOrSublistTags = [
     "List",
     "Sublist1",

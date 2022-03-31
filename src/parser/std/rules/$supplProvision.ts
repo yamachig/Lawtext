@@ -20,8 +20,8 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
 
     lines.push(new SupplProvisionHeadLine(
         null,
-        indentTexts.length,
-        indentTexts,
+        indentTexts.length * 3,
+        [...indentTexts, CST.INDENT, CST.INDENT, CST.INDENT],
         sentenceChildrenToString(supplProvisionLabel?.children ?? []),
         (typeof supplProvision.attr.AmendLawNum === "string") ? `${CST.MARGIN}（` : "",
         supplProvision.attr.AmendLawNum ?? "",

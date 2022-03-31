@@ -6,7 +6,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-附　則　抄
+      附　則　抄
 
   （施行期日）
 第一条　この法律は、公布の日から起算して一年六月を超えない範囲内において政令で定める日から施行する。
@@ -17,11 +17,11 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
   * - 力
     - ダイン
 
-附　則　（平成一一年七月一六日法律第一〇二号）　抄
+      附　則　（平成一一年七月一六日法律第一〇二号）　抄
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-附　則　抄
+      附　則　抄
   （施行期日）
 第一条　この法律は、公布の日から起算して一年六月を超えない範囲内において政令で定める日から施行する。
 附則別表第一
@@ -178,7 +178,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-附　則　（平成五年一一月一二日法律第八九号）　抄　
+      附　則　（平成五年一一月一二日法律第八九号）　抄　
 
   （施行期日）
 第一条　この法律は、行政手続法（平成五年法律第八十八号）の施行の日から施行する。
@@ -187,7 +187,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-附　則　（平成五年一一月一二日法律第八九号）　抄
+      附　則　（平成五年一一月一二日法律第八九号）　抄
   （施行期日）
 第一条　この法律は、行政手続法（平成五年法律第八十八号）の施行の日から施行する。
 `.replace(/\r?\n/g, "\r\n");
@@ -256,7 +256,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
             expectedErrorMessages,
             (vlines, env) => {
                 const result = $supplProvision.match(0, vlines, env);
-                console.log(JSON.stringify(vlines, null, 2));
+                // console.log(JSON.stringify(vlines, null, 2));
                 // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
