@@ -39,7 +39,7 @@ export const $blankLine = factory
     .oneMatch(({ item }) => item.type === LineType.BNK ? item : null);
 
 
-export const isSingleParentheses = (line: VirtualLine | Line | SentencesArray): boolean => {
+export const isSingleParentheses = (line: VirtualLine | Line | SentencesArray): __Parentheses | null => {
     let columns: SentencesArray = [];
     if (Array.isArray(line)){
         columns = line;
@@ -56,5 +56,5 @@ export const isSingleParentheses = (line: VirtualLine | Line | SentencesArray): 
             && columns[0].sentences[0].children[0].attr.type === "round"
             // && typeof columns[0].sentences[0].children[0] !== "string"
             // && columns[0].sentences[0].children[0].tag === "__Parentheses"
-    );
+    ) ? columns[0].sentences[0].children[0] : null;
 };

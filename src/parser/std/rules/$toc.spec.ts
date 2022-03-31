@@ -41,6 +41,7 @@ describe("Test $toc and tocToLines", () => {
   第六章　意見公募手続等（第三十八条―第四十五条）
   第七章　補則（第四十六条）
   附則
+
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "TOC",

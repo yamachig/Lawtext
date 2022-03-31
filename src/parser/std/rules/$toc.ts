@@ -1,4 +1,4 @@
-import { ArticleGroupHeadLine, ArticleLine, Line, LineType, OtherLine, SupplProvisionHeadLine, TOCHeadLine } from "../../../node/cst/line";
+import { ArticleGroupHeadLine, ArticleLine, BlankLine, Line, LineType, OtherLine, SupplProvisionHeadLine, TOCHeadLine } from "../../../node/cst/line";
 import { articleGroupTags, articleGroupTitleTags, isTOCAppdxTableLabel, isTOCArticle, isTOCArticleGroup, isTOCPreambleLabel, isTOCSupplProvision, newStdEL, tocArticleGroupTags } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
@@ -112,6 +112,8 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
 
             lines.push(...tocItemToLines(child, childrenIndentTexts));
         }
+
+        lines.push(new BlankLine(null, CST.EOL));
 
     }
     else { assertNever(el); }
