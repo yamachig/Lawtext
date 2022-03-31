@@ -4,7 +4,7 @@ import { $blankLine, WithErrorRule } from "../util";
 import { isArticle, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
-import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
+import $paragraphItem, { $noNumParagraph, paragraphItemToLines } from "./$paragraphItem";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
@@ -53,23 +53,66 @@ const $supplProvisionChildren: WithErrorRule<(std.ParagraphItem | std.Article | 
     .withName("supplProvisionChildren")
     .sequence(s => s
         .and(r => r
-            .oneOrMore(r => r
-                .sequence(s => s
-                    .and(r => r
-                        .choice(c => c
-                            .or(() => $paragraphItem)
-                            .or(() => $article)
-                            .or(() => $articleGroup)
-                            .or(() => $supplProvisionAppdx)
-                            .or(() => $supplProvisionAppdxStyle)
-                            .or(() => $supplProvisionAppdxTable)
+            .sequence(s => s
+                .and(r => r
+                    .choice(c => c
+                        .or(r => r
+                            .oneOrMore(r => r
+                                .sequence(s => s
+                                    .and(r => r
+                                        .choice(c => c
+                                            .or(() => $article)
+                                            .or(() => $articleGroup)
+                                        )
+                                    )
+                                    .andOmit(r => r.zeroOrMore(() => $blankLine))
+                                )
+                            )
+                        )
+                        .or(r => r
+                            .oneOrMore(r => r
+                                .sequence(s => s
+                                    .and(r => r
+                                        .choice(c => c
+                                            .or(() => $paragraphItem)
+                                        )
+                                    )
+                                    .andOmit(r => r.zeroOrMore(() => $blankLine))
+                                )
+                            )
+                        )
+                        .or(r => r
+                            .oneOrMore(r => r
+                                .sequence(s => s
+                                    .and(r => r
+                                        .choice(c => c
+                                            .or(() => $noNumParagraph)
+                                        )
+                                    )
+                                    .andOmit(r => r.zeroOrMore(() => $blankLine))
+                                )
+                            )
                         )
                     )
-                    .andOmit(r => r.zeroOrMore(() => $blankLine))
+                )
+                .and(r => r
+                    .zeroOrMore(r => r
+                        .sequence(s => s
+                            .and(r => r
+                                .choice(c => c
+                                    .or(() => $supplProvisionAppdx)
+                                    .or(() => $supplProvisionAppdxStyle)
+                                    .or(() => $supplProvisionAppdxTable)
+                                )
+                            )
+                            .andOmit(r => r.zeroOrMore(() => $blankLine))
+                        )
+                    )
                 )
             )
-        , "children")
-        .action(({ children }) => {
+        , "childrenList")
+        .action(({ childrenList }) => {
+            const children = childrenList.flat();
             return {
                 value: children.map(c => c.value).flat(),
                 errors: children.map(c => c.errors).flat(),

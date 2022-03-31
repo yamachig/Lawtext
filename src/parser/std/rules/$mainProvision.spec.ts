@@ -1,46 +1,30 @@
 import { testLawtextToStd } from "../testHelper";
-import $supplProvision, { supplProvisionToLines } from "./$supplProvision";
+import $mainProvision, { mainProvisionToLines } from "./$mainProvision";
 
-describe("Test $supplProvision and supplProvisionToLines", () => {
+describe("Test $mainProvision and mainProvisionToLines", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-      附　則　抄
-
   （施行期日）
 第一条　この法律は、公布の日から起算して一年六月を超えない範囲内において政令で定める日から施行する。
 
-附則別表第一
-  * * 物象の状態の量
-    * 計量単位
-  * - 力
-    - ダイン
+  （経過措置）
+第二条　この法律の施行前にした行為に対する罰則の適用については、なお従前の例による。
 
       附　則　（平成一一年七月一六日法律第一〇二号）　抄
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-      附　則　抄
   （施行期日）
 第一条　この法律は、公布の日から起算して一年六月を超えない範囲内において政令で定める日から施行する。
-附則別表第一
-  * * 物象の状態の量
-    * 計量単位
-  * - 力
-    - ダイン
+  （経過措置）
+第二条　この法律の施行前にした行為に対する罰則の適用については、なお従前の例による。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
-            tag: "SupplProvision",
-            attr: {
-                Extract: "true"
-            },
+            tag: "MainProvision",
+            attr: {},
             children: [
-                {
-                    tag: "SupplProvisionLabel",
-                    attr: {},
-                    children: ["附　則"]
-                },
                 {
                     tag: "Article",
                     attr: {
@@ -85,72 +69,48 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                     ]
                 },
                 {
-                    tag: "SupplProvisionAppdxTable",
-                    attr: {},
+                    tag: "Article",
+                    attr: {
+                        Delete: "false",
+                        Hide: "false"
+                    },
                     children: [
                         {
-                            tag: "SupplProvisionAppdxTableTitle",
+                            tag: "ArticleCaption",
                             attr: {},
-                            children: ["附則別表第一"]
+                            children: ["（経過措置）"]
                         },
                         {
-                            tag: "TableStruct",
+                            tag: "ArticleTitle",
                             attr: {},
+                            children: ["第二条"]
+                        },
+                        {
+                            tag: "Paragraph",
+                            attr: {
+                                OldStyle: "false"
+                            },
                             children: [
                                 {
-                                    tag: "Table",
+                                    tag: "ParagraphNum",
+                                    attr: {},
+                                    children: []
+                                },
+                                {
+                                    tag: "ParagraphSentence",
                                     attr: {},
                                     children: [
                                         {
-                                            tag: "TableHeaderRow",
+                                            tag: "Sentence",
                                             attr: {},
-                                            children: [
-                                                {
-                                                    tag: "TableHeaderColumn",
-                                                    attr: {},
-                                                    children: ["物象の状態の量"]
-                                                },
-                                                {
-                                                    tag: "TableHeaderColumn",
-                                                    attr: {},
-                                                    children: ["計量単位"]
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            tag: "TableRow",
-                                            attr: {},
-                                            children: [
-                                                {
-                                                    tag: "TableColumn",
-                                                    attr: {},
-                                                    children: [
-                                                        {
-                                                            tag: "Sentence",
-                                                            attr: {},
-                                                            children: ["力"]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    tag: "TableColumn",
-                                                    attr: {},
-                                                    children: [
-                                                        {
-                                                            tag: "Sentence",
-                                                            attr: {},
-                                                            children: ["ダイン"]
-                                                        }
-                                                    ]
-                                                }
-                                            ]
+                                            children: ["この法律の施行前にした行為に対する罰則の適用については、なお従前の例による。"]
                                         }
                                     ]
                                 }
                             ]
                         }
                     ]
-                }
+                },
             ]
         };
 
@@ -160,7 +120,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
             expectedValue,
             expectedErrorMessages,
             (vlines, env) => {
-                const result = $supplProvision.match(0, vlines, env);
+                const result = $mainProvision.match(0, vlines, env);
                 // console.log(JSON.stringify(vlines, null, 2));
                 // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
@@ -168,7 +128,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 return result;
             },
             el => {
-                const lines = supplProvisionToLines(el, []);
+                const lines = mainProvisionToLines(el, []);
                 // console.log(JSON.stringify(lines, null, 2));
                 return lines;
             },
@@ -178,8 +138,6 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-      附　則　（平成五年一一月一二日法律第八九号）　抄　
-
   （施行期日）
 第一条　この法律は、行政手続法（平成五年法律第八十八号）の施行の日から施行する。
 
@@ -187,22 +145,13 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-      附　則　（平成五年一一月一二日法律第八九号）　抄
   （施行期日）
 第一条　この法律は、行政手続法（平成五年法律第八十八号）の施行の日から施行する。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
-            tag: "SupplProvision",
-            attr: {
-                AmendLawNum: "平成五年一一月一二日法律第八九号",
-                Extract: "true"
-            },
+            tag: "MainProvision",
+            attr: {},
             children: [
-                {
-                    tag: "SupplProvisionLabel",
-                    attr: {},
-                    children: ["附　則"]
-                },
                 {
                     tag: "Article",
                     attr: {
@@ -255,7 +204,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
             expectedValue,
             expectedErrorMessages,
             (vlines, env) => {
-                const result = $supplProvision.match(0, vlines, env);
+                const result = $mainProvision.match(0, vlines, env);
                 // console.log(JSON.stringify(vlines, null, 2));
                 // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
@@ -263,7 +212,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 return result;
             },
             el => {
-                const lines = supplProvisionToLines(el, []);
+                const lines = mainProvisionToLines(el, []);
                 // console.log(JSON.stringify(lines, null, 2));
                 return lines;
             },
@@ -273,28 +222,18 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-      附　則　（昭和五九年五月二九日法律第四八号）
-
 この法律は、昭和五十九年九月一日から施行する。ただし、第百三条の改正規定は、公布の日から施行する。
 
 附　則　（平成一一年七月一六日法律第一〇二号）　抄
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-      附　則　（昭和五九年五月二九日法律第四八号）
 この法律は、昭和五十九年九月一日から施行する。ただし、第百三条の改正規定は、公布の日から施行する。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
-            tag: "SupplProvision",
-            attr: {
-                AmendLawNum: "昭和五九年五月二九日法律第四八号"
-            },
+            tag: "MainProvision",
+            attr: {},
             children: [
-                {
-                    tag: "SupplProvisionLabel",
-                    attr: {},
-                    children: ["附　則"]
-                },
                 {
                     tag: "Paragraph",
                     attr: {
@@ -334,7 +273,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
             expectedValue,
             expectedErrorMessages,
             (vlines, env) => {
-                const result = $supplProvision.match(0, vlines, env);
+                const result = $mainProvision.match(0, vlines, env);
                 // console.log(JSON.stringify(vlines, null, 2));
                 // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
@@ -342,7 +281,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 return result;
             },
             el => {
-                const lines = supplProvisionToLines(el, []);
+                const lines = mainProvisionToLines(el, []);
                 // console.log(JSON.stringify(lines, null, 2));
                 return lines;
             },
@@ -352,8 +291,6 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-      附　則　（平成五年一一月一二日法律第八九号）　抄　
-
   （施行期日）
 １　この法律は、サービスの貿易に関する一般協定の第四議定書が日本国について効力を生ずる日から施行する。
 
@@ -364,24 +301,15 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-      附　則　（平成五年一一月一二日法律第八九号）　抄
   （施行期日）
 １　この法律は、サービスの貿易に関する一般協定の第四議定書が日本国について効力を生ずる日から施行する。
   （罰則に関する経過措置）
 ２　この法律の施行前にした行為に対する罰則の適用については、なお従前の例による。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
-            tag: "SupplProvision",
-            attr: {
-                AmendLawNum: "平成五年一一月一二日法律第八九号",
-                Extract: "true"
-            },
+            tag: "MainProvision",
+            attr: {},
             children: [
-                {
-                    tag: "SupplProvisionLabel",
-                    attr: {},
-                    children: ["附　則"]
-                },
                 {
                     tag: "Paragraph",
                     attr: {
@@ -449,7 +377,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
             expectedValue,
             expectedErrorMessages,
             (vlines, env) => {
-                const result = $supplProvision.match(0, vlines, env);
+                const result = $mainProvision.match(0, vlines, env);
                 // console.log(JSON.stringify(vlines, null, 2));
                 // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
@@ -457,7 +385,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 return result;
             },
             el => {
-                const lines = supplProvisionToLines(el, []);
+                const lines = mainProvisionToLines(el, []);
                 // console.log(JSON.stringify(lines, null, 2));
                 return lines;
             },

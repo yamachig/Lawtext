@@ -195,7 +195,7 @@ export const $paragraphItemChildrenOuter: WithErrorRule<
     factory as VirtualLineRuleFactory<
         Env & {
             firstParagraphItemLine: VirtualLine & {
-                type: LineType.ART | LineType.PIT;
+                type: LineType.ART | LineType.PIT | LineType.OTH;
             }
         }
     >
@@ -367,6 +367,54 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
             return {
                 value: paragraphItem,
                 errors,
+            };
+        })
+    )
+    ;
+
+export const $noNumParagraph: WithErrorRule<std.ParagraphItem> = factory
+    .withName("noNumParagraph")
+    .sequence(s => s
+        .and(r => r
+            .oneMatch(({ item }) => {
+                if (
+                    item.type === LineType.OTH
+                    && item.line.controls.length === 0
+                ) {
+                    return item;
+                } else {
+                    return null;
+                }
+            })
+        , "firstParagraphItemLine")
+        .and(r => r
+            .zeroOrOne(() => $paragraphItemChildrenOuter)
+        , "tailChildren")
+        .action(({ firstParagraphItemLine, tailChildren }) => {
+
+            const paragraph = newStdEL(
+                "Paragraph",
+                {
+                    OldStyle: "false",
+                },
+                [
+                    newStdEL(std.paragraphItemSentenceTags[firstParagraphItemLine.virtualIndentDepth],
+                        {},
+                        sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
+                        firstParagraphItemLine.line.sentencesArrayRange,
+                    )
+                ]
+            );
+
+            if (tailChildren) {
+                paragraph.extend(tailChildren.value);
+            }
+
+            paragraph.range = rangeOfELs(paragraph.children);
+
+            return {
+                value: paragraph,
+                errors: tailChildren?.errors ?? [],
             };
         })
     )
