@@ -1,7 +1,7 @@
 // import formatXML from "xml-formatter";
 import { DOMParser } from "@xmldom/xmldom";
 import * as law_diff from "lawtext/dist/src/diff/law_diff";
-import * as parser from "lawtext/dist/src/parser";
+import { parse } from "lawtext/dist/src/parser/lawtext";
 import * as analyzer from "lawtext/dist/src/analyzer";
 import { render as renderLawtext } from "lawtext/dist/src/renderer/lawtext";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
@@ -122,7 +122,7 @@ export const getParsedLaw = async (lawtext: string): Promise<{
         const requiredms = new Map<string, number>();
         const lap = new Lap();
 
-        const parsedEL = parser.parse(lawtext);
+        const { value: parsedEL, errors: parsedErrors } = parse(lawtext);
         requiredms.set("parseLawtext", lap.lapms());
 
         analyzer.analyze(parsedEL);
@@ -138,7 +138,9 @@ export const getParsedLaw = async (lawtext: string): Promise<{
                 ok: {
                     requiredms,
                 },
-                info: {},
+                info: {
+                    ...(parsedErrors.length > 0 ? { error: JSON.stringify(parsedErrors) } : {}),
+                },
             },
         };
     } catch (e) {

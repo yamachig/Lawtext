@@ -17,7 +17,7 @@ export class LawCoveragesManager {
     }
 
     protected sort: [key:SortKey, direction:SortDirection][] = [];
-    protected lawCoveragesCursor: mongoose.AggregationCursor | null = null;
+    protected lawCoveragesCursor: mongoose.Cursor | null = null;
     protected lawCoveragesCache: LawCoverage[] | null = null;
 
     protected countsCache: LawCoverageCounts | null = null;

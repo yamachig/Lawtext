@@ -524,7 +524,7 @@ const LawCoverageList: React.FC<LawtextDashboardPageStateStruct & {lawCoveragesS
     const { lawCoveragesStruct } = props;
 
     const listItemOnClick = React.useMemo(() => (lawCoverage: LawCoverage) => {
-        location.hash = `${lawCoverage.LawID}`;
+        location.hash = `/${lawCoverage.LawID}`;
     }, []);
 
     return (

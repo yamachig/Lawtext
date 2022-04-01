@@ -2,9 +2,8 @@ import { LawCoverage, LawCoverageCounts, toSortString } from "../../lawCoverage"
 import { ComparableEL, TagType } from "lawtext/dist/src/diff/law_diff";
 import { EL, xmlToJson } from "lawtext/dist/src/node/el";
 import React from "react";
-import { useHistory } from "react-router";
 import { FilterInfo, filterInfoEqual, SortDirection, SortKey } from "./FilterInfo";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const domParser = new DOMParser();
 
@@ -87,13 +86,14 @@ export type OrigSetLawtextDashboardPageState = React.Dispatch<React.SetStateActi
 
 interface RouteParams {
     LawID: string | undefined,
+    [key: string]: string | undefined,
 }
 
 export interface LawtextDashboardPageStateStruct {
     origState: Readonly<BaseLawtextDashboardPageState>,
     origSetState: OrigSetLawtextDashboardPageState,
     setState: SetLawtextDashboardPageState,
-    history: ReturnType<typeof useHistory>,
+    history: ReturnType<typeof useNavigate>,
     onNavigated: () => void,
     routeParams: RouteParams,
 }
@@ -268,7 +268,7 @@ const _onNavigated = async (stateStruct: LawtextDashboardPageStateStruct) => {
 };
 
 export const useLawtextDashboardPageState = (): LawtextDashboardPageStateStruct => {
-    const routeParams = useParams<RouteParams>();
+    const routeParams = useParams<RouteParams>() as RouteParams;
 
     const [state, origSetState] = React.useState<BaseLawtextDashboardPageState>(getInitialState);
 
@@ -278,9 +278,9 @@ export const useLawtextDashboardPageState = (): LawtextDashboardPageStateStruct 
         },
         [origSetState],
     );
-    const history = useHistory();
+    const history = useNavigate();
 
-    const onNavigated = () => _onNavigated(stateStruct);
+    const onNavigated: () => void = () => _onNavigated(stateStruct);
 
     const stateStruct = {
         origState: state,
