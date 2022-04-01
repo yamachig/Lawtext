@@ -306,6 +306,11 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                     },
                     children: [
                         {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
                             tag: "ParagraphSentence",
                             attr: {},
                             children: [

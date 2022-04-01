@@ -242,6 +242,11 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
                     },
                     children: [
                         {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
                             tag: "ParagraphSentence",
                             attr: {},
                             children: [

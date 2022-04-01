@@ -467,6 +467,11 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
             },
             children: [
                 {
+                    tag: "ParagraphNum",
+                    attr: {},
+                    children: []
+                },
+                {
                     tag: "ParagraphSentence",
                     attr: {},
                     children: [

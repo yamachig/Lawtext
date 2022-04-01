@@ -398,11 +398,12 @@ export const $noNumParagraph: WithErrorRule<std.ParagraphItem> = factory
                     OldStyle: "false",
                 },
                 [
+                    newStdEL("ParagraphNum"),
                     newStdEL(std.paragraphItemSentenceTags[firstParagraphItemLine.virtualIndentDepth],
                         {},
                         sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
                         firstParagraphItemLine.line.sentencesArrayRange,
-                    )
+                    ),
                 ]
             );
 

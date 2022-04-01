@@ -67,7 +67,13 @@ describe("Test $law and lawToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Law",
-            attr: {},
+            attr: {
+                Era: "Heisei",
+                Lang: "ja",
+                LawType: "Act",
+                Num: "88",
+                Year: "5",
+            },
             children: [
                 {
                     tag: "LawNum",
@@ -491,7 +497,13 @@ describe("Test $law and lawToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Law",
-            attr: {},
+            attr: {
+                Era: "Heisei",
+                Lang: "ja",
+                LawType: "Act",
+                Num: "88",
+                Year: "5",
+            },
             children: [
                 {
                     tag: "LawNum",

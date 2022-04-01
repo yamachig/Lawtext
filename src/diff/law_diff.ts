@@ -1,6 +1,6 @@
 import * as xpath from "xpath";
 import * as util from "../util";
-import { JsonEL } from "../node/el"
+import { JsonEL } from "../node/el";
 import { compare, EditTable } from "./edit_table";
 
 export enum TagType {
@@ -120,6 +120,11 @@ const defaultAttr = new Map([
 ]);
 
 const warningAttrKey = new Set([
+    "PromulgateMonth",
+    "PromulgateDay",
+    "Kana",
+    "Abbrev",
+    "AbbrevKana",
     "Num",
     "Type",
     "Function",

@@ -15,6 +15,7 @@ import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, 
 import { ErrorMessage } from "../../cst/error";
 import { rangeOfELs } from "../../../node/el";
 import { sentencesArrayToString } from "../../cst/rules/$sentencesArray";
+import { parseLawNum } from "../../../law/num";
 
 
 export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
@@ -263,19 +264,29 @@ export const $law: WithErrorRule<std.Law> = factory
         .action(({ lawTitleLines, enactStatementLines, toc, preambles, mainProvisionAndErrors, supplOrAppdxItemAndErrors, notCapturedErrorLines }) => {
             const errors: ErrorMessage[] = [];
 
-            const law = newStdEL("Law");
+            const law = newStdEL(
+                "Law",
+                {
+                    Lang: "ja",
+                }
+            );
             if (lawTitleLines?.value.lawNumLine) {
                 const parentheses = isSingleParentheses(lawTitleLines.value.lawNumLine);
+                const lawNum = parentheses
+                    ? parentheses.content
+                    : sentencesArrayToString(lawTitleLines.value.lawNumLine.line.sentencesArray);
                 law.append(newStdEL(
                     "LawNum",
                     {},
-                    [
-                        parentheses
-                            ? parentheses.content
-                            : sentencesArrayToString(lawTitleLines.value.lawNumLine.line.sentencesArray)
-                    ],
+                    [lawNum],
                     lawTitleLines.value.lawNumLine.virtualRange,
                 ));
+
+                const { Era, Year, LawType, Num } = parseLawNum(lawNum);
+                if (Era !== null) law.attr.Era = Era;
+                if (Year !== null) law.attr.Year = Year.toString();
+                if (LawType !== null) law.attr.LawType = LawType;
+                law.attr.Num = Num !== null ? Num.toString() : "";
             }
 
             const lawBody = newStdEL("LawBody");
