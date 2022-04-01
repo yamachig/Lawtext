@@ -1,7 +1,7 @@
 import { factory } from "../factory";
-import { AppdxItemHeadLine, Line, LineType } from "../../../node/cst/line";
+import { AppdxItemHeadLine, BlankLine, Line, LineType } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
-import { isAppdxItemTitle, newStdEL, appdxItemTags, appdxItemTitleTags, StdELType, isRelatedArticleNum, isRemarks, isFigStruct, isTableStruct, isNoteLikeStruct, isArithFormula } from "../../../law/std";
+import { isAppdxItemTitle, newStdEL, appdxItemTags, appdxItemTitleTags, StdELType, isRelatedArticleNum, isRemarks, isFigStruct, isTableStruct, isNoteLikeStruct, isArithFormula, isParagraphItem } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
@@ -12,7 +12,6 @@ import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines } from "./$noteLike";
 import $figStruct, { figStructToLines } from "./$figStruct";
-import { isParagraphItem } from "../../out_ std copy/lawUtil";
 import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
@@ -53,6 +52,8 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
         CST.EOL,
     ));
 
+    lines.push(new BlankLine(null, CST.EOL));
+
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
     for (const child of appdxItem.children) {
@@ -61,16 +62,22 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
 
         if (isNoteLikeStruct(child)) {
             lines.push(...noteLikeStructToLines(child, childrenIndentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isRemarks(child)) {
             lines.push(...remarksToLines(child, childrenIndentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isFigStruct(child)) {
             lines.push(...figStructToLines(child, childrenIndentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isParagraphItem(child)) {
             lines.push(...paragraphItemToLines(child, childrenIndentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isTableStruct(child)) {
             lines.push(...tableStructToLines(child, childrenIndentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isArithFormula(child)) {
             lines.push(...arithFormulaToLines(child, childrenIndentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         }
         else { assertNever(child); }
     }

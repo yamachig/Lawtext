@@ -18,6 +18,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
         const expectedRendered = `\
   （施行期日）
 第一条　この法律は、公布の日から起算して一年六月を超えない範囲内において政令で定める日から施行する。
+
   （経過措置）
 第二条　この法律の施行前にした行為に対する罰則の適用については、なお従前の例による。
 `.replace(/\r?\n/g, "\r\n");
@@ -303,6 +304,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
         const expectedRendered = `\
   （施行期日）
 １　この法律は、サービスの貿易に関する一般協定の第四議定書が日本国について効力を生ずる日から施行する。
+
   （罰則に関する経過措置）
 ２　この法律の施行前にした行為に対する罰則の適用については、なお従前の例による。
 `.replace(/\r?\n/g, "\r\n");

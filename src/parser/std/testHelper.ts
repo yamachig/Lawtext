@@ -69,6 +69,6 @@ export const testLawtextToStd = <
     } else {
         renderedLines = toLines(loadEl(expectedValue as unknown as JsonEL) as TEL);
     }
-    const renderedText = renderedLines.map(l => l.text()).join("");
+    const renderedText = renderedLines.map(l => l.text()).join("").replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1").replace(/(?<!\n)$/, "\r\n").replace(/(?:\r?\n)+$/, "\r\n");
     assert.strictEqual(renderedText, expectedRendered);
 };

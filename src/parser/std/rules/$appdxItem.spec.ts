@@ -16,6 +16,7 @@ describe("Test $appdx and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 付録第一（第二十六条、第四十五条、第四十六条の五関係）
+
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -87,6 +88,7 @@ describe("Test $appdx and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 :appdx:別記付録第一（第二十六条、第四十五条、第四十六条の五関係）
+
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -158,6 +160,7 @@ describe("Test $appdx and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 付録第一（第二十六条、第四十五条、第四十六条の五関係）
+
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -233,8 +236,10 @@ describe("Test $appdx and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 付録第一（第二十六条、第四十五条、第四十六条の五関係）
+
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
+
   備考
     備考文
 `.replace(/\r?\n/g, "\r\n");
@@ -326,6 +331,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別表第二（第十九条、第二十一条関係）
+
   * - 情報照会者
     - 事務
 `.replace(/\r?\n/g, "\r\n");
@@ -420,6 +426,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 :appdx-table:付録別表第二（第十九条、第二十一条関係）
+
   * - 情報照会者
     - 事務
 `.replace(/\r?\n/g, "\r\n");
@@ -513,6 +520,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別表第二（第十九条、第二十一条関係）
+
   * - 情報照会者
     - 事務
 `.replace(/\r?\n/g, "\r\n");
@@ -611,8 +619,10 @@ describe("Test $appdxTable and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別表第二（第十九条、第二十一条関係）
+
   * - 情報照会者
     - 事務
+
   備考
     備考文
 `.replace(/\r?\n/g, "\r\n");
@@ -727,6 +737,7 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別記様式（第十四条関係）
+
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -804,6 +815,7 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 :appdx-style:付録別記（第十四条関係）
+
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -881,6 +893,7 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別記様式（第十四条関係）
+
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -962,8 +975,10 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別記様式（第十四条関係）
+
   :style-struct:
     <Fig src="./pict/001.pdf"/>
+
   備考
     備考文
 `.replace(/\r?\n/g, "\r\n");
@@ -1061,6 +1076,7 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別紙第一号書式（第三条関係）
+
   :format-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -1138,6 +1154,7 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 :appdx-format:付録別記（第三条関係）
+
   :format-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -1215,6 +1232,7 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別紙第一号書式（第三条関係）
+
   :format-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -1296,8 +1314,10 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別紙第一号書式（第三条関係）
+
   :format-struct:
     <Fig src="./pict/001.pdf"/>
+
   備考
     備考文
 `.replace(/\r?\n/g, "\r\n");
@@ -1394,6 +1414,7 @@ describe("Test $appdxFig and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別図第十一（第１９条第１項の表の６の項関係）
+
   <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
@@ -1457,6 +1478,7 @@ describe("Test $appdxFig and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 :appdx-fig:付録別記（第１９条第１項の表の６の項関係）
+
   <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
@@ -1520,6 +1542,7 @@ describe("Test $appdxFig and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別図第十一（第１９条第１項の表の６の項関係）
+
   <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
@@ -1588,6 +1611,7 @@ describe("Test $appdxNote and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別記第二号（第一条第一項、第九条関係）
+
   :note-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -1665,6 +1689,7 @@ describe("Test $appdxNote and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 :appdx-note:付録別記（第一条第一項、第九条関係）
+
   :note-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -1742,6 +1767,7 @@ describe("Test $appdxNote and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別記第二号（第一条第一項、第九条関係）
+
   :note-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -1823,8 +1849,10 @@ describe("Test $appdxNote and appdxItemToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 別記第二号（第一条第一項、第九条関係）
+
   :note-struct:
     <Fig src="./pict/001.pdf"/>
+
   備考
     備考文
 `.replace(/\r?\n/g, "\r\n");

@@ -1,14 +1,14 @@
 import { factory } from "../factory";
-import { Line } from "../../../node/cst/line";
+import { BlankLine, Line } from "../../../node/cst/line";
 import { $blankLine, WithErrorRule } from "../util";
-import { isArticle, newStdEL } from "../../../law/std";
+import { isArticle, isArticleGroup, isParagraphItem, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import $paragraphItem, { $noNumParagraph, paragraphItemToLines } from "./$paragraphItem";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
-import { isArticleGroup, isParagraphItem } from "../../out_ std copy/lawUtil";
 import $article, { articleToLines } from "./$article";
 import $articleGroup, { articleGroupToLines } from "./$articleGroup";
+import CST from "../toCSTSettings";
 
 export const mainProvisionToLines = (mainProvision: std.MainProvision, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -16,10 +16,13 @@ export const mainProvisionToLines = (mainProvision: std.MainProvision, indentTex
     for (const child of mainProvision.children) {
         if (isParagraphItem(child)) {
             lines.push(...paragraphItemToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isArticle(child)) {
             lines.push(...articleToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isArticleGroup(child)) {
             lines.push(...articleGroupToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         }
         else { assertNever(child); }
     }

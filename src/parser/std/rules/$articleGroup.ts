@@ -11,6 +11,7 @@ import { mergeAdjacentTexts } from "../../cst/util";
 import $article, { articleToLines } from "./$article";
 import { rangeOfELs } from "../../../node/el";
 import { parseNamedNum } from "../../../law/num";
+import { appdxItemToLines } from "./$appdxItem";
 
 export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -44,17 +45,19 @@ export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[])
         if (i > 0) lines.push(new BlankLine(null, CST.EOL));
         if (child.tag === "Article") {
             lines.push(...articleToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
 
         } else if (child.tag === "Paragraph") {
             lines.push(...paragraphItemToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
 
         } else if (std.isArticleGroup(child)) {
             lines.push(...articleGroupToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
 
         } else if (std.isAppdxStyle(child)) {
-            // TODO: Implement
-            // console.error("Unexpected AppdxStyle in MainProvision!");
-            // blocks.push(renderAppdxStyle(child, indent));
+            console.error("Unexpected AppdxStyle in MainProvision!");
+            lines.push(...appdxItemToLines(child, indentTexts));
 
         }
         else { assertNever(child); }

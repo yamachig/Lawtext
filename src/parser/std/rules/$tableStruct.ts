@@ -1,5 +1,5 @@
 import { factory } from "../factory";
-import { Line, LineType, OtherLine, TableColumnLine } from "../../../node/cst/line";
+import { BlankLine, Line, LineType, OtherLine, TableColumnLine } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
 import { isColumn, isSentence, isTableColumn, isTableHeaderColumn, isTableHeaderRow, isTableRow, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
@@ -96,6 +96,8 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
             ] : [],
             CST.EOL,
         ));
+
+        lines.push(new BlankLine(null, CST.EOL));
     }
 
     const childrenIndentTexts = requireControl ? [...indentTexts, CST.INDENT] : indentTexts;
@@ -106,10 +108,12 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
         if (child.tag === "Table") {
             const tableLines = tableToLines(child, childrenIndentTexts);
             lines.push(...tableLines);
+            if (requireControl) lines.push(new BlankLine(null, CST.EOL));
 
         } else if (child.tag === "Remarks") {
             const remarksLines = remarksToLines(child, childrenIndentTexts);
             lines.push(...remarksLines);
+            if (requireControl) lines.push(new BlankLine(null, CST.EOL));
         }
         else { assertNever(child); }
     }

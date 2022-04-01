@@ -1,5 +1,5 @@
 import { factory } from "../factory";
-import { Line, LineType, OtherLine } from "../../../node/cst/line";
+import { BlankLine, Line, LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, isSingleParentheses, WithErrorRule } from "../util";
 import * as std from "../../../law/std";
 import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
@@ -60,6 +60,10 @@ export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
         ));
     }
 
+    if (lawTitle || lawNum) {
+        lines.push(new BlankLine(null, CST.EOL));
+    }
+
     for (const child of law.children) {
         if (isLawNum(child) || isLawBody(child)) {
             continue;
@@ -86,16 +90,22 @@ export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
                 ],
                 CST.EOL,
             ));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isTOC(child)) {
             lines.push(...tocToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isPreamble(child)) {
             lines.push(...preambleToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isMainProvision(child)) {
             lines.push(...mainProvisionToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isSupplProvision(child)) {
             lines.push(...supplProvisionToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isAppdxItem(child)) {
             lines.push(...appdxItemToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         }
         else { assertNever(child); }
     }
@@ -256,7 +266,6 @@ export const $law: WithErrorRule<std.Law> = factory
             const law = newStdEL("Law");
             if (lawTitleLines?.value.lawNumLine) {
                 const parentheses = isSingleParentheses(lawTitleLines.value.lawNumLine);
-                console.log(parentheses);
                 law.append(newStdEL(
                     "LawNum",
                     {},

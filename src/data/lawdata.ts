@@ -3,6 +3,7 @@ import * as analyzer from "../analyzer";
 import * as util from "../util";
 import { parse } from "../parser/lawtext";
 import { xmlToJson } from "../node/el";
+import { ErrorMessage } from "../parser/cst/error";
 
 
 export interface LawDataCore {el: std.Law, analysis: analyzer.Analysis}
@@ -17,7 +18,7 @@ export interface BaseLawtextLawDataProps {
 export type BaseLawDataProps = BaseXMLLawDataProps | BaseLawtextLawDataProps;
 
 export type LawDataResult<TLawDataProps extends BaseLawDataProps> =
-    { ok: true, lawData: LawDataCore & TLawDataProps} | {ok: false, error: Error};
+    { ok: true, lawData: LawDataCore & TLawDataProps, lawtextErrors?: ErrorMessage[]} | {ok: false, error: Error};
 
 export class Timing {
     public searchLawNum: number | null = null;
@@ -85,7 +86,7 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
             onMessage("Lawtextをパースしています...");
             // console.log("onNavigated: parsing lawtext...");
             await util.wait(30);
-            const [parseXMLOrLawtextTime, el] = await util.withTime(parse)(_props.lawtext);
+            const [parseXMLOrLawtextTime, { value: el, errors }] = await util.withTime(parse)(_props.lawtext);
             timing.parseXMLOrLawtext = parseXMLOrLawtextTime;
 
             onMessage("法令を解析しています...");
@@ -101,6 +102,7 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
                     el: el as std.Law,
                     analysis,
                 },
+                lawtextErrors: errors,
             };
         } else {
             throw util.assertNever(_props);

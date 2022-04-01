@@ -22,8 +22,10 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
       附　則　抄
+
   （施行期日）
 第一条　この法律は、公布の日から起算して一年六月を超えない範囲内において政令で定める日から施行する。
+
 附則別表第一
   * * 物象の状態の量
     * 計量単位
@@ -188,6 +190,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
       附　則　（平成五年一一月一二日法律第八九号）　抄
+
   （施行期日）
 第一条　この法律は、行政手続法（平成五年法律第八十八号）の施行の日から施行する。
 `.replace(/\r?\n/g, "\r\n");
@@ -282,6 +285,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
       附　則　（昭和五九年五月二九日法律第四八号）
+
 この法律は、昭和五十九年九月一日から施行する。ただし、第百三条の改正規定は、公布の日から施行する。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
@@ -365,8 +369,10 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
       附　則　（平成五年一一月一二日法律第八九号）　抄
+
   （施行期日）
 １　この法律は、サービスの貿易に関する一般協定の第四議定書が日本国について効力を生ずる日から施行する。
+
   （罰則に関する経過措置）
 ２　この法律の施行前にした行為に対する罰則の適用については、なお従前の例による。
 `.replace(/\r?\n/g, "\r\n");

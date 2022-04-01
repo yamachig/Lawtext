@@ -21,6 +21,7 @@ describe("Test $tableStruct and tableStructToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 :table-struct:表一
+
   * * 項
     * 種名
   * - [colspan="2"]（１）　かも科
@@ -154,6 +155,7 @@ describe("Test $tableStruct and tableStructToLines", () => {
         const expectedErrorMessages: string[] = ["table: Column indicator mismatch"];
         const expectedRendered = `\
 :table-struct:表一
+
   * * 項
     * 種名
 `.replace(/\r?\n/g, "\r\n");
@@ -220,6 +222,7 @@ describe("Test $tableStruct and tableStructToLines", () => {
         const expectedErrorMessages: string[] = ["table: No first column indicator"];
         const expectedRendered = `\
 :table-struct:表一
+
   * * 項
     * 種名
 `.replace(/\r?\n/g, "\r\n");
@@ -292,10 +295,13 @@ describe("Test $tableStruct and tableStructToLines", () => {
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 :table-struct:表一
+
   備考
     備考文１
+
   * - 項
     - 種名
+
   :remarks:
     備考文２
 `.replace(/\r?\n/g, "\r\n");

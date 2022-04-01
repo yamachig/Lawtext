@@ -1,14 +1,13 @@
 import { factory } from "../factory";
-import { Line, LineType, SupplProvisionHeadLine } from "../../../node/cst/line";
+import { BlankLine, Line, LineType, SupplProvisionHeadLine } from "../../../node/cst/line";
 import { $blankLine, WithErrorRule } from "../util";
-import { isArticle, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std";
+import { isArticle, isArticleGroup, isParagraphItem, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import $paragraphItem, { $noNumParagraph, paragraphItemToLines } from "./$paragraphItem";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import { isArticleGroup, isParagraphItem } from "../../out_ std copy/lawUtil";
 import $article, { articleToLines } from "./$article";
 import $articleGroup, { articleGroupToLines } from "./$articleGroup";
 import { $supplProvisionAppdx, $supplProvisionAppdxStyle, $supplProvisionAppdxTable, supplProvisionAppdxItemToLines } from "./$supplProvisionAppdxItem";
@@ -30,17 +29,23 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
         CST.EOL,
     ));
 
+    lines.push(new BlankLine(null, CST.EOL));
+
     for (const child of supplProvision.children) {
         if (child.tag === "SupplProvisionLabel") continue;
 
         if (isParagraphItem(child)) {
             lines.push(...paragraphItemToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isArticle(child)) {
             lines.push(...articleToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isArticleGroup(child)) {
             lines.push(...articleGroupToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         } else if (isSupplProvisionAppdxItem(child)) {
             lines.push(...supplProvisionAppdxItemToLines(child, indentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         }
         else { assertNever(child); }
     }
