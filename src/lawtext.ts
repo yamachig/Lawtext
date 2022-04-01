@@ -99,7 +99,11 @@ export const main = (args: Args): void => {
             }
         } else if (intype === "lawtext") {
             try {
-                law = parse(intext);
+                const result = parse(intext);
+                law = result.value;
+                for (const error of result.errors) {
+                    console.error(error);
+                }
             } catch (e) {
                 console.error("[parsing lawtext at main]", e);
                 throw e;

@@ -17,6 +17,7 @@ import { TERMC, toTableText } from "../src/util/term";
 import * as util from "../src/util";
 import { loader } from "./prepare_test";
 import { outerXML, xmlToJson } from "../src/node/el";
+import { ErrorMessage } from "../src/parser/cst/error";
 
 const domParser = new xmldom.DOMParser();
 
@@ -289,8 +290,12 @@ describe("Test Renderes", () => {
         await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });
 
         let parsedEL;
+        let errors: ErrorMessage[];
         try {
-            parsedEL = parse(lawtext);
+            const result = parse(lawtext);
+            parsedEL = result.value;
+            errors = result.errors;
+            chai.assert(errors.length === 0, JSON.stringify(errors, null, 2));
             if (parsedEL === undefined) return;
         } catch (e) {
             const msg = [
