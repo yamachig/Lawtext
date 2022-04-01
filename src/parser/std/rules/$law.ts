@@ -198,13 +198,22 @@ export const $law: WithErrorRule<std.Law> = factory
             )
         , "preambles")
         .and(r => r
-            .zeroOrOne(r => r
+            .zeroOrMore(r => r
                 .sequence(s => s
                     .and(() => $mainProvision)
                     .andOmit(r => r.zeroOrMore(() => $blankLine))
+                    .and(r => r
+                        .zeroOrMore(r => r
+                            .sequence(s => s
+                                .andOmit(r => r.nextIsNot(r => r.oneMatch(({ item }) => item.type === LineType.SPR || item.type === LineType.APP ? item : null)))
+                                .and(r => r.anyOne())
+                                .andOmit(r => r.zeroOrMore(() => $blankLine))
+                            )
+                        )
+                    )
                 )
             )
-        , "mainProvision")
+        , "mainProvisionAndErrors")
         .and(r => r
             .zeroOrMore(r => r
                 .sequence(s => s
@@ -220,10 +229,28 @@ export const $law: WithErrorRule<std.Law> = factory
                         )
                     )
                     .andOmit(r => r.zeroOrMore(() => $blankLine))
+                    .and(r => r
+                        .zeroOrMore(r => r
+                            .sequence(s => s
+                                .andOmit(r => r.nextIsNot(r => r.oneMatch(({ item }) => item.type === LineType.SPR || item.type === LineType.APP ? item : null)))
+                                .and(r => r.anyOne())
+                                .andOmit(r => r.zeroOrMore(() => $blankLine))
+                            )
+                        )
+                    )
                 )
             )
-        , "supplOrAppdxItems")
-        .action(({ lawTitleLines, enactStatementLines, toc, preambles, mainProvision, supplOrAppdxItems }) => {
+        , "supplOrAppdxItemAndErrors")
+        .and(r => r
+            .zeroOrMore(r => r
+                .sequence(s => s
+                    .andOmit(r => r.zeroOrMore(() => $blankLine))
+                    .and(r => r.anyOne())
+                    .andOmit(r => r.zeroOrMore(() => $blankLine))
+                )
+            )
+        , "notCapturedErrorLines")
+        .action(({ lawTitleLines, enactStatementLines, toc, preambles, mainProvisionAndErrors, supplOrAppdxItemAndErrors, notCapturedErrorLines }) => {
             const errors: ErrorMessage[] = [];
 
             const law = newStdEL("Law");
@@ -273,14 +300,39 @@ export const $law: WithErrorRule<std.Law> = factory
                 errors.push(...preamble.errors);
             }
 
-            if (mainProvision) {
-                lawBody.append(mainProvision.value);
+            for (const [mainProvision, errorLines] of mainProvisionAndErrors) {
+                const lastChild = lawBody.children.length > 0 ? lawBody.children[lawBody.children.length - 1] : null;
+                if (lastChild && isMainProvision(lastChild)) {
+                    lastChild.extend(mainProvision.value.children);
+                    Object.assign(lastChild.attr, { ...mainProvision.value.attr, ...lastChild.attr });
+                } else {
+                    lawBody.append(mainProvision.value);
+                }
                 errors.push(...mainProvision.errors);
+                for (const errorLine of errorLines) {
+                    errors.push(new ErrorMessage(
+                        `$law: この行をパースできませんでした。line.type: ${errorLine.type}`,
+                        errorLine.virtualRange,
+                    ));
+                }
             }
 
-            for (const supplOrAppdxItem of supplOrAppdxItems) {
+            for (const [supplOrAppdxItem, errorLines] of supplOrAppdxItemAndErrors) {
                 lawBody.append(supplOrAppdxItem.value);
                 errors.push(...supplOrAppdxItem.errors);
+                for (const errorLine of errorLines) {
+                    errors.push(new ErrorMessage(
+                        `$law: この行をパースできませんでした。line.type: ${errorLine.type}`,
+                        errorLine.virtualRange,
+                    ));
+                }
+            }
+
+            for (const errorLine of notCapturedErrorLines) {
+                errors.push(new ErrorMessage(
+                    `$law: この行をパースできませんでした。line.type: ${errorLine.type}`,
+                    errorLine.virtualRange,
+                ));
             }
 
             lawBody.range = rangeOfELs(lawBody.children);

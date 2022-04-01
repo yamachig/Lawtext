@@ -20,14 +20,28 @@ export const testLawtextToStd = <
         toLines: (el: TEL) => Line[],
     ): void => {
     const env = initialEnv({});
-    const lawtext = lawtextWithMarker.replace(/[!]/g, "");
+    const lawtext = lawtextWithMarker.replace(/!(?:\\\[\d+\])?/g, "");
     const markerPositions: number[] = [];
-    for (let i = 0; i < lawtextWithMarker.length; i++) {
-        const index = lawtextWithMarker.indexOf("!", i);
-        if (index !== -1) {
-            markerPositions.push(index - markerPositions.length);
-            i = index;
-        } else break;
+    const markerMemo = new Map<string, number>();
+    let accMarkerLength = 0;
+    for (const m of lawtextWithMarker.matchAll(/!(?:\\\[(\d+)\])?/g)) {
+        const name = m[1];
+        if (name) {
+            if (markerMemo.has(name)) {
+                markerPositions.splice(
+                    2 * Math.floor(markerPositions.length / 2),
+                    0,
+                    markerMemo.get(name) ?? 0,
+                    (m.index ?? 0) - accMarkerLength,
+                );
+                markerMemo.delete(name);
+            } {
+                markerMemo.set(name, (m.index ?? 0) - accMarkerLength);
+            }
+        } else {
+            markerPositions.push((m.index ?? 0) - accMarkerLength);
+        }
+        accMarkerLength += m[0].length;
     }
     const expectedErrors = expectedErrorMessages.map((message, i) => ({
         message,

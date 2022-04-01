@@ -443,4 +443,232 @@ describe("Test $law and lawToLines", () => {
             },
         );
     });
+
+    it("Success with errors case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+行政手続法
+（平成五年法律第八十八号）
+
+      第一章　総則
+
+  （目的等）
+第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
+  一　行政運営における公正の確保と透明性
+  !\\[1]!\\[2]:table-struct:
+!\\[1]!\\[2]
+!!!２　処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。
+!
+
+      附　則　（平成一一年一二月八日法律第一五一号）　抄
+
+  （施行期日）
+第一条　この法律は、平成十二年四月一日から施行する。
+`;
+        const expectedErrorMessages: string[] = [
+            "$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。",
+            "$law: この行をパースできませんでした。line.type: OTH",
+            "$law: この行をパースできませんでした。line.type: DED",
+            "$law: この行をパースできませんでした。line.type: PIT",
+        ];
+        const expectedRendered = `\
+行政手続法
+（平成五年法律第八十八号）
+      第一章　総則
+
+  （目的等）
+第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
+  一　行政運営における公正の確保と透明性
+      附　則　（平成一一年一二月八日法律第一五一号）　抄
+  （施行期日）
+第一条　この法律は、平成十二年四月一日から施行する。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Law",
+            attr: {},
+            children: [
+                {
+                    tag: "LawNum",
+                    attr: {},
+                    children: ["平成五年法律第八十八号"]
+                },
+                {
+                    tag: "LawBody",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "LawTitle",
+                            attr: {},
+                            children: ["行政手続法"]
+                        },
+                        {
+                            tag: "MainProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Chapter",
+                                    attr: {
+                                        Delete: "false",
+                                        Hide: "false",
+                                        Num: "1"
+                                    },
+                                    children: [
+                                        {
+                                            tag: "ChapterTitle",
+                                            attr: {},
+                                            children: ["第一章　総則"]
+                                        },
+                                        {
+                                            tag: "Article",
+                                            attr: {
+                                                Delete: "false",
+                                                Hide: "false"
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ArticleCaption",
+                                                    attr: {},
+                                                    children: ["（目的等）"]
+                                                },
+                                                {
+                                                    tag: "ArticleTitle",
+                                                    attr: {},
+                                                    children: ["第一条"]
+                                                },
+                                                {
+                                                    tag: "Paragraph",
+                                                    attr: {
+                                                        OldStyle: "false"
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "ParagraphNum",
+                                                            attr: {},
+                                                            children: []
+                                                        },
+                                                        {
+                                                            tag: "ParagraphSentence",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {},
+                                                                    children: ["この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。"]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            tag: "Item",
+                                                            attr: {
+                                                                Delete: "false"
+                                                            },
+                                                            children: [
+                                                                {
+                                                                    tag: "ItemTitle",
+                                                                    attr: {},
+                                                                    children: ["一"]
+                                                                },
+                                                                {
+                                                                    tag: "ItemSentence",
+                                                                    attr: {},
+                                                                    children: [
+                                                                        {
+                                                                            tag: "Sentence",
+                                                                            attr: {},
+                                                                            children: ["行政運営における公正の確保と透明性"]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "SupplProvision",
+                            attr: {
+                                AmendLawNum: "平成一一年一二月八日法律第一五一号",
+                                Extract: "true"
+                            },
+                            children: [
+                                {
+                                    tag: "SupplProvisionLabel",
+                                    attr: {},
+                                    children: ["附　則"]
+                                },
+                                {
+                                    tag: "Article",
+                                    attr: {
+                                        Delete: "false",
+                                        Hide: "false"
+                                    },
+                                    children: [
+                                        {
+                                            tag: "ArticleCaption",
+                                            attr: {},
+                                            children: ["（施行期日）"]
+                                        },
+                                        {
+                                            tag: "ArticleTitle",
+                                            attr: {},
+                                            children: ["第一条"]
+                                        },
+                                        {
+                                            tag: "Paragraph",
+                                            attr: {
+                                                OldStyle: "false"
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ParagraphNum",
+                                                    attr: {},
+                                                    children: []
+                                                },
+                                                {
+                                                    tag: "ParagraphSentence",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "Sentence",
+                                                            attr: {},
+                                                            children: ["この法律は、平成十二年四月一日から施行する。"]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $law.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = lawToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });
