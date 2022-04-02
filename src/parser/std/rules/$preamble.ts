@@ -1,14 +1,14 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
-import { newStdEL } from "../../../law/std";
+import { isParagraph, isParagraphNum, isParagraphSentence, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
-import { paragraphItemToLines } from "./$paragraphItem";
-import { Control } from "../../../node/cst/inline";
+import { Control, Sentences } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
+import { assertNever, NotImplementedError } from "../../../util";
 
 export const preambleControl = ":preamble:";
 
@@ -34,8 +34,29 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
     for (const paragraph of preamble.children) {
-        const paragraphLines = paragraphItemToLines(paragraph, childrenIndentTexts);
-        lines.push(...paragraphLines);
+        if (
+            (paragraph.children.filter(isParagraphNum).every(p => p.text === ""))
+            && (paragraph.children.every(c => isParagraphNum(c) || isParagraphSentence(c)))
+        ) {
+            lines.push(new OtherLine(
+                null,
+                childrenIndentTexts.length,
+                childrenIndentTexts,
+                [],
+                [
+                    new Sentences(
+                        "",
+                        null,
+                        [],
+                        paragraph.children.filter(isParagraphSentence).map(c => c.children).flat(),
+                    )
+                ],
+                CST.EOL,
+            ));
+        } else if (isParagraph(paragraph)) {
+            throw new NotImplementedError(`preambleToLines: ${paragraph.tag} with is not single non-nmmbered`);
+        }
+        else { assertNever(paragraph); }
     }
 
     return lines;

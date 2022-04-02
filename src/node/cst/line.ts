@@ -1,3 +1,4 @@
+import { appdxItemTags, articleGroupTags, paragraphItemTags, supplProvisionAppdxItemTags } from "../../law/std";
 import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
 import { rangeOfELs } from "../el";
 import { AttrEntries, SentencesArray, Controls, SentenceChildEL } from "./inline";
@@ -90,7 +91,7 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
         range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
-        public mainTag: "Part" | "Chapter" | "Section" | "Subsection" | "Division",
+        public mainTag: (typeof articleGroupTags)[number],
         // public num: string,
         // public midSpace: string,
         public sentenceChildren: SentenceChildEL[],
@@ -115,7 +116,7 @@ export class AppdxItemHeadLine extends IndentsLine<LineType.APP> {
         range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
-        public mainTag: "Appdx" | "AppdxTable" | "AppdxStyle" | "AppdxFormat" | "AppdxFig" | "AppdxNote",
+        public mainTag: (typeof appdxItemTags)[number],
         public controls: Controls,
         public title: SentenceChildEL[],
         public relatedArticleNum: SentenceChildEL[],
@@ -197,7 +198,7 @@ export class SupplProvisionAppdxItemHeadLine extends IndentsLine<LineType.SPA> {
         range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
-        public mainTag: "SupplProvisionAppdx" | "SupplProvisionAppdxTable" | "SupplProvisionAppdxStyle",
+        public mainTag: (typeof supplProvisionAppdxItemTags)[number],
         public controls: Controls,
         public title: SentenceChildEL[],
         public relatedArticleNum: SentenceChildEL[],
@@ -282,6 +283,8 @@ export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
         range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
+        public mainTag: (typeof paragraphItemTags)[number],
+        public controls: Controls,
         public title: string,
         public midSpace: string,
         public sentencesArray: SentencesArray,
@@ -291,6 +294,7 @@ export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
     }
     public contentText(): string {
         return [
+            ...this.controls.map(c => c.control + c.trailingSpace),
             this.title,
             this.midSpace,
             ...this.sentencesArray.map(c => [
@@ -299,6 +303,17 @@ export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
                 ...c.sentences.map(s => sentenceChildrenToString(s.children)),
             ]).flat(),
         ].join("");
+    }
+    public get controlsRange(): [number, number] | null {
+        let start = null as number | null;
+        let end = null as number | null;
+        for (const control of this.controls) {
+            if (control.controlRange && control.trailingSpaceRange) {
+                start = Math.min(control.controlRange[0], start ?? control.controlRange[0]);
+                end = Math.max(control.trailingSpaceRange[1], end ?? control.trailingSpaceRange[1]);
+            }
+        }
+        return (start !== null && end !== null) ? [start, end] : null;
     }
     public get titleRange(): [number, number] | null {
         return this.range ? [this.range[0], this.range[0] + this.title.length] : null;

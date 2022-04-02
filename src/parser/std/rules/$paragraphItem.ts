@@ -1,11 +1,11 @@
 import { ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine } from "../../../node/cst/line";
-import { newStdEL } from "../../../law/std";
+import { isParagraph, newStdEL, paragraphItemTags } from "../../../law/std";
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { assertNever, Diff, NotImplementedError } from "../../../util";
-import { AttrEntries, AttrEntry, SentenceChildEL, Sentences } from "../../../node/cst/inline";
+import { AttrEntries, AttrEntry, Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
 import { WithErrorRule } from "../util";
 import factory, { VirtualLineRuleFactory } from "../factory";
 import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
@@ -18,6 +18,8 @@ import { $listsOuter, listOrSublistToLines } from "./$list";
 import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $figStruct, { figStructToLines } from "./$figStruct";
 import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
+import { paragraphItemTitleMatch, paragraphItemTitleRule } from "../../cst/rules/$paragraphItemLine";
+import { autoTagControls, tagControls } from "../../cst/rules/$tagControl";
 
 
 export const paragraphItemToLines = (
@@ -121,6 +123,35 @@ export const paragraphItemToLines = (
             null,
             indentTexts.length,
             indentTexts,
+            el.tag,
+            (
+                (
+                    paragraphItemTags.indexOf(el.tag) === indentTexts.length
+                )
+                    ? []
+                    : (
+                        (el.tag in paragraphItemTitleRule)
+                        && (
+                            paragraphItemTitleMatch[el.tag as keyof typeof paragraphItemTitleRule]( sentenceChildrenToString(ParagraphItemTitle)).ok
+                        )
+                    )
+                        ? [
+                            new Control(
+                                autoTagControls[0],
+                                null,
+                                " ",
+                                null,
+                            )
+                        ]
+                        : [
+                            new Control(
+                                tagControls[el.tag],
+                                null,
+                                "",
+                                null,
+                            )
+                        ]
+            ),
             sentenceChildrenToString(Title),
             Title.length === 0 ? "" : CST.MARGIN,
             sentencesArray,
@@ -309,12 +340,10 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
         , "tailChildren")
         .action(({ captionLine, firstParagraphItemLine, tailChildren }) => {
 
-            const paragraphItem = newStdEL(
-                std.paragraphItemTags[firstParagraphItemLine.virtualIndentDepth],
-            );
+            const paragraphItem = newStdEL(firstParagraphItemLine.line.mainTag);
             const errors = tailChildren?.errors ?? [];
 
-            if (firstParagraphItemLine.virtualIndentDepth === 0) {
+            if (isParagraph(paragraphItem)) {
                 (paragraphItem as std.Paragraph).attr.OldStyle = "false";
             } else {
                 (paragraphItem as Diff<std.ParagraphItem, std.Paragraph>).attr.Delete = "false";
@@ -352,7 +381,8 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
 
             if (firstParagraphItemLine.line.title) {
                 paragraphItem.append(
-                    newStdEL(std.paragraphItemTitleTags[firstParagraphItemLine.virtualIndentDepth],
+                    newStdEL(
+                        std.paragraphItemTitleTags[std.paragraphItemTags.indexOf(firstParagraphItemLine.line.mainTag)],
                         {},
                         [firstParagraphItemLine.line.title],
                         firstParagraphItemLine.line.titleRange,
@@ -361,7 +391,8 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
             }
 
             paragraphItem.append(
-                newStdEL(std.paragraphItemSentenceTags[firstParagraphItemLine.virtualIndentDepth],
+                newStdEL(
+                    std.paragraphItemSentenceTags[std.paragraphItemTags.indexOf(firstParagraphItemLine.line.mainTag)],
                     {},
                     sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
                     firstParagraphItemLine.line.sentencesArrayRange,
@@ -408,7 +439,8 @@ export const $noNumParagraph: WithErrorRule<std.ParagraphItem> = factory
                 },
                 [
                     newStdEL("ParagraphNum"),
-                    newStdEL(std.paragraphItemSentenceTags[firstParagraphItemLine.virtualIndentDepth],
+                    newStdEL(
+                        "ParagraphSentence",
                         {},
                         sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
                         firstParagraphItemLine.line.sentencesArrayRange,

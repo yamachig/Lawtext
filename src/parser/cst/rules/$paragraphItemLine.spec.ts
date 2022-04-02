@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $paragraphItemLine from "./$paragraphItemLine";
-import { SentencesArray } from "../../../node/cst/inline";
+import { Controls, SentencesArray } from "../../../node/cst/inline";
 
 const env = initialEnv({});
 
@@ -26,6 +26,201 @@ describe("Test $paragraphItemLine", () => {
             type: LineType.PIT,
             indentDepth: 1,
             indentTexts: ["  "] as string[],
+            mainTag: "Item",
+            controls: [] as Controls,
+            title: "八",
+            midSpace: "　",
+            lineEndText: `　
+`,
+        } as const;
+        const result = $paragraphItemLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+  # 八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+    イ　法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 35,
+        } as const;
+        const expectedText = `\
+  # 八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+`;
+        const expectedValue = {
+            type: LineType.PIT,
+            indentDepth: 1,
+            indentTexts: ["  "] as string[],
+            mainTag: "Item",
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [2, 3],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [3, 4],
+                }
+            ] as Controls,
+            title: "八",
+            midSpace: "　",
+            lineEndText: `　
+`,
+        } as const;
+        const result = $paragraphItemLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+  :item:八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+    イ　法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 39,
+        } as const;
+        const expectedText = `\
+  :item:八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+`;
+        const expectedValue = {
+            type: LineType.PIT,
+            indentDepth: 1,
+            indentTexts: ["  "] as string[],
+            mainTag: "Item",
+            controls: [
+                {
+                    control: ":item:",
+                    controlRange: [2, 8],
+                    trailingSpace: "",
+                    trailingSpaceRange: [8, 8],
+                }
+            ] as Controls,
+            title: "八",
+            midSpace: "　",
+            lineEndText: `　
+`,
+        } as const;
+        const result = $paragraphItemLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+    八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+      イ　法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 35,
+        } as const;
+        const expectedText = `\
+    八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+`;
+        const expectedValue = {
+            type: LineType.PIT,
+            indentDepth: 2,
+            indentTexts: ["  ", "  "] as string[],
+            mainTag: "Subitem1",
+            controls: [] as Controls,
+            title: "八",
+            midSpace: "　",
+            lineEndText: `　
+`,
+        } as const;
+        const result = $paragraphItemLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+    # 八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+      イ　法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 37,
+        } as const;
+        const expectedText = `\
+    # 八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+`;
+        const expectedValue = {
+            type: LineType.PIT,
+            indentDepth: 2,
+            indentTexts: ["  ", "  "] as string[],
+            mainTag: "Item",
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [4, 5],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [5, 6],
+                }
+            ] as Controls,
+            title: "八",
+            midSpace: "　",
+            lineEndText: `　
+`,
+        } as const;
+        const result = $paragraphItemLine.abstract().match(offset, target, env);
+        assert.deepInclude(result, expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+    :paragraph:八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+      イ　法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 46,
+        } as const;
+        const expectedText = `\
+    :paragraph:八　命令等　内閣又は行政機関が定める次に掲げるものをいう。　
+`;
+        const expectedValue = {
+            type: LineType.PIT,
+            indentDepth: 2,
+            indentTexts: ["  ", "  "] as string[],
+            mainTag: "Paragraph",
+            controls: [
+                {
+                    control: ":paragraph:",
+                    controlRange: [4, 15],
+                    trailingSpace: "",
+                    trailingSpaceRange: [15, 15],
+                }
+            ] as Controls,
             title: "八",
             midSpace: "　",
             lineEndText: `　
@@ -57,6 +252,8 @@ describe("Test $paragraphItemLine", () => {
             type: LineType.PIT,
             indentDepth: 1,
             indentTexts: ["  "] as string[],
+            mainTag: "Item",
+            controls: [] as Controls,
             title: "八",
             midSpace: "",
             sentencesArray: [] as SentencesArray,
@@ -89,6 +286,8 @@ describe("Test $paragraphItemLine", () => {
             type: LineType.PIT,
             indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
+            mainTag: "Subitem1",
+            controls: [] as Controls,
             title: "ロ",
             midSpace: "　",
             lineEndText: `
@@ -119,6 +318,8 @@ describe("Test $paragraphItemLine", () => {
             type: LineType.PIT,
             indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
+            mainTag: "Subitem1",
+            controls: [] as Controls,
             title: "イ～ハ",
             midSpace: "　",
             lineEndText: `
