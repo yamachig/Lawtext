@@ -191,84 +191,123 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
         );
     });
 
-    // TODO: Test for figure
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+  （地方整備局組織規則の一部改正）
+第四条　地方整備局組織規則（平成十三年国土交通省令第二十一号）の一部を次のように改正する。
+  次の表により、改正前欄に掲げる規定の傍線を付した部分をこれに対応する改正後欄に掲げる規定の傍線を付した部分のように改め、改正前欄に掲げるその標記部分に二重傍線を付した規定で改正後欄にこれに対応するものを掲げていないものは、これを削る。
 
-    //     it("Success case", () => {
-    //         /* eslint-disable no-irregular-whitespace */
-    //         const lawtextWithMarker = `\
-    //   （地方整備局組織規則の一部改正）
+    <Fig src="./pict/001.jpg"/>
 
-    // 第四条　地方整備局組織規則（平成十三年国土交通省令第二十一号）の一部を次のように改正する。
+  （北海道開発局組織規則の一部改正）
+第五条　北海道開発局組織規則（平成十三年国土交通省令第二十二号）の一部を次のように改正する。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+  （地方整備局組織規則の一部改正）
+第四条　地方整備局組織規則（平成十三年国土交通省令第二十一号）の一部を次のように改正する。
+  次の表により、改正前欄に掲げる規定の傍線を付した部分をこれに対応する改正後欄に掲げる規定の傍線を付した部分のように改め、改正前欄に掲げるその標記部分に二重傍線を付した規定で改正後欄にこれに対応するものを掲げていないものは、これを削る。
+    <Fig src="./pict/001.jpg"/>
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Article",
+            attr: {
+                Delete: "false",
+                Hide: "false"
+            },
+            children: [
+                {
+                    tag: "ArticleCaption",
+                    attr: {},
+                    children: ["（地方整備局組織規則の一部改正）"]
+                },
+                {
+                    tag: "ArticleTitle",
+                    attr: {},
+                    children: ["第四条"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        OldStyle: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["地方整備局組織規則（平成十三年国土交通省令第二十一号）の一部を次のように改正する。"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "AmendProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "AmendProvisionSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["次の表により、改正前欄に掲げる規定の傍線を付した部分をこれに対応する改正後欄に掲げる規定の傍線を付した部分のように改め、改正前欄に掲げるその標記部分に二重傍線を付した規定で改正後欄にこれに対応するものを掲げていないものは、これを削る。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "NewProvision",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "FigStruct",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Fig",
+                                                    attr: {
+                                                        src: "./pict/001.jpg"
+                                                    },
+                                                    children: []
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                    ]
+                }
+            ]
+        };
 
-    //   次の表により、改正前欄に掲げる規定の傍線を付した部分をこれに対応する改正後欄に掲げる規定の傍線を付した部分のように改め、改正前欄に掲げるその標記部分に二重傍線を付した規定で改正後欄にこれに対応するものを掲げていないものは、これを削る。
-
-    //     <Fig src="./pict/001.jpg"/>
-
-    //   （北海道開発局組織規則の一部改正）
-    // 第五条　北海道開発局組織規則（平成十三年国土交通省令第二十二号）の一部を次のように改正する。
-    // `.replace(/\r?\n/g, "\r\n");
-    //         const expectedErrorMessages: string[] = [];
-    //         const expectedRendered = `\
-    //   （地方整備局組織規則の一部改正）
-    // 第四条　地方整備局組織規則（平成十三年国土交通省令第二十一号）の一部を次のように改正する。
-    //   次の表により、改正前欄に掲げる規定の傍線を付した部分をこれに対応する改正後欄に掲げる規定の傍線を付した部分のように改め、改正前欄に掲げるその標記部分に二重傍線を付した規定で改正後欄にこれに対応するものを掲げていないものは、これを削る。
-    //     <Fig src="./pict/001.jpg"/>
-    // `.replace(/\r?\n/g, "\r\n");
-    //         const expectedValue = {
-    //             tag: "Article",
-    //             attr: {
-    //                 Delete: "false",
-    //                 Hide: "false",
-    //             },
-    //             children: [
-    //                 {
-    //                     tag: "ArticleCaption",
-    //                     attr: {},
-    //                     children: ["（地方整備局組織規則の一部改正）"]
-    //                 },
-    //                 {
-    //                     tag: "ArticleTitle",
-    //                     attr: {},
-    //                     children: ["第四条"]
-    //                 },
-    //                 {
-    //                     tag: "Paragraph",
-    //                     attr: {
-    //                         OldStyle: "false"
-    //                     },
-    //                     children: [
-    //                         {
-    //                             tag: "ParagraphNum",
-    //                             attr: {},
-    //                             children: []
-    //                         },
-    //                         {
-    //                             tag: "ParagraphSentence",
-    //                             attr: {},
-    //                             children: [
-    //                                 {
-    //                                     tag: "Sentence",
-    //                                     attr: {},
-    //                                     children: ["地方整備局組織規則（平成十三年国土交通省令第二十一号）の一部を次のように改正する。"]
-    //                                 }
-    //                             ]
-    //                         },
-    //                     ],
-    //                 },
-    //             ],
-    //         };
-
-//         testLawtextToStd(
-//             lawtextWithMarker,
-//             expectedRendered,
-//             expectedValue,
-//             expectedErrorMessages,
-//             (vlines, env) => {
-//                 const result = $article.match(0, vlines, env);
-//                 if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
-//                 return result;
-//             },
-//             el => articleToLines(el, []),
-//         );
-//     });
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $article.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = articleToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });

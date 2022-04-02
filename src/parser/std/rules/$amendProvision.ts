@@ -1,7 +1,7 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
-import { isAmendProvisionSentence, isArticle, isNewProvision, newStdEL } from "../../../law/std";
+import { isAmendProvisionSentence, isArticle, isFigStruct, isNewProvision, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { ErrorMessage } from "../../cst/error";
 import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
@@ -13,6 +13,7 @@ import $articleGroup from "./$articleGroup";
 import $article, { articleToLines } from "./$article";
 import { assertNever, NotImplementedError } from "../../../util";
 import { rangeOfELs } from "../../../node/el";
+import $figStruct, { figStructToLines } from "./$figStruct";
 
 export const amendProvisionToLines = (amendProvision: std.AmendProvision, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -41,8 +42,9 @@ export const amendProvisionToLines = (amendProvision: std.AmendProvision, indent
         } else if (isNewProvision(child)) {
             for (const cc of child.children) {
                 if (isArticle(cc)) {
-                    const newProvisionLines = articleToLines(cc, newProvisionsIndentTexts);
-                    lines.push(...newProvisionLines);
+                    lines.push(...articleToLines(cc, newProvisionsIndentTexts));
+                } else if (isFigStruct(cc)) {
+                    lines.push(...figStructToLines(cc, newProvisionsIndentTexts));
                 }
                 else { throw new NotImplementedError(cc.tag); }
             }
@@ -88,6 +90,7 @@ export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
                                 .or(() => $articleGroup)
                                 .or(() => $article)
                                 .or(() => $paragraphItem)
+                                .or(() => $figStruct)
                             // .or(() => $list) // TODO: Implement
                             // .or(() => $appdxItem) // TODO: Implement
                             // .or(() => $structItem) // TODO: Implement

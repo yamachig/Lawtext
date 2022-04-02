@@ -1,15 +1,16 @@
 import { factory } from "../factory";
 import { BlankLine, Line, LineType, OtherLine, TableColumnLine } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
-import { isColumn, isSentence, isTableColumn, isTableHeaderColumn, isTableHeaderRow, isTableRow, newStdEL } from "../../../law/std";
+import { isColumn, isParagraphItem, isSentence, isTableColumn, isTableHeaderColumn, isTableHeaderRow, isTableRow, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
-import { AttrEntry, Control, Sentences } from "../../../node/cst/inline";
+import { AttrEntry, Control, Sentences, SentencesArray } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
+import { paragraphItemToLines } from "./$paragraphItem";
 
 
 export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] => {
@@ -18,19 +19,34 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
     for (const row of table.children) {
         for (const [i, cell] of row.children.entries()) {
             const newIndentTexts = i === 0 ? indentTexts : [...indentTexts, CST.INDENT];
-            const columnsOrSentences: (std.Column | std.Sentence)[] = [];
+            // const columnsOrSentences: (std.Column | std.Sentence)[] = [];
+            const sentencesArray: SentencesArray = [];
             if (isTableColumn(cell)) {
-                for (const child of cell.children) {
-                    if (typeof child === "string") {
-                        columnsOrSentences.push(newStdEL("Sentence", {}, child));
-                    } else if (isColumn(child) || isSentence(child)) {
-                        columnsOrSentences.push(child);
-                    } else {
-                        throw new NotImplementedError(`tableToLines: ${child.tag}`);
+                if (cell.children.every(isColumn)) {
+                    sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
+                } else if (cell.children.every(isSentence)) {
+                    sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
+                } else {
+                    for (const child of cell.children) {
+                        // if (typeof child === "string") {
+                        //     columnsOrSentences.push(newStdEL("Sentence", {}, child));
+                        // } else
+                        if (isColumn(child) || isSentence(child)) {
+                            throw new NotImplementedError(`tableToLines: mixed ${child.tag}`);
+                        } else if (isParagraphItem(child)) {
+                            const childLines = paragraphItemToLines(child, newIndentTexts);
+                            if (childLines.length === 1 && childLines[0].type === LineType.PIT) {
+                                sentencesArray.push(...childLines[0].sentencesArray);
+                            } else {
+                                throw new NotImplementedError(`tableToLines: ${child.tag} with ${childLines.length} lines`);
+                            }
+                        } else {
+                            throw new NotImplementedError(`tableToLines: ${child.tag}`);
+                        }
                     }
                 }
             } else {
-                columnsOrSentences.push(newStdEL("Sentence", {}, cell.children));
+                sentencesArray.push(...columnsOrSentencesToSentencesArray([newStdEL("Sentence", {}, cell.children)]));
             }
             const cellLine = new TableColumnLine(
                 null,
@@ -41,7 +57,7 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                 isTableHeaderColumn(cell) ? "*" : "-",
                 " ",
                 [],
-                columnsOrSentencesToSentencesArray(columnsOrSentences),
+                sentencesArray,
                 CST.EOL,
             );
             for (const [name, value] of Object.entries(cell.attr)) {
@@ -166,6 +182,7 @@ const $table: WithErrorRule<std.Table> = factory
                                 newStdEL(
                                     "TableColumn",
                                     Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
+                                    // TODO: ParagraphItem in TableColumn
                                     sentencesArrayToColumnsOrSentences(tableColumnLine.line.sentencesArray),
                                 ),
                             ],
