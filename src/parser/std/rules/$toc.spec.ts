@@ -22,7 +22,7 @@ describe("Test $toc and tocToLines", () => {
   第七章　補則（第四十六条）
   附則
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\

@@ -173,23 +173,30 @@ describe("Test $appdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+# 付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 
   <Fig src="./pict/001.jpg"/>
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 29,
+            nextOffset: 31,
         } as const;
         const expectedText = `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+# 付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 `;
         const expectedValue = {
             type: LineType.APP,
             indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "Appdx",
-            controls: [] as Controls,
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [0, 1],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [1, 2],
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
@@ -327,24 +334,31 @@ describe("Test $appdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-別表第二（第十九条、第二十一条関係）　
+# 別表第二（第十九条、第二十一条関係）　
 
   * - 情報照会者
     - 事務
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 20,
+            nextOffset: 22,
         } as const;
         const expectedText = `\
-別表第二（第十九条、第二十一条関係）　
+# 別表第二（第十九条、第二十一条関係）　
 `;
         const expectedValue = {
             type: LineType.APP,
             indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxTable",
-            controls: [] as Controls,
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [0, 1],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [1, 2],
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
@@ -530,23 +544,30 @@ describe("Test $appdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-別記様式（第十四条関係）　
+# 別記様式（第十四条関係）　
 
   <Fig src="./pict/001.pdf"/>
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 14,
+            nextOffset: 16,
         } as const;
         const expectedText = `\
-別記様式（第十四条関係）　
+# 別記様式（第十四条関係）　
 `;
         const expectedValue = {
             type: LineType.APP,
             indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxStyle",
-            controls: [] as Controls,
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [0, 1],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [1, 2],
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
@@ -683,23 +704,30 @@ describe("Test $appdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-別紙第一号書式（第三条関係）　
+# 別紙第一号書式（第三条関係）　
 
   <Fig src="./pict/001.pdf"/>
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 16,
+            nextOffset: 18,
         } as const;
         const expectedText = `\
-別紙第一号書式（第三条関係）　
+# 別紙第一号書式（第三条関係）　
 `;
         const expectedValue = {
             type: LineType.APP,
             indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxFormat",
-            controls: [] as Controls,
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [0, 1],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [1, 2],
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
@@ -836,23 +864,30 @@ describe("Test $appdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-別図第十一（第１９条第１項の表の６の項関係）　
+# 別図第十一（第１９条第１項の表の６の項関係）　
 
   <Fig src="./pict/011.jpg"/>
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 24,
+            nextOffset: 26,
         } as const;
         const expectedText = `\
-別図第十一（第１９条第１項の表の６の項関係）　
+# 別図第十一（第１９条第１項の表の６の項関係）　
 `;
         const expectedValue = {
             type: LineType.APP,
             indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxFig",
-            controls: [] as Controls,
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [0, 1],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [1, 2],
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
@@ -989,23 +1024,30 @@ describe("Test $appdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-別記第二号（第一条第一項、第九条関係）　
+# 別記第二号（第一条第一項、第九条関係）　
 
   <Fig src="./pict/002.pdf"/>
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 21,
+            nextOffset: 23,
         } as const;
         const expectedText = `\
-別記第二号（第一条第一項、第九条関係）　
+# 別記第二号（第一条第一項、第九条関係）　
 `;
         const expectedValue = {
             type: LineType.APP,
             indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxNote",
-            controls: [] as Controls,
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [0, 1],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [1, 2],
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
@@ -1062,7 +1104,7 @@ describe("Test $appdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-附則別表第二（第十九条、第二十一条関係）
+# 附則別表第二（第十九条、第二十一条関係）
 
   * - 情報照会者
     - 事務

@@ -15,8 +15,9 @@ import $figStruct, { figStructToLines } from "./$figStruct";
 import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
-import { appdxItemControl, appdxItemTitlePtn } from "../../cst/rules/$appdxItemHeadLine";
+import { appdxItemTitlePtn } from "../../cst/rules/$appdxItemHeadLine";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
+import { autoTagControls, tagControls } from "../../cst/rules/$tagControl";
 
 
 export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]): Line[] => {
@@ -39,9 +40,16 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
         indentTexts.length,
         indentTexts,
         appdxItem.tag,
-        appdxItemTitleSentenceChildren && appdxItemTitlePtn[appdxItem.tag].exec(sentenceChildrenToString(appdxItemTitleSentenceChildren)) ? [] : [
+        appdxItemTitleSentenceChildren && appdxItemTitlePtn[appdxItem.tag].exec(sentenceChildrenToString(appdxItemTitleSentenceChildren)) ? [
             new Control(
-                appdxItemControl[appdxItem.tag],
+                autoTagControls[0],
+                null,
+                " ",
+                null,
+            )
+        ] : [
+            new Control(
+                tagControls[appdxItem.tag],
                 null,
                 "",
                 null,

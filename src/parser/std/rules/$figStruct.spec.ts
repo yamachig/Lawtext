@@ -10,7 +10,7 @@ describe("Test $figStruct and figStructToLines", () => {
 
   <Fig src="./pict/S27F03901000056-005.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -62,7 +62,7 @@ describe("Test $figStruct and figStructToLines", () => {
 
   <Fig src="./pict/S27F03901000056-005.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -108,7 +108,7 @@ describe("Test $figStruct and figStructToLines", () => {
 
   !<Fig/>
 !
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = ["$figStruct: Figタグ に src 属性が設定されていません。"];
         const expectedRendered = `\

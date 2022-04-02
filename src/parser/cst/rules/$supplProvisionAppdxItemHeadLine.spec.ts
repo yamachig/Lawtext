@@ -92,23 +92,30 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+# 附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 
   <Fig src="./pict/001.jpg"/>
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 31,
+            nextOffset: 33,
         } as const;
         const expectedText = `\
-附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+# 附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 `;
         const expectedValue = {
             type: LineType.SPA,
             indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "SupplProvisionAppdx",
-            controls: [] as Controls,
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [0, 1],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [1, 2],
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
@@ -246,24 +253,31 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-附則別表第二（第十九条、第二十一条関係）　
+# 附則別表第二（第十九条、第二十一条関係）　
 
   * - 情報照会者
     - 事務
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 22,
+            nextOffset: 24,
         } as const;
         const expectedText = `\
-附則別表第二（第十九条、第二十一条関係）　
+# 附則別表第二（第十九条、第二十一条関係）　
 `;
         const expectedValue = {
             type: LineType.SPA,
             indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "SupplProvisionAppdxTable",
-            controls: [] as Controls,
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [0, 1],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [1, 2],
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
@@ -400,22 +414,29 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-附則別記様式（第十四条関係）　
+# 附則別記様式（第十四条関係）　
 
   <Fig src="./pict/001.pdf"/>
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 16,
+            nextOffset: 18,
         } as const;
         const expectedText = `\
-附則別記様式（第十四条関係）　
+# 附則別記様式（第十四条関係）　
 `;
         const expectedValue = {
             type: LineType.SPA,
             indentDepth: 0,
             indentTexts: [] as string[],
-            controls: [] as Controls,
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [0, 1],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [1, 2],
+                }
+            ] as Controls,
             lineEndText: `　
 `,
         } as const;
@@ -472,7 +493,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-別表第二（第十九条、第二十一条関係）
+# 別表第二（第十九条、第二十一条関係）
 
   * - 情報照会者
     - 事務

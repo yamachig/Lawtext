@@ -10,7 +10,7 @@ describe("Test $noteStruct and noteLikeStructToLines", () => {
 
   <Fig src="./pict/S39SE188-002.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -74,7 +74,7 @@ describe("Test $noteStruct and noteLikeStructToLines", () => {
 
   <Fig src="./pict/S39SE188-002.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -139,7 +139,7 @@ describe("Test $noteStruct and noteLikeStructToLines", () => {
 
     備考文２
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -232,7 +232,7 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
 
   <Fig src="./pict/S39SE188-002.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -296,7 +296,7 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
 
   <Fig src="./pict/S39SE188-002.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -361,7 +361,7 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
 
     備考文２
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -454,7 +454,7 @@ describe("Test $formatStruct and noteLikeStructToLines", () => {
 
   <Fig src="./pict/S39SE188-002.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -518,7 +518,7 @@ describe("Test $formatStruct and noteLikeStructToLines", () => {
 
   <Fig src="./pict/S39SE188-002.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -583,7 +583,7 @@ describe("Test $formatStruct and noteLikeStructToLines", () => {
 
     備考文２
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\

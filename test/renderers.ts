@@ -257,7 +257,7 @@ describe("Test Renderes", () => {
 
     it("Render and Parse Lawtext", async () => {
         // const [list, listByLawnum] = await getLawList();
-        const lawNum = "平成十四年法律第百八十九号";
+        const lawNum = "平成十四年法律第百四十七号";
 
         const lawInfo = await loader.getLawInfoByLawNum(lawNum);
         if (lawInfo === null) throw Error("LawInfo not found");
@@ -299,7 +299,12 @@ describe("Test Renderes", () => {
             ];
             errors = result.errors.filter(e => !ignoreErrorMessages.includes(e.message));
             const allLines = lawtext.split("\n");
-            chai.assert(errors.length === 0, errors.map(e => e.toString(allLines)).join("\n\n"));
+            chai.assert(
+                errors.length === 0,
+                `\
+${errors.slice(0, 7).map(e => e.toString(allLines)).join("\n\n")}
+${errors.length > 7 ? "\n... more errors ..." : ""}
+`);
             if (parsedEL === undefined) return;
         } catch (e) {
             const msg = [

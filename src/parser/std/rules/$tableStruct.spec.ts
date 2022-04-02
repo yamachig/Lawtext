@@ -16,7 +16,7 @@ describe("Test $tableStruct and tableStructToLines", () => {
   * - １
     - シジュウカラガン
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -150,7 +150,7 @@ describe("Test $tableStruct and tableStructToLines", () => {
   * * 項
     !-! 種名
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = ["table: Column indicator mismatch"];
         const expectedRendered = `\
@@ -217,7 +217,7 @@ describe("Test $tableStruct and tableStructToLines", () => {
   !!* 項
   * 種名
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = ["table: No first column indicator"];
         const expectedRendered = `\
@@ -290,7 +290,7 @@ describe("Test $tableStruct and tableStructToLines", () => {
   :remarks:
     備考文２
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -400,7 +400,7 @@ describe("Test $tableStruct and tableStructToLines", () => {
 * - 項
   - 種名
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\

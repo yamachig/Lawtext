@@ -10,7 +10,7 @@ describe("Test $arithFormula and arithFormulaToLines", () => {
 
   Ｐｃ′／Ｐｃ×０．８＋Ｐｉ′／Ｐｉ×０．２
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\

@@ -10,7 +10,7 @@ describe("Test $remarks and remarksToLines", () => {
 
   路程の計算については、水路及び陸路四分の一キロメートルをもつて鉄道一キロメートルとみなす。
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -51,7 +51,7 @@ describe("Test $remarks and remarksToLines", () => {
 
   路程の計算については、水路及び陸路四分の一キロメートルをもつて鉄道一キロメートルとみなす。
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -92,7 +92,7 @@ describe("Test $remarks and remarksToLines", () => {
 
   路程の計算については、水路及び陸路四分の一キロメートルをもつて鉄道一キロメートルとみなす。
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\

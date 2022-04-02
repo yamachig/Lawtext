@@ -11,11 +11,11 @@ describe("Test $appdx and appdxItemToLines", () => {
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）
+# 付録第一（第二十六条、第四十五条、第四十六条の五関係）
 
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
@@ -83,7 +83,7 @@ describe("Test $appdx and appdxItemToLines", () => {
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -150,16 +150,16 @@ describe("Test $appdx and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+# 付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）
+# 付録第一（第二十六条、第四十五条、第四十六条の五関係）
 
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
@@ -222,7 +222,7 @@ describe("Test $appdx and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+# 付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
@@ -231,11 +231,11 @@ describe("Test $appdx and appdxItemToLines", () => {
 
     備考文
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-付録第一（第二十六条、第四十五条、第四十六条の五関係）
+# 付録第一（第二十六条、第四十五条、第四十六条の五関係）
 
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
@@ -326,11 +326,11 @@ describe("Test $appdxTable and appdxItemToLines", () => {
   * - 情報照会者
     - 事務
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別表第二（第十九条、第二十一条関係）
+# 別表第二（第十九条、第二十一条関係）
 
   * - 情報照会者
     - 事務
@@ -421,7 +421,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
   * - 情報照会者
     - 事務
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -511,15 +511,15 @@ describe("Test $appdxTable and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-別表第二（第十九条、第二十一条関係）
+# 別表第二（第十九条、第二十一条関係）
   * - 情報照会者
     - 事務
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別表第二（第十九条、第二十一条関係）
+# 別表第二（第十九条、第二十一条関係）
 
   * - 情報照会者
     - 事務
@@ -605,7 +605,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-別表第二（第十九条、第二十一条関係）
+# 別表第二（第十九条、第二十一条関係）
 
   * - 情報照会者
     - 事務
@@ -614,11 +614,11 @@ describe("Test $appdxTable and appdxItemToLines", () => {
 
     備考文
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別表第二（第十九条、第二十一条関係）
+# 別表第二（第十九条、第二十一条関係）
 
   * - 情報照会者
     - 事務
@@ -732,11 +732,11 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別記様式（第十四条関係）
+# 別記様式（第十四条関係）
 
   :style-struct:
     <Fig src="./pict/001.pdf"/>
@@ -810,7 +810,7 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -883,16 +883,16 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-別記様式（第十四条関係）　
+# 別記様式（第十四条関係）　
 
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別記様式（第十四条関係）
+# 別記様式（第十四条関係）
 
   :style-struct:
     <Fig src="./pict/001.pdf"/>
@@ -961,7 +961,7 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-別記様式（第十四条関係）　
+# 別記様式（第十四条関係）　
 
   :style-struct:
     <Fig src="./pict/001.pdf"/>
@@ -970,11 +970,11 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
 
     備考文
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別記様式（第十四条関係）
+# 別記様式（第十四条関係）
 
   :style-struct:
     <Fig src="./pict/001.pdf"/>
@@ -1071,11 +1071,11 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
   :format-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別紙第一号書式（第三条関係）
+# 別紙第一号書式（第三条関係）
 
   :format-struct:
     <Fig src="./pict/001.pdf"/>
@@ -1149,7 +1149,7 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
   :format-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -1222,16 +1222,16 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-別紙第一号書式（第三条関係）　
+# 別紙第一号書式（第三条関係）　
 
   :format-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別紙第一号書式（第三条関係）
+# 別紙第一号書式（第三条関係）
 
   :format-struct:
     <Fig src="./pict/001.pdf"/>
@@ -1300,7 +1300,7 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-別紙第一号書式（第三条関係）
+# 別紙第一号書式（第三条関係）
 
   :format-struct:
     <Fig src="./pict/001.pdf"/>
@@ -1309,11 +1309,11 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
 
     備考文
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別紙第一号書式（第三条関係）
+# 別紙第一号書式（第三条関係）
 
   :format-struct:
     <Fig src="./pict/001.pdf"/>
@@ -1409,11 +1409,11 @@ describe("Test $appdxFig and appdxItemToLines", () => {
 
   <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別図第十一（第１９条第１項の表の６の項関係）
+# 別図第十一（第１９条第１項の表の６の項関係）
 
   <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -1473,7 +1473,7 @@ describe("Test $appdxFig and appdxItemToLines", () => {
 
   <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -1533,15 +1533,15 @@ describe("Test $appdxFig and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-別図第十一（第１９条第１項の表の６の項関係）　
+# 別図第十一（第１９条第１項の表の６の項関係）　
 
   <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別図第十一（第１９条第１項の表の６の項関係）
+# 別図第十一（第１９条第１項の表の６の項関係）
 
   <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -1606,11 +1606,11 @@ describe("Test $appdxNote and appdxItemToLines", () => {
   :note-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別記第二号（第一条第一項、第九条関係）
+# 別記第二号（第一条第一項、第九条関係）
 
   :note-struct:
     <Fig src="./pict/001.pdf"/>
@@ -1684,7 +1684,7 @@ describe("Test $appdxNote and appdxItemToLines", () => {
   :note-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -1757,16 +1757,16 @@ describe("Test $appdxNote and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-別記第二号（第一条第一項、第九条関係）
+# 別記第二号（第一条第一項、第九条関係）
 
   :note-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別記第二号（第一条第一項、第九条関係）
+# 別記第二号（第一条第一項、第九条関係）
 
   :note-struct:
     <Fig src="./pict/001.pdf"/>
@@ -1835,7 +1835,7 @@ describe("Test $appdxNote and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-別記第二号（第一条第一項、第九条関係）
+# 別記第二号（第一条第一項、第九条関係）
 
   :note-struct:
     <Fig src="./pict/001.pdf"/>
@@ -1844,11 +1844,11 @@ describe("Test $appdxNote and appdxItemToLines", () => {
 
     備考文
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-別記第二号（第一条第一項、第九条関係）
+# 別記第二号（第一条第一項、第九条関係）
 
   :note-struct:
     <Fig src="./pict/001.pdf"/>

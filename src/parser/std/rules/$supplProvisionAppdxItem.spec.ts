@@ -11,11 +11,11 @@ describe("Test $supplProvisionAppdx and supplProvisionAppdxItemToLines", () => {
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-附則付録第一（第二十六条、第四十五条、第四十六条の五関係）
+# 附則付録第一（第二十六条、第四十五条、第四十六条の五関係）
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -82,7 +82,7 @@ describe("Test $supplProvisionAppdx and supplProvisionAppdxItemToLines", () => {
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -148,16 +148,16 @@ describe("Test $supplProvisionAppdx and supplProvisionAppdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+# 附則付録第一（第二十六条、第四十五条、第四十六条の五関係）　
 
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-附則付録第一（第二十六条、第四十五条、第四十六条の五関係）
+# 附則付録第一（第二十六条、第四十五条、第四十六条の五関係）
   :arith-formula:
     <Fig src="./pict/001.jpg"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -228,11 +228,11 @@ describe("Test $supplProvisionAppdxTable and supplProvisionAppdxItemToLines", ()
   * - 情報照会者
     - 事務
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-附則別表第二（第十九条、第二十一条関係）
+# 附則別表第二（第十九条、第二十一条関係）
   * - 情報照会者
     - 事務
 `.replace(/\r?\n/g, "\r\n");
@@ -322,7 +322,7 @@ describe("Test $supplProvisionAppdxTable and supplProvisionAppdxItemToLines", ()
   * - 情報照会者
     - 事務
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -411,15 +411,15 @@ describe("Test $supplProvisionAppdxTable and supplProvisionAppdxItemToLines", ()
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-附則別表第二（第十九条、第二十一条関係）
+# 附則別表第二（第十九条、第二十一条関係）
   * - 情報照会者
     - 事務
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-附則別表第二（第十九条、第二十一条関係）
+# 附則別表第二（第十九条、第二十一条関係）
   * - 情報照会者
     - 事務
 `.replace(/\r?\n/g, "\r\n");
@@ -513,11 +513,11 @@ describe("Test $supplProvisionAppdxStyle and supplProvisionAppdxItemToLines", ()
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-附則別記様式（第十四条関係）
+# 附則別記様式（第十四条関係）
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");
@@ -590,7 +590,7 @@ describe("Test $supplProvisionAppdxStyle and supplProvisionAppdxItemToLines", ()
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
@@ -662,16 +662,16 @@ describe("Test $supplProvisionAppdxStyle and supplProvisionAppdxItemToLines", ()
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
-附則別記様式（第十四条関係）　
+# 附則別記様式（第十四条関係）　
 
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 
-別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
-附則別記様式（第十四条関係）
+# 附則別記様式（第十四条関係）
   :style-struct:
     <Fig src="./pict/001.pdf"/>
 `.replace(/\r?\n/g, "\r\n");

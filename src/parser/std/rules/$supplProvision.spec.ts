@@ -11,7 +11,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
   （施行期日）
 第一条　この法律は、公布の日から起算して一年六月を超えない範囲内において政令で定める日から施行する。
 
-附則別表第一
+# 附則別表第一
   * * 物象の状態の量
     * 計量単位
   * - 力
@@ -26,7 +26,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
   （施行期日）
 第一条　この法律は、公布の日から起算して一年六月を超えない範囲内において政令で定める日から施行する。
 
-附則別表第一
+# 附則別表第一
   * * 物象の状態の量
     * 計量単位
   * - 力

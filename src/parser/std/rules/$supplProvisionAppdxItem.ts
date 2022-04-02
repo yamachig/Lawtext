@@ -12,8 +12,9 @@ import { assertNever } from "../../../util";
 import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
 import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
-import { supplProvisionAppdxItemControl, supplProvisionAppdxItemTitlePtn } from "../../cst/rules/$supplProvisionAppdxItemHeadLine";
+import { supplProvisionAppdxItemTitlePtn } from "../../cst/rules/$supplProvisionAppdxItemHeadLine";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
+import { autoTagControls, tagControls } from "../../cst/rules/$tagControl";
 
 
 export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.SupplProvisionAppdxItem, indentTexts: string[]): Line[] => {
@@ -36,9 +37,16 @@ export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.Supp
         indentTexts.length,
         indentTexts,
         supplProvisionAppdxItem.tag,
-        supplProvisionAppdxItemTitleSentenceChildren && supplProvisionAppdxItemTitlePtn[supplProvisionAppdxItem.tag].exec(sentenceChildrenToString(supplProvisionAppdxItemTitleSentenceChildren)) ? [] : [
+        supplProvisionAppdxItemTitleSentenceChildren && supplProvisionAppdxItemTitlePtn[supplProvisionAppdxItem.tag].exec(sentenceChildrenToString(supplProvisionAppdxItemTitleSentenceChildren)) ? [
             new Control(
-                supplProvisionAppdxItemControl[supplProvisionAppdxItem.tag],
+                autoTagControls[0],
+                null,
+                " ",
+                null,
+            )
+        ] : [
+            new Control(
+                tagControls[supplProvisionAppdxItem.tag],
                 null,
                 "",
                 null,

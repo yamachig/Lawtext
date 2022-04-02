@@ -1,19 +1,21 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
-import { isAmendProvisionSentence, isArticle, isFigStruct, isNewProvision, newStdEL } from "../../../law/std";
+import { isAmendProvisionSentence, isArticle, isFigStruct, isNewProvision, isTableStruct, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { ErrorMessage } from "../../cst/error";
 import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { Sentences } from "../../../node/cst/inline";
-import $paragraphItem from "./$paragraphItem";
+import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import $preamble from "./$preamble";
 import $articleGroup from "./$articleGroup";
 import $article, { articleToLines } from "./$article";
 import { assertNever, NotImplementedError } from "../../../util";
 import { rangeOfELs } from "../../../node/el";
 import $figStruct, { figStructToLines } from "./$figStruct";
+import { isParagraphItem } from "../../out_ std --copy/lawUtil";
+import { tableStructToLines } from "./$tableStruct";
 
 export const amendProvisionToLines = (amendProvision: std.AmendProvision, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -43,6 +45,10 @@ export const amendProvisionToLines = (amendProvision: std.AmendProvision, indent
             for (const cc of child.children) {
                 if (isArticle(cc)) {
                     lines.push(...articleToLines(cc, newProvisionsIndentTexts));
+                } else if (isParagraphItem(cc)) {
+                    lines.push(...paragraphItemToLines(cc, newProvisionsIndentTexts));
+                } else if (isTableStruct(cc)) {
+                    lines.push(...tableStructToLines(cc, newProvisionsIndentTexts));
                 } else if (isFigStruct(cc)) {
                     lines.push(...figStructToLines(cc, newProvisionsIndentTexts));
                 }
