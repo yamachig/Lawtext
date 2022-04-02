@@ -20,7 +20,7 @@ const sliceLinesWithNumbers = (
         const mIndent = /^ */.exec(line.replace(/　/g, "  "));
         const indentWidth = mIndent ? mIndent[0].length : 0;
         // eslint-disable-next-line no-irregular-whitespace
-        line = line.replace(/ /g, "␣").replace(/　/g, "＿");
+        line = line.replace(/ /g, "･").replace(/　/g, "⬚");
         const wrapLines = Array.from(wrapSingle(line, maxWidth, indentWidth + 2));
 
         for (const [j, wrapLine] of wrapLines.entries()) {
