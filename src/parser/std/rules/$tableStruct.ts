@@ -140,7 +140,7 @@ const $table: WithErrorRule<std.Table> = factory
                 )
             )
         , "tableColumnLines")
-        .action(({ tableColumnLines }) => {
+        .action(({ tableColumnLines, newErrorMessage }) => {
             const tableRows: (std.TableRow | std.TableHeaderRow)[] = [];
             const errors: ErrorMessage[] = [];
             for (const tableColumnLine of tableColumnLines) {
@@ -183,13 +183,13 @@ const $table: WithErrorRule<std.Table> = factory
                     );
 
                     if (tableRowOrNull === null) {
-                        errors.push(new ErrorMessage(
+                        errors.push(newErrorMessage(
                             "table: No first column indicator",
                             tableColumnLine.line.firstColumnIndicatorRange ?? tableColumnLine.virtualRange,
                         ));
                         tableRows.push(tableRow);
                     } else if (isTableHeaderRow(tableRowOrNull) !== (tableColumnLine.line.columnIndicator === "*")) {
-                        errors.push(new ErrorMessage(
+                        errors.push(newErrorMessage(
                             "table: Column indicator mismatch",
                             tableColumnLine.line.columnIndicatorRange ?? tableColumnLine.virtualRange,
                         ));
@@ -270,8 +270,8 @@ export const $tableStruct: WithErrorRule<std.TableStruct> = factory
                             .sequence(s => s
                                 .and(r => r.zeroOrMore(() => $blankLine))
                                 .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected }) => {
-                                    return new ErrorMessage(
+                                .action(({ unexpected, newErrorMessage }) => {
+                                    return newErrorMessage(
                                         "$tableStruct: この前にある表の終了時にインデント解除が必要です。",
                                         unexpected.virtualRange,
                                     );

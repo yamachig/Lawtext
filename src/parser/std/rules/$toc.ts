@@ -218,8 +218,8 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
                                     .sequence(s => s
                                         .and(r => r.zeroOrMore(() => $blankLine))
                                         .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected }) => {
-                                            return new ErrorMessage(
+                                        .action(({ unexpected, newErrorMessage }) => {
+                                            return newErrorMessage(
                                                 "$tocArticleGroup: この前にある目次項目の終了時にインデント解除が必要です。",
                                                 unexpected.virtualRange,
                                             );
@@ -378,8 +378,8 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
                                     .sequence(s => s
                                         .and(r => r.zeroOrMore(() => $blankLine))
                                         .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected }) => {
-                                            return new ErrorMessage(
+                                        .action(({ unexpected, newErrorMessage }) => {
+                                            return newErrorMessage(
                                                 "$tocSupplProvision: この前にある目次項目の終了時にインデント解除が必要です。",
                                                 unexpected.virtualRange,
                                             );
@@ -490,8 +490,8 @@ export const $toc: WithErrorRule<std.TOC> = factory
                                     .sequence(s => s
                                         .and(r => r.zeroOrMore(() => $blankLine))
                                         .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected }) => {
-                                            return new ErrorMessage(
+                                        .action(({ unexpected, newErrorMessage }) => {
+                                            return newErrorMessage(
                                                 "$toc: この前にある目次の終了時にインデント解除が必要です。",
                                                 unexpected.virtualRange,
                                             );

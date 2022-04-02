@@ -112,8 +112,8 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
                         .sequence(s => s
                             .and(r => r.zeroOrMore(() => $blankLine))
                             .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected }) => {
-                                return new ErrorMessage(
+                            .action(({ unexpected, newErrorMessage }) => {
+                                return newErrorMessage(
                                     "$preamble: この前にある前文の終了時にインデント解除が必要です。",
                                     unexpected.virtualRange,
                                 );

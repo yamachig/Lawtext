@@ -261,7 +261,7 @@ export const $law: WithErrorRule<std.Law> = factory
                 )
             )
         , "notCapturedErrorLines")
-        .action(({ lawTitleLines, enactStatementLines, toc, preambles, mainProvisionAndErrors, supplOrAppdxItemAndErrors, notCapturedErrorLines }) => {
+        .action(({ lawTitleLines, enactStatementLines, toc, preambles, mainProvisionAndErrors, supplOrAppdxItemAndErrors, notCapturedErrorLines, newErrorMessage }) => {
             const errors: ErrorMessage[] = [];
 
             const law = newStdEL(
@@ -330,7 +330,7 @@ export const $law: WithErrorRule<std.Law> = factory
                 }
                 errors.push(...mainProvision.errors);
                 for (const errorLine of errorLines) {
-                    errors.push(new ErrorMessage(
+                    errors.push(newErrorMessage(
                         `$law: この行をパースできませんでした。line.type: ${errorLine.type}`,
                         errorLine.virtualRange,
                     ));
@@ -341,7 +341,7 @@ export const $law: WithErrorRule<std.Law> = factory
                 lawBody.append(supplOrAppdxItem.value);
                 errors.push(...supplOrAppdxItem.errors);
                 for (const errorLine of errorLines) {
-                    errors.push(new ErrorMessage(
+                    errors.push(newErrorMessage(
                         `$law: この行をパースできませんでした。line.type: ${errorLine.type}`,
                         errorLine.virtualRange,
                     ));
@@ -349,7 +349,7 @@ export const $law: WithErrorRule<std.Law> = factory
             }
 
             for (const errorLine of notCapturedErrorLines) {
-                errors.push(new ErrorMessage(
+                errors.push(newErrorMessage(
                     `$law: この行をパースできませんでした。line.type: ${errorLine.type}`,
                     errorLine.virtualRange,
                 ));

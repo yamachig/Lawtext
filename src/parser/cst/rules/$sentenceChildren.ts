@@ -7,7 +7,6 @@ import { factory } from "../factory";
 import { ValueRule, WithErrorRule } from "../util";
 import { $_EOL, $__ } from "./lexical";
 import { $xmlElement } from "./$xml";
-import { ErrorMessage } from "../error";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 
@@ -251,8 +250,8 @@ export const $MISMATCH_START_PARENTHESIS: WithErrorRule<__EL> = factory
         .and(r => r
             .asSlice(r => r.regExp(/^[<(（[［{｛「]/))
         , "mismatch")
-        .action(({ mismatch, range }) => {
-            const error = new ErrorMessage(
+        .action(({ mismatch, range, newErrorMessage }) => {
+            const error = newErrorMessage(
                 "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
                 range(),
             );
@@ -270,8 +269,8 @@ export const $MISMATCH_END_PARENTHESIS: WithErrorRule<__EL> = factory
         .and(r => r
             .asSlice(r => r.regExp(/^[>)）\]］}｝」]/))
         , "mismatch")
-        .action(({ mismatch, range }) => {
-            const error = new ErrorMessage(
+        .action(({ mismatch, range, newErrorMessage }) => {
+            const error = newErrorMessage(
                 "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
                 range(),
             );
@@ -349,7 +348,7 @@ export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
         .or(() => $SQUARE_PARENTHESES_INLINE)
         .orSequence(s => s
             .and(() => $xmlElement, "elWithError")
-            .action(({ elWithError, range }) => {
+            .action(({ elWithError, range, newErrorMessage }) => {
                 const el = elWithError.value;
                 if (std.isLine(el) || std.isQuoteStruct(el) || std.isArithFormula(el) || std.isRuby(el) || std.isSup(el) || std.isControl(el)) {
                     return {
@@ -367,7 +366,7 @@ export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
                         value: new EL("__UnexpectedXML", {}, [el]) as __EL,
                         errors: [
                             ...elWithError.errors,
-                            new ErrorMessage(
+                            newErrorMessage(
                                 `$PARENTHESES_INLINE_INNER: タグ <${el.tag}> はこの場所では使用できません。`,
                                 range(),
                             ),

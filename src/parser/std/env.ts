@@ -1,4 +1,5 @@
-import { MatchFail, MatchContext, BasePos, BaseEnv } from "generic-parser/lib/core";
+import { MatchFail, MatchContext, BasePos, BaseEnv, getMemorizedStringOffsetToPos, StringPos } from "generic-parser/lib/core";
+import { ErrorMessage } from "../cst/error";
 import { VirtualLine } from "./virtualLine";
 
 export interface Env extends BaseEnv<VirtualLine[], BasePos> {
@@ -6,11 +7,14 @@ export interface Env extends BaseEnv<VirtualLine[], BasePos> {
         maxOffsetMatchFail: MatchFail | null;
         maxOffsetMatchContext: MatchContext | null;
     };
+    newErrorMessage: (message: string, range: [start: number, end: number]) => ErrorMessage;
+    stringOffsetToPos: (target: string, offset: number) => StringPos;
 }
 
-export const initialEnv = (options: Record<string | number | symbol, unknown>): Env => {
+export const initialEnv = (target: string, options: Record<string | number | symbol, unknown>): Env => {
     const registerCurrentRangeTarget = () => { /**/ };
     const offsetToPos = (_: VirtualLine[], offset: number) => ({ offset });
+    const stringOffsetToPos = getMemorizedStringOffsetToPos();
 
     const onMatchFail = (matchFail: MatchFail, matchContext: MatchContext) => {
         if (state.maxOffsetMatchFail === null || matchFail.offset > state.maxOffsetMatchFail.offset) {
@@ -18,6 +22,15 @@ export const initialEnv = (options: Record<string | number | symbol, unknown>): 
             state.maxOffsetMatchContext = matchContext;
         }
     };
+
+    const newErrorMessage = (message: string, range: [start:number, end:number]) =>
+        new ErrorMessage(
+            message,
+            [
+                stringOffsetToPos(target, range[0]),
+                stringOffsetToPos(target, range[1]),
+            ]
+        );
 
     const state = {
         maxOffsetMatchFail: null as null | MatchFail,
@@ -34,6 +47,8 @@ export const initialEnv = (options: Record<string | number | symbol, unknown>): 
         offsetToPos,
         onMatchFail,
         state,
+        newErrorMessage,
+        stringOffsetToPos,
     };
 };
 

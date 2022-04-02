@@ -159,8 +159,8 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                         .sequence(s => s
                             .and(r => r.zeroOrMore(() => $blankLine))
                             .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected }) => {
-                                return new ErrorMessage(
+                            .action(({ unexpected, newErrorMessage }) => {
+                                return newErrorMessage(
                                     "$remarks: この前にある備考の終了時にインデント解除が必要です。",
                                     unexpected.virtualRange,
                                 );

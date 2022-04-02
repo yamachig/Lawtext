@@ -139,8 +139,8 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                             .sequence(s => s
                                 .and(r => r.zeroOrMore(() => $blankLine))
                                 .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected }) => {
-                                    return new ErrorMessage(
+                                .action(({ unexpected, newErrorMessage }) => {
+                                    return newErrorMessage(
                                         "noteLikeStruct: この前にある記／様式／書式の終了時にインデント解除が必要です。",
                                         unexpected.virtualRange,
                                     );

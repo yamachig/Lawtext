@@ -1,4 +1,5 @@
-import { stringOffsetToPos, MatchFail, MatchContext, StringPos, BaseEnv } from "generic-parser/lib/core";
+import { getMemorizedStringOffsetToPos, MatchFail, MatchContext, StringPos, BaseEnv } from "generic-parser/lib/core";
+import { ErrorMessage } from "./error";
 
 export interface Env extends BaseEnv<string, StringPos> {
     currentIndentDepth: number;
@@ -7,11 +8,17 @@ export interface Env extends BaseEnv<string, StringPos> {
         maxOffsetMatchFail: MatchFail | null;
         maxOffsetMatchContext: MatchContext | null;
     };
+    newErrorMessage: (message: string, range: [start: number, end: number]) => ErrorMessage;
 }
 
 export const initialEnv = (options: Record<string | number | symbol, unknown>): Env => {
-    const registerCurrentRangeTarget = () => { /**/ };
-    const offsetToPos = stringOffsetToPos;
+    let target = "";
+    const registerCurrentRangeTarget = (start: number, end: number, _target: string) => {
+        void start;
+        void end;
+        target = _target;
+    };
+    const offsetToPos = getMemorizedStringOffsetToPos();
 
     const state = {
         parenthesesDepth: 0,
@@ -26,6 +33,15 @@ export const initialEnv = (options: Record<string | number | symbol, unknown>): 
         }
     };
 
+    const newErrorMessage = (message: string, range: [start:number, end:number]) =>
+        new ErrorMessage(
+            message,
+            [
+                offsetToPos(target, range[0]),
+                offsetToPos(target, range[1]),
+            ]
+        );
+
     return {
         currentIndentDepth: 0,
         offsetToPos,
@@ -37,6 +53,7 @@ export const initialEnv = (options: Record<string | number | symbol, unknown>): 
         options,
         state,
         onMatchFail,
+        newErrorMessage,
     };
 };
 

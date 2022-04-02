@@ -151,7 +151,7 @@ export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
         //                     .and(r => r.zeroOrMore(() => $blankLine))
         //                     .and(r => r.anyOne(), "unexpected")
         //                     .action(({ unexpected }) => {
-        //                         return new ErrorMessage(
+        //                         return newErrorMessage(
         //                             "$supplProvision: この前にある附則の終了時にインデント解除が必要です。",
         //                             unexpected.virtualRange,
         //                         );

@@ -308,8 +308,8 @@ export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number
                             .sequence(s => s
                                 .and(r => r.zeroOrMore(() => $blankLine))
                                 .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected }) => {
-                                    return new ErrorMessage(
+                                .action(({ unexpected, newErrorMessage }) => {
+                                    return newErrorMessage(
                                         "appdxItem: この前にある別記類の終了時にインデント解除が必要です。",
                                         unexpected.virtualRange,
                                     );

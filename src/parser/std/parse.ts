@@ -17,11 +17,12 @@ const $start = factory
 
 
 export const parse = (
+    target: string,
     lines: Line[],
     options: Record<string | number | symbol, unknown> = {},
 ) => {
 
-    const env = initialEnv(options);
+    const env = initialEnv(target, options);
 
     const result = $start.match(
         0,

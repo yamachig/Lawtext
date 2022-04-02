@@ -102,8 +102,8 @@ export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
                                     .sequence(s => s
                                         .and(r => r.zeroOrMore(() => $blankLine))
                                         .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected }) => {
-                                            return new ErrorMessage(
+                                        .action(({ unexpected, newErrorMessage }) => {
+                                            return newErrorMessage(
                                                 "$amendProvision: この前にある改正文の終了時にインデント解除が必要です。",
                                                 unexpected.virtualRange,
                                             );

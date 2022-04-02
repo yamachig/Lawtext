@@ -1,4 +1,4 @@
-import { ArticleLine, Line, LineType, OtherLine, ParagraphItemLine } from "../../../node/cst/line";
+import { ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine } from "../../../node/cst/line";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
@@ -15,6 +15,9 @@ import { rangeOfELs } from "../../../node/el";
 import $amendProvision, { amendProvisionToLines } from "./$amendProvision";
 import { Env } from "../env";
 import { $listsOuter, listOrSublistToLines } from "./$list";
+import $tableStruct, { tableStructToLines } from "./$tableStruct";
+import $figStruct, { figStructToLines } from "./$figStruct";
+import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
 
 
 export const paragraphItemToLines = (
@@ -130,20 +133,19 @@ export const paragraphItemToLines = (
             lines.push(...paragraphItemToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "TableStruct") {
-            // TODO: Implement
-            throw new NotImplementedError(child.tag);
-            // const isFirstTableStruct = !(0 < i && Children[i - 1].tag === "TableStruct");
-            // blocks.push(renderTableStruct(child, indent + 1, !isFirstTableStruct)); /* >>>> INDENT >>>> */
+            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(...tableStructToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
+            lines.push(new BlankLine(null, CST.EOL));
 
         } else if (child.tag === "FigStruct") {
-            // TODO: Implement
-            throw new NotImplementedError(child.tag);
-            // blocks.push(renderFigStruct(child, indent + 1)); /* >>>> INDENT >>>> */
+            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(...figStructToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
+            lines.push(new BlankLine(null, CST.EOL));
 
         } else if (child.tag === "StyleStruct") {
-            // TODO: Implement
-            throw new NotImplementedError(child.tag);
-            // blocks.push(renderStyleStruct(child, indent + 1)); /* >>>> INDENT >>>> */
+            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(...noteLikeStructToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
+            lines.push(new BlankLine(null, CST.EOL));
 
         } else if (child.tag === "List") {
             lines.push(...listOrSublistToLines(child, [...indentTexts, CST.INDENT, CST.INDENT])); /* >>>> INDENT ++++ INDENT >>>> */
@@ -161,23 +163,30 @@ export const paragraphItemToLines = (
     return lines;
 };
 
-export const $paragraphItemChildren: WithErrorRule<Diff<std.ParagraphItem, std.Paragraph>[]> = factory
+export const $paragraphItemChildren: WithErrorRule<(Diff<std.ParagraphItem, std.Paragraph> | std.TableStruct | std.FigStruct | std.StyleStruct)[]> = factory
     .withName("paragraphItemChildren")
     .sequence(s => s
         .and(r => r
             .oneOrMore(r => r
-                .choice(c => c
-                    .orSequence(s => s
-                        .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        .and(() => $paragraphItem, "elWithErrors")
-                        .and(r => r.assert(({ elWithErrors }) => !std.isParagraph(elWithErrors.value)))
-                        .action(({ elWithErrors }) => {
-                            return elWithErrors as {
-                        value: Diff<std.ParagraphItem, std.Paragraph>,
-                        errors: ErrorMessage[],
-                    };
-                        })
+                .sequence(s => s
+                    .and(r => r
+                        .choice(c => c
+                            .orSequence(s => s
+                                .and(() => $paragraphItem, "elWithErrors")
+                                .and(r => r.assert(({ elWithErrors }) => !std.isParagraph(elWithErrors.value)))
+                                .action(({ elWithErrors }) => {
+                                    return elWithErrors as {
+                                        value: Diff<std.ParagraphItem, std.Paragraph>,
+                                        errors: ErrorMessage[],
+                                    };
+                                })
+                            )
+                            .or(() => $tableStruct)
+                            .or(() => $figStruct)
+                            .or(() => $styleStruct)
+                        )
                     )
+                    .andOmit(r => r.zeroOrMore(() => $blankLine))
                 )
             )
         , "children")
@@ -190,7 +199,7 @@ export const $paragraphItemChildren: WithErrorRule<Diff<std.ParagraphItem, std.P
     );
 
 export const $paragraphItemChildrenOuter: WithErrorRule<
-    (Diff<std.ParagraphItem, std.Paragraph> | std.AmendProvision | std.List)[]
+    (Diff<std.ParagraphItem, std.Paragraph> | std.TableStruct | std.FigStruct | std.StyleStruct | std.AmendProvision | std.List)[]
 > = (
     factory as VirtualLineRuleFactory<
         Env & {
@@ -217,8 +226,8 @@ export const $paragraphItemChildrenOuter: WithErrorRule<
                     .and(r => r
                         .oneOrMore(r => r
                             .sequence(s => s
-                                .andOmit(r => r.zeroOrMore(() => $blankLine))
                                 .and(() => $amendProvision)
+                                .andOmit(r => r.zeroOrMore(() => $blankLine))
                             )
                         )
                     , "amendProvisions")
@@ -241,8 +250,8 @@ export const $paragraphItemChildrenOuter: WithErrorRule<
                         .sequence(s => s
                             .and(r => r.zeroOrMore(() => $blankLine))
                             .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected }) => {
-                                return new ErrorMessage(
+                            .action(({ unexpected, newErrorMessage }) => {
+                                return newErrorMessage(
                                     "$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。",
                                     unexpected.virtualRange,
                                 );

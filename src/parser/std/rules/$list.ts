@@ -91,8 +91,8 @@ TRet
                                                 .sequence(s => s
                                                     .and(r => r.zeroOrMore(() => $blankLine))
                                                     .and(r => r.anyOne(), "unexpected")
-                                                    .action(({ unexpected }) => {
-                                                        return new ErrorMessage(
+                                                    .action(({ unexpected, newErrorMessage }) => {
+                                                        return newErrorMessage(
                                                             "$listOrSublist: この前にある列記の終了時にインデント解除が必要です。",
                                                             unexpected.virtualRange,
                                                         );
@@ -171,8 +171,8 @@ export const $listsOuter: WithErrorRule<std.List[]> = factory
                         .sequence(s => s
                             .and(r => r.zeroOrMore(() => $blankLine))
                             .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected }) => {
-                                return new ErrorMessage(
+                            .action(({ unexpected, newErrorMessage }) => {
+                                return newErrorMessage(
                                     "$listsOuter: この前にある列記の終了時にインデント解除が必要です。",
                                     unexpected.virtualRange,
                                 );

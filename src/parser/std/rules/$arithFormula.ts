@@ -65,8 +65,8 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
                         .sequence(s => s
                             .and(r => r.zeroOrMore(() => $blankLine))
                             .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected }) => {
-                                return new ErrorMessage(
+                            .action(({ unexpected, newErrorMessage }) => {
+                                return newErrorMessage(
                                     "$arithFormula: この前にある数式の終了時にインデント解除が必要です。",
                                     unexpected.virtualRange,
                                 );

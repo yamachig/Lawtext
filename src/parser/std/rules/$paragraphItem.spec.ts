@@ -535,4 +535,207 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
             el => paragraphItemToLines(el, []),
         );
     });
+
+    it("Success with errors case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+  （定義）
+
+２　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+  一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
+
+  * - 項
+    - 種名
+
+  <Fig src="./pict/S27F03901000056-005.jpg"/>
+
+  :style-struct:
+    <Fig src="./pict/S39SE188-002.jpg"/>
+
+  （適用除外）
+第二条　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+  （定義）
+２　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+  一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
+
+  * - 項
+    - 種名
+
+  <Fig src="./pict/S27F03901000056-005.jpg"/>
+
+  :style-struct:
+    <Fig src="./pict/S39SE188-002.jpg"/>
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Paragraph",
+            attr: {
+                OldStyle: "false"
+            },
+            children: [
+                {
+                    tag: "ParagraphCaption",
+                    attr: {},
+                    children: ["（定義）"]
+                },
+                {
+                    tag: "ParagraphNum",
+                    attr: {},
+                    children: ["２"]
+                },
+                {
+                    tag: "ParagraphSentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: ["この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。"]
+                        }
+                    ]
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["一"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Column",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["法令"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "Column",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。"]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "TableStruct",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Table",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "TableRow",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "TableColumn",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: ["項"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            tag: "TableColumn",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: ["種名"]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "FigStruct",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Fig",
+                            attr: {
+                                src: "./pict/S27F03901000056-005.jpg"
+                            },
+                            children: []
+                        }
+                    ]
+                },
+                {
+                    tag: "StyleStruct",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Style",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "FigStruct",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Fig",
+                                            attr: {
+                                                src: "./pict/S39SE188-002.jpg"
+                                            },
+                                            children: []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $paragraphItem.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = paragraphItemToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });

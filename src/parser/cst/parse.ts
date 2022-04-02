@@ -1,4 +1,4 @@
-import { stringOffsetToPos } from "generic-parser";
+import { getMemorizedStringOffsetToPos } from "generic-parser";
 import { MatchContext } from "generic-parser/lib/core";
 import { Line } from "../../node/cst/line";
 import { initialEnv } from "./env";
@@ -13,7 +13,7 @@ const makeMatchContextString = (context: MatchContext, target: string): string =
     const newLineOffsetAfter = target.slice(offset).search(/\r?\n/);
     // eslint-disable-next-line no-irregular-whitespace
     const subString = (target.slice(newLineOffsetBefore + 1, offset) + "▸" + target.slice(offset, offset + newLineOffsetAfter)).replace(/ /g, "･").replace(/　/g, "⬚");
-    const pos = stringOffsetToPos(target, offset);
+    const pos = getMemorizedStringOffsetToPos()(target, offset);
     return `Location: ${JSON.stringify(pos)}
 Expected: ${expected}
 ${subString}

@@ -82,7 +82,7 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
 
 export const $fig: WithErrorRule<std.Fig> = factory
     .withName("fig")
-    .oneMatch(({ item }) => {
+    .oneMatch(({ item, newErrorMessage }) => {
         if (
             item.type === LineType.OTH
             && item.line.type === LineType.OTH
@@ -98,7 +98,7 @@ export const $fig: WithErrorRule<std.Fig> = factory
             const errors: ErrorMessage[] = [];
             const fig = item.line.sentencesArray[0].sentences[0].children[0].children[0].copy(false) as std.Fig;
             if (!("src" in fig.attr)) {
-                errors.push(new ErrorMessage(
+                errors.push(newErrorMessage(
                     "$figStruct: Figタグ に src 属性が設定されていません。",
                     item.virtualRange,
                 ));
@@ -161,8 +161,8 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                             .sequence(s => s
                                 .and(r => r.zeroOrMore(() => $blankLine))
                                 .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected }) => {
-                                    return new ErrorMessage(
+                                .action(({ unexpected, newErrorMessage }) => {
+                                    return newErrorMessage(
                                         "$figStruct: この前にある備考の終了時にインデント解除が必要です。",
                                         unexpected.virtualRange,
                                     );

@@ -19,8 +19,8 @@ export const testLawtextToStd = <
         parseLines: (vlines: VirtualLine[], env: Env) => MatchResult<{value: TEL, errors: ErrorMessage[]}, Env>,
         toLines: (el: TEL) => Line[],
     ): void => {
-    const env = initialEnv({});
     const lawtext = lawtextWithMarker.replace(/!(?:\\\[\d+\])?/g, "");
+    const env = initialEnv(lawtext, {});
     const markerPositions: number[] = [];
     const markerMemo = new Map<string, number>();
     let accMarkerLength = 0;
@@ -43,10 +43,16 @@ export const testLawtextToStd = <
         }
         accMarkerLength += m[0].length;
     }
-    const expectedErrors = expectedErrorMessages.map((message, i) => ({
-        message,
-        range: markerPositions.slice(i * 2, i * 2 + 2),
-    }));
+    const expectedErrors = expectedErrorMessages.map((message, i) => {
+        const range = markerPositions.slice(i * 2, i * 2 + 2);
+        return {
+            message,
+            location: [
+                env.stringOffsetToPos(lawtext, range[0]),
+                env.stringOffsetToPos(lawtext, range[1]),
+            ],
+        };
+    });
 
     const lines = parse(lawtext);
     const vls = toVirtualLines(lines.value);

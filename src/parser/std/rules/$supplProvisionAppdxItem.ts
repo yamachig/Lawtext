@@ -164,8 +164,8 @@ export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplPr
                             .sequence(s => s
                                 .and(r => r.zeroOrMore(() => $blankLine))
                                 .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected }) => {
-                                    return new ErrorMessage(
+                                .action(({ unexpected, newErrorMessage }) => {
+                                    return newErrorMessage(
                                         "supplProvisionAppdxItem: この前にある附則別記類の終了時にインデント解除が必要です。",
                                         unexpected.virtualRange,
                                     );
