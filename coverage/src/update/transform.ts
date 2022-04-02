@@ -112,6 +112,10 @@ export const getRenderedLawtext = async (origEL: EL): Promise<{
     }
 };
 
+const ignoreErrorMessages = [
+    "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
+    "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
+];
 
 export const getParsedLaw = async (lawtext: string): Promise<{
     parsedEL: EL | null,
@@ -131,6 +135,15 @@ export const getParsedLaw = async (lawtext: string): Promise<{
         const parsedXML = parsedEL.outerXML(false);
         requiredms.set("parsedELToXML", lap.lapms());
 
+        const allLines = lawtext.split("\n");
+        const filteredParsedErrors = parsedErrors.filter(e => !ignoreErrorMessages.includes(e.message));
+        let errorText = filteredParsedErrors.length > 0
+            ? filteredParsedErrors.slice(0, 7).map(e => e.toString(allLines)).join("\n\n")
+            : null;
+        if (filteredParsedErrors.length > 7) {
+            errorText += `\n\n... ${filteredParsedErrors.length - 7} more errors ...`;
+        }
+
         return {
             parsedEL,
             parsedXML,
@@ -139,7 +152,11 @@ export const getParsedLaw = async (lawtext: string): Promise<{
                     requiredms,
                 },
                 info: {
-                    ...(parsedErrors.length > 0 ? { error: JSON.stringify(parsedErrors) } : {}),
+                    ...(
+                        parsedErrors.length > 0
+                            ? { error: errorText }
+                            : {}
+                    ),
                 },
             },
         };
