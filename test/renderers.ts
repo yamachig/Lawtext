@@ -293,8 +293,13 @@ describe("Test Renderes", () => {
         try {
             const result = parse(lawtext);
             parsedEL = result.value;
-            errors = result.errors;
-            chai.assert(errors.length === 0, JSON.stringify(errors, null, 2));
+            const ignoreErrorMessages = [
+                "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
+                "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
+            ];
+            errors = result.errors.filter(e => !ignoreErrorMessages.includes(e.message));
+            const allLines = lawtext.split("\n");
+            chai.assert(errors.length === 0, errors.map(e => e.toString(allLines)).join("\n\n"));
             if (parsedEL === undefined) return;
         } catch (e) {
             const msg = [

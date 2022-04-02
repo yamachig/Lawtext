@@ -38,11 +38,13 @@ interface IterableIterator<T> extends Iterator<T, void, undefined> {
     [Symbol.iterator](): IterableIterator<T>;
 }
 
-function* wrapSingle(s: string, width: number): IterableIterator<string> {
+export function* wrapSingle(s: string, width: number, afterFirstLineIndent = 0): IterableIterator<string> {
     let pos = 0;
     let lastFlag = "";
+    let currentWidth = width;
     while (pos < s.length) {
-        const sliced = sliceWOColor(s, pos, width);
+        const sliced = sliceWOColor(s, pos, currentWidth);
+        if (pos === 0) currentWidth -= afterFirstLineIndent;
         pos += sliced.length;
 
         // eslint-disable-next-line no-control-regex
@@ -56,14 +58,14 @@ function* wrapSingle(s: string, width: number): IterableIterator<string> {
                 lastFlag = flag;
                 retSubs = `${retSubs}${TERMC.DEFAULT}`;
             }
-        } else {
+        } else if (lastFlag) {
             retSubs = `${retSubs}${TERMC.DEFAULT}`;
         }
         yield retSubs;
     }
 }
 
-function* wrap(row: string[], width: number): IterableIterator<string[]> {
+export function* wrap(row: string[], width: number): IterableIterator<string[]> {
     const iters = row.map(s => wrapSingle(s, width));
     while (true) {
         const nexts = iters.map(iter => iter.next());
