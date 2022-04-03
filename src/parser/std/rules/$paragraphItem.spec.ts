@@ -743,6 +743,81 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
+２
+  一　内閣又は行政機関が定める次に掲げるものをいう。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+２
+  一　内閣又は行政機関が定める次に掲げるものをいう。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Paragraph",
+            attr: {
+                OldStyle: "false"
+            },
+            children: [
+                {
+                    tag: "ParagraphNum",
+                    attr: {},
+                    children: ["２"]
+                },
+                {
+                    tag: "ParagraphSentence",
+                    attr: {},
+                    children: []
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        "Delete": "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["一"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["内閣又は行政機関が定める次に掲げるものをいう。"]
+                                }
+                            ]
+                        },
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $paragraphItem.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = paragraphItemToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
 第十三条　法の一部を次のように改正する。
   第十七条第一項第七号に次の一号を加える。
     イ　命令等　内閣又は行政機関が定める次に掲げるものをいう。

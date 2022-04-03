@@ -153,7 +153,7 @@ export const paragraphItemToLines = (
                         ]
             ),
             sentenceChildrenToString(Title),
-            Title.length === 0 ? "" : CST.MARGIN,
+            (Title.length === 0 || sentencesArray.length === 0) ? "" : CST.MARGIN,
             sentencesArray,
             CST.EOL,
         ));
@@ -249,8 +249,8 @@ export const $paragraphItemChildrenOuter: WithErrorRule<
                     .andOmit(r => r.assert(({ firstParagraphItemLine }) => {
                         const lastText = firstParagraphItemLine.line
                             .sentencesArray.slice(-1)[0]
-                            .sentences.slice(-1)[0]
-                            .text;
+                            ?.sentences.slice(-1)[0]
+                            ?.text ?? "";
                         const m = /.*?の一部を次のように(?:改正す|改め)る。$/.exec(lastText);
                         return m !== null;
                     }))
@@ -349,9 +349,8 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
                 (paragraphItem as Diff<std.ParagraphItem, std.Paragraph>).attr.Delete = "false";
             }
 
-            const replacedAttrEntries: AttrEntries = [];
-
             if (firstParagraphItemLine.line.sentencesArray.length >= 1) {
+                const replacedAttrEntries: AttrEntries = [];
                 for (const attrEntry of firstParagraphItemLine.line.sentencesArray[0].attrEntries) {
                     if (attrEntry.entry[0] === "OldNum") {
                         (paragraphItem as std.Paragraph).attr.OldNum = attrEntry.entry[1];
@@ -359,9 +358,9 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
                         replacedAttrEntries.push(attrEntry);
                     }
                 }
+                firstParagraphItemLine.line.sentencesArray[0].attrEntries.splice(0);
+                firstParagraphItemLine.line.sentencesArray[0].attrEntries.push(...replacedAttrEntries);
             }
-            firstParagraphItemLine.line.sentencesArray[0].attrEntries.splice(0);
-            firstParagraphItemLine.line.sentencesArray[0].attrEntries.push(...replacedAttrEntries);
 
 
             if (captionLine) {
