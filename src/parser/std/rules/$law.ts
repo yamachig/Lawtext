@@ -216,8 +216,13 @@ export const $law: WithErrorRule<std.Law> = factory
                     .and(r => r
                         .zeroOrMore(r => r
                             .sequence(s => s
-                                .andOmit(r => r.nextIsNot(r => r.oneMatch(({ item }) => item.type === LineType.SPR || item.type === LineType.APP ? item : null)))
-                                .and(r => r.anyOne())
+                                .and(r => r.anyOne(), "captured")
+                                .andOmit(r => r.assertNot(({ captured }) =>
+                                    (captured.type === LineType.SPR)
+                                    || (captured.type === LineType.APP)
+                                    || (captured.type === LineType.ART)
+                                    || (captured.type === LineType.ARG)
+                                ))
                                 .andOmit(r => r.zeroOrMore(() => $blankLine))
                             )
                         )

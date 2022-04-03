@@ -6,12 +6,13 @@ import { assertNever, Diff, range } from "../../../util";
 import { WithErrorRule } from "../util";
 import factory from "../factory";
 import { $blankLine } from "../util";
-import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
+import { paragraphItemToLines } from "./$paragraphItem";
 import { mergeAdjacentTexts } from "../../cst/util";
 import $article, { articleToLines } from "./$article";
 import { rangeOfELs } from "../../../node/el";
 import { parseNamedNum } from "../../../law/num";
 import { appdxItemToLines } from "./$appdxItem";
+import { ErrorMessage } from "../../cst/error";
 
 export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -88,7 +89,7 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
                     .and(r => r
                         .choice(r => r
                             .or(() => $article)
-                            .or(() => $paragraphItem)
+                            // .or(() => $paragraphItem)
                             .orSequence(s => s
                                 .andOmit(r => r
                                     .nextIs(r => r
@@ -106,13 +107,46 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
                                 )
                                 .and(() => $articleGroup)
                             )
+                            .or(r => r
+                                .oneOrMore(r => r
+                                    .sequence(s => s
+                                        .and(r => r.anyOne(), "captured")
+                                        .andOmit(r => r.assertNot(({ captured }) =>
+                                            (captured.type === LineType.SPR)
+                                            || (captured.type === LineType.SPA)
+                                            || (captured.type === LineType.APP)
+                                            || (captured.type === LineType.ART)
+                                            || (captured.type === LineType.ARG)
+                                            // || (captured.type === LineType.PIT)
+                                        ))
+                                        .andOmit(r => r.zeroOrMore(() => $blankLine))
+                                    )
+                                )
+                            )
                         )
                     )
                 )
             )
-        , "children")
-        .action(({ headLine, children }) => {
-            const errors = [...children.map(c => c.errors).flat()];
+        , "childrenAndErrors")
+        .action(({ headLine, childrenAndErrors, newErrorMessage }) => {
+
+            const children: (std.ArticleGroup | std.Article)[] = [];
+            const errors: ErrorMessage[] = [];
+
+            for (const child of childrenAndErrors) {
+                if (Array.isArray(child)) {
+                    for (const errorLine of child) {
+                        errors.push(newErrorMessage(
+                            `$articleGroup: この行をパースできませんでした。line.type: ${errorLine.type}`,
+                            errorLine.virtualRange,
+                        ));
+                    }
+                } else {
+                    children.push(child.value);
+                    errors.push(...child.errors);
+                }
+            }
+
             const articleGroup = newStdEL(
                 headLine.line.mainTag,
                 { Delete: "false", Hide: "false" },
@@ -134,7 +168,7 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
                 articleGroup.attr.Num = num;
             }
 
-            articleGroup.extend(children.map(c => c.value));
+            articleGroup.extend(children);
 
             articleGroup.range = rangeOfELs(articleGroup.children);
 

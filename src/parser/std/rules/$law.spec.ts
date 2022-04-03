@@ -459,8 +459,6 @@ describe("Test $law and lawToLines", () => {
 行政手続法
 （平成五年法律第八十八号）
 
-      第一章　総則
-
   （目的等）
 第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
   一　行政運営における公正の確保と透明性
@@ -483,8 +481,6 @@ describe("Test $law and lawToLines", () => {
         const expectedRendered = `\
 行政手続法
 （平成五年法律第八十八号）
-
-      第一章　総則
 
   （目的等）
 第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
@@ -524,78 +520,63 @@ describe("Test $law and lawToLines", () => {
                             attr: {},
                             children: [
                                 {
-                                    tag: "Chapter",
+                                    tag: "Article",
                                     attr: {
                                         Delete: "false",
-                                        Hide: "false",
-                                        Num: "1"
+                                        Hide: "false"
                                     },
                                     children: [
                                         {
-                                            tag: "ChapterTitle",
+                                            tag: "ArticleCaption",
                                             attr: {},
-                                            children: ["第一章　総則"]
+                                            children: ["（目的等）"]
                                         },
                                         {
-                                            tag: "Article",
+                                            tag: "ArticleTitle",
+                                            attr: {},
+                                            children: ["第一条"]
+                                        },
+                                        {
+                                            tag: "Paragraph",
                                             attr: {
-                                                Delete: "false",
-                                                Hide: "false"
+                                                OldStyle: "false"
                                             },
                                             children: [
                                                 {
-                                                    tag: "ArticleCaption",
+                                                    tag: "ParagraphNum",
                                                     attr: {},
-                                                    children: ["（目的等）"]
+                                                    children: []
                                                 },
                                                 {
-                                                    tag: "ArticleTitle",
+                                                    tag: "ParagraphSentence",
                                                     attr: {},
-                                                    children: ["第一条"]
+                                                    children: [
+                                                        {
+                                                            tag: "Sentence",
+                                                            attr: {},
+                                                            children: ["この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。"]
+                                                        }
+                                                    ]
                                                 },
                                                 {
-                                                    tag: "Paragraph",
+                                                    tag: "Item",
                                                     attr: {
-                                                        OldStyle: "false"
+                                                        Delete: "false"
                                                     },
                                                     children: [
                                                         {
-                                                            tag: "ParagraphNum",
+                                                            tag: "ItemTitle",
                                                             attr: {},
-                                                            children: []
+                                                            children: ["一"]
                                                         },
                                                         {
-                                                            tag: "ParagraphSentence",
+                                                            tag: "ItemSentence",
                                                             attr: {},
                                                             children: [
                                                                 {
                                                                     tag: "Sentence",
                                                                     attr: {},
-                                                                    children: ["この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。"]
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            tag: "Item",
-                                                            attr: {
-                                                                Delete: "false"
-                                                            },
-                                                            children: [
-                                                                {
-                                                                    tag: "ItemTitle",
-                                                                    attr: {},
-                                                                    children: ["一"]
-                                                                },
-                                                                {
-                                                                    tag: "ItemSentence",
-                                                                    attr: {},
-                                                                    children: [
-                                                                        {
-                                                                            tag: "Sentence",
-                                                                            attr: {},
-                                                                            children: ["行政運営における公正の確保と透明性"]
-                                                                        }
-                                                                    ]
+                                                                    children: ["行政運営における公正の確保と透明性"]
                                                                 }
                                                             ]
                                                         }
