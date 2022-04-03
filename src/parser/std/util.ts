@@ -38,6 +38,95 @@ export const $blankLine = factory
     .withName("blankLine")
     .oneMatch(({ item }) => item.type === LineType.BNK ? item : null);
 
+export const $indentBlock: ValueRule<VirtualLine[]> = factory
+    .withName("indentBlock")
+    .asSlice(r => r
+        .sequence(s => s
+            .and(() => $INDENT)
+            .and(r => r
+                .zeroOrMore(r => r
+                    .choice(c => c
+                        .or(() => $blankLine)
+                        .orSequence(s => s
+                            .and(r => r.nextIsNot(() => $INDENT))
+                            .and(r => r.nextIsNot(() => $DEDENT))
+                            .and(r => r.anyOne())
+                        )
+                        .or(() => $indentBlock)
+                    )
+                )
+            )
+            .and(() => $DEDENT)
+        )
+    );
+
+
+export const makeIndentBlockWithCaptureRule = <TValue>(
+    ruleName: string,
+    ruleRepeatedOneOrMore: Rule<VirtualLine[], TValue, Env, Empty>,
+) => factory
+        .withName(ruleName)
+        .sequence(s => s
+            .andOmit(() => $optBNK_INDENT)
+            .andOmit(r => r.zeroOrMore(() => $blankLine))
+            .and(r => r
+                .oneOrMore(r => r
+                    .sequence(s => s
+                        .and(r => r
+                            .choice(r => r
+                                .orSequence(r => r
+                                    .and(() => ruleRepeatedOneOrMore, "success")
+                                    .action(({ success }) => ({ success, errorLines: [] as VirtualLine[] }))
+                                )
+                                .orSequence(s => s
+                                    .and(r => r
+                                        .asSlice(r => r
+                                            .choice(c => c
+                                                .or(() => $indentBlock)
+                                                .orSequence(s => s
+                                                    .andOmit(r => r.nextIsNot(() => $optBNK_DEDENT))
+                                                    .and(r => r.anyOne())
+                                                )
+                                            )
+                                        )
+                                    , "captured")
+                                    .action(({ captured }) => ({ success: null, errorLines: captured }))
+                                )
+                            )
+                        )
+                        .andOmit(r => r.zeroOrMore(() => $blankLine))
+                    )
+                )
+            , "childrenAndErrors")
+            .andOmit(() => $optBNK_DEDENT)
+            .action(({ childrenAndErrors, newErrorMessage }) => {
+                for ( let i = 0; i < childrenAndErrors.length; i += 1 ) {
+                    if (childrenAndErrors[i].success || i + 1 >= childrenAndErrors.length || childrenAndErrors[i + 1].success) continue;
+                    childrenAndErrors[i].errorLines.push(...childrenAndErrors.splice(i + 1, 1)[0].errorLines);
+                }
+
+                const children: TValue[] = [];
+                const errors: ErrorMessage[] = [];
+                for (const { success, errorLines } of childrenAndErrors) {
+                    if (success){
+                        children.push(success);
+                    }
+                    if (errorLines.length > 0) {
+                        errors.push(newErrorMessage(
+                            `${ruleName}: この部分をパースできませんでした。`,
+                            [
+                                errorLines[0].virtualRange[0],
+                                errorLines.slice(-1)[0].virtualRange[1],
+                            ],
+                        ));
+                    }
+                }
+                return {
+                    value: children,
+                    errors,
+                };
+            })
+        );
 
 export const isSingleParentheses = (line: VirtualLine | Line | SentencesArray): __Parentheses | null => {
     let columns: SentencesArray = [];

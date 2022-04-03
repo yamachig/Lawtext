@@ -1,11 +1,10 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { isParagraph, isParagraphNum, isParagraphSentence, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
-import { ErrorMessage } from "../../cst/error";
 import { Control, Sentences } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
@@ -63,45 +62,39 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
 };
 
 
-const $preambleChildren = factory
-    .withName("preambleChildren")
-    .oneOrMore(r => r
-        .sequence(s => s
-            .andOmit(r => r.zeroOrMore(() => $blankLine))
-            .and(r => r
-                .oneMatch(({ item }) => {
-                    if (
-                        item.type === LineType.OTH
-                        && item.line.type === LineType.OTH
-                        && item.line.sentencesArray.length > 0
-                    ) {
-                        const inline = sentencesArrayToColumnsOrSentences(item.line.sentencesArray);
-                        const firstRange = inline[0].range;
-                        const lastRange = inline.slice(-1)[0].range;
-                        const range = firstRange && lastRange
-                            ? [firstRange[0], lastRange[1]] as [number, number]
-                            : null;
-                        return newStdEL(
-                            "Paragraph",
+const $preambleChildrenBlock = makeIndentBlockWithCaptureRule(
+    "$preambleChildrenBlock",
+    (factory
+        .oneMatch(({ item }) => {
+            if (
+                item.type === LineType.OTH
+            ) {
+                const inline = sentencesArrayToColumnsOrSentences(item.line.sentencesArray);
+                const firstRange = inline[0].range;
+                const lastRange = inline.slice(-1)[0].range;
+                const range = firstRange && lastRange
+                    ? [firstRange[0], lastRange[1]] as [number, number]
+                    : null;
+                return newStdEL(
+                    "Paragraph",
+                    {},
+                    [
+                        newStdEL("ParagraphNum", {}, [], range ? [range[0], range[0]] : null),
+                        newStdEL(
+                            "ParagraphSentence",
                             {},
-                            [
-                                newStdEL("ParagraphNum", {}, [], range ? [range[0], range[0]] : null),
-                                newStdEL(
-                                    "ParagraphSentence",
-                                    {},
-                                    inline,
-                                    range,
-                                ),
-                            ],
+                            inline,
                             range,
-                        );
-                    } else {
-                        return null;
-                    }
-                })
-            )
-        )
-    );
+                        ),
+                    ],
+                    range,
+                );
+            } else {
+                return null;
+            }
+        })
+    ),
+);
 
 export const $preamble: WithErrorRule<std.Preamble> = factory
     .withName("preamble")
@@ -123,28 +116,8 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
             })
         )
         .and(r => r.zeroOrMore(() => $blankLine))
-        .and(() => $optBNK_INDENT)
-        .and(() => $preambleChildren, "children")
-        .and(r => r
-            .choice(c => c
-                .or(() => $optBNK_DEDENT)
-                .or(r => r
-                    .noConsumeRef(r => r
-                        .sequence(s => s
-                            .and(r => r.zeroOrMore(() => $blankLine))
-                            .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected, newErrorMessage }) => {
-                                return newErrorMessage(
-                                    "$preamble: この前にある前文の終了時にインデント解除が必要です。",
-                                    unexpected.virtualRange,
-                                );
-                            })
-                        )
-                    )
-                )
-            )
-        , "error")
-        .action(({ children, error }) => {
+        .and(() => $preambleChildrenBlock, "children")
+        .action(({ children: { value: children, errors } }) => {
             for (let i = 0; i < children.length; i++) {
                 children[i].attr.Num = `${i + 1}`;
             }
@@ -152,7 +125,7 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
             preamble.range = rangeOfELs(preamble.children);
             return {
                 value: preamble,
-                errors: error instanceof ErrorMessage ? [error] : [],
+                errors,
             };
         })
     )
