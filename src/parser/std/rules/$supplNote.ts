@@ -5,6 +5,7 @@ import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { Control, Sentences } from "../../../node/cst/inline";
+
 export const supplNoteControl = ":suppl-note:";
 
 export const supplNoteToLines = (supplNote: std.SupplNote, indentTexts: string[]): Line[] => {

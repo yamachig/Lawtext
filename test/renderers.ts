@@ -258,7 +258,7 @@ describe("Test Renderes", () => {
     it("Render and Parse Lawtext", async () => {
         // const [list, listByLawnum] = await getLawList();
         // chai.assert(false);
-        const lawNum = "平成十四年法律第十四号";
+        const lawNum = "平成十四年法律第二十一号";
 
         const lawInfo = await loader.getLawInfoByLawNum(lawNum);
         if (lawInfo === null) throw Error("LawInfo not found");

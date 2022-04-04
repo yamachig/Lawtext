@@ -214,7 +214,7 @@ export const toVirtualLines = (lines: Line[]) => {
         } else {
             currentDepth = line.indentDepth;
             type = line.type;
-            if (isSingleParentheses(line)) {
+            if (line.type === LineType.OTH && isSingleParentheses(line) && line.controls.length === 0) {
                 for (let currentOffset = i + 1; currentOffset < lines.length; currentOffset++) {
                     const nextLine = lines[currentOffset];
                     if (nextLine.type === LineType.BNK) continue;

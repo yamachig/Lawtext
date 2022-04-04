@@ -453,6 +453,302 @@ describe("Test $law and lawToLines", () => {
         );
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+平成十四年度における国民年金法による年金の額等の改定の特例に関する法律
+（平成十四年法律第二十一号）
+
+平成十四年四月から平成十五年三月までの月分の次の表の上欄に掲げる額については、同表の下欄に掲げる規定（他の法令において、引用し、準用し、又はその例による場合を含む。）にかかわらず、これらの規定による平成十年の年平均の物価指数（従前の総務庁において作成した全国消費者物価指数をいう。）に対する平成十三年の年平均の物価指数（総務省において作成する全国消費者物価指数をいう。）の比率を基準とする改定は、行わない。
+
+  * - [BorderBottom="solid"][BorderLeft="solid"][BorderRight="solid"][BorderTop="solid"]国民年金法（昭和三十四年法律第百四十一号）による年金たる給付（付加年金を除く。）の額
+    - [BorderBottom="solid"][BorderLeft="solid"][BorderRight="solid"][BorderTop="solid"]国民年金法第十六条の二
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+平成十四年度における国民年金法による年金の額等の改定の特例に関する法律
+（平成十四年法律第二十一号）
+
+平成十四年四月から平成十五年三月までの月分の次の表の上欄に掲げる額については、同表の下欄に掲げる規定（他の法令において、引用し、準用し、又はその例による場合を含む。）にかかわらず、これらの規定による平成十年の年平均の物価指数（従前の総務庁において作成した全国消費者物価指数をいう。）に対する平成十三年の年平均の物価指数（総務省において作成する全国消費者物価指数をいう。）の比率を基準とする改定は、行わない。
+
+  * - [BorderBottom="solid"][BorderLeft="solid"][BorderRight="solid"][BorderTop="solid"]国民年金法（昭和三十四年法律第百四十一号）による年金たる給付（付加年金を除く。）の額
+    - [BorderBottom="solid"][BorderLeft="solid"][BorderRight="solid"][BorderTop="solid"]国民年金法第十六条の二
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Law",
+            attr: {
+                Lang: "ja",
+                Era: "Heisei",
+                Year: "14",
+                LawType: "Act",
+                Num: "21"
+            },
+            children: [
+                {
+                    tag: "LawNum",
+                    attr: {},
+                    children: ["平成十四年法律第二十一号"]
+                },
+                {
+                    tag: "LawBody",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "LawTitle",
+                            attr: {},
+                            children: ["平成十四年度における国民年金法による年金の額等の改定の特例に関する法律"]
+                        },
+                        {
+                            tag: "MainProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Paragraph",
+                                    attr: {
+                                        OldStyle: "false"
+                                    },
+                                    children: [
+                                        {
+                                            tag: "ParagraphNum",
+                                            attr: {},
+                                            children: []
+                                        },
+                                        {
+                                            tag: "ParagraphSentence",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: ["平成十四年四月から平成十五年三月までの月分の次の表の上欄に掲げる額については、同表の下欄に掲げる規定（他の法令において、引用し、準用し、又はその例による場合を含む。）にかかわらず、これらの規定による平成十年の年平均の物価指数（従前の総務庁において作成した全国消費者物価指数をいう。）に対する平成十三年の年平均の物価指数（総務省において作成する全国消費者物価指数をいう。）の比率を基準とする改定は、行わない。"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            tag: "TableStruct",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Table",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "TableRow",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "TableColumn",
+                                                                    attr: {
+                                                                        BorderBottom: "solid",
+                                                                        BorderLeft: "solid",
+                                                                        BorderRight: "solid",
+                                                                        BorderTop: "solid"
+                                                                    },
+                                                                    children: [
+                                                                        {
+                                                                            tag: "Sentence",
+                                                                            attr: {},
+                                                                            children: ["国民年金法（昭和三十四年法律第百四十一号）による年金たる給付（付加年金を除く。）の額"]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    tag: "TableColumn",
+                                                                    attr: {
+                                                                        BorderBottom: "solid",
+                                                                        BorderLeft: "solid",
+                                                                        BorderRight: "solid",
+                                                                        BorderTop: "solid"
+                                                                    },
+                                                                    children: [
+                                                                        {
+                                                                            tag: "Sentence",
+                                                                            attr: {},
+                                                                            children: ["国民年金法第十六条の二"]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $law.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = lawToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+民法
+（明治二十九年法律第八十九号）
+
+:enact-statement:民法第一編第二編第三編別冊ノ通定ム
+
+:enact-statement:此法律施行ノ期日ハ勅令ヲ以テ之ヲ定ム
+
+:enact-statement:明治二十三年法律第二十八号民法財産編財産取得編債権担保編証拠編ハ此法律発布ノ日ヨリ廃止ス
+
+:enact-statement:（別冊）
+
+第一条　私権は、公共の福祉に適合しなければならない。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+民法
+（明治二十九年法律第八十九号）
+
+:enact-statement:民法第一編第二編第三編別冊ノ通定ム
+
+:enact-statement:此法律施行ノ期日ハ勅令ヲ以テ之ヲ定ム
+
+:enact-statement:明治二十三年法律第二十八号民法財産編財産取得編債権担保編証拠編ハ此法律発布ノ日ヨリ廃止ス
+
+:enact-statement:（別冊）
+
+第一条　私権は、公共の福祉に適合しなければならない。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Law",
+            attr: {
+                Lang: "ja",
+                Era: "Meiji",
+                Year: "29",
+                LawType: "Act",
+                Num: "89"
+            },
+            children: [
+                {
+                    tag: "LawNum",
+                    attr: {},
+                    children: ["明治二十九年法律第八十九号"]
+                },
+                {
+                    tag: "LawBody",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "LawTitle",
+                            attr: {},
+                            children: ["民法"]
+                        },
+                        {
+                            tag: "EnactStatement",
+                            attr: {},
+                            children: ["民法第一編第二編第三編別冊ノ通定ム"]
+                        },
+                        {
+                            tag: "EnactStatement",
+                            attr: {},
+                            children: ["此法律施行ノ期日ハ勅令ヲ以テ之ヲ定ム"]
+                        },
+                        {
+                            tag: "EnactStatement",
+                            attr: {},
+                            children: ["明治二十三年法律第二十八号民法財産編財産取得編債権担保編証拠編ハ此法律発布ノ日ヨリ廃止ス"]
+                        },
+                        {
+                            tag: "EnactStatement",
+                            attr: {},
+                            children: ["（別冊）"]
+                        },
+                        {
+                            tag: "MainProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Article",
+                                    attr: {
+                                        Delete: "false",
+                                        Hide: "false"
+                                    },
+                                    children: [
+                                        {
+                                            tag: "ArticleTitle",
+                                            attr: {},
+                                            children: ["第一条"]
+                                        },
+                                        {
+                                            tag: "Paragraph",
+                                            attr: {
+                                                OldStyle: "false"
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ParagraphNum",
+                                                    attr: {},
+                                                    children: []
+                                                },
+                                                {
+                                                    tag: "ParagraphSentence",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "Sentence",
+                                                            attr: {},
+                                                            children: ["私権は、公共の福祉に適合しなければならない。"]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $law.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = lawToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
     it("Success with errors case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\

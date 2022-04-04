@@ -26,6 +26,9 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                 } else if (cell.children.every(isSentence)) {
                     sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
                 } else {
+                    // TODO: multiline
+                    // - 平成十四年法律第百三号 別表
+                    // - 平成十四年法律第百八十号 附則（平成三〇年六月一日法律第四〇号） 第四条
                     for (const child of cell.children) {
                         // if (typeof child === "string") {
                         //     columnsOrSentences.push(newStdEL("Sentence", {}, child));
@@ -35,6 +38,17 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                         } else if (isParagraphItem(child)) {
                             const childLines = paragraphItemToLines(child, newIndentTexts);
                             if (childLines.length === 1 && childLines[0].type === LineType.PIT) {
+                                if (childLines[0].title) {
+                                    sentencesArray.push(new Sentences(
+                                        "",
+                                        null,
+                                        [],
+                                        [newStdEL("Sentence", {}, [childLines[0].title])]
+                                    ));
+                                    if (childLines[0].sentencesArray.length > 0) {
+                                        childLines[0].sentencesArray[0].leadingSpace = CST.MARGIN + childLines[0].sentencesArray[0].leadingSpace;
+                                    }
+                                }
                                 sentencesArray.push(...childLines[0].sentencesArray);
                             } else {
                                 throw new NotImplementedError(`tableToLines: ${child.tag} with ${childLines.length} lines`);

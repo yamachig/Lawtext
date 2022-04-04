@@ -4,7 +4,7 @@ import { $blankLine, isSingleParentheses, WithErrorRule } from "../util";
 import * as std from "../../../law/std";
 import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
 import { isAppdxItem, isEnactStatement, isLawBody, isLawNum, isLawTitle, isMainProvision, isPreamble, isSupplProvision, isTOC, newStdEL } from "../../../law/std";
-import { Sentences } from "../../../node/cst/inline";
+import { Control, Sentences } from "../../../node/cst/inline";
 import CST from "../toCSTSettings";
 import { assertNever } from "../../../util";
 import $toc, { tocToLines } from "./$toc";
@@ -75,21 +75,7 @@ export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
         if (isLawTitle(child)) {
             continue;
         } else if (isEnactStatement(child)) {
-            lines.push(new OtherLine(
-                null,
-                indentTexts.length,
-                indentTexts,
-                [],
-                [
-                    new Sentences(
-                        "",
-                        null,
-                        [],
-                        [newStdEL("Sentence", {}, child.children)]
-                    )
-                ],
-                CST.EOL,
-            ));
+            lines.push(...enactStatementToLines(child, indentTexts));
             lines.push(new BlankLine(null, CST.EOL));
         } else if (isTOC(child)) {
             lines.push(...tocToLines(child, indentTexts));
@@ -161,6 +147,69 @@ export const $lawTitleLines: WithErrorRule<{
     )
     ;
 
+export const enactStatementControl = ":enact-statement:";
+
+export const enactStatementToLines = (enactStatement: std.EnactStatement, indentTexts: string[]): Line[] => {
+    const lines: Line[] = [];
+
+    lines.push(new OtherLine(
+        null,
+        indentTexts.length,
+        indentTexts,
+        [
+            new Control(
+                enactStatementControl,
+                null,
+                "",
+                null,
+            ),
+        ],
+        [
+            new Sentences(
+                "",
+                null,
+                [],
+                [newStdEL("Sentence", {}, enactStatement.children)],
+            ),
+        ],
+        CST.EOL,
+    ));
+
+    return lines;
+};
+
+export const $enactStatement: WithErrorRule<std.EnactStatement> = factory
+    .withName("enactStatement")
+    .sequence(s => s
+        .and(r => r
+            .oneMatch(({ item }) => {
+                if (
+                    item.type === LineType.OTH
+                    && item.line.controls.some(c => c.control === enactStatementControl)
+                ) {
+                    return item;
+                } else {
+                    return null;
+                }
+            })
+        , "line")
+        .action(({ line }) => {
+            // for (let i = 0; i < children.value.length; i++) {
+            //     children.value[i].attr.Num = `${i + 1}`;
+            // }
+            const enactStatement = newStdEL(
+                "EnactStatement",
+                {},
+                line.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
+            );
+            return {
+                value: enactStatement.setRangeFromChildren(),
+                errors: [],
+            };
+        })
+    )
+    ;
+
 
 export const $law: WithErrorRule<std.Law> = factory
     .withName("Law")
@@ -176,21 +225,11 @@ export const $law: WithErrorRule<std.Law> = factory
         .and(r => r
             .zeroOrMore(r => r
                 .sequence(s => s
-                    .and(r => r
-                        .oneMatch(({ item }) => {
-                            if (
-                                item.type === LineType.OTH
-                            ) {
-                                return item;
-                            } else {
-                                return null;
-                            }
-                        })
-                    )
+                    .and(() => $enactStatement)
                     .andOmit(r => r.zeroOrMore(() => $blankLine))
                 )
             )
-        , "enactStatementLines")
+        , "enactStatements")
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(s => s
@@ -265,7 +304,7 @@ export const $law: WithErrorRule<std.Law> = factory
                 )
             )
         , "notCapturedErrorLines")
-        .action(({ lawTitleLines, enactStatementLines, toc, preambles, mainProvisionAndErrors, supplOrAppdxItemAndErrors, notCapturedErrorLines, newErrorMessage }) => {
+        .action(({ lawTitleLines, enactStatements, toc, preambles, mainProvisionAndErrors, supplOrAppdxItemAndErrors, notCapturedErrorLines, newErrorMessage }) => {
             const errors: ErrorMessage[] = [];
 
             const law = newStdEL(
@@ -305,14 +344,8 @@ export const $law: WithErrorRule<std.Law> = factory
                 ));
             }
 
-            for (const enactStatementLine of enactStatementLines) {
-                lawBody.append(newStdEL(
-                    "EnactStatement",
-                    {},
-                    enactStatementLine.line.sentencesArray.flat().map(ss => ss.sentences).flat().map(s => s.children).flat(),
-                    enactStatementLine.virtualRange,
-                ));
-            }
+            lawBody.extend(enactStatements.map(v => v.value));
+            errors.push(...enactStatements.map(v => v.errors).flat());
 
             if (toc) {
                 lawBody.append(toc.value);
