@@ -1,9 +1,9 @@
 import { factory } from "../factory";
 import { BlankLine, Line } from "../../../node/cst/line";
 import { $blankLine, WithErrorRule } from "../util";
-import { isArticle, isArticleGroup, isParagraphItem, newStdEL } from "../../../law/std";
+import { isArticle, isArticleGroup, isParagraphItem, isParagraphItemTitle, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
-import $paragraphItem, { $noNumParagraph, paragraphItemToLines } from "./$paragraphItem";
+import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
 import { assertNever } from "../../../util";
 import $article, { articleToLines } from "./$article";
 import $articleGroup, { articleGroupToLines } from "./$articleGroup";
@@ -14,7 +14,11 @@ export const mainProvisionToLines = (mainProvision: std.MainProvision, indentTex
 
     for (const child of mainProvision.children) {
         if (isParagraphItem(child)) {
-            lines.push(...paragraphItemToLines(child, indentTexts));
+            if (child.children.filter(isParagraphItemTitle).some(el => el.text !== "")) {
+                lines.push(...paragraphItemToLines(child, indentTexts));
+            } else {
+                lines.push(...paragraphItemToLines(child, indentTexts, { noControl: true }));
+            }
             lines.push(new BlankLine(null, CST.EOL));
         } else if (isArticle(child)) {
             lines.push(...articleToLines(child, indentTexts));
@@ -65,7 +69,7 @@ const $mainProvisionChildren: WithErrorRule<(std.ParagraphItem | std.Article | s
                         .sequence(s => s
                             .and(r => r
                                 .choice(c => c
-                                    .or(() => $noNumParagraph)
+                                    .or(() => $noControlAnonymParagraph)
                                 )
                             )
                             .andOmit(r => r.zeroOrMore(() => $blankLine))

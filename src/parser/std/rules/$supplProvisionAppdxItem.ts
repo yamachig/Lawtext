@@ -14,7 +14,7 @@ import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
 import { supplProvisionAppdxItemTitlePtn } from "../../cst/rules/$supplProvisionAppdxItemHeadLine";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import { autoTagControls, tagControls } from "../../cst/rules/$tagControl";
+import { autoTagControls, supplProvisionAppdxItemControls } from "../../cst/rules/$tagControl";
 
 
 export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.SupplProvisionAppdxItem, indentTexts: string[]): Line[] => {
@@ -46,7 +46,7 @@ export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.Supp
             )
         ] : [
             new Control(
-                tagControls[supplProvisionAppdxItem.tag],
+                supplProvisionAppdxItemControls[supplProvisionAppdxItem.tag],
                 null,
                 "",
                 null,

@@ -17,7 +17,7 @@ import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
 import { appdxItemTitlePtn } from "../../cst/rules/$appdxItemHeadLine";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import { autoTagControls, tagControls } from "../../cst/rules/$tagControl";
+import { appdxItemControls, autoTagControls } from "../../cst/rules/$tagControl";
 
 
 export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]): Line[] => {
@@ -49,7 +49,7 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
             )
         ] : [
             new Control(
-                tagControls[appdxItem.tag],
+                appdxItemControls[appdxItem.tag],
                 null,
                 "",
                 null,

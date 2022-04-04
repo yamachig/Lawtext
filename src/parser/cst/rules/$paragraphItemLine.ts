@@ -6,7 +6,7 @@ import $columnsOrSentences from "./$sentencesArray";
 import makeRangesRule from "./makeRangesRule";
 import $paragraphItemTitle, { $stdItemTitle, $stdParagraphNum, $stdSubitem1Title, $stdSubitem2Title, $stdSubitem3Title } from "./$paragraphItemTitle";
 import { WithErrorRule } from "../util";
-import { $autoTagControl, $itemControl, $paragraphControl, $subitem10Control, $subitem1Control, $subitem2Control, $subitem3Control, $subitem4Control, $subitem5Control, $subitem6Control, $subitem7Control, $subitem8Control, $subitem9Control } from "./$tagControl";
+import { $anonymItemControl, $anonymParagraphControl, $anonymSubitem10Control, $anonymSubitem1Control, $anonymSubitem2Control, $anonymSubitem3Control, $anonymSubitem4Control, $anonymSubitem5Control, $anonymSubitem6Control, $anonymSubitem7Control, $anonymSubitem8Control, $anonymSubitem9Control, $autoTagControl, $itemControl, $paragraphControl, $subitem10Control, $subitem1Control, $subitem2Control, $subitem3Control, $subitem4Control, $subitem5Control, $subitem6Control, $subitem7Control, $subitem8Control, $subitem9Control } from "./$tagControl";
 import { paragraphItemTags } from "../../../law/std";
 import { Env, initialEnv } from "../env";
 import { MatchResult } from "generic-parser/lib/core";
@@ -41,155 +41,200 @@ export const paragraphItemTitleMatch = Object.fromEntries(Object.entries(paragra
 
 export const $paragraphItemLine: WithErrorRule<ParagraphItemLine> = factory
     .withName("paragraphItemLine")
-    .sequence(s => s
-        .and(() => $indents, "indentsStruct")
-        .and(r => r
-            .zeroOrOne(r => r
-                .sequence(s => s
-                    .and(r => r
-                        .choice(c => c
-                            .or(() => $paragraphControl)
-                            .or(() => $itemControl)
-                            .or(() => $subitem1Control)
-                            .or(() => $subitem2Control)
-                            .or(() => $subitem3Control)
-                            .or(() => $subitem4Control)
-                            .or(() => $subitem5Control)
-                            .or(() => $subitem6Control)
-                            .or(() => $subitem7Control)
-                            .or(() => $subitem8Control)
-                            .or(() => $subitem9Control)
-                            .or(() => $subitem10Control)
-                            .orSequence(s => s
-                                .and(() => $autoTagControl, "control")
-                                .and(r => r
-                                    .choice(c => c
-                                        .orSequence(s => s
-                                            .and(r => r.nextIs(r => r
-                                                .sequence(s => s
-                                                    .and(() => paragraphItemTitleRule.Paragraph)
-                                                    .and(r => r
-                                                        .choice(c => c
-                                                            .or(() => $__)
-                                                            .or(() => $_EOL)
+    .choice(c => c
+        .orSequence(s => s
+            .and(() => $indents, "indentsStruct")
+            .and(r => r
+                .zeroOrOne(r => r
+                    .sequence(s => s
+                        .and(r => r
+                            .choice(c => c
+                                .or(() => $paragraphControl)
+                                .or(() => $itemControl)
+                                .or(() => $subitem1Control)
+                                .or(() => $subitem2Control)
+                                .or(() => $subitem3Control)
+                                .or(() => $subitem4Control)
+                                .or(() => $subitem5Control)
+                                .or(() => $subitem6Control)
+                                .or(() => $subitem7Control)
+                                .or(() => $subitem8Control)
+                                .or(() => $subitem9Control)
+                                .or(() => $subitem10Control)
+                                .orSequence(s => s
+                                    .and(() => $autoTagControl, "control")
+                                    .and(r => r
+                                        .choice(c => c
+                                            .orSequence(s => s
+                                                .and(r => r.nextIs(r => r
+                                                    .sequence(s => s
+                                                        .and(() => paragraphItemTitleRule.Paragraph)
+                                                        .and(r => r
+                                                            .choice(c => c
+                                                                .or(() => $__)
+                                                                .or(() => $_EOL)
+                                                            )
                                                         )
                                                     )
-                                                )
-                                            ))
-                                            .action(() => "Paragraph" as const)
-                                        )
-                                        .orSequence(s => s
-                                            .and(r => r.nextIs(r => r
-                                                .sequence(s => s
-                                                    .and(() => paragraphItemTitleRule.Item)
-                                                    .and(r => r
-                                                        .choice(c => c
-                                                            .or(() => $__)
-                                                            .or(() => $_EOL)
+                                                ))
+                                                .action(() => "Paragraph" as const)
+                                            )
+                                            .orSequence(s => s
+                                                .and(r => r.nextIs(r => r
+                                                    .sequence(s => s
+                                                        .and(() => paragraphItemTitleRule.Item)
+                                                        .and(r => r
+                                                            .choice(c => c
+                                                                .or(() => $__)
+                                                                .or(() => $_EOL)
+                                                            )
                                                         )
                                                     )
-                                                )
-                                            ))
-                                            .action(() => "Item" as const)
-                                        )
-                                        .orSequence(s => s
-                                            .and(r => r.nextIs(r => r
-                                                .sequence(s => s
-                                                    .and(() => paragraphItemTitleRule.Subitem1)
-                                                    .and(r => r
-                                                        .choice(c => c
-                                                            .or(() => $__)
-                                                            .or(() => $_EOL)
+                                                ))
+                                                .action(() => "Item" as const)
+                                            )
+                                            .orSequence(s => s
+                                                .and(r => r.nextIs(r => r
+                                                    .sequence(s => s
+                                                        .and(() => paragraphItemTitleRule.Subitem1)
+                                                        .and(r => r
+                                                            .choice(c => c
+                                                                .or(() => $__)
+                                                                .or(() => $_EOL)
+                                                            )
                                                         )
                                                     )
-                                                )
-                                            ))
-                                            .action(() => "Subitem1" as const)
-                                        )
-                                        .orSequence(s => s
-                                            .and(r => r.nextIs(r => r
-                                                .sequence(s => s
-                                                    .and(() => paragraphItemTitleRule.Subitem2)
-                                                    .and(r => r
-                                                        .choice(c => c
-                                                            .or(() => $__)
-                                                            .or(() => $_EOL)
+                                                ))
+                                                .action(() => "Subitem1" as const)
+                                            )
+                                            .orSequence(s => s
+                                                .and(r => r.nextIs(r => r
+                                                    .sequence(s => s
+                                                        .and(() => paragraphItemTitleRule.Subitem2)
+                                                        .and(r => r
+                                                            .choice(c => c
+                                                                .or(() => $__)
+                                                                .or(() => $_EOL)
+                                                            )
                                                         )
                                                     )
-                                                )
-                                            ))
-                                            .action(() => "Subitem2" as const)
-                                        )
-                                        .orSequence(s => s
-                                            .and(r => r.nextIs(r => r
-                                                .sequence(s => s
-                                                    .and(() => paragraphItemTitleRule.Subitem3)
-                                                    .and(r => r
-                                                        .choice(c => c
-                                                            .or(() => $__)
-                                                            .or(() => $_EOL)
+                                                ))
+                                                .action(() => "Subitem2" as const)
+                                            )
+                                            .orSequence(s => s
+                                                .and(r => r.nextIs(r => r
+                                                    .sequence(s => s
+                                                        .and(() => paragraphItemTitleRule.Subitem3)
+                                                        .and(r => r
+                                                            .choice(c => c
+                                                                .or(() => $__)
+                                                                .or(() => $_EOL)
+                                                            )
                                                         )
                                                     )
-                                                )
-                                            ))
-                                            .action(() => "Subitem3" as const)
+                                                ))
+                                                .action(() => "Subitem3" as const)
+                                            )
                                         )
-                                    )
-                                , "tag")
-                                .action(({ tag, control }) => {
-                                    return { tag, control };
-                                })
+                                    , "tag")
+                                    .action(({ tag, control }) => {
+                                        return { tag, control };
+                                    })
+                                )
                             )
                         )
                     )
                 )
-            )
-        , "tagControl")
-        .and(r => r
-            .sequence(s => s
-                .and(() => $paragraphItemRanges, "title")
-                .action(({ title, text }) => {
-                    return {
-                        value: text(),
-                        errors: title.errors,
-                    };
-                })
-            )
-        , "title")
-        .and(r => r
-            .zeroOrOne(r => r
-                .sequence(c => c
-                    .and(() => $__, "midSpace")
-                    .and(() => $columnsOrSentences, "columns")
-                    .action(({ midSpace, columns }) => {
-                        return { midSpace, columns };
+            , "tagControl")
+            .and(r => r
+                .sequence(s => s
+                    .and(() => $paragraphItemRanges, "title")
+                    .action(({ title, text }) => {
+                        return {
+                            value: text(),
+                            errors: title.errors,
+                        };
                     })
                 )
-            )
-        , "contentStruct")
-        .and(() => $_EOL, "lineEndText")
-        .action(({ range, indentsStruct, tagControl, title, contentStruct, lineEndText }) => {
-            const errors = [
-                ...indentsStruct.errors,
-                ...title.errors,
-                ...(contentStruct?.columns.errors ?? []),
-            ];
-            const tag = tagControl?.tag ?? paragraphItemTags[indentsStruct.value.indentDepth];
-            return {
-                value: new ParagraphItemLine(
-                    range(),
-                    indentsStruct.value.indentDepth,
-                    indentsStruct.value.indentTexts,
-                    tag,
-                    tagControl ? [tagControl.control] : [],
-                    title.value,
-                    contentStruct?.midSpace ?? "",
-                    contentStruct?.columns.value ?? [],
-                    lineEndText,
-                ),
-                errors,
-            };
-        })
+            , "title")
+            .and(r => r
+                .zeroOrOne(r => r
+                    .sequence(c => c
+                        .and(() => $__, "midSpace")
+                        .and(() => $columnsOrSentences, "columns")
+                        .action(({ midSpace, columns }) => {
+                            return { midSpace, columns };
+                        })
+                    )
+                )
+            , "contentStruct")
+            .and(() => $_EOL, "lineEndText")
+            .action(({ range, indentsStruct, tagControl, title, contentStruct, lineEndText }) => {
+                const errors = [
+                    ...indentsStruct.errors,
+                    ...title.errors,
+                    ...(contentStruct?.columns.errors ?? []),
+                ];
+                const tag = tagControl?.tag ?? paragraphItemTags[indentsStruct.value.indentDepth];
+                return {
+                    value: new ParagraphItemLine(
+                        range(),
+                        indentsStruct.value.indentDepth,
+                        indentsStruct.value.indentTexts,
+                        tag,
+                        tagControl ? [tagControl.control] : [],
+                        title.value,
+                        contentStruct?.midSpace ?? "",
+                        contentStruct?.columns.value ?? [],
+                        lineEndText,
+                    ),
+                    errors,
+                };
+            })
+        )
+        .orSequence(s => s
+            .and(() => $indents, "indentsStruct")
+            .and(r => r
+                .choice(c => c
+                    .or(() => $anonymParagraphControl)
+                    .or(() => $anonymItemControl)
+                    .or(() => $anonymSubitem1Control)
+                    .or(() => $anonymSubitem2Control)
+                    .or(() => $anonymSubitem3Control)
+                    .or(() => $anonymSubitem4Control)
+                    .or(() => $anonymSubitem5Control)
+                    .or(() => $anonymSubitem6Control)
+                    .or(() => $anonymSubitem7Control)
+                    .or(() => $anonymSubitem8Control)
+                    .or(() => $anonymSubitem9Control)
+                    .or(() => $anonymSubitem10Control)
+                )
+            , "tagControl")
+            .and(r => r
+                .zeroOrOne(() => $columnsOrSentences)
+            , "columns")
+            .and(() => $_EOL, "lineEndText")
+            .action(({ range, indentsStruct, tagControl, columns, lineEndText }) => {
+                const errors = [
+                    ...indentsStruct.errors,
+                    ...(columns?.errors ?? []),
+                ];
+                return {
+                    value: new ParagraphItemLine(
+                        range(),
+                        indentsStruct.value.indentDepth,
+                        indentsStruct.value.indentTexts,
+                        tagControl.tag,
+                        [tagControl.control],
+                        "",
+                        "",
+                        columns?.value ?? [],
+                        lineEndText,
+                    ),
+                    errors,
+                };
+            })
+        )
     )
     ;
 

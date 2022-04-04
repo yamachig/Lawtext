@@ -1,10 +1,10 @@
 import { factory } from "../factory";
 import { BlankLine, Line, LineType, SupplProvisionHeadLine } from "../../../node/cst/line";
 import { $blankLine, WithErrorRule } from "../util";
-import { isArticle, isArticleGroup, isParagraphItem, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std";
+import { isArticle, isArticleGroup, isParagraphItem, isParagraphItemTitle, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
-import $paragraphItem, { $noNumParagraph, paragraphItemToLines } from "./$paragraphItem";
+import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
 import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import $article, { articleToLines } from "./$article";
@@ -34,7 +34,11 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
         if (child.tag === "SupplProvisionLabel") continue;
 
         if (isParagraphItem(child)) {
-            lines.push(...paragraphItemToLines(child, indentTexts));
+            if (child.children.filter(isParagraphItemTitle).some(el => el.text !== "")) {
+                lines.push(...paragraphItemToLines(child, indentTexts));
+            } else {
+                lines.push(...paragraphItemToLines(child, indentTexts, { noControl: true }));
+            }
             lines.push(new BlankLine(null, CST.EOL));
         } else if (isArticle(child)) {
             lines.push(...articleToLines(child, indentTexts));
@@ -90,7 +94,7 @@ const $supplProvisionChildren: WithErrorRule<(std.ParagraphItem | std.Article | 
                                 .sequence(s => s
                                     .and(r => r
                                         .choice(c => c
-                                            .or(() => $noNumParagraph)
+                                            .or(() => $noControlAnonymParagraph)
                                         )
                                     )
                                     .andOmit(r => r.zeroOrMore(() => $blankLine))

@@ -19,16 +19,31 @@ import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $figStruct, { figStructToLines } from "./$figStruct";
 import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
 import { paragraphItemTitleMatch, paragraphItemTitleRule } from "../../cst/rules/$paragraphItemLine";
-import { autoTagControls, tagControls } from "../../cst/rules/$tagControl";
+import { anonymParagraphItemControls, autoTagControls, paragraphItemControls } from "../../cst/rules/$tagControl";
 
+interface ParagraphItemToLinesOptions {
+    firstArticleParagraphArticleTitle?: (string | SentenceChildEL)[],
+    secondaryArticleParagraph?: boolean,
+    noControl?: boolean,
+}
 
 export const paragraphItemToLines = (
     el: std.ParagraphItem,
     indentTexts: string[],
-    firstArticleParagraphArticleTitle?: (string | SentenceChildEL)[],
-    secondaryArticleParagraph = false,
+    options?: ParagraphItemToLinesOptions,
 ): Line[] => {
     const lines: Line[] = [];
+
+    const {
+        firstArticleParagraphArticleTitle,
+        secondaryArticleParagraph,
+        noControl,
+    } = {
+        firstArticleParagraphArticleTitle: undefined,
+        secondaryArticleParagraph: false,
+        noControl: false,
+        ...options,
+    };
 
     const ParagraphCaption: (string | SentenceChildEL)[] = [];
     const ParagraphItemTitle: (string | SentenceChildEL)[] = [];
@@ -52,6 +67,14 @@ export const paragraphItemToLines = (
 
         }
         else { assertNever(child); }
+    }
+
+    if (noControl && ParagraphCaption.length > 0) {
+        throw new NotImplementedError("noControl paragraphItemToLines with ParagraphCaption");
+    }
+
+    if (noControl && ParagraphItemTitle.length > 0) {
+        throw new NotImplementedError("noControl paragraphItemToLines with ParagraphTitle");
     }
 
     if (ParagraphCaption.length > 0) {
@@ -118,7 +141,19 @@ export const paragraphItemToLines = (
             sentencesArray,
             CST.EOL,
         ));
-    } else {
+    } else if (noControl) {
+        lines.push(new ParagraphItemLine(
+            null,
+            indentTexts.length,
+            indentTexts,
+            el.tag,
+            [],
+            sentenceChildrenToString(Title),
+            (Title.length === 0 || sentencesArray.length === 0) ? "" : CST.MARGIN,
+            sentencesArray,
+            CST.EOL,
+        ));
+    } else if (Title.length > 0) {
         lines.push(new ParagraphItemLine(
             null,
             indentTexts.length,
@@ -145,7 +180,7 @@ export const paragraphItemToLines = (
                         ]
                         : [
                             new Control(
-                                tagControls[el.tag],
+                                paragraphItemControls[el.tag],
                                 null,
                                 "",
                                 null,
@@ -153,7 +188,26 @@ export const paragraphItemToLines = (
                         ]
             ),
             sentenceChildrenToString(Title),
-            (Title.length === 0 || sentencesArray.length === 0) ? "" : CST.MARGIN,
+            (sentencesArray.length === 0) ? "" : CST.MARGIN,
+            sentencesArray,
+            CST.EOL,
+        ));
+    } else {
+        lines.push(new ParagraphItemLine(
+            null,
+            indentTexts.length,
+            indentTexts,
+            el.tag,
+            [
+                new Control(
+                    anonymParagraphItemControls[el.tag],
+                    null,
+                    "",
+                    null,
+                )
+            ],
+            "",
+            "",
             sentencesArray,
             CST.EOL,
         ));
@@ -193,7 +247,6 @@ export const paragraphItemToLines = (
 
     return lines;
 };
-
 
 const $paragraphItemNotAmendChildrenBlock = makeIndentBlockWithCaptureRule(
     "$paragraphItemNotAmendChildrenBlock",
@@ -383,16 +436,14 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
                 );
             }
 
-            if (firstParagraphItemLine.line.title) {
-                paragraphItem.append(
-                    newStdEL(
-                        std.paragraphItemTitleTags[std.paragraphItemTags.indexOf(firstParagraphItemLine.line.mainTag)],
-                        {},
-                        [firstParagraphItemLine.line.title],
-                        firstParagraphItemLine.line.titleRange,
-                    )
-                );
-            }
+            paragraphItem.append(
+                newStdEL(
+                    std.paragraphItemTitleTags[std.paragraphItemTags.indexOf(firstParagraphItemLine.line.mainTag)],
+                    {},
+                    firstParagraphItemLine.line.title ? [firstParagraphItemLine.line.title] : [],
+                    firstParagraphItemLine.line.titleRange,
+                )
+            );
 
             paragraphItem.append(
                 newStdEL(
@@ -416,8 +467,8 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
     )
     ;
 
-export const $noNumParagraph: WithErrorRule<std.ParagraphItem> = factory
-    .withName("noNumParagraph")
+export const $noControlAnonymParagraph: WithErrorRule<std.ParagraphItem> = factory
+    .withName("noControlAnonymParagraph")
     .sequence(s => s
         .and(r => r
             .oneMatch(({ item }) => {

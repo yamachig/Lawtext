@@ -62,8 +62,10 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
         const paragraphLines = paragraphItemToLines(
             Paragraph,
             indentTexts,
-            (i === 0 && ArticleTitle) ? ArticleTitle : undefined,
-            i >= 1,
+            {
+                firstArticleParagraphArticleTitle: (i === 0 && ArticleTitle) ? ArticleTitle : undefined,
+                secondaryArticleParagraph: i >= 1,
+            },
         );
         lines.push(...paragraphLines);
     }

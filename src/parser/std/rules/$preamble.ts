@@ -1,13 +1,12 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
-import { isParagraph, isParagraphNum, isParagraphSentence, newStdEL } from "../../../law/std";
+import { isParagraph, isParagraphItemTitle, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
-import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
-import { Control, Sentences } from "../../../node/cst/inline";
-import { assertNever, NotImplementedError } from "../../../util";
+import { Control } from "../../../node/cst/inline";
 import { ErrorMessage } from "../../cst/error";
+import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
 
 export const preambleControl = ":preamble:";
 
@@ -33,29 +32,12 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
     for (const paragraph of preamble.children) {
-        if (
-            (paragraph.children.filter(isParagraphNum).every(p => p.text === ""))
-            && (paragraph.children.every(c => isParagraphNum(c) || isParagraphSentence(c)))
-        ) {
-            lines.push(new OtherLine(
-                null,
-                childrenIndentTexts.length,
-                childrenIndentTexts,
-                [],
-                [
-                    new Sentences(
-                        "",
-                        null,
-                        [],
-                        paragraph.children.filter(isParagraphSentence).map(c => c.children).flat(),
-                    )
-                ],
-                CST.EOL,
-            ));
-        } else if (isParagraph(paragraph)) {
-            throw new NotImplementedError(`preambleToLines: ${paragraph.tag} with is not single non-nmmbered`);
+
+        if (paragraph.children.filter(isParagraphItemTitle).some(el => el.text !== "")) {
+            lines.push(...paragraphItemToLines(paragraph, childrenIndentTexts));
+        } else {
+            lines.push(...paragraphItemToLines(paragraph, childrenIndentTexts, { noControl: true }));
         }
-        else { assertNever(paragraph); }
     }
 
     return lines;
@@ -65,34 +47,13 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
 const $preambleChildrenBlock = makeIndentBlockWithCaptureRule(
     "$preambleChildrenBlock",
     (factory
-        .oneMatch(({ item }) => {
-            if (
-                item.type === LineType.OTH
-            ) {
-                const inline = sentencesArrayToColumnsOrSentences(item.line.sentencesArray);
-                const firstRange = inline[0].range;
-                const lastRange = inline.slice(-1)[0].range;
-                const range = firstRange && lastRange
-                    ? [firstRange[0], lastRange[1]] as [number, number]
-                    : null;
-                return newStdEL(
-                    "Paragraph",
-                    {},
-                    [
-                        newStdEL("ParagraphNum", {}, [], range ? [range[0], range[0]] : null),
-                        newStdEL(
-                            "ParagraphSentence",
-                            {},
-                            inline,
-                            range,
-                        ),
-                    ],
-                    range,
-                );
-            } else {
-                return null;
-            }
-        })
+        .choice(c => c
+            .orSequence(s => s
+                .and(() => $paragraphItem, "paragraphItem")
+                .andOmit(r => r.assert(({ paragraphItem }) => isParagraph(paragraphItem.value)))
+            )
+            .or(() => $noControlAnonymParagraph)
+        )
     ),
 );
 
@@ -125,7 +86,8 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
             const errors: ErrorMessage[] = [];
 
             if (childrenBlock) {
-                children.push(...childrenBlock.value);
+                children.push(...childrenBlock.value.map(c => c.value as std.Paragraph));
+                errors.push(...childrenBlock.value.map(c => c.errors).flat());
                 errors.push(...childrenBlock.errors);
                 for (let i = 0; i < children.length; i++) {
                     children[i].attr.Num = `${i + 1}`;

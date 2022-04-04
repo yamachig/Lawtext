@@ -29,6 +29,7 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                     // TODO: multiline
                     // - 平成十四年法律第百三号 別表
                     // - 平成十四年法律第百八十号 附則（平成三〇年六月一日法律第四〇号） 第四条
+                    // - 平成十一年法律第百二十七号 別記第一
                     for (const child of cell.children) {
                         // if (typeof child === "string") {
                         //     columnsOrSentences.push(newStdEL("Sentence", {}, child));
