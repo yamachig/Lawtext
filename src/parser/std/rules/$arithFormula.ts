@@ -1,6 +1,6 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
@@ -36,6 +36,12 @@ export const arithFormulaToLines = (arithFormula: std.ArithFormula, indentTexts:
     return lines;
 };
 
+
+const $arithFormulaChildrenBlock = makeIndentBlockWithCaptureRule(
+    "$arithFormulaChildrenBlock",
+    (factory.ref(() => $any)),
+);
+
 export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
     .withName("arithFormula")
     .sequence(s => s
@@ -54,42 +60,23 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
             })
         , "labelLine")
         .and(r => r.zeroOrMore(() => $blankLine))
-        .and(() => $optBNK_INDENT)
-        .and(() => $any, "any")
-        .and(r => r
-            .choice(c => c
-                .or(() => $optBNK_DEDENT)
-                .or(r => r
-                    .noConsumeRef(r => r
-                        .sequence(s => s
-                            .and(r => r.zeroOrMore(() => $blankLine))
-                            .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected, newErrorMessage }) => {
-                                return newErrorMessage(
-                                    "$arithFormula: この前にある数式の終了時にインデント解除が必要です。",
-                                    unexpected.virtualRange,
-                                );
-                            })
-                        )
-                    )
-                )
-            )
-        , "error")
-        .action(({ any, error }) => {
-            // for (let i = 0; i < children.value.length; i++) {
-            //     children.value[i].attr.Num = `${i + 1}`;
-            // }
+        .and(() => $arithFormulaChildrenBlock, "childrenBlock")
+        .action(({ childrenBlock }) => {
+
+            const children: std.ArithFormula["children"] = [];
+            const errors: ErrorMessage[] = [];
+
+            children.push(...childrenBlock.value.flat().map(v => v.value).flat());
+            errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+
             const arithFormula = newStdEL(
                 "ArithFormula",
                 {},
-                any.value,
+                children,
             );
             return {
                 value: arithFormula.setRangeFromChildren(),
-                errors: [
-                    ...any.errors,
-                    ...(error instanceof ErrorMessage ? [error] : []),
-                ],
+                errors,
             };
         })
     )
