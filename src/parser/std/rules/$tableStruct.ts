@@ -1,6 +1,6 @@
 import { factory } from "../factory";
 import { BlankLine, Line, LineType, OtherLine, TableColumnLine } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { isColumn, isParagraphItem, isSentence, isTableColumn, isTableHeaderColumn, isTableHeaderRow, isTableRow, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
@@ -85,7 +85,7 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
         tableStruct.children.find(el => el.tag === "TableStructTitle") as std.TableStructTitle | undefined
     )?.children;
 
-    const requireControl = Boolean(tableStructTitleSentenceChildren) || tableStruct.children[0].tag !== "Table";
+    const requireControl = Boolean(tableStructTitleSentenceChildren) || tableStruct.children.length !== 1 || tableStruct.children[0].tag !== "Table";
 
     if (requireControl) {
 
@@ -239,6 +239,16 @@ const $table: WithErrorRule<std.Table> = factory
         })
     );
 
+const $tableStructChildrenBlock = makeIndentBlockWithCaptureRule(
+    "$tableStructChildrenBlock",
+    (factory
+        .choice(c => c
+            .or(() => $table)
+            .or(() => $remarks)
+        )
+    ),
+);
+
 export const $tableStruct: WithErrorRule<std.TableStruct> = factory
     .withName("tableStruct")
     .choice(c => c
@@ -266,39 +276,14 @@ export const $tableStruct: WithErrorRule<std.TableStruct> = factory
                     }
                 })
             , "titleLine")
-            .and(() => $optBNK_INDENT)
-            .and(r => r.zeroOrOne(() => $remarks), "remarks1")
-            .and(r => r.zeroOrMore(() => $blankLine))
-            // .andOmit(r => r.assert(({ remarks1 }) => {
-            //     console.log(`⚠️here: ${remarks1?.value}`);
-            //     return true;
-            // }))
-            .and(() => $table, "table")
-            .and(r => r.zeroOrMore(() => $blankLine))
-            .and(r => r.zeroOrOne(() => $remarks), "remarks2")
             .and(r => r
-                .choice(c => c
-                    .or(() => $optBNK_DEDENT)
-                    .or(r => r
-                        .noConsumeRef(r => r
-                            .sequence(s => s
-                                .and(r => r.zeroOrMore(() => $blankLine))
-                                .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected, newErrorMessage }) => {
-                                    return newErrorMessage(
-                                        "$tableStruct: この前にある表の終了時にインデント解除が必要です。",
-                                        unexpected.virtualRange,
-                                    );
-                                })
-                            )
-                        )
-                    )
-                )
-            , "error")
-            .action(({ titleLine, remarks1, table, remarks2, error }) => {
-                // for (let i = 0; i < children.value.length; i++) {
-                //     children.value[i].attr.Num = `${i + 1}`;
-                // }
+                .zeroOrOne(() => $tableStructChildrenBlock)
+            , "childrenBlock")
+            .action(({ titleLine, childrenBlock }) => {
+
+                const children: std.TableStruct["children"] = [];
+                const errors: ErrorMessage[] = [];
+
                 const tableStructTitleText = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.text).join("");
                 const tableStructTitle = tableStructTitleText ? newStdEL(
                     "TableStructTitle",
@@ -306,24 +291,25 @@ export const $tableStruct: WithErrorRule<std.TableStruct> = factory
                     [tableStructTitleText],
                     titleLine.virtualRange,
                 ) : null;
+
+                if (tableStructTitle) {
+                    children.push(tableStructTitle);
+                }
+
+                if (childrenBlock) {
+                    children.push(...childrenBlock.value.flat().map(v => v.value).flat());
+                    errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+                    errors.push(...childrenBlock.errors);
+                }
+
                 const tableStruct = newStdEL(
                     "TableStruct",
                     {},
-                    [
-                        ...(tableStructTitle ? [tableStructTitle] : []),
-                        ...(remarks1 ? [remarks1.value] : []),
-                        table.value,
-                        ...(remarks2 ? [remarks2.value] : []),
-                    ],
+                    children,
                 );
                 return {
                     value: tableStruct.setRangeFromChildren(),
-                    errors: [
-                        ...(remarks1?.errors ?? []),
-                        ...table.errors,
-                        ...(remarks2?.errors ?? []),
-                        ...(error instanceof ErrorMessage ? [error] : []),
-                    ],
+                    errors,
                 };
             })
         )
