@@ -1,6 +1,6 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { isNoteLike, isNoteLikeStructTitle, newStdEL, noteLikeStructTags, noteLikeStructTitleTags, StdELType } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
@@ -108,6 +108,34 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
         : TTag extends "FormatStruct" ? std.Format
         : never
     >;
+    const sublistsBlockRule = (
+        factory
+            .sequence(s => s
+                .and(r => r
+                    .ref(
+                        makeIndentBlockWithCaptureRule(
+                            `$${tag[0].toLowerCase()}${tag.slice(1)}ChildrenBlock`,
+                            (
+                                factory
+                                    .choice(c => c
+                                        .or(() => $remarks)
+                                        .or(() => noteLikeRule)
+                                    )
+                            ),
+                        )
+                    )
+                , "block")
+                .action(({ block }) => {
+                    return {
+                        value: block.value.map(v => v.value),
+                        errors: [
+                            ...block.value.map(v => v.errors).flat(),
+                            ...block.errors,
+                        ]
+                    };
+                })
+            )
+    );
     return factory
         .withName("noteLikeStruct")
         .sequence(s => s
@@ -125,35 +153,11 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                 })
             , "titleLine")
             .and(r => r.zeroOrMore(() => $blankLine))
-            .and(() => $optBNK_INDENT)
-            .and(r => r.zeroOrOne(() => $remarks), "remarks1")
-            .and(r => r.zeroOrMore(() => $blankLine))
-            .and(() => noteLikeRule, "noteLike")
-            .and(r => r.zeroOrMore(() => $blankLine))
-            .and(r => r.zeroOrOne(() => $remarks), "remarks2")
-            .and(r => r
-                .choice(c => c
-                    .or(() => $optBNK_DEDENT)
-                    .or(r => r
-                        .noConsumeRef(r => r
-                            .sequence(s => s
-                                .and(r => r.zeroOrMore(() => $blankLine))
-                                .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected, newErrorMessage }) => {
-                                    return newErrorMessage(
-                                        "noteLikeStruct: この前にある記／様式／書式の終了時にインデント解除が必要です。",
-                                        unexpected.virtualRange,
-                                    );
-                                })
-                            )
-                        )
-                    )
-                )
-            , "error")
-            .action(({ titleLine, remarks1, noteLike, remarks2, error }) => {
-            // for (let i = 0; i < children.value.length; i++) {
-            //     children.value[i].attr.Num = `${i + 1}`;
-            // }
+            .and(sublistsBlockRule, "childrenBlock")
+            .action(({ titleLine, childrenBlock }) => {
+                const children: std.NoteLikeStruct["children"][number][] = [];
+                const errors: ErrorMessage[] = [];
+
                 const noteLikeStructTitleSentenceChildren = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
                 const noteLikeStructTitle = noteLikeStructTitleSentenceChildren.length > 0 ? newStdEL(
                     std.noteLikeStructTitleTags[std.noteLikeStructTags.indexOf(tag)],
@@ -161,25 +165,24 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                     noteLikeStructTitleSentenceChildren,
                     titleLine.virtualRange,
                 ) : null;
+
+
+                if (noteLikeStructTitle) {
+                    children.push(noteLikeStructTitle);
+                }
+
+                children.push(...childrenBlock.value);
+                errors.push(...childrenBlock.errors);
+
                 const noteLikeStruct = newStdEL(
                     tag,
                     {},
-                    [
-                        ...(noteLikeStructTitle ? [noteLikeStructTitle] : []),
-                        ...(remarks1 ? [remarks1.value] : []),
-                        noteLike.value,
-                        ...(remarks2 ? [remarks2.value] : []),
-                    ],
+                    children,
                 );
                 noteLikeStruct.range = rangeOfELs(noteLikeStruct.children);
                 return {
                     value: noteLikeStruct,
-                    errors: [
-                        ...(remarks1?.errors ?? []),
-                        ...noteLike.errors,
-                        ...(remarks2?.errors ?? []),
-                        ...(error instanceof ErrorMessage ? [error] : []),
-                    ],
+                    errors,
                 };
             })
         )

@@ -160,7 +160,7 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
             .and(() => $figStructChildrenBlock, "childrenBlock")
             .action(({ titleLine, childrenBlock }) => {
 
-                const children: std.ArithFormula["children"] = [];
+                const children: std.FigStruct["children"] = [];
                 const errors: ErrorMessage[] = [];
 
                 const figStructTitleSentenceChildren = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
