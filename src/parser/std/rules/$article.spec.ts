@@ -257,9 +257,9 @@ describe("Test $article and articleToLines", () => {
   一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
 
     !（国の機関等に対する処分等の適用除外）
-!  第四条　国の機関又は地方公共団体若しくはその機関に対する処分
-`;
-        const expectedErrorMessages: string[] = ["$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。"];
+  第四条　国の機関又は地方公共団体若しくはその機関に対する処分
+!`;
+        const expectedErrorMessages: string[] = ["$paragraphItemNotAmendChildrenBlock: この部分をパースできませんでした。"];
         const expectedRendered = `\
   （定義）
 第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。

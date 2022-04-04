@@ -6,10 +6,10 @@ import CST from "../toCSTSettings";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { assertNever, Diff, NotImplementedError } from "../../../util";
 import { AttrEntries, AttrEntry, Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
-import { WithErrorRule } from "../util";
+import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory, { VirtualLineRuleFactory } from "../factory";
 import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT } from "../util";
+import { $blankLine } from "../util";
 import { ErrorMessage } from "../../cst/error";
 import { rangeOfELs } from "../../../node/el";
 import $amendProvision, { amendProvisionToLines } from "./$amendProvision";
@@ -194,43 +194,59 @@ export const paragraphItemToLines = (
     return lines;
 };
 
-export const $paragraphItemChildren: WithErrorRule<(Diff<std.ParagraphItem, std.Paragraph> | std.TableStruct | std.FigStruct | std.StyleStruct)[]> = factory
-    .withName("paragraphItemChildren")
-    .sequence(s => s
-        .and(r => r
-            .oneOrMore(r => r
-                .sequence(s => s
-                    .and(r => r
-                        .choice(c => c
-                            .orSequence(s => s
-                                .and(() => $paragraphItem, "elWithErrors")
-                                .and(r => r.assert(({ elWithErrors }) => !std.isParagraph(elWithErrors.value)))
-                                .action(({ elWithErrors }) => {
-                                    return elWithErrors as {
-                                        value: Diff<std.ParagraphItem, std.Paragraph>,
-                                        errors: ErrorMessage[],
-                                    };
-                                })
-                            )
-                            .or(() => $tableStruct)
-                            .or(() => $figStruct)
-                            .or(() => $styleStruct)
-                        )
-                    )
-                    .andOmit(r => r.zeroOrMore(() => $blankLine))
-                )
+
+const $paragraphItemNotAmendChildrenBlock = makeIndentBlockWithCaptureRule(
+    "$paragraphItemNotAmendChildrenBlock",
+    (factory
+        .choice(c => c
+            .orSequence(s => s
+                .and(() => $listsOuter, "content")
+                .action(({ content }) => {
+                    return {
+                        value: content.value.map(c => c.value),
+                        errors: [
+                            ...content.errors,
+                            ...content.value.map(c => c.errors).flat(),
+                        ],
+                    };
+                })
             )
-        , "children")
-        .action(({ children }) => {
-            return {
-                value: children.map(c => c.value),
-                errors: children.map(c => c.errors).flat(),
-            };
-        })
-    );
+            .orSequence(s => s
+                .and(r => r
+                    .choice(c => c
+                        .orSequence(s => s
+                            .and(() => $paragraphItem, "elWithErrors")
+                            .and(r => r.assert(({ elWithErrors }) => !std.isParagraph(elWithErrors.value)))
+                            .action(({ elWithErrors }) => {
+                                return elWithErrors as {
+                                    value: Diff<std.ParagraphItem, std.Paragraph>,
+                                    errors: ErrorMessage[],
+                                };
+                            })
+                        )
+                        .or(() => $tableStruct)
+                        .or(() => $figStruct)
+                        .or(() => $styleStruct)
+                    )
+                , "content")
+                .action(({ content }) => {
+                    return {
+                        value: [content.value],
+                        errors: content.errors,
+                    };
+                })
+            )
+        )
+    ),
+);
+
+const $amendProvisionsBlock = makeIndentBlockWithCaptureRule(
+    "$amendProvisionsBlock",
+    (factory.ref(() => $amendProvision)),
+);
 
 export const $paragraphItemChildrenOuter: WithErrorRule<
-    (Diff<std.ParagraphItem, std.Paragraph> | std.TableStruct | std.FigStruct | std.StyleStruct | std.AmendProvision | std.List)[]
+    std.ParagraphItem["children"][number][]
 > = (
     factory as VirtualLineRuleFactory<
         Env & {
@@ -242,7 +258,6 @@ export const $paragraphItemChildrenOuter: WithErrorRule<
 )
     .withName("paragraphItemChildrenOuter")
     .sequence(s => s
-        .and(() => $optBNK_INDENT)
         .and(r => r
             .choice(c => c
                 .orSequence(s => s
@@ -254,51 +269,41 @@ export const $paragraphItemChildrenOuter: WithErrorRule<
                         const m = /.*?の一部を次のように(?:改正す|改め)る。$/.exec(lastText);
                         return m !== null;
                     }))
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .sequence(s => s
-                                .and(() => $amendProvision)
-                                .andOmit(r => r.zeroOrMore(() => $blankLine))
-                            )
-                        )
-                    , "amendProvisions")
-                    .action(({ amendProvisions }) => {
+                    .and(() => $amendProvisionsBlock, "block")
+                    .action(({ block }) => {
                         return {
-                            value: amendProvisions.map(c => c.value),
-                            errors: amendProvisions.map(c => c.errors).flat(),
+                            value: block.value.map(c => c.value),
+                            errors: [
+                                ...block.errors,
+                                ...block.value.map(c => c.errors).flat(),
+                            ],
                         };
                     })
                 )
-                .or(() => $listsOuter)
-                .or(() => $paragraphItemChildren)
-            )
-        , "children")
-        .and(r => r
-            .choice(c => c
-                .or(() => $optBNK_DEDENT)
-                .or(r => r
-                    .noConsumeRef(r => r
-                        .sequence(s => s
-                            .and(r => r.zeroOrMore(() => $blankLine))
-                            .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected, newErrorMessage }) => {
-                                return newErrorMessage(
-                                    "$paragraphItem: この前にある項または号の終了時にインデント解除が必要です。",
-                                    unexpected.virtualRange,
-                                );
-                            })
-                        )
-                    )
+                .orSequence(s => s
+                    .and(() => $paragraphItemNotAmendChildrenBlock, "block")
+                    .action(({ block }) => {
+                        return {
+                            value: block.value.map(c => c.value).flat(),
+                            errors: [
+                                ...block.errors,
+                                ...block.value.map(c => c.errors).flat(),
+                            ],
+                        };
+                    })
                 )
             )
-        , "error")
-        .action(({ children, error }) => {
+        , "childrenBlock")
+        .action(({ childrenBlock }) => {
+            const value: std.ParagraphItem["children"][number][] = [];
+            const errors: ErrorMessage[] = [];
+
+            value.push(...childrenBlock.value);
+            errors.push(...childrenBlock.errors);
+
             return {
-                value: children.value,
-                errors: [
-                    ...children.errors,
-                    ...(error instanceof ErrorMessage ? [error] : []),
-                ],
+                value,
+                errors,
             };
         })
     );

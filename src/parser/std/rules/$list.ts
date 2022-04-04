@@ -2,7 +2,7 @@ import { Line, LineType, OtherLine } from "../../../node/cst/line";
 import { isListOrSublist, isListOrSublistSentence, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import { WithErrorRule } from "../util";
+import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory from "../factory";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT } from "../util";
 import { ErrorMessage } from "../../cst/error";
@@ -148,44 +148,49 @@ export const $sublist2 = makelistOrSublistRule("Sublist2", $sublist3);
 export const $sublist1 = makelistOrSublistRule("Sublist1", $sublist2);
 export const $list = makelistOrSublistRule("List", $sublist1);
 
-export const $listsOuter: WithErrorRule<std.List[]> = factory
-    .withName("listsOuter")
-    .sequence(s => s
-        .and(() => $optBNK_INDENT)
-        .and(r => r
-            .oneOrMore(r => r
-                .sequence(s => s
-                    .andOmit(r => r.zeroOrMore(() => $blankLine))
-                    .and(() => $list)
-                )
-            )
-        , "children")
-        .and(r => r
-            .choice(c => c
-                .or(() => $optBNK_DEDENT)
-                .or(r => r
-                    .noConsumeRef(r => r
-                        .sequence(s => s
-                            .and(r => r.zeroOrMore(() => $blankLine))
-                            .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected, newErrorMessage }) => {
-                                return newErrorMessage(
-                                    "$listsOuter: この前にある列記の終了時にインデント解除が必要です。",
-                                    unexpected.virtualRange,
-                                );
-                            })
-                        )
-                    )
-                )
-            )
-        , "error")
-        .action(({ children, error }) => {
-            return {
-                value: children.map(c => c.value),
-                errors: [
-                    ...children.map(c => c.errors).flat(),
-                    ...(error instanceof ErrorMessage ? [error] : []),
-                ],
-            };
-        })
-    );
+export const $listsOuter = makeIndentBlockWithCaptureRule(
+    "$listsOuter",
+    (factory.ref(() => $list)),
+);
+
+// export const _$listsOuter: WithErrorRule<std.List[]> = factory
+//     .withName("listsOuter")
+//     .sequence(s => s
+//         .and(() => $optBNK_INDENT)
+//         .and(r => r
+//             .oneOrMore(r => r
+//                 .sequence(s => s
+//                     .andOmit(r => r.zeroOrMore(() => $blankLine))
+//                     .and(() => $list)
+//                 )
+//             )
+//         , "children")
+//         .and(r => r
+//             .choice(c => c
+//                 .or(() => $optBNK_DEDENT)
+//                 .or(r => r
+//                     .noConsumeRef(r => r
+//                         .sequence(s => s
+//                             .and(r => r.zeroOrMore(() => $blankLine))
+//                             .and(r => r.anyOne(), "unexpected")
+//                             .action(({ unexpected, newErrorMessage }) => {
+//                                 return newErrorMessage(
+//                                     "$listsOuter: この前にある列記の終了時にインデント解除が必要です。",
+//                                     unexpected.virtualRange,
+//                                 );
+//                             })
+//                         )
+//                     )
+//                 )
+//             )
+//         , "error")
+//         .action(({ children, error }) => {
+//             return {
+//                 value: children.map(c => c.value),
+//                 errors: [
+//                     ...children.map(c => c.errors).flat(),
+//                     ...(error instanceof ErrorMessage ? [error] : []),
+//                 ],
+//             };
+//         })
+//     );
