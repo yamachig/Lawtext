@@ -3,9 +3,8 @@ import { articleGroupTags, articleGroupTitleTags, isTOCAppdxTableLabel, isTOCArt
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { assertNever } from "../../../util";
-import { $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory from "../factory";
-import { $blankLine } from "../util";
 import { Sentences } from "../../../node/cst/inline";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { mergeAdjacentTexts } from "../../cst/util";
@@ -154,6 +153,7 @@ export const $tocPreambleLabel: WithErrorRule<std.TOCPreambleLabel> = factory
             .oneMatch(({ item }) => {
                 if (
                     item.type === LineType.OTH
+                    && item.line.sentencesArray.length === 1
                 ) {
                     return item;
                 } else {
@@ -176,6 +176,15 @@ export const $tocPreambleLabel: WithErrorRule<std.TOCPreambleLabel> = factory
     )
     ;
 
+const $tocArticleGroupChildrenBlock = makeIndentBlockWithCaptureRule(
+    "$tableStructChildrenBlock",
+    (factory
+        .choice(c => c
+            .or(() => $tocArticleGroup)
+        )
+    ),
+);
+
 
 export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
     .withName("tocArticleGroup")
@@ -192,50 +201,13 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
             })
         , "headLine")
         .and(r => r
-            .zeroOrOne(r => r
-                .sequence(s => s
-                    .and(() => $optBNK_INDENT)
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .sequence(s => s
-                                .andOmit(r => r.zeroOrMore(() => $blankLine))
-                                .and(r => r
-                                    .choice(c => c
-                                        .or(() => $tocArticleGroup)
-                                    )
-                                )
-                            )
-                        )
-                    , "children")
-                    .and(r => r
-                        .choice(c => c
-                            .or(() => $optBNK_DEDENT)
-                            .or(r => r
-                                .noConsumeRef(r => r
-                                    .sequence(s => s
-                                        .and(r => r.zeroOrMore(() => $blankLine))
-                                        .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected, newErrorMessage }) => {
-                                            return newErrorMessage(
-                                                "$tocArticleGroup: この前にある目次項目の終了時にインデント解除が必要です。",
-                                                unexpected.virtualRange,
-                                            );
-                                        })
-                                    )
-                                )
-                            )
-                        )
-                    , "error")
-                    .action(({ children, error }) => {
-                        return {
-                            value: children,
-                            errors: error instanceof ErrorMessage ? [error] : [],
-                        };
-                    })
-                )
-            )
-        , "children")
-        .action(({ headLine, children }) => {
+            .zeroOrOne(() => $tocArticleGroupChildrenBlock)
+        , "childrenBlock")
+        .action(({ headLine, childrenBlock }) => {
+
+            const children: (std.TOCArticleGroup["children"][number] | std.TOCPart)[] = [];
+            const errors: ErrorMessage[] = [];
+
             const inline = mergeAdjacentTexts(headLine.line.sentenceChildren);
             const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
             const [title, articleRangeSentenceChildren] = (
@@ -251,27 +223,35 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
                 title,
             );
 
+            children.push(articleGroupTitle.setRangeFromChildren());
+
             const articleRange = articleRangeSentenceChildren.length > 0 ? newStdEL(
                 "ArticleRange",
                 {},
                 articleRangeSentenceChildren,
             ) : null;
 
+            if (articleRange) {
+                children.push(articleRange.setRangeFromChildren());
+            }
+
+            if (childrenBlock) {
+                children.push(...childrenBlock.value.flat().map(v => v.value));
+                errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+                errors.push(...childrenBlock.errors);
+            }
+
             const tocArticleGroupTag = tocArticleGroupTags[articleGroupTags.indexOf(headLine.line.mainTag)];
 
             const tocArticleGroup = newStdEL(
                 tocArticleGroupTag,
                 {},
-                [
-                    articleGroupTitle.setRangeFromChildren(),
-                    ...(articleRange ? [articleRange.setRangeFromChildren()] : []),
-                    ...(children ? children.value.map(c => c.value) : []),
-                ],
+                children,
             );
 
             return {
                 value: tocArticleGroup.setRangeFromChildren(),
-                errors: [],
+                errors,
             };
         })
     )
@@ -323,6 +303,16 @@ export const $tocArticle: WithErrorRule<std.TOCArticle> = factory
     )
     ;
 
+const $tocSupplProvisionChildrenBlock = makeIndentBlockWithCaptureRule(
+    "$tocSupplProvisionChildrenBlock",
+    (factory
+        .choice(c => c
+            .or(() => $tocArticleGroup)
+            .or(() => $tocArticle)
+        )
+    ),
+);
+
 
 export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
     .withName("tocSupplProvision")
@@ -339,51 +329,13 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
             })
         , "headLine")
         .and(r => r
-            .zeroOrOne(r => r
-                .sequence(s => s
-                    .and(() => $optBNK_INDENT)
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .sequence(s => s
-                                .andOmit(r => r.zeroOrMore(() => $blankLine))
-                                .and(r => r
-                                    .choice(c => c
-                                        .or(() => $tocArticleGroup)
-                                        .or(() => $tocArticle)
-                                    )
-                                )
-                            )
-                        )
-                    , "children")
-                    .and(r => r
-                        .choice(c => c
-                            .or(() => $optBNK_DEDENT)
-                            .or(r => r
-                                .noConsumeRef(r => r
-                                    .sequence(s => s
-                                        .and(r => r.zeroOrMore(() => $blankLine))
-                                        .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected, newErrorMessage }) => {
-                                            return newErrorMessage(
-                                                "$tocSupplProvision: この前にある目次項目の終了時にインデント解除が必要です。",
-                                                unexpected.virtualRange,
-                                            );
-                                        })
-                                    )
-                                )
-                            )
-                        )
-                    , "error")
-                    .action(({ children, error }) => {
-                        return {
-                            value: children,
-                            errors: error instanceof ErrorMessage ? [error] : [],
-                        };
-                    })
-                )
-            )
-        , "children")
-        .action(({ headLine, children }) => {
+            .zeroOrOne(() => $tocSupplProvisionChildrenBlock)
+        , "childrenBlock")
+        .action(({ headLine, childrenBlock }) => {
+
+            const children: (std.TOCSupplProvision["children"][number] | std.TOCArticleGroup)[] = [];
+            const errors: ErrorMessage[] = [];
+
             const inline = mergeAdjacentTexts([
                 headLine.line.head,
                 headLine.line.openParen,
@@ -403,30 +355,49 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
                 title,
             );
 
+            children.push(supplProvisionLabel.setRangeFromChildren());
+
             const articleRange = articleRangeSentenceChildren.length > 0 ? newStdEL(
                 "ArticleRange",
                 {},
                 articleRangeSentenceChildren,
             ) : null;
 
+            if (articleRange) {
+                children.push(articleRange.setRangeFromChildren());
+            }
+
+            if (childrenBlock) {
+                children.push(...childrenBlock.value.flat().map(v => v.value));
+                errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+                errors.push(...childrenBlock.errors);
+            }
+
             const tocSupplProvision = newStdEL(
                 "TOCSupplProvision",
                 {},
-                [
-                    supplProvisionLabel.setRangeFromChildren(),
-                    ...(articleRange ? [articleRange.setRangeFromChildren()] : []),
-                    ...(children ? children.value.map(c => c.value) : []),
-                ],
+                children,
             );
 
             return {
                 value: tocSupplProvision.setRangeFromChildren(),
-                errors: [],
+                errors,
             };
         })
     )
     ;
 
+const $tocChildrenBlock = makeIndentBlockWithCaptureRule(
+    "$tocChildrenBlock",
+    (factory
+        .choice(c => c
+            .or(() => $tocPreambleLabel)
+            .or(() => $tocArticleGroup)
+            .or(() => $tocArticle)
+            .or(() => $tocSupplProvision)
+        )
+    ),
+);
 
 export const $toc: WithErrorRule<std.TOC> = factory
     .withName("toc")
@@ -443,53 +414,12 @@ export const $toc: WithErrorRule<std.TOC> = factory
             })
         , "headLine")
         .and(r => r
-            .zeroOrOne(r => r
-                .sequence(s => s
-                    .and(() => $optBNK_INDENT)
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .sequence(s => s
-                                .andOmit(r => r.zeroOrMore(() => $blankLine))
-                                .and(r => r
-                                    .choice(c => c
-                                        .or(() => $tocPreambleLabel)
-                                        .or(() => $tocArticleGroup)
-                                        .or(() => $tocArticle)
-                                        .or(() => $tocSupplProvision)
-                                    )
-                                )
-                            )
-                        )
-                    , "children")
-                    .and(r => r
-                        .choice(c => c
-                            .or(() => $optBNK_DEDENT)
-                            .or(r => r
-                                .noConsumeRef(r => r
-                                    .sequence(s => s
-                                        .and(r => r.zeroOrMore(() => $blankLine))
-                                        .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected, newErrorMessage }) => {
-                                            return newErrorMessage(
-                                                "$toc: この前にある目次の終了時にインデント解除が必要です。",
-                                                unexpected.virtualRange,
-                                            );
-                                        })
-                                    )
-                                )
-                            )
-                        )
-                    , "error")
-                    .action(({ children, error }) => {
-                        return {
-                            value: children,
-                            errors: error instanceof ErrorMessage ? [error] : [],
-                        };
-                    })
-                )
-            )
-        , "children")
-        .action(({ headLine, children }) => {
+            .zeroOrOne(() => $tocChildrenBlock)
+        , "childrenBlock")
+        .action(({ headLine, childrenBlock }) => {
+
+            const children: (std.TOC["children"][number] | std.TOCArticleGroup)[] = [];
+            const errors: ErrorMessage[] = [];
 
             const tocLabel = newStdEL(
                 "TOCLabel",
@@ -497,18 +427,23 @@ export const $toc: WithErrorRule<std.TOC> = factory
                 [headLine.line.contentText()],
             );
 
+            children.push(tocLabel.setRangeFromChildren());
+
+            if (childrenBlock) {
+                children.push(...childrenBlock.value.flat().map(v => v.value));
+                errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+                errors.push(...childrenBlock.errors);
+            }
+
             const toc = newStdEL(
                 "TOC",
                 {},
-                [
-                    tocLabel.setRangeFromChildren(),
-                    ...(children ? children.value.map(c => c.value) : [])
-                ],
+                children,
             );
 
             return {
                 value: toc.setRangeFromChildren(),
-                errors: [],
+                errors,
             };
         })
     )

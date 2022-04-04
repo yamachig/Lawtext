@@ -277,4 +277,113 @@ describe("Test $toc and tocToLines", () => {
             },
         );
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+目次
+
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+目次
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "TOC",
+            attr: {},
+            children: [
+                {
+                    tag: "TOCLabel",
+                    attr: {},
+                    children: ["目次"]
+                },
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $toc.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = tocToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success with errors case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+目次
+  前文
+  !:table-struct:
+!  附則
+
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+`;
+        const expectedErrorMessages: string[] = ["$tocChildrenBlock: この部分をパースできませんでした。"];
+        const expectedRendered = `\
+目次
+  前文
+  附則
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "TOC",
+            attr: {},
+            children: [
+                {
+                    tag: "TOCLabel",
+                    attr: {},
+                    children: ["目次"]
+                },
+                {
+                    tag: "TOCPreambleLabel",
+                    attr: {},
+                    children: ["前文"]
+                },
+                {
+                    tag: "TOCSupplProvision",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "SupplProvisionLabel",
+                            attr: {},
+                            children: ["附則"]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $toc.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = tocToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });
