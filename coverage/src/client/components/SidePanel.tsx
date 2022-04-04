@@ -228,6 +228,9 @@ export const FilterInfoFilterContainer: React.FC<LawtextDashboardPageStateStruct
                     {counts.ParsedLawStatus[ParsedLawStatus.Fail] !== 0 &&
                         <><span className="badge bg-dark">{counts.ParsedLawStatus[ParsedLawStatus.Fail]} Fails</span>&nbsp;</>
                     }
+                    {counts.ParsedLawStatus[ParsedLawStatus.Error] !== 0 &&
+                        <><span className="badge bg-danger">{counts.ParsedLawStatus[ParsedLawStatus.Error]} Error</span>&nbsp;</>
+                    }
                     {counts.ParsedLawStatus[ParsedLawStatus.Success] !== 0 &&
                         <><span className="badge bg-success">{counts.ParsedLawStatus[ParsedLawStatus.Success]} Success</span>&nbsp;</>
                     }

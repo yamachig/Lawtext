@@ -61,6 +61,7 @@ export enum RenderedLawtextStatus {
 
 export enum ParsedLawStatus {
     Fail = "Fail",
+    Error = "Error",
     Success = "Success",
     Null = "Null",
 }
@@ -104,6 +105,7 @@ export interface LawCoverage extends BaseLawInfo {
         ok: {
             requiredms: Map<string, number>,
         } | null,
+        hasError: boolean,
         info: Record<string, unknown>,
     } | null,
     lawDiff: {

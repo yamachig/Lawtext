@@ -69,6 +69,7 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
                     requiredms: { type: mongoose.Schema.Types.Map, of: Number, required: true },
                 }, { minimize: false }),
             },
+            hasError: { type: Boolean, required: true },
             info: { type: Object, required: true },
         }, { minimize: false }),
     },

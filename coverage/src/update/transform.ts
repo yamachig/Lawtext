@@ -141,7 +141,7 @@ export const getParsedLaw = async (lawtext: string): Promise<{
             ? filteredParsedErrors.slice(0, 7).map(e => e.toString(allLines)).join("\n\n")
             : null;
         if (filteredParsedErrors.length > 7) {
-            errorText += `\n\n... ${filteredParsedErrors.length - 7} more errors ...`;
+            errorText = (errorText ?? "") + `\n\n... ${filteredParsedErrors.length - 7} more errors ...`;
         }
 
         return {
@@ -151,9 +151,10 @@ export const getParsedLaw = async (lawtext: string): Promise<{
                 ok: {
                     requiredms,
                 },
+                hasError: !!errorText,
                 info: {
                     ...(
-                        parsedErrors.length > 0
+                        errorText
                             ? { error: errorText }
                             : {}
                     ),
@@ -166,6 +167,7 @@ export const getParsedLaw = async (lawtext: string): Promise<{
             parsedXML: null,
             parsedLaw: {
                 ok: null,
+                hasError: true,
                 info: { error: (e as Error).stack },
             },
         };

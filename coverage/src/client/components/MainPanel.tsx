@@ -593,7 +593,7 @@ export const LawCoverageInfoDetail: React.FC<{
                                     date={lawCoverage.updateDate}
                                 />
                             </div>
-                            {"error" in lawCoverage.parsedLaw.info && (
+                            {("error" in lawCoverage.parsedLaw.info) && (!!lawCoverage.parsedLaw.info.error) && (
                                 <pre>{lawCoverage.parsedLaw.info.error as string}</pre>
                             )}
                             <hr />

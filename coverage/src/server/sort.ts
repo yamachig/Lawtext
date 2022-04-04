@@ -43,7 +43,8 @@ export const forSortAgg = {
     ParsedLawStatus: {
         $switch: {
             branches: [
-                { case: { $not: "$parsedLaw" }, then: 2 },
+                { case: { $not: "$parsedLaw" }, then: 3 },
+                { case: { $not: "$parsedLaw.hasError" }, then: 2 },
                 { case: { $not: "$parsedLaw.ok" }, then: 0 },
             ],
             default: 1,
@@ -119,6 +120,7 @@ export const sortedLawCoverages = async (db: ConnectionInfo, sort: [key:SortKey,
                     "originalLaw.ok.requiredms": true,
                     "renderedLawtext.ok.requiredms": true,
                     "parsedLaw.ok.requiredms": true,
+                    "parsedLaw.hasError": true,
                     "lawDiff.ok.requiredms": true,
                     "lawDiff.ok.mostSeriousStatus": true,
                 },

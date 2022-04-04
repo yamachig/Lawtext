@@ -43,6 +43,7 @@ export const getRenderedLawtextStatus = (lawCoverage: LawCoverage): RenderedLawt
 
 export enum ParsedLawStatus {
     Fail = "Fail",
+    Error = "Error",
     Success = "Success",
     Null = "Null",
 }
@@ -50,6 +51,7 @@ export enum ParsedLawStatus {
 export const getParsedLawStatus = (lawCoverage: LawCoverage): ParsedLawStatus => {
     if (!lawCoverage.parsedLaw) return ParsedLawStatus.Null;
     else if (!lawCoverage.parsedLaw.ok) return ParsedLawStatus.Fail;
+    else if (lawCoverage.parsedLaw.hasError) return ParsedLawStatus.Error;
     else return ParsedLawStatus.Success;
 };
 

@@ -27,6 +27,7 @@ const forCountAgg = {
             branches: [
                 { case: { $not: "$parsedLaw" }, then: ParsedLawStatus.Null },
                 { case: { $not: "$parsedLaw.ok" }, then: ParsedLawStatus.Fail },
+                { case: "$parsedLaw.hasError", then: ParsedLawStatus.Error },
             ],
             default: ParsedLawStatus.Success,
         },
