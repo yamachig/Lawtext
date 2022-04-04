@@ -64,16 +64,21 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                 )
             )
         , "tagControl")
-        .and(() => $sentenceChildren, "tail")
+        .and(r => r
+            .zeroOrOne(() => $sentenceChildren)
+        , "tail")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, tagControl: { tag, control }, tail, lineEndText }) => {
-            const inline = mergeAdjacentTexts(tail.value);
+            const inline = mergeAdjacentTexts(tail?.value ?? []);
             const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
             const [title, relatedArticleNum] = (
                 lastItem instanceof __Parentheses
                 && lastItem.attr.type === "round"
             ) ? [inline.slice(0, -1), inline.slice(-1)] : [inline, []];
-            const errors = [...indentsStruct.errors, ...tail.errors];
+            const errors = [
+                ...indentsStruct.errors,
+                ...(tail?.errors ?? []),
+            ];
             return {
                 value: new AppdxItemHeadLine(
                     range(),

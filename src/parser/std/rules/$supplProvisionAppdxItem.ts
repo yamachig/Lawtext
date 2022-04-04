@@ -1,6 +1,6 @@
 import { factory } from "../factory";
 import { SupplProvisionAppdxItemHeadLine, Line, LineType } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { isSupplProvisionAppdxItemTitle, newStdEL, supplProvisionAppdxItemTags, supplProvisionAppdxItemTitleTags, StdELType, isRelatedArticleNum, isTableStruct, isNoteLikeStruct, isArithFormula } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
@@ -79,75 +79,36 @@ export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.Supp
 const supplProvisionAppdxItemContentRule = {
     SupplProvisionAppdxStyle: (
         factory
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $styleStruct)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content")
-                .action(({ content }) => ({
-                    value: content.map(c => c.value),
-                    errors: content.map(c => c.errors).flat(),
-                })),
+            .choice(c => c
+                .or(() => $styleStruct)
             )
     ),
     SupplProvisionAppdxTable: (
         factory
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $tableStruct)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content")
-                .action(({ content }) => ({
-                    value: content.map(c => c.value),
-                    errors: content.map(c => c.errors).flat(),
-                })),
+            .choice(c => c
+                .or(() => $tableStruct)
             )
     ),
     SupplProvisionAppdx: (
         factory
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $arithFormula)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content")
-                .action(({ content }) => ({
-                    value: content.map(c => c.value),
-                    errors: content.map(c => c.errors).flat(),
-                })),
+            .choice(c => c
+                .or(() => $arithFormula)
             )
     ),
 } as const;
 
-export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplProvisionAppdxItemTags)[number]>(tag: TTag): WithErrorRule<StdELType<TTag>> => {
+export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplProvisionAppdxItemTags)[number]>(
+    ruleName: string,
+    tag: TTag,
+): WithErrorRule<StdELType<TTag>> => {
 
-    const contentRule = supplProvisionAppdxItemContentRule[tag];
+    const contentBlockRule = makeIndentBlockWithCaptureRule(
+        `${ruleName}ChildrenBlock`,
+        supplProvisionAppdxItemContentRule[tag] as WithErrorRule<std.SupplProvisionAppdxItem["children"][number]>,
+    );
 
     const ret = factory
-        .withName("supplProvisionAppdxItem")
+        .withName(ruleName)
         .sequence(s => s
             .and(r => r
                 .oneMatch(({ item }) => {
@@ -162,31 +123,13 @@ export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplPr
                 })
             , "titleLine")
             .and(r => r.zeroOrMore(() => $blankLine))
-            .and(() => $optBNK_INDENT)
-            .and(() => contentRule, "content")
             .and(r => r
-                .choice(c => c
-                    .or(() => $optBNK_DEDENT)
-                    .or(r => r
-                        .noConsumeRef(r => r
-                            .sequence(s => s
-                                .and(r => r.zeroOrMore(() => $blankLine))
-                                .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected, newErrorMessage }) => {
-                                    return newErrorMessage(
-                                        "supplProvisionAppdxItem: この前にある附則別記類の終了時にインデント解除が必要です。",
-                                        unexpected.virtualRange,
-                                    );
-                                })
-                            )
-                        )
-                    )
-                )
-            , "error")
-            .action(({ titleLine, content, error }) => {
-            // for (let i = 0; i < children.value.length; i++) {
-            //     children.value[i].attr.Num = `${i + 1}`;
-            // }
+                .zeroOrOne(() => contentBlockRule)
+            , "contentBlock")
+            .action(({ titleLine, contentBlock }) => {
+
+                const children: StdELType<TTag>["children"][number][] = [];
+                const errors: ErrorMessage[] = [];
 
                 const title = titleLine.line.title.length > 0 ? newStdEL(
                     std.supplProvisionAppdxItemTitleTags[std.supplProvisionAppdxItemTags.indexOf(tag)],
@@ -194,28 +137,32 @@ export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplPr
                     titleLine.line.title,
                     titleLine.line.titleRange,
                 ) : null;
+                if (title) children.push(title);
+
                 const relatedArticleNum = titleLine.line.relatedArticleNum.length > 0 ? newStdEL(
                     "RelatedArticleNum",
                     {},
                     titleLine.line.relatedArticleNum,
                     titleLine.line.relatedArticleNumRange,
                 ) : null;
+                if (relatedArticleNum) children.push(relatedArticleNum);
+
+                if (contentBlock) {
+                    children.push(...contentBlock.value.flat().map(v => v.value));
+                    errors.push(...contentBlock.value.flat().map(v => v.errors).flat());
+                    errors.push(...contentBlock.errors);
+                }
+
                 const supplProvisionAppdxItem = newStdEL(
                     tag,
                     {},
-                    [
-                        ...(title ? [title] : []),
-                        ...(relatedArticleNum ? [relatedArticleNum] : []),
-                        ...content.value,
-                    ],
+                    children,
                 );
                 supplProvisionAppdxItem.range = rangeOfELs(supplProvisionAppdxItem.children);
+
                 return {
                     value: supplProvisionAppdxItem,
-                    errors: [
-                        ...content.errors,
-                        ...(error instanceof ErrorMessage ? [error] : []),
-                    ],
+                    errors,
                 };
             })
         )
@@ -223,8 +170,8 @@ export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplPr
     return ret;
 };
 
-export const $supplProvisionAppdxStyle = makeSupplProvisionAppdxItemRule("SupplProvisionAppdxStyle");
-export const $supplProvisionAppdxTable = makeSupplProvisionAppdxItemRule("SupplProvisionAppdxTable");
-export const $supplProvisionAppdx = makeSupplProvisionAppdxItemRule("SupplProvisionAppdx");
+export const $supplProvisionAppdxStyle = makeSupplProvisionAppdxItemRule("$supplProvisionAppdxStyle", "SupplProvisionAppdxStyle");
+export const $supplProvisionAppdxTable = makeSupplProvisionAppdxItemRule("$supplProvisionAppdxTable", "SupplProvisionAppdxTable");
+export const $supplProvisionAppdx = makeSupplProvisionAppdxItemRule("$supplProvisionAppdx", "SupplProvisionAppdx");
 
 

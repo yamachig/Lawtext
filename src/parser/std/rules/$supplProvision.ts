@@ -139,31 +139,8 @@ export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
             })
         , "labelLine")
         .and(r => r.zeroOrMore(() => $blankLine))
-        // .and(() => $optBNK_INDENT)
         .and(() => $supplProvisionChildren, "children")
-        // .and(r => r
-        //     .choice(c => c
-        //         .or(() => $optBNK_DEDENT)
-        //         .or(r => r
-        //             .noConsumeRef(r => r
-        //                 .sequence(s => s
-        //                     .and(r => r.zeroOrMore(() => $blankLine))
-        //                     .and(r => r.anyOne(), "unexpected")
-        //                     .action(({ unexpected }) => {
-        //                         return newErrorMessage(
-        //                             "$supplProvision: この前にある附則の終了時にインデント解除が必要です。",
-        //                             unexpected.virtualRange,
-        //                         );
-        //                     })
-        //                 )
-        //             )
-        //         )
-        //     )
-        // , "error")
         .action(({ labelLine, children }) => {
-            // for (let i = 0; i < children.value.length; i++) {
-            //     children.value[i].attr.Num = `${i + 1}`;
-            // }
             const supplProvisionLabel = newStdEL(
                 "SupplProvisionLabel",
                 {},
@@ -187,10 +164,7 @@ export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
             );
             return {
                 value: supplProvision.setRangeFromChildren(),
-                errors: [
-                    ...children.errors,
-                    // ...(error instanceof ErrorMessage ? [error] : []),
-                ],
+                errors: [...children.errors],
             };
         })
     )

@@ -215,6 +215,44 @@ describe("Test $supplProvisionAppdx and supplProvisionAppdxItemToLines", () => {
             },
         );
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+:suppl-provision-appdx:
+
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+:suppl-provision-appdx:
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "SupplProvisionAppdx",
+            attr: {},
+            children: [],
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $supplProvisionAppdx.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = supplProvisionAppdxItemToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });
 
 
