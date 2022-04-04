@@ -6,7 +6,6 @@ import * as std from "../../../law/std";
 import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { Control, Sentences } from "../../../node/cst/inline";
-import { rangeOfELs } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
 
 export const preambleControl = ":preamble:";
@@ -122,9 +121,8 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
                 children[i].attr.Num = `${i + 1}`;
             }
             const preamble = newStdEL("Preamble", {}, children);
-            preamble.range = rangeOfELs(preamble.children);
             return {
-                value: preamble,
+                value: preamble.setRangeFromChildren(),
                 errors,
             };
         })

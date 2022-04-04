@@ -5,7 +5,6 @@ import { isArticle, isArticleGroup, isParagraphItem, isSupplProvisionAppdxItem, 
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import $paragraphItem, { $noNumParagraph, paragraphItemToLines } from "./$paragraphItem";
-import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import $article, { articleToLines } from "./$article";
@@ -186,9 +185,8 @@ export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
                     ...children.value
                 ],
             );
-            supplProvision.range = rangeOfELs(supplProvision.children);
             return {
-                value: supplProvision,
+                value: supplProvision.setRangeFromChildren(),
                 errors: [
                     ...children.errors,
                     // ...(error instanceof ErrorMessage ? [error] : []),

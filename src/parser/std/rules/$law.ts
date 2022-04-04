@@ -13,7 +13,6 @@ import $mainProvision, { mainProvisionToLines } from "./$mainProvision";
 import $supplProvision, { supplProvisionToLines } from "./$supplProvision";
 import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, appdxItemToLines } from "./$appdxItem";
 import { ErrorMessage } from "../../cst/error";
-import { rangeOfELs } from "../../../node/el";
 import { sentencesArrayToString } from "../../cst/rules/$sentencesArray";
 import { parseLawNum } from "../../../law/num";
 
@@ -360,10 +359,9 @@ export const $law: WithErrorRule<std.Law> = factory
                 ));
             }
 
-            lawBody.range = rangeOfELs(lawBody.children);
-            law.range = rangeOfELs(law.children);
+            lawBody.setRangeFromChildren();
             return {
-                value: law,
+                value: law.setRangeFromChildren(),
                 errors,
             };
         })

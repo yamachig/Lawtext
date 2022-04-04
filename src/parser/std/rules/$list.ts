@@ -6,7 +6,6 @@ import { WithErrorRule } from "../util";
 import factory from "../factory";
 import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT } from "../util";
 import { ErrorMessage } from "../../cst/error";
-import { rangeOfELs } from "../../../node/el";
 import CST from "../toCSTSettings";
 import { assertNever } from "../../../util";
 
@@ -125,18 +124,16 @@ TRet
                     {},
                     sentencesArrayToColumnsOrSentences(listOrSublistSentenceLine.line.sentencesArray),
                 );
-                listOrSublistSentence.range = rangeOfELs(listOrSublistSentence.children);
                 const listOrSublist = newStdEL(
                     tag,
                     {},
                     [
-                        listOrSublistSentence,
+                        listOrSublistSentence.setRangeFromChildren(),
                         ...(children ? children.value : []),
                     ],
                 );
-                listOrSublist.range = rangeOfELs(listOrSublist.children);
                 return {
-                    value: listOrSublist as unknown as TRet,
+                    value: listOrSublist.setRangeFromChildren() as unknown as TRet,
                     errors: [
                         ...(children?.errors ?? []),
                         ...(error instanceof ErrorMessage ? [error] : []),

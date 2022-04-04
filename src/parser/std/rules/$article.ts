@@ -10,7 +10,6 @@ import factory from "../factory";
 import { VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine } from "../util";
 import $paragraphItem, { $paragraphItemChildrenOuter, paragraphItemToLines } from "./$paragraphItem";
-import { rangeOfELs } from "../../../node/el";
 import $supplNote, { supplNoteToLines } from "./$supplNote";
 
 export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] => {
@@ -179,16 +178,14 @@ export const $article: WithErrorRule<std.Article> = factory
                 firstParagraph.extend(firstParagraphChildren.value);
             }
 
-            firstParagraph.range = rangeOfELs(firstParagraph.children);
+            firstParagraph.setRangeFromChildren();
 
             article.extend(otherParagraphs.map(p => p.value));
 
             article.extend(supplNotes.map(n => n.value));
 
-            article.range = rangeOfELs(article.children);
-
             return {
-                value: article,
+                value: article.setRangeFromChildren(),
                 errors,
             };
         })

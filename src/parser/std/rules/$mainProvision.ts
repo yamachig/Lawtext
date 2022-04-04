@@ -4,7 +4,6 @@ import { $blankLine, WithErrorRule } from "../util";
 import { isArticle, isArticleGroup, isParagraphItem, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import $paragraphItem, { $noNumParagraph, paragraphItemToLines } from "./$paragraphItem";
-import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import $article, { articleToLines } from "./$article";
 import $articleGroup, { articleGroupToLines } from "./$articleGroup";
@@ -96,9 +95,8 @@ export const $mainProvision: WithErrorRule<std.MainProvision> = factory
                 {},
                 children.value,
             );
-            mainProvision.range = rangeOfELs(mainProvision.children);
             return {
-                value: mainProvision,
+                value: mainProvision.setRangeFromChildren(),
                 errors: [
                     ...children.errors,
                     // ...(error instanceof ErrorMessage ? [error] : []),

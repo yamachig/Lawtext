@@ -7,7 +7,6 @@ import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
 import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import { Control, Sentences } from "../../../node/cst/inline";
-import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 
@@ -189,9 +188,8 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                     ...children.value
                 ],
             );
-            remarks.range = rangeOfELs(remarks.children);
             return {
-                value: remarks,
+                value: remarks.setRangeFromChildren(),
                 errors: [
                     ...children.errors,
                     ...(error instanceof ErrorMessage ? [error] : []),

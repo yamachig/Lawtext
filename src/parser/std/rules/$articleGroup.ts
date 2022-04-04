@@ -9,7 +9,6 @@ import { $blankLine } from "../util";
 import { paragraphItemToLines } from "./$paragraphItem";
 import { mergeAdjacentTexts } from "../../cst/util";
 import $article, { articleToLines } from "./$article";
-import { rangeOfELs } from "../../../node/el";
 import { parseNamedNum } from "../../../law/num";
 import { appdxItemToLines } from "./$appdxItem";
 import { ErrorMessage } from "../../cst/error";
@@ -170,10 +169,8 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
 
             articleGroup.extend(children);
 
-            articleGroup.range = rangeOfELs(articleGroup.children);
-
             return {
-                value: articleGroup,
+                value: articleGroup.setRangeFromChildren(),
                 errors,
             };
         })

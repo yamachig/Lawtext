@@ -5,8 +5,6 @@ import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { Control, Sentences } from "../../../node/cst/inline";
-import { rangeOfELs } from "../../../node/el";
-
 export const supplNoteControl = ":suppl-note:";
 
 export const supplNoteToLines = (supplNote: std.SupplNote, indentTexts: string[]): Line[] => {
@@ -62,9 +60,8 @@ export const $supplNote: WithErrorRule<std.SupplNote> = factory
                 {},
                 line.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
             );
-            supplNote.range = rangeOfELs(supplNote.children);
             return {
-                value: supplNote,
+                value: supplNote.setRangeFromChildren(),
                 errors: [],
             };
         })

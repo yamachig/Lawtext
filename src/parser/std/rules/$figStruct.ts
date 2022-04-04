@@ -193,9 +193,8 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                         ...(remarks2 ? [remarks2.value] : []),
                     ],
                 );
-                figStruct.range = rangeOfELs(figStruct.children);
                 return {
-                    value: figStruct,
+                    value: figStruct.setRangeFromChildren(),
                     errors: [
                         ...(remarks1?.errors ?? []),
                         ...fig.errors,

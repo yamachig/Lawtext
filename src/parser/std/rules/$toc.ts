@@ -6,7 +6,6 @@ import { assertNever } from "../../../util";
 import { $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
 import factory from "../factory";
 import { $blankLine } from "../util";
-import { rangeOfELs } from "../../../node/el";
 import { Sentences } from "../../../node/cst/inline";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { mergeAdjacentTexts } from "../../cst/util";
@@ -169,10 +168,8 @@ export const $tocPreambleLabel: WithErrorRule<std.TOCPreambleLabel> = factory
                 headLine.line.sentencesArray.flat().map(ss => ss.sentences).flat().map(s => s.children).flat(),
             );
 
-            tocPreambleLabel.range = rangeOfELs(tocPreambleLabel.children);
-
             return {
-                value: tocPreambleLabel,
+                value: tocPreambleLabel.setRangeFromChildren(),
                 errors: [],
             };
         })
@@ -254,15 +251,11 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
                 title,
             );
 
-            articleGroupTitle.range = rangeOfELs(articleGroupTitle.children);
-
             const articleRange = articleRangeSentenceChildren.length > 0 ? newStdEL(
                 "ArticleRange",
                 {},
                 articleRangeSentenceChildren,
             ) : null;
-
-            if (articleRange) articleRange.range = rangeOfELs(articleRange.children);
 
             const tocArticleGroupTag = tocArticleGroupTags[articleGroupTags.indexOf(headLine.line.mainTag)];
 
@@ -270,16 +263,14 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
                 tocArticleGroupTag,
                 {},
                 [
-                    articleGroupTitle,
-                    ...(articleRange ? [articleRange] : []),
+                    articleGroupTitle.setRangeFromChildren(),
+                    ...(articleRange ? [articleRange.setRangeFromChildren()] : []),
                     ...(children ? children.value.map(c => c.value) : []),
                 ],
             );
 
-            tocArticleGroup.range = rangeOfELs(tocArticleGroup.children);
-
             return {
-                value: tocArticleGroup,
+                value: tocArticleGroup.setRangeFromChildren(),
                 errors: [],
             };
         })
@@ -309,29 +300,23 @@ export const $tocArticle: WithErrorRule<std.TOCArticle> = factory
                 [headLine.line.title],
             );
 
-            articleTitle.range = rangeOfELs(articleTitle.children);
-
             const articleCaption = headLine.line.sentencesArray.length > 0 ? newStdEL(
                 "ArticleCaption",
                 {},
                 mergeAdjacentTexts([...headLine.line.sentencesArray.flat().map(ss => ss.sentences).flat().map(s => s.children).flat()]),
             ) : null;
 
-            if (articleCaption) articleCaption.range = rangeOfELs(articleCaption.children);
-
             const tocArticle = newStdEL(
                 "TOCArticle",
                 {},
                 [
-                    articleTitle,
-                    ...(articleCaption ? [articleCaption] : []),
+                    articleTitle.setRangeFromChildren(),
+                    ...(articleCaption ? [articleCaption.setRangeFromChildren()] : []),
                 ],
             );
 
-            tocArticle.range = rangeOfELs(tocArticle.children);
-
             return {
-                value: tocArticle,
+                value: tocArticle.setRangeFromChildren(),
                 errors: [],
             };
         })
@@ -418,30 +403,24 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
                 title,
             );
 
-            supplProvisionLabel.range = rangeOfELs(supplProvisionLabel.children);
-
             const articleRange = articleRangeSentenceChildren.length > 0 ? newStdEL(
                 "ArticleRange",
                 {},
                 articleRangeSentenceChildren,
             ) : null;
 
-            if (articleRange) articleRange.range = rangeOfELs(articleRange.children);
-
             const tocSupplProvision = newStdEL(
                 "TOCSupplProvision",
                 {},
                 [
-                    supplProvisionLabel,
-                    ...(articleRange ? [articleRange] : []),
+                    supplProvisionLabel.setRangeFromChildren(),
+                    ...(articleRange ? [articleRange.setRangeFromChildren()] : []),
                     ...(children ? children.value.map(c => c.value) : []),
                 ],
             );
 
-            tocSupplProvision.range = rangeOfELs(tocSupplProvision.children);
-
             return {
-                value: tocSupplProvision,
+                value: tocSupplProvision.setRangeFromChildren(),
                 errors: [],
             };
         })
@@ -518,21 +497,17 @@ export const $toc: WithErrorRule<std.TOC> = factory
                 [headLine.line.contentText()],
             );
 
-            tocLabel.range = rangeOfELs(tocLabel.children);
-
             const toc = newStdEL(
                 "TOC",
                 {},
                 [
-                    tocLabel,
+                    tocLabel.setRangeFromChildren(),
                     ...(children ? children.value.map(c => c.value) : [])
                 ],
             );
 
-            toc.range = rangeOfELs(toc.children);
-
             return {
-                value: toc,
+                value: toc.setRangeFromChildren(),
                 errors: [],
             };
         })

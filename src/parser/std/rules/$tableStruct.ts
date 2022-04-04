@@ -6,7 +6,6 @@ import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
 import { AttrEntry, Control, Sentences, SentencesArray } from "../../../node/cst/inline";
-import { rangeOfELs } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
@@ -230,12 +229,11 @@ const $table: WithErrorRule<std.Table> = factory
                 else { assertNever(tableColumnLine.line.firstColumnIndicator); }
             }
             for (const tableRow of tableRows) {
-                tableRow.range = rangeOfELs(tableRow.children);
+                tableRow.setRangeFromChildren();
             }
             const table = newStdEL("Table", {}, tableRows);
-            table.range = rangeOfELs(table.children);
             return {
-                value: table,
+                value: table.setRangeFromChildren(),
                 errors,
             };
         })
@@ -248,9 +246,8 @@ export const $tableStruct: WithErrorRule<std.TableStruct> = factory
             .and(() => $table, "table")
             .action(({ table }) => {
                 const tableStruct = newStdEL("TableStruct", {}, [table.value]);
-                tableStruct.range = rangeOfELs(tableStruct.children);
                 return {
-                    value: tableStruct,
+                    value: tableStruct.setRangeFromChildren(),
                     errors: table.errors,
                 };
             })
@@ -319,9 +316,8 @@ export const $tableStruct: WithErrorRule<std.TableStruct> = factory
                         ...(remarks2 ? [remarks2.value] : []),
                     ],
                 );
-                tableStruct.range = rangeOfELs(tableStruct.children);
                 return {
-                    value: tableStruct,
+                    value: tableStruct.setRangeFromChildren(),
                     errors: [
                         ...(remarks1?.errors ?? []),
                         ...table.errors,

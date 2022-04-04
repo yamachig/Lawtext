@@ -6,7 +6,6 @@ import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
 import { Control } from "../../../node/cst/inline";
-import { rangeOfELs } from "../../../node/el";
 import $any, { anyToLines } from "./$any";
 
 export const arithFormulaControl = ":arith-formula:";
@@ -85,9 +84,8 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
                 {},
                 any.value,
             );
-            arithFormula.range = rangeOfELs(arithFormula.children);
             return {
-                value: arithFormula,
+                value: arithFormula.setRangeFromChildren(),
                 errors: [
                     ...any.errors,
                     ...(error instanceof ErrorMessage ? [error] : []),

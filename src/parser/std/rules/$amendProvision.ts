@@ -1,6 +1,6 @@
 import { factory } from "../factory";
 import { BlankLine, Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { isAmendProvisionSentence, isArticle, isFigStruct, isNewProvision, isTableStruct, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { ErrorMessage } from "../../cst/error";
@@ -12,7 +12,6 @@ import $preamble from "./$preamble";
 import $articleGroup from "./$articleGroup";
 import $article, { articleToLines } from "./$article";
 import { assertNever, NotImplementedError } from "../../../util";
-import { rangeOfELs } from "../../../node/el";
 import $figStruct, { figStructToLines } from "./$figStruct";
 import { isParagraphItem } from "../../out_ std --copy/lawUtil";
 import $tableStruct, { tableStructToLines } from "./$tableStruct";
@@ -65,6 +64,26 @@ export const amendProvisionToLines = (amendProvision: std.AmendProvision, indent
 };
 
 
+const $newProvisionsBlock = makeIndentBlockWithCaptureRule(
+    "$newProvisionsBlock",
+    (factory
+        .choice(c => c
+        // .or(() => $lawTitle) // TODO: Implement
+            .or(() => $preamble)
+        // .or(() => $toc) // TODO: Implement
+            .or(() => $articleGroup)
+            .or(() => $article)
+            .or(() => $paragraphItem)
+            .or(() => $figStruct)
+            .or(() => $tableStruct)
+        // .or(() => $list) // TODO: Implement
+        // .or(() => $appdxItem) // TODO: Implement
+        // .or(() => $structItem) // TODO: Implement
+        )
+    ),
+);
+
+
 export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
     .withName("amendProvision")
     .sequence(s => s
@@ -86,79 +105,33 @@ export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
             })
         , "amendProvisionSentence")
         .and(r => r
-            .zeroOrOne(r => r
-                .sequence(s => s
-                    .and(() => $optBNK_INDENT)
-                    .and(r => r
-                        .oneOrMore(r => r
-                            .choice(c => c
-                            // .or(() => $lawTitle) // TODO: Implement
-                                .or(() => $preamble)
-                            // .or(() => $toc) // TODO: Implement
-                                .or(() => $articleGroup)
-                                .or(() => $article)
-                                .or(() => $paragraphItem)
-                                .or(() => $figStruct)
-                                .or(() => $tableStruct)
-                            // .or(() => $list) // TODO: Implement
-                            // .or(() => $appdxItem) // TODO: Implement
-                            // .or(() => $structItem) // TODO: Implement
-                            )
-                        )
-                    , "children")
-                    .and(r => r
-                        .choice(c => c
-                            .or(() => $optBNK_DEDENT)
-                            .or(r => r
-                                .noConsumeRef(r => r
-                                    .sequence(s => s
-                                        .and(r => r.zeroOrMore(() => $blankLine))
-                                        .and(r => r.anyOne(), "unexpected")
-                                        .action(({ unexpected, newErrorMessage }) => {
-                                            return newErrorMessage(
-                                                "$amendProvision: この前にある改正文の終了時にインデント解除が必要です。",
-                                                unexpected.virtualRange,
-                                            );
-                                        })
-                                    )
-                                )
-                            )
-                        )
-                    , "error")
-                    .action(({ children, error }) => {
-                        const newProvision = newStdEL(
-                            "NewProvision",
-                            {},
-                            children.map(c => c.value),
-                        );
-                        newProvision.range = rangeOfELs(newProvision.children);
-                        return {
-                            value: [newProvision],
-                            errors: [
-                                ...children.map(c => c.errors).flat(),
-                                ...(error instanceof ErrorMessage ? [error] : []),
-                            ],
-                        };
-                    })
-                )
-            )
+            .zeroOrOne(() => $newProvisionsBlock)
         , "newProvisions")
-        .action(({ amendProvisionSentence, error, newProvisions }) => {
+        .action(({ amendProvisionSentence, newProvisions }) => {
+
+            const children: std.AmendProvision["children"] = [];
+            const errors: ErrorMessage[] = [];
+
+            children.push(amendProvisionSentence);
+
+            if (newProvisions) {
+                children.push(newStdEL(
+                    "NewProvision",
+                    {},
+                    newProvisions.value.map(c => c.value),
+                ).setRangeFromChildren());
+                errors.push(...newProvisions.errors);
+            }
+
+
             const amendProvision = newStdEL(
                 "AmendProvision",
                 {},
-                [
-                    amendProvisionSentence,
-                    ...(newProvisions?.value ?? []),
-                ],
+                children,
             );
-            amendProvision.range = rangeOfELs(amendProvision.children);
             return {
-                value: amendProvision,
-                errors: [
-                    ...(newProvisions?.errors ?? []),
-                    ...(error instanceof ErrorMessage ? [error] : []),
-                ],
+                value: amendProvision.setRangeFromChildren(),
+                errors,
             };
         })
     )
