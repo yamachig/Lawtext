@@ -1,6 +1,6 @@
 import { factory } from "../factory";
 import { AppdxItemHeadLine, BlankLine, Line, LineType } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { isAppdxItemTitle, newStdEL, appdxItemTags, appdxItemTitleTags, StdELType, isRelatedArticleNum, isRemarks, isFigStruct, isTableStruct, isNoteLikeStruct, isArithFormula, isParagraphItem } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
@@ -96,199 +96,60 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
 const appdxItemContentRule = {
     AppdxFig: (
         factory
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $figStruct)
-                                    .or(() => $tableStruct)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content")
-                .action(({ content }) => ({
-                    value: content.map(c => c.value),
-                    errors: content.map(c => c.errors).flat(),
-                })),
+            .choice(c => c
+                .or(() => $figStruct)
+                .or(() => $tableStruct)
             )
     ),
     AppdxStyle: (
         factory
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $styleStruct)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content1")
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $remarks)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content2")
-                .action(({ content1, content2 }) => ({
-                    value: [content1, content2].flat().map(c => c.value),
-                    errors: [content1, content2].flat().map(c => c.errors).flat(),
-                })),
+            .choice(c => c
+                .or(() => $styleStruct)
+                .or(() => $remarks)
             )
     ),
     AppdxFormat: (
         factory
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $formatStruct)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content1")
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $remarks)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content2")
-                .action(({ content1, content2 }) => ({
-                    value: [content1, content2].flat().map(c => c.value),
-                    errors: [content1, content2].flat().map(c => c.errors).flat(),
-                })),
+            .choice(c => c
+                .or(() => $formatStruct)
+                .or(() => $remarks)
             )
     ),
     AppdxTable: (
         factory
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $tableStruct)
-                                    .or(() => $paragraphItem)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content1")
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $remarks)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content2")
-                .action(({ content1, content2 }) => ({
-                    value: [content1, content2].flat().map(c => c.value),
-                    errors: [content1, content2].flat().map(c => c.errors).flat(),
-                })),
+            .choice(c => c
+                .or(() => $tableStruct)
+                .or(() => $paragraphItem)
+                .or(() => $remarks)
             )
     ),
     AppdxNote: (
         factory
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $noteStruct)
-                                    .or(() => $figStruct)
-                                    .or(() => $tableStruct)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content1")
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $remarks)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content2")
-                .action(({ content1, content2 }) => ({
-                    value: [content1, content2].flat().map(c => c.value),
-                    errors: [content1, content2].flat().map(c => c.errors).flat(),
-                })),
+            .choice(c => c
+                .or(() => $noteStruct)
+                .or(() => $figStruct)
+                .or(() => $tableStruct)
+                .or(() => $remarks)
             )
     ),
     Appdx: (
         factory
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $arithFormula)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content1")
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $remarks)
-                                )
-                            )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
-                    )
-                , "content2")
-                .action(({ content1, content2 }) => ({
-                    value: [content1, content2].flat().map(c => c.value),
-                    errors: [content1, content2].flat().map(c => c.errors).flat(),
-                })),
+            .choice(c => c
+                .or(() => $arithFormula)
+                .or(() => $remarks)
             )
     ),
 } as const;
 
-export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number]>(tag: TTag): WithErrorRule<StdELType<TTag>> => {
+export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number]>(
+    ruleName: string,
+    tag: TTag,
+): WithErrorRule<StdELType<TTag>> => {
 
-    const contentRule = appdxItemContentRule[tag];
+    const contentBlockRule = makeIndentBlockWithCaptureRule(
+        `${ruleName}ChildrenBlock`,
+        appdxItemContentRule[tag] as WithErrorRule<std.AppdxItem["children"][number]>,
+    );
 
     const ret = factory
         .withName("appdxItem")
@@ -306,31 +167,11 @@ export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number
                 })
             , "titleLine")
             .and(r => r.zeroOrMore(() => $blankLine))
-            .and(() => $optBNK_INDENT)
-            .and(() => contentRule, "content")
-            .and(r => r
-                .choice(c => c
-                    .or(() => $optBNK_DEDENT)
-                    .or(r => r
-                        .noConsumeRef(r => r
-                            .sequence(s => s
-                                .and(r => r.zeroOrMore(() => $blankLine))
-                                .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected, newErrorMessage }) => {
-                                    return newErrorMessage(
-                                        "appdxItem: この前にある別記類の終了時にインデント解除が必要です。",
-                                        unexpected.virtualRange,
-                                    );
-                                })
-                            )
-                        )
-                    )
-                )
-            , "error")
-            .action(({ titleLine, content, error }) => {
-            // for (let i = 0; i < children.value.length; i++) {
-            //     children.value[i].attr.Num = `${i + 1}`;
-            // }
+            .and(() => contentBlockRule, "content")
+            .action(({ titleLine, content }) => {
+
+                const children: StdELType<TTag>["children"][number][] = [];
+                const errors: ErrorMessage[] = [];
 
                 const title = titleLine.line.title.length > 0 ? newStdEL(
                     std.appdxItemTitleTags[std.appdxItemTags.indexOf(tag)],
@@ -338,28 +179,29 @@ export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number
                     titleLine.line.title,
                     titleLine.line.titleRange,
                 ) : null;
+                if (title) children.push(title);
+
                 const relatedArticleNum = titleLine.line.relatedArticleNum.length > 0 ? newStdEL(
                     "RelatedArticleNum",
                     {},
                     titleLine.line.relatedArticleNum,
                     titleLine.line.relatedArticleNumRange,
                 ) : null;
+                if (relatedArticleNum) children.push(relatedArticleNum);
+
+                children.push(...content.value.flat().map(v => v.value));
+                errors.push(...content.value.flat().map(v => v.errors).flat());
+                errors.push(...content.errors);
+
                 const appdxItem = newStdEL(
                     tag,
                     {},
-                    [
-                        ...(title ? [title] : []),
-                        ...(relatedArticleNum ? [relatedArticleNum] : []),
-                        ...content.value,
-                    ],
+                    children,
                 );
                 appdxItem.range = rangeOfELs(appdxItem.children);
                 return {
                     value: appdxItem,
-                    errors: [
-                        ...content.errors,
-                        ...(error instanceof ErrorMessage ? [error] : []),
-                    ],
+                    errors,
                 };
             })
         )
@@ -367,11 +209,11 @@ export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number
     return ret;
 };
 
-export const $appdxFig = makeAppdxItemRule("AppdxFig");
-export const $appdxTable = makeAppdxItemRule("AppdxTable");
-export const $appdxStyle = makeAppdxItemRule("AppdxStyle");
-export const $appdxNote = makeAppdxItemRule("AppdxNote");
-export const $appdxFormat = makeAppdxItemRule("AppdxFormat");
-export const $appdx = makeAppdxItemRule("Appdx");
+export const $appdxFig = makeAppdxItemRule("$appdxFig", "AppdxFig");
+export const $appdxTable = makeAppdxItemRule("$appdxTable", "AppdxTable");
+export const $appdxStyle = makeAppdxItemRule("$appdxStyle", "AppdxStyle");
+export const $appdxNote = makeAppdxItemRule("$appdxNote", "AppdxNote");
+export const $appdxFormat = makeAppdxItemRule("$appdxFormat", "AppdxFormat");
+export const $appdx = makeAppdxItemRule("$appdx", "Appdx");
 
 

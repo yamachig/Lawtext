@@ -313,6 +313,80 @@ describe("Test $appdx and appdxItemToLines", () => {
             },
         );
     });
+
+    it("Success with errors case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+:appdx:付録第一（第二十六条、第四十五条、第四十六条の五関係）　
+
+  !第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+!
+  :arith-formula:
+    <Fig src="./pict/001.jpg"/>
+
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+`;
+        const expectedErrorMessages: string[] = ["$appdxChildrenBlock: この部分をパースできませんでした。"];
+        const expectedRendered = `\
+# 付録第一（第二十六条、第四十五条、第四十六条の五関係）
+
+  :arith-formula:
+    <Fig src="./pict/001.jpg"/>
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Appdx",
+            attr: {},
+            children: [
+                {
+                    tag: "ArithFormulaNum",
+                    attr: {},
+                    children: ["付録第一"],
+                },
+                {
+                    tag: "RelatedArticleNum",
+                    attr: {},
+                    children: ["（第二十六条、第四十五条、第四十六条の五関係）"],
+                },
+                {
+                    tag: "ArithFormula",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "FigStruct",
+                            attr: { },
+                            children: [
+                                {
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.jpg" },
+                                    children: [],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $appdx.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = appdxItemToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });
 
 
