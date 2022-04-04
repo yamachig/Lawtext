@@ -167,8 +167,10 @@ export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number
                 })
             , "titleLine")
             .and(r => r.zeroOrMore(() => $blankLine))
-            .and(() => contentBlockRule, "content")
-            .action(({ titleLine, content }) => {
+            .and(r => r
+                .zeroOrOne(() => contentBlockRule)
+            , "contentBlock")
+            .action(({ titleLine, contentBlock }) => {
 
                 const children: StdELType<TTag>["children"][number][] = [];
                 const errors: ErrorMessage[] = [];
@@ -189,9 +191,11 @@ export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number
                 ) : null;
                 if (relatedArticleNum) children.push(relatedArticleNum);
 
-                children.push(...content.value.flat().map(v => v.value));
-                errors.push(...content.value.flat().map(v => v.errors).flat());
-                errors.push(...content.errors);
+                if (contentBlock) {
+                    children.push(...contentBlock.value.flat().map(v => v.value));
+                    errors.push(...contentBlock.value.flat().map(v => v.errors).flat());
+                    errors.push(...contentBlock.errors);
+                }
 
                 const appdxItem = newStdEL(
                     tag,

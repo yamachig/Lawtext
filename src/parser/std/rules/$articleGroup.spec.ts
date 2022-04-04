@@ -181,6 +181,58 @@ describe("Test $articleGroup and articleGroupToLines", () => {
         );
     });
 
+    it("Successcase", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+          第二款　外国人観光旅客の来訪の促進
+
+        第一節　通則
+
+!第○条　削除
+!
+第十三条　削除
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+          第二款　外国人観光旅客の来訪の促進
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Subsection",
+            attr: {
+                Delete: "false",
+                Hide: "false",
+                Num: "2"
+            },
+            children: [
+                {
+                    tag: "SubsectionTitle",
+                    attr: {},
+                    children: ["第二款　外国人観光旅客の来訪の促進"]
+                },
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $articleGroup.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = articleGroupToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
     it("Success with errors case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\

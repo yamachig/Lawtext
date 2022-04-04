@@ -1,6 +1,6 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
@@ -75,53 +75,38 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
     return lines;
 };
 
-
-const $remarksChildren: WithErrorRule<(std.Sentence | std.ParagraphItem)[]> = factory
-    .withName("remarksChildren")
-    .sequence(s => s
-        .and(r => r
-            .oneOrMore(r => r
-                .sequence(s => s
-                    .andOmit(r => r.zeroOrMore(() => $blankLine))
-                    .and(r => r
-                        .choice(c => c
-                            .orSequence(s => s
-                                .and(() => $paragraphItem, "paragraphItem")
-                                .action(({ paragraphItem }) => {
-                                    return {
-                                        value: [paragraphItem.value],
-                                        errors: paragraphItem.errors,
-                                    };
-                                })
-                            )
-                            .or(r => r
-                                .oneMatch(({ item }) => {
-                                    if (
-                                        item.type === LineType.OTH
-                                && item.line.type === LineType.OTH
-                                && item.line.sentencesArray.length > 0
-                                    ) {
-                                        return {
-                                            value: item.line.sentencesArray.flat().map(ss => ss.sentences).flat(),
-                                            errors: [],
-                                        };
-                                    } else {
-                                        return null;
-                                    }
-                                })
-                            )
-                        )
-                    )
-                )
+const $remarksChildrenBlock = makeIndentBlockWithCaptureRule(
+    "$remarksChildrenBlock",
+    (factory
+        .choice(c => c
+            .orSequence(s => s
+                .and(() => $paragraphItem, "paragraphItem")
+                .andOmit(r => r.assert(({ paragraphItem }) => std.isItem(paragraphItem.value)))
+                .action(({ paragraphItem }) => {
+                    return {
+                        value: [paragraphItem.value as std.Item],
+                        errors: paragraphItem.errors,
+                    };
+                })
             )
-        , "children")
-        .action(({ children }) => {
-            return {
-                value: children.map(c => c.value).flat(),
-                errors: children.map(c => c.errors).flat(),
-            };
-        })
-    );
+            .or(r => r
+                .oneMatch(({ item }) => {
+                    if (
+                        item.type === LineType.OTH
+                        && item.line.sentencesArray.length > 0
+                    ) {
+                        return {
+                            value: item.line.sentencesArray.flat().map(ss => ss.sentences).flat(),
+                            errors: [],
+                        };
+                    } else {
+                        return null;
+                    }
+                })
+            )
+        )
+    ),
+);
 
 export const $remarks: WithErrorRule<std.Remarks> = factory
     .withName("remarks")
@@ -148,31 +133,12 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
             })
         , "labelLine")
         .and(r => r.zeroOrMore(() => $blankLine))
-        .and(() => $optBNK_INDENT)
-        .and(() => $remarksChildren, "children")
-        .and(r => r
-            .choice(c => c
-                .or(() => $optBNK_DEDENT)
-                .or(r => r
-                    .noConsumeRef(r => r
-                        .sequence(s => s
-                            .and(r => r.zeroOrMore(() => $blankLine))
-                            .and(r => r.anyOne(), "unexpected")
-                            .action(({ unexpected, newErrorMessage }) => {
-                                return newErrorMessage(
-                                    "$remarks: この前にある備考の終了時にインデント解除が必要です。",
-                                    unexpected.virtualRange,
-                                );
-                            })
-                        )
-                    )
-                )
-            )
-        , "error")
-        .action(({ labelLine, children, error }) => {
-            // for (let i = 0; i < children.value.length; i++) {
-            //     children.value[i].attr.Num = `${i + 1}`;
-            // }
+        .and(() => $remarksChildrenBlock, "childrenBlock")
+        .action(({ labelLine, childrenBlock }) => {
+
+            const children: std.Remarks["children"] = [];
+            const errors: ErrorMessage[] = [];
+
             const remarksLabelSentenceChildren = labelLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
             const remarksLabel = remarksLabelSentenceChildren.length > 0 ? newStdEL(
                 "RemarksLabel",
@@ -180,20 +146,23 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                 remarksLabelSentenceChildren,
                 labelLine.virtualRange,
             ) : null;
+
+            if (remarksLabel) {
+                children.push(remarksLabel);
+            }
+
+            children.push(...childrenBlock.value.flat().map(v => v.value).flat());
+            errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+            errors.push(...childrenBlock.errors);
+
             const remarks = newStdEL(
                 "Remarks",
                 {},
-                [
-                    ...(remarksLabel ? [remarksLabel] : []),
-                    ...children.value
-                ],
+                children,
             );
             return {
                 value: remarks.setRangeFromChildren(),
-                errors: [
-                    ...children.errors,
-                    ...(error instanceof ErrorMessage ? [error] : []),
-                ],
+                errors,
             };
         })
     )

@@ -153,7 +153,9 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                 })
             , "titleLine")
             .and(r => r.zeroOrMore(() => $blankLine))
-            .and(sublistsBlockRule, "childrenBlock")
+            .and(r => r
+                .zeroOrOne(() => sublistsBlockRule)
+            , "childrenBlock")
             .action(({ titleLine, childrenBlock }) => {
                 const children: std.NoteLikeStruct["children"][number][] = [];
                 const errors: ErrorMessage[] = [];
@@ -171,8 +173,10 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                     children.push(noteLikeStructTitle);
                 }
 
-                children.push(...childrenBlock.value);
-                errors.push(...childrenBlock.errors);
+                if (childrenBlock) {
+                    children.push(...childrenBlock.value);
+                    errors.push(...childrenBlock.errors);
+                }
 
                 const noteLikeStruct = newStdEL(
                     tag,

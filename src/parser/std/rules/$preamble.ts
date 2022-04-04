@@ -7,6 +7,7 @@ import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { Control, Sentences } from "../../../node/cst/inline";
 import { assertNever, NotImplementedError } from "../../../util";
+import { ErrorMessage } from "../../cst/error";
 
 export const preambleControl = ":preamble:";
 
@@ -115,10 +116,20 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
             })
         )
         .and(r => r.zeroOrMore(() => $blankLine))
-        .and(() => $preambleChildrenBlock, "children")
-        .action(({ children: { value: children, errors } }) => {
-            for (let i = 0; i < children.length; i++) {
-                children[i].attr.Num = `${i + 1}`;
+        .and(r => r
+            .zeroOrOne(() => $preambleChildrenBlock)
+        , "childrenBlock")
+        .action(({ childrenBlock }) => {
+
+            const children: std.Preamble["children"] = [];
+            const errors: ErrorMessage[] = [];
+
+            if (childrenBlock) {
+                children.push(...childrenBlock.value);
+                errors.push(...childrenBlock.errors);
+                for (let i = 0; i < children.length; i++) {
+                    children[i].attr.Num = `${i + 1}`;
+                }
             }
             const preamble = newStdEL("Preamble", {}, children);
             return {

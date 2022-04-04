@@ -60,15 +60,19 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
             })
         , "labelLine")
         .and(r => r.zeroOrMore(() => $blankLine))
-        .and(() => $arithFormulaChildrenBlock, "childrenBlock")
+        .and(r => r
+            .zeroOrOne(() => $arithFormulaChildrenBlock)
+        , "childrenBlock")
         .action(({ childrenBlock }) => {
 
             const children: std.ArithFormula["children"] = [];
             const errors: ErrorMessage[] = [];
 
-            children.push(...childrenBlock.value.flat().map(v => v.value).flat());
-            errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
-            errors.push(...childrenBlock.errors);
+            if (childrenBlock) {
+                children.push(...childrenBlock.value.flat().map(v => v.value).flat());
+                errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+                errors.push(...childrenBlock.errors);
+            }
 
             const arithFormula = newStdEL(
                 "ArithFormula",

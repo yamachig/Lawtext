@@ -157,7 +157,9 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                 })
             , "titleLine")
             .and(r => r.zeroOrMore(() => $blankLine))
-            .and(() => $figStructChildrenBlock, "childrenBlock")
+            .and(r => r
+                .zeroOrOne(() => $figStructChildrenBlock)
+            , "childrenBlock")
             .action(({ titleLine, childrenBlock }) => {
 
                 const children: std.FigStruct["children"] = [];
@@ -175,9 +177,11 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                     children.push(figStructTitle);
                 }
 
-                children.push(...childrenBlock.value.flat().map(v => v.value).flat());
-                errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
-                errors.push(...childrenBlock.errors);
+                if (childrenBlock) {
+                    children.push(...childrenBlock.value.flat().map(v => v.value).flat());
+                    errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+                    errors.push(...childrenBlock.errors);
+                }
 
                 const figStruct = newStdEL(
                     "FigStruct",

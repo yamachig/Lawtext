@@ -145,6 +145,34 @@ describe("Test $preamble and preambleToLines", () => {
         );
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+:preamble:
+
+  （成年）
+第四条　年齢二十歳をもって、成年とする。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+:preamble:
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Preamble",
+            attr: {},
+            children: [],
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => $preamble.match(0, vlines, env),
+            el => preambleToLines(el, []),
+        );
+    });
+
     it("Success with errors case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
