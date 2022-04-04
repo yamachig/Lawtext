@@ -2,12 +2,11 @@ import { Line, LineType, OtherLine } from "../../../node/cst/line";
 import { isListOrSublist, isListOrSublistSentence, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
+import { makeDoubleIndentBlockWithCaptureRule, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory from "../factory";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT } from "../util";
 import { ErrorMessage } from "../../cst/error";
 import CST from "../toCSTSettings";
-import { assertNever } from "../../../util";
+import { assertNever, Diff } from "../../../util";
 
 export const listOrSublistToLines = (listOrSublist: std.ListOrSublist, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -44,11 +43,35 @@ export const makelistOrSublistRule = <
     : never
 >(
         tag: TTag,
-        nextSublistRule: WithErrorRule<std.ListOrSublist> | null,
+        nextSublistRule: WithErrorRule<Diff<std.ListOrSublist, std.List>> | null,
     ): WithErrorRule<
 TRet
 > => {
     const sentenceTag = std.listOrSublistSentenceTags[std.listOrSublistTags.indexOf(tag)];
+    const sublistsBlockRule = nextSublistRule
+        ? (
+            factory
+                .sequence(s => s
+                    .and(r => r
+                        .ref(
+                            makeDoubleIndentBlockWithCaptureRule(
+                                `$${tag.toLowerCase()}ChildrenBlock`,
+                                nextSublistRule,
+                            )
+                        )
+                    , "block")
+                    .action(({ block }) => {
+                        return {
+                            value: block.value.map(v => v.value),
+                            errors: [
+                                ...block.value.map(v => v.errors).flat(),
+                                ...block.errors,
+                            ]
+                        };
+                    })
+                )
+        )
+        : null;
     return factory
         .withName("listOrSublist")
         .sequence(s => s
@@ -64,80 +87,40 @@ TRet
                     }
                 })
             , "listOrSublistSentenceLine")
-            .and(r =>
-                nextSublistRule ? (
-                    r
-                        .zeroOrOne(r => r
+            .and(r => r
+                .zeroOrOne(
+                    sublistsBlockRule
+                        ? sublistsBlockRule
+                        : r
                             .sequence(s => s
-                                .and(() => $optBNK_INDENT)
-                                .and(() => $optBNK_INDENT)
-                                .and(r => r
-                                    .oneOrMore(r => r
-                                        .sequence(s => s
-                                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                                            .and(() => nextSublistRule)
-                                        )
-                                    )
-                                , "children")
-                                .and(r => r
-                                    .choice(c => c
-                                        .orSequence(s => s
-                                            .and(() => $optBNK_DEDENT)
-                                            .and(() => $optBNK_DEDENT)
-                                        )
-                                        .or(r => r
-                                            .noConsumeRef(r => r
-                                                .sequence(s => s
-                                                    .and(r => r.zeroOrMore(() => $blankLine))
-                                                    .and(r => r.anyOne(), "unexpected")
-                                                    .action(({ unexpected, newErrorMessage }) => {
-                                                        return newErrorMessage(
-                                                            "$listOrSublist: この前にある列記の終了時にインデント解除が必要です。",
-                                                            unexpected.virtualRange,
-                                                        );
-                                                    })
-                                                )
-                                            )
-                                        )
-                                    )
-                                , "error")
-                                .action(({ children, error }) => {
-                                    return {
-                                        value: children.map(c => c.value),
-                                        errors: [
-                                            ...children.map(c => c.errors).flat(),
-                                            ...(error instanceof ErrorMessage ? [error] : []),
-                                        ],
-                                    };
-                                })
-                            )
-                        )
-                ) : r
-                    .sequence(s => s
-                        .and(r => r.assert(() => true))
-                        .action(() => null)
-                    )
-            , "children")
-            .action(({ listOrSublistSentenceLine, error, children }) => {
+                                .and(r => r.assert(() => true))
+                                .action(() => null)
+                            ))
+            , "childrenBlock")
+            .action(({ listOrSublistSentenceLine, childrenBlock }) => {
+                const children: std.ListOrSublist["children"][number][] = [];
+                const errors: ErrorMessage[] = [];
+
                 const listOrSublistSentence = newStdEL(
                     sentenceTag,
                     {},
                     sentencesArrayToColumnsOrSentences(listOrSublistSentenceLine.line.sentencesArray),
                 );
+                children.push(listOrSublistSentence.setRangeFromChildren());
+
+                if (childrenBlock) {
+                    children.push(...childrenBlock.value);
+                    errors.push(...childrenBlock.errors);
+                }
+
                 const listOrSublist = newStdEL(
                     tag,
                     {},
-                    [
-                        listOrSublistSentence.setRangeFromChildren(),
-                        ...(children ? children.value : []),
-                    ],
+                    children,
                 );
                 return {
                     value: listOrSublist.setRangeFromChildren() as unknown as TRet,
-                    errors: [
-                        ...(children?.errors ?? []),
-                        ...(error instanceof ErrorMessage ? [error] : []),
-                    ],
+                    errors,
                 };
             })
         );
@@ -152,45 +135,3 @@ export const $listsOuter = makeIndentBlockWithCaptureRule(
     "$listsOuter",
     (factory.ref(() => $list)),
 );
-
-// export const _$listsOuter: WithErrorRule<std.List[]> = factory
-//     .withName("listsOuter")
-//     .sequence(s => s
-//         .and(() => $optBNK_INDENT)
-//         .and(r => r
-//             .oneOrMore(r => r
-//                 .sequence(s => s
-//                     .andOmit(r => r.zeroOrMore(() => $blankLine))
-//                     .and(() => $list)
-//                 )
-//             )
-//         , "children")
-//         .and(r => r
-//             .choice(c => c
-//                 .or(() => $optBNK_DEDENT)
-//                 .or(r => r
-//                     .noConsumeRef(r => r
-//                         .sequence(s => s
-//                             .and(r => r.zeroOrMore(() => $blankLine))
-//                             .and(r => r.anyOne(), "unexpected")
-//                             .action(({ unexpected, newErrorMessage }) => {
-//                                 return newErrorMessage(
-//                                     "$listsOuter: この前にある列記の終了時にインデント解除が必要です。",
-//                                     unexpected.virtualRange,
-//                                 );
-//                             })
-//                         )
-//                     )
-//                 )
-//             )
-//         , "error")
-//         .action(({ children, error }) => {
-//             return {
-//                 value: children.map(c => c.value),
-//                 errors: [
-//                     ...children.map(c => c.errors).flat(),
-//                     ...(error instanceof ErrorMessage ? [error] : []),
-//                 ],
-//             };
-//         })
-//     );

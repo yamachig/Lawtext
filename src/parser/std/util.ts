@@ -129,94 +129,94 @@ export const makeIndentBlockWithCaptureRule = <TValue>(
         );
 
 
-// export const makeDoubleIndentBlockWithCaptureRule = <TValue>(
-//     ruleName: string,
-//     ruleRepeatedOneOrMore: Rule<VirtualLine[], TValue, Env, Empty>,
-// ) => factory
-//         .withName(ruleName)
-//         .sequence(s => s
-//             .andOmit(() => $optBNK_INDENT)
-//             .andOmit(() => $optBNK_INDENT)
-//             .andOmit(r => r.zeroOrMore(() => $blankLine))
-//             .and(r => r
-//                 .oneOrMore(r => r
-//                     .sequence(s => s
-//                         .and(r => r
-//                             .choice(r => r
-//                                 .orSequence(r => r
-//                                     .and(() => ruleRepeatedOneOrMore, "success")
-//                                     .action(({ success }) => ({ success, errorLines: [] as VirtualLine[] }))
-//                                 )
-//                                 .orSequence(s => s
-//                                     .and(r => r
-//                                         .asSlice(r => r
-//                                             .choice(c => c
-//                                                 .or(() => $indentBlock)
-//                                                 .orSequence(s => s
-//                                                     .andOmit(r => r.nextIsNot(() => $optBNK_DEDENT))
-//                                                     .and(r => r.anyOne())
-//                                                 )
-//                                             )
-//                                         )
-//                                     , "captured")
-//                                     .action(({ captured }) => ({ success: null, errorLines: captured }))
-//                                 )
-//                             )
-//                         )
-//                         .andOmit(r => r.zeroOrMore(() => $blankLine))
-//                     )
-//                 )
-//             , "childrenAndErrors1")
-//             .andOmit(() => $optBNK_DEDENT)
-//             .and(r => r
-//                 .oneOrMore(r => r
-//                     .sequence(s => s
-//                         .and(r => r
-//                             .asSlice(r => r
-//                                 .choice(c => c
-//                                     .or(() => $indentBlock)
-//                                     .orSequence(s => s
-//                                         .andOmit(r => r.nextIsNot(() => $optBNK_DEDENT))
-//                                         .and(r => r.anyOne())
-//                                     )
-//                                 )
-//                             )
-//                         , "captured")
-//                         .andOmit(r => r.zeroOrMore(() => $blankLine))
-//                         .action(({ captured }) => ({ success: null, errorLines: captured }))
-//                     )
-//                 )
-//             , "childrenAndErrors2")
-//             .andOmit(() => $optBNK_DEDENT)
-//             .action(({ childrenAndErrors1, childrenAndErrors2, newErrorMessage }) => {
-//                 const childrenAndErrors = [...childrenAndErrors1, ...childrenAndErrors2];
-//                 for ( let i = 0; i < childrenAndErrors.length; i += 1 ) {
-//                     if (childrenAndErrors[i].success || i + 1 >= childrenAndErrors.length || childrenAndErrors[i + 1].success) continue;
-//                     childrenAndErrors[i].errorLines.push(...childrenAndErrors.splice(i + 1, 1)[0].errorLines);
-//                 }
+export const makeDoubleIndentBlockWithCaptureRule = <TValue>(
+    ruleName: string,
+    ruleRepeatedOneOrMore: Rule<VirtualLine[], TValue, Env, Empty>,
+) => factory
+        .withName(ruleName)
+        .sequence(s => s
+            .andOmit(() => $optBNK_INDENT)
+            .andOmit(() => $optBNK_INDENT)
+            .andOmit(r => r.zeroOrMore(() => $blankLine))
+            .and(r => r
+                .oneOrMore(r => r
+                    .sequence(s => s
+                        .and(r => r
+                            .choice(r => r
+                                .orSequence(r => r
+                                    .and(() => ruleRepeatedOneOrMore, "success")
+                                    .action(({ success }) => ({ success, errorLines: [] as VirtualLine[] }))
+                                )
+                                .orSequence(s => s
+                                    .and(r => r
+                                        .asSlice(r => r
+                                            .choice(c => c
+                                                .or(() => $indentBlock)
+                                                .orSequence(s => s
+                                                    .andOmit(r => r.nextIsNot(() => $optBNK_DEDENT))
+                                                    .and(r => r.anyOne())
+                                                )
+                                            )
+                                        )
+                                    , "captured")
+                                    .action(({ captured }) => ({ success: null, errorLines: captured }))
+                                )
+                            )
+                        )
+                        .andOmit(r => r.zeroOrMore(() => $blankLine))
+                    )
+                )
+            , "childrenAndErrors1")
+            .andOmit(() => $optBNK_DEDENT)
+            .and(r => r
+                .oneOrMore(r => r
+                    .sequence(s => s
+                        .and(r => r
+                            .asSlice(r => r
+                                .choice(c => c
+                                    .or(() => $indentBlock)
+                                    .orSequence(s => s
+                                        .andOmit(r => r.nextIsNot(() => $optBNK_DEDENT))
+                                        .and(r => r.anyOne())
+                                    )
+                                )
+                            )
+                        , "captured")
+                        .andOmit(r => r.zeroOrMore(() => $blankLine))
+                        .action(({ captured }) => ({ success: null, errorLines: captured }))
+                    )
+                )
+            , "childrenAndErrors2")
+            .andOmit(() => $optBNK_DEDENT)
+            .action(({ childrenAndErrors1, childrenAndErrors2, newErrorMessage }) => {
+                const childrenAndErrors = [...childrenAndErrors1, ...childrenAndErrors2];
+                for ( let i = 0; i < childrenAndErrors.length; i += 1 ) {
+                    if (childrenAndErrors[i].success || i + 1 >= childrenAndErrors.length || childrenAndErrors[i + 1].success) continue;
+                    childrenAndErrors[i].errorLines.push(...childrenAndErrors.splice(i + 1, 1)[0].errorLines);
+                }
 
-//                 const children: TValue[] = [];
-//                 const errors: ErrorMessage[] = [];
-//                 for (const { success, errorLines } of childrenAndErrors) {
-//                     if (success){
-//                         children.push(success);
-//                     }
-//                     if (errorLines.length > 0) {
-//                         errors.push(newErrorMessage(
-//                             `${ruleName}: この部分をパースできませんでした。`,
-//                             [
-//                                 errorLines[0].virtualRange[0],
-//                                 errorLines.slice(-1)[0].virtualRange[1],
-//                             ],
-//                         ));
-//                     }
-//                 }
-//                 return {
-//                     value: children,
-//                     errors,
-//                 };
-//             })
-//         );
+                const children: TValue[] = [];
+                const errors: ErrorMessage[] = [];
+                for (const { success, errorLines } of childrenAndErrors) {
+                    if (success){
+                        children.push(success);
+                    }
+                    if (errorLines.length > 0) {
+                        errors.push(newErrorMessage(
+                            `${ruleName}: この部分をパースできませんでした。`,
+                            [
+                                errorLines[0].virtualRange[0],
+                                errorLines.slice(-1)[0].virtualRange[1],
+                            ],
+                        ));
+                    }
+                }
+                return {
+                    value: children,
+                    errors,
+                };
+            })
+        );
 
 export const isSingleParentheses = (line: VirtualLine | Line | SentencesArray): __Parentheses | null => {
     let columns: SentencesArray = [];
