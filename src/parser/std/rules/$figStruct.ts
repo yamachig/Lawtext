@@ -1,5 +1,5 @@
 import { factory } from "../factory";
-import { Line, LineType, OtherLine } from "../../../node/cst/line";
+import { BlankLine, Line, LineType, OtherLine } from "../../../node/cst/line";
 import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { isFig, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
@@ -11,6 +11,28 @@ import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 
 export const figStructControl = ":fig-struct:";
+
+export const figToLines = (fig: std.Fig, indentTexts: string[]): Line[] => {
+    const lines: Line[] = [];
+
+    lines.push(new OtherLine(
+        null,
+        indentTexts.length,
+        indentTexts,
+        [],
+        [
+            new Sentences(
+                "",
+                null,
+                [],
+                [newStdEL("Sentence", {}, [new EL("__CapturedXML", {}, [fig])])],
+            ),
+        ],
+        CST.EOL,
+    ));
+
+    return lines;
+};
 
 export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -53,26 +75,12 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
         if (child.tag === "FigStructTitle") continue;
 
         if (child.tag === "Fig") {
-
-            lines.push(new OtherLine(
-                null,
-                childrenIndentTexts.length,
-                childrenIndentTexts,
-                [],
-                [
-                    new Sentences(
-                        "",
-                        null,
-                        [],
-                        [newStdEL("Sentence", {}, [new EL("__CapturedXML", {}, [child])])],
-                    ),
-                ],
-                CST.EOL,
-            ));
+            lines.push(...figToLines(child, childrenIndentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
 
         } else if (child.tag === "Remarks") {
-            const remarksLines = remarksToLines(child, childrenIndentTexts);
-            lines.push(...remarksLines);
+            lines.push(...remarksToLines(child, childrenIndentTexts));
+            lines.push(new BlankLine(null, CST.EOL));
         }
         else { assertNever(child); }
     }

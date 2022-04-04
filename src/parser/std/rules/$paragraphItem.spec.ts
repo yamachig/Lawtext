@@ -700,17 +700,11 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                             attr: {},
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: {},
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: {
-                                                src: "./pict/S39SE188-002.jpg"
-                                            },
-                                            children: []
-                                        }
-                                    ]
+                                    tag: "Fig",
+                                    attr: {
+                                        src: "./pict/S39SE188-002.jpg"
+                                    },
+                                    children: []
                                 }
                             ]
                         }

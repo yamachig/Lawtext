@@ -31,15 +31,9 @@ describe("Test $noteStruct and noteLikeStructToLines", () => {
                     attr: { },
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/S39SE188-002.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/S39SE188-002.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -90,15 +84,9 @@ describe("Test $noteStruct and noteLikeStructToLines", () => {
                     attr: { },
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/S39SE188-002.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/S39SE188-002.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -175,15 +163,9 @@ describe("Test $noteStruct and noteLikeStructToLines", () => {
                     attr: { },
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/S39SE188-002.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/S39SE188-002.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -291,15 +273,9 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
                     attr: { },
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/S39SE188-002.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/S39SE188-002.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -350,15 +326,9 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
                     attr: { },
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/S39SE188-002.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/S39SE188-002.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -435,15 +405,9 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
                     attr: { },
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/S39SE188-002.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/S39SE188-002.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -513,15 +477,9 @@ describe("Test $formatStruct and noteLikeStructToLines", () => {
                     attr: { },
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/S39SE188-002.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/S39SE188-002.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -572,15 +530,9 @@ describe("Test $formatStruct and noteLikeStructToLines", () => {
                     attr: { },
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/S39SE188-002.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/S39SE188-002.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -657,15 +609,9 @@ describe("Test $formatStruct and noteLikeStructToLines", () => {
                     attr: { },
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/S39SE188-002.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/S39SE188-002.jpg" },
+                            children: [],
                         },
                     ],
                 },

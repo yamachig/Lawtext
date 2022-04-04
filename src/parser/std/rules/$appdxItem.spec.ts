@@ -39,15 +39,9 @@ describe("Test $appdx and appdxItemToLines", () => {
                     attr: {},
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/001.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/001.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -111,15 +105,9 @@ describe("Test $appdx and appdxItemToLines", () => {
                     attr: {},
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/001.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/001.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -183,15 +171,9 @@ describe("Test $appdx and appdxItemToLines", () => {
                     attr: {},
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/001.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/001.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -262,15 +244,9 @@ describe("Test $appdx and appdxItemToLines", () => {
                     attr: {},
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/001.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/001.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -439,15 +415,9 @@ describe("Test $appdx and appdxItemToLines", () => {
                     attr: {},
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/001.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/001.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -925,15 +895,9 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1003,15 +967,9 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1081,15 +1039,9 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1166,15 +1118,9 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1264,15 +1210,9 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1342,15 +1282,9 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1420,15 +1354,9 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1505,15 +1433,9 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1799,15 +1721,9 @@ describe("Test $appdxNote and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1877,15 +1793,9 @@ describe("Test $appdxNote and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -1955,15 +1865,9 @@ describe("Test $appdxNote and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -2040,15 +1944,9 @@ describe("Test $appdxNote and appdxItemToLines", () => {
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },

@@ -38,15 +38,9 @@ describe("Test $supplProvisionAppdx and supplProvisionAppdxItemToLines", () => {
                     attr: {},
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/001.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/001.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -109,15 +103,9 @@ describe("Test $supplProvisionAppdx and supplProvisionAppdxItemToLines", () => {
                     attr: {},
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/001.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/001.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -180,15 +168,9 @@ describe("Test $supplProvisionAppdx and supplProvisionAppdxItemToLines", () => {
                     attr: {},
                     children: [
                         {
-                            tag: "FigStruct",
-                            attr: { },
-                            children: [
-                                {
-                                    tag: "Fig",
-                                    attr: { src: "./pict/001.jpg" },
-                                    children: [],
-                                },
-                            ],
+                            tag: "Fig",
+                            attr: { src: "./pict/001.jpg" },
+                            children: [],
                         },
                     ],
                 },
@@ -582,15 +564,9 @@ describe("Test $supplProvisionAppdxStyle and supplProvisionAppdxItemToLines", ()
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -659,15 +635,9 @@ describe("Test $supplProvisionAppdxStyle and supplProvisionAppdxItemToLines", ()
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
@@ -736,15 +706,9 @@ describe("Test $supplProvisionAppdxStyle and supplProvisionAppdxItemToLines", ()
                             attr: { },
                             children: [
                                 {
-                                    tag: "FigStruct",
-                                    attr: { },
-                                    children: [
-                                        {
-                                            tag: "Fig",
-                                            attr: { src: "./pict/001.pdf" },
-                                            children: [],
-                                        },
-                                    ],
+                                    tag: "Fig",
+                                    attr: { src: "./pict/001.pdf" },
+                                    children: [],
                                 },
                             ],
                         },
