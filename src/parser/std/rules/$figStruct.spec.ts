@@ -146,4 +146,53 @@ describe("Test $figStruct and figStructToLines", () => {
             },
         );
     });
+
+    it("Success with errors case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+:fig-struct:　
+
+  !第三条　私権の享有は、出生に始まる。
+    一  外国人は、法令又は条約の規定により禁止される場合を除き、私権を享有する。
+
+  !<Fig src="./pict/S27F03901000056-005.jpg"/>
+
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+`;
+        const expectedErrorMessages: string[] = ["$figStructChildrenBlock: この部分をパースできませんでした。"];
+        const expectedRendered = `\
+<Fig src="./pict/S27F03901000056-005.jpg"/>
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "FigStruct",
+            attr: {},
+            children: [
+                {
+                    tag: "Fig",
+                    attr: { src: "./pict/S27F03901000056-005.jpg" },
+                    children: [],
+                },
+            ],
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $figStruct.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = figStructToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });

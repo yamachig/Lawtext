@@ -1,6 +1,6 @@
 import { factory } from "../factory";
 import { Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, $optBNK_DEDENT, $optBNK_INDENT, WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import { isFig, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
@@ -114,6 +114,17 @@ export const $fig: WithErrorRule<std.Fig> = factory
     })
     ;
 
+
+const $figStructChildrenBlock = makeIndentBlockWithCaptureRule(
+    "$figStructChildrenBlock",
+    (factory
+        .choice(c => c
+            .or(() => $fig)
+            .or(() => $remarks)
+        )
+    ),
+);
+
 export const $figStruct: WithErrorRule<std.FigStruct> = factory
     .withName("figStruct")
     .choice(c => c
@@ -137,7 +148,6 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                 .oneMatch(({ item }) => {
                     if (
                         item.type === LineType.OTH
-                        && item.line.type === LineType.OTH
                         && item.line.controls.some(c => c.control === figStructControl)
                     ) {
                         return item;
@@ -147,35 +157,12 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                 })
             , "titleLine")
             .and(r => r.zeroOrMore(() => $blankLine))
-            .and(() => $optBNK_INDENT)
-            .and(r => r.zeroOrOne(() => $remarks), "remarks1")
-            .and(r => r.zeroOrMore(() => $blankLine))
-            .and(() => $fig, "fig")
-            .and(r => r.zeroOrMore(() => $blankLine))
-            .and(r => r.zeroOrOne(() => $remarks), "remarks2")
-            .and(r => r
-                .choice(c => c
-                    .or(() => $optBNK_DEDENT)
-                    .or(r => r
-                        .noConsumeRef(r => r
-                            .sequence(s => s
-                                .and(r => r.zeroOrMore(() => $blankLine))
-                                .and(r => r.anyOne(), "unexpected")
-                                .action(({ unexpected, newErrorMessage }) => {
-                                    return newErrorMessage(
-                                        "$figStruct: この前にある備考の終了時にインデント解除が必要です。",
-                                        unexpected.virtualRange,
-                                    );
-                                })
-                            )
-                        )
-                    )
-                )
-            , "error")
-            .action(({ titleLine, remarks1, fig, remarks2, error }) => {
-                // for (let i = 0; i < children.value.length; i++) {
-                //     children.value[i].attr.Num = `${i + 1}`;
-                // }
+            .and(() => $figStructChildrenBlock, "childrenBlock")
+            .action(({ titleLine, childrenBlock }) => {
+
+                const children: std.ArithFormula["children"] = [];
+                const errors: ErrorMessage[] = [];
+
                 const figStructTitleSentenceChildren = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
                 const figStructTitle = figStructTitleSentenceChildren.length > 0 ? newStdEL(
                     "FigStructTitle",
@@ -183,24 +170,24 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                     figStructTitleSentenceChildren,
                     titleLine.virtualRange,
                 ) : null;
+
+                if (figStructTitle) {
+                    children.push(figStructTitle);
+                }
+
+                children.push(...childrenBlock.value.flat().map(v => v.value).flat());
+                errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+                errors.push(...childrenBlock.errors);
+
                 const figStruct = newStdEL(
                     "FigStruct",
                     {},
-                    [
-                        ...(figStructTitle ? [figStructTitle] : []),
-                        ...(remarks1 ? [remarks1.value] : []),
-                        fig.value,
-                        ...(remarks2 ? [remarks2.value] : []),
-                    ],
+                    children,
                 );
+
                 return {
                     value: figStruct.setRangeFromChildren(),
-                    errors: [
-                        ...(remarks1?.errors ?? []),
-                        ...fig.errors,
-                        ...(remarks2?.errors ?? []),
-                        ...(error instanceof ErrorMessage ? [error] : []),
-                    ],
+                    errors,
                 };
             })
         )

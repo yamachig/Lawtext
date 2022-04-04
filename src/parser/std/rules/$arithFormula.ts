@@ -68,6 +68,7 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
 
             children.push(...childrenBlock.value.flat().map(v => v.value).flat());
             errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
+            errors.push(...childrenBlock.errors);
 
             const arithFormula = newStdEL(
                 "ArithFormula",
