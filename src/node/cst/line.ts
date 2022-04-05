@@ -92,6 +92,7 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
         indentDepth: number,
         indentTexts: string[],
         public mainTag: (typeof articleGroupTags)[number],
+        public controls: Controls,
         // public num: string,
         // public midSpace: string,
         public sentenceChildren: SentenceChildEL[],
@@ -103,8 +104,20 @@ export class ArticleGroupHeadLine extends IndentsLine<LineType.ARG> {
         return [
             // this.num,
             // this.midSpace,
+            ...this.controls.map(c => c.control + c.trailingSpace),
             ...sentenceChildrenToString(this.sentenceChildren),
         ].join("");
+    }
+    public get controlsRange(): [number, number] | null {
+        let start = null as number | null;
+        let end = null as number | null;
+        for (const control of this.controls) {
+            if (control.controlRange && control.trailingSpaceRange) {
+                start = Math.min(control.controlRange[0], start ?? control.controlRange[0]);
+                end = Math.max(control.trailingSpaceRange[1], end ?? control.trailingSpaceRange[1]);
+            }
+        }
+        return (start !== null && end !== null) ? [start, end] : null;
     }
     public get contentRange(): [number, number] | null {
         return rangeOfELs(this.sentenceChildren);
@@ -155,6 +168,7 @@ export class SupplProvisionHeadLine extends IndentsLine<LineType.SPR> {
         range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
+        public controls: Controls,
         public head: string,
         public openParen: string,
         public amendLawNum: string,
@@ -166,12 +180,24 @@ export class SupplProvisionHeadLine extends IndentsLine<LineType.SPR> {
     }
     public contentText(): string {
         return [
+            ...this.controls.map(c => c.control + c.trailingSpace),
             this.head,
             this.openParen,
             this.amendLawNum,
             this.closeParen,
             this.extractText,
         ].join("");
+    }
+    public get controlsRange(): [number, number] | null {
+        let start = null as number | null;
+        let end = null as number | null;
+        for (const control of this.controls) {
+            if (control.controlRange && control.trailingSpaceRange) {
+                start = Math.min(control.controlRange[0], start ?? control.controlRange[0]);
+                end = Math.max(control.trailingSpaceRange[1], end ?? control.trailingSpaceRange[1]);
+            }
+        }
+        return (start !== null && end !== null) ? [start, end] : null;
     }
     public get openParenRange(): [number, number] | null {
         return this.range ? [this.range[0], this.range[0] + this.openParen.length] : null;

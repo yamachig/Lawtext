@@ -204,12 +204,15 @@ export const toVirtualLines = (lines: Line[]) => {
             currentDepth = line.indentDepth;
             type = line.type;
         } else if (line.type === LineType.ARG || line.type === LineType.SPR) {
-            if (inTOCDepth === null) {
-                currentDepth = 0;
-                type = line.type;
-            } else {
+            if (inTOCDepth !== null) {
                 currentDepth = line.indentDepth;
                 type = line.type === LineType.ARG ? VirtualOnlyLineType.TAG : VirtualOnlyLineType.TSP;
+            } else if (line.controls.some(c => c.control === ":keep-indents:")) {
+                currentDepth = line.indentDepth;
+                type = line.type;
+            } else {
+                currentDepth = 0;
+                type = line.type;
             }
         } else {
             currentDepth = line.indentDepth;

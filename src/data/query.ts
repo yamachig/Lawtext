@@ -190,7 +190,7 @@ export class Query<
                     if (value === undefined) {
                         throw TypeError(`Query.assign: the mapped function (${func}) returned an undefined. Please check the definition of the function. (First occurance: ${item})`);
                     }
-                    yield { ...item, ...value };
+                    yield Object.setPrototypeOf({ ...item, ...value }, Object.getPrototypeOf(item));
                 }
             })(),
             criteria as QueryCriteria<TItem> | null,
@@ -777,7 +777,7 @@ export class LawQuery<
                         console.error(e);
                     }
                     if (!ensure || document !== null) {
-                        yield { ...item, document };
+                        yield Object.setPrototypeOf({ ...item, document }, Object.getPrototypeOf(item));
                     }
                 }
             })(),

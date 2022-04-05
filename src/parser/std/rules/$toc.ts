@@ -46,6 +46,7 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
             indentTexts.length,
             indentTexts,
             mainTag,
+            [],
             mergeAdjacentTexts([
                 ...(articleGroupTitle?.children ?? []),
                 ...(
@@ -97,6 +98,7 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
             null,
             indentTexts.length,
             indentTexts,
+            [],
             sentenceChildrenToString([
                 ...(supplProvisionLabel?.children ?? []),
                 ...(articleRange?.children ?? []),

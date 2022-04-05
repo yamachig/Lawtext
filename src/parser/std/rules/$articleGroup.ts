@@ -12,6 +12,7 @@ import $article, { articleToLines } from "./$article";
 import { parseNamedNum } from "../../../law/num";
 import { appdxItemToLines } from "./$appdxItem";
 import { ErrorMessage } from "../../cst/error";
+import { Control } from "../../../node/cst/inline";
 
 export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -20,17 +21,26 @@ export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[])
     for (const child of el.children) {
 
         if (std.isArticleGroupTitle(child)) {
-            const titleIndentDepth = indentTexts.length + std.articleGroupTitleTags.indexOf(child.tag) + 2;
-            const titleIndentTexts = [
-                ...indentTexts,
-                ...[...range(0, titleIndentDepth)].map(() => CST.INDENT)
-            ];
+            const titleIndentDepth = indentTexts.length === 0
+                ? std.articleGroupTitleTags.indexOf(child.tag) + 2
+                : indentTexts.length;
+            const titleIndentTexts = indentTexts.length === 0
+                ? [...range(0, titleIndentDepth)].map(() => CST.INDENT)
+                : indentTexts;
 
             lines.push(new ArticleGroupHeadLine(
                 null,
                 titleIndentDepth,
                 titleIndentTexts,
                 el.tag,
+                indentTexts.length == 0 ? [] : [
+                    new Control(
+                        "keep-indents",
+                        null,
+                        "",
+                        null,
+                    )
+                ],
                 mergeAdjacentTexts(child.children),
                 CST.EOL,
             ));

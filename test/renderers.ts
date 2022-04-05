@@ -255,117 +255,125 @@ const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
 
 describe("Test Renderes", () => {
 
-    it("Render and Parse Lawtext", async () => {
+    const lawNums = [
+        // "平成十二年政令第五百五十六号",
+        "昭和六十三年法律第九十八号",
+        // "平成十五年厚生労働省令第百四十七号",
+        // "昭和四十七年労働省令第八号",
+    ];
+
+    for (const lawNum of lawNums) {
+        it(`Render and Parse Lawtext: ${lawNum}`, async () => {
         // const [list, listByLawnum] = await getLawList();
         // chai.assert(false);
-        const lawNum = "平成十六年厚生労働省令第五十一号";
 
-        const lawInfo = await loader.getLawInfoByLawNum(lawNum);
-        if (lawInfo === null) throw Error("LawInfo not found");
-        const origXML = await loader.loadLawXMLByInfo(lawInfo);
-        if (origXML === null) throw new Error(`XML cannot be fetched: ${lawNum}`);
-        console.log(`Temporary directory: "${tempDir}"`);
-        const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
-        const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);
-        const tempParsedXml = path.join(tempDir, `${lawNum}.parsed.xml`);
-        await promisify(fsExtra.ensureDir)(tempDir);
+            const lawInfo = await loader.getLawInfoByLawNum(lawNum);
+            if (lawInfo === null) throw Error("LawInfo not found");
+            const origXML = await loader.loadLawXMLByInfo(lawInfo);
+            if (origXML === null) throw new Error(`XML cannot be fetched: ${lawNum}`);
+            console.log(`${TERMC.CYAN}Temporary directory: "${tempDir}"${TERMC.DEFAULT}`);
+            const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
+            const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);
+            const tempParsedXml = path.join(tempDir, `${lawNum}.parsed.xml`);
+            await promisify(fsExtra.ensureDir)(tempDir);
 
-        const origDOM = domParser.parseFromString(origXML);
-        await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
+            const origDOM = domParser.parseFromString(origXML);
+            await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
 
-        const origEL = xmlToJson(origXML);
+            const origEL = xmlToJson(origXML);
 
-        let lawtext;
-        try {
-            lawtext = renderLawtext(origEL);
-        } catch (e) {
-            const msg = [
-                `Original XML: "${tempOrigXml}"`,
-                "",
-            ].join("\r\n");
-            console.error(msg);
-            throw e;
-        }
+            let lawtext;
+            try {
+                lawtext = renderLawtext(origEL);
+            } catch (e) {
+                const msg = [
+                    `${TERMC.CYAN}Original XML: "${tempOrigXml}"${TERMC.DEFAULT}`,
+                    "",
+                ].join("\r\n");
+                console.error(msg);
+                throw e;
+            }
 
-        await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });
+            await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });
 
-        let parsedEL;
-        let errors: ErrorMessage[];
-        try {
-            const result = parse(lawtext);
-            parsedEL = result.value;
-            const ignoreErrorMessages = [
-                "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
-                "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
-            ];
-            errors = result.errors.filter(e => !ignoreErrorMessages.includes(e.message));
-            const allLines = lawtext.split("\n");
-            chai.assert(
-                errors.length === 0,
-                `\
+            let parsedEL;
+            let errors: ErrorMessage[];
+            try {
+                const result = parse(lawtext);
+                parsedEL = result.value;
+                const ignoreErrorMessages = [
+                    "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
+                    "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
+                ];
+                errors = result.errors.filter(e => !ignoreErrorMessages.includes(e.message));
+                const allLines = lawtext.split("\n");
+                chai.assert(
+                    errors.length === 0,
+                    `\
 ${errors.slice(0, 7).map(e => e.toString(allLines)).join("\n\n")}
 ${errors.length > 7 ? "\n... more errors ..." : ""}
 `);
-            if (parsedEL === undefined) return;
-        } catch (e) {
-            const msg = [
-                `Original XML: "${tempOrigXml}"`,
-                `Rendered Lawtext: "${tempRenderedLawtext}"`,
-                "",
-            ].join("\r\n");
-            console.error(msg);
-            throw e;
-        }
+                if (parsedEL === undefined) return;
+            } catch (e) {
+                const msg = [
+                    `Original XML: "${tempOrigXml}"`,
+                    `Rendered Lawtext: "${tempRenderedLawtext}"`,
+                    "",
+                ].join("\r\n");
+                console.error(msg);
+                throw e;
+            }
 
-        analyze(parsedEL);
+            analyze(parsedEL);
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        const parsedXML = prettifyXml(outerXML(parsedEL)) as string;
-        const parsedDOM = domParser.parseFromString(parsedXML);
-        await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            const parsedXML = prettifyXml(outerXML(parsedEL)) as string;
+            const parsedDOM = domParser.parseFromString(parsedXML);
+            await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });
 
-        const d = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.WarningAsNoDiff);
-        const table: string[][] = [];
+            const d = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.WarningAsNoDiff);
+            const table: string[][] = [];
 
-        const diffData = makeDiffData(d, origDOM, parsedDOM);
+            const diffData = makeDiffData(d, origDOM, parsedDOM);
 
-        for (const ditem of diffData) {
-            if (ditem.type === LawDiffType.ElementMismatch) {
-                table.push(...makeElementMismatchTable(ditem));
+            for (const ditem of diffData) {
+                if (ditem.type === LawDiffType.ElementMismatch) {
+                    table.push(...makeElementMismatchTable(ditem));
 
-            } else if (ditem.type === LawDiffType.ElementChange) {
-                table.push(...makeElementChangeTable(ditem));
+                } else if (ditem.type === LawDiffType.ElementChange) {
+                    table.push(...makeElementChangeTable(ditem));
 
-            } else if (ditem.type === LawDiffType.NoDiff) {
-                table.push(...makeElementNoDiffTable(ditem));
+                } else if (ditem.type === LawDiffType.NoDiff) {
+                    table.push(...makeElementNoDiffTable(ditem));
 
-            } else { util.assertNever(ditem); }
-        }
+                } else { util.assertNever(ditem); }
+            }
 
-        if (d.mostSeriousStatus !== ProblemStatus.NoProblem) {
-            const legend = `Legend: Error(${TERMC.YELLOW}*Change${TERMC.DEFAULT}, ${TERMC.GREEN}+Add${TERMC.DEFAULT}, ${TERMC.MAGENTA}-Remove${TERMC.DEFAULT}), ${TERMC.CYAN}Warning${TERMC.DEFAULT}, ${TERMC.BLUE}NoProblem${TERMC.DEFAULT}`;
-            const mssStr = (d.mostSeriousStatus === ProblemStatus.Error)
-                ? `${TERMC.RED}Error${TERMC.DEFAULT}`
-                : (d.mostSeriousStatus === ProblemStatus.Warning)
-                    ? `${TERMC.CYAN}Warning${TERMC.DEFAULT}`
-                    : util.assertNever(d.mostSeriousStatus);
-            const msg = [
-                legend,
-                `Original XML: "${tempOrigXml}"`,
-                `Rendered Lawtext: "${tempRenderedLawtext}"`,
-                `Parsed XML: "${tempParsedXml}"`,
-                `Most serious status: ${mssStr}`,
-                toTableText(table, LIMIT_WIDTH),
-                legend,
-                `View XML: "${tempOrigXml}"`,
-                `Rendered Lawtext: "${tempRenderedLawtext}"`,
-                `Parsed XML: "${tempParsedXml}"`,
-                `Most serious status: ${mssStr}`,
-                "",
-            ].join("\r\n");
+            if (d.mostSeriousStatus !== ProblemStatus.NoProblem) {
+                const legend = `Legend: Error(${TERMC.YELLOW}*Change${TERMC.DEFAULT}, ${TERMC.GREEN}+Add${TERMC.DEFAULT}, ${TERMC.MAGENTA}-Remove${TERMC.DEFAULT}), ${TERMC.CYAN}Warning${TERMC.DEFAULT}, ${TERMC.BLUE}NoProblem${TERMC.DEFAULT}`;
+                const mssStr = (d.mostSeriousStatus === ProblemStatus.Error)
+                    ? `${TERMC.RED}Error${TERMC.DEFAULT}`
+                    : (d.mostSeriousStatus === ProblemStatus.Warning)
+                        ? `${TERMC.CYAN}Warning${TERMC.DEFAULT}`
+                        : util.assertNever(d.mostSeriousStatus);
+                const msg = [
+                    legend,
+                    `Original XML: "${tempOrigXml}"`,
+                    `Rendered Lawtext: "${tempRenderedLawtext}"`,
+                    `Parsed XML: "${tempParsedXml}"`,
+                    `Most serious status: ${mssStr}`,
+                    toTableText(table, LIMIT_WIDTH),
+                    legend,
+                    `View XML: "${tempOrigXml}"`,
+                    `Rendered Lawtext: "${tempRenderedLawtext}"`,
+                    `Parsed XML: "${tempParsedXml}"`,
+                    `Most serious status: ${mssStr}`,
+                    "",
+                ].join("\r\n");
 
-            chai.assert(false, `\x1b\r\n\r\n[39m${msg}`);
-        }
+                chai.assert(false, `\x1b\r\n\r\n[39m${msg}`);
+            }
 
-    });
+        });
+    }
 });
