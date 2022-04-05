@@ -894,7 +894,214 @@ describe("Test $appdxTable and appdxItemToLines", () => {
 
   # 八　カカオ脂及びこれに類似するもの
 `.replace(/\r?\n/g, "\r\n");
-        const expectedValue = {};
+        const expectedValue = {
+            tag: "AppdxTable",
+            attr: {},
+            children: [
+                {
+                    tag: "AppdxTableTitle",
+                    attr: {},
+                    children: ["別表"]
+                },
+                {
+                    tag: "RelatedArticleNum",
+                    attr: {},
+                    children: ["（第一条、第三十四条関係）"]
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["一"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["アラビアゴム"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["二"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["アラビアゴム末"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["三"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["亜硫酸水素ナトリウム"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["四"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["エチレンジアミン"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["五"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["エーテル（麻酔用エーテルを除く。）"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["六"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["オリブ油"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["七"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["オレンジ油"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: ["八"]
+                        },
+                        {
+                            tag: "ItemSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["カカオ脂及びこれに類似するもの"]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
 
         testLawtextToStd(
             lawtextWithMarker,

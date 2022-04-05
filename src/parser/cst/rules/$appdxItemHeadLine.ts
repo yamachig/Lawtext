@@ -68,7 +68,14 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
             .zeroOrOne(() => $sentenceChildren)
         , "tail")
         .and(() => $_EOL, "lineEndText")
-        .action(({ range, indentsStruct, tagControl: { tag, control }, tail, lineEndText }) => {
+        .action(({ range, indentsStruct, tagControl: { tag, control }, tail, lineEndText, text }) => {
+            if (text().includes("オリブ")) {
+                console.log(text());
+                console.log(tag);
+                console.log(control);
+                console.log(tail);
+                console.log(appdxItemTitlePtn.AppdxStyle.exec(text()));
+            }
             const inline = mergeAdjacentTexts(tail?.value ?? []);
             const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
             const [title, relatedArticleNum] = (

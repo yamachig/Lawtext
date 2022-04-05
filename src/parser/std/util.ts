@@ -101,6 +101,11 @@ export const makeIndentBlockWithCaptureRule = <TValue>(
             , "childrenAndErrors")
             .andOmit(() => $optBNK_DEDENT)
             .action(({ childrenAndErrors, newErrorMessage }) => {
+                // const err = childrenAndErrors.filter(c => !c.success);
+                // if (err.length > 5) {
+                //     console.log(JSON.stringify(err.slice(0, 5), null, 2));
+                // }
+
                 for ( let i = 0; i < childrenAndErrors.length; i += 1 ) {
                     while (!childrenAndErrors[i].success && i + 1 < childrenAndErrors.length && !childrenAndErrors[i + 1].success) {
                         childrenAndErrors[i].errorLines.push(...childrenAndErrors.splice(i + 1, 1)[0].errorLines);
