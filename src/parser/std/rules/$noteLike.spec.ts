@@ -359,6 +359,58 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
+:style-struct:
+  <Fig src=""/>
+
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+:style-struct:
+  <Fig src=""/>
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "StyleStruct",
+            attr: {},
+            children: [
+                {
+                    tag: "Style",
+                    attr: { },
+                    children: [
+                        {
+                            tag: "Fig",
+                            attr: { src: "" },
+                            children: [],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $styleStruct.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = noteLikeStructToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
 :style-struct:　
   備考
     備考文１

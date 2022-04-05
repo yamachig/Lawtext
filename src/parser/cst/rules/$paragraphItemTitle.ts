@@ -71,6 +71,15 @@ export const $paragraphItemTitle: WithErrorRule<string> = factory
         .and(r => r.zeroOrOne(r => r.seqEqual("○")))
         .and(r => r
             .choice(c => c
+                .orSequence(s => s
+                    .and(r => r
+                        .choice(c => c
+                            .or(r => r.regExp(/^[0123456789０１２３４５６７８９]+/))
+                            .or(r => r.regExp(/^[a-zA-Zａ-ｚＡ-Ｚ]+/)),
+                        ),
+                    )
+                    .and(r => r.oneOf(".．")),
+                )
                 .or(r => r.regExp(/^[0123456789０１２３４５６７８９]+/))
                 .or(r => r.oneOf(irohaChars))
                 .or(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
