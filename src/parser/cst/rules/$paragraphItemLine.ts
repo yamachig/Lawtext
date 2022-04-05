@@ -10,6 +10,7 @@ import { $anonymItemControl, $anonymParagraphControl, $anonymSubitem10Control, $
 import { Env, initialEnv } from "../env";
 import { MatchResult } from "generic-parser/lib/core";
 import { ErrorMessage } from "../error";
+import $sentenceChildren from "./$sentenceChildren";
 
 export const { $ranges: $paragraphItemRanges } = makeRangesRule(() => $paragraphItemTitle);
 export const { $ranges: $stdParagraphRange } = makeRangesRule(() => $stdParagraphNum);
@@ -30,12 +31,41 @@ export const paragraphItemTitleMatch = Object.fromEntries(Object.entries(paragra
     const env = initialEnv({});
     return [
         tag,
-        (target: string) => $rule.match(0, target, env),
+        (target: string) => {
+            const m = $rule.match(0, target, env);
+            if (m.ok && m.nextOffset === target.length) {
+                return m;
+            } else {
+                return {
+                    ok: false,
+                    offset: m.ok ? m.nextOffset : 0,
+                    expected: "EOL",
+                    prevFail: null,
+                };
+            }
+        },
     ];
 })) as {[tag in keyof typeof paragraphItemTitleRule]: (target: string) => MatchResult<{
     value: [string, string][];
     errors: ErrorMessage[];
 }, Env>};
+
+export const unknownParagraphItemTitleMatch = (() => {
+    const env = initialEnv({});
+    return (target: string) => {
+        const m = $paragraphItemRanges.match(0, target, env);
+        if (m.ok && m.nextOffset === target.length) {
+            return m;
+        } else {
+            return {
+                ok: false,
+                offset: m.ok ? m.nextOffset : 0,
+                expected: "EOL",
+                prevFail: null,
+            };
+        }
+    };
+})();
 
 
 export const $paragraphItemLine: WithErrorRule<ParagraphItemLine> = factory
@@ -134,6 +164,10 @@ export const $paragraphItemLine: WithErrorRule<ParagraphItemLine> = factory
                                                 ))
                                                 .action(() => "Subitem3" as const)
                                             )
+                                            .orSequence(s => s
+                                                .and(r => r.assert(() => true))
+                                                .action(() => null)
+                                            )
                                         )
                                     , "tag")
                                     .action(({ tag, control }) => {
@@ -182,6 +216,73 @@ export const $paragraphItemLine: WithErrorRule<ParagraphItemLine> = factory
                         indentsStruct.value.indentTexts,
                         tag,
                         tagControl ? [tagControl.control] : [],
+                        title.value,
+                        contentStruct?.midSpace ?? "",
+                        contentStruct?.columns.value ?? [],
+                        lineEndText,
+                    ),
+                    errors,
+                };
+            })
+        )
+        .orSequence(s => s
+            .and(() => $indents, "indentsStruct")
+            .and(r => r
+                .sequence(s => s
+                    .and(r => r
+                        .choice(c => c
+                            .or(() => $paragraphControl)
+                            .or(() => $itemControl)
+                            .or(() => $subitem1Control)
+                            .or(() => $subitem2Control)
+                            .or(() => $subitem3Control)
+                            .or(() => $subitem4Control)
+                            .or(() => $subitem5Control)
+                            .or(() => $subitem6Control)
+                            .or(() => $subitem7Control)
+                            .or(() => $subitem8Control)
+                            .or(() => $subitem9Control)
+                            .or(() => $subitem10Control)
+                        )
+                    )
+                )
+            , "tagControl")
+            .and(r => r
+                .sequence(s => s
+                    .and(() => $sentenceChildren, "title")
+                    .action(({ title, text }) => {
+                        return {
+                            value: text(),
+                            errors: title.errors,
+                        };
+                    })
+                )
+            , "title")
+            .and(r => r
+                .zeroOrOne(r => r
+                    .sequence(c => c
+                        .and(() => $__, "midSpace")
+                        .and(() => $columnsOrSentences, "columns")
+                        .action(({ midSpace, columns }) => {
+                            return { midSpace, columns };
+                        })
+                    )
+                )
+            , "contentStruct")
+            .and(() => $_EOL, "lineEndText")
+            .action(({ range, indentsStruct, tagControl, title, contentStruct, lineEndText }) => {
+                const errors = [
+                    ...indentsStruct.errors,
+                    ...title.errors,
+                    ...(contentStruct?.columns.errors ?? []),
+                ];
+                return {
+                    value: new ParagraphItemLine(
+                        range(),
+                        indentsStruct.value.indentDepth,
+                        indentsStruct.value.indentTexts,
+                        tagControl.tag,
+                        [tagControl.control],
                         title.value,
                         contentStruct?.midSpace ?? "",
                         contentStruct?.columns.value ?? [],

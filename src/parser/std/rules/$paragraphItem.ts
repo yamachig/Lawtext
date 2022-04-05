@@ -18,7 +18,7 @@ import { $list, listOrSublistToLines } from "./$list";
 import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $figStruct, { figStructToLines } from "./$figStruct";
 import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
-import { paragraphItemTitleMatch, paragraphItemTitleRule } from "../../cst/rules/$paragraphItemLine";
+import { paragraphItemTitleMatch, paragraphItemTitleRule, unknownParagraphItemTitleMatch } from "../../cst/rules/$paragraphItemLine";
 import { anonymParagraphItemControls, autoTagControls, paragraphItemControls } from "../../cst/rules/$tagControl";
 import { isParagraphItem } from "../../out_ std --copy/lawUtil";
 
@@ -157,6 +157,7 @@ export const paragraphItemToLines = (
             CST.EOL,
         ));
     } else if (Title.length > 0) {
+        const paragraphItemTitleStr = sentenceChildrenToString(Title);
         lines.push(new ParagraphItemLine(
             null,
             indentTexts.length,
@@ -165,12 +166,13 @@ export const paragraphItemToLines = (
             (
                 (
                     el.tag === defaultTag
+                    && unknownParagraphItemTitleMatch(paragraphItemTitleStr).ok
                 )
                     ? []
                     : (
                         (el.tag in paragraphItemTitleRule)
                         && (
-                            paragraphItemTitleMatch[el.tag as keyof typeof paragraphItemTitleRule]( sentenceChildrenToString(ParagraphItemTitle)).ok
+                            paragraphItemTitleMatch[el.tag as keyof typeof paragraphItemTitleRule](paragraphItemTitleStr).ok
                         )
                     )
                         ? [
@@ -190,7 +192,7 @@ export const paragraphItemToLines = (
                             )
                         ]
             ),
-            sentenceChildrenToString(Title),
+            paragraphItemTitleStr,
             (sentencesArray.length === 0) ? "" : CST.MARGIN,
             sentencesArray,
             CST.EOL,

@@ -80,12 +80,10 @@ export const $paragraphItemTitle: WithErrorRule<string> = factory
                     )
                     .and(r => r.oneOf(".．")),
                 )
-                .or(r => r.regExp(/^[0123456789０１２３４５６７８９]+/))
-                .or(r => r.oneOf(irohaChars))
-                .or(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
-                .or(r => r.regExp(/^[a-zA-Zａ-ｚＡ-Ｚ]+/))
                 .orSequence(s => s
-                    .and(r => r.oneOf("(（"))
+                    .and(r => r
+                        .zeroOrOne(r => r.oneOf("(（"))
+                    )
                     .and(r => r
                         .choice(c => c
                             .or(r => r.regExp(/^[0123456789０１２３４５６７８９]+/))
@@ -96,6 +94,10 @@ export const $paragraphItemTitle: WithErrorRule<string> = factory
                     )
                     .and(r => r.oneOf(")）")),
                 )
+                .or(r => r.regExp(/^[0123456789０１２３４５６７８９]+/))
+                .or(r => r.oneOf(irohaChars))
+                .or(r => r.regExp(/^[〇一二三四五六七八九十百千]+/))
+                .or(r => r.regExp(/^[a-zA-Zａ-ｚＡ-Ｚ]+/))
                 .or(r => r.oneOf("⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿"))
                 .or(r => r.oneOf("⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇")),
             ),
