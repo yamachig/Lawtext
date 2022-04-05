@@ -170,7 +170,7 @@ export const makeDoubleIndentBlockWithCaptureRule = <TValue>(
             , "childrenAndErrors1")
             .andOmit(() => $optBNK_DEDENT)
             .and(r => r
-                .oneOrMore(r => r
+                .zeroOrMore(r => r
                     .sequence(s => s
                         .and(r => r
                             .asSlice(r => r
@@ -187,10 +187,10 @@ export const makeDoubleIndentBlockWithCaptureRule = <TValue>(
                         .action(({ captured }) => ({ success: null, errorLines: captured }))
                     )
                 )
-            , "childrenAndErrors2")
+            , "errors2")
             .andOmit(() => $optBNK_DEDENT)
-            .action(({ childrenAndErrors1, childrenAndErrors2, newErrorMessage }) => {
-                const childrenAndErrors = [...childrenAndErrors1, ...childrenAndErrors2];
+            .action(({ childrenAndErrors1, errors2, newErrorMessage }) => {
+                const childrenAndErrors = [...childrenAndErrors1, ...errors2];
                 for ( let i = 0; i < childrenAndErrors.length; i += 1 ) {
                     if (childrenAndErrors[i].success || i + 1 >= childrenAndErrors.length || childrenAndErrors[i + 1].success) continue;
                     childrenAndErrors[i].errorLines.push(...childrenAndErrors.splice(i + 1, 1)[0].errorLines);

@@ -10,8 +10,7 @@ import $remarks, { remarksToLines } from "./$remarks";
 import { amendProvisionToLines } from "./$amendProvision";
 import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
 import $article, { articleToLines } from "./$article";
-import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
-import $articleGroup, { articleGroupToLines } from "./$articleGroup";
+import { $requireControlParagraphItem, paragraphItemToLines } from "./$paragraphItem";
 import $figStruct, { $fig, figStructToLines, figToLines } from "./$figStruct";
 import { listOrSublistToLines } from "./$list";
 import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines, noteLikeToLines } from "./$noteLike";
@@ -42,7 +41,7 @@ export const anyToLines = (any: (std.StdEL | std.__EL | string), indentTexts: st
     else if (std.isAmendProvision(any)) { return amendProvisionToLines(any, indentTexts); }
     else if (std.isArithFormula(any)) { return arithFormulaToLines(any, indentTexts); }
     else if (std.isArticle(any)) { return articleToLines(any, indentTexts); }
-    else if (std.isArticleGroup(any)) { return articleGroupToLines(any, indentTexts); }
+    // else if (std.isArticleGroup(any)) { return articleGroupToLines(any, indentTexts); }
     else if (std.isFig(any)) { return figToLines(any, indentTexts); }
     else if (std.isFigStruct(any)) { return figStructToLines(any, indentTexts); }
     else if (std.isListOrSublist(any)) { return listOrSublistToLines(any, indentTexts); }
@@ -76,7 +75,7 @@ export const $any: WithErrorRule<(std.StdEL | std.__EL | string)[]> = factory
                 // .or(() => $amendProvision) // Same as (Sentence | Column)[]
                 .or(() => $arithFormula)
                 .or(() => $article)
-                .or(() => $articleGroup)
+                // .or(() => $articleGroup) // Resets indentation
                 .or(() => $fig) // Capture before $figStruct
                 .or(() => $figStruct)
                 // .or(() => $list) // Same as (Sentence | Column)[]
@@ -89,7 +88,7 @@ export const $any: WithErrorRule<(std.StdEL | std.__EL | string)[]> = factory
                 .or(() => $preamble)
                 .or(() => $remarks)
                 .or(() => $tableStruct)
-                .or(() => $paragraphItem("Paragraph"))
+                .or(() => $requireControlParagraphItem)
             ), "any")
             .action(({ any }) => ({ value: [any.value], errors: any.errors }))
         )

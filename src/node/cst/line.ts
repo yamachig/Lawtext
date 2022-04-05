@@ -361,6 +361,7 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
         public columnIndicator: "-" | "*",
         public midSpace: string,
         public attrEntries: AttrEntries,
+        public multilineIndicator: "|" | "",
         public sentencesArray: SentencesArray,
         lineEndText: string,
     ) {
@@ -373,6 +374,7 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
             this.columnIndicator,
             this.midSpace,
             ...this.attrEntries.map(e => e.text + e.trailingSpace),
+            this.multilineIndicator,
             ...this.sentencesArray.map(c => [
                 c.leadingSpace,
                 ...c.attrEntries.map(a => a.text + a.trailingSpace),
@@ -386,19 +388,19 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
         return this.range ? [start, start + this.firstColumnIndicator.length] : null;
     }
     public get midIndicatorsSpaceRange(): [number, number] | null {
-        if (!this.range) return null;
-        const start = this.range[0] + this.indentTexts.map(s => s.length).reduce((a, b) => a + b, 0) + this.firstColumnIndicator.length;
-        return [start, start + this.midIndicatorsSpace.length];
+        const base = this.firstColumnIndicatorRange;
+        if (!base) return null;
+        return [base[1], base[1] + this.midIndicatorsSpace.length];
     }
     public get columnIndicatorRange(): [number, number] | null {
-        if (!this.range) return null;
-        const start = this.range[0] + this.indentTexts.map(s => s.length).reduce((a, b) => a + b, 0) + this.firstColumnIndicator.length + this.midIndicatorsSpace.length;
-        return [start, start + this.columnIndicator.length];
+        const base = this.midIndicatorsSpaceRange;
+        if (!base) return null;
+        return [base[1], base[1] + this.columnIndicator.length];
     }
     public get midSpaceRange(): [number, number] | null {
-        if (!this.range) return null;
-        const start = this.range[0] + this.indentTexts.map(s => s.length).reduce((a, b) => a + b, 0) + this.firstColumnIndicator.length + this.midIndicatorsSpace.length + this.columnIndicator.length;
-        return [start, start + this.midSpace.length];
+        const base = this.columnIndicatorRange;
+        if (!base) return null;
+        return [base[1], base[1] + this.midSpace.length];
     }
     public get attrEntriesRange(): [number, number] | null {
         let start = null as number | null;
@@ -410,6 +412,11 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
             }
         }
         return (start !== null && end !== null) ? [start, end] : null;
+    }
+    public get multilineIndicatorRange(): [number, number] | null {
+        const base = this.attrEntriesRange;
+        if (!base) return null;
+        return [base[1], base[1] + this.multilineIndicator.length];
     }
 }
 

@@ -1,15 +1,15 @@
 import { factory } from "../factory";
 import { BlankLine, Line, LineType, OtherLine, TableColumnLine } from "../../../node/cst/line";
-import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
-import { isColumn, isParagraphItem, isSentence, isTableColumn, isTableHeaderColumn, isTableHeaderRow, isTableRow, newStdEL } from "../../../law/std";
+import { $blankLine, makeDoubleIndentBlockWithCaptureRule, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
+import { isColumn, isSentence, isTableColumn, isTableHeaderColumn, isTableHeaderRow, isTableRow, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
-import { AttrEntry, Control, Sentences, SentencesArray } from "../../../node/cst/inline";
-import { assertNever, NotImplementedError } from "../../../util";
+import { AttrEntry, Control, Sentences } from "../../../node/cst/inline";
+import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import { paragraphItemToLines } from "./$paragraphItem";
+import $any, { anyToLines } from "./$any";
 
 
 export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] => {
@@ -19,49 +19,7 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
         for (const [i, cell] of row.children.entries()) {
             const newIndentTexts = i === 0 ? indentTexts : [...indentTexts, CST.INDENT];
             // const columnsOrSentences: (std.Column | std.Sentence)[] = [];
-            const sentencesArray: SentencesArray = [];
-            if (isTableColumn(cell)) {
-                if (cell.children.every(isColumn)) {
-                    sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
-                } else if (cell.children.every(isSentence)) {
-                    sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
-                } else {
-                    // TODO: multiline
-                    // - 平成十四年法律第百三号 別表
-                    // - 平成十四年法律第百八十号 附則（平成三〇年六月一日法律第四〇号） 第四条
-                    // - 平成十一年法律第百二十七号 別記第一
-                    for (const child of cell.children) {
-                        // if (typeof child === "string") {
-                        //     columnsOrSentences.push(newStdEL("Sentence", {}, child));
-                        // } else
-                        if (isColumn(child) || isSentence(child)) {
-                            throw new NotImplementedError(`tableToLines: mixed ${child.tag}`);
-                        } else if (isParagraphItem(child)) {
-                            const childLines = paragraphItemToLines(child, newIndentTexts);
-                            if (childLines.length === 1 && childLines[0].type === LineType.PIT) {
-                                if (childLines[0].title) {
-                                    sentencesArray.push(new Sentences(
-                                        "",
-                                        null,
-                                        [],
-                                        [newStdEL("Sentence", {}, [childLines[0].title])]
-                                    ));
-                                    if (childLines[0].sentencesArray.length > 0) {
-                                        childLines[0].sentencesArray[0].leadingSpace = CST.MARGIN + childLines[0].sentencesArray[0].leadingSpace;
-                                    }
-                                }
-                                sentencesArray.push(...childLines[0].sentencesArray);
-                            } else {
-                                throw new NotImplementedError(`tableToLines: ${child.tag} with ${childLines.length} lines`);
-                            }
-                        } else {
-                            throw new NotImplementedError(`tableToLines: ${child.tag}`);
-                        }
-                    }
-                }
-            } else {
-                sentencesArray.push(...columnsOrSentencesToSentencesArray([newStdEL("Sentence", {}, cell.children)]));
-            }
+
             const cellLine = new TableColumnLine(
                 null,
                 newIndentTexts.length,
@@ -71,7 +29,8 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                 isTableHeaderColumn(cell) ? "*" : "-",
                 " ",
                 [],
-                sentencesArray,
+                "",
+                [],
                 CST.EOL,
             );
             for (const [name, value] of Object.entries(cell.attr)) {
@@ -86,6 +45,32 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                 );
             }
             lines.push(cellLine);
+
+            const childrenIndentTexts = [...indentTexts, CST.INDENT, CST.INDENT];
+
+            if (isTableColumn(cell)) {
+                if (cell.children.every(isColumn)) {
+                    cellLine.sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
+                } else if (cell.children.every(isSentence)) {
+                    cellLine.sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
+                } else {
+                    // TODO: multiline
+                    // - 平成十四年法律第百三号 別表
+                    // - 平成十四年法律第百八十号 附則（平成三〇年六月一日法律第四〇号） 第四条
+                    // - 平成十一年法律第百二十七号 別記第一
+                    // - 平成三十年政令第四十七号 第一条 表 備考
+                    cellLine.multilineIndicator = "|";
+                    if (cellLine.attrEntries.length > 0) {
+                        cellLine.attrEntries.slice(-1)[0].trailingSpace = " ";
+                    }
+                    for (const child of cell.children) {
+                        lines.push(...anyToLines(child, childrenIndentTexts));
+                        lines.push(new BlankLine(null, CST.EOL));
+                    }
+                }
+            } else {
+                cellLine.sentencesArray.push(...columnsOrSentencesToSentencesArray([newStdEL("Sentence", {}, cell.children)]));
+            }
         }
     }
 
@@ -151,6 +136,13 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
     return lines;
 };
 
+const $tableCellChildrenBlock = makeDoubleIndentBlockWithCaptureRule(
+    "$tableCellChildrenBlock",
+    (factory
+        .ref(() => $any)
+    ),
+);
+
 const $table: WithErrorRule<std.Table> = factory
     .withName("table")
     .sequence(s => s
@@ -166,16 +158,67 @@ const $table: WithErrorRule<std.Table> = factory
                                 return null;
                             }
                         })
+                    , "line")
+                    .and(r => r
+                        .zeroOrOne(r => r
+                            .sequence(s => s
+                                .andOmit(r => r.assert(({ line }) => line.line.multilineIndicator === "|"))
+                                // .andOmit(r => r
+                                //     .zeroOrOne(r => r
+                                //         .sequence(s => s
+                                //             .and(r => r.noConsumeRef(() => $indentBlock), "nextBlock")
+                                //             .andOmit(r => r.assert(({ nextBlock }) => {
+                                //                 console.log(JSON.stringify(nextBlock, null, 4));
+                                //                 return true;
+                                //             }))
+                                //         )
+                                //     )
+                                // )
+                                .andOmit(r => r.zeroOrMore(() => $blankLine))
+                                .and(() => $tableCellChildrenBlock, "block")
+                                // .andOmit(r => r.assert(({ block }) => {
+                                //     console.log(JSON.stringify(block, null, 2));
+                                //     return true;
+                                // }))
+                                // .andOmit(r => r
+                                //     .zeroOrOne(r => r
+                                //         .sequence(s => s
+                                //             .and(r => r.noConsumeRef(r => r.anyOne()), "nextBlock")
+                                //             .andOmit(r => r.assert(({ nextBlock }) => {
+                                //                 console.log(JSON.stringify(nextBlock, null, 4));
+                                //                 return true;
+                                //             }))
+                                //         )
+                                //     )
+                                // )
+                                .action(({ block }) => ({
+                                    value: block.value.map(v => v.value).flat(),
+                                    errors: [
+                                        ...block.value.map(v => v.errors).flat(),
+                                        ...block.errors,
+                                    ]
+                                }))
+                            )
+                        )
                     )
+                    .andOmit(r => r.zeroOrMore(() => $blankLine))
                 )
             )
         , "tableColumnLines")
         .action(({ tableColumnLines, newErrorMessage }) => {
             const tableRows: (std.TableRow | std.TableHeaderRow)[] = [];
             const errors: ErrorMessage[] = [];
-            for (const tableColumnLine of tableColumnLines) {
+            for (const [tableColumnLine, tableColumnChildrenBlock] of tableColumnLines) {
+                errors.push(...(tableColumnChildrenBlock?.errors ?? []));
                 if (tableColumnLine.line.firstColumnIndicator === "*") {
                     if (tableColumnLine.line.columnIndicator === "*") {
+                        const tableHeaderColumnChildren = [
+                            ...tableColumnLine.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
+                            ...(tableColumnChildrenBlock?.value ?? []),
+                        ];
+                        if (tableHeaderColumnChildren.length === 0) {
+                            tableHeaderColumnChildren.push(newStdEL("Sentence"));
+                        }
                         const tableRow = newStdEL(
                             "TableHeaderRow",
                             {},
@@ -183,12 +226,19 @@ const $table: WithErrorRule<std.Table> = factory
                                 newStdEL(
                                     "TableHeaderColumn",
                                     Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
-                                    tableColumnLine.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
+                                    tableHeaderColumnChildren,
                                 ),
                             ],
                         );
                         tableRows.push(tableRow);
                     } else if (tableColumnLine.line.columnIndicator === "-") {
+                        const tableColumnChildren = [
+                            ...sentencesArrayToColumnsOrSentences(tableColumnLine.line.sentencesArray),
+                            ...(tableColumnChildrenBlock?.value ?? []),
+                        ];
+                        if (tableColumnChildren.length === 0) {
+                            tableColumnChildren.push(newStdEL("Sentence"));
+                        }
                         const tableRow = newStdEL(
                             "TableRow",
                             {},
@@ -196,8 +246,7 @@ const $table: WithErrorRule<std.Table> = factory
                                 newStdEL(
                                     "TableColumn",
                                     Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
-                                    // TODO: ParagraphItem in TableColumn
-                                    sentencesArrayToColumnsOrSentences(tableColumnLine.line.sentencesArray),
+                                    tableColumnChildren,
                                 ),
                             ],
                         );
@@ -227,17 +276,31 @@ const $table: WithErrorRule<std.Table> = factory
                     }
 
                     if (isTableHeaderRow(tableRow)) {
+                        const tableHeaderColumnChildren = [
+                            ...tableColumnLine.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
+                            ...(tableColumnChildrenBlock?.value ?? []),
+                        ];
+                        if (tableHeaderColumnChildren.length === 0) {
+                            tableHeaderColumnChildren.push(newStdEL("Sentence"));
+                        }
                         tableRow.children.push(newStdEL(
                             "TableHeaderColumn",
                             Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
-                            tableColumnLine.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
-                        ));
+                            tableHeaderColumnChildren
+                        ).setRangeFromChildren());
                     } else if (isTableRow(tableRow)) {
+                        const tableColumnChildren = [
+                            ...sentencesArrayToColumnsOrSentences(tableColumnLine.line.sentencesArray),
+                            ...(tableColumnChildrenBlock?.value ?? []),
+                        ];
+                        if (tableColumnChildren.length === 0) {
+                            tableColumnChildren.push(newStdEL("Sentence"));
+                        }
                         tableRow.children.push(newStdEL(
                             "TableColumn",
                             Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
-                            sentencesArrayToColumnsOrSentences(tableColumnLine.line.sentencesArray),
-                        ));
+                            tableColumnChildren,
+                        ).setRangeFromChildren());
                     }
                     else { assertNever(tableRow); }
                 }

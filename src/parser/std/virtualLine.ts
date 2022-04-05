@@ -233,7 +233,10 @@ export const toVirtualLines = (lines: Line[]) => {
                 for (let currentOffset = i - 1; currentOffset >= 0; currentOffset--) {
                     const prevLine = lines[currentOffset];
                     if (prevLine.type === LineType.BNK) continue;
-                    if (prevLine.type === LineType.TBL && prevLine.firstColumnIndicator === "") continue;
+                    if (
+                        (prevLine.type === LineType.TBL && prevLine.firstColumnIndicator === "")
+                        || (prevLine.indentDepth > line.indentDepth)
+                    ) continue;
                     if (
                         prevLine.type === LineType.TBL && prevLine.firstColumnIndicator === "*"
                     ) {

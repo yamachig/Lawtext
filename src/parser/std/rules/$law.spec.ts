@@ -736,7 +736,7 @@ describe("Test $law and lawToLines", () => {
             (vlines, env) => {
                 const result = $law.match(0, vlines, env);
                 // console.log(JSON.stringify(vlines, null, 2));
-                if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
                 return result;

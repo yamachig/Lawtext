@@ -42,14 +42,25 @@ export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
             )
         , "attrEntries")
         .and(r => r
-            .zeroOrOne(r => r
-                .sequence(s => s
-                    .and(() => $columnsOrSentences, "columns")
+            .choice(c => c
+                .orSequence(r => r
+                    .and(r => r.oneOf(["|"] as const))
+                    .andOmit(r => r.nextIs(() => $_EOL))
+                )
+                .or(r => r
+                    .zeroOrOne(r => r
+                        .sequence(s => s
+                            .and(() => $columnsOrSentences)
+                        )
+                    )
                 )
             )
-        , "columns")
+        , "columnsOrMultilineIndicator")
         .and(() => $_EOL, "lineEndText")
-        .action(({ range, indentsStruct, firstColumnIndicatorStruct, columnIndicator, midSpace, attrEntries, columns, lineEndText }) => {
+        .action(({ range, indentsStruct, firstColumnIndicatorStruct, columnIndicator, midSpace, attrEntries, columnsOrMultilineIndicator, lineEndText }) => {
+            const [columns, multilineIndicator] = typeof columnsOrMultilineIndicator === "string"
+                ? [null, columnsOrMultilineIndicator]
+                : [columnsOrMultilineIndicator, null];
             const errors = [
                 ...indentsStruct.errors,
                 ...attrEntries.map(e => e.errors).flat(),
@@ -65,6 +76,7 @@ export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
                     columnIndicator,
                     midSpace,
                     attrEntries.map(e => e.value),
+                    multilineIndicator ?? "",
                     columns?.value ?? [],
                     lineEndText,
                 ),

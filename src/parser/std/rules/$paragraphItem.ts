@@ -557,7 +557,7 @@ export const $requireControlParagraphItem: WithErrorRule<std.ParagraphItem> = fa
             if (autoParagraphItem.value.tag === "__AutoParagraphItem") {
                 defautTag = "Paragraph";
                 errors.push(newErrorMessage(
-                    "$requireControlParagraphItem: 項号の種別を明示的に指定してください。",
+                    "$requireControlParagraphItem: 制御記号（\":paragraph:\" や \"#\" など）が必要です。",
                     autoParagraphItem.value.range ?? [0, 0],
                 ));
             } else {
