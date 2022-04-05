@@ -5,33 +5,8 @@ import { factory } from "../factory";
 import { WithErrorRule } from "../util";
 import { $_ } from "./lexical";
 
-export const $xml = factory
+export const $xml: WithErrorRule<EL> = factory
     .withName("xml")
-    .zeroOrMore(r => r
-        .choice(c => c
-            .or(r => r
-                .action(r => r
-                    .sequence(c => c
-                        .and(r => r
-                            .asSlice(r => r
-                                .oneOrMore(r => r.regExp(/^[^<>]/)),
-                            )
-                        , "text"),
-                    )
-                , (({ text, range }) => {
-                    return { value: new __Text(text, range()), errors: [] };
-                }),
-                ),
-            )
-            .or(() => $xmlElement),
-        ),
-    )
-;
-
-export default $xml;
-
-export const $xmlElement: WithErrorRule<EL> = factory
-    .withName("xmlElement")
     .choice(c => c
         .or(r => r
             .action(r => r
@@ -76,7 +51,33 @@ export const $xmlElement: WithErrorRule<EL> = factory
                     , "attr")
                     .and(() => $_)
                     .and(r => r.seqEqual(">"))
-                    .and(() => $xml, "children")
+                    .and(r => r
+                        .zeroOrMore(r => r
+                            .choice(c => c
+                                .or(() => $xml)
+                                .or(r => r
+                                    .action(r => r
+                                        .sequence(c => c
+                                            .and(r => r
+                                                .asSlice(r => r
+                                                    .oneOrMore(r => r.regExp(/^[^<>]/)),
+                                                )
+                                            , "text"),
+                                        )
+                                    , (({ text, range }) => {
+                                        return {
+                                            value: new __Text(
+                                                text.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'"),
+                                                range()
+                                            ),
+                                            errors: [],
+                                        };
+                                    }),
+                                    ),
+                                )
+                            )
+                        )
+                    , "children")
                     .and(r => r
                         .sequence(c => c
                             .and(r => r.seqEqual("</"))
@@ -137,7 +138,7 @@ export const $xmlElement: WithErrorRule<EL> = factory
                                     .and(r => r.seqEqual("\""))
                                     .and(r => r
                                         .asSlice(r => r
-                                            .oneOrMore(r => r.regExp(/^[^"]/)),
+                                            .zeroOrMore(r => r.regExp(/^[^"]/)),
                                         )
                                     , "value")
                                     .and(r => r.seqEqual("\"")),
@@ -168,3 +169,5 @@ export const $xmlElement: WithErrorRule<EL> = factory
         ),
     )
 ;
+
+export default $xml;

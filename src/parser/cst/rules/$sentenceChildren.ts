@@ -6,9 +6,9 @@ import { assertNever, NotImplementedError } from "../../../util";
 import { factory } from "../factory";
 import { ValueRule, WithErrorRule } from "../util";
 import { $_EOL, $__ } from "./lexical";
-import { $xmlElement } from "./$xml";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
+import $xml from "./$xml";
 
 
 export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): string => {
@@ -347,7 +347,7 @@ export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
         .or(() => $CURLY_BRACKETS_INLINE)
         .or(() => $SQUARE_PARENTHESES_INLINE)
         .orSequence(s => s
-            .and(() => $xmlElement, "elWithError")
+            .and(() => $xml, "elWithError")
             .action(({ elWithError, range, newErrorMessage }) => {
                 const el = elWithError.value;
                 if (std.isLine(el) || std.isQuoteStruct(el) || std.isArithFormula(el) || std.isRuby(el) || std.isSup(el) || std.isControl(el)) {
@@ -491,7 +491,7 @@ export const $SQUARE_PARENTHESES_INLINE: WithErrorRule<__Parentheses> = factory
                 .and(r => r
                     .zeroOrMore(r => r
                         .choice(c => c
-                            .or(() => $xmlElement)
+                            .or(() => $xml)
                             .or(r => r
                                 .sequence(c => c
                                     .and(r => r

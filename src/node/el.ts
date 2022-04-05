@@ -38,7 +38,7 @@ export const innerXML = (el: JsonEL, withControlEl = false): string => {
     if (!el.children) console.error(el);
     return el.children.map(child =>
         (child instanceof String || (typeof child === "string"))
-            ? child
+            ? child.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
             : outerXML(child, withControlEl),
     ).join("");
 };
