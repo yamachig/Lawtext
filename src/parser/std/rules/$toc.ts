@@ -48,6 +48,11 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
             mainTag,
             mergeAdjacentTexts([
                 ...(articleGroupTitle?.children ?? []),
+                ...(
+                    /^[(（]/.exec(articleRange?.text ?? "（")
+                        ? []
+                        : [CST.MARGIN]
+                ),
                 ...(articleRange?.children ?? []),
             ]),
             CST.EOL,
