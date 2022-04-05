@@ -66,7 +66,7 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
                 CST.EOL,
             ));
         } else if (child.tag === "Item") {
-            const itemLines = paragraphItemToLines(child, childrenIndentTexts);
+            const itemLines = paragraphItemToLines(child, childrenIndentTexts, { defaultTag: "Item" });
             lines.push(...itemLines);
         }
         else { assertNever(child); }
@@ -80,7 +80,7 @@ const $remarksChildrenBlock = makeIndentBlockWithCaptureRule(
     (factory
         .choice(c => c
             .orSequence(s => s
-                .and(() => $paragraphItem, "paragraphItem")
+                .and(() => $paragraphItem("Item"), "paragraphItem")
                 .andOmit(r => r.assert(({ paragraphItem }) => std.isItem(paragraphItem.value)))
                 .action(({ paragraphItem }) => {
                     return {

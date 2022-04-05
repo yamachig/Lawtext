@@ -343,8 +343,8 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
             expectedRendered,
             expectedValue,
             expectedErrorMessages,
-            (vlines, env) => $paragraphItem.match(0, vlines, env),
-            el => paragraphItemToLines(el, []),
+            (vlines, env) => $paragraphItem("Paragraph").match(0, vlines, env),
+            el => paragraphItemToLines(el, [], { defaultTag: "Paragraph" }),
         );
     });
 
@@ -441,8 +441,8 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
             expectedRendered,
             expectedValue,
             expectedErrorMessages,
-            (vlines, env) => $paragraphItem.match(0, vlines, env),
-            el => paragraphItemToLines(el, []),
+            (vlines, env) => $paragraphItem("Paragraph").match(0, vlines, env),
+            el => paragraphItemToLines(el, [], { defaultTag: "Paragraph" }),
         );
     });
 
@@ -623,8 +623,8 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
             expectedRendered,
             expectedValue,
             expectedErrorMessages,
-            (vlines, env) => $paragraphItem.match(0, vlines, env),
-            el => paragraphItemToLines(el, []),
+            (vlines, env) => $paragraphItem("Paragraph").match(0, vlines, env),
+            el => paragraphItemToLines(el, [], { defaultTag: "Paragraph" }),
         );
     });
 
@@ -810,7 +810,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
             expectedValue,
             expectedErrorMessages,
             (vlines, env) => {
-                const result = $paragraphItem.match(0, vlines, env);
+                const result = $paragraphItem("Paragraph").match(0, vlines, env);
                 // console.log(JSON.stringify(vlines, null, 2));
                 // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
@@ -818,7 +818,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 return result;
             },
             el => {
-                const lines = paragraphItemToLines(el, []);
+                const lines = paragraphItemToLines(el, [], { defaultTag: "Paragraph" });
                 // console.log(JSON.stringify(lines, null, 2));
                 return lines;
             },
@@ -885,7 +885,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
             expectedValue,
             expectedErrorMessages,
             (vlines, env) => {
-                const result = $paragraphItem.match(0, vlines, env);
+                const result = $paragraphItem("Paragraph").match(0, vlines, env);
                 // console.log(JSON.stringify(vlines, null, 2));
                 // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
@@ -893,7 +893,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 return result;
             },
             el => {
-                const lines = paragraphItemToLines(el, []);
+                const lines = paragraphItemToLines(el, [], { defaultTag: "Paragraph" });
                 // console.log(JSON.stringify(lines, null, 2));
                 return lines;
             },
@@ -911,7 +911,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
         const expectedRendered = `\
 第十三条　法の一部を次のように改正する。
   第十七条第一項第七号に次の一号を加える。
-    イ　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+    :paragraph:イ　命令等　内閣又は行政機関が定める次に掲げるものをいう。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
@@ -967,18 +967,18 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     attr: {},
                                     children: [
                                         {
-                                            tag: "Subitem1",
+                                            tag: "Paragraph",
                                             attr: {
-                                                Delete: "false"
+                                                OldStyle: "false"
                                             },
                                             children: [
                                                 {
-                                                    tag: "Subitem1Title",
+                                                    tag: "ParagraphNum",
                                                     attr: {},
                                                     children: ["イ"]
                                                 },
                                                 {
-                                                    tag: "Subitem1Sentence",
+                                                    tag: "ParagraphSentence",
                                                     attr: {},
                                                     children: [
                                                         {
@@ -1048,7 +1048,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
         const expectedRendered = `\
 第十三条　法の一部を次のように改正する。
   第十七条第一項第七号に次の一号を加える。
-    イ　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+    # イ　命令等　内閣又は行政機関が定める次に掲げるものをいう。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
@@ -1185,7 +1185,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
         const expectedRendered = `\
 第十三条　法の一部を次のように改正する。
   第十七条第一項第七号に次の一号を加える。
-    イ　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+    # イ　命令等　内閣又は行政機関が定める次に掲げるものをいう。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
@@ -1316,13 +1316,13 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
         const lawtextWithMarker = `\
 第十三条　法の一部を次のように改正する。
   第十七条第一項第七号に次の一号を加える。
-    八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+    :item:八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 第十三条　法の一部を次のように改正する。
   第十七条第一項第七号に次の一号を加える。
-    八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+    # 八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
@@ -1378,18 +1378,155 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     attr: {},
                                     children: [
                                         {
-                                            tag: "Subitem1",
+                                            tag: "Item",
                                             attr: {
                                                 Delete: "false"
                                             },
                                             children: [
                                                 {
-                                                    tag: "Subitem1Title",
+                                                    tag: "ItemTitle",
                                                     attr: {},
                                                     children: ["八"]
                                                 },
                                                 {
-                                                    tag: "Subitem1Sentence",
+                                                    tag: "ItemSentence",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "Column",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {},
+                                                                    children: ["命令等"]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            tag: "Column",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {},
+                                                                    children: ["内閣又は行政機関が定める次に掲げるものをいう。"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $article.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = articleToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+第十三条　法の一部を次のように改正する。
+  第十七条第一項第七号に次の一号を加える。
+    八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+第十三条　法の一部を次のように改正する。
+  第十七条第一項第七号に次の一号を加える。
+    :paragraph:八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Article",
+            attr: {
+                Delete: "false",
+                Hide: "false"
+            },
+            children: [
+                {
+                    tag: "ArticleTitle",
+                    attr: {},
+                    children: ["第十三条"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        OldStyle: "false"
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["法の一部を次のように改正する。"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "AmendProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "AmendProvisionSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["第十七条第一項第七号に次の一号を加える。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "NewProvision",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Paragraph",
+                                            attr: {
+                                                OldStyle: "false"
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ParagraphNum",
+                                                    attr: {},
+                                                    children: ["八"]
+                                                },
+                                                {
+                                                    tag: "ParagraphSentence",
                                                     attr: {},
                                                     children: [
                                                         {

@@ -9,7 +9,7 @@ import { WithErrorRule } from "../util";
 import factory from "../factory";
 import { VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine } from "../util";
-import $paragraphItem, { $paragraphItemChildrenOuter, paragraphItemToLines } from "./$paragraphItem";
+import $paragraphItem, { $autoParagraphItemChildrenOuter, paragraphItemFromAuto, paragraphItemToLines } from "./$paragraphItem";
 import $supplNote, { supplNoteToLines } from "./$supplNote";
 
 export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] => {
@@ -65,6 +65,7 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
             {
                 firstArticleParagraphArticleTitle: (i === 0 && ArticleTitle) ? ArticleTitle : undefined,
                 secondaryArticleParagraph: i >= 1,
+                defaultTag: "Paragraph",
             },
         );
         lines.push(...paragraphLines);
@@ -112,14 +113,14 @@ export const $article: WithErrorRule<std.Article> = factory
         , "firstParagraphItemLine")
         .andOmit(r => r.zeroOrMore(() => $blankLine))
         .and(r => r
-            .zeroOrOne(() => $paragraphItemChildrenOuter)
-        , "firstParagraphChildren")
+            .zeroOrOne(() => $autoParagraphItemChildrenOuter)
+        , "firstAutoParagraphChildren")
         .andOmit(r => r.zeroOrMore(() => $blankLine))
         .and(r => r
             .zeroOrMore(r => r
                 .sequence(s => s
                     .andOmit(r => r.zeroOrMore(() => $blankLine))
-                    .and(() => $paragraphItem)
+                    .and(() => $paragraphItem("Paragraph"))
                 )
             )
         , "otherParagraphs")
@@ -127,10 +128,10 @@ export const $article: WithErrorRule<std.Article> = factory
         .and(r => r
             .zeroOrMore(() => $supplNote)
         , "supplNotes")
-        .action(({ captionLine, firstParagraphItemLine, firstParagraphChildren, otherParagraphs, supplNotes }) => {
+        .action(({ captionLine, firstParagraphItemLine, firstAutoParagraphChildren, otherParagraphs, supplNotes }) => {
             const article = newStdEL("Article");
             const errors = [
-                ...(firstParagraphChildren?.errors ?? []),
+                ...(firstAutoParagraphChildren?.errors ?? []),
                 ...otherParagraphs.map(p => p.errors).flat(),
                 ...supplNotes.map(n => n.errors).flat(),
             ];
@@ -164,7 +165,6 @@ export const $article: WithErrorRule<std.Article> = factory
 
             const firstParagraph = newStdEL("Paragraph");
             firstParagraph.attr.OldStyle = "false";
-            article.append(firstParagraph);
 
             firstParagraph.append(newStdEL("ParagraphNum"));
             firstParagraph.append(
@@ -176,11 +176,12 @@ export const $article: WithErrorRule<std.Article> = factory
                 )
             );
 
-            if (firstParagraphChildren) {
-                firstParagraph.extend(firstParagraphChildren.value);
+            if (firstAutoParagraphChildren) {
+                firstParagraph.extend(firstAutoParagraphChildren.value);
             }
 
             firstParagraph.setRangeFromChildren();
+            article.append(paragraphItemFromAuto("Paragraph", firstParagraph) as std.Paragraph);
 
             article.extend(otherParagraphs.map(p => p.value));
 

@@ -8,7 +8,8 @@ import factory from "./factory";
 import { Dedent, Indent, isVirtualLine, PhysicalLine, VirtualLine, VirtualOnlyLineType } from "./virtualLine";
 
 export type ValueRule<TValue> = Rule<VirtualLine[], TValue, Env, Empty>
-export type WithErrorRule<TValue> = Rule<VirtualLine[], { value: TValue, errors: ErrorMessage[] }, Env, Empty>
+export type WithErrorValue<TValue> = { value: TValue, errors: ErrorMessage[] }
+export type WithErrorRule<TValue> = Rule<VirtualLine[], WithErrorValue<TValue>, Env, Empty>
 
 export const $INDENT: ValueRule<Indent> = factory
     .withName("INDENT")
@@ -124,7 +125,7 @@ export const makeIndentBlockWithCaptureRule = <TValue>(
                 return {
                     value: children,
                     errors,
-                };
+                } as WithErrorValue<TValue[]>;
             })
         );
 
@@ -214,7 +215,7 @@ export const makeDoubleIndentBlockWithCaptureRule = <TValue>(
                 return {
                     value: children,
                     errors,
-                };
+                } as WithErrorValue<TValue[]>;
             })
         );
 

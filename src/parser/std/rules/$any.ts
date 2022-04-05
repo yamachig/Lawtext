@@ -89,7 +89,7 @@ export const $any: WithErrorRule<(std.StdEL | std.__EL | string)[]> = factory
                 .or(() => $preamble)
                 .or(() => $remarks)
                 .or(() => $tableStruct)
-                .or(() => $paragraphItem)
+                .or(() => $paragraphItem("Paragraph"))
             ), "any")
             .action(({ any }) => ({ value: [any.value], errors: any.errors }))
         )

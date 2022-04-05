@@ -15,7 +15,7 @@ export const mainProvisionToLines = (mainProvision: std.MainProvision, indentTex
     for (const child of mainProvision.children) {
         if (isParagraphItem(child)) {
             if (child.children.filter(isParagraphItemTitle).some(el => el.text !== "")) {
-                lines.push(...paragraphItemToLines(child, indentTexts));
+                lines.push(...paragraphItemToLines(child, indentTexts, { defaultTag: "Paragraph" }));
             } else {
                 lines.push(...paragraphItemToLines(child, indentTexts, { noControl: true }));
             }
@@ -57,7 +57,7 @@ const $mainProvisionChildren: WithErrorRule<(std.ParagraphItem | std.Article | s
                         .sequence(s => s
                             .and(r => r
                                 .choice(c => c
-                                    .or(() => $paragraphItem)
+                                    .or(() => $paragraphItem("Paragraph"))
                                 )
                             )
                             .andOmit(r => r.zeroOrMore(() => $blankLine))

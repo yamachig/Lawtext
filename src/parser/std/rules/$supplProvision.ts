@@ -35,7 +35,7 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
 
         if (isParagraphItem(child)) {
             if (child.children.filter(isParagraphItemTitle).some(el => el.text !== "")) {
-                lines.push(...paragraphItemToLines(child, indentTexts));
+                lines.push(...paragraphItemToLines(child, indentTexts, { defaultTag: "Paragraph" }));
             } else {
                 lines.push(...paragraphItemToLines(child, indentTexts, { noControl: true }));
             }
@@ -82,7 +82,7 @@ const $supplProvisionChildren: WithErrorRule<(std.ParagraphItem | std.Article | 
                                 .sequence(s => s
                                     .and(r => r
                                         .choice(c => c
-                                            .or(() => $paragraphItem)
+                                            .or(() => $paragraphItem("Paragraph"))
                                         )
                                     )
                                     .andOmit(r => r.zeroOrMore(() => $blankLine))

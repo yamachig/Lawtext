@@ -12,7 +12,7 @@ import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines } from "./$noteLike";
 import $figStruct, { figStructToLines } from "./$figStruct";
-import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
+import { $requireControlParagraphItem, paragraphItemToLines } from "./$paragraphItem";
 import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
 import { appdxItemTitlePtn } from "../../cst/rules/$appdxItemHeadLine";
@@ -119,7 +119,7 @@ const appdxItemContentRule = {
         factory
             .choice(c => c
                 .or(() => $tableStruct)
-                .or(() => $paragraphItem)
+                .or(() => $requireControlParagraphItem)
                 .or(() => $remarks)
             )
     ),

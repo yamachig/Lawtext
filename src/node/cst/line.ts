@@ -278,12 +278,12 @@ export class ArticleLine extends IndentsLine<LineType.ART> {
     }
 }
 
-export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
+export class ParagraphItemLine<TTag extends (typeof paragraphItemTags)[number] | null = (typeof paragraphItemTags)[number] | null> extends IndentsLine<LineType.PIT> {
     public constructor(
         range: [start: number, end: number] | null,
         indentDepth: number,
         indentTexts: string[],
-        public mainTag: (typeof paragraphItemTags)[number],
+        public mainTag: TTag,
         public controls: Controls,
         public title: string,
         public midSpace: string,
@@ -335,6 +335,19 @@ export class ParagraphItemLine extends IndentsLine<LineType.PIT> {
             }
         }
         return (start !== null && end !== null) ? [start, end] : null;
+    }
+    public withTag<TNewTag extends(typeof paragraphItemTags)[number] | null>(tag: TNewTag): ParagraphItemLine<TNewTag> {
+        return new ParagraphItemLine(
+            this.range,
+            this.indentDepth,
+            this.indentTexts,
+            tag,
+            this.controls,
+            this.title,
+            this.midSpace,
+            this.sentencesArray,
+            this.lineEndText,
+        );
     }
 }
 

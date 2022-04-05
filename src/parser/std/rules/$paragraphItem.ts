@@ -1,17 +1,17 @@
 import { ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine } from "../../../node/cst/line";
-import { isParagraph, newStdEL, paragraphItemTags } from "../../../law/std";
+import { isParagraph, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { assertNever, Diff, NotImplementedError } from "../../../util";
-import { AttrEntries, AttrEntry, Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
+import { AttrEntry, Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
 import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory, { VirtualLineRuleFactory } from "../factory";
 import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine } from "../util";
 import { ErrorMessage } from "../../cst/error";
-import { rangeOfELs } from "../../../node/el";
+import { EL, rangeOfELs } from "../../../node/el";
 import $amendProvision, { amendProvisionToLines } from "./$amendProvision";
 import { Env } from "../env";
 import { $listsOuter, listOrSublistToLines } from "./$list";
@@ -20,11 +20,14 @@ import $figStruct, { figStructToLines } from "./$figStruct";
 import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
 import { paragraphItemTitleMatch, paragraphItemTitleRule } from "../../cst/rules/$paragraphItemLine";
 import { anonymParagraphItemControls, autoTagControls, paragraphItemControls } from "../../cst/rules/$tagControl";
+import { isParagraphItem } from "../../out_ std --copy/lawUtil";
 
 interface ParagraphItemToLinesOptions {
     firstArticleParagraphArticleTitle?: (string | SentenceChildEL)[],
     secondaryArticleParagraph?: boolean,
     noControl?: boolean,
+    // requireControl?: boolean,
+    defaultTag?: (typeof std.paragraphItemTags)[number],
 }
 
 export const paragraphItemToLines = (
@@ -38,10 +41,14 @@ export const paragraphItemToLines = (
         firstArticleParagraphArticleTitle,
         secondaryArticleParagraph,
         noControl,
+        // requireControl,
+        defaultTag,
     } = {
         firstArticleParagraphArticleTitle: undefined,
         secondaryArticleParagraph: false,
         noControl: false,
+        // requireControl: false,
+        defaultTag: null,
         ...options,
     };
 
@@ -161,7 +168,7 @@ export const paragraphItemToLines = (
             el.tag,
             (
                 (
-                    paragraphItemTags.indexOf(el.tag) === indentTexts.length
+                    el.tag === defaultTag
                 )
                     ? []
                     : (
@@ -215,7 +222,13 @@ export const paragraphItemToLines = (
 
     for (const child of Children) {
         if (std.isParagraphItem(child)) {
-            lines.push(...paragraphItemToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
+            lines.push(...paragraphItemToLines(
+                child,
+                [...indentTexts, CST.INDENT],
+                {
+                    defaultTag: std.paragraphItemTags[std.paragraphItemTags.indexOf(el.tag) + 1],
+                }
+            )); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "TableStruct") {
             lines.push(new BlankLine(null, CST.EOL));
@@ -248,7 +261,7 @@ export const paragraphItemToLines = (
     return lines;
 };
 
-const $paragraphItemNotAmendChildrenBlock = makeIndentBlockWithCaptureRule(
+const $autoParagraphItemNotAmendChildrenBlock = makeIndentBlockWithCaptureRule(
     "$paragraphItemNotAmendChildrenBlock",
     (factory
         .choice(c => c
@@ -268,7 +281,7 @@ const $paragraphItemNotAmendChildrenBlock = makeIndentBlockWithCaptureRule(
                 .and(r => r
                     .choice(c => c
                         .orSequence(s => s
-                            .and(() => $paragraphItem, "elWithErrors")
+                            .and(() => $autoParagraphItem, "elWithErrors")
                             .and(r => r.assert(({ elWithErrors }) => !std.isParagraph(elWithErrors.value)))
                             .action(({ elWithErrors }) => {
                                 return elWithErrors as {
@@ -298,8 +311,8 @@ const $amendProvisionsBlock = makeIndentBlockWithCaptureRule(
     (factory.ref(() => $amendProvision)),
 );
 
-export const $paragraphItemChildrenOuter: WithErrorRule<
-    std.ParagraphItem["children"][number][]
+export const $autoParagraphItemChildrenOuter: WithErrorRule<
+    (std.ParagraphItem["children"][number] | __AutoParagraphItem)[]
 > = (
     factory as VirtualLineRuleFactory<
         Env & {
@@ -334,7 +347,7 @@ export const $paragraphItemChildrenOuter: WithErrorRule<
                     })
                 )
                 .orSequence(s => s
-                    .and(() => $paragraphItemNotAmendChildrenBlock, "block")
+                    .and(() => $autoParagraphItemNotAmendChildrenBlock, "block")
                     .action(({ block }) => {
                         return {
                             value: block.value.map(c => c.value).flat(),
@@ -361,8 +374,66 @@ export const $paragraphItemChildrenOuter: WithErrorRule<
         })
     );
 
-export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
-    .withName("paragraphItem")
+type __AutoParagraphItem = EL & {tag: "__AutoParagraphItem"};
+export const isAutoParagraphItem = (el: EL | string): el is __AutoParagraphItem =>
+    typeof el !== "string" && el.tag === "__AutoParagraphItem";
+
+// type __AutoParagraphItemTitle = EL & {tag: "__AutoParagraphItemTitle"};
+export const isAutoParagraphItemTitle = (el: EL | string): el is __AutoParagraphItem =>
+    typeof el !== "string" && el.tag === "__AutoParagraphItemTitle";
+
+// type __AutoParagraphItemSentence = EL & {tag: "__AutoParagraphItemSentence"};
+export const isAutoParagraphItemSentence = (el: EL | string): el is __AutoParagraphItem =>
+    typeof el !== "string" && el.tag === "__AutoParagraphItemSentence";
+
+export const paragraphItemFromAuto = (
+    defautTag: (typeof std.paragraphItemTags)[number],
+    paragraphItem: std.ParagraphItem | __AutoParagraphItem,
+): std.ParagraphItem => {
+    const tag = paragraphItem.tag === "__AutoParagraphItem" ? defautTag : paragraphItem.tag;
+    const attr = {} as Record<string, string>;
+    if (tag === "Paragraph") {
+        attr.OldStyle = "false";
+    } else {
+        attr.Delete = "false";
+    }
+    Object.assign(attr, paragraphItem.attr);
+
+    const children = paragraphItem.children.map(c => {
+        if (isParagraphItem(c) || isAutoParagraphItem(c)) {
+            return paragraphItemFromAuto(
+                std.paragraphItemTags[std.paragraphItemTags.indexOf(tag) + 1],
+                c,
+            );
+        } else if (isAutoParagraphItemTitle(c)) {
+            return newStdEL(
+                std.paragraphItemTitleTags[std.paragraphItemTags.indexOf(tag)],
+                c.attr,
+                c.children,
+                c.range,
+            );
+        } else if (isAutoParagraphItemSentence(c)) {
+            return newStdEL(
+                std.paragraphItemSentenceTags[std.paragraphItemTags.indexOf(tag)],
+                c.attr,
+                c.children,
+                c.range,
+            );
+        } else {
+            return c;
+        }
+    });
+
+    return newStdEL(
+        tag,
+        attr,
+        children,
+        paragraphItem.range,
+    );
+};
+
+export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagraphItem> = factory
+    .withName("autoParagraphItem")
     .sequence(s => s
         .and(r => r
             .zeroOrOne(r => r
@@ -394,31 +465,35 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
             })
         , "firstParagraphItemLine")
         .and(r => r
-            .zeroOrOne(() => $paragraphItemChildrenOuter)
+            .zeroOrOne(() => $autoParagraphItemChildrenOuter)
         , "tailChildren")
         .action(({ captionLine, firstParagraphItemLine, tailChildren }) => {
 
-            const paragraphItem = newStdEL(firstParagraphItemLine.line.mainTag);
+            const tag = firstParagraphItemLine.line.mainTag ?? "__AutoParagraphItem";
+
+            const paragraphItem = new EL(tag) as std.ParagraphItem | __AutoParagraphItem;
             const errors = tailChildren?.errors ?? [];
 
-            if (isParagraph(paragraphItem)) {
-                (paragraphItem as std.Paragraph).attr.OldStyle = "false";
-            } else {
-                (paragraphItem as Diff<std.ParagraphItem, std.Paragraph>).attr.Delete = "false";
+            if (isParagraphItem(paragraphItem)) {
+                if (isParagraph(paragraphItem)) {
+                    (paragraphItem as std.Paragraph).attr.OldStyle = "false";
+                } else {
+                    (paragraphItem as Diff<std.ParagraphItem, std.Paragraph>).attr.Delete = "false";
+                }
             }
 
-            if (firstParagraphItemLine.line.sentencesArray.length >= 1) {
-                const replacedAttrEntries: AttrEntries = [];
-                for (const attrEntry of firstParagraphItemLine.line.sentencesArray[0].attrEntries) {
-                    if (attrEntry.entry[0] === "OldNum") {
-                        (paragraphItem as std.Paragraph).attr.OldNum = attrEntry.entry[1];
-                    } else {
-                        replacedAttrEntries.push(attrEntry);
-                    }
-                }
-                firstParagraphItemLine.line.sentencesArray[0].attrEntries.splice(0);
-                firstParagraphItemLine.line.sentencesArray[0].attrEntries.push(...replacedAttrEntries);
-            }
+            // if (firstParagraphItemLine.line.sentencesArray.length >= 1) {
+            //     const replacedAttrEntries: AttrEntries = [];
+            //     for (const attrEntry of firstParagraphItemLine.line.sentencesArray[0].attrEntries) {
+            //         if (attrEntry.entry[0] === "OldNum") {
+            //             (paragraphItem as std.Paragraph).attr.OldNum = attrEntry.entry[1];
+            //         } else {
+            //             replacedAttrEntries.push(attrEntry);
+            //         }
+            //     }
+            //     firstParagraphItemLine.line.sentencesArray[0].attrEntries.splice(0);
+            //     firstParagraphItemLine.line.sentencesArray[0].attrEntries.push(...replacedAttrEntries);
+            // }
 
 
             if (captionLine) {
@@ -438,7 +513,9 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
 
             paragraphItem.append(
                 newStdEL(
-                    std.paragraphItemTitleTags[std.paragraphItemTags.indexOf(firstParagraphItemLine.line.mainTag)],
+                    tag !== "__AutoParagraphItem"
+                        ? std.paragraphItemTitleTags[std.paragraphItemTags.indexOf(tag)]
+                        : "__AutoParagraphItemTitle",
                     {},
                     firstParagraphItemLine.line.title ? [firstParagraphItemLine.line.title] : [],
                     firstParagraphItemLine.line.titleRange,
@@ -447,7 +524,9 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
 
             paragraphItem.append(
                 newStdEL(
-                    std.paragraphItemSentenceTags[std.paragraphItemTags.indexOf(firstParagraphItemLine.line.mainTag)],
+                    tag !== "__AutoParagraphItem"
+                        ? std.paragraphItemSentenceTags[std.paragraphItemTags.indexOf(tag)]
+                        : "__AutoParagraphItemSentence",
                     {},
                     sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
                     firstParagraphItemLine.line.sentencesArrayRange,
@@ -467,7 +546,41 @@ export const $paragraphItem: WithErrorRule<std.ParagraphItem> = factory
     )
     ;
 
-export const $noControlAnonymParagraph: WithErrorRule<std.ParagraphItem> = factory
+export const $requireControlParagraphItem: WithErrorRule<std.ParagraphItem> = factory
+    .withName("$paragraphItem")
+    .sequence(s => s
+        .and(() => $autoParagraphItem, "autoParagraphItem")
+        .action(({ autoParagraphItem, newErrorMessage }) => {
+            let defautTag: (typeof std.paragraphItemTags)[number];
+            const errors: ErrorMessage[] = [];
+            errors.push(...autoParagraphItem.errors);
+            if (autoParagraphItem.value.tag === "__AutoParagraphItem") {
+                defautTag = "Paragraph";
+                errors.push(newErrorMessage(
+                    "$requireControlParagraphItem: 項号の種別を明示的に指定してください。",
+                    autoParagraphItem.value.range ?? [0, 0],
+                ));
+            } else {
+                defautTag = autoParagraphItem.value.tag;
+            }
+            return {
+                value: paragraphItemFromAuto(defautTag, autoParagraphItem.value),
+                errors,
+            };
+        })
+    );
+
+export const $paragraphItem = (defautTag: (typeof std.paragraphItemTags)[number]): WithErrorRule<std.ParagraphItem> => factory
+    .withName("$paragraphItem")
+    .sequence(s => s
+        .and(() => $autoParagraphItem, "autoParagraphItem")
+        .action(({ autoParagraphItem }) => ({
+            value: paragraphItemFromAuto(defautTag, autoParagraphItem.value),
+            errors: autoParagraphItem.errors,
+        }))
+    );
+
+export const $noControlAnonymParagraph: WithErrorRule<std.Paragraph> = factory
     .withName("noControlAnonymParagraph")
     .sequence(s => s
         .and(r => r
@@ -483,7 +596,7 @@ export const $noControlAnonymParagraph: WithErrorRule<std.ParagraphItem> = facto
             })
         , "firstParagraphItemLine")
         .and(r => r
-            .zeroOrOne(() => $paragraphItemChildrenOuter)
+            .zeroOrOne(() => $autoParagraphItemChildrenOuter)
         , "tailChildren")
         .action(({ firstParagraphItemLine, tailChildren }) => {
 
@@ -510,7 +623,7 @@ export const $noControlAnonymParagraph: WithErrorRule<std.ParagraphItem> = facto
             paragraph.range = rangeOfELs(paragraph.children);
 
             return {
-                value: paragraph,
+                value: paragraphItemFromAuto("Paragraph", paragraph) as std.Paragraph,
                 errors: tailChildren?.errors ?? [],
             };
         })

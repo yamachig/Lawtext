@@ -48,7 +48,7 @@ export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[])
             lines.push(new BlankLine(null, CST.EOL));
 
         } else if (child.tag === "Paragraph") {
-            lines.push(...paragraphItemToLines(child, indentTexts));
+            lines.push(...paragraphItemToLines(child, indentTexts, { defaultTag: "Paragraph" }));
             lines.push(new BlankLine(null, CST.EOL));
 
         } else if (std.isArticleGroup(child)) {

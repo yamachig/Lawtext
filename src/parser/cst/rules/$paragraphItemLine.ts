@@ -7,7 +7,6 @@ import makeRangesRule from "./makeRangesRule";
 import $paragraphItemTitle, { $stdItemTitle, $stdParagraphNum, $stdSubitem1Title, $stdSubitem2Title, $stdSubitem3Title } from "./$paragraphItemTitle";
 import { WithErrorRule } from "../util";
 import { $anonymItemControl, $anonymParagraphControl, $anonymSubitem10Control, $anonymSubitem1Control, $anonymSubitem2Control, $anonymSubitem3Control, $anonymSubitem4Control, $anonymSubitem5Control, $anonymSubitem6Control, $anonymSubitem7Control, $anonymSubitem8Control, $anonymSubitem9Control, $autoTagControl, $itemControl, $paragraphControl, $subitem10Control, $subitem1Control, $subitem2Control, $subitem3Control, $subitem4Control, $subitem5Control, $subitem6Control, $subitem7Control, $subitem8Control, $subitem9Control } from "./$tagControl";
-import { paragraphItemTags } from "../../../law/std";
 import { Env, initialEnv } from "../env";
 import { MatchResult } from "generic-parser/lib/core";
 import { ErrorMessage } from "../error";
@@ -175,7 +174,7 @@ export const $paragraphItemLine: WithErrorRule<ParagraphItemLine> = factory
                     ...title.errors,
                     ...(contentStruct?.columns.errors ?? []),
                 ];
-                const tag = tagControl?.tag ?? paragraphItemTags[indentsStruct.value.indentDepth];
+                const tag = tagControl?.tag ?? null;
                 return {
                     value: new ParagraphItemLine(
                         range(),

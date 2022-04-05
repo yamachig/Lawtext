@@ -7,7 +7,7 @@ import { ErrorMessage } from "../../cst/error";
 import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { Sentences } from "../../../node/cst/inline";
-import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
+import { $requireControlParagraphItem, paragraphItemToLines } from "./$paragraphItem";
 import $preamble from "./$preamble";
 import $articleGroup from "./$articleGroup";
 import $article, { articleToLines } from "./$article";
@@ -73,7 +73,7 @@ const $newProvisionsBlock = makeIndentBlockWithCaptureRule(
         // .or(() => $toc) // TODO: Implement
             .or(() => $articleGroup)
             .or(() => $article)
-            .or(() => $paragraphItem)
+            .or(() => $requireControlParagraphItem)
             .or(() => $figStruct)
             .or(() => $tableStruct)
         // .or(() => $list) // TODO: Implement
