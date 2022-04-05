@@ -1,8 +1,8 @@
-import { Line, LineType, OtherLine } from "../../../node/cst/line";
+import { Line, LineType, TableColumnLine } from "../../../node/cst/line";
 import { isListOrSublist, isListOrSublistSentence, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import { makeDoubleIndentBlockWithCaptureRule, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory from "../factory";
 import { ErrorMessage } from "../../cst/error";
 import CST from "../toCSTSettings";
@@ -11,19 +11,32 @@ import { assertNever, Diff } from "../../../util";
 export const listOrSublistToLines = (listOrSublist: std.ListOrSublist, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    const childrenIndentTexts = [...indentTexts, CST.INDENT, CST.INDENT];
+    const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
     for (const child of listOrSublist.children) {
 
         if (isListOrSublistSentence(child)) {
-            lines.push(new OtherLine(
+            lines.push(new TableColumnLine(
                 null,
                 indentTexts.length,
                 indentTexts,
+                "",
+                "",
+                "-",
+                " ",
                 [],
+                "",
                 columnsOrSentencesToSentencesArray(child.children),
                 CST.EOL,
             ));
+            // lines.push(new OtherLine(
+            //     null,
+            //     indentTexts.length,
+            //     indentTexts,
+            //     [],
+            //     columnsOrSentencesToSentencesArray(child.children),
+            //     CST.EOL,
+            // ));
         } else if (isListOrSublist(child)) {
             const listOrSublistLines = listOrSublistToLines(child, childrenIndentTexts);
             lines.push(...listOrSublistLines);
@@ -42,6 +55,7 @@ export const makelistOrSublistRule = <
     : TTag extends "Sublist3" ? std.Sublist3
     : never
 >(
+        ruleName: string,
         tag: TTag,
         nextSublistRule: WithErrorRule<Diff<std.ListOrSublist, std.List>> | null,
     ): WithErrorRule<
@@ -54,7 +68,7 @@ TRet
                 .sequence(s => s
                     .and(r => r
                         .ref(
-                            makeDoubleIndentBlockWithCaptureRule(
+                            makeIndentBlockWithCaptureRule(
                                 `$${tag.toLowerCase()}ChildrenBlock`,
                                 nextSublistRule,
                             )
@@ -73,20 +87,21 @@ TRet
         )
         : null;
     return factory
-        .withName("listOrSublist")
+        .withName(ruleName)
         .sequence(s => s
             .and(r => r
                 .oneMatch(({ item }) => {
                     if (
-                        item.type === LineType.OTH
-                        && item.line.type === LineType.OTH
+                        item.type === LineType.TBL
+                        && item.line.firstColumnIndicator === ""
                     ) {
                         return item;
                     } else {
                         return null;
                     }
                 })
-            , "listOrSublistSentenceLine")
+            , "line")
+            .andOmit(r => r.zeroOrMore(() => $blankLine))
             .and(r => r
                 .zeroOrOne(
                     sublistsBlockRule
@@ -97,14 +112,14 @@ TRet
                                 .action(() => null)
                             ))
             , "childrenBlock")
-            .action(({ listOrSublistSentenceLine, childrenBlock }) => {
+            .action(({ line, childrenBlock }) => {
                 const children: std.ListOrSublist["children"][number][] = [];
                 const errors: ErrorMessage[] = [];
 
                 const listOrSublistSentence = newStdEL(
                     sentenceTag,
                     {},
-                    sentencesArrayToColumnsOrSentences(listOrSublistSentenceLine.line.sentencesArray),
+                    sentencesArrayToColumnsOrSentences(line.line.sentencesArray),
                 );
                 children.push(listOrSublistSentence.setRangeFromChildren());
 
@@ -126,12 +141,12 @@ TRet
         );
 };
 
-export const $sublist3 = makelistOrSublistRule("Sublist3", null);
-export const $sublist2 = makelistOrSublistRule("Sublist2", $sublist3);
-export const $sublist1 = makelistOrSublistRule("Sublist1", $sublist2);
-export const $list = makelistOrSublistRule("List", $sublist1);
+export const $sublist3 = makelistOrSublistRule("$sublist3", "Sublist3", null);
+export const $sublist2 = makelistOrSublistRule("$sublist2", "Sublist2", $sublist3);
+export const $sublist1 = makelistOrSublistRule("$sublist1", "Sublist1", $sublist2);
+export const $list = makelistOrSublistRule("$list", "List", $sublist1);
 
-export const $listsOuter = makeIndentBlockWithCaptureRule(
-    "$listsOuter",
-    (factory.ref(() => $list)),
-);
+// export const $listsOuter = makeIndentBlockWithCaptureRule(
+//     "$listsOuter",
+//     (factory.ref(() => $list)),
+// );

@@ -14,7 +14,7 @@ import { ErrorMessage } from "../../cst/error";
 import { EL, rangeOfELs } from "../../../node/el";
 import $amendProvision, { amendProvisionToLines } from "./$amendProvision";
 import { Env } from "../env";
-import { $listsOuter, listOrSublistToLines } from "./$list";
+import { $list, listOrSublistToLines } from "./$list";
 import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import $figStruct, { figStructToLines } from "./$figStruct";
 import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
@@ -242,7 +242,7 @@ export const paragraphItemToLines = (
             lines.push(new BlankLine(null, CST.EOL));
 
         } else if (child.tag === "List") {
-            lines.push(...listOrSublistToLines(child, [...indentTexts, CST.INDENT, CST.INDENT])); /* >>>> INDENT ++++ INDENT >>>> */
+            lines.push(...listOrSublistToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "AmendProvision") {
             lines.push(...amendProvisionToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
@@ -261,18 +261,18 @@ const $autoParagraphItemNotAmendChildrenBlock = makeIndentBlockWithCaptureRule(
     "$paragraphItemNotAmendChildrenBlock",
     (factory
         .choice(c => c
-            .orSequence(s => s
-                .and(() => $listsOuter, "content")
-                .action(({ content }) => {
-                    return {
-                        value: content.value.map(c => c.value),
-                        errors: [
-                            ...content.errors,
-                            ...content.value.map(c => c.errors).flat(),
-                        ],
-                    };
-                })
-            )
+            // .orSequence(s => s
+            //     .and(() => $listsOuter, "content")
+            //     .action(({ content }) => {
+            //         return {
+            //             value: content.value.map(c => c.value),
+            //             errors: [
+            //                 ...content.errors,
+            //                 ...content.value.map(c => c.errors).flat(),
+            //             ],
+            //         };
+            //     })
+            // )
             .orSequence(s => s
                 .and(r => r
                     .choice(c => c
@@ -286,6 +286,7 @@ const $autoParagraphItemNotAmendChildrenBlock = makeIndentBlockWithCaptureRule(
                                 };
                             })
                         )
+                        .or(() => $list)
                         .or(() => $tableStruct)
                         .or(() => $figStruct)
                         .or(() => $styleStruct)
