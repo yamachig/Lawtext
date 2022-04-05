@@ -102,8 +102,9 @@ export const makeIndentBlockWithCaptureRule = <TValue>(
             .andOmit(() => $optBNK_DEDENT)
             .action(({ childrenAndErrors, newErrorMessage }) => {
                 for ( let i = 0; i < childrenAndErrors.length; i += 1 ) {
-                    if (childrenAndErrors[i].success || i + 1 >= childrenAndErrors.length || childrenAndErrors[i + 1].success) continue;
-                    childrenAndErrors[i].errorLines.push(...childrenAndErrors.splice(i + 1, 1)[0].errorLines);
+                    while (!childrenAndErrors[i].success && i + 1 < childrenAndErrors.length && !childrenAndErrors[i + 1].success) {
+                        childrenAndErrors[i].errorLines.push(...childrenAndErrors.splice(i + 1, 1)[0].errorLines);
+                    }
                 }
 
                 const children: TValue[] = [];
@@ -192,8 +193,9 @@ export const makeDoubleIndentBlockWithCaptureRule = <TValue>(
             .action(({ childrenAndErrors1, errors2, newErrorMessage }) => {
                 const childrenAndErrors = [...childrenAndErrors1, ...errors2];
                 for ( let i = 0; i < childrenAndErrors.length; i += 1 ) {
-                    if (childrenAndErrors[i].success || i + 1 >= childrenAndErrors.length || childrenAndErrors[i + 1].success) continue;
-                    childrenAndErrors[i].errorLines.push(...childrenAndErrors.splice(i + 1, 1)[0].errorLines);
+                    while (!childrenAndErrors[i].success && i + 1 < childrenAndErrors.length && !childrenAndErrors[i + 1].success) {
+                        childrenAndErrors[i].errorLines.push(...childrenAndErrors.splice(i + 1, 1)[0].errorLines);
+                    }
                 }
 
                 const children: TValue[] = [];

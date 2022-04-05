@@ -12,7 +12,7 @@ import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
 import $article, { articleToLines } from "./$article";
 import { $requireControlParagraphItem, paragraphItemToLines } from "./$paragraphItem";
 import $figStruct, { $fig, figStructToLines, figToLines } from "./$figStruct";
-import { listOrSublistToLines } from "./$list";
+import { $list, listOrSublistToLines } from "./$list";
 import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines, noteLikeToLines } from "./$noteLike";
 import $preamble, { preambleToLines } from "./$preamble";
 import $tableStruct, { tableStructToLines, tableToLines } from "./$tableStruct";
@@ -78,7 +78,7 @@ export const $any: WithErrorRule<(std.StdEL | std.__EL | string)[]> = factory
                 // .or(() => $articleGroup) // Resets indentation
                 .or(() => $fig) // Capture before $figStruct
                 .or(() => $figStruct)
-                // .or(() => $list) // Same as (Sentence | Column)[]
+                .or(() => $list) // Capture before $tableStruct
                 // .or(() => $note) // Same as $any
                 // .or(() => $style) // Same as $any
                 // .or(() => $format) // Same as $any

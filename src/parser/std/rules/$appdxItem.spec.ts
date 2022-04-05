@@ -850,6 +850,72 @@ describe("Test $appdxTable and appdxItemToLines", () => {
             },
         );
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+# 別表（第一条、第三十四条関係）
+
+  # 一　アラビアゴム
+
+  # 二　アラビアゴム末
+
+  # 三　亜硫酸水素ナトリウム
+
+  # 四　エチレンジアミン
+
+  # 五　エーテル（麻酔用エーテルを除く。）
+
+  # 六　オリブ油
+
+  # 七　オレンジ油
+
+  # 八　カカオ脂及びこれに類似するもの
+
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+# 別表（第一条、第三十四条関係）
+
+  # 一　アラビアゴム
+
+  # 二　アラビアゴム末
+
+  # 三　亜硫酸水素ナトリウム
+
+  # 四　エチレンジアミン
+
+  # 五　エーテル（麻酔用エーテルを除く。）
+
+  # 六　オリブ油
+
+  # 七　オレンジ油
+
+  # 八　カカオ脂及びこれに類似するもの
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {};
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $appdxTable.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = appdxItemToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });
 
 
