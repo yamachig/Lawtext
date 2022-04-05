@@ -10,6 +10,7 @@ import { Worker } from "worker_threads";
 import { range } from "lawtext/dist/src/util";
 import { UpdateArgs } from "./args";
 import { getToProcessLawInfos } from "./getLawInfos";
+import os from "os";
 
 class ProgressBar {
     public bar: Bar;
@@ -122,7 +123,7 @@ const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
 
     if (lawInfos.length === 0 || args.dryRun) return;
 
-    const workers_count = parseInt(process.env.WORKERS_COUNT || "1");
+    const workers_count = parseInt(process.env.WORKERS_COUNT ?? (os.cpus().length * 2).toString());
     const minimum_parallel_count = parseInt(process.env.MINIMUM_PARALLEL_COUNT || "0");
 
     if (workers_count > 1 && lawInfos.length >= minimum_parallel_count) {
