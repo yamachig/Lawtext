@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { __EL } from "../../../law/std";
+import { isSub, __EL } from "../../../law/std";
 import { ParenthesesType, __Parentheses, __Text } from "../../../node/control";
 import { EL } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
@@ -350,7 +350,7 @@ export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
             .and(() => $xml, "elWithError")
             .action(({ elWithError, range, newErrorMessage }) => {
                 const el = elWithError.value;
-                if (std.isLine(el) || std.isQuoteStruct(el) || std.isArithFormula(el) || std.isRuby(el) || std.isSup(el) || std.isControl(el)) {
+                if (std.isLine(el) || std.isQuoteStruct(el) || std.isArithFormula(el) || std.isRuby(el) || std.isSup(el) || isSub(el) || std.isControl(el)) {
                     return {
                         value: el,
                         errors: elWithError.errors,
