@@ -339,7 +339,7 @@ export const $law: WithErrorRule<std.Law> = factory
                 lawBody.append(newStdEL(
                     "LawTitle",
                     {},
-                    lawTitleLines.value.lawNameLine.line.sentencesArray.flat().map(ss => ss.sentences).flat().map(s => s.children).flat(),
+                    lawTitleLines.value.lawNameLine.line.sentencesArray.flat().map(ss => ({ ls: ss.leadingSpace, ss: ss.sentences })).map(({ ls, ss }) => [ls, ...ss.map(s => s.children).flat()]).flat(),
                     lawTitleLines.value.lawNameLine.virtualRange,
                 ));
             }

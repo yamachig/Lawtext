@@ -1,7 +1,7 @@
 import { factory } from "../factory";
 import { BlankLine, Line, LineType, SupplProvisionHeadLine } from "../../../node/cst/line";
 import { $blankLine, WithErrorRule } from "../util";
-import { isArticle, isArticleGroup, isParagraphItem, isParagraphItemTitle, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std";
+import { isArticle, isArticleGroup, isParagraph, isParagraphItem, isParagraphItemTitle, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
@@ -39,14 +39,17 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
 
     lines.push(new BlankLine(null, CST.EOL));
 
+    const paragraphs = supplProvision.children.filter(isParagraph);
+    const isSingleAnonymParagraph = paragraphs.length === 1 && paragraphs.every(p => p.children.filter(isParagraphItemTitle).every(el => el.text === ""));
+
     for (const child of supplProvision.children) {
         if (child.tag === "SupplProvisionLabel") continue;
 
         if (isParagraphItem(child)) {
-            if (child.children.filter(isParagraphItemTitle).some(el => el.text !== "")) {
-                lines.push(...paragraphItemToLines(child, indentTexts, { defaultTag: "Paragraph" }));
-            } else {
+            if (isSingleAnonymParagraph) {
                 lines.push(...paragraphItemToLines(child, indentTexts, { noControl: true }));
+            } else {
+                lines.push(...paragraphItemToLines(child, indentTexts, { defaultTag: "Paragraph" }));
             }
             lines.push(new BlankLine(null, CST.EOL));
         } else if (isArticle(child)) {

@@ -101,8 +101,9 @@ export const paragraphItemToLines = (
         firstArticleParagraphArticleTitle
         && firstArticleParagraphArticleTitle.length > 0
     ) Title.push(...firstArticleParagraphArticleTitle);
+    const paragraphItemTitleStr = sentenceChildrenToString(Title);
 
-    const OldNum = (Title.length === 0 && el.tag === "Paragraph" && el.attr.OldNum === "true") ? "true" : undefined;
+    const OldNum = (paragraphItemTitleStr.length === 0 && el.tag === "Paragraph" && el.attr.OldNum === "true") ? "true" : undefined;
     const MissingNum = (secondaryArticleParagraph && Title.length === 0 && el.tag === "Paragraph" && el.attr.OldNum !== "true") ? "true" : undefined;
 
     const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
@@ -144,6 +145,7 @@ export const paragraphItemToLines = (
         noControl
         && ParagraphCaption.every(c => (typeof c !== "string" && !c.text) && !c)
         && ParagraphItemTitle.every(c => (typeof c !== "string" && !c.text) && !c)
+        // && paragraphItemTitleStr.length > 0
     ) {
         lines.push(new ParagraphItemLine(
             null,
@@ -151,13 +153,12 @@ export const paragraphItemToLines = (
             indentTexts,
             el.tag,
             [],
-            sentenceChildrenToString(Title),
+            paragraphItemTitleStr,
             (Title.length === 0 || sentencesArray.length === 0) ? "" : CST.MARGIN,
             sentencesArray,
             CST.EOL,
         ));
-    } else if (Title.length > 0) {
-        const paragraphItemTitleStr = sentenceChildrenToString(Title);
+    } else if (paragraphItemTitleStr.length > 0) {
         lines.push(new ParagraphItemLine(
             null,
             indentTexts.length,
