@@ -31,8 +31,8 @@ export type ParagraphItem =
     | std.Subitem10
     ;
 
-export const isParagraphItem = (el: EL): el is ParagraphItem =>
-    (paragraphItemTags as readonly string[]).includes(el.tag);
+export const isParagraphItem = (el: EL | string): el is ParagraphItem =>
+    typeof el !== "string" && (paragraphItemTags as readonly string[]).includes(el.tag);
 
 export const paragraphItemTitleTags = [
     "ParagraphNum",
@@ -64,8 +64,8 @@ export type ParagraphItemTitle =
     | std.Subitem10Title
     ;
 
-export const isParagraphItemTitle = (el: EL): el is ParagraphItemTitle =>
-    (paragraphItemTitleTags as readonly string[]).includes(el.tag);
+export const isParagraphItemTitle = (el: EL | string): el is ParagraphItemTitle =>
+    typeof el !== "string" && (paragraphItemTitleTags as readonly string[]).includes(el.tag);
 
 export const paragraphItemSentenceTags = [
     "ParagraphSentence",
@@ -97,8 +97,8 @@ export type ParagraphItemSentence =
     | std.Subitem10Sentence
     ;
 
-export const isParagraphItemSentence = (el: EL): el is ParagraphItemSentence =>
-    (paragraphItemSentenceTags as readonly string[]).includes(el.tag);
+export const isParagraphItemSentence = (el: EL | string): el is ParagraphItemSentence =>
+    typeof el !== "string" && (paragraphItemSentenceTags as readonly string[]).includes(el.tag);
 
 
 export const listTags = ["List", "Sublist1", "Sublist2", "Sublist3"] as const;
@@ -122,8 +122,8 @@ export type ArticleGroup =
     | std.Division
     ;
 
-export const isArticleGroup = (el: EL): el is ArticleGroup =>
-    (articleGroupTags as readonly string[]).includes(el.tag);
+export const isArticleGroup = (el: EL | string): el is ArticleGroup =>
+    typeof el !== "string" && (articleGroupTags as readonly string[]).includes(el.tag);
 
 export const articleGroupTitleTags = [
     "PartTitle",
@@ -141,8 +141,8 @@ export type ArticleGroupTitle =
     | std.DivisionTitle
     ;
 
-export const isArticleGroupTitle = (el: EL): el is ArticleGroupTitle =>
-    (articleGroupTitleTags as readonly string[]).includes(el.tag);
+export const isArticleGroupTitle = (el: EL | string): el is ArticleGroupTitle =>
+    typeof el !== "string" && (articleGroupTitleTags as readonly string[]).includes(el.tag);
 
 export const tocArticleGroupTags = [
     "TOCPart",
@@ -160,8 +160,8 @@ export type TOCArticleGroup =
     | std.TOCDivision
     ;
 
-export const isTOCArticleGroup = (el: EL): el is TOCArticleGroup =>
-    (tocArticleGroupTags as readonly string[]).includes(el.tag);
+export const isTOCArticleGroup = (el: EL | string): el is TOCArticleGroup =>
+    typeof el !== "string" && (tocArticleGroupTags as readonly string[]).includes(el.tag);
 
 export const tocItemTags = [
     ...tocArticleGroupTags,
@@ -179,8 +179,8 @@ export type TOCItem =
     | std.TOCAppdxTableLabel
     ;
 
-export const isTOCItem = (el: EL): el is TOCItem =>
-    (tocItemTags as readonly string[]).includes(el.tag);
+export const isTOCItem = (el: EL | string): el is TOCItem =>
+    typeof el !== "string" && (tocItemTags as readonly string[]).includes(el.tag);
 
 export const listOrSublistTags = [
     "List",
@@ -196,8 +196,8 @@ export type ListOrSublist =
     | std.Sublist3
     ;
 
-export const isListOrSublist = (el: EL): el is ListOrSublist =>
-    (listOrSublistTags as readonly string[]).includes(el.tag);
+export const isListOrSublist = (el: EL | string): el is ListOrSublist =>
+    typeof el !== "string" && (listOrSublistTags as readonly string[]).includes(el.tag);
 
 export const listOrSublistSentenceTags = [
     "ListSentence",
@@ -213,8 +213,8 @@ export type ListOrSublistSentence =
     | std.Sublist3Sentence
     ;
 
-export const isListOrSublistSentence = (el: EL): el is ListOrSublistSentence =>
-    (listOrSublistSentenceTags as readonly string[]).includes(el.tag);
+export const isListOrSublistSentence = (el: EL | string): el is ListOrSublistSentence =>
+    typeof el !== "string" && (listOrSublistSentenceTags as readonly string[]).includes(el.tag);
 
 export const noteLikeTags = [
     "Note",
@@ -228,8 +228,8 @@ export type NoteLike =
     | std.Format
     ;
 
-export const isNoteLike = (el: EL): el is NoteLike =>
-    (noteLikeTags as readonly string[]).includes(el.tag);
+export const isNoteLike = (el: EL | string): el is NoteLike =>
+    typeof el !== "string" && (noteLikeTags as readonly string[]).includes(el.tag);
 
 export const noteLikeStructTags = [
     "NoteStruct",
@@ -243,8 +243,8 @@ export type NoteLikeStruct =
     | std.FormatStruct
     ;
 
-export const isNoteLikeStruct = (el: EL): el is NoteLikeStruct =>
-    (noteLikeStructTags as readonly string[]).includes(el.tag);
+export const isNoteLikeStruct = (el: EL | string): el is NoteLikeStruct =>
+    typeof el !== "string" && (noteLikeStructTags as readonly string[]).includes(el.tag);
 
 export const noteLikeStructTitleTags = [
     "NoteStructTitle",
@@ -258,8 +258,8 @@ export type NoteLikeStructTitle =
     | std.FormatStructTitle
     ;
 
-export const isNoteLikeStructTitle = (el: EL): el is NoteLikeStructTitle =>
-    (noteLikeStructTitleTags as readonly string[]).includes(el.tag);
+export const isNoteLikeStructTitle = (el: EL | string): el is NoteLikeStructTitle =>
+    typeof el !== "string" && (noteLikeStructTitleTags as readonly string[]).includes(el.tag);
 
 export const appdxItemTags = [
     "AppdxFig",
@@ -279,8 +279,8 @@ export type AppdxItem =
     | std.Appdx
     ;
 
-export const isAppdxItem = (el: EL): el is AppdxItem =>
-    (appdxItemTags as readonly string[]).includes(el.tag);
+export const isAppdxItem = (el: EL | string): el is AppdxItem =>
+    typeof el !== "string" && (appdxItemTags as readonly string[]).includes(el.tag);
 
 export const appdxItemTitleTags = [
     "AppdxFigTitle",
@@ -300,8 +300,8 @@ export type AppdxItemTitle =
         | std.ArithFormulaNum
         ;
 
-export const isAppdxItemTitle = (el: EL): el is AppdxItemTitle =>
-    (appdxItemTitleTags as readonly string[]).includes(el.tag);
+export const isAppdxItemTitle = (el: EL | string): el is AppdxItemTitle =>
+    typeof el !== "string" && (appdxItemTitleTags as readonly string[]).includes(el.tag);
 
 export const supplProvisionAppdxItemTags = [
     "SupplProvisionAppdxTable",
@@ -315,8 +315,8 @@ export type SupplProvisionAppdxItem =
     | std.SupplProvisionAppdx
     ;
 
-export const isSupplProvisionAppdxItem = (el: EL): el is SupplProvisionAppdxItem =>
-    (supplProvisionAppdxItemTags as readonly string[]).includes(el.tag);
+export const isSupplProvisionAppdxItem = (el: EL | string): el is SupplProvisionAppdxItem =>
+    typeof el !== "string" && (supplProvisionAppdxItemTags as readonly string[]).includes(el.tag);
 
 export const supplProvisionAppdxItemTitleTags = [
     "SupplProvisionAppdxTableTitle",
@@ -330,5 +330,5 @@ export type SupplProvisionAppdxItemTitle =
         | std.ArithFormulaNum
         ;
 
-export const isSupplProvisionAppdxItemTitle = (el: EL): el is SupplProvisionAppdxItemTitle =>
-    (supplProvisionAppdxItemTitleTags as readonly string[]).includes(el.tag);
+export const isSupplProvisionAppdxItemTitle = (el: EL | string): el is SupplProvisionAppdxItemTitle =>
+    typeof el !== "string" && (supplProvisionAppdxItemTitleTags as readonly string[]).includes(el.tag);

@@ -242,7 +242,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
 !
 第十三条　削除
 `;
-        const expectedErrorMessages: string[] = ["$articleGroup: この行をパースできませんでした。line.type: OTH"];
+        const expectedErrorMessages: string[] = ["$articleGroup: この部分をパースできませんでした。"];
         const expectedRendered = `\
           第二款　外国人観光旅客の来訪の促進
 

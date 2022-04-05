@@ -23,7 +23,7 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
         [...indentTexts, CST.INDENT, CST.INDENT, CST.INDENT],
         indentTexts.length == 0 ? [] : [
             new Control(
-                "keep-indents",
+                ":keep-indents:",
                 null,
                 "",
                 null,

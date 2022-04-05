@@ -1,4 +1,5 @@
 import { testLawtextToStd } from "../testHelper";
+import $amendProvision, { amendProvisionToLines } from "./$amendProvision";
 import $article, { articleToLines } from "./$article";
 
 describe("Test $amendProvision and amendProvisionToLines", () => {
@@ -469,6 +470,212 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
             },
             el => {
                 const lines = articleToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+第二章の章名を次のように改める。
+  <ChapterTitle>第二章　肉用牛及び肉豚についての交付金の交付</ChapterTitle>
+
+  （北海道開発局組織規則の一部改正）
+第五条　北海道開発局組織規則（平成十三年国土交通省令第二十二号）の一部を次のように改正する。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+第二章の章名を次のように改める。
+  <ChapterTitle>第二章　肉用牛及び肉豚についての交付金の交付</ChapterTitle>
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "AmendProvision",
+            attr: {},
+            children: [
+                {
+                    tag: "AmendProvisionSentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: ["第二章の章名を次のように改める。"]
+                        }
+                    ]
+                },
+                {
+                    tag: "NewProvision",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "ChapterTitle",
+                            attr: {},
+                            children: ["第二章　肉用牛及び肉豚についての交付金の交付"]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $amendProvision.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = amendProvisionToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+第三章を第五章とし、第二章の次に次の二章を加える。
+  :keep-indents:第三章　加工原料乳についての生産者補給交付金等の交付
+
+  :keep-indents:第一節　生産者補給交付金等の交付
+    （生産者補給交付金等の交付）
+  第十一条　機構は、次の各号に掲げる対象事業を行う対象事業者に対し、この節に定めるところにより、当該各号に定める生産者補給交付金又は生産者補給金（以下「生産者補給交付金等」という。）を交付することができる。
+
+  （北海道開発局組織規則の一部改正）
+第五条　北海道開発局組織規則（平成十三年国土交通省令第二十二号）の一部を次のように改正する。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+第三章を第五章とし、第二章の次に次の二章を加える。
+
+  :keep-indents:第三章　加工原料乳についての生産者補給交付金等の交付
+
+  :keep-indents:第一節　生産者補給交付金等の交付
+
+    （生産者補給交付金等の交付）
+  第十一条　機構は、次の各号に掲げる対象事業を行う対象事業者に対し、この節に定めるところにより、当該各号に定める生産者補給交付金又は生産者補給金（以下「生産者補給交付金等」という。）を交付することができる。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "AmendProvision",
+            attr: {},
+            children: [
+                {
+                    tag: "AmendProvisionSentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: ["第三章を第五章とし、第二章の次に次の二章を加える。"]
+                        }
+                    ]
+                },
+                {
+                    tag: "NewProvision",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Chapter",
+                            attr: {
+                                Delete: "false",
+                                Hide: "false",
+                                Num: "3"
+                            },
+                            children: [
+                                {
+                                    tag: "ChapterTitle",
+                                    attr: {},
+                                    children: ["第三章　加工原料乳についての生産者補給交付金等の交付"]
+                                },
+                                {
+                                    tag: "Section",
+                                    attr: {
+                                        Delete: "false",
+                                        Hide: "false",
+                                        Num: "1"
+                                    },
+                                    children: [
+                                        {
+                                            tag: "SectionTitle",
+                                            attr: {},
+                                            children: ["第一節　生産者補給交付金等の交付"]
+                                        },
+                                        {
+                                            tag: "Article",
+                                            attr: {
+                                                Delete: "false",
+                                                Hide: "false"
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ArticleCaption",
+                                                    attr: {},
+                                                    children: ["（生産者補給交付金等の交付）"]
+                                                },
+                                                {
+                                                    tag: "ArticleTitle",
+                                                    attr: {},
+                                                    children: ["第十一条"]
+                                                },
+                                                {
+                                                    tag: "Paragraph",
+                                                    attr: {
+                                                        OldStyle: "false"
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "ParagraphNum",
+                                                            attr: {},
+                                                            children: []
+                                                        },
+                                                        {
+                                                            tag: "ParagraphSentence",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {},
+                                                                    children: ["機構は、次の各号に掲げる対象事業を行う対象事業者に対し、この節に定めるところにより、当該各号に定める生産者補給交付金又は生産者補給金（以下「生産者補給交付金等」という。）を交付することができる。"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $amendProvision.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = amendProvisionToLines(el, []);
                 // console.log(JSON.stringify(lines, null, 2));
                 return lines;
             },

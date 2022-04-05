@@ -5,7 +5,7 @@ import CST from "../toCSTSettings";
 import { assertNever, Diff, range } from "../../../util";
 import { WithErrorRule } from "../util";
 import factory from "../factory";
-import { $blankLine } from "../util";
+import { $blankLine, $indentBlock } from "../util";
 import { paragraphItemToLines } from "./$paragraphItem";
 import { mergeAdjacentTexts } from "../../cst/util";
 import $article, { articleToLines } from "./$article";
@@ -35,7 +35,7 @@ export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[])
                 el.tag,
                 indentTexts.length == 0 ? [] : [
                     new Control(
-                        "keep-indents",
+                        ":keep-indents:",
                         null,
                         "",
                         null,
@@ -117,18 +117,22 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
                                 .and(() => $articleGroup)
                             )
                             .or(r => r
-                                .oneOrMore(r => r
-                                    .sequence(s => s
-                                        .and(r => r.anyOne(), "captured")
-                                        .andOmit(r => r.assertNot(({ captured }) =>
-                                            (captured.type === LineType.SPR)
-                                            || (captured.type === LineType.SPA)
-                                            || (captured.type === LineType.APP)
-                                            || (captured.type === LineType.ART)
-                                            || (captured.type === LineType.ARG)
-                                            // || (captured.type === LineType.PIT)
-                                        ))
-                                        .andOmit(r => r.zeroOrMore(() => $blankLine))
+                                .asSlice(r => r
+                                    .oneOrMore(r => r
+                                        .sequence(s => s
+                                            .and(r => r
+                                                .choice(c => c
+                                                    .or(() => $indentBlock)
+                                                    .orSequence(s => s
+                                                        .and(r => r.anyOne(), "captured")
+                                                        .andOmit(r => r.assert(({ captured }) =>
+                                                            (captured.type === LineType.OTH)
+                                                            || (captured.type === LineType.PIT)
+                                                        ))
+                                                    )
+                                                )
+                                            )
+                                        )
                                     )
                                 )
                             )
@@ -144,12 +148,13 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
 
             for (const child of childrenAndErrors) {
                 if (Array.isArray(child)) {
-                    for (const errorLine of child) {
-                        errors.push(newErrorMessage(
-                            `$articleGroup: この行をパースできませんでした。line.type: ${errorLine.type}`,
-                            errorLine.virtualRange,
-                        ));
-                    }
+                    errors.push(newErrorMessage(
+                        "$articleGroup: この部分をパースできませんでした。",
+                        [
+                            child[0].virtualRange[0],
+                            child.slice(-1)[0].virtualRange[1],
+                        ],
+                    ));
                 } else {
                     children.push(child.value);
                     errors.push(...child.errors);

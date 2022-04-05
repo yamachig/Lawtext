@@ -1,5 +1,5 @@
 import factory from "../factory";
-import $sentenceChildren from "./$sentenceChildren";
+import $sentenceChildren, { sentenceChildrenToString } from "./$sentenceChildren";
 import $indents from "./$indents";
 import { AppdxItemHeadLine } from "../../../node/cst/line";
 import { $_EOL } from "./lexical";
@@ -9,8 +9,8 @@ import { $appdxControl, $appdxFigControl, $appdxFormatControl, $appdxNoteControl
 
 export const appdxItemTitlePtn = {
     AppdxFig: /^[別付附]?図/,
-    AppdxStyle: /^(?![付附]則)[^(（]*様式/,
-    AppdxFormat: /^(?![付附]則)[^(（]*書式/,
+    AppdxStyle: /^(?![付附]則)[^(（\r\n]*様式/,
+    AppdxFormat: /^(?![付附]則)[^(（\r\n]*書式/,
     AppdxTable: /^[別付附]表/,
     AppdxNote: /^別[記紙]/,
     Appdx: /^[付附]録/,
@@ -69,12 +69,14 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
         , "tail")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, tagControl: { tag, control }, tail, lineEndText, text }) => {
-            if (text().includes("オリブ")) {
+            if (
+                (!appdxItemTitlePtn[tag].exec(sentenceChildrenToString(tail?.value ?? [])))
+                && control.control === "#"
+            ) {
                 console.log(text());
                 console.log(tag);
                 console.log(control);
-                console.log(tail);
-                console.log(appdxItemTitlePtn.AppdxStyle.exec(text()));
+                console.log(JSON.stringify(tail, null, 2));
             }
             const inline = mergeAdjacentTexts(tail?.value ?? []);
             const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;

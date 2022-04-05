@@ -4,7 +4,11 @@ import { OtherLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
 import $columnsOrSentences from "./$sentencesArray";
 import { WithErrorRule } from "../util";
-import { Control } from "../../../node/cst/inline";
+import { Control, Sentences } from "../../../node/cst/inline";
+import $xml from "./$xml";
+import { newStdEL } from "../../../law/std";
+import * as std from "../../../law/std";
+import { EL } from "../../../node/el";
 
 
 export const $otherLine: WithErrorRule<OtherLine> = factory
@@ -37,7 +41,36 @@ export const $otherLine: WithErrorRule<OtherLine> = factory
             )
         , "controls")
         .and(r => r
-            .zeroOrOne(() => $columnsOrSentences)
+            .zeroOrOne(r => r
+                .choice(c => c
+                    .orSequence(s => s
+                        // .andOmit(r => r.assert(({ controls }) => controls.some(c => c.control === ":xml:")))
+                        .and(() => $xml, "xml")
+                        .andOmit(r => r.nextIs(() => $_EOL))
+                        .action(({ range, xml }) => {
+                            const [start, end] = xml.value.range ?? range();
+                            const el = xml.value;
+                            const capturedEl = (
+                                std.isLine(el) || std.isQuoteStruct(el) || std.isArithFormula(el) || std.isRuby(el) || std.isSup(el) || std.isSub(el) || std.isControl(el)
+                            )
+                                ? el
+                                : new EL("__CapturedXML", {}, [el], [start, end]);
+                            return {
+                                value: [
+                                    new Sentences(
+                                        "",
+                                        [start, start],
+                                        [],
+                                        [newStdEL("Sentence", {}, [capturedEl], [start, end])]
+                                    )
+                                ],
+                                errors: xml.errors,
+                            };
+                        })
+                    )
+                    .or(() => $columnsOrSentences)
+                )
+            )
         , "columns")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, controls, columns, lineEndText }) => {
