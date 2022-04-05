@@ -1,20 +1,34 @@
 import factory from "../factory";
-import $sentenceChildren, { sentenceChildrenToString } from "./$sentenceChildren";
+import $sentenceChildren from "./$sentenceChildren";
 import $indents from "./$indents";
 import { AppdxItemHeadLine } from "../../../node/cst/line";
 import { $_EOL } from "./lexical";
 import { mergeAdjacentTexts, WithErrorRule } from "../util";
 import { __Parentheses } from "../../../node/control";
 import { $appdxControl, $appdxFigControl, $appdxFormatControl, $appdxNoteControl, $appdxStyleControl, $appdxTableControl, $autoTagControl } from "./$tagControl";
+import { ChoiceRule } from "generic-parser/lib/rules/choice";
+import { Env } from "../env";
+import { ErrorMessage } from "../error";
+import { Control } from "../../../node/cst/inline";
+import { appdxItemTags } from "../../../law/std";
 
-export const appdxItemTitlePtn = {
-    AppdxFig: /^[別付附]?図/,
-    AppdxStyle: /^(?![付附]則)[^(（\r\n]*様式/,
-    AppdxFormat: /^(?![付附]則)[^(（\r\n]*書式/,
-    AppdxTable: /^[別付附]表/,
-    AppdxNote: /^別[記紙]/,
-    Appdx: /^[付附]録/,
-} as const;
+export const appdxItemTitlePtns = [
+    ["AppdxFig", /^[別付附]?図/],
+    ["AppdxStyle", /^(?![付附]則)[^(（\r\n]*様式/],
+    ["AppdxFormat", /^(?![付附]則)[^(（\r\n]*書式/],
+    ["AppdxTable", /^[別付附]表/],
+    ["AppdxNote", /^別[記紙]/],
+    ["Appdx", /^[付附]録/],
+] as const;
+
+export const detectAppdxItemTitle = (text: string) => {
+    for (const [name, ptn] of appdxItemTitlePtns) {
+        if (ptn.test(text)) {
+            return name;
+        }
+    }
+    return null;
+};
 
 export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
     .withName("appdxItemHeadLine")
@@ -31,32 +45,27 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                 .orSequence(s => s
                     .and(() => $autoTagControl, "control")
                     .and(r => r
-                        .choice(c => c
-                            .orSequence(s => s
-                                .and(r => r.nextIs(r => r.regExp(appdxItemTitlePtn.AppdxFig)))
-                                .action(() => "AppdxFig" as const)
-                            )
-                            .orSequence(s => s
-                                .and(r => r.nextIs(r => r.regExp(appdxItemTitlePtn.AppdxStyle)))
-                                .action(() => "AppdxStyle" as const)
-                            )
-                            .orSequence(s => s
-                                .and(r => r.nextIs(r => r.regExp(appdxItemTitlePtn.AppdxFormat)))
-                                .action(() => "AppdxFormat" as const)
-                            )
-                            .orSequence(s => s
-                                .and(r => r.nextIs(r => r.regExp(appdxItemTitlePtn.AppdxTable)))
-                                .action(() => "AppdxTable" as const)
-                            )
-                            .orSequence(s => s
-                                .and(r => r.nextIs(r => r.regExp(appdxItemTitlePtn.AppdxNote)))
-                                .action(() => "AppdxNote" as const)
-                            )
-                            .orSequence(s => s
-                                .and(r => r.nextIs(r => r.regExp(appdxItemTitlePtn.Appdx)))
-                                .action(() => "Appdx" as const)
-                            )
-                        )
+                        .choice(c => {
+                            let choice = c as unknown as ChoiceRule<string, typeof appdxItemTags[number], Env & {
+                                indentsStruct: {
+                                    value: {
+                                        indentTexts: string[];
+                                        indentDepth: number;
+                                    };
+                                    errors: ErrorMessage[];
+                                    control: Control;
+                                };
+                                control: Control;
+                            }>;
+                            for (const [name, ptn] of appdxItemTitlePtns) {
+                                choice = choice
+                                    .orSequence(s => s
+                                        .and(r => r.nextIs(r => r.regExp(ptn)))
+                                        .action(() => name)
+                                    );
+                            }
+                            return choice;
+                        })
                     , "tag")
                     .action(({ tag, control }) => {
                         return { tag, control };
@@ -68,16 +77,7 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
             .zeroOrOne(() => $sentenceChildren)
         , "tail")
         .and(() => $_EOL, "lineEndText")
-        .action(({ range, indentsStruct, tagControl: { tag, control }, tail, lineEndText, text }) => {
-            if (
-                (!appdxItemTitlePtn[tag].exec(sentenceChildrenToString(tail?.value ?? [])))
-                && control.control === "#"
-            ) {
-                console.log(text());
-                console.log(tag);
-                console.log(control);
-                console.log(JSON.stringify(tail, null, 2));
-            }
+        .action(({ range, indentsStruct, tagControl: { tag, control }, tail, lineEndText }) => {
             const inline = mergeAdjacentTexts(tail?.value ?? []);
             const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
             const [title, relatedArticleNum] = (

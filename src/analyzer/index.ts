@@ -601,7 +601,7 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
     const ret: ____Declaration[] = [];
 
     let columnsMode = true;
-    let paragraphMatch = /([^。]+?)において、?[次左]の各号に掲げる用語の意義は、(?:それぞれ)?当該各号に定めるところによる。$/.exec(spans[spanIndex].text);
+    let paragraphMatch = /([^。\r\n]+?)において、?[次左]の各号に掲げる用語の意義は、(?:それぞれ)?当該各号に定めるところによる。$/.exec(spans[spanIndex].text);
     if (!paragraphMatch) {
         columnsMode = false;
         paragraphMatch = /^(.+?)(?:及びこの法律に基づく命令)?(?:において次に掲げる用語は、|の規定の解釈に(?:ついて|関して)は、)次の定義に従うものとする。$/.exec(spans[spanIndex].text);

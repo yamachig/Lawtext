@@ -879,70 +879,57 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 {
                     tag: "AppdxTableTitle",
                     attr: {},
-                    children: ["別表第二"],
+                    children: ["別表第二〔第６条・第８条〕"]
                 },
                 {
-                    tag: "RelatedArticleNum",
-                    attr: {},
-                    children: ["（第十九条、第二十一条関係）"],
-                },
-                {
-                    tag: "TableStruct",
-                    attr: {},
+                    tag: "Item",
+                    attr: {
+                        Delete: "false"
+                    },
                     children: [
                         {
-                            tag: "Table",
+                            tag: "ItemTitle",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ItemSentence",
                             attr: {},
                             children: [
                                 {
-                                    tag: "TableRow",
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["接続会計財務諸表様式"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "StyleStruct",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "StyleStructTitle",
+                                    attr: {},
+                                    children: ["様式第１"]
+                                },
+                                {
+                                    tag: "Style",
                                     attr: {},
                                     children: [
                                         {
-                                            tag: "TableColumn",
-                                            attr: {},
-                                            children: [
-                                                {
-                                                    tag: "Sentence",
-                                                    attr: {},
-                                                    children: ["情報照会者"]
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            tag: "TableColumn",
-                                            attr: {},
-                                            children: [
-                                                {
-                                                    tag: "Sentence",
-                                                    attr: {},
-                                                    children: ["事務"]
-                                                }
-                                            ]
+                                            tag: "Fig",
+                                            attr: {
+                                                src: "./pict/H09F04001000091-001.pdf"
+                                            },
+                                            children: []
                                         }
                                     ]
-                                },
+                                }
                             ]
-                        },
-                    ],
-                },
-                {
-                    tag: "Remarks",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "RemarksLabel",
-                            attr: {},
-                            children: ["備考"],
-                        },
-                        {
-                            tag: "Sentence",
-                            attr: {},
-                            children: ["備考文"],
-                        },
-                    ],
-                },
-            ],
+                        }
+                    ]
+                }
+            ]
         };
 
         testLawtextToStd(
@@ -953,7 +940,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
             (vlines, env) => {
                 const result = $appdxTable.match(0, vlines, env);
                 // console.log(JSON.stringify(vlines, null, 2));
-                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
                 // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
                 return result;

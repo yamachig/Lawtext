@@ -6,12 +6,26 @@ import { $_EOL } from "./lexical";
 import { mergeAdjacentTexts, WithErrorRule } from "../util";
 import { __Parentheses } from "../../../node/control";
 import { $autoTagControl, $supplProvisionAppdxControl, $supplProvisionAppdxStyleControl, $supplProvisionAppdxTableControl } from "./$tagControl";
+import { ChoiceRule } from "generic-parser/lib/rules/choice";
+import { ErrorMessage } from "../error";
+import { Control } from "../../../node/cst/inline";
+import { supplProvisionAppdxItemTags } from "../../../law/std";
+import { Env } from "../env";
 
-export const supplProvisionAppdxItemTitlePtn = {
-    SupplProvisionAppdx: /^[付附]則[付附]録/,
-    SupplProvisionAppdxTable: /^[付附]則[別付附]表/,
-    SupplProvisionAppdxStyle: /^[付附]則[^(（]*様式/,
-} as const;
+export const supplProvisionAppdxItemTitlePtns = [
+    ["SupplProvisionAppdx", /^[付附]則[付附]録/],
+    ["SupplProvisionAppdxTable", /^[付附]則[別付附]表/],
+    ["SupplProvisionAppdxStyle", /^[付附]則[^(（\r\n]*様式/],
+] as const;
+
+export const detectSupplProvisionAppdxItemTitle = (text: string) => {
+    for (const [name, ptn] of supplProvisionAppdxItemTitlePtns) {
+        if (ptn.test(text)) {
+            return name;
+        }
+    }
+    return null;
+};
 
 
 export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdxItemHeadLine> = factory
@@ -26,20 +40,27 @@ export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdx
                 .orSequence(s => s
                     .and(() => $autoTagControl, "control")
                     .and(r => r
-                        .choice(c => c
-                            .orSequence(s => s
-                                .and(r => r.nextIs(r => r.regExp(supplProvisionAppdxItemTitlePtn.SupplProvisionAppdxStyle)))
-                                .action(() => "SupplProvisionAppdxStyle" as const)
-                            )
-                            .orSequence(s => s
-                                .and(r => r.nextIs(r => r.regExp(supplProvisionAppdxItemTitlePtn.SupplProvisionAppdxTable)))
-                                .action(() => "SupplProvisionAppdxTable" as const)
-                            )
-                            .orSequence(s => s
-                                .and(r => r.nextIs(r => r.regExp(supplProvisionAppdxItemTitlePtn.SupplProvisionAppdx)))
-                                .action(() => "SupplProvisionAppdx" as const)
-                            )
-                        )
+                        .choice(c => {
+                            let choice = c as unknown as ChoiceRule<string, typeof supplProvisionAppdxItemTags[number], Env & {
+                                indentsStruct: {
+                                    value: {
+                                        indentTexts: string[];
+                                        indentDepth: number;
+                                    };
+                                    errors: ErrorMessage[];
+                                    control: Control;
+                                };
+                                control: Control;
+                            }>;
+                            for (const [name, ptn] of supplProvisionAppdxItemTitlePtns) {
+                                choice = choice
+                                    .orSequence(s => s
+                                        .and(r => r.nextIs(r => r.regExp(ptn)))
+                                        .action(() => name)
+                                    );
+                            }
+                            return choice;
+                        })
                     , "tag")
                     .action(({ tag, control }) => {
                         return { tag, control };
