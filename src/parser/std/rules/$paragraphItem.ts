@@ -76,14 +76,6 @@ export const paragraphItemToLines = (
         else { assertNever(child); }
     }
 
-    if (noControl && ParagraphCaption.length > 0) {
-        throw new NotImplementedError("noControl paragraphItemToLines with ParagraphCaption");
-    }
-
-    if (noControl && ParagraphItemTitle.length > 0) {
-        throw new NotImplementedError("noControl paragraphItemToLines with ParagraphTitle");
-    }
-
     if (ParagraphCaption.length > 0) {
         const newIndentTexts = [...indentTexts, CST.INDENT];
 
@@ -148,7 +140,11 @@ export const paragraphItemToLines = (
             sentencesArray,
             CST.EOL,
         ));
-    } else if (noControl) {
+    } else if (
+        noControl
+        && ParagraphCaption.every(c => (typeof c !== "string" && !c.text) && !c)
+        && ParagraphItemTitle.every(c => (typeof c !== "string" && !c.text) && !c)
+    ) {
         lines.push(new ParagraphItemLine(
             null,
             indentTexts.length,
