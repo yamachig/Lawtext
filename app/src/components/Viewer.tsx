@@ -150,7 +150,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                 <div className="container-fluid">
                     <p style={{ textAlign: "center" }}>
                         {location.hostname === "yamachig.github.io" ? (<>
-                            <a href="https://yamachig.github.io/lawtext-app/#download/" target="_blank" rel="noreferrer">ダウンロード版Lawtextはこちら</a>
+                            <a href="https://yamachig.github.io/lawtext-app/#/download/" target="_blank" rel="noreferrer">ダウンロード版Lawtextはこちら</a>
                         </>) : (<>
                             <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer">Web版Lawtextはこちら</a>
                         </>)}

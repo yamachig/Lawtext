@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { HashRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 
 import "bootstrap";
 import "./index.scss";
@@ -10,11 +10,12 @@ import { DownloadPage } from "./components/DownloadPage";
 
 const App = () => {
     return (
-        <HashRouter hashType="noslash">
-            <Switch>
-                <Route path="/download/" component={DownloadPage} />
-                <Route path="/:lawSearchKey?" component={LawtextAppPage} />
-            </Switch>
+        <HashRouter>
+            <Routes>
+                <Route path="/download/" element={<DownloadPage/>} />
+                <Route path=":lawSearchKey" element={<LawtextAppPage/>} />
+                <Route path="" element={<LawtextAppPage/>} />
+            </Routes>
         </HashRouter>
     );
 };

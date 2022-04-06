@@ -2746,7 +2746,7 @@ interface ____LawNumComponentProps extends ELComponentProps { el: std.__EL }
 const ____LawNumComponent = withCatcher<____LawNumComponentProps>(props => {
     const el = props.el;
     return (
-        <LawNumA href={`#${el.text}`} target="_blank">
+        <LawNumA href={`#/${el.text}`} target="_blank">
             {getInnerRun(el, props.ls)}
         </LawNumA>
     );

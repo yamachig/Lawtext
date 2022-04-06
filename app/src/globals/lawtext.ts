@@ -8,7 +8,7 @@ import * as coreQuery from "./coreQuery";
 import * as law_util from "@appsrc/law_util";
 import { elawsLoader, storedLoader } from "@appsrc/lawdata/loaders";
 import { LawInfo } from "lawtext/dist/src/data/lawinfo";
-import * as _lawUtil from "lawtext/dist/src/law/lawUtil";
+import * as _lawUtil from "lawtext/dist/src/law/std";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
 
 /**
@@ -46,7 +46,7 @@ export const getLawtextAppUrl = (lawOrLawNum: string | LawInfo, lawtextAppRoot?:
 export const query = (criteria: coreQuery.LawCriteria | null = null, options?: coreQuery.QueryOptions): coreQuery.LawQuery => {
     if (location.hostname === "yamachig.github.io") {
         console.error("lawtext.query() はダウンロード版Lawtextでオフライン用データを使用する場合に利用できます。Web版では lawtext.queryViaAPI() を使用してください。ダウンロード版Lawtextはこちら：");
-        console.error("https://yamachig.github.io/lawtext-app/#download/");
+        console.error("https://yamachig.github.io/lawtext-app/#/download/");
     } else {
         storedLoader.listJsonExists().then(exists => {
             if (!exists) {
@@ -65,7 +65,7 @@ export const query = (criteria: coreQuery.LawCriteria | null = null, options?: c
  */
 export const queryViaAPI = (criteria: coreQuery.LawCriteria | null = null, options?: coreQuery.QueryOptions): coreQuery.LawQuery => {
     console.warn("クエリの実行に e-Gov 法令API を使用します。時間がかかる場合があります。ダウンロード版Lawtextでオフライン用データを使用することをご検討ください。ダウンロード版Lawtextはこちら：");
-    console.warn("https://yamachig.github.io/lawtext-app/#download/");
+    console.warn("https://yamachig.github.io/lawtext-app/#/download/");
     return queryWithLoader(elawsLoader, criteria, options);
 };
 
