@@ -13,7 +13,6 @@ import $articleGroup, { articleGroupToLines } from "./$articleGroup";
 import $article, { articleToLines } from "./$article";
 import { assertNever, NotImplementedError } from "../../../util";
 import $figStruct, { figStructToLines } from "./$figStruct";
-import { isParagraphItem } from "../../out_ std --copy/lawUtil";
 import $tableStruct, { tableStructToLines } from "./$tableStruct";
 import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, appdxItemToLines } from "./$appdxItem";
 import { $supplProvisionAppdx, $supplProvisionAppdxStyle, $supplProvisionAppdxTable, supplProvisionAppdxItemToLines } from "./$supplProvisionAppdxItem";
@@ -74,7 +73,7 @@ export const amendProvisionToLines = (
             for (const cc of child.children) {
                 if (isArticle(cc)) {
                     lines.push(...articleToLines(cc, newProvisionsIndentTexts));
-                } else if (isParagraphItem(cc)) {
+                } else if (std.isParagraphItem(cc)) {
                     lines.push(...paragraphItemToLines(cc, newProvisionsIndentTexts));
                 } else if (isList(cc)) {
                     lines.push(...listOrSublistToLines(cc, newProvisionsIndentTexts));

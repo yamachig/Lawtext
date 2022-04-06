@@ -20,7 +20,6 @@ import $figStruct, { figStructToLines } from "./$figStruct";
 import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
 import { paragraphItemTitleMatch, paragraphItemTitleRule, unknownParagraphItemTitleMatch } from "../../cst/rules/$paragraphItemLine";
 import { anonymParagraphItemControls, autoTagControls, paragraphItemControls } from "../../cst/rules/$tagControl";
-import { isParagraphItem } from "../../out_ std --copy/lawUtil";
 
 interface ParagraphItemToLinesOptions {
     firstArticleParagraphArticleTitle?: (string | SentenceChildEL)[],
@@ -400,7 +399,7 @@ export const paragraphItemFromAuto = (
     Object.assign(attr, paragraphItem.attr);
 
     const children = paragraphItem.children.map(c => {
-        if (isParagraphItem(c) || isAutoParagraphItem(c)) {
+        if (std.isParagraphItem(c) || isAutoParagraphItem(c)) {
             return paragraphItemFromAuto(
                 std.paragraphItemTags[std.paragraphItemTags.indexOf(tag) + 1],
                 c,
@@ -474,7 +473,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
             const paragraphItem = new EL(tag) as std.ParagraphItem | __AutoParagraphItem;
             const errors = tailChildren?.errors ?? [];
 
-            if (isParagraphItem(paragraphItem)) {
+            if (std.isParagraphItem(paragraphItem)) {
                 if (isParagraph(paragraphItem)) {
                     (paragraphItem as std.Paragraph).attr.OldStyle = "false";
                 } else {
