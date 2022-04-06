@@ -105,7 +105,7 @@ export const $paragraphItemTitle: WithErrorRule<string> = factory
         .and(r => r
             .zeroOrMore(r => r
                 .sequence(s => s
-                    .and(r => r.seqEqual("の"))
+                    .and(r => r.oneOf("のノ"))
                     .and(() => $paragraphItemTitle),
                 ),
             ),
