@@ -7,6 +7,9 @@ import { $__, $_EOL, $_ } from "./lexical";
 import { mergeAdjacentTexts, WithErrorRule } from "../util";
 import { articleGroupType } from "../../../law/num";
 import { Control } from "../../../node/cst/inline";
+import makeRangesRule from "./makeRangesRule";
+
+const { $ranges: $articleGroupRanges } = makeRangesRule(() => $articleGroupNum);
 
 
 export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factory
@@ -39,7 +42,12 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
                 )
             )
         , "control")
-        .and(() => $articleGroupNum, "articleGroupNum")
+        .and(r => r
+            .sequence(s => s
+                .and(() => $articleGroupRanges, "ranges")
+                .action(({ ranges, text }) => ({ ranges, text: text() }))
+            )
+        , "articleGroupNum")
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(c => c
@@ -55,7 +63,7 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
         .action(({ range, control, indentsStruct, articleGroupNum, tail, lineEndText }) => {
             const errors = [
                 ...indentsStruct.errors,
-                ...articleGroupNum.errors,
+                ...articleGroupNum.ranges.errors,
                 ...(tail?.inline.errors ?? []),
             ];
             return {
@@ -63,10 +71,10 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
                     range(),
                     indentsStruct.value.indentDepth,
                     indentsStruct.value.indentTexts,
-                    articleGroupType[articleGroupNum.value.typeChar],
+                    articleGroupType[articleGroupNum.ranges.value[0][0].value.typeChar],
                     control ? [control] : [],
                     mergeAdjacentTexts([
-                        articleGroupNum.value.text,
+                        articleGroupNum.text,
                         tail?.space ?? "",
                         ...(tail?.inline.value ?? []),
                     ]),
