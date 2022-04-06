@@ -37,7 +37,8 @@ abstract class IndentsLine<TType extends LineType = LineType> extends BaseLine<T
     }
     public abstract contentText(): string;
     public text(): string {
-        return [...this.indentTexts, this.contentText(), this.lineEndText].join("");
+        const contentText = this.contentText().replace(/^\s+/g, "");
+        return [...this.indentTexts, contentText, this.lineEndText].join("");
     }
     public get indentRanges(): [number, number][] | null {
         if (!this.range) return null;

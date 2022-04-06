@@ -39,11 +39,26 @@ export const mergeAdjacentTexts = <T extends SentenceChildEL>(inline: (string | 
 export const separateTrailingSpaces = <T extends SentenceChildEL>(inline: (string | T)[]): { inline: (T | __Text)[], spaces: string} => {
     const ret = { inline: mergeAdjacentTexts(inline), spaces: "" };
     if (ret.inline.slice(-1)[0]?.tag === "__Text") {
-        const m = /^(.*?)(\s+)/.exec(ret.inline.slice(-1)[0].text);
+        const m = /^(.*?)(\s+)$/.exec(ret.inline.slice(-1)[0].text);
         if (m) {
             ret.inline.splice(-1, 1);
             if (m[1] !== "") {
                 ret.inline.push(new __Text(m[1]));
+            }
+            ret.spaces = m[2];
+        }
+    }
+    return ret;
+};
+
+export const separateLeadingSpaces = <T extends SentenceChildEL>(inline: (string | T)[]): { inline: (T | __Text)[], spaces: string} => {
+    const ret = { inline: mergeAdjacentTexts(inline), spaces: "" };
+    if (ret.inline[0]?.tag === "__Text") {
+        const m = /^(\s+)(.*?)$/.exec(ret.inline[0].text);
+        if (m) {
+            ret.inline.splice(0, 1);
+            if (m[1] !== "") {
+                ret.inline.unshift(new __Text(m[1]));
             }
             ret.spaces = m[2];
         }
