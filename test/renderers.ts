@@ -255,7 +255,7 @@ const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
 
 describe("Test Renderes", () => {
 
-    const lawNums = ["平成十二年郵政省令第六十四号"];
+    const lawNums = ["令和三年内閣府令第三十五号"];
     // lawNums.splice(0, lawNums.length);
 
     for (const lawNum of lawNums) {
