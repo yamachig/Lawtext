@@ -5,17 +5,25 @@ import { $_, $_EOL } from "./lexical";
 import { WithErrorRule } from "../util";
 import { Control } from "../../../node/cst/inline";
 
+// eslint-disable-next-line no-irregular-whitespace
+export const supplProvisionLabelPtn = /^[附付][ 　\t\r\n]*則/;
+export const supplProvisionControl = ":suppl-provision:";
 
 export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = factory
     .withName("supplProvisionHeadLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
         .and(r => r
-            .zeroOrOne(r => r
+            .zeroOrMore(r => r
                 .sequence(s => s
                     .and(r => r
                         .sequence(s => s
-                            .and(r => r.regExp(/^:keep-indents:/), "value")
+                            .and(r => r
+                                .choice(c => c
+                                    .or(r => r.regExp(/^:keep-indents:/))
+                                    .or(r => r.regExp(new RegExp(`^${supplProvisionControl}`)))
+                                )
+                            , "value")
                             .action(({ value, range }) => ({ value, range: range() }))
                         )
                     , "control")
@@ -35,9 +43,16 @@ export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = fa
                     })
                 )
             )
-        , "control")
-        // eslint-disable-next-line no-irregular-whitespace
-        .and(r => r.regExp(/^[附付][ 　\t\r\n]*則/), "head")
+        , "controls")
+        .and(r => r
+            .choice(c => c
+                .or(r => r.regExp(supplProvisionLabelPtn))
+                .orSequence(s => s
+                    .andOmit(r => r.assert(({ controls }) => controls.some(c => c.control === supplProvisionControl)))
+                    .and(r => r.regExp(/^[^(（\r\n]+/))
+                )
+            )
+        , "head")
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(s => s
@@ -60,14 +75,14 @@ export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = fa
             .zeroOrOne(r => r.regExp(/^[ 　\t\r\n]*抄/))
         , "extract")
         .and(() => $_EOL, "lineEndText")
-        .action(({ range, control, indentsStruct, head, amendLawNumStruct, extract, lineEndText }) => {
+        .action(({ range, controls, indentsStruct, head, amendLawNumStruct, extract, lineEndText }) => {
             const errors = indentsStruct.errors;
             return {
                 value: new SupplProvisionHeadLine(
                     range(),
                     indentsStruct.value.indentDepth,
                     indentsStruct.value.indentTexts,
-                    control ? [control] : [],
+                    controls,
                     head,
                     amendLawNumStruct?.openParen ?? "",
                     amendLawNumStruct?.amendLawNum ?? "",

@@ -11,25 +11,28 @@ import $article, { articleToLines } from "./$article";
 import $articleGroup, { articleGroupToLines } from "./$articleGroup";
 import { $supplProvisionAppdx, $supplProvisionAppdxStyle, $supplProvisionAppdxTable, supplProvisionAppdxItemToLines } from "./$supplProvisionAppdxItem";
 import { Control } from "../../../node/cst/inline";
+import { supplProvisionControl, supplProvisionLabelPtn } from "../../cst/rules/$supplProvisionHeadLine";
 
 export const supplProvisionToLines = (supplProvision: std.SupplProvision, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
     const supplProvisionLabel = supplProvision.children.find(el => el.tag === "SupplProvisionLabel") as std.SupplProvisionLabel | undefined;
+    const supplProvisionLabelStr = sentenceChildrenToString(supplProvisionLabel?.children ?? []);
+
+    const controlStrs: string[] = [];
+    if (indentTexts.length !== 0) {
+        controlStrs.push(":keep-indents:");
+    }
+    if (!supplProvisionLabelPtn.exec(supplProvisionLabelStr)) {
+        controlStrs.push(supplProvisionControl);
+    }
 
     lines.push(new SupplProvisionHeadLine(
         null,
         indentTexts.length * 3,
         [...indentTexts, CST.INDENT, CST.INDENT, CST.INDENT],
-        indentTexts.length == 0 ? [] : [
-            new Control(
-                ":keep-indents:",
-                null,
-                "",
-                null,
-            )
-        ],
-        sentenceChildrenToString(supplProvisionLabel?.children ?? []),
+        controlStrs.map((str, i) => new Control(str, null, i !== controlStrs.length - 1 ? " " : "", null)),
+        supplProvisionLabelStr,
         (typeof supplProvision.attr.AmendLawNum === "string") ? `${CST.MARGIN}（` : "",
         supplProvision.attr.AmendLawNum ?? "",
         (typeof supplProvision.attr.AmendLawNum === "string") ? "）" : "",
