@@ -13,7 +13,7 @@ import $mainProvision, { mainProvisionToLines } from "./$mainProvision";
 import $supplProvision, { supplProvisionToLines } from "./$supplProvision";
 import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, appdxItemToLines } from "./$appdxItem";
 import { ErrorMessage } from "../../cst/error";
-import { sentencesArrayToString } from "../../cst/rules/$sentencesArray";
+import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
 import { parseLawNum } from "../../../law/num";
 
 
@@ -200,7 +200,7 @@ export const $enactStatement: WithErrorRule<std.EnactStatement> = factory
             const enactStatement = newStdEL(
                 "EnactStatement",
                 {},
-                line.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
+                forceSentencesArrayToSentenceChildren(line.line.sentencesArray),
             );
             return {
                 value: enactStatement.setRangeFromChildren(),
@@ -339,7 +339,7 @@ export const $law: WithErrorRule<std.Law> = factory
                 lawBody.append(newStdEL(
                     "LawTitle",
                     {},
-                    lawTitleLines.value.lawNameLine.line.sentencesArray.flat().map(ss => ({ ls: ss.leadingSpace, ss: ss.sentences })).map(({ ls, ss }) => [ls, ...ss.map(s => s.children).flat()]).flat(),
+                    forceSentencesArrayToSentenceChildren(lawTitleLines.value.lawNameLine.line.sentencesArray),
                     lawTitleLines.value.lawNameLine.virtualRange,
                 ));
             }

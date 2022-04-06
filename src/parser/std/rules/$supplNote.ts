@@ -5,6 +5,7 @@ import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { Control, Sentences } from "../../../node/cst/inline";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 
 export const supplNoteControl = ":suppl-note:";
 
@@ -59,7 +60,7 @@ export const $supplNote: WithErrorRule<std.SupplNote> = factory
             const supplNote = newStdEL(
                 "SupplNote",
                 {},
-                line.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
+                forceSentencesArrayToSentenceChildren(line.line.sentencesArray),
             );
             return {
                 value: supplNote.setRangeFromChildren(),

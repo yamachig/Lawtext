@@ -10,6 +10,7 @@ import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import $any, { anyToLines } from "./$any";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 
 export const noteLikeStructControl = {
     NoteStruct: ":note-struct:",
@@ -160,7 +161,7 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                 const children: std.NoteLikeStruct["children"][number][] = [];
                 const errors: ErrorMessage[] = [];
 
-                const noteLikeStructTitleSentenceChildren = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
+                const noteLikeStructTitleSentenceChildren = forceSentencesArrayToSentenceChildren(titleLine.line.sentencesArray);
                 const noteLikeStructTitle = noteLikeStructTitleSentenceChildren.length > 0 ? newStdEL(
                     std.noteLikeStructTitleTags[std.noteLikeStructTags.indexOf(tag)],
                     {},

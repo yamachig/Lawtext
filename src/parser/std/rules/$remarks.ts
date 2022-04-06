@@ -9,6 +9,7 @@ import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import { Control, Sentences } from "../../../node/cst/inline";
 import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 
 export const remarksControl = ":remarks:";
 export const remarksLabelPtn = /^(?:備\s*考|注)\s*$/;
@@ -122,7 +123,7 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                         )
                         || (
                             item.line.sentencesArray.length > 0
-                            && remarksLabelPtn.exec(item.line.sentencesArray[0].sentences[0].text)
+                            && remarksLabelPtn.exec(item.line.contentText())
                         )
                     )
                 ) {
@@ -139,7 +140,7 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
             const children: std.Remarks["children"] = [];
             const errors: ErrorMessage[] = [];
 
-            const remarksLabelSentenceChildren = labelLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
+            const remarksLabelSentenceChildren = forceSentencesArrayToSentenceChildren(labelLine.line.sentencesArray);
             const remarksLabel = remarksLabelSentenceChildren.length > 0 ? newStdEL(
                 "RemarksLabel",
                 {},

@@ -10,6 +10,7 @@ import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import $any, { anyToLines } from "./$any";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 
 
 export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] => {
@@ -213,7 +214,7 @@ const $table: WithErrorRule<std.Table> = factory
                 if (tableColumnLine.line.firstColumnIndicator === "*") {
                     if (tableColumnLine.line.columnIndicator === "*") {
                         const tableHeaderColumnChildren = [
-                            ...tableColumnLine.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
+                            ...forceSentencesArrayToSentenceChildren(tableColumnLine.line.sentencesArray),
                             ...(tableColumnChildrenBlock?.value ?? []),
                         ];
                         if (tableHeaderColumnChildren.length === 0) {
@@ -277,7 +278,7 @@ const $table: WithErrorRule<std.Table> = factory
 
                     if (isTableHeaderRow(tableRow)) {
                         const tableHeaderColumnChildren = [
-                            ...tableColumnLine.line.sentencesArray.flat().map(s => s.sentences).flat().map(s => s.children).flat(),
+                            ...forceSentencesArrayToSentenceChildren(tableColumnLine.line.sentencesArray),
                             ...(tableColumnChildrenBlock?.value ?? []),
                         ];
                         if (tableHeaderColumnChildren.length === 0) {

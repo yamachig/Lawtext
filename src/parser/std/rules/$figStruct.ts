@@ -9,6 +9,7 @@ import { Control, Sentences } from "../../../node/cst/inline";
 import { EL, rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 
 export const figStructControl = ":fig-struct:";
 
@@ -173,7 +174,7 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                 const children: std.FigStruct["children"] = [];
                 const errors: ErrorMessage[] = [];
 
-                const figStructTitleSentenceChildren = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.children).flat();
+                const figStructTitleSentenceChildren = forceSentencesArrayToSentenceChildren(titleLine.line.sentencesArray);
                 const figStructTitle = figStructTitleSentenceChildren.length > 0 ? newStdEL(
                     "FigStructTitle",
                     {},

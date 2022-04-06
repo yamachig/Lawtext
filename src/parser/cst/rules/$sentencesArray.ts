@@ -3,8 +3,8 @@ import { __Text } from "../../../node/control";
 import { factory } from "../factory";
 import $sentenceChildren, { $PERIOD_SENTENCE_FRAGMENT, sentenceChildrenToString } from "./$sentenceChildren";
 import { $_, $__ } from "./lexical";
-import { WithErrorRule } from "../util";
-import { Sentences, SentencesArray } from "../../../node/cst/inline";
+import { mergeAdjacentTexts, WithErrorRule } from "../util";
+import { SentenceChildEL, Sentences, SentencesArray } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $squareAttr from "./$squareAttr";
 import { ErrorMessage } from "../error";
@@ -26,6 +26,12 @@ export const sentencesArrayToString = (
     }
 
     return runs.join("");
+};
+
+export const forceSentencesArrayToSentenceChildren = (
+    sentencesArray: SentencesArray,
+): SentenceChildEL[] => {
+    return mergeAdjacentTexts(sentencesArray.flat().map(ss => ({ ls: ss.leadingSpace, ss: ss.sentences })).map(({ ls, ss }) => [ls, ...ss.map(s => s.children).flat()]).flat());
 };
 
 

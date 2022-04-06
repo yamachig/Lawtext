@@ -11,6 +11,7 @@ import { mergeAdjacentTexts } from "../../cst/util";
 import { VirtualOnlyLineType } from "../virtualLine";
 import { ErrorMessage } from "../../cst/error";
 import { __Parentheses } from "../../../node/control";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 
 export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -172,7 +173,7 @@ export const $tocPreambleLabel: WithErrorRule<std.TOCPreambleLabel> = factory
             const tocPreambleLabel = newStdEL(
                 "TOCPreambleLabel",
                 {},
-                headLine.line.sentencesArray.flat().map(ss => ss.sentences).flat().map(s => s.children).flat(),
+                forceSentencesArrayToSentenceChildren(headLine.line.sentencesArray),
             );
 
             return {
@@ -290,7 +291,7 @@ export const $tocArticle: WithErrorRule<std.TOCArticle> = factory
             const articleCaption = headLine.line.sentencesArray.length > 0 ? newStdEL(
                 "ArticleCaption",
                 {},
-                mergeAdjacentTexts([...headLine.line.sentencesArray.flat().map(ss => ss.sentences).flat().map(s => s.children).flat()]),
+                forceSentencesArrayToSentenceChildren(headLine.line.sentencesArray),
             ) : null;
 
             const tocArticle = newStdEL(
