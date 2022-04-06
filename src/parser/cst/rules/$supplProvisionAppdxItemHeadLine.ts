@@ -15,7 +15,8 @@ import { Env } from "../env";
 export const supplProvisionAppdxItemTitlePtns = [
     ["SupplProvisionAppdx", /^[付附]則[付附]録/],
     ["SupplProvisionAppdxTable", /^[付附]則[別付附]表/],
-    ["SupplProvisionAppdxStyle", /^[付附]則[^(（\r\n]*様式/],
+    // eslint-disable-next-line no-irregular-whitespace
+    ["SupplProvisionAppdxStyle", /^[付附]則[^(（ 　\t\r\n]*様式/],
 ] as const;
 
 export const detectSupplProvisionAppdxItemTitle = (text: string) => {

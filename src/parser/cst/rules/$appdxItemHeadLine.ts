@@ -14,8 +14,10 @@ import { appdxItemTags } from "../../../law/std";
 
 export const appdxItemTitlePtns = [
     ["AppdxFig", /^[別付附]?図/],
-    ["AppdxStyle", /^(?![付附]則)[^(（\r\n]*様式/],
-    ["AppdxFormat", /^(?![付附]則)[^(（\r\n]*書式/],
+    // eslint-disable-next-line no-irregular-whitespace
+    ["AppdxStyle", /^(?![付附]則)[^(（ 　\t\r\n]*様式/],
+    // eslint-disable-next-line no-irregular-whitespace
+    ["AppdxFormat", /^(?![付附]則)[^(（ 　\t\r\n]*書式/],
     ["AppdxTable", /^[別付附]表/],
     ["AppdxNote", /^別[記紙]/],
     ["Appdx", /^[付附]録/],

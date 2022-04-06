@@ -37,7 +37,7 @@ export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = fa
             )
         , "control")
         // eslint-disable-next-line no-irregular-whitespace
-        .and(r => r.regExp(/^[附付][ 　\t]*則/), "head")
+        .and(r => r.regExp(/^[附付][ 　\t\r\n]*則/), "head")
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(s => s
@@ -57,7 +57,7 @@ export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = fa
         , "amendLawNumStruct")
         .and(r => r
             // eslint-disable-next-line no-irregular-whitespace
-            .zeroOrOne(r => r.regExp(/^[ 　\t]*抄/))
+            .zeroOrOne(r => r.regExp(/^[ 　\t\r\n]*抄/))
         , "extract")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, control, indentsStruct, head, amendLawNumStruct, extract, lineEndText }) => {
