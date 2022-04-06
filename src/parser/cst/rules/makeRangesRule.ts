@@ -12,6 +12,7 @@ export const makeRangesRule = <TPointer>(lazyPointerRule: () => ValueRule<TPoint
                         .choice(c => c
                             .or(r => r.seqEqual("、"))
                             .or(r => r.seqEqual("及び"))
+                            .or(r => r.regExp(/^及(?!至)/))
                             .or(r => r.seqEqual("並びに"))
                         )
                     )
@@ -52,7 +53,7 @@ export const makeRangesRule = <TPointer>(lazyPointerRule: () => ValueRule<TPoint
             .or(r => r
                 .sequence(c => c
                     .and(lazyPointerRule, "from")
-                    .and(r => r.oneOf("・～"))
+                    .and(r => r.regExp(/^(?:・|～|乃至)/))
                     .and(lazyPointerRule, "to")
                     .action(({ from, to }) => {
                         return { value: [from, to] as [TPointer, TPointer], errors: [] };

@@ -265,7 +265,7 @@ describe("Test Renderes", () => {
         // "昭和六年法律第四十二号",
         "明治三十二年法律第四十九号",
     ];
-    // lawNums.splice(0, lawNums.length);
+    lawNums.splice(0, lawNums.length);
 
     for (const lawNum of lawNums) {
         it(`Render and Parse Lawtext: ${lawNum}`, async () => {
