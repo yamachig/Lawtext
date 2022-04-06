@@ -232,17 +232,17 @@ const NO_DIFF_SHOW_LINES = 3;
 
 const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
     const table: string[][] = [];
-    for (const [i, drow] of ditem.diffTable.entries()) {
+    for (const [i, dRow] of ditem.diffTable.entries()) {
         if (i < NO_DIFF_SHOW_LINES || ditem.diffTable.length - NO_DIFF_SHOW_LINES <= i) {
-            if (drow.status !== DiffStatus.NoChange) throw new Error("never");
-            const oldItem = drow.oldItem;
-            const newItem = drow.newItem;
+            // if (dRow.status !== DiffStatus.NoChange) throw new Error(`Unexpected diff status: ${dRow.status}`);
+            const oldItem = dRow.oldItem;
+            const newItem = dRow.newItem;
 
             table.push(...zipLongest([
                 [oldItem ? `  ${oldItem.pos ? oldItem.pos.str : ""}` : ""],
-                itemToString(oldItem),
+                oldItem ? itemToString(oldItem) : [],
                 [newItem ? `  ${newItem.pos ? newItem.pos.str : ""}` : ""],
-                itemToString(newItem),
+                newItem ? itemToString(newItem) : [],
             ], ["", "", "", ""]));
         } else if (i === NO_DIFF_SHOW_LINES && i < ditem.diffTable.length - NO_DIFF_SHOW_LINES) {
             table.push(["  ～～～", "～～～～～", "  ～～～", "～～～～～"]);
@@ -255,7 +255,16 @@ const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
 
 describe("Test Renderes", () => {
 
-    const lawNums = ["昭和二十五年電波監理委員会規則第十四号"];
+    const lawNums = [
+        // "昭和二十六年農林省令第五十四号",
+        // "昭和二十四年建設省令第十六号",
+        "昭和二十二年法律第百二十号",
+        "昭和五年逓信省・鉄道省令",
+        "昭和八年法律第十一号",
+        "昭和十五年勅令第九百四十三号",
+        "昭和六年法律第四十二号",
+        "明治三十二年法律第四十九号",
+    ];
     // lawNums.splice(0, lawNums.length);
 
     for (const lawNum of lawNums) {

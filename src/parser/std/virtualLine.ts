@@ -222,7 +222,7 @@ export const toVirtualLines = (lines: Line[]) => {
                     const nextLine = lines[currentOffset];
                     if (nextLine.type === LineType.BNK) continue;
                     if (
-                        nextLine.indentDepth <= line.indentDepth
+                        (nextLine.indentDepth == line.indentDepth - 1)
                         && (nextLine.type === LineType.ART || nextLine.type === LineType.PIT)
                         // && nextLine.indentDepth === 0
                     ) {

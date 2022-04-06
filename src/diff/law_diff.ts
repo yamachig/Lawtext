@@ -824,11 +824,11 @@ export const makeDiffData = (d: LawDiffResult<string>, origDOM: Node, parsedDOM:
     for (const ditem of d.items) {
         if (ditem.type === LawDiffType.ElementMismatch || ditem.type === LawDiffType.NoDiff) {
             const table: DiffTableData = [];
-            for (const drow of ditem.diffTable) {
+            for (const dRow of ditem.diffTable) {
                 let oldItem: DiffTableItemData | null = null;
                 let newItem: DiffTableItemData | null = null;
-                if (drow.oldItem) {
-                    const [oldEL, oldTT] = d.oldELs[drow.oldItem.index];
+                if (dRow.oldItem) {
+                    const [oldEL, oldTT] = d.oldELs[dRow.oldItem.index];
                     const oldPos = ditem.type === LawDiffType.ElementMismatch ? getPosition([oldEL, oldTT], origDOM) : null;
                     oldItem = {
                         tag: oldEL.tag,
@@ -838,8 +838,8 @@ export const makeDiffData = (d: LawDiffResult<string>, origDOM: Node, parsedDOM:
                         pos: oldPos,
                     };
                 }
-                if (drow.newItem) {
-                    const [newEL, newTT] = d.newELs[drow.newItem.index];
+                if (dRow.newItem) {
+                    const [newEL, newTT] = d.newELs[dRow.newItem.index];
                     const newPos = ditem.type === LawDiffType.ElementMismatch ? getPosition([newEL, newTT], parsedDOM) : null;
                     newItem = {
                         tag: newEL.tag,
@@ -850,7 +850,7 @@ export const makeDiffData = (d: LawDiffResult<string>, origDOM: Node, parsedDOM:
                     };
                 }
                 table.push({
-                    status: drow.status,
+                    status: dRow.status,
                     oldItem,
                     newItem,
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any

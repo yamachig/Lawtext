@@ -8,7 +8,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
         const lawtextWithMarker = `\
           第三章　不利益処分
         第一節　通則
-（処分の基準）
+  （処分の基準）
 第十二条 行政庁は、処分基準を定め、かつ、これを公にしておくよう努めなければならない。
 
 第二節　聴聞

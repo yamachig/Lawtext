@@ -166,7 +166,7 @@ export const paragraphItemToLines = (
             el.tag,
             (
                 (
-                    el.tag === defaultTag
+                    (el.tag === defaultTag)
                     && unknownParagraphItemTitleMatch(paragraphItemTitleStr).ok
                 )
                     ? []

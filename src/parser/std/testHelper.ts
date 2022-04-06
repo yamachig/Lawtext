@@ -61,12 +61,9 @@ export const testLawtextToStd = <
     assert.isTrue(result.ok);
     if (result.ok) {
         // console.log(JSON.stringify(result.value.value.json(), undefined, 2));
-        if (Array.isArray(result.value.value)) {
-            assert.deepStrictEqual(result.value.value.map(v => v.json()), expectedValue as unknown as JsonEL[]);
-        } else {
-            assert.deepStrictEqual(result.value.value.json(), expectedValue as unknown as JsonEL);
-        }
-        assert.deepStrictEqual([...lines.errors, ...result.value.errors], expectedErrors);
+        const value = Array.isArray(result.value.value) ? result.value.value.map(v => v.json()) : result.value.value.json();
+        const errors = [...lines.errors, ...result.value.errors];
+        assert.deepStrictEqual({ value, errors }, { value: expectedValue, errors: expectedErrors });
     }
 
     let renderedLines: Line[];
