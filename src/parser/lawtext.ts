@@ -11,6 +11,7 @@ export const parse = (lawtext: string) => {
     if (law.ok) {
         return {
             value: law.value.value,
+            virtualLines: vls,
             errors: [...lines.errors, ...law.value.errors],
         };
     } else {
