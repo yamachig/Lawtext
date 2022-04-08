@@ -8,6 +8,7 @@ import { assertNever } from "../../../util";
 import $article, { articleToLines } from "./$article";
 import $articleGroup, { articleGroupToLines } from "./$articleGroup";
 import CST from "../toCSTSettings";
+import { rangeOfELs } from "../../../node/el";
 
 export const mainProvisionToLines = (mainProvision: std.MainProvision, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -101,9 +102,10 @@ export const $mainProvision: WithErrorRule<std.MainProvision> = factory
                 "MainProvision",
                 {},
                 children.value,
+                rangeOfELs(children.value),
             );
             return {
-                value: mainProvision.setRangeFromChildren(),
+                value: mainProvision,
                 errors: [
                     ...children.errors,
                     // ...(error instanceof ErrorMessage ? [error] : []),

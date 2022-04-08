@@ -521,6 +521,8 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
                 )
             );
 
+            const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
+            const pos = firstParagraphItemLine.line.range ? firstParagraphItemLine.line.range[1] - firstParagraphItemLine.line.lineEndText.length : null;
             paragraphItem.append(
                 newStdEL(
                     tag !== "__AutoParagraphItem"
@@ -528,7 +530,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
                         : "__AutoParagraphItemSentence",
                     {},
                     sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
-                    firstParagraphItemLine.line.sentencesArrayRange,
+                    sentencesArrayRange ?? (pos ? [pos, pos] : null),
                 ));
 
             if (tailChildren) {
@@ -599,18 +601,19 @@ export const $noControlAnonymParagraph: WithErrorRule<std.Paragraph> = factory
         , "tailChildren")
         .action(({ firstParagraphItemLine, tailChildren }) => {
 
+            const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
             const paragraph = newStdEL(
                 "Paragraph",
                 {
                     OldStyle: "false",
                 },
                 [
-                    newStdEL("ParagraphNum"),
+                    newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null),
                     newStdEL(
                         "ParagraphSentence",
                         {},
                         sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
-                        firstParagraphItemLine.line.sentencesArrayRange,
+                        sentencesArrayRange,
                     ),
                 ]
             );

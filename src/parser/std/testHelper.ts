@@ -4,6 +4,7 @@ import { Line } from "../../node/cst/line";
 import { EL, JsonEL, loadEl } from "../../node/el";
 import { ErrorMessage } from "../cst/error";
 import parse from "../cst/parse";
+import { enumAllELs } from "../cst/util";
 import { Env, initialEnv } from "./env";
 import { toVirtualLines, VirtualLine } from "./virtualLine";
 
@@ -64,6 +65,11 @@ export const testLawtextToStd = <
         const value = Array.isArray(result.value.value) ? result.value.value.map(v => v.json()) : result.value.value.json();
         const errors = [...lines.errors, ...result.value.errors];
         assert.deepStrictEqual({ value, errors }, { value: expectedValue, errors: expectedErrors });
+
+        const topELs: EL[] = (result.value.value instanceof EL) ? [result.value.value] : result.value.value;
+        for (const el of topELs.map(enumAllELs).flat()) {
+            assert.isNotNull(el.range, `${el.tag} has no range`);
+        }
     }
 
     let renderedLines: Line[];

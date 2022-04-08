@@ -179,12 +179,13 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                     errors.push(...childrenBlock.errors);
                 }
 
+                const pos = titleLine.line.range ? titleLine.line.range[1] - titleLine.line.lineEndText.length : null;
                 const noteLikeStruct = newStdEL(
                     tag,
                     {},
                     children,
+                    rangeOfELs(children) ?? (pos ? [pos, pos] : null),
                 );
-                noteLikeStruct.range = rangeOfELs(noteLikeStruct.children);
                 return {
                     value: noteLikeStruct,
                     errors,

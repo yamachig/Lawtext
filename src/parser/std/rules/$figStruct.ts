@@ -192,14 +192,16 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                     errors.push(...childrenBlock.errors);
                 }
 
+                const pos = titleLine.line.range ? titleLine.line.range[1] - titleLine.line.lineEndText.length : null;
                 const figStruct = newStdEL(
                     "FigStruct",
                     {},
                     children,
+                    rangeOfELs(children) ?? (pos ? [pos, pos] : null),
                 );
 
                 return {
-                    value: figStruct.setRangeFromChildren(),
+                    value: figStruct,
                     errors,
                 };
             })

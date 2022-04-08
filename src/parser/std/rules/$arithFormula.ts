@@ -7,6 +7,7 @@ import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
 import { Control } from "../../../node/cst/inline";
 import $any, { anyToLines } from "./$any";
+import { rangeOfELs } from "../../../node/el";
 
 export const arithFormulaControl = ":arith-formula:";
 
@@ -63,7 +64,7 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
         .and(r => r
             .zeroOrOne(() => $arithFormulaChildrenBlock)
         , "childrenBlock")
-        .action(({ childrenBlock }) => {
+        .action(({ labelLine, childrenBlock }) => {
 
             const children: std.ArithFormula["children"] = [];
             const errors: ErrorMessage[] = [];
@@ -74,13 +75,15 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
                 errors.push(...childrenBlock.errors);
             }
 
+            const pos = labelLine.line.range ? labelLine.line.range[1] - labelLine.line.lineEndText.length : null;
             const arithFormula = newStdEL(
                 "ArithFormula",
                 {},
                 children,
+                rangeOfELs(children) ?? (pos ? [pos, pos] : null),
             );
             return {
-                value: arithFormula.setRangeFromChildren(),
+                value: arithFormula,
                 errors,
             };
         })

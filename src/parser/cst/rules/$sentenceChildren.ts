@@ -256,7 +256,7 @@ export const $MISMATCH_START_PARENTHESIS: WithErrorRule<__EL> = factory
                 range(),
             );
             return {
-                value: new EL("__MismatchStartParenthesis", {}, [mismatch]) as __EL,
+                value: new EL("__MismatchStartParenthesis", {}, [mismatch], range()) as __EL,
                 errors: [error],
             };
         })
@@ -275,7 +275,7 @@ export const $MISMATCH_END_PARENTHESIS: WithErrorRule<__EL> = factory
                 range(),
             );
             return {
-                value: new EL("__MismatchEndParenthesis", {}, [mismatch]) as __EL,
+                value: new EL("__MismatchEndParenthesis", {}, [mismatch], range()) as __EL,
                 errors: [error],
             };
         })
@@ -358,12 +358,12 @@ export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
                 } else if (std.isFig(el)) {
                     // Not a child of Sentence in stdLaw.xsd
                     return {
-                        value: new EL("__CapturedXML", {}, [el]) as __EL,
+                        value: new EL("__CapturedXML", {}, [el], range()) as __EL,
                         errors: elWithError.errors,
                     };
                 } else {
                     return {
-                        value: new EL("__UnexpectedXML", {}, [el]) as __EL,
+                        value: new EL("__UnexpectedXML", {}, [el], range()) as __EL,
                         errors: [
                             ...elWithError.errors,
                             newErrorMessage(

@@ -7,11 +7,12 @@ import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory from "../factory";
 import { Sentences } from "../../../node/cst/inline";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import { mergeAdjacentTexts } from "../../cst/util";
+import { mergeAdjacentTexts, mergeAdjacentTextsWithString } from "../../cst/util";
 import { VirtualOnlyLineType } from "../virtualLine";
 import { ErrorMessage } from "../../cst/error";
-import { __Parentheses } from "../../../node/control";
+import { __Parentheses, __Text } from "../../../node/control";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
+import { rangeOfELs } from "../../../node/el";
 
 export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -42,21 +43,22 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
         const articleGroupTitle = (el.children as (typeof el.children)[number][]).find(std.isArticleGroupTitle);
         const articleRange = (el.children as (typeof el.children)[number][]).find(std.isArticleRange);
 
+        const sentenceChildren = mergeAdjacentTextsWithString([
+            ...(articleGroupTitle?.children ?? []),
+            ...(
+                /^[(（]/.exec(articleRange?.text ?? "（")
+                    ? []
+                    : [CST.MARGIN]
+            ),
+            ...(articleRange?.children ?? []),
+        ]);
         lines.push(new ArticleGroupHeadLine(
             null,
             indentTexts.length,
             indentTexts,
             mainTag,
             [],
-            mergeAdjacentTexts([
-                ...(articleGroupTitle?.children ?? []),
-                ...(
-                    /^[(（]/.exec(articleRange?.text ?? "（")
-                        ? []
-                        : [CST.MARGIN]
-                ),
-                ...(articleRange?.children ?? []),
-            ]),
+            sentenceChildren,
             CST.EOL,
         ));
 
@@ -104,6 +106,7 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
                 ...(supplProvisionLabel?.children ?? []),
                 ...(articleRange?.children ?? []),
             ]),
+            null,
             "",
             "",
             "",
@@ -174,10 +177,11 @@ export const $tocPreambleLabel: WithErrorRule<std.TOCPreambleLabel> = factory
                 "TOCPreambleLabel",
                 {},
                 forceSentencesArrayToSentenceChildren(headLine.line.sentencesArray),
+                headLine.line.sentencesArrayRange,
             );
 
             return {
-                value: tocPreambleLabel.setRangeFromChildren(),
+                value: tocPreambleLabel,
                 errors: [],
             };
         })
@@ -229,18 +233,20 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
                 articleGroupTitleTag,
                 {},
                 title,
+                rangeOfELs(title),
             );
 
-            children.push(articleGroupTitle.setRangeFromChildren());
+            children.push(articleGroupTitle);
 
             const articleRange = articleRangeSentenceChildren.length > 0 ? newStdEL(
                 "ArticleRange",
                 {},
                 articleRangeSentenceChildren,
+                rangeOfELs(articleRangeSentenceChildren),
             ) : null;
 
             if (articleRange) {
-                children.push(articleRange.setRangeFromChildren());
+                children.push(articleRange);
             }
 
             if (childrenBlock) {
@@ -255,10 +261,11 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
                 tocArticleGroupTag,
                 {},
                 children,
+                rangeOfELs(children),
             );
 
             return {
-                value: tocArticleGroup.setRangeFromChildren(),
+                value: tocArticleGroup,
                 errors,
             };
         })
@@ -286,25 +293,30 @@ export const $tocArticle: WithErrorRule<std.TOCArticle> = factory
                 "ArticleTitle",
                 {},
                 [headLine.line.title],
+                headLine.line.range,
             );
 
+            const articleCaptionChildren = forceSentencesArrayToSentenceChildren(headLine.line.sentencesArray);
             const articleCaption = headLine.line.sentencesArray.length > 0 ? newStdEL(
                 "ArticleCaption",
                 {},
-                forceSentencesArrayToSentenceChildren(headLine.line.sentencesArray),
+                articleCaptionChildren,
+                rangeOfELs(articleCaptionChildren)
             ) : null;
 
+            const tocArticleChildren = [
+                articleTitle,
+                ...(articleCaption ? [articleCaption] : []),
+            ];
             const tocArticle = newStdEL(
                 "TOCArticle",
                 {},
-                [
-                    articleTitle.setRangeFromChildren(),
-                    ...(articleCaption ? [articleCaption.setRangeFromChildren()] : []),
-                ],
+                tocArticleChildren,
+                rangeOfELs(tocArticleChildren),
             );
 
             return {
-                value: tocArticle.setRangeFromChildren(),
+                value: tocArticle,
                 errors: [],
             };
         })
@@ -345,11 +357,11 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
             const errors: ErrorMessage[] = [];
 
             const inline = mergeAdjacentTexts([
-                headLine.line.head,
-                headLine.line.openParen,
-                headLine.line.amendLawNum,
-                headLine.line.closeParen,
-                headLine.line.extractText,
+                new __Text(headLine.line.head, headLine.line.headRange),
+                new __Text(headLine.line.openParen, headLine.line.openParenRange),
+                new __Text(headLine.line.amendLawNum, headLine.line.amendLawNumRange),
+                new __Text(headLine.line.closeParen, headLine.line.closeParenRange),
+                new __Text(headLine.line.extractText, headLine.line.extractTextRange),
             ]);
             const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
             const [title, articleRangeSentenceChildren] = (
@@ -361,18 +373,20 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
                 "SupplProvisionLabel",
                 {},
                 title,
+                rangeOfELs(title),
             );
 
-            children.push(supplProvisionLabel.setRangeFromChildren());
+            children.push(supplProvisionLabel);
 
             const articleRange = articleRangeSentenceChildren.length > 0 ? newStdEL(
                 "ArticleRange",
                 {},
                 articleRangeSentenceChildren,
+                rangeOfELs(articleRangeSentenceChildren),
             ) : null;
 
             if (articleRange) {
-                children.push(articleRange.setRangeFromChildren());
+                children.push(articleRange);
             }
 
             if (childrenBlock) {
@@ -385,10 +399,11 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
                 "TOCSupplProvision",
                 {},
                 children,
+                rangeOfELs(children),
             );
 
             return {
-                value: tocSupplProvision.setRangeFromChildren(),
+                value: tocSupplProvision,
                 errors,
             };
         })
@@ -433,9 +448,10 @@ export const $toc: WithErrorRule<std.TOC> = factory
                 "TOCLabel",
                 {},
                 [headLine.line.contentText()],
+                headLine.line.contentRange,
             );
 
-            children.push(tocLabel.setRangeFromChildren());
+            children.push(tocLabel);
 
             if (childrenBlock) {
                 children.push(...childrenBlock.value.flat().map(v => v.value));
@@ -447,10 +463,11 @@ export const $toc: WithErrorRule<std.TOC> = factory
                 "TOC",
                 {},
                 children,
+                rangeOfELs(children),
             );
 
             return {
-                value: toc.setRangeFromChildren(),
+                value: toc,
                 errors,
             };
         })

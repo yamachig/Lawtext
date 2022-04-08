@@ -5,7 +5,7 @@ import { isAppdxItemTitle, newStdEL, appdxItemTags, appdxItemTitleTags, StdELTyp
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
-import { mergeAdjacentTexts } from "../../cst/util";
+import { mergeAdjacentTextsWithString } from "../../cst/util";
 import { Control } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
@@ -55,8 +55,8 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
                 null,
             )
         ],
-        mergeAdjacentTexts(appdxItemTitleSentenceChildren ?? []),
-        mergeAdjacentTexts(relatedArticleNumSentenceChildren ?? []),
+        mergeAdjacentTextsWithString(appdxItemTitleSentenceChildren ?? []),
+        mergeAdjacentTextsWithString(relatedArticleNumSentenceChildren ?? []),
         CST.EOL,
     ));
 
@@ -197,12 +197,13 @@ export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number
                     errors.push(...contentBlock.errors);
                 }
 
+                const pos = titleLine.line.range ? titleLine.line.range[1] - titleLine.line.lineEndText.length : null;
                 const appdxItem = newStdEL(
                     tag,
                     {},
                     children,
+                    rangeOfELs(children) ?? (pos ? [pos, pos] : null),
                 );
-                appdxItem.range = rangeOfELs(appdxItem.children);
                 return {
                     value: appdxItem,
                     errors,

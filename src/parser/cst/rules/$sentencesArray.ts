@@ -31,7 +31,16 @@ export const sentencesArrayToString = (
 export const forceSentencesArrayToSentenceChildren = (
     sentencesArray: SentencesArray,
 ): SentenceChildEL[] => {
-    return mergeAdjacentTexts(sentencesArray.flat().map(ss => ({ ls: ss.leadingSpace, ss: ss.sentences })).map(({ ls, ss }) => [ls, ...ss.map(s => s.children).flat()]).flat());
+    return mergeAdjacentTexts(
+        sentencesArray
+            .flat()
+            .map(ss => ({ ls: new __Text(ss.leadingSpace, ss.leadingSpaceRange), ss: ss.sentences }))
+            .map(({ ls, ss }) => [
+                ls,
+                ...ss.map(s => s.children as SentenceChildEL[]).flat(),
+            ])
+            .flat()
+    );
 };
 
 

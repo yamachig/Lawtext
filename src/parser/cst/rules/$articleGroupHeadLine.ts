@@ -8,6 +8,7 @@ import { mergeAdjacentTexts, WithErrorRule } from "../util";
 import { articleGroupType } from "../../../law/num";
 import { Control } from "../../../node/cst/inline";
 import makeRangesRule from "./makeRangesRule";
+import { __Text } from "../../../node/control";
 
 const { $ranges: $articleGroupRanges } = makeRangesRule(() => $articleGroupNum);
 
@@ -45,13 +46,20 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
         .and(r => r
             .sequence(s => s
                 .and(() => $articleGroupRanges, "ranges")
-                .action(({ ranges, text }) => ({ ranges, text: text() }))
+                .action(({ ranges, text, range }) => ({ ranges, text: text(), range: range() }))
             )
         , "articleGroupNum")
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(c => c
-                    .and(() => $__, "space")
+                    .and(r => r
+                        .sequence(c => c
+                            .and(() => $__, "space")
+                            .action(({ space, range }) => {
+                                return { text: space, range: range() };
+                            })
+                        )
+                    , "space")
                     .and(() => $sentenceChildren, "inline")
                     .action(({ space, inline }) => {
                         return { space, inline };
@@ -66,6 +74,17 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
                 ...articleGroupNum.ranges.errors,
                 ...(tail?.inline.errors ?? []),
             ];
+            const sentenceChildren = mergeAdjacentTexts([
+                new __Text(articleGroupNum.text, articleGroupNum.range),
+                ...(
+                    tail
+                        ? [
+                            new __Text(tail.space.text, tail.space.range),
+                            ...tail.inline.value,
+                        ]
+                        : []
+                ),
+            ]);
             return {
                 value: new ArticleGroupHeadLine(
                     range(),
@@ -73,11 +92,7 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
                     indentsStruct.value.indentTexts,
                     articleGroupType[articleGroupNum.ranges.value[0][0].value.typeChar],
                     control ? [control] : [],
-                    mergeAdjacentTexts([
-                        articleGroupNum.text,
-                        tail?.space ?? "",
-                        ...(tail?.inline.value ?? []),
-                    ]),
+                    sentenceChildren,
                     lineEndText,
                 ),
                 errors,

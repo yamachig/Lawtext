@@ -15,12 +15,12 @@ export const $tocHeadLine: WithErrorRule<TOCHeadLine> = factory
             .sequence(s => s
                 // eslint-disable-next-line no-irregular-whitespace
                 .and(r => r.regExp(/^目[ 　\t]*次/), "label")
-                .action(({ label }) => {
+                .action(({ label, range }) => {
                     return {
                         content: newStdEL(
                             "TOC",
                             {},
-                            [newStdEL("TOCLabel", {}, [new __Text(label)])],
+                            [newStdEL("TOCLabel", {}, [new __Text(label, range())], range())],
                         ),
                         contentText: label,
                     };

@@ -212,11 +212,6 @@ export class EL implements JsonEL {
             }
         }
     }
-
-    public setRangeFromChildren(): this {
-        this.range = rangeOfELs(this.children);
-        return this;
-    }
 }
 
 export const rangeOfELs = (els: unknown[]): [start: number, end: number] | null => {

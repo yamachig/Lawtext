@@ -15,6 +15,7 @@ import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, 
 import { ErrorMessage } from "../../cst/error";
 import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
 import { parseLawNum } from "../../../law/num";
+import { rangeOfELs } from "../../../node/el";
 
 
 export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
@@ -197,13 +198,15 @@ export const $enactStatement: WithErrorRule<std.EnactStatement> = factory
             // for (let i = 0; i < children.value.length; i++) {
             //     children.value[i].attr.Num = `${i + 1}`;
             // }
+            const enactStatementChildren = forceSentencesArrayToSentenceChildren(line.line.sentencesArray);
             const enactStatement = newStdEL(
                 "EnactStatement",
                 {},
-                forceSentencesArrayToSentenceChildren(line.line.sentencesArray),
+                enactStatementChildren,
+                rangeOfELs(enactStatementChildren),
             );
             return {
-                value: enactStatement.setRangeFromChildren(),
+                value: enactStatement,
                 errors: [],
             };
         })
@@ -392,9 +395,11 @@ export const $law: WithErrorRule<std.Law> = factory
                 ));
             }
 
-            lawBody.setRangeFromChildren();
+            lawBody.range = rangeOfELs(lawBody.children);
+            law.range = rangeOfELs(law.children);
+
             return {
-                value: law.setRangeFromChildren(),
+                value: law,
                 errors,
             };
         })

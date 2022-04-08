@@ -7,12 +7,13 @@ import { WithErrorRule } from "../util";
 import factory from "../factory";
 import { $blankLine, $indentBlock } from "../util";
 import { paragraphItemToLines } from "./$paragraphItem";
-import { mergeAdjacentTexts } from "../../cst/util";
+import { mergeAdjacentTextsWithString } from "../../cst/util";
 import $article, { articleToLines } from "./$article";
 import { parseNamedNum } from "../../../law/num";
 import { appdxItemToLines } from "./$appdxItem";
 import { ErrorMessage } from "../../cst/error";
 import { Control } from "../../../node/cst/inline";
+import { rangeOfELs } from "../../../node/el";
 
 export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -41,7 +42,7 @@ export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[])
                         null,
                     )
                 ],
-                mergeAdjacentTexts(child.children),
+                mergeAdjacentTextsWithString(child.children),
                 CST.EOL,
             ));
             lines.push(new BlankLine(null, CST.EOL));
@@ -184,8 +185,10 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
 
             articleGroup.extend(children);
 
+            articleGroup.range = rangeOfELs(articleGroup.children);
+
             return {
-                value: articleGroup.setRangeFromChildren(),
+                value: articleGroup,
                 errors,
             };
         })

@@ -46,10 +46,14 @@ export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = fa
         , "controls")
         .and(r => r
             .choice(c => c
-                .or(r => r.regExp(supplProvisionLabelPtn))
+                .orSequence(r => r
+                    .and(r => r.regExp(supplProvisionLabelPtn), "text")
+                    .action(({ text, range }) => ({ text, range: range() }))
+                )
                 .orSequence(s => s
                     .andOmit(r => r.assert(({ controls }) => controls.some(c => c.control === supplProvisionControl)))
-                    .and(r => r.regExp(/^[^(（\r\n]+/))
+                    .and(r => r.regExp(/^[^(（\r\n]+/), "text")
+                    .action(({ text, range }) => ({ text, range: range() }))
                 )
             )
         , "head")
@@ -83,7 +87,8 @@ export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = fa
                     indentsStruct.value.indentDepth,
                     indentsStruct.value.indentTexts,
                     controls,
-                    head,
+                    head.text,
+                    head.range,
                     amendLawNumStruct?.openParen ?? "",
                     amendLawNumStruct?.amendLawNum ?? "",
                     amendLawNumStruct?.closeParen ?? "",

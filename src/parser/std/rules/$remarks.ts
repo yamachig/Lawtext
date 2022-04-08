@@ -10,6 +10,7 @@ import { Control, Sentences } from "../../../node/cst/inline";
 import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
+import { rangeOfELs } from "../../../node/el";
 
 export const remarksControl = ":remarks:";
 export const remarksLabelPtn = /^(?:備\s*考|注)\s*$/;
@@ -160,9 +161,10 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                 "Remarks",
                 {},
                 children,
+                rangeOfELs(children),
             );
             return {
-                value: remarks.setRangeFromChildren(),
+                value: remarks,
                 errors,
             };
         })

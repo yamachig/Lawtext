@@ -11,6 +11,7 @@ import { VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine } from "../util";
 import $paragraphItem, { $autoParagraphItemChildrenOuter, paragraphItemFromAuto, paragraphItemToLines } from "./$paragraphItem";
 import $supplNote, { supplNoteToLines } from "./$supplNote";
+import { rangeOfELs } from "../../../node/el";
 
 export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -166,13 +167,14 @@ export const $article: WithErrorRule<std.Article> = factory
             const firstParagraph = newStdEL("Paragraph");
             firstParagraph.attr.OldStyle = "false";
 
-            firstParagraph.append(newStdEL("ParagraphNum"));
+            const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
+            firstParagraph.append(newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null));
             firstParagraph.append(
                 newStdEL(
                     "ParagraphSentence",
                     {},
                     sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
-                    firstParagraphItemLine.line.sentencesArrayRange
+                    sentencesArrayRange,
                 )
             );
 
@@ -180,15 +182,18 @@ export const $article: WithErrorRule<std.Article> = factory
                 firstParagraph.extend(firstAutoParagraphChildren.value);
             }
 
-            firstParagraph.setRangeFromChildren();
+            firstParagraph.range = rangeOfELs(firstParagraph.children);
+
             article.append(paragraphItemFromAuto("Paragraph", firstParagraph) as std.Paragraph);
 
             article.extend(otherParagraphs.map(p => p.value));
 
             article.extend(supplNotes.map(n => n.value));
 
+            article.range = rangeOfELs(article.children);
+
             return {
-                value: article.setRangeFromChildren(),
+                value: article,
                 errors,
             };
         })

@@ -21,7 +21,7 @@ import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines } from 
 import $toc, { tocToLines } from "./$toc";
 import $remarks, { remarksToLines } from "./$remarks";
 import $supplNote, { supplNoteToLines } from "./$supplNote";
-import { EL } from "../../../node/el";
+import { EL, rangeOfELs } from "../../../node/el";
 
 interface AmendProvisionToLinesOptions {
     withControl?: boolean,
@@ -241,11 +241,13 @@ export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
             children.push(amendProvisionSentence);
 
             if (newProvisions) {
+                const newProvisionChildren = newProvisions.value.map(c => c.value);
                 children.push(newStdEL(
                     "NewProvision",
                     {},
-                    newProvisions.value.map(c => c.value),
-                ).setRangeFromChildren());
+                    newProvisionChildren,
+                    rangeOfELs(newProvisionChildren),
+                ));
                 errors.push(...newProvisions.errors);
             }
 
@@ -254,9 +256,10 @@ export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
                 "AmendProvision",
                 {},
                 children,
+                rangeOfELs(children),
             );
             return {
-                value: amendProvision.setRangeFromChildren(),
+                value: amendProvision,
                 errors,
             };
         })

@@ -7,6 +7,7 @@ import factory from "../factory";
 import { ErrorMessage } from "../../cst/error";
 import CST from "../toCSTSettings";
 import { assertNever, Diff } from "../../../util";
+import { rangeOfELs } from "../../../node/el";
 
 export const listOrSublistToLines = (listOrSublist: std.ListOrSublist, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -116,12 +117,14 @@ TRet
                 const children: std.ListOrSublist["children"][number][] = [];
                 const errors: ErrorMessage[] = [];
 
+                const listOrSublistSentenceChildren = sentencesArrayToColumnsOrSentences(line.line.sentencesArray);
                 const listOrSublistSentence = newStdEL(
                     sentenceTag,
                     {},
-                    sentencesArrayToColumnsOrSentences(line.line.sentencesArray),
+                    listOrSublistSentenceChildren,
+                    rangeOfELs(listOrSublistSentenceChildren),
                 );
-                children.push(listOrSublistSentence.setRangeFromChildren());
+                children.push(listOrSublistSentence);
 
                 if (childrenBlock) {
                     children.push(...childrenBlock.value);
@@ -132,9 +135,10 @@ TRet
                     tag,
                     {},
                     children,
+                    rangeOfELs(children),
                 );
                 return {
-                    value: listOrSublist.setRangeFromChildren() as unknown as TRet,
+                    value: listOrSublist as unknown as TRet,
                     errors,
                 };
             })

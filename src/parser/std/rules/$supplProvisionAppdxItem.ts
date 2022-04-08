@@ -5,7 +5,7 @@ import { isSupplProvisionAppdxItemTitle, newStdEL, supplProvisionAppdxItemTags, 
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
-import { mergeAdjacentTexts } from "../../cst/util";
+import { mergeAdjacentTextsWithString } from "../../cst/util";
 import { Control } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
@@ -52,8 +52,8 @@ export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.Supp
                 null,
             )
         ],
-        mergeAdjacentTexts(supplProvisionAppdxItemTitleSentenceChildren ?? []),
-        mergeAdjacentTexts(relatedArticleNumSentenceChildren ?? []),
+        mergeAdjacentTextsWithString(supplProvisionAppdxItemTitleSentenceChildren ?? []),
+        mergeAdjacentTextsWithString(relatedArticleNumSentenceChildren ?? []),
         CST.EOL,
     ));
 
@@ -153,12 +153,13 @@ export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplPr
                     errors.push(...contentBlock.errors);
                 }
 
+                const pos = titleLine.line.range ? titleLine.line.range[1] - titleLine.line.lineEndText.length : null;
                 const supplProvisionAppdxItem = newStdEL(
                     tag,
                     {},
                     children,
+                    rangeOfELs(children) ?? (pos ? [pos, pos] : null),
                 );
-                supplProvisionAppdxItem.range = rangeOfELs(supplProvisionAppdxItem.children);
 
                 return {
                     value: supplProvisionAppdxItem,

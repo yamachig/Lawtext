@@ -171,6 +171,7 @@ export class SupplProvisionHeadLine extends IndentsLine<LineType.SPR> {
         indentTexts: string[],
         public controls: Controls,
         public head: string,
+        public headRange: [start: number, end: number] | null,
         public openParen: string,
         public amendLawNum: string,
         public closeParen: string,
@@ -444,6 +445,19 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
         const base = this.attrEntriesRange;
         if (!base) return null;
         return [base[1], base[1] + this.multilineIndicator.length];
+    }
+    public get sentencesArrayRange(): [number, number] | null {
+        let start = null as number | null;
+        let end = null as number | null;
+        for (const sentences of this.sentencesArray) {
+            for (const sentence of sentences.sentences) {
+                if (sentence.range) {
+                    start = Math.min(sentence.range[0], start ?? sentence.range[0]);
+                    end = Math.max(sentence.range[1], end ?? sentence.range[1]);
+                }
+            }
+        }
+        return (start !== null && end !== null) ? [start, end] : null;
     }
 }
 

@@ -7,6 +7,7 @@ import CST from "../toCSTSettings";
 import { Control } from "../../../node/cst/inline";
 import { ErrorMessage } from "../../cst/error";
 import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
+import { rangeOfELs } from "../../../node/el";
 
 export const preambleControl = ":preamble:";
 
@@ -75,12 +76,12 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
                     return null;
                 }
             })
-        )
+        , "headLine")
         .and(r => r.zeroOrMore(() => $blankLine))
         .and(r => r
             .zeroOrOne(() => $preambleChildrenBlock)
         , "childrenBlock")
-        .action(({ childrenBlock }) => {
+        .action(({ headLine, childrenBlock }) => {
 
             const children: std.Preamble["children"] = [];
             const errors: ErrorMessage[] = [];
@@ -93,9 +94,10 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
                     children[i].attr.Num = `${i + 1}`;
                 }
             }
-            const preamble = newStdEL("Preamble", {}, children);
+            const pos = headLine.line.range ? headLine.line.range[1] - headLine.line.lineEndText.length : null;
+            const preamble = newStdEL("Preamble", {}, children, rangeOfELs(children) ?? (pos ? [pos, pos] : null));
             return {
-                value: preamble.setRangeFromChildren(),
+                value: preamble,
                 errors,
             };
         })

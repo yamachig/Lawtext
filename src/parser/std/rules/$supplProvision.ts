@@ -12,6 +12,7 @@ import $articleGroup, { articleGroupToLines } from "./$articleGroup";
 import { $supplProvisionAppdx, $supplProvisionAppdxStyle, $supplProvisionAppdxTable, supplProvisionAppdxItemToLines } from "./$supplProvisionAppdxItem";
 import { Control } from "../../../node/cst/inline";
 import { supplProvisionControl, supplProvisionLabelPtn } from "../../cst/rules/$supplProvisionHeadLine";
+import { rangeOfELs } from "../../../node/el";
 
 export const supplProvisionToLines = (supplProvision: std.SupplProvision, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -33,6 +34,7 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
         [...indentTexts, CST.INDENT, CST.INDENT, CST.INDENT],
         controlStrs.map((str, i) => new Control(str, null, i !== controlStrs.length - 1 ? " " : "", null)),
         supplProvisionLabelStr,
+        null,
         (typeof supplProvision.attr.AmendLawNum === "string") ? `${CST.MARGIN}（` : "",
         supplProvision.attr.AmendLawNum ?? "",
         (typeof supplProvision.attr.AmendLawNum === "string") ? "）" : "",
@@ -166,6 +168,10 @@ export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
                 [labelLine.line.head],
                 labelLine.virtualRange,
             );
+            const supplProvisionChildren = [
+                supplProvisionLabel,
+                ...children.value
+            ];
             const supplProvision = newStdEL(
                 "SupplProvision",
                 {
@@ -176,13 +182,11 @@ export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
                         labelLine.line.extractText !== "" ? { Extract: "true" } : {}
                     ),
                 },
-                [
-                    supplProvisionLabel,
-                    ...children.value
-                ],
+                supplProvisionChildren,
+                rangeOfELs(supplProvisionChildren),
             );
             return {
-                value: supplProvision.setRangeFromChildren(),
+                value: supplProvision,
                 errors: [...children.errors],
             };
         })
