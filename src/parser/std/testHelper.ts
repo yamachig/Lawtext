@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { MatchResult } from "generic-parser/lib/core";
-import { isLawNum } from "../../law/std";
+import { isLawNum, isLawTitle } from "../../law/std";
 import { __Text } from "../../node/control";
 import { Line } from "../../node/cst/line";
 import { EL, JsonEL, loadEl, rangeOfELs } from "../../node/el";
@@ -103,7 +103,7 @@ export const testLawtextToStd = <
         assert.deepStrictEqual({ value, errors }, { value: expectedValue, errors: expectedErrors });
 
         const topELs: EL[] = (result.value.value instanceof EL) ? [result.value.value] : result.value.value;
-        topELs.map(el => assertELVaridity(el, lawtext));
+        topELs.map(el => assertELVaridity(el, lawtext, errors.length === 0));
     }
 
     let renderedLines: Line[];
@@ -116,7 +116,7 @@ export const testLawtextToStd = <
     assert.strictEqual(renderedText, expectedRendered);
 };
 
-const assertELVaridity = (el: EL | string, lawtext: string): void => {
+const assertELVaridity = (el: EL | string, lawtext: string, testGap: boolean): void => {
     if (typeof el === "string") return;
 
     assert.isNotNull(el.range, `${el.tag} has no range`);
@@ -130,7 +130,7 @@ const assertELVaridity = (el: EL | string, lawtext: string): void => {
     }
 
     for (const [i, child] of el.children.entries()) {
-        assertELVaridity(child, lawtext);
+        assertELVaridity(child, lawtext, testGap);
         if (typeof child === "string") continue;
         if (i > 0 && typeof el.children[i - 1] !== "string") {
             const prevChild = el.children[i - 1] as EL;
@@ -139,15 +139,18 @@ const assertELVaridity = (el: EL | string, lawtext: string): void => {
                     (prevChild.range[1] <= child.range[0]),
                     `${child.tag} has invalid range: ${JSON.stringify(child.range)}, prev: ${prevChild.tag} ${JSON.stringify(prevChild.range)}, parent: ${el.tag}`,
                 );
-                // if (prevChild.range[1] <= child.range[0]) {
-                //     const gapText = lawtext.slice(prevChild.range[1], child.range[0]);
-                //     const gatTextWOControl = gapText
-                //         .replace(/:(?:\w|-)+:/g, "")
-                //         .replace(/\[\w+="\w+"\]/g, "")
-                //         .replace(/^\s+(?:\*\s+[*-]|[*-])(?:\s*\|)?/mg, "")
-                //         .trim();
-                //     assert.isTrue(gatTextWOControl.length === 0, `Invalid gap text between ${prevChild.tag} and ${child.tag}: ${gapText}, without control: ${gatTextWOControl}, gap range: ${JSON.stringify([prevChild.range[1], child.range[0]])}, parent: ${el.tag}`);
-                // }
+                if (testGap && !isLawTitle(prevChild)) {
+                    if (prevChild.range[1] <= child.range[0]) {
+                        const gapText = lawtext.slice(prevChild.range[1], child.range[0]);
+                        const gatTextWOControl = gapText
+                            .replace(/:(?:\w|-)+:/g, "")
+                            .replace(/\[\w+="\w+"\]/g, "")
+                            .replace(/^\s+#/mg, "")
+                            .replace(/^\s+(?:\*\s+[*-]|[*-])(?:\s*\|)?/mg, "")
+                            .trim();
+                        assert.isTrue(gatTextWOControl.length === 0, `Invalid gap text between ${prevChild.tag} and ${child.tag}: ${gapText}, without control: ${gatTextWOControl}, gap range: ${JSON.stringify([prevChild.range[1], child.range[0]])}, parent: ${el.tag}`);
+                    }
+                }
             }
         }
     }
