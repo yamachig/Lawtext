@@ -26,12 +26,11 @@ export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
     const lawTitle = lawBody?.children.find(isLawTitle);
 
     if (lawTitle) {
-        lines.push(new OtherLine(
-            null,
-            indentTexts.length,
+        lines.push(new OtherLine({
+            range: null,
             indentTexts,
-            [],
-            [
+            controls: [],
+            sentencesArray: [
                 new Sentences(
                     "",
                     null,
@@ -39,17 +38,16 @@ export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
                     [newStdEL("Sentence", {}, lawTitle.children)]
                 )
             ],
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     }
 
     if (lawNum) {
-        lines.push(new OtherLine(
-            null,
-            indentTexts.length,
+        lines.push(new OtherLine({
+            range: null,
             indentTexts,
-            [],
-            [
+            controls: [],
+            sentencesArray: [
                 new Sentences(
                     "",
                     null,
@@ -57,12 +55,12 @@ export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
                     [newStdEL("Sentence", {}, ["（", ...lawNum.children, "）"])]
                 )
             ],
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     }
 
     if (lawTitle || lawNum) {
-        lines.push(new BlankLine(null, CST.EOL));
+        lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
     }
 
     for (const child of law.children) {
@@ -77,22 +75,22 @@ export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
             continue;
         } else if (isEnactStatement(child)) {
             lines.push(...enactStatementToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isTOC(child)) {
             lines.push(...tocToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isPreamble(child)) {
             lines.push(...preambleToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isMainProvision(child)) {
             lines.push(...mainProvisionToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isSupplProvision(child)) {
             lines.push(...supplProvisionToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isAppdxItem(child)) {
             lines.push(...appdxItemToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         }
         else { assertNever(child); }
     }
@@ -153,11 +151,10 @@ export const enactStatementControl = ":enact-statement:";
 export const enactStatementToLines = (enactStatement: std.EnactStatement, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    lines.push(new OtherLine(
-        null,
-        indentTexts.length,
+    lines.push(new OtherLine({
+        range: null,
         indentTexts,
-        [
+        controls: [
             new Control(
                 enactStatementControl,
                 null,
@@ -165,7 +162,7 @@ export const enactStatementToLines = (enactStatement: std.EnactStatement, indent
                 null,
             ),
         ],
-        [
+        sentencesArray: [
             new Sentences(
                 "",
                 null,
@@ -173,8 +170,8 @@ export const enactStatementToLines = (enactStatement: std.EnactStatement, indent
                 [newStdEL("Sentence", {}, enactStatement.children)],
             ),
         ],
-        CST.EOL,
-    ));
+        lineEndText: CST.EOL,
+    }));
 
     return lines;
 };

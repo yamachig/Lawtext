@@ -41,12 +41,11 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
     if (ArticleCaption.length > 0) {
         const newIndentTexts = [...indentTexts, CST.INDENT];
 
-        lines.push(new OtherLine(
-            null,
-            newIndentTexts.length,
-            newIndentTexts,
-            [],
-            [
+        lines.push(new OtherLine({
+            range: null,
+            indentTexts: newIndentTexts,
+            controls: [],
+            sentencesArray: [
                 new Sentences(
                     "",
                     null,
@@ -54,8 +53,8 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
                     [newStdEL("Sentence", {}, ArticleCaption)]
                 )
             ],
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     }
 
     for (let i = 0; i < Paragraphs.length; i++) {

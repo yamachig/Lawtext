@@ -23,13 +23,13 @@ export const mainProvisionToLines = (mainProvision: std.MainProvision, indentTex
             } else {
                 lines.push(...paragraphItemToLines(child, indentTexts, { defaultTag: "Paragraph" }));
             }
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isArticle(child)) {
             lines.push(...articleToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isArticleGroup(child)) {
             lines.push(...articleGroupToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         }
         else { assertNever(child); }
     }

@@ -28,21 +28,20 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
         controlStrs.push(supplProvisionControl);
     }
 
-    lines.push(new SupplProvisionHeadLine(
-        null,
-        indentTexts.length * 3,
-        [...indentTexts, CST.INDENT, CST.INDENT, CST.INDENT],
-        controlStrs.map((str, i) => new Control(str, null, i !== controlStrs.length - 1 ? " " : "", null)),
-        supplProvisionLabelStr,
-        null,
-        (typeof supplProvision.attr.AmendLawNum === "string") ? `${CST.MARGIN}（` : "",
-        supplProvision.attr.AmendLawNum ?? "",
-        (typeof supplProvision.attr.AmendLawNum === "string") ? "）" : "",
-        supplProvision.attr.Extract === "true" ? `${CST.MARGIN}抄` : "",
-        CST.EOL,
-    ));
+    lines.push(new SupplProvisionHeadLine({
+        range: null,
+        indentTexts: [...indentTexts, CST.INDENT, CST.INDENT, CST.INDENT],
+        controls: controlStrs.map((str, i) => new Control(str, null, i !== controlStrs.length - 1 ? " " : "", null)),
+        title: supplProvisionLabelStr,
+        titleRange: null,
+        openParen: (typeof supplProvision.attr.AmendLawNum === "string") ? `${CST.MARGIN}（` : "",
+        amendLawNum: supplProvision.attr.AmendLawNum ?? "",
+        closeParen: (typeof supplProvision.attr.AmendLawNum === "string") ? "）" : "",
+        extractText: supplProvision.attr.Extract === "true" ? `${CST.MARGIN}抄` : "",
+        lineEndText: CST.EOL,
+    }));
 
-    lines.push(new BlankLine(null, CST.EOL));
+    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
     const paragraphs = supplProvision.children.filter(isParagraph);
     const isSingleAnonymParagraph = paragraphs.length === 1 && paragraphs.every(p => p.children.filter(isParagraphItemTitle).every(el => el.text === ""));
@@ -56,16 +55,16 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
             } else {
                 lines.push(...paragraphItemToLines(child, indentTexts, { defaultTag: "Paragraph" }));
             }
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isArticle(child)) {
             lines.push(...articleToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isArticleGroup(child)) {
             lines.push(...articleGroupToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isSupplProvisionAppdxItem(child)) {
             lines.push(...supplProvisionAppdxItemToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         }
         else { assertNever(child); }
     }
@@ -165,7 +164,7 @@ export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
             const supplProvisionLabel = newStdEL(
                 "SupplProvisionLabel",
                 {},
-                [labelLine.line.head],
+                [labelLine.line.title],
                 labelLine.virtualRange,
             );
             const supplProvisionChildren = [

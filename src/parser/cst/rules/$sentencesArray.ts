@@ -18,7 +18,7 @@ export const sentencesArrayToString = (
     for (const sentences of sentencesArray) {
         runs.push(sentences.leadingSpace);
         for (const attrEntry of sentences.attrEntries) {
-            runs.push(attrEntry.text);
+            runs.push(attrEntry.entryText + attrEntry.trailingSpace);
         }
         for (const sentence of sentences.sentences) {
             runs.push(sentenceChildrenToString(sentence.children));

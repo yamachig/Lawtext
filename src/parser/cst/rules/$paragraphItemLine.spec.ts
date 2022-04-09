@@ -24,7 +24,6 @@ describe("Test $paragraphItemLine", () => {
 `;
         const expectedValue = {
             type: LineType.PIT,
-            indentDepth: 1,
             indentTexts: ["  "] as string[],
             mainTag: null,
             controls: [] as Controls,
@@ -57,7 +56,6 @@ describe("Test $paragraphItemLine", () => {
 `;
         const expectedValue = {
             type: LineType.PIT,
-            indentDepth: 1,
             indentTexts: ["  "] as string[],
             mainTag: "Item",
             controls: [
@@ -97,7 +95,6 @@ describe("Test $paragraphItemLine", () => {
 `;
         const expectedValue = {
             type: LineType.PIT,
-            indentDepth: 1,
             indentTexts: ["  "] as string[],
             mainTag: "Item",
             controls: [
@@ -137,7 +134,6 @@ describe("Test $paragraphItemLine", () => {
 `;
         const expectedValue = {
             type: LineType.PIT,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             mainTag: null,
             controls: [] as Controls,
@@ -170,7 +166,6 @@ describe("Test $paragraphItemLine", () => {
 `;
         const expectedValue = {
             type: LineType.PIT,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             mainTag: "Item",
             controls: [
@@ -210,7 +205,6 @@ describe("Test $paragraphItemLine", () => {
 `;
         const expectedValue = {
             type: LineType.PIT,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             mainTag: "Paragraph",
             controls: [
@@ -250,7 +244,6 @@ describe("Test $paragraphItemLine", () => {
 `;
         const expectedValue = {
             type: LineType.PIT,
-            indentDepth: 1,
             indentTexts: ["  "] as string[],
             mainTag: null,
             controls: [] as Controls,
@@ -284,7 +277,6 @@ describe("Test $paragraphItemLine", () => {
 `;
         const expectedValue = {
             type: LineType.PIT,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             mainTag: null,
             controls: [] as Controls,
@@ -316,7 +308,6 @@ describe("Test $paragraphItemLine", () => {
 `;
         const expectedValue = {
             type: LineType.PIT,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             mainTag: null,
             controls: [] as Controls,

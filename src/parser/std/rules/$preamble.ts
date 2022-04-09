@@ -14,11 +14,10 @@ export const preambleControl = ":preamble:";
 export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    lines.push(new OtherLine(
-        null,
-        indentTexts.length,
+    lines.push(new OtherLine({
+        range: null,
         indentTexts,
-        [
+        controls: [
             new Control(
                 preambleControl,
                 null,
@@ -26,9 +25,9 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
                 null,
             ),
         ],
-        [],
-        CST.EOL,
-    ));
+        sentencesArray: [],
+        lineEndText: CST.EOL,
+    }));
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 

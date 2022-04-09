@@ -32,12 +32,11 @@ export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.Supp
             .find(el => el.tag === "RelatedArticleNum") as std.SupplProvisionAppdxItemTitle | undefined
     )?.children;
 
-    lines.push(new SupplProvisionAppdxItemHeadLine(
-        null,
-        indentTexts.length,
+    lines.push(new SupplProvisionAppdxItemHeadLine({
+        range: null,
         indentTexts,
-        supplProvisionAppdxItem.tag,
-        supplProvisionAppdxItemTitleSentenceChildren && detectSupplProvisionAppdxItemTitle(sentenceChildrenToString(supplProvisionAppdxItemTitleSentenceChildren)) === supplProvisionAppdxItem.tag ? [
+        mainTag: supplProvisionAppdxItem.tag,
+        controls: supplProvisionAppdxItemTitleSentenceChildren && detectSupplProvisionAppdxItemTitle(sentenceChildrenToString(supplProvisionAppdxItemTitleSentenceChildren)) === supplProvisionAppdxItem.tag ? [
             new Control(
                 autoTagControls[0],
                 null,
@@ -52,10 +51,10 @@ export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.Supp
                 null,
             )
         ],
-        mergeAdjacentTextsWithString(supplProvisionAppdxItemTitleSentenceChildren ?? []),
-        mergeAdjacentTextsWithString(relatedArticleNumSentenceChildren ?? []),
-        CST.EOL,
-    ));
+        title: mergeAdjacentTextsWithString(supplProvisionAppdxItemTitleSentenceChildren ?? []),
+        relatedArticleNum: mergeAdjacentTextsWithString(relatedArticleNumSentenceChildren ?? []),
+        lineEndText: CST.EOL,
+    }));
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 

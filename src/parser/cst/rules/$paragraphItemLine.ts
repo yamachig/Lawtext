@@ -210,17 +210,16 @@ export const $paragraphItemLine: WithErrorRule<ParagraphItemLine> = factory
                 ];
                 const tag = tagControl?.tag ?? null;
                 return {
-                    value: new ParagraphItemLine(
-                        range(),
-                        indentsStruct.value.indentDepth,
-                        indentsStruct.value.indentTexts,
-                        tag,
-                        tagControl ? [tagControl.control] : [],
-                        title.value,
-                        contentStruct?.midSpace ?? "",
-                        contentStruct?.columns.value ?? [],
+                    value: new ParagraphItemLine({
+                        range: range(),
+                        indentTexts: indentsStruct.value.indentTexts,
+                        mainTag: tag,
+                        controls: tagControl ? [tagControl.control] : [],
+                        title: title.value,
+                        midSpace: contentStruct?.midSpace ?? "",
+                        sentencesArray: contentStruct?.columns.value ?? [],
                         lineEndText,
-                    ),
+                    }),
                     errors,
                 };
             })
@@ -277,17 +276,16 @@ export const $paragraphItemLine: WithErrorRule<ParagraphItemLine> = factory
                     ...(contentStruct?.columns.errors ?? []),
                 ];
                 return {
-                    value: new ParagraphItemLine(
-                        range(),
-                        indentsStruct.value.indentDepth,
-                        indentsStruct.value.indentTexts,
-                        tagControl.tag,
-                        [tagControl.control],
-                        title.value,
-                        contentStruct?.midSpace ?? "",
-                        contentStruct?.columns.value ?? [],
+                    value: new ParagraphItemLine({
+                        range: range(),
+                        indentTexts: indentsStruct.value.indentTexts,
+                        mainTag: tagControl.tag,
+                        controls: [tagControl.control],
+                        title: title.value,
+                        midSpace: contentStruct?.midSpace ?? "",
+                        sentencesArray: contentStruct?.columns.value ?? [],
                         lineEndText,
-                    ),
+                    }),
                     errors,
                 };
             })
@@ -320,17 +318,16 @@ export const $paragraphItemLine: WithErrorRule<ParagraphItemLine> = factory
                     ...(columns?.errors ?? []),
                 ];
                 return {
-                    value: new ParagraphItemLine(
-                        range(),
-                        indentsStruct.value.indentDepth,
-                        indentsStruct.value.indentTexts,
-                        tagControl.tag,
-                        [tagControl.control],
-                        "",
-                        "",
-                        columns?.value ?? [],
+                    value: new ParagraphItemLine({
+                        range: range(),
+                        indentTexts: indentsStruct.value.indentTexts,
+                        mainTag: tagControl.tag,
+                        controls: [tagControl.control],
+                        title: "",
+                        midSpace: "",
+                        sentencesArray: columns?.value ?? [],
                         lineEndText,
-                    ),
+                    }),
                     errors,
                 };
             })

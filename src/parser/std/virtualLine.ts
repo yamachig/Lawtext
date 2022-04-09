@@ -113,15 +113,15 @@ export type VirtualLine = PhysicalLine | Indent | Dedent;
 //             if (nextLine.type === LineType.BNK) {
 //                 currentOffset++;
 //                 continue;
-//             } else if (nextLine.indentDepth <= line.indentDepth) {
-//                 return nextLine.indentDepth;
+//             } else if (nextLine.indentTexts.length <= line.indentTexts.length) {
+//                 return nextLine.indentTexts.length;
 //             } else {
-//                 return line.indentDepth;
+//                 return line.indentTexts.length;
 //             }
 //         }
-//         return line.indentDepth;
+//         return line.indentTexts.length;
 //     } else {
-//         return line.indentDepth;
+//         return line.indentTexts.length;
 //     }
 // };
 
@@ -137,7 +137,7 @@ export type VirtualLine = PhysicalLine | Indent | Dedent;
 //         const line = lines[currentOffset];
 //         if (
 //             inTOCDepth !== null
-//             && (line.type === LineType.BNK || line.indentDepth <= inTOCDepth)
+//             && (line.type === LineType.BNK || line.indentTexts.length <= inTOCDepth)
 //         ) {
 //             break;
 //         }
@@ -166,7 +166,7 @@ export type VirtualLine = PhysicalLine | Indent | Dedent;
 //                         lines,
 //                         currentOffset,
 //                         currentIndentDepth + 1,
-//                         line.indentDepth,
+//                         line.indentTexts.length,
 //                     );
 //                     if (block.children.length > 0) {
 //                         block.children.push(tocBlock);
@@ -193,40 +193,40 @@ export const toVirtualLines = (lines: Line[]) => {
         let currentDepth = virtualIndentDepth;
         if (
             inTOCDepth !== null
-            && (line.type === LineType.BNK || line.indentDepth <= inTOCDepth)
+            && (line.type === LineType.BNK || line.indentTexts.length <= inTOCDepth)
         ) {
             inTOCDepth = null;
         }
         if (line.type === LineType.BNK) {
             type = line.type;
         } else if (line.type === LineType.TOC) {
-            inTOCDepth = line.indentDepth;
-            currentDepth = line.indentDepth;
+            inTOCDepth = line.indentTexts.length;
+            currentDepth = line.indentTexts.length;
             type = line.type;
         } else if (line.type === LineType.ARG || line.type === LineType.SPR) {
             if (inTOCDepth !== null) {
-                currentDepth = line.indentDepth;
+                currentDepth = line.indentTexts.length;
                 type = line.type === LineType.ARG ? VirtualOnlyLineType.TAG : VirtualOnlyLineType.TSP;
             } else if (line.controls.some(c => c.control === ":keep-indents:")) {
-                currentDepth = line.indentDepth;
+                currentDepth = line.indentTexts.length;
                 type = line.type;
             } else {
                 currentDepth = 0;
                 type = line.type;
             }
         } else {
-            currentDepth = line.indentDepth;
+            currentDepth = line.indentTexts.length;
             type = line.type;
             if (line.type === LineType.OTH && isSingleParentheses(line) && line.controls.length === 0) {
                 for (let currentOffset = i + 1; currentOffset < lines.length; currentOffset++) {
                     const nextLine = lines[currentOffset];
                     if (nextLine.type === LineType.BNK) continue;
                     if (
-                        (nextLine.indentDepth == line.indentDepth - 1)
+                        (nextLine.indentTexts.length == line.indentTexts.length - 1)
                         && (nextLine.type === LineType.ART || nextLine.type === LineType.PIT)
-                        // && nextLine.indentDepth === 0
+                        // && nextLine.indentTexts.length === 0
                     ) {
-                        currentDepth = nextLine.indentDepth;
+                        currentDepth = nextLine.indentTexts.length;
                         type = VirtualOnlyLineType.CAP;
                     }
                     break;
@@ -238,12 +238,12 @@ export const toVirtualLines = (lines: Line[]) => {
                     if (prevLine.type === LineType.BNK) continue;
                     if (
                         (prevLine.type === LineType.TBL && prevLine.firstColumnIndicator === "")
-                        || (prevLine.indentDepth > line.indentDepth)
+                        || (prevLine.indentTexts.length > line.indentTexts.length)
                     ) continue;
                     if (
                         prevLine.type === LineType.TBL && prevLine.firstColumnIndicator === "*"
                     ) {
-                        currentDepth = prevLine.indentDepth;
+                        currentDepth = prevLine.indentTexts.length;
                     }
                     break;
                 }

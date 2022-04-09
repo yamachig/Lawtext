@@ -13,11 +13,10 @@ export const supplNoteControl = ":suppl-note:";
 export const supplNoteToLines = (supplNote: std.SupplNote, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    lines.push(new OtherLine(
-        null,
-        indentTexts.length,
+    lines.push(new OtherLine({
+        range: null,
         indentTexts,
-        [
+        controls: [
             new Control(
                 supplNoteControl,
                 null,
@@ -25,7 +24,7 @@ export const supplNoteToLines = (supplNote: std.SupplNote, indentTexts: string[]
                 null,
             ),
         ],
-        [
+        sentencesArray: [
             new Sentences(
                 "",
                 null,
@@ -33,8 +32,8 @@ export const supplNoteToLines = (supplNote: std.SupplNote, indentTexts: string[]
                 [newStdEL("Sentence", {}, supplNote.children)],
             ),
         ],
-        CST.EOL,
-    ));
+        lineEndText: CST.EOL,
+    }));
 
     return lines;
 };

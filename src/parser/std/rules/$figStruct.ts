@@ -16,12 +16,11 @@ export const figStructControl = ":fig-struct:";
 export const figToLines = (fig: std.Fig, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    lines.push(new OtherLine(
-        null,
-        indentTexts.length,
+    lines.push(new OtherLine({
+        range: null,
         indentTexts,
-        [],
-        [
+        controls: [],
+        sentencesArray: [
             new Sentences(
                 "",
                 null,
@@ -29,8 +28,8 @@ export const figToLines = (fig: std.Fig, indentTexts: string[]): Line[] => {
                 [newStdEL("Sentence", {}, [new EL("__CapturedXML", {}, [fig])])],
             ),
         ],
-        CST.EOL,
-    ));
+        lineEndText: CST.EOL,
+    }));
 
     return lines;
 };
@@ -45,11 +44,10 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
     const requireControl = Boolean(figStructTitleSentenceChildren) || figStruct.children.length !== 1 || figStruct.children[0].tag !== "Fig";
 
     if (requireControl) {
-        lines.push(new OtherLine(
-            null,
-            indentTexts.length,
+        lines.push(new OtherLine({
+            range: null,
             indentTexts,
-            [
+            controls: [
                 new Control(
                     figStructControl,
                     null,
@@ -57,7 +55,7 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
                     null,
                 )
             ],
-            figStructTitleSentenceChildren ? [
+            sentencesArray: figStructTitleSentenceChildren ? [
                 new Sentences(
                     "",
                     null,
@@ -65,8 +63,8 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
                     [newStdEL("Sentence", {}, figStructTitleSentenceChildren)]
                 )
             ] : [],
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     }
 
 
@@ -77,11 +75,11 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
 
         if (child.tag === "Fig") {
             lines.push(...figToLines(child, childrenIndentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else if (child.tag === "Remarks") {
             lines.push(...remarksToLines(child, childrenIndentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         }
         else { assertNever(child); }
     }

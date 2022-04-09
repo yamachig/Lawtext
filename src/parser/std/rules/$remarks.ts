@@ -9,7 +9,7 @@ import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import { Control, Sentences } from "../../../node/cst/inline";
 import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
+import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
 import { rangeOfELs } from "../../../node/el";
 
 export const remarksControl = ":remarks:";
@@ -30,12 +30,11 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
         ),
     ];
 
-    lines.push(new OtherLine(
-        null,
-        indentTexts.length,
+    lines.push(new OtherLine({
+        range: null,
         indentTexts,
         controls,
-        remarksLabelSentenceChildren ? [
+        sentencesArray: remarksLabelSentenceChildren ? [
             new Sentences(
                 "",
                 null,
@@ -43,8 +42,8 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
                 [newStdEL("Sentence", {}, remarksLabelSentenceChildren)]
             )
         ] : [],
-        CST.EOL,
-    ));
+        lineEndText: CST.EOL,
+    }));
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
@@ -52,12 +51,11 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
         if (child.tag === "RemarksLabel") continue;
 
         if (child.tag === "Sentence") {
-            lines.push(new OtherLine(
-                null,
-                childrenIndentTexts.length,
-                childrenIndentTexts,
-                [],
-                [
+            lines.push(new OtherLine({
+                range: null,
+                indentTexts: childrenIndentTexts,
+                controls: [],
+                sentencesArray: [
                     new Sentences(
                         "",
                         null,
@@ -65,8 +63,8 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
                         [child]
                     ),
                 ],
-                CST.EOL,
-            ));
+                lineEndText: CST.EOL,
+            }));
         } else if (child.tag === "Item") {
             const itemLines = paragraphItemToLines(child, childrenIndentTexts, { defaultTag: "Item" });
             lines.push(...itemLines);
@@ -124,7 +122,7 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                         )
                         || (
                             item.line.sentencesArray.length > 0
-                            && remarksLabelPtn.exec(item.line.contentText())
+                            && remarksLabelPtn.exec(sentencesArrayToString(item.line.sentencesArray))
                         )
                     )
                 ) {

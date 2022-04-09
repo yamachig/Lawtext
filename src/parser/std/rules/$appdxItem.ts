@@ -35,12 +35,11 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
             .find(el => el.tag === "RelatedArticleNum") as std.AppdxItemTitle | undefined
     )?.children;
 
-    lines.push(new AppdxItemHeadLine(
-        null,
-        indentTexts.length,
+    lines.push(new AppdxItemHeadLine({
+        range: null,
         indentTexts,
-        appdxItem.tag,
-        appdxItemTitleSentenceChildren && detectAppdxItemTitle(sentenceChildrenToString(appdxItemTitleSentenceChildren)) === appdxItem.tag ? [
+        mainTag: appdxItem.tag,
+        controls: appdxItemTitleSentenceChildren && detectAppdxItemTitle(sentenceChildrenToString(appdxItemTitleSentenceChildren)) === appdxItem.tag ? [
             new Control(
                 autoTagControls[0],
                 null,
@@ -55,12 +54,12 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
                 null,
             )
         ],
-        mergeAdjacentTextsWithString(appdxItemTitleSentenceChildren ?? []),
-        mergeAdjacentTextsWithString(relatedArticleNumSentenceChildren ?? []),
-        CST.EOL,
-    ));
+        title: mergeAdjacentTextsWithString(appdxItemTitleSentenceChildren ?? []),
+        relatedArticleNum: mergeAdjacentTextsWithString(relatedArticleNumSentenceChildren ?? []),
+        lineEndText: CST.EOL,
+    }));
 
-    lines.push(new BlankLine(null, CST.EOL));
+    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
@@ -70,22 +69,22 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
 
         if (isNoteLikeStruct(child)) {
             lines.push(...noteLikeStructToLines(child, childrenIndentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isRemarks(child)) {
             lines.push(...remarksToLines(child, childrenIndentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isFigStruct(child)) {
             lines.push(...figStructToLines(child, childrenIndentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isParagraphItem(child)) {
             lines.push(...paragraphItemToLines(child, childrenIndentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isTableStruct(child)) {
             lines.push(...tableStructToLines(child, childrenIndentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isArithFormula(child)) {
             lines.push(...arithFormulaToLines(child, childrenIndentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         }
         else { assertNever(child); }
     }

@@ -183,7 +183,7 @@ describe("Test $tableStruct and tableStructToLines", () => {
 
   - [Valign="top"] |
 
-!    ４　機構は、前三項!
+    !４　機構は、前三項!
 
 # 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
 `;

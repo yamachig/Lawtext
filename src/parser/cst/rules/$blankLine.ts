@@ -8,7 +8,7 @@ export const $blankLine: WithErrorRule<BlankLine> = factory
         // eslint-disable-next-line no-irregular-whitespace
         .and(r => r.regExp(/^[ 　\t]*\r?\n/), "text")
         .action(({ range, text }) => {
-            return { value: new BlankLine(range(), text), errors: [] };
+            return { value: new BlankLine({ range: range(), lineEndText: text }), errors: [] };
         })
     )
     ;

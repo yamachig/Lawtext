@@ -94,7 +94,7 @@ describe("Test virtualLine", () => {
                 lines.slice(i, i + 5).map((line, index) => ({
                     index,
                     type: line.type,
-                    rawIndentDepth: "indentDepth" in line ? line.indentDepth : 0,
+                    rawIndentDepth: "indentTexts" in line ? line.indentTexts.length : 0,
                     text: line.text(),
                 })),
                 target.slice(i, i + 5).map(([[type, rawIndentDepth], input], index) => ({

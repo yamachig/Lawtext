@@ -17,19 +17,18 @@ export const listOrSublistToLines = (listOrSublist: std.ListOrSublist, indentTex
     for (const child of listOrSublist.children) {
 
         if (isListOrSublistSentence(child)) {
-            lines.push(new TableColumnLine(
-                null,
-                indentTexts.length,
+            lines.push(new TableColumnLine({
+                range: null,
                 indentTexts,
-                "",
-                "",
-                "-",
-                " ",
-                [],
-                "",
-                columnsOrSentencesToSentencesArray(child.children),
-                CST.EOL,
-            ));
+                firstColumnIndicator: "",
+                midIndicatorsSpace: "",
+                columnIndicator: "-",
+                midSpace: " ",
+                attrEntries: [],
+                multilineIndicator: "",
+                sentencesArray: columnsOrSentencesToSentencesArray(child.children),
+                lineEndText: CST.EOL,
+            }));
             // lines.push(new OtherLine(
             //     null,
             //     indentTexts.length,

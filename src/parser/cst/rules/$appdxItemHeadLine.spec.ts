@@ -26,7 +26,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "Appdx",
             controls: [
@@ -106,7 +105,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "Appdx",
             controls: [
@@ -186,7 +184,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "Appdx",
             controls: [
@@ -267,7 +264,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxTable",
             controls: [
@@ -348,7 +344,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxTable",
             controls: [
@@ -428,7 +423,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxStyle",
             controls: [
@@ -508,7 +502,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxStyle",
             controls: [
@@ -557,7 +550,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxStyle",
             controls: [
@@ -637,7 +629,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxFormat",
             controls: [
@@ -717,7 +708,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxFormat",
             controls: [
@@ -797,7 +787,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxFig",
             controls: [
@@ -877,7 +866,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxFig",
             controls: [
@@ -957,7 +945,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxNote",
             controls: [
@@ -1037,7 +1024,6 @@ describe("Test $appdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.APP,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "AppdxNote",
             controls: [

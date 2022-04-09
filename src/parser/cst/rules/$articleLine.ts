@@ -44,15 +44,14 @@ export const $articleLine: WithErrorRule<ArticleLine> = factory
                 ...(contentStruct?.columns.errors ?? []),
             ];
             return {
-                value: new ArticleLine(
-                    range(),
-                    indentsStruct.value.indentDepth,
-                    indentsStruct.value.indentTexts,
-                    title.value,
-                    contentStruct?.midSpace ?? "",
-                    contentStruct?.columns.value ?? [],
+                value: new ArticleLine({
+                    range: range(),
+                    indentTexts: indentsStruct.value.indentTexts,
+                    title: title.value,
+                    midSpace: contentStruct?.midSpace ?? "",
+                    sentencesArray: contentStruct?.columns.value ?? [],
                     lineEndText,
-                ),
+                }),
                 errors,
             };
         })

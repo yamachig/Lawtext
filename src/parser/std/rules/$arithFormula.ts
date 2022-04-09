@@ -14,11 +14,10 @@ export const arithFormulaControl = ":arith-formula:";
 export const arithFormulaToLines = (arithFormula: std.ArithFormula, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    lines.push(new OtherLine(
-        null,
-        indentTexts.length,
+    lines.push(new OtherLine({
+        range: null,
         indentTexts,
-        [
+        controls: [
             new Control(
                 arithFormulaControl,
                 null,
@@ -26,9 +25,9 @@ export const arithFormulaToLines = (arithFormula: std.ArithFormula, indentTexts:
                 null,
             ),
         ],
-        [],
-        CST.EOL,
-    ));
+        sentencesArray: [],
+        lineEndText: CST.EOL,
+    }));
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 

@@ -25,9 +25,8 @@ describe("Test $supplProvisionHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.SPR,
-            indentDepth: 3,
             indentTexts: ["  ", "  ", "  "] as string[],
-            head: "附　則",
+            title: "附　則",
             openParen: "",
             amendLawNum: "",
             closeParen: "",
@@ -61,9 +60,8 @@ describe("Test $supplProvisionHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.SPR,
-            indentDepth: 3,
             indentTexts: ["  ", "  ", "  "] as string[],
-            head: "附　則",
+            title: "附　則",
             openParen: "（",
             amendLawNum: "平成二六年六月一三日法律第七〇号",
             closeParen: "）",
@@ -97,9 +95,8 @@ describe("Test $supplProvisionHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.SPR,
-            indentDepth: 3,
             indentTexts: ["  ", "  ", "  "] as string[],
-            head: "附　則",
+            title: "附　則",
             openParen: "（",
             amendLawNum: "平成二六年六月一三日法律第七〇号",
             closeParen: "）",

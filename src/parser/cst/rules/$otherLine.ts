@@ -79,14 +79,13 @@ export const $otherLine: WithErrorRule<OtherLine> = factory
                 ...(columns?.errors ?? []),
             ];
             return {
-                value: new OtherLine(
-                    range(),
-                    indentsStruct.value.indentDepth,
-                    indentsStruct.value.indentTexts,
+                value: new OtherLine({
+                    range: range(),
+                    indentTexts: indentsStruct.value.indentTexts,
                     controls,
-                    columns?.value ?? [],
+                    sentencesArray: columns?.value ?? [],
                     lineEndText,
-                ),
+                }),
                 errors,
             };
         })

@@ -31,13 +31,12 @@ export const $tocHeadLine: WithErrorRule<TOCHeadLine> = factory
         .action(({ range, indentsStruct, contentStruct, lineEndText }) => {
             const errors = indentsStruct.errors;
             return {
-                value: new TOCHeadLine(
-                    range(),
-                    indentsStruct.value.indentDepth,
-                    indentsStruct.value.indentTexts,
-                    contentStruct.contentText,
+                value: new TOCHeadLine({
+                    range: range(),
+                    indentTexts: indentsStruct.value.indentTexts,
+                    title: contentStruct.contentText,
                     lineEndText,
-                ),
+                }),
                 errors,
             };
         })

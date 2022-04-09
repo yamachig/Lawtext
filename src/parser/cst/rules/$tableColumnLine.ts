@@ -30,11 +30,11 @@ export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
                     .and(() => $squareAttr, "entry")
                     .and(() => $_, "trailingSpace")
                     .action(({ entry, trailingSpace }) => {
+                        const attrEntry = entry.value;
+                        attrEntry.trailingSpace += trailingSpace;
+                        if (attrEntry.trailingSpaceRange) attrEntry.trailingSpaceRange[1] += trailingSpace.length;
                         return {
-                            value: {
-                                ...entry.value,
-                                trailingSpace
-                            },
+                            value: attrEntry,
                             errors: entry.errors,
                         };
                     })
@@ -67,19 +67,18 @@ export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
                 ...(columns?.errors ?? []),
             ];
             return {
-                value: new TableColumnLine(
-                    range(),
-                    indentsStruct.value.indentDepth,
-                    indentsStruct.value.indentTexts,
-                    firstColumnIndicatorStruct?.firstColumnIndicator ?? "",
-                    firstColumnIndicatorStruct?.midIndicatorsSpace ?? "",
+                value: new TableColumnLine({
+                    range: range(),
+                    indentTexts: indentsStruct.value.indentTexts,
+                    firstColumnIndicator: firstColumnIndicatorStruct?.firstColumnIndicator ?? "",
+                    midIndicatorsSpace: firstColumnIndicatorStruct?.midIndicatorsSpace ?? "",
                     columnIndicator,
                     midSpace,
-                    attrEntries.map(e => e.value),
-                    multilineIndicator ?? "",
-                    columns?.value ?? [],
+                    attrEntries: attrEntries.map(e => e.value),
+                    multilineIndicator: multilineIndicator ?? "",
+                    sentencesArray: columns?.value ?? [],
                     lineEndText,
-                ),
+                }),
                 errors,
             };
         })

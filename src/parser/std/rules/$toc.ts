@@ -21,12 +21,11 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
 
     if (isTOCPreambleLabel(el) || isTOCAppdxTableLabel(el)) {
 
-        lines.push(new OtherLine(
-            null,
-            indentTexts.length,
+        lines.push(new OtherLine({
+            range: null,
             indentTexts,
-            [],
-            [
+            controls: [],
+            sentencesArray: [
                 new Sentences(
                     "",
                     null,
@@ -34,8 +33,8 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
                     [newStdEL("Sentence", {}, el.children)]
                 )
             ],
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
 
     } else if (isTOCArticleGroup(el)) {
 
@@ -52,15 +51,14 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
             ),
             ...(articleRange?.children ?? []),
         ]);
-        lines.push(new ArticleGroupHeadLine(
-            null,
-            indentTexts.length,
+        lines.push(new ArticleGroupHeadLine({
+            range: null,
             indentTexts,
             mainTag,
-            [],
+            controls: [],
             sentenceChildren,
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
 
         for (const child of el.children) {
             if (std.isArticleGroupTitle(child) || std.isArticleRange(child)) {
@@ -75,13 +73,12 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
         const articleTitle = el.children.find(std.isArticleTitle);
         const articleCaption = el.children.find(std.isArticleCaption);
 
-        lines.push(new ArticleLine(
-            null,
-            indentTexts.length,
+        lines.push(new ArticleLine({
+            range: null,
             indentTexts,
-            sentenceChildrenToString(articleTitle?.children ?? []),
-            CST.MARGIN,
-            articleCaption ? [
+            title: sentenceChildrenToString(articleTitle?.children ?? []),
+            midSpace: CST.MARGIN,
+            sentencesArray: articleCaption ? [
                 new Sentences(
                     "",
                     null,
@@ -89,30 +86,29 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
                     [newStdEL("Sentence", {}, articleCaption.children)]
                 )
             ] : [],
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
 
     } else if (isTOCSupplProvision(el)) {
 
         const supplProvisionLabel = el.children.find(std.isSupplProvisionLabel) as std.SupplProvisionLabel | undefined;
         const articleRange = el.children.find(std.isArticleRange);
 
-        lines.push(new SupplProvisionHeadLine(
-            null,
-            indentTexts.length,
+        lines.push(new SupplProvisionHeadLine({
+            range: null,
             indentTexts,
-            [],
-            sentenceChildrenToString([
+            controls: [],
+            title: sentenceChildrenToString([
                 ...(supplProvisionLabel?.children ?? []),
                 ...(articleRange?.children ?? []),
             ]),
-            null,
-            "",
-            "",
-            "",
-            "",
-            CST.EOL,
-        ));
+            titleRange: null,
+            openParen: "",
+            amendLawNum: "",
+            closeParen: "",
+            extractText: "",
+            lineEndText: CST.EOL,
+        }));
 
         for (const child of el.children) {
             if (std.isSupplProvisionLabel(child) || std.isArticleRange(child)) {
@@ -122,7 +118,7 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
             lines.push(...tocItemToLines(child, childrenIndentTexts));
         }
 
-        lines.push(new BlankLine(null, CST.EOL));
+        lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
     }
     else { assertNever(el); }
@@ -137,13 +133,12 @@ export const tocToLines = (el: std.TOC, indentTexts: string[]): Line[] => {
 
     const tocLabel = el.children.find(std.isTOCLabel);
 
-    lines.push(new TOCHeadLine(
-        null,
-        indentTexts.length,
+    lines.push(new TOCHeadLine({
+        range: null,
         indentTexts,
-        sentenceChildrenToString(tocLabel?.children ?? []),
-        CST.EOL,
-    ));
+        title: sentenceChildrenToString(tocLabel?.children ?? []),
+        lineEndText: CST.EOL,
+    }));
 
     for (const child of el.children) {
         if (std.isTOCLabel(child)) {
@@ -220,7 +215,7 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
             const children: (std.TOCArticleGroup["children"][number] | std.TOCPart)[] = [];
             const errors: ErrorMessage[] = [];
 
-            const inline = mergeAdjacentTexts(headLine.line.sentenceChildren);
+            const inline = mergeAdjacentTexts(headLine.line.title);
             const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
             const [title, articleRangeSentenceChildren] = (
                 lastItem instanceof __Parentheses
@@ -293,7 +288,7 @@ export const $tocArticle: WithErrorRule<std.TOCArticle> = factory
                 "ArticleTitle",
                 {},
                 [headLine.line.title],
-                headLine.line.range,
+                headLine.line.titleRange,
             );
 
             const articleCaptionChildren = forceSentencesArrayToSentenceChildren(headLine.line.sentencesArray);
@@ -357,7 +352,7 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
             const errors: ErrorMessage[] = [];
 
             const inline = mergeAdjacentTexts([
-                new __Text(headLine.line.head, headLine.line.headRange),
+                new __Text(headLine.line.title, headLine.line.titleRange),
                 new __Text(headLine.line.openParen, headLine.line.openParenRange),
                 new __Text(headLine.line.amendLawNum, headLine.line.amendLawNumRange),
                 new __Text(headLine.line.closeParen, headLine.line.closeParenRange),
@@ -447,8 +442,8 @@ export const $toc: WithErrorRule<std.TOC> = factory
             const tocLabel = newStdEL(
                 "TOCLabel",
                 {},
-                [headLine.line.contentText()],
-                headLine.line.contentRange,
+                [headLine.line.title],
+                headLine.line.titleRange,
             );
 
             children.push(tocLabel);

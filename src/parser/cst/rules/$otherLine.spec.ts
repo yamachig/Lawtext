@@ -24,7 +24,6 @@ describe("Test $otherLine", () => {
 `;
         const expectedValue = {
             type: LineType.OTH,
-            indentDepth: 1,
             indentTexts: ["  "] as string[],
             controls: [] as Controls,
             lineEndText: `　
@@ -108,7 +107,6 @@ describe("Test $otherLine", () => {
 `;
         const expectedValue = {
             type: LineType.OTH,
-            indentDepth: 0,
             indentTexts: [] as string[],
             controls: [] as Controls,
             lineEndText: `
@@ -165,7 +163,6 @@ describe("Test $otherLine", () => {
 `;
         const expectedValue = {
             type: LineType.OTH,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             controls: [
                 {
@@ -229,7 +226,6 @@ describe("Test $otherLine", () => {
 `;
         const expectedValue = {
             type: LineType.OTH,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             controls: [
                 {

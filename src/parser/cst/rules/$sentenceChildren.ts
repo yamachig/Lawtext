@@ -154,6 +154,7 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                     if (tail) {
                         if (last.value instanceof __Text) {
                             last.value.text += tail.text;
+                            if (last.value.range) last.value.range[1] += tail.text.length;
                         } else {
                             texts.push({ value: new __Text(tail.text, tail.range), errors: [] });
                         }

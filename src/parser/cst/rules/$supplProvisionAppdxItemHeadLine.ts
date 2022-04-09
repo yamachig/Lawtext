@@ -85,16 +85,15 @@ export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdx
                 ...(tail?.errors ?? []),
             ];
             return {
-                value: new SupplProvisionAppdxItemHeadLine(
-                    range(),
-                    indentsStruct.value.indentDepth,
-                    indentsStruct.value.indentTexts,
-                    tag,
-                    control ? [control] : [],
+                value: new SupplProvisionAppdxItemHeadLine({
+                    range: range(),
+                    indentTexts: indentsStruct.value.indentTexts,
+                    mainTag: tag,
+                    controls: control ? [control] : [],
                     title,
                     relatedArticleNum,
                     lineEndText,
-                ),
+                }),
                 errors,
             };
         })

@@ -22,12 +22,11 @@ import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences 
 export const anyToLines = (any: (std.StdEL | std.__EL | string), indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
     if (typeof any === "string" || isSentenceChildEL(any)) {
-        lines.push(new OtherLine(
-            null,
-            indentTexts.length,
+        lines.push(new OtherLine({
+            range: null,
             indentTexts,
-            [],
-            [
+            controls: [],
+            sentencesArray: [
                 new Sentences(
                     "",
                     null,
@@ -35,8 +34,8 @@ export const anyToLines = (any: (std.StdEL | std.__EL | string), indentTexts: st
                     [newStdEL("Sentence", {}, [any])],
                 ),
             ],
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     }
     else if (std.isAmendProvision(any)) { return amendProvisionToLines(any, indentTexts); }
     else if (std.isArithFormula(any)) { return arithFormulaToLines(any, indentTexts); }
@@ -53,14 +52,13 @@ export const anyToLines = (any: (std.StdEL | std.__EL | string), indentTexts: st
     else if (std.isTable(any)) { return tableToLines(any, indentTexts); }
     else if (std.isTableStruct(any)) { return tableStructToLines(any, indentTexts); }
     else if (std.isColumn(any) || std.isSentence(any)) {
-        lines.push(new OtherLine(
-            null,
-            indentTexts.length,
+        lines.push(new OtherLine({
+            range: null,
             indentTexts,
-            [],
-            columnsOrSentencesToSentencesArray([any]),
-            CST.EOL,
-        ));
+            controls: [],
+            sentencesArray: columnsOrSentencesToSentencesArray([any]),
+            lineEndText: CST.EOL,
+        }));
     }
     else { throw new NotImplementedError(`anyToLines: ${any.tag}`); }
     // else { assertNever(any); }

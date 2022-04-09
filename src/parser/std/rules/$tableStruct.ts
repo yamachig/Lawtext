@@ -22,19 +22,18 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
             const newIndentTexts = i === 0 ? indentTexts : [...indentTexts, CST.INDENT];
             // const columnsOrSentences: (std.Column | std.Sentence)[] = [];
 
-            const cellLine = new TableColumnLine(
-                null,
-                newIndentTexts.length,
-                newIndentTexts,
-                i == 0 ? "*" : "",
-                i == 0 ? " " : "",
-                isTableHeaderColumn(cell) ? "*" : "-",
-                " ",
-                [],
-                "",
-                [],
-                CST.EOL,
-            );
+            const cellLine = new TableColumnLine({
+                range: null,
+                indentTexts: newIndentTexts,
+                firstColumnIndicator: i == 0 ? "*" : "",
+                midIndicatorsSpace: i == 0 ? " " : "",
+                columnIndicator: isTableHeaderColumn(cell) ? "*" : "-",
+                midSpace: " ",
+                attrEntries: [],
+                multilineIndicator: "",
+                sentencesArray: [],
+                lineEndText: CST.EOL,
+            });
             for (const [name, value] of Object.entries(cell.attr)) {
                 cellLine.attrEntries.push(
                     new AttrEntry(
@@ -67,7 +66,7 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                     }
                     for (const child of cell.children) {
                         lines.push(...anyToLines(child, childrenIndentTexts));
-                        lines.push(new BlankLine(null, CST.EOL));
+                        lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     }
                 }
             } else {
@@ -91,11 +90,10 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
 
     if (requireControl) {
 
-        lines.push(new OtherLine(
-            null,
-            indentTexts.length,
+        lines.push(new OtherLine({
+            range: null,
             indentTexts,
-            [
+            controls: [
                 new Control(
                     ":table-struct:",
                     null,
@@ -103,7 +101,7 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
                     null,
                 ),
             ],
-            tableStructTitleSentenceChildren ? [
+            sentencesArray: tableStructTitleSentenceChildren ? [
                 new Sentences(
                     "",
                     null,
@@ -111,10 +109,10 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
                     [newStdEL("Sentence", {}, tableStructTitleSentenceChildren)]
                 )
             ] : [],
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
 
-        lines.push(new BlankLine(null, CST.EOL));
+        lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
     }
 
     const childrenIndentTexts = requireControl ? [...indentTexts, CST.INDENT] : indentTexts;
@@ -125,12 +123,12 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
         if (child.tag === "Table") {
             const tableLines = tableToLines(child, childrenIndentTexts);
             lines.push(...tableLines);
-            if (requireControl) lines.push(new BlankLine(null, CST.EOL));
+            if (requireControl) lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else if (child.tag === "Remarks") {
             const remarksLines = remarksToLines(child, childrenIndentTexts);
             lines.push(...remarksLines);
-            if (requireControl) lines.push(new BlankLine(null, CST.EOL));
+            if (requireControl) lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         }
         else { assertNever(child); }
     }

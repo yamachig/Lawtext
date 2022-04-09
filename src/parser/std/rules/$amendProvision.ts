@@ -46,11 +46,10 @@ export const amendProvisionToLines = (
     for (const child of amendProvision.children) {
 
         if (isAmendProvisionSentence(child)) {
-            lines.push(new OtherLine(
-                null,
-                indentTexts.length,
+            lines.push(new OtherLine({
+                range: null,
                 indentTexts,
-                withControl ? [
+                controls: withControl ? [
                     new Control(
                         ":amend-provision:",
                         null,
@@ -58,7 +57,7 @@ export const amendProvisionToLines = (
                         null,
                     )
                 ] : [],
-                [
+                sentencesArray: [
                     new Sentences(
                         "",
                         null,
@@ -66,8 +65,8 @@ export const amendProvisionToLines = (
                         child.children,
                     ),
                 ],
-                CST.EOL,
-            ));
+                lineEndText: CST.EOL,
+            }));
 
         } else if (isNewProvision(child)) {
             for (const cc of child.children) {
@@ -78,44 +77,43 @@ export const amendProvisionToLines = (
                 } else if (isList(cc)) {
                     lines.push(...listOrSublistToLines(cc, newProvisionsIndentTexts));
                 } else if (isTableStruct(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...tableStructToLines(cc, newProvisionsIndentTexts));
                 } else if (isFigStruct(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...figStructToLines(cc, newProvisionsIndentTexts));
                 } else if (isAppdxItem(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...appdxItemToLines(cc, newProvisionsIndentTexts));
                 } else if (isSupplProvisionAppdxItem(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...supplProvisionAppdxItemToLines(cc, newProvisionsIndentTexts));
                 } else if (isNoteLikeStruct(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...noteLikeStructToLines(cc, newProvisionsIndentTexts));
                 } else if (isRemarks(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...remarksToLines(cc, newProvisionsIndentTexts));
                 } else if (isSupplNote(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...supplNoteToLines(cc, newProvisionsIndentTexts));
                 } else if (isPreamble(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...preambleToLines(cc, newProvisionsIndentTexts));
                 } else if (isTOC(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...tocToLines(cc, newProvisionsIndentTexts));
                 } else if (isAmendProvision(cc)) {
                     lines.push(...amendProvisionToLines(cc, newProvisionsIndentTexts, { withControl: true }));
                 } else if (isArticleGroup(cc)) {
-                    lines.push(new BlankLine(null, CST.EOL));
+                    lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...articleGroupToLines(cc, newProvisionsIndentTexts));
                 } else if (isArticleGroupTitle(cc) || isLawTitle(cc)) {
-                    lines.push(new OtherLine(
-                        null,
-                        newProvisionsIndentTexts.length,
-                        newProvisionsIndentTexts,
-                        [],
-                        [
+                    lines.push(new OtherLine({
+                        range: null,
+                        indentTexts: newProvisionsIndentTexts,
+                        controls: [],
+                        sentencesArray: [
                             new Sentences(
                                 "",
                                 null,
@@ -123,8 +121,8 @@ export const amendProvisionToLines = (
                                 [newStdEL("Sentence", {}, [new EL("__CapturedXML", {}, [cc])])],
                             ),
                         ],
-                        CST.EOL,
-                    ));
+                        lineEndText: CST.EOL,
+                    }));
                 }
                 else { throw new NotImplementedError(cc.tag); }
             }

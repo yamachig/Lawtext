@@ -86,15 +86,14 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
                 ),
             ]);
             return {
-                value: new ArticleGroupHeadLine(
-                    range(),
-                    indentsStruct.value.indentDepth,
-                    indentsStruct.value.indentTexts,
-                    articleGroupType[articleGroupNum.ranges.value[0][0].value.typeChar],
-                    control ? [control] : [],
+                value: new ArticleGroupHeadLine({
+                    range: range(),
+                    indentTexts: indentsStruct.value.indentTexts,
+                    mainTag: articleGroupType[articleGroupNum.ranges.value[0][0].value.typeChar],
+                    controls: control ? [control] : [],
                     sentenceChildren,
                     lineEndText,
-                ),
+                }),
                 errors,
             };
         })

@@ -25,7 +25,6 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.SPA,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "SupplProvisionAppdx",
             controls: [
@@ -105,7 +104,6 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.SPA,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "SupplProvisionAppdx",
             controls: [
@@ -186,7 +184,6 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.SPA,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "SupplProvisionAppdxTable",
             controls: [
@@ -267,7 +264,6 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.SPA,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "SupplProvisionAppdxTable",
             controls: [
@@ -347,7 +343,6 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.SPA,
-            indentDepth: 0,
             indentTexts: [] as string[],
             mainTag: "SupplProvisionAppdxStyle",
             controls: [
@@ -427,7 +422,6 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.SPA,
-            indentDepth: 0,
             indentTexts: [] as string[],
             controls: [
                 {

@@ -25,7 +25,6 @@ describe("Test $articleGroupHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.ARG,
-            indentDepth: 3,
             indentTexts: ["  ", "  ", "  "] as string[],
             mainTag: "Chapter",
             lineEndText: `
@@ -43,7 +42,7 @@ describe("Test $articleGroupHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedInline);
         }
     });
 
@@ -63,7 +62,6 @@ describe("Test $articleGroupHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.ARG,
-            indentDepth: 1,
             indentTexts: ["  "] as string[],
             lineEndText: `　
 `,
@@ -110,7 +108,7 @@ describe("Test $articleGroupHeadLine", () => {
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
-            assert.deepStrictEqual(result.value.value.sentenceChildren.map(el => el.json(true)), expectedInline);
+            assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedInline);
         }
     });
 

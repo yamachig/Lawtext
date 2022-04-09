@@ -1,10 +1,11 @@
 import { assert } from "chai";
 import { MatchResult } from "generic-parser/lib/core";
+import { isLawNum } from "../../law/std";
+import { __Text } from "../../node/control";
 import { Line } from "../../node/cst/line";
-import { EL, JsonEL, loadEl } from "../../node/el";
+import { EL, JsonEL, loadEl, rangeOfELs } from "../../node/el";
 import { ErrorMessage } from "../cst/error";
 import parse from "../cst/parse";
-import { enumAllELs } from "../cst/util";
 import { Env, initialEnv } from "./env";
 import { toVirtualLines, VirtualLine } from "./virtualLine";
 
@@ -56,6 +57,41 @@ export const testLawtextToStd = <
     });
 
     const lines = parse(lawtext);
+    for (const [iLine, line] of lines.value.entries()) {
+        const lineRange = line.range;
+        assert.isNotNull(lineRange, `Line ${iLine}: ${line} has no range`);
+        const prevLineRange = iLine > 0 ? lines.value[iLine - 1].range : null;
+        if (lineRange && prevLineRange) {
+            assert.strictEqual(
+                prevLineRange[1],
+                lineRange[0],
+                `LineType.${line.type} has invalid range: ${JSON.stringify(lineRange)}, prev: LineType.${lines.value[iLine - 1].type} ${JSON.stringify(prevLineRange)}`,
+            );
+        }
+        const rawRangeTexts = line.rangeTexts();
+        for (const [range, , description] of rawRangeTexts) {
+            assert.isNotNull(
+                range,
+                `An element of LineType.${line.type} has null range: ${description}, lineRange: ${JSON.stringify(lineRange)}`,
+            );
+        }
+        const rangeTexts = rawRangeTexts as [[number, number], string, string][];
+        for (const [iText, [textRange, text, description]] of rangeTexts.entries()) {
+            assert.strictEqual(
+                text,
+                lawtext.slice(textRange[0], textRange[1]),
+                `LineType.${line.type} has mismatch text: range: ${JSON.stringify(textRange)} ${description}`,
+            );
+            if (iText === 0) continue;
+            const [prevTextRange, , prevDescription] = rangeTexts[iText - 1];
+            assert.strictEqual(
+                prevTextRange[1],
+                textRange[0],
+                `An element of LineType.${line.type} has invalid range: ${description} ${JSON.stringify(textRange)}, prev: ${prevDescription} ${JSON.stringify(prevTextRange)}, lineRange: ${JSON.stringify(lineRange)}`,
+            );
+        }
+    }
+
     const vls = toVirtualLines(lines.value);
 
     const result = parseLines(vls, env);
@@ -67,9 +103,7 @@ export const testLawtextToStd = <
         assert.deepStrictEqual({ value, errors }, { value: expectedValue, errors: expectedErrors });
 
         const topELs: EL[] = (result.value.value instanceof EL) ? [result.value.value] : result.value.value;
-        for (const el of topELs.map(enumAllELs).flat()) {
-            assert.isNotNull(el.range, `${el.tag} has no range`);
-        }
+        topELs.map(el => assertELVaridity(el, lawtext));
     }
 
     let renderedLines: Line[];
@@ -81,3 +115,50 @@ export const testLawtextToStd = <
     const renderedText = renderedLines.map(l => l.text()).join("").replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1").replace(/(?<!\n)$/, "\r\n").replace(/(?:\r?\n)+$/, "\r\n");
     assert.strictEqual(renderedText, expectedRendered);
 };
+
+const assertELVaridity = (el: EL | string, lawtext: string): void => {
+    if (typeof el === "string") return;
+
+    assert.isNotNull(el.range, `${el.tag} has no range`);
+
+    if (el instanceof __Text && el.range) {
+        assert.strictEqual(
+            el.text,
+            lawtext.slice(el.range[0], el.range[1]),
+            `${el.tag} has mismatch text: range: ${JSON.stringify(el.range)}`,
+        );
+    }
+
+    for (const [i, child] of el.children.entries()) {
+        assertELVaridity(child, lawtext);
+        if (typeof child === "string") continue;
+        if (i > 0 && typeof el.children[i - 1] !== "string") {
+            const prevChild = el.children[i - 1] as EL;
+            if (prevChild.range && child.range && !isLawNum(prevChild)) {
+                assert.isTrue(
+                    (prevChild.range[1] <= child.range[0]),
+                    `${child.tag} has invalid range: ${JSON.stringify(child.range)}, prev: ${prevChild.tag} ${JSON.stringify(prevChild.range)}, parent: ${el.tag}`,
+                );
+                // if (prevChild.range[1] <= child.range[0]) {
+                //     const gapText = lawtext.slice(prevChild.range[1], child.range[0]);
+                //     const gatTextWOControl = gapText
+                //         .replace(/:(?:\w|-)+:/g, "")
+                //         .replace(/\[\w+="\w+"\]/g, "")
+                //         .replace(/^\s+(?:\*\s+[*-]|[*-])(?:\s*\|)?/mg, "")
+                //         .trim();
+                //     assert.isTrue(gatTextWOControl.length === 0, `Invalid gap text between ${prevChild.tag} and ${child.tag}: ${gapText}, without control: ${gatTextWOControl}, gap range: ${JSON.stringify([prevChild.range[1], child.range[0]])}, parent: ${el.tag}`);
+                // }
+            }
+        }
+    }
+
+    const childrenRange = rangeOfELs(el.children);
+    if (el.range && childrenRange) {
+        assert.isTrue(
+            (el.range[0] <= childrenRange[0] && childrenRange[1] <= el.range[1]),
+            `Children of ${el.tag} has invalid range: children range: ${JSON.stringify(childrenRange)}, parent range: ${JSON.stringify(el.range)}`,
+        );
+    }
+};
+
+

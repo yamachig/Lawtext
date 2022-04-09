@@ -22,9 +22,8 @@ describe("Test $tocHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.TOC,
-            indentDepth: 0,
             indentTexts: [] as string[],
-            _contentText: "目次",
+            title: "目次",
             lineEndText: `
 `,
         } as const;
@@ -51,9 +50,8 @@ describe("Test $tocHeadLine", () => {
 `;
         const expectedValue = {
             type: LineType.TOC,
-            indentDepth: 4,
             indentTexts: ["  ", "  ", "  ", "  "] as string[],
-            _contentText: "目　次",
+            title: "目　次",
             lineEndText: `　
 `,
         } as const;

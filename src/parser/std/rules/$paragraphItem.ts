@@ -78,12 +78,11 @@ export const paragraphItemToLines = (
     if (ParagraphCaption.length > 0) {
         const newIndentTexts = [...indentTexts, CST.INDENT];
 
-        lines.push(new OtherLine(
-            null,
-            newIndentTexts.length,
-            newIndentTexts,
-            [],
-            [
+        lines.push(new OtherLine({
+            range: null,
+            indentTexts: newIndentTexts,
+            controls: [],
+            sentencesArray: [
                 new Sentences(
                     "",
                     null,
@@ -91,8 +90,8 @@ export const paragraphItemToLines = (
                     [newStdEL("Sentence", {}, ParagraphCaption)]
                 ),
             ],
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     }
 
     const Title = ParagraphItemTitle;
@@ -131,39 +130,36 @@ export const paragraphItemToLines = (
     }
 
     if (firstArticleParagraphArticleTitle) {
-        lines.push(new ArticleLine(
-            null,
-            indentTexts.length,
+        lines.push(new ArticleLine({
+            range: null,
             indentTexts,
-            sentenceChildrenToString(firstArticleParagraphArticleTitle),
-            CST.MARGIN,
+            title: sentenceChildrenToString(firstArticleParagraphArticleTitle),
+            midSpace: CST.MARGIN,
             sentencesArray,
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     } else if (
         noControl
         && ParagraphCaption.every(c => (typeof c !== "string" && !c.text) && !c)
         && ParagraphItemTitle.every(c => (typeof c !== "string" && !c.text) && !c)
         // && paragraphItemTitleStr.length > 0
     ) {
-        lines.push(new ParagraphItemLine(
-            null,
-            indentTexts.length,
+        lines.push(new ParagraphItemLine({
+            range: null,
             indentTexts,
-            el.tag,
-            [],
-            paragraphItemTitleStr,
-            (Title.length === 0 || sentencesArray.length === 0) ? "" : CST.MARGIN,
+            mainTag: el.tag,
+            controls: [],
+            title: paragraphItemTitleStr,
+            midSpace: (Title.length === 0 || sentencesArray.length === 0) ? "" : CST.MARGIN,
             sentencesArray,
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     } else if (paragraphItemTitleStr.length > 0) {
-        lines.push(new ParagraphItemLine(
-            null,
-            indentTexts.length,
+        lines.push(new ParagraphItemLine({
+            range: null,
             indentTexts,
-            el.tag,
-            (
+            mainTag: el.tag,
+            controls: (
                 (
                     (el.tag === defaultTag)
                     && unknownParagraphItemTitleMatch(paragraphItemTitleStr).ok
@@ -192,18 +188,17 @@ export const paragraphItemToLines = (
                             )
                         ]
             ),
-            paragraphItemTitleStr,
-            (sentencesArray.length === 0) ? "" : CST.MARGIN,
+            title: paragraphItemTitleStr,
+            midSpace: (sentencesArray.length === 0) ? "" : CST.MARGIN,
             sentencesArray,
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     } else {
-        lines.push(new ParagraphItemLine(
-            null,
-            indentTexts.length,
+        lines.push(new ParagraphItemLine({
+            range: null,
             indentTexts,
-            el.tag,
-            [
+            mainTag: el.tag,
+            controls: [
                 new Control(
                     anonymParagraphItemControls[el.tag],
                     null,
@@ -211,11 +206,11 @@ export const paragraphItemToLines = (
                     null,
                 )
             ],
-            "",
-            "",
+            title: "",
+            midSpace: "",
             sentencesArray,
-            CST.EOL,
-        ));
+            lineEndText: CST.EOL,
+        }));
     }
 
     for (const child of Children) {
@@ -229,19 +224,19 @@ export const paragraphItemToLines = (
             )); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "TableStruct") {
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
             lines.push(...tableStructToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else if (child.tag === "FigStruct") {
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
             lines.push(...figStructToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else if (child.tag === "StyleStruct") {
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
             lines.push(...noteLikeStructToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else if (child.tag === "List") {
             lines.push(...listOrSublistToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */

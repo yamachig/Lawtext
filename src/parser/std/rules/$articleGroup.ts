@@ -29,12 +29,11 @@ export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[])
                 ? [...range(0, titleIndentDepth)].map(() => CST.INDENT)
                 : indentTexts;
 
-            lines.push(new ArticleGroupHeadLine(
-                null,
-                titleIndentDepth,
-                titleIndentTexts,
-                el.tag,
-                indentTexts.length == 0 ? [] : [
+            lines.push(new ArticleGroupHeadLine({
+                range: null,
+                indentTexts: titleIndentTexts,
+                mainTag: el.tag,
+                controls: indentTexts.length == 0 ? [] : [
                     new Control(
                         ":keep-indents:",
                         null,
@@ -42,10 +41,10 @@ export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[])
                         null,
                     )
                 ],
-                mergeAdjacentTextsWithString(child.children),
-                CST.EOL,
-            ));
-            lines.push(new BlankLine(null, CST.EOL));
+                sentenceChildren: mergeAdjacentTextsWithString(child.children),
+                lineEndText: CST.EOL,
+            }));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else {
             ChildItems.push(child);
@@ -53,18 +52,18 @@ export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[])
     }
 
     for (const [i, child] of ChildItems.entries()) {
-        if (i > 0) lines.push(new BlankLine(null, CST.EOL));
+        if (i > 0) lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         if (child.tag === "Article") {
             lines.push(...articleToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else if (child.tag === "Paragraph") {
             lines.push(...paragraphItemToLines(child, indentTexts, { defaultTag: "Paragraph" }));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else if (std.isArticleGroup(child)) {
             lines.push(...articleGroupToLines(child, indentTexts));
-            lines.push(new BlankLine(null, CST.EOL));
+            lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else if (std.isAppdxStyle(child)) {
             console.error("Unexpected AppdxStyle in MainProvision!");
@@ -170,14 +169,14 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
             articleGroup.append(newStdEL(
                 std.articleGroupTitleTags[std.articleGroupTags.indexOf(headLine.line.mainTag)],
                 {},
-                headLine.line.sentenceChildren,
-                headLine.line.contentRange,
+                headLine.line.title,
+                headLine.line.titleRange,
             ));
 
             const num = parseNamedNum(
-                typeof headLine.line.sentenceChildren[0] === "string"
-                    ? headLine.line.sentenceChildren[0]
-                    : headLine.line.sentenceChildren[0]?.text
+                typeof headLine.line.title[0] === "string"
+                    ? headLine.line.title[0]
+                    : headLine.line.title[0]?.text
             );
             if (num) {
                 articleGroup.attr.Num = num;

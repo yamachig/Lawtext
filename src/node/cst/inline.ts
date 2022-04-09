@@ -16,7 +16,7 @@ export type Controls = Control[];
 
 export class AttrEntry {
     public constructor(
-        public text: string,
+        public entryText: string,
         public entry: [name: string, value: string],
         public entryRange: [start: number, end: number] | null,
         public trailingSpace: string,

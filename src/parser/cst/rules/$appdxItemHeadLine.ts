@@ -91,16 +91,15 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
                 ...(tail?.errors ?? []),
             ];
             return {
-                value: new AppdxItemHeadLine(
-                    range(),
-                    indentsStruct.value.indentDepth,
-                    indentsStruct.value.indentTexts,
-                    tag,
-                    control ? [control] : [],
+                value: new AppdxItemHeadLine({
+                    range: range(),
+                    indentTexts: indentsStruct.value.indentTexts,
+                    mainTag: tag,
+                    controls: control ? [control] : [],
                     title,
                     relatedArticleNum,
                     lineEndText,
-                ),
+                }),
                 errors,
             };
         })

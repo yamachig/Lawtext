@@ -23,7 +23,6 @@ describe("Test $articleLine", () => {
 `;
         const expectedValue = {
             type: LineType.ART,
-            indentDepth: 0,
             indentTexts: [] as string[],
             title: "第二条",
             midSpace: "　",
@@ -82,7 +81,6 @@ describe("Test $articleLine", () => {
 `;
         const expectedValue = {
             type: LineType.ART,
-            indentDepth: 0,
             indentTexts: [] as string[],
             title: "第三十六条の三",
             midSpace: "　",
@@ -139,7 +137,6 @@ describe("Test $articleLine", () => {
 `;
         const expectedValue = {
             type: LineType.ART,
-            indentDepth: 0,
             indentTexts: [] as string[],
             title: "第百九十八条から第二百九条まで",
             midSpace: "　",

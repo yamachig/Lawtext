@@ -24,7 +24,6 @@ describe("Test $tableColumnLine", () => {
 `;
         const expectedValue = {
             type: LineType.TBL,
-            indentDepth: 1,
             indentTexts: ["  "] as string[],
             firstColumnIndicator: "*",
             midIndicatorsSpace: " ",
@@ -32,14 +31,14 @@ describe("Test $tableColumnLine", () => {
             midSpace: " ",
             attrEntries: [
                 {
-                    text: "[Valign=\"top\"]",
+                    entryText: "[Valign=\"top\"]",
                     entry: ["Valign", "top"],
                     entryRange: [6, 20],
                     trailingSpace: "",
                     trailingSpaceRange: [20, 20],
                 },
                 {
-                    text: "[rowspan=\"2\"]",
+                    entryText: "[rowspan=\"2\"]",
                     entry: ["rowspan", "2"],
                     entryRange: [20, 33],
                     trailingSpace: "",
@@ -99,7 +98,6 @@ describe("Test $tableColumnLine", () => {
 `;
         const expectedValue = {
             type: LineType.TBL,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             firstColumnIndicator: "",
             midIndicatorsSpace: "",
@@ -107,11 +105,11 @@ describe("Test $tableColumnLine", () => {
             midSpace: "   ",
             attrEntries: [
                 {
-                    text: "[Valign=\"top\"]",
+                    entryText: "[Valign=\"top\"]",
                     entry: ["Valign", "top"],
                     entryRange: [8, 22],
                     trailingSpace: "  ",
-                    trailingSpaceRange: [22, 22],
+                    trailingSpaceRange: [22, 24],
                 },
             ] as AttrEntries,
             lineEndText: `
@@ -167,7 +165,6 @@ describe("Test $tableColumnLine", () => {
 `;
         const expectedValue = {
             type: LineType.TBL,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             firstColumnIndicator: "",
             midIndicatorsSpace: "",
@@ -227,7 +224,6 @@ describe("Test $tableColumnLine", () => {
 `;
         const expectedValue = {
             type: LineType.TBL,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             firstColumnIndicator: "",
             midIndicatorsSpace: "",
@@ -287,7 +283,6 @@ describe("Test $tableColumnLine", () => {
 `;
         const expectedValue = {
             type: LineType.TBL,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             firstColumnIndicator: "*",
             midIndicatorsSpace: " ",
@@ -347,7 +342,6 @@ describe("Test $tableColumnLine", () => {
 `;
         const expectedValue = {
             type: LineType.TBL,
-            indentDepth: 2,
             indentTexts: ["  ", "  "] as string[],
             firstColumnIndicator: "*",
             midIndicatorsSpace: " ",

@@ -37,11 +37,10 @@ export const noteLikeStructToLines = (noteLikeStruct: std.NoteLikeStruct, indent
             .find(el => el.tag === noteLikeStructTitleTag) as std.NoteLikeStructTitle | undefined
     )?.children;
 
-    lines.push(new OtherLine(
-        null,
-        indentTexts.length,
+    lines.push(new OtherLine({
+        range: null,
         indentTexts,
-        [
+        controls: [
             new Control(
                 noteLikeStructControl[noteLikeStruct.tag],
                 null,
@@ -49,7 +48,7 @@ export const noteLikeStructToLines = (noteLikeStruct: std.NoteLikeStruct, indent
                 null,
             )
         ],
-        noteLikeStructTitleSentenceChildren ? [
+        sentencesArray: noteLikeStructTitleSentenceChildren ? [
             new Sentences(
                 "",
                 null,
@@ -57,8 +56,8 @@ export const noteLikeStructToLines = (noteLikeStruct: std.NoteLikeStruct, indent
                 [newStdEL("Sentence", {}, noteLikeStructTitleSentenceChildren)]
             )
         ] : [],
-        CST.EOL,
-    ));
+        lineEndText: CST.EOL,
+    }));
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 

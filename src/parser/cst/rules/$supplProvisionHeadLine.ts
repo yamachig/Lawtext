@@ -82,19 +82,18 @@ export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = fa
         .action(({ range, controls, indentsStruct, head, amendLawNumStruct, extract, lineEndText }) => {
             const errors = indentsStruct.errors;
             return {
-                value: new SupplProvisionHeadLine(
-                    range(),
-                    indentsStruct.value.indentDepth,
-                    indentsStruct.value.indentTexts,
+                value: new SupplProvisionHeadLine({
+                    range: range(),
+                    indentTexts: indentsStruct.value.indentTexts,
                     controls,
-                    head.text,
-                    head.range,
-                    amendLawNumStruct?.openParen ?? "",
-                    amendLawNumStruct?.amendLawNum ?? "",
-                    amendLawNumStruct?.closeParen ?? "",
-                    extract ?? "",
+                    title: head.text,
+                    titleRange: head.range,
+                    openParen: amendLawNumStruct?.openParen ?? "",
+                    amendLawNum: amendLawNumStruct?.amendLawNum ?? "",
+                    closeParen: amendLawNumStruct?.closeParen ?? "",
+                    extractText: extract ?? "",
                     lineEndText,
-                ),
+                }),
                 errors,
             };
         })
