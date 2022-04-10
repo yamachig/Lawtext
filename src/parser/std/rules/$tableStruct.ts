@@ -217,8 +217,8 @@ const $table: WithErrorRule<std.Table> = factory
                             ...(tableColumnChildrenBlock?.value ?? []),
                         ];
                         if (tableHeaderColumnChildren.length === 0) {
-                            const pos = tableColumnLine.line.range ? tableColumnLine.line.range[1] - tableColumnLine.line.lineEndText.length : null;
-                            tableHeaderColumnChildren.push(newStdEL("Sentence", {}, [], pos ? [pos, pos] : null));
+                            const pos = tableColumnLine.line.midSpaceRange?.[1] ?? null;
+                            tableHeaderColumnChildren.push(newStdEL("Sentence", {}, [], (pos !== null ? [pos, pos] : null)));
                         }
                         const pos = tableColumnLine.line.indentsEndPos;
                         const range = rangeOfELs(tableHeaderColumnChildren) ?? (pos !== null ? [pos, pos] : null);
@@ -246,7 +246,7 @@ const $table: WithErrorRule<std.Table> = factory
                             ...(tableColumnChildrenBlock?.value ?? []),
                         ];
                         if (tableColumnChildren.length === 0) {
-                            const pos = tableColumnLine.line.range ? tableColumnLine.line.range[1] - tableColumnLine.line.lineEndText.length : null;
+                            const pos = tableColumnLine.line.midSpaceRange?.[1] ?? null;
                             tableColumnChildren.push(newStdEL("Sentence", {}, [], pos ? [pos, pos] : null));
                         }
                         const pos = tableColumnLine.line.indentsEndPos;
@@ -299,7 +299,7 @@ const $table: WithErrorRule<std.Table> = factory
                             ...(tableColumnChildrenBlock?.value ?? []),
                         ];
                         if (tableHeaderColumnChildren.length === 0) {
-                            const pos = tableColumnLine.line.range ? tableColumnLine.line.range[1] - tableColumnLine.line.lineEndText.length : null;
+                            const pos = tableColumnLine.line.midSpaceRange?.[1] ?? null;
                             tableHeaderColumnChildren.push(newStdEL("Sentence", {}, [], pos ? [pos, pos] : null));
                         }
                         const pos = tableColumnLine.line.indentsEndPos;
@@ -319,7 +319,7 @@ const $table: WithErrorRule<std.Table> = factory
                             ...(tableColumnChildrenBlock?.value ?? []),
                         ];
                         if (tableColumnChildren.length === 0) {
-                            const pos = tableColumnLine.line.range ? tableColumnLine.line.range[1] - tableColumnLine.line.lineEndText.length : null;
+                            const pos = tableColumnLine.line.midSpaceRange?.[1] ?? null;
                             tableColumnChildren.push(newStdEL("Sentence", {}, [], pos ? [pos, pos] : null));
                         }
                         const pos = tableColumnLine.line.indentsEndPos;
