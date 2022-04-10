@@ -225,7 +225,7 @@ export class AppdxItemHeadLine extends WithControlsLine<LineType.APP> {
         ret.push(...this.indentRangeTexts());
         ret.push(...this.controlsRangeTexts());
         ret.push([this.titleRange, sentenceChildrenToString(this.title), "Title"]);
-        ret.push([this.relatedArticleNumRange, sentenceChildrenToString(this.relatedArticleNum), "Title"]);
+        ret.push([this.relatedArticleNumRange, sentenceChildrenToString(this.relatedArticleNum), "RelatedArticleNum"]);
         ret.push([this.lineEndTextRange(), this.lineEndText, "LineEnd"]);
         return ret;
     }
@@ -286,7 +286,7 @@ export class SupplProvisionHeadLine extends WithControlsLine<LineType.SPR> {
         ret.push([this.openParenRange, this.openParen, "OpenParen"]);
         ret.push([this.amendLawNumRange, this.amendLawNum, "AmendLawNum"]);
         ret.push([this.closeParenRange, this.closeParen, "CloseParen"]);
-        ret.push([this.extractTextRange, this.extractText, "CloseParen"]);
+        ret.push([this.extractTextRange, this.extractText, "ExtractText"]);
         ret.push([this.lineEndTextRange(), this.lineEndText, "LineEnd"]);
         return ret;
     }
