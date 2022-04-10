@@ -144,7 +144,7 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                 "RemarksLabel",
                 {},
                 remarksLabelSentenceChildren,
-                labelLine.virtualRange,
+                labelLine.line.sentencesArrayRange,
             ) : null;
 
             if (remarksLabel) {

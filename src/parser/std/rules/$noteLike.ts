@@ -165,7 +165,7 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                     std.noteLikeStructTitleTags[std.noteLikeStructTags.indexOf(tag)],
                     {},
                     noteLikeStructTitleSentenceChildren,
-                    titleLine.virtualRange,
+                    titleLine.line.sentencesArrayRange,
                 ) : null;
 
 

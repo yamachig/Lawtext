@@ -328,7 +328,7 @@ export const $law: WithErrorRule<std.Law> = factory
                     "LawNum",
                     {},
                     [lawNum],
-                    lawTitleLines.value.lawNumLine.virtualRange,
+                    lawTitleLines.value.lawNumLine.line.sentencesArrayRange,
                 ));
 
                 const { Era, Year, LawType, Num } = parseLawNum(lawNum);

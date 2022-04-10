@@ -399,7 +399,7 @@ export const $tableStruct: WithErrorRule<std.TableStruct> = factory
                     "TableStructTitle",
                     {},
                     [tableStructTitleText],
-                    titleLine.virtualRange,
+                    titleLine.line.sentencesArrayRange,
                 ) : null;
 
                 if (tableStructTitle) {

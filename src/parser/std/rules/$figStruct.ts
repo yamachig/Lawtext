@@ -177,7 +177,7 @@ export const $figStruct: WithErrorRule<std.FigStruct> = factory
                     "FigStructTitle",
                     {},
                     figStructTitleSentenceChildren,
-                    titleLine.virtualRange,
+                    titleLine.line.sentencesArrayRange,
                 ) : null;
 
                 if (figStructTitle) {
