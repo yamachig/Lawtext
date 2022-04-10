@@ -184,7 +184,12 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
 
             articleGroup.extend(children);
 
-            articleGroup.range = rangeOfELs(articleGroup.children);
+            const pos = headLine.line.indentsEndPos;
+            const range = rangeOfELs(articleGroup.children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
+            articleGroup.range = range;
 
             return {
                 value: articleGroup,

@@ -74,12 +74,16 @@ export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
                 errors.push(...childrenBlock.errors);
             }
 
-            const pos = labelLine.line.range ? labelLine.line.range[1] - labelLine.line.lineEndText.length : null;
+            const pos = labelLine.line.indentsEndPos;
+            const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const arithFormula = newStdEL(
                 "ArithFormula",
                 {},
                 children,
-                rangeOfELs(children) ?? (pos ? [pos, pos] : null),
+                range,
             );
             return {
                 value: arithFormula,

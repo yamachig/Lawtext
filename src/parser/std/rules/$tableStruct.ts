@@ -220,12 +220,17 @@ const $table: WithErrorRule<std.Table> = factory
                             const pos = tableColumnLine.line.range ? tableColumnLine.line.range[1] - tableColumnLine.line.lineEndText.length : null;
                             tableHeaderColumnChildren.push(newStdEL("Sentence", {}, [], pos ? [pos, pos] : null));
                         }
+                        const pos = tableColumnLine.line.indentsEndPos;
+                        const range = rangeOfELs(tableHeaderColumnChildren) ?? (pos !== null ? [pos, pos] : null);
+                        if (range && pos !== null) {
+                            range[0] = pos;
+                        }
                         const tableRowChildren = [
                             newStdEL(
                                 "TableHeaderColumn",
                                 Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
                                 tableHeaderColumnChildren,
-                                rangeOfELs(tableHeaderColumnChildren),
+                                range,
                             ),
                         ];
                         const tableRow = newStdEL(
@@ -244,12 +249,17 @@ const $table: WithErrorRule<std.Table> = factory
                             const pos = tableColumnLine.line.range ? tableColumnLine.line.range[1] - tableColumnLine.line.lineEndText.length : null;
                             tableColumnChildren.push(newStdEL("Sentence", {}, [], pos ? [pos, pos] : null));
                         }
+                        const pos = tableColumnLine.line.indentsEndPos;
+                        const range = rangeOfELs(tableColumnChildren) ?? (pos !== null ? [pos, pos] : null);
+                        if (range && pos !== null) {
+                            range[0] = pos;
+                        }
                         const tableRowChildren = [
                             newStdEL(
                                 "TableColumn",
                                 Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
                                 tableColumnChildren,
-                                rangeOfELs(tableColumnChildren),
+                                range,
                             ),
                         ];
                         const tableRow = newStdEL(
@@ -292,11 +302,16 @@ const $table: WithErrorRule<std.Table> = factory
                             const pos = tableColumnLine.line.range ? tableColumnLine.line.range[1] - tableColumnLine.line.lineEndText.length : null;
                             tableHeaderColumnChildren.push(newStdEL("Sentence", {}, [], pos ? [pos, pos] : null));
                         }
+                        const pos = tableColumnLine.line.indentsEndPos;
+                        const range = rangeOfELs(tableHeaderColumnChildren) ?? (pos !== null ? [pos, pos] : null);
+                        if (range && pos !== null) {
+                            range[0] = pos;
+                        }
                         tableRow.children.push(newStdEL(
                             "TableHeaderColumn",
                             Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
                             tableHeaderColumnChildren,
-                            rangeOfELs(tableHeaderColumnChildren),
+                            range,
                         ));
                     } else if (isTableRow(tableRow)) {
                         const tableColumnChildren = [
@@ -307,11 +322,16 @@ const $table: WithErrorRule<std.Table> = factory
                             const pos = tableColumnLine.line.range ? tableColumnLine.line.range[1] - tableColumnLine.line.lineEndText.length : null;
                             tableColumnChildren.push(newStdEL("Sentence", {}, [], pos ? [pos, pos] : null));
                         }
+                        const pos = tableColumnLine.line.indentsEndPos;
+                        const range = rangeOfELs(tableColumnChildren) ?? (pos !== null ? [pos, pos] : null);
+                        if (range && pos !== null) {
+                            range[0] = pos;
+                        }
                         tableRow.children.push(newStdEL(
                             "TableColumn",
                             Object.fromEntries(tableColumnLine.line.attrEntries.map(attrEntry => attrEntry.entry)),
                             tableColumnChildren,
-                            rangeOfELs(tableColumnChildren),
+                            range,
                         ));
                     }
                     else { assertNever(tableRow); }
@@ -392,12 +412,16 @@ export const $tableStruct: WithErrorRule<std.TableStruct> = factory
                     errors.push(...childrenBlock.errors);
                 }
 
-                const pos = titleLine.line.range ? titleLine.line.range[1] - titleLine.line.lineEndText.length : null;
+                const pos = titleLine.line.indentsEndPos;
+                const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+                if (range && pos !== null) {
+                    range[0] = pos;
+                }
                 const tableStruct = newStdEL(
                     "TableStruct",
                     {},
                     children,
-                    rangeOfELs(children) ?? (pos ? [pos, pos] : null),
+                    range,
                 );
                 return {
                     value: tableStruct,

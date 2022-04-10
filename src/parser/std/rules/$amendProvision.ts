@@ -217,24 +217,26 @@ export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
                     item.type === LineType.OTH
                     && item.line.type === LineType.OTH
                 ) {
-                    return newStdEL(
-                        "AmendProvisionSentence",
-                        {},
-                        sentencesArrayToColumnsOrSentences(item.line.sentencesArray),
-                        item.line.sentencesArrayRange
-                    );
+                    return item;
                 } else {
                     return null;
                 }
             })
-        , "amendProvisionSentence")
+        , "line")
         .and(r => r
             .zeroOrOne(() => $newProvisionsBlock)
         , "newProvisions")
-        .action(({ amendProvisionSentence, newProvisions }) => {
+        .action(({ line, newProvisions }) => {
 
             const children: std.AmendProvision["children"] = [];
             const errors: ErrorMessage[] = [];
+
+            const amendProvisionSentence = newStdEL(
+                "AmendProvisionSentence",
+                {},
+                sentencesArrayToColumnsOrSentences(line.line.sentencesArray),
+                line.line.sentencesArrayRange
+            );
 
             children.push(amendProvisionSentence);
 
@@ -249,12 +251,16 @@ export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
                 errors.push(...newProvisions.errors);
             }
 
-
+            const pos = line.line.indentsEndPos;
+            const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const amendProvision = newStdEL(
                 "AmendProvision",
                 {},
                 children,
-                rangeOfELs(children),
+                range,
             );
             return {
                 value: amendProvision,

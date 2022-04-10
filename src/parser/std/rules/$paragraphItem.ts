@@ -517,7 +517,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
             );
 
             const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
-            const pos = firstParagraphItemLine.line.range ? firstParagraphItemLine.line.range[1] - firstParagraphItemLine.line.lineEndText.length : null;
+            const paragraphItemSentencePos = firstParagraphItemLine.line.indentsEndPos;
             paragraphItem.append(
                 newStdEL(
                     tag !== "__AutoParagraphItem"
@@ -525,14 +525,19 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
                         : "__AutoParagraphItemSentence",
                     {},
                     sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
-                    sentencesArrayRange ?? (pos ? [pos, pos] : null),
+                    sentencesArrayRange ?? (paragraphItemSentencePos !== null ? [paragraphItemSentencePos, paragraphItemSentencePos] : null),
                 ));
 
             if (tailChildren) {
                 paragraphItem.extend(tailChildren.value);
             }
 
-            paragraphItem.range = rangeOfELs(paragraphItem.children);
+            const pos = captionLine ? captionLine.line.indentsEndPos : firstParagraphItemLine.line.indentsEndPos;
+            const range = rangeOfELs(paragraphItem.children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
+            paragraphItem.range = range;
 
             return {
                 value: paragraphItem,
@@ -617,7 +622,12 @@ export const $noControlAnonymParagraph: WithErrorRule<std.Paragraph> = factory
                 paragraph.extend(tailChildren.value);
             }
 
-            paragraph.range = rangeOfELs(paragraph.children);
+            const pos = firstParagraphItemLine.line.indentsEndPos;
+            const range = rangeOfELs(paragraph.children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
+            paragraph.range = range;
 
             return {
                 value: paragraphItemFromAuto("Paragraph", paragraph) as std.Paragraph,

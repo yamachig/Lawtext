@@ -189,7 +189,12 @@ export const $article: WithErrorRule<std.Article> = factory
 
             article.extend(supplNotes.map(n => n.value));
 
-            article.range = rangeOfELs(article.children);
+            const pos = captionLine ? captionLine.line.indentsEndPos : firstParagraphItemLine.line.indentsEndPos;
+            const range = rangeOfELs(article.children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
+            article.range = range;
 
             return {
                 value: article,

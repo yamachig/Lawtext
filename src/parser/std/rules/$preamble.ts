@@ -93,8 +93,13 @@ export const $preamble: WithErrorRule<std.Preamble> = factory
                     children[i].attr.Num = `${i + 1}`;
                 }
             }
-            const pos = headLine.line.range ? headLine.line.range[1] - headLine.line.lineEndText.length : null;
-            const preamble = newStdEL("Preamble", {}, children, rangeOfELs(children) ?? (pos ? [pos, pos] : null));
+
+            const pos = headLine.line.indentsEndPos;
+            const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
+            const preamble = newStdEL("Preamble", {}, children, range);
             return {
                 value: preamble,
                 errors,

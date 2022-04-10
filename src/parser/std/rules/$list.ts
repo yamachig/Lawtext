@@ -130,11 +130,17 @@ TRet
                     errors.push(...childrenBlock.errors);
                 }
 
+                const pos = line.line.indentsEndPos;
+                const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+                if (range && pos !== null) {
+                    range[0] = pos;
+                }
+
                 const listOrSublist = newStdEL(
                     tag,
                     {},
                     children,
-                    rangeOfELs(children),
+                    range,
                 );
                 return {
                     value: listOrSublist as unknown as TRet,

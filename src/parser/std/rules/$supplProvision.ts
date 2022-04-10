@@ -171,6 +171,11 @@ export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
                 supplProvisionLabel,
                 ...children.value
             ];
+            const pos = labelLine.line.indentsEndPos;
+            const range = rangeOfELs(supplProvisionChildren) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const supplProvision = newStdEL(
                 "SupplProvision",
                 {
@@ -182,7 +187,7 @@ export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
                     ),
                 },
                 supplProvisionChildren,
-                rangeOfELs(supplProvisionChildren),
+                range,
             );
             return {
                 value: supplProvision,

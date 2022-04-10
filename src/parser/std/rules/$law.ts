@@ -195,12 +195,18 @@ export const $enactStatement: WithErrorRule<std.EnactStatement> = factory
             // for (let i = 0; i < children.value.length; i++) {
             //     children.value[i].attr.Num = `${i + 1}`;
             // }
-            const enactStatementChildren = forceSentencesArrayToSentenceChildren(line.line.sentencesArray);
+            const children = forceSentencesArrayToSentenceChildren(line.line.sentencesArray);
+
+            const pos = line.line.indentsEndPos;
+            const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const enactStatement = newStdEL(
                 "EnactStatement",
                 {},
-                enactStatementChildren,
-                rangeOfELs(enactStatementChildren),
+                children,
+                range,
             );
             return {
                 value: enactStatement,

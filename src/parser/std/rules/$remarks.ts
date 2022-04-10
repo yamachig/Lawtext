@@ -155,11 +155,16 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
             errors.push(...childrenBlock.value.flat().map(v => v.errors).flat());
             errors.push(...childrenBlock.errors);
 
+            const pos = labelLine.line.indentsEndPos;
+            const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const remarks = newStdEL(
                 "Remarks",
                 {},
                 children,
-                rangeOfELs(children),
+                range,
             );
             return {
                 value: remarks,

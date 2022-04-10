@@ -152,12 +152,16 @@ export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplPr
                     errors.push(...contentBlock.errors);
                 }
 
-                const pos = titleLine.line.range ? titleLine.line.range[1] - titleLine.line.lineEndText.length : null;
+                const pos = titleLine.line.indentsEndPos;
+                const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+                if (range && pos !== null) {
+                    range[0] = pos;
+                }
                 const supplProvisionAppdxItem = newStdEL(
                     tag,
                     {},
                     children,
-                    rangeOfELs(children) ?? (pos ? [pos, pos] : null),
+                    range,
                 );
 
                 return {

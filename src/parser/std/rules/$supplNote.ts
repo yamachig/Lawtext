@@ -57,12 +57,17 @@ export const $supplNote: WithErrorRule<std.SupplNote> = factory
             // for (let i = 0; i < children.value.length; i++) {
             //     children.value[i].attr.Num = `${i + 1}`;
             // }
-            const supplNoteChildren = forceSentencesArrayToSentenceChildren(line.line.sentencesArray);
+            const children = forceSentencesArrayToSentenceChildren(line.line.sentencesArray);
+            const pos = line.line.indentsEndPos;
+            const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const supplNote = newStdEL(
                 "SupplNote",
                 {},
-                supplNoteChildren,
-                rangeOfELs(supplNoteChildren),
+                children,
+                range,
             );
             return {
                 value: supplNote,

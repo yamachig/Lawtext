@@ -252,11 +252,16 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
 
             const tocArticleGroupTag = tocArticleGroupTags[articleGroupTags.indexOf(headLine.line.mainTag)];
 
+            const pos = headLine.line.indentsEndPos;
+            const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const tocArticleGroup = newStdEL(
                 tocArticleGroupTag,
                 {},
                 children,
-                rangeOfELs(children),
+                range,
             );
 
             return {
@@ -303,11 +308,17 @@ export const $tocArticle: WithErrorRule<std.TOCArticle> = factory
                 articleTitle,
                 ...(articleCaption ? [articleCaption] : []),
             ];
+
+            const pos = headLine.line.indentsEndPos;
+            const range = rangeOfELs(tocArticleChildren) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const tocArticle = newStdEL(
                 "TOCArticle",
                 {},
                 tocArticleChildren,
-                rangeOfELs(tocArticleChildren),
+                range,
             );
 
             return {
@@ -390,11 +401,16 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
                 errors.push(...childrenBlock.errors);
             }
 
+            const pos = headLine.line.indentsEndPos;
+            const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const tocSupplProvision = newStdEL(
                 "TOCSupplProvision",
                 {},
                 children,
-                rangeOfELs(children),
+                range,
             );
 
             return {
@@ -454,11 +470,16 @@ export const $toc: WithErrorRule<std.TOC> = factory
                 errors.push(...childrenBlock.errors);
             }
 
+            const pos = headLine.line.indentsEndPos;
+            const range = rangeOfELs(children) ?? (pos !== null ? [pos, pos] : null);
+            if (range && pos !== null) {
+                range[0] = pos;
+            }
             const toc = newStdEL(
                 "TOC",
                 {},
                 children,
-                rangeOfELs(children),
+                range,
             );
 
             return {
