@@ -147,19 +147,36 @@ const extractSpans = (law: EL): [Span[], Container[], Container] => {
     return [spans, containers, rootContainer];
 };
 
+interface PosOptions {
+    span: Span,
+    spanIndex: number,
+    textIndex: number,
+    length: number,
+    env: Env,
+}
+
 class Pos {
     public span: Span;
     public spanIndex: number;
     public textIndex: number;
     public length: number;
     public env: Env;
-    constructor(span: Span, spanIndex: number, textIndex: number, length: number, env: Env) {
-        this.span = span;
-        this.spanIndex = spanIndex;
-        this.textIndex = textIndex;
-        this.length = length;
-        this.env = env;
+    constructor(options: PosOptions) {
+        this.span = options.span;
+        this.spanIndex = options.spanIndex;
+        this.textIndex = options.textIndex;
+        this.length = options.length;
+        this.env = options.env;
     }
+}
+
+export interface DeclarationOptions {
+    type: string,
+    name: string,
+    value: string | null,
+    scope: ScopeRange[],
+    namePos: Pos,
+    range: [start: number, end: number] | null,
 }
 
 export class ____Declaration extends EL {
@@ -168,27 +185,41 @@ export class ____Declaration extends EL {
     public scope: ScopeRange[];
     public value: string | null;
     public namePos: Pos;
-    constructor(type: string, name: string, value: string | null, scope: ScopeRange[], namePos: Pos) {
-        super("____Declaration");
+    constructor(options: DeclarationOptions) {
+        super("____Declaration", {}, [], options.range);
 
-        this.type = type;
-        this.name = name;
-        this.value = value;
-        this.scope = scope;
-        this.namePos = namePos;
+        this.type = options.type;
+        this.name = options.name;
+        this.value = options.value;
+        this.scope = options.scope;
+        this.namePos = options.namePos;
 
-        this.attr.type = type;
-        this.attr.name = name;
-        if (value !== null) this.attr.value = value;
-        this.attr.scope = JSON.stringify(scope);
+        this.attr.type = this.type;
+        this.attr.name = this.name;
+        if (this.value !== null) this.attr.value = this.value;
+        this.attr.scope = JSON.stringify(this.scope);
         this.attr.name_pos = JSON.stringify({
-            span_index: namePos.spanIndex,
-            text_index: namePos.textIndex,
-            length: namePos.length,
+            span_index: this.namePos.spanIndex,
+            text_index: this.namePos.textIndex,
+            length: this.namePos.length,
         });
 
-        this.append(name);
+        this.append(this.name);
     }
+
+    public get nameRange(): [number, number] | null {
+        return this.namePos.span.el.range && [
+            this.namePos.span.el.range[0] + this.namePos.textIndex,
+            this.namePos.span.el.range[0] + this.namePos.textIndex + this.namePos.length,
+        ];
+    }
+}
+
+interface ScopeRangeOptions {
+    startSpanIndex: number,
+    startTextIndex: number,
+    endSpanIndex: number, // half open
+    endTextIndex: number, // half open
 }
 
 class ScopeRange {
@@ -196,33 +227,35 @@ class ScopeRange {
     public startTextIndex: number;
     public endSpanIndex: number;
     public endTextIndex: number;
-    constructor(
-        startSpanIndex: number,
-        startTextIndex: number,
-        endSpanIndex: number, // half open
-        endTextIndex: number, // half open
-    ) {
-        this.startSpanIndex = startSpanIndex;
-        this.startTextIndex = startTextIndex;
-        this.endSpanIndex = endSpanIndex;
-        this.endTextIndex = endTextIndex;
+    constructor(options: ScopeRangeOptions) {
+        this.startSpanIndex = options.startSpanIndex;
+        this.startTextIndex = options.startTextIndex;
+        this.endSpanIndex = options.endSpanIndex;
+        this.endTextIndex = options.endTextIndex;
     }
 }
 
-class ____VarRef extends EL {
+export interface VarRefOptions {
+    refName: string,
+    declaration: ____Declaration,
+    refPos: Pos,
+    range: [start: number, end: number] | null,
+}
+
+export class ____VarRef extends EL {
     public refName: string;
     public declaration: ____Declaration;
     public refPos: Pos;
-    constructor(refName: string, declaration: ____Declaration, refPos: Pos) {
-        super("____VarRef");
+    constructor(options: VarRefOptions) {
+        super("____VarRef", {}, [], options.range);
 
-        this.refName = refName;
-        this.declaration = declaration;
-        this.refPos = refPos;
+        this.refName = options.refName;
+        this.declaration = options.declaration;
+        this.refPos = options.refPos;
 
-        this.attr.ref_declaration_index = declaration.attr.declaration_index;
+        this.attr.ref_declaration_index = this.declaration.attr.declaration_index;
 
-        this.append(refName);
+        this.append(this.refName);
     }
 }
 
@@ -414,9 +447,19 @@ const getScope = (currentSpan: Span, scopeText: string, following: boolean, foll
         const toc = to[to.length - 1].locatedContainer;
         if (fromc && toc) {
             if (following) {
-                ret.push(new ScopeRange(followingIndex, 0, toc.spanRange[1], 0));
+                ret.push(new ScopeRange({
+                    startSpanIndex: followingIndex,
+                    startTextIndex: 0,
+                    endSpanIndex: toc.spanRange[1],
+                    endTextIndex: 0,
+                }));
             } else {
-                ret.push(new ScopeRange(fromc.spanRange[0], 0, toc.spanRange[1], 0));
+                ret.push(new ScopeRange({
+                    startSpanIndex: fromc.spanRange[0],
+                    startTextIndex: 0,
+                    endSpanIndex: toc.spanRange[1],
+                    endTextIndex: 0,
+                }));
             }
         } else {
             // console.warn("Scope couldn't be detected:", { from, to });
@@ -462,29 +505,35 @@ const detectLawname = (spans: Span[], spanIndex: number) => {
             afterSpan.el.attr.type === "round"
         ) {
             const scope = [
-                new ScopeRange(
-                    afterSpan.index + 1,
-                    0,
-                    spans.length, // half open
-                    0, // half open
-                ),
+                new ScopeRange({
+                    startSpanIndex: afterSpan.index + 1,
+                    startTextIndex: 0,
+                    endSpanIndex: spans.length, // half open
+                    endTextIndex: 0, // half open
+                }),
             ];
 
-            const namePos = new Pos(
-                lawnameSpan,       // span
-                lawnameSpan.index, // span_index
-                lawnameTextIndex, // text_index
-                lawnameLength,     // length
-                lawnameSpan.env,   // env
-            );
+            const namePos = new Pos({
+                span: lawnameSpan,
+                spanIndex: lawnameSpan.index,
+                textIndex: lawnameTextIndex,
+                length: lawnameLength,
+                env: lawnameSpan.env,
+            });
 
-            const declaration = new ____Declaration(
-                "LawName", // type
-                lawName,  // name
-                lawNum,   // value
-                scope,     // scope
-                namePos,  // name_pos
-            );
+            const range = lawnameSpan.el.range ? [
+                lawnameSpan.el.range[0] + lawnameTextIndex,
+                lawnameSpan.el.range[0] + lawnameTextIndex + lawnameLength,
+            ] as [number, number] : null;
+
+            const declaration = new ____Declaration({
+                type: "LawName",
+                name: lawName,
+                value: lawNum,
+                scope: scope,
+                namePos: namePos,
+                range,
+            });
 
             lawnameSpan.el.replaceSpan(lawnameTextIndex, lawnameTextIndex + lawnameLength, declaration);
             lawnumSpan.el.replaceSpan(0, lawNum.length, lawnumEl);
@@ -519,23 +568,36 @@ const detectLawname = (spans: Span[], spanIndex: number) => {
 
             const scope = scopeText
                 ? getScope(lawnumSpan, scopeText, following, nameAfterSpan.index)
-                : [new ScopeRange(nameAfterSpan.index, 0, spans.length, 0)];
+                : [
+                    new ScopeRange({
+                        startSpanIndex: nameAfterSpan.index,
+                        startTextIndex: 0,
+                        endSpanIndex: spans.length,
+                        endTextIndex: 0,
+                    }),
+                ];
 
-            const namePos = new Pos(
-                nameSpan,       // span
-                nameSpan.index, // span_index
-                0,               // text_index
-                nameSpan.text.length, // length
-                nameSpan.env,   // env
-            );
+            const namePos = new Pos({
+                span: nameSpan,
+                spanIndex: nameSpan.index,
+                textIndex: 0,
+                length: nameSpan.text.length,
+                env: nameSpan.env,
+            });
 
-            const declaration = new ____Declaration(
-                "LawName", // type
-                nameSpan.text,  // name
-                lawNum,   // value
-                scope,     // scope
-                namePos,  // name_pos
-            );
+            const range = lawnameSpan.el.range ? [
+                lawnameSpan.el.range[0] + lawnameTextIndex,
+                lawnameSpan.el.range[0] + lawnameTextIndex + lawnameLength,
+            ] as [number, number] : null;
+
+            const declaration = new ____Declaration({
+                type: "LawName",
+                name: nameSpan.text,
+                value: lawNum,
+                scope: scope,
+                namePos: namePos,
+                range,
+            });
 
             lawnameSpan.el.replaceSpan(lawnameTextIndex, lawnameTextIndex + lawnameLength, new EL("____DeclarationVal", {}, [lawName]));
             nameSpan.el.replaceSpan(0, nameSpan.text.length, declaration);
@@ -572,23 +634,36 @@ const detectNameInline = (spans: Span[], spanIndex: number) => {
 
         const scope = scopeText
             ? getScope(nameBeforeSpan, scopeText, following, nameAfterSpan.index)
-            : [new ScopeRange(nameAfterSpan.index, 0, spans.length, 0)];
+            : [
+                new ScopeRange({
+                    startSpanIndex: nameAfterSpan.index,
+                    startTextIndex: 0,
+                    endSpanIndex: spans.length,
+                    endTextIndex: 0,
+                }),
+            ];
 
-        const namePos = new Pos(
-            nameSpan,       // span
-            nameSpan.index, // span_index
-            0,               // text_index
-            nameSpan.text.length, // length
-            nameSpan.env,   // env
-        );
+        const namePos = new Pos({
+            span: nameSpan,
+            spanIndex: nameSpan.index,
+            textIndex: 0,
+            length: nameSpan.text.length,
+            env: nameSpan.env,
+        });
 
-        const declaration = new ____Declaration(
-            "Keyword", // type
-            nameSpan.text,  // name
-            null,   // value
-            scope,     // scope
-            namePos,  // name_pos
-        );
+        const range = nameSpan.el.range ? [
+            nameSpan.el.range[0],
+            nameSpan.el.range[0] + nameSpan.text.length,
+        ] as [number, number] : null;
+
+        const declaration = new ____Declaration({
+            type: "Keyword",
+            name: nameSpan.text,
+            value: null,
+            scope: scope,
+            namePos: namePos,
+            range,
+        });
 
         nameSpan.el.replaceSpan(0, nameSpan.text.length, declaration);
         return declaration;
@@ -663,12 +738,26 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
         const scopeText = paragraphMatch[1] || null;
 
         const scope = !scopeText
-            ? [new ScopeRange(spanIndex, 0, spans.length, 0)]
+            ? [
+                new ScopeRange({
+                    startSpanIndex: spanIndex,
+                    startTextIndex: 0,
+                    endSpanIndex: spans.length,
+                    endTextIndex: 0,
+                }),
+            ]
             : lawTypes.some(([ptn]) => {
                 const re = new RegExp(`^この${ptn}`);
                 return re.exec(scopeText);
             })
-                ? [new ScopeRange(0, 0, spans.length, 0)]
+                ? [
+                    new ScopeRange({
+                        startSpanIndex: 0,
+                        startTextIndex: 0,
+                        endSpanIndex: spans.length,
+                        endTextIndex: 0,
+                    }),
+                ]
                 : getScope(
                     spans[spanIndex], // currentSpan
                     scopeText, // scopeText
@@ -676,21 +765,27 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
                     spanIndex, // followingIndex
                 );
 
-        const namePos = new Pos(
-            nameSpan,       // span
-            nameSpan.index, // span_index
-            0,               // text_index
-            nameSpan.text.length, // length
-            nameSpan.env,   // env
-        );
+        const namePos = new Pos({
+            span: nameSpan,       // span
+            spanIndex: nameSpan.index, // span_index
+            textIndex: 0,               // text_index
+            length: nameSpan.text.length, // length
+            env: nameSpan.env,   // env
+        });
 
-        const declaration = new ____Declaration(
-            "Keyword", // type
-            name,  // name
-            value,   // value
-            scope,     // scope
-            namePos,  // name_pos
-        );
+        const range = nameSpan.el.range ? [
+            nameSpan.el.range[0],
+            nameSpan.el.range[0] + nameSpan.text.length,
+        ] as [number, number] : null;
+
+        const declaration = new ____Declaration({
+            type: "Keyword",
+            name: name,
+            value: value,
+            scope: scope,
+            namePos: namePos,
+            range,
+        });
 
         nameSpan.el.replaceSpan(0, nameSpan.text.length, declaration);
 
@@ -749,15 +844,25 @@ const detectVariableReferences = (_law: EL, spans: Span[], declarations: Declara
                     searchIndex = index + declaration.name.length;
 
                     if (textScope.start <= index && index < textScope.end) {
-                        const refPos = new Pos(
-                            span,       // span
-                            span.index, // span_index
-                            index + indexOffset,      // text_index
-                            declaration.name.length, // length
-                            span.env,   // env
-                        );
+                        const refPos = new Pos({
+                            span: span,       // span
+                            spanIndex: span.index, // span_index
+                            textIndex: index + indexOffset,      // text_index
+                            length: declaration.name.length, // length
+                            env: span.env,   // env
+                        });
 
-                        const varref = new ____VarRef(declaration.name, declaration, refPos);
+                        const range = span.el.range ? [
+                            span.el.range[0] + index + indexOffset,
+                            span.el.range[0] + searchIndex + indexOffset,
+                        ] as [number, number] : null;
+
+                        const varref = new ____VarRef({
+                            refName: declaration.name,
+                            declaration: declaration,
+                            refPos: refPos,
+                            range,
+                        });
                         span.el.replaceSpan(index + indexOffset, searchIndex + indexOffset, varref);
                         ret.push(varref);
                     }
@@ -783,10 +888,10 @@ export interface Analysis {
     variableReferences: ____VarRef[],
 }
 
-export const analyze = (law: EL): Analysis => {
-    const [spans, containers] = extractSpans(law);
-    const declarations = detectDeclarations(law, spans, containers);
-    const variableReferences = detectVariableReferences(law, spans, declarations);
+export const analyze = (lawToBeModified: EL): Analysis => {
+    const [spans, containers] = extractSpans(lawToBeModified);
+    const declarations = detectDeclarations(lawToBeModified, spans, containers);
+    const variableReferences = detectVariableReferences(lawToBeModified, spans, declarations);
     return {
         declarations,
         variableReferences,
