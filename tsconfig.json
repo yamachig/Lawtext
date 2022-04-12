@@ -8,6 +8,7 @@
         "esModuleInterop": true,
         "sourceMap": true,
         "lib": ["es2017", "scripthost"],
+        "jsx": "react",
         
         "composite": true,
         "allowJs": true,

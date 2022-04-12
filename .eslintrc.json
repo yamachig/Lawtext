@@ -40,7 +40,7 @@
     "ignorePatterns": ["/dist/*"],
     "overrides": [
         {
-            "files": ["*.ts", "*.tsx"],
+            "files": ["*.ts"],
             "excludedFiles": ["*.d.ts"],
             "extends": [
                 "eslint:recommended",
@@ -60,6 +60,35 @@
                 "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
                 "@typescript-eslint/type-annotation-spacing": "error",
                 "tsdoc/syntax": "warn"
+            }
+        },
+        {
+            "files": ["*.tsx"],
+            "extends": [
+                "eslint:recommended",
+                "plugin:@typescript-eslint/recommended",
+                "plugin:react/recommended"
+            ],
+            "plugins": [
+                "@typescript-eslint",
+                "prefer-arrow",
+                "eslint-plugin-tsdoc",
+                "react",
+                "react-hooks"
+            ],
+            "parser": "@typescript-eslint/parser",
+            "parserOptions": {
+                "project": "./tsconfig.json",
+                "ecmaVersion": 12
+            },
+            "rules": {
+                "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
+                "@typescript-eslint/type-annotation-spacing": "error",
+                "tsdoc/syntax": "warn",
+                "react-hooks/rules-of-hooks": "error",
+                "react-hooks/exhaustive-deps": "warn",
+                "react/jsx-no-target-blank": ["error", { "enforceDynamicLinks": "always" }],
+                "react/prop-types": ["error", { "ignore": ["children"], "skipUndeclared": true }]
             }
         },
         {
