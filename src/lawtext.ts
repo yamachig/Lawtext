@@ -133,7 +133,10 @@ export const main = (args: Args): void => {
             if (outtype === "lawtext") {
                 outtext = renderLawtext(law);
             } else if (outtype === "xml") {
-                outtext = renderer.renderXml(law, { withControlEl });
+                outtext = `\
+<?xml version="1.0" encoding="utf-8"?>
+${law.outerXML(withControlEl)}
+`;
             } else if (outtype === "json") {
                 outtext = JSON.stringify(law.json(withControlEl));
             } else if (outtype === "html") {

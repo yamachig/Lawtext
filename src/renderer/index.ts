@@ -142,34 +142,22 @@ export const renderDocxAsync = (law: JsonEL): Promise<Uint8Array | Buffer> => {
     });
 };
 
-// export const render_lawtext = (law: JsonEL, context?: { [key: string]: any }): string  => {
-//     return render("lawtext.j2", Object.assign({ law: law }, context));
-// }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const renderXml = (law: JsonEL, context?: { [key: string]: any }): string => {
-    return render("xml.xml", Object.assign({ law }, context));
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const renderHtml = (el: JsonEL, context?: { [key: string]: any }): string => {
+export const renderHtml = (el: JsonEL, context?: { [key: string]: unknown }): string => {
     if (el.tag === "Law") {
-        return render("html.html", Object.assign({ law: el }, context));
+        return render("html.html", { law: el, ...context });
     } else {
-        return render("html.html", Object.assign({ elements: [el] }, context));
+        return render("html.html", { elements: [el], ...context });
     }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const renderHtmlfragment = (el: JsonEL, context?: { [key: string]: any }): string => {
+export const renderHtmlfragment = (el: JsonEL, context?: { [key: string]: unknown }): string => {
     if (el.tag === "Law") {
-        return render("htmlfragment.html", Object.assign({ law: el }, context));
+        return render("htmlfragment.html", { law: el, ...context });
     } else {
-        return render("htmlfragment.html", Object.assign({ elements: [el] }, context));
+        return render("htmlfragment.html", { elements: [el], ...context });
     }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const renderElementsFragment = (elements: JsonEL[], context?: { [key: string]: any }): string => {
-    return render("htmlfragment.html", Object.assign({ elements }, context));
+export const renderElementsFragment = (elements: JsonEL[], context?: { [key: string]: unknown }): string => {
+    return render("htmlfragment.html", { elements, ...context });
 };
