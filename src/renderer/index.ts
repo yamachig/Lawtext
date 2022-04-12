@@ -3,7 +3,7 @@
 import JSZip from "jszip";
 import * as nunjucks from "nunjucks";
 import { nunjucksPrecompiled } from "./templates";
-import { JsonEL } from "../node/el";
+import { EL, JsonEL, loadEl } from "../node/el";
 
 
 const restructureTable = (table: JsonEL): JsonEL => {
@@ -141,6 +141,15 @@ export const renderDocxAsync = (law: JsonEL): Promise<Uint8Array | Buffer> => {
         },
     });
 };
+
+export const renderXml = (law: JsonEL | EL, withControlEl = false): string => {
+    const xml = `\
+<?xml version="1.0" encoding="utf-8"?>
+${(law instanceof EL ? law : loadEl(law)).outerXML(withControlEl)}
+`;
+    return xml;
+};
+
 
 export const renderHtml = (el: JsonEL, context?: { [key: string]: unknown }): string => {
     if (el.tag === "Law") {
