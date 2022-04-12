@@ -741,6 +741,8 @@ paragraph-item-body
       {{- m_paragraph_item(el) -}}
     {%- elif el.tag == 'TableStruct' -%}
       {{- m_table_struct(el) -}}
+    {%- elif el.tag == 'Table' -%}
+      {{- m_table(el) -}}
     {%- elif el.tag == 'StyleStruct' -%}
       {{- m_style_struct(el) -}}
     {%- elif el.tag == 'List' -%}

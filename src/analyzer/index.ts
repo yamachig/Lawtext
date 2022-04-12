@@ -898,20 +898,20 @@ export const analyze = (lawToBeModified: EL): Analysis => {
     };
 };
 
-export const stdxmlToExt = (el: EL): EL => {
-    if (["LawNum", "QuoteStruct"].indexOf(el.tag) < 0) {
-        const isMixed = el.children.some(child => typeof child === "string" || child instanceof String);
+export const stdxmlToExt = (elToBeModified: EL): EL => {
+    if (["LawNum", "QuoteStruct"].indexOf(elToBeModified.tag) < 0) {
+        const isMixed = elToBeModified.children.some(child => typeof child === "string" || child instanceof String);
         if (isMixed) {
-            const result = $sentenceChildren.match(0, el.innerXML().replace(/\r|\n/, ""), initialEnv({}));
+            const result = $sentenceChildren.match(0, elToBeModified.innerXML().replace(/\r|\n/, ""), initialEnv({}));
             if (result.ok) {
-                el.children = result.value.value;
+                elToBeModified.children = result.value.value;
             } else {
-                const message = `stdxml_to_ext: Error: ${el.innerXML()}`;
+                const message = `stdxml_to_ext: Error: ${elToBeModified.innerXML()}`;
                 throw new Error(message);
             }
         } else {
-            el.children = (el.children as EL[]).map(stdxmlToExt);
+            elToBeModified.children = (elToBeModified.children as EL[]).map(stdxmlToExt);
         }
     }
-    return el;
+    return elToBeModified;
 };

@@ -2,8 +2,6 @@
 
 import JSZip from "jszip";
 import * as nunjucks from "nunjucks";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { nunjucksPrecompiled } from "./templates";
 import { JsonEL } from "../node/el";
 
@@ -102,8 +100,6 @@ class Context {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 const env = new nunjucks.Environment(new nunjucks.PrecompiledLoader(nunjucksPrecompiled));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -156,13 +152,21 @@ export const renderXml = (law: JsonEL, context?: { [key: string]: any }): string
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const renderHtml = (law: JsonEL, context?: { [key: string]: any }): string => {
-    return render("html.html", Object.assign({ law }, context));
+export const renderHtml = (el: JsonEL, context?: { [key: string]: any }): string => {
+    if (el.tag === "Law") {
+        return render("html.html", Object.assign({ law: el }, context));
+    } else {
+        return render("html.html", Object.assign({ elements: [el] }, context));
+    }
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const renderHtmlfragment = (law: JsonEL, context?: { [key: string]: any }): string => {
-    return render("htmlfragment.html", Object.assign({ law }, context));
+export const renderHtmlfragment = (el: JsonEL, context?: { [key: string]: any }): string => {
+    if (el.tag === "Law") {
+        return render("htmlfragment.html", Object.assign({ law: el }, context));
+    } else {
+        return render("htmlfragment.html", Object.assign({ elements: [el] }, context));
+    }
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

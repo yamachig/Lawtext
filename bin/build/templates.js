@@ -10,7 +10,7 @@ const { defaultBasePath } = require("./defaultBasePath.js");
 const buildTemplates = async (basePath = defaultBasePath) => {
     const srcPath = path.join(basePath, "src");
     const destPath = path.join(srcPath, "renderer/templates.js");
-    if (fs.existsSync(destPath)) return;
+    // if (fs.existsSync(destPath)) return;
     // const distPath = path.join(basePath, "dist/src");
 
     let templates = nunjucks.precompile(
