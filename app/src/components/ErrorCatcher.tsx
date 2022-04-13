@@ -4,7 +4,7 @@ import styled from "styled-components";
 const ErrorComponentDiv = styled.div`
 `;
 
-export class ErrorCatcher extends React.Component<{ onError?: (error: Error) => void}, { hasError: boolean, error: Error | null }> {
+export class ErrorCatcher extends React.Component<React.PropsWithChildren<{ onError?: (error: Error) => void}>, { hasError: boolean, error: Error | null }> {
     constructor(props: { onError: (error: Error) => void}) {
         super(props);
         this.state = { hasError: false, error: null };
