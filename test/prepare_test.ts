@@ -38,7 +38,6 @@ export const prepare = async (loader: FSStoredLoader): Promise<void> => {
     }
 };
 
-
 if (typeof require !== "undefined" && require.main === module) {
     console.log("running prepare() from toplevel.");
     process.on("unhandledRejection", e => {
@@ -49,4 +48,5 @@ if (typeof require !== "undefined" && require.main === module) {
         process.exit(1);
     });
     prepare(loader);
+
 }

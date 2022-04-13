@@ -1,41 +1,58 @@
 import React from "react";
-import * as std from "../../law/std";
-import { EL } from "../../node/el";
+import ReactDOMServer from "react-dom/server";
 
-export const MARGIN = "　";
 
-export interface HTMLComponentProps {
-    htmlOptions: {
-        WrapperComponent?: React.ComponentType<React.PropsWithChildren<{
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            htmlComponentID: string;
-        }>>;
-        ControlRunComponent?: React.ComponentType<HTMLComponentProps & {el: std.__EL}>;
-        renderControlEL?: boolean;
+const ignoreMessagePatterns = [/is using incorrect casing\./];
+
+const origWarn = global.console.warn;
+const filteredWarn = (message: string, ...args: unknown[]) => {
+    if (ignoreMessagePatterns.some(p => p.test(message))) {
+        return;
     }
-}
+    origWarn(message, ...args);
+};
 
-export interface ELComponentProps { el: EL }
+const origError = global.console.error;
+const filteredError = (message: string, ...args: unknown[]) => {
+    if (ignoreMessagePatterns.some(p => p.test(message))) {
+        return;
+    }
+    origError(message, ...args);
+};
 
-export function wrapHTMLComponent<P>(htmlComponentID: string, Component: React.ComponentType<P & HTMLComponentProps>) {
-    return ((props: P & HTMLComponentProps) => {
-        const { htmlOptions } = props;
-        if (htmlOptions.WrapperComponent) {
-            return (
-                <htmlOptions.WrapperComponent {...{ htmlComponentID }}>
-                    <Component {...props} />
-                </htmlOptions.WrapperComponent>
-            );
-        } else {
-            return <Component {...props} />;
-        }
-    }) as React.FC<P & HTMLComponentProps>;
-}
+export const overrrideConsole = () => {
+    console.warn = filteredWarn;
+    console.error = filteredError;
 
-export const containerInfoOf = (el: EL | string): {tag: string, id: string | number} => {
-    if (typeof el === "string") {
-        return { tag: "", id: "" };
-    } else {
-        return { tag: el.tag, id: el.id };
+    // const origError = global.console.error;
+    // console.error = (message, ...args) => {
+    //     if (ignoreMessagePatterns.some(p => p.test(message))) {
+    //         return;
+    //     }
+    //     origError(message, ...args);
+    // };
+
+    // const origLog = global.console.log;
+    // console.log = (message, ...args) => {
+    //     if (ignoreMessagePatterns.some(p => p.test(message))) {
+    //         return;
+    //     }
+    //     origLog(message, ...args);
+    // };
+};
+
+export const revertConsole = () => {
+    console.warn = origWarn;
+    console.error = origError;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const renderToStaticMarkup = (element: React.ReactElement<any, string | React.JSXElementConstructor<any>>) => {
+    try {
+        overrrideConsole();
+        const ret = ReactDOMServer.renderToStaticMarkup(element);
+        return ret;
+    } finally {
+        revertConsole();
     }
 };

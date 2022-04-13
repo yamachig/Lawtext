@@ -1,10 +1,9 @@
 import React from "react";
-import ReactDOMServer from "react-dom/server";
 import { assert } from "chai";
-import { HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { loadEl } from "../../node/el";
 import * as std from "../../law/std";
-
+import { renderToStaticMarkup } from "./common";
 
 describe("Test HTML sentenceChildren", () => {
     /* eslint-disable no-irregular-whitespace */
@@ -89,7 +88,104 @@ describe("Test HTML sentenceChildren", () => {
 この法律において「スパイクタイヤ」とは、積雪又は凍結の状態にある路面において滑ることを防止するために金属<ruby>鋲<rt>びよう</rt></ruby>その他これに類する物をその接地部に固定したタイヤをいう。
 `.replace(/\r?\n$/g, "").replace(/\r?\n\s*/g, "");
         const element = <HTMLSentenceChildren els={input.children} htmlOptions={{}} />;
-        const rendered = ReactDOMServer.renderToStaticMarkup(element);
+        const rendered = renderToStaticMarkup(element);
         assert.strictEqual(rendered, expectedHTML);
+    });
+});
+
+
+describe("Test DOCX sentenceChildren", () => {
+    /* eslint-disable no-irregular-whitespace */
+
+    it("Success case", () => {
+
+        const input = loadEl({
+            tag: "Sentence",
+            attr: {},
+            children: [
+                {
+                    tag: "__Text",
+                    attr: {},
+                    children: ["この法律において"],
+                },
+                {
+                    tag: "__Parentheses",
+                    attr: {
+                        depth: "1",
+                        type: "square",
+                    },
+                    children: [
+                        {
+                            tag: "__PStart",
+                            attr: {
+                                type: "square",
+                            },
+                            children: ["「"],
+                        },
+                        {
+                            tag: "__PContent",
+                            attr: { type: "square" },
+                            children: [
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["スパイクタイヤ"],
+                                },
+                            ],
+                        },
+                        {
+                            tag: "__PEnd",
+                            attr: { "type": "square" },
+                            children: ["」"],
+                        },
+                    ],
+                },
+                {
+                    tag: "__Text",
+                    attr: {},
+                    children: ["とは、積雪又は凍結の状態にある路面において滑ることを防止するために金属"],
+                },
+                {
+                    tag: "Ruby",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "__Text",
+                            attr: {},
+                            children: ["鋲"],
+                        },
+                        {
+                            tag: "Rt",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["びよう"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    tag: "__Text",
+                    attr: {},
+                    children: ["その他これに類する物をその接地部に固定したタイヤをいう。"],
+                },
+            ],
+        }) as std.Sentence;
+        const expectedXML = /*xml*/`\
+<w:r><w:t>この法律において</w:t></w:r>
+<w:r><w:t>「スパイクタイヤ」</w:t></w:r>
+<w:r><w:t>とは、積雪又は凍結の状態にある路面において滑ることを防止するために金属</w:t></w:r>
+<w:r><w:ruby>
+  <w:rubyBase><w:r><w:t>鋲</w:t></w:r></w:rubyBase>
+  <w:r><w:t>びよう</w:t></w:r>
+</w:ruby></w:r>
+<w:r><w:t>その他これに類する物をその接地部に固定したタイヤをいう。</w:t></w:r>
+`.replace(/\r?\n$/g, "").replace(/\r?\n\s*/g, "");
+        const element = <DOCXSentenceChildren els={input.children} docxOptions={{}} />;
+        const rendered = renderToStaticMarkup(element);
+        assert.strictEqual(rendered, expectedXML);
     });
 });
