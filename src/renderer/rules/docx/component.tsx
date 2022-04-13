@@ -13,7 +13,7 @@ export type ComponentWithTag<TTag extends string> = {
     displayName: `ComponentWithTag<${TTag}>`;
 }
 
-function makeComponentWithTag <TTag extends string>(tag: TTag): ComponentWithTag<TTag> {
+export function makeComponentWithTag <TTag extends string>(tag: TTag): ComponentWithTag<TTag> {
     const func = function ComponentWithTag<P>(props: React.PropsWithChildren<P>) {
         return React.createElement(tag, props);
     };
@@ -576,3 +576,4 @@ for (const key of wTags) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (w as any)[key] = makeComponentWithTag(`w:${key}`);
 }
+

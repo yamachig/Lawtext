@@ -180,15 +180,17 @@ export const DOCXParagraphItem: React.FC<DOCXComponentProps & ParagraphItemProps
     blocks.push(<>
         <w.p>
             <w.pPr>
-                {ArticleTitle ? (
+                {(ArticleTitle || ParagraphItemTitle) ? (
                     <w.pStyle w:val={el.tag}/>
                 ) : (
                     <w.pStyle w:val={`IndentFirstLine${indent}`}/>
                 )}
             </w.pPr>
-            {ParagraphItemTitle && <DOCXSentenceChildren els={ParagraphItemTitle.children} {...{ docxOptions }} />}
-            {ArticleTitle && <DOCXSentenceChildren els={ArticleTitle.children} {...{ docxOptions }} />}
-            <w.r><w.t>{MARGIN}</w.t></w.r>
+            {Boolean(ArticleTitle || ParagraphItemTitle) && (<>
+                {ParagraphItemTitle && <DOCXSentenceChildren els={ParagraphItemTitle.children} {...{ docxOptions }} />}
+                {ArticleTitle && <DOCXSentenceChildren els={ArticleTitle.children} emphasis={true} {...{ docxOptions }} />}
+                <w.r><w.t>{MARGIN}</w.t></w.r>
+            </>)}
             <DOCXColumnsOrSentences
                 els={SentenceChildren}
                 {...{ docxOptions }}

@@ -4,7 +4,12 @@ import { loadEl } from "../../node/el";
 import * as std from "../../law/std";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { renderToStaticMarkup } from "./common";
+import { renderDocxAsync } from "./docx";
+import os from "os";
+import path from "path";
+import fs from "fs";
 
+const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 describe("Test HTML paragraphItem", () => {
     /* eslint-disable no-irregular-whitespace */
@@ -115,10 +120,10 @@ describe("Test DOCX paragraphItem", () => {
                 },
             ],
         }) as std.Item;
-        const expectedDOCX = /*docx*/`\
+        const expectedDOCX = /*xml*/`\
 <w:p>
   <w:pPr>
-    <w:pStyle w:val="IndentFirstLine1"></w:pStyle>
+    <w:pStyle w:val="Item"></w:pStyle>
   </w:pPr>
   <w:r><w:t>一</w:t></w:r>
   <w:r><w:t>　</w:t></w:r>
@@ -130,5 +135,11 @@ describe("Test DOCX paragraphItem", () => {
         const element = <DOCXParagraphItem el={input} indent={1} docxOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
         assert.strictEqual(rendered, expectedDOCX);
+        renderDocxAsync(element)
+            .then(u8 => {
+                const tempParsedDocx = path.join(tempDir, "renderer.paragraphItem.docx");
+                fs.writeFileSync(tempParsedDocx, u8);
+                console.log(`Saved docx: ${tempParsedDocx}`);
+            });
     });
 });

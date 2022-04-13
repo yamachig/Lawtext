@@ -2,7 +2,11 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 
 
-const ignoreMessagePatterns = [/is using incorrect casing\./];
+const ignoreMessagePatterns = [
+    /is using incorrect casing\./,
+    /React does not recognize/,
+    /Invalid DOM property/,
+];
 
 const origWarn = global.console.warn;
 const filteredWarn = (message: string, ...args: unknown[]) => {
