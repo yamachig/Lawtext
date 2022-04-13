@@ -3,13 +3,17 @@ import { SentenceChildEL } from "../../node/cst/inline";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXComponentProps, w } from "./docx";
+import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 
 interface SentenceChildrenProps {
     els: (string | SentenceChildEL)[];
 }
 
-export const HTMLSentenceChildren = wrapHTMLComponent<HTMLComponentProps & SentenceChildrenProps>("HTMLSentenceChildren", (props => {
+export const HTMLSentenceChildrenCSS = /*css*/`
+`;
+
+export const HTMLSentenceChildren = wrapHTMLComponent("HTMLSentenceChildren", ((props: HTMLComponentProps & SentenceChildrenProps) => {
+
     const { els, htmlOptions: { renderControlEL, ControlRunComponent } } = props;
     const runs: JSX.Element[] = [];
 
@@ -67,7 +71,8 @@ export const HTMLSentenceChildren = wrapHTMLComponent<HTMLComponentProps & Sente
     </>;
 }));
 
-export const DOCXSentenceChildren: React.FC<DOCXComponentProps & SentenceChildrenProps & {emphasis?: boolean}> = props => {
+export const DOCXSentenceChildren = wrapDOCXComponent("DOCXSentenceChildren", ((props: DOCXComponentProps & SentenceChildrenProps & {emphasis?: boolean}) => {
+
     const { els, emphasis } = props;
     const runs: JSX.Element[] = [];
 
@@ -143,4 +148,4 @@ export const DOCXSentenceChildren: React.FC<DOCXComponentProps & SentenceChildre
     return <>
         {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
     </>;
-};
+}));

@@ -1,4 +1,5 @@
 import { EL } from "../../node/el";
+import { Diff } from "../../util";
 
 export interface __EL extends EL {
     isControl: true
@@ -1931,6 +1932,8 @@ export const stdELTags = [
     "Sub",
 ] as const;
 
+export type StdELTag = typeof stdELTags[number];
+
 export const newStdEL = <
     TName extends string,
     TStdEL = StdELType<TName>,
@@ -1945,6 +1948,18 @@ export const newStdEL = <
     return new EL(tag, attr, children, range) as StdELType<TName>;
 };
 
-export const isStdEL = (obj: EL | string): obj is StdEL => {
-    return (typeof obj !== "string") && ((stdELTags as readonly string[]).includes(obj.tag));
+export const isStdEL = <TTag extends StdELTag | undefined>(obj: EL | string, tag?: TTag | TTag[]): obj is (TTag extends undefined ? StdEL : StdELType<Diff<TTag, undefined>>) => {
+    if (typeof obj === "string") {
+        return false;
+    } else if (tag === undefined) {
+        return (stdELTags as readonly string[]).includes(obj.tag);
+    } else if (Array.isArray(tag)) {
+        return (tag as readonly string[]).includes(obj.tag);
+    } else {
+        return obj.tag === tag;
+    }
 };
+
+export const makeIsStdEL = <TTag extends StdELTag>(tag: TTag | TTag[]) =>
+    (obj: EL | string): obj is StdELType<TTag> =>
+        isStdEL(obj, tag);

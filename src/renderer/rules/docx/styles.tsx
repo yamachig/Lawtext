@@ -56,7 +56,7 @@ export const styles = (
             </w.rPr>
         </w.style>
 
-        <w.style w:type="paragraph" w:customStyle="1" w:styleId="Paragraph">
+        {/* <w.style w:type="paragraph" w:customStyle="1" w:styleId="Paragraph">
             <w.name w:val="01-01 条項"/>
             <w.basedOn w:val="DefaultParagraph"/>
             <w.qFormat/>
@@ -72,18 +72,18 @@ export const styles = (
             <w.pPr>
                 <w.ind w:leftChars="100" w:hangingChars="100"/>
             </w.pPr>
-        </w.style>
+        </w.style> */}
 
         {[...range(1, 11)].map(i => (<>
 
-            <w.style w:type="paragraph" w:customStyle="1" w:styleId={`Subitem${i}`}>
+            {/* <w.style w:type="paragraph" w:customStyle="1" w:styleId={`Subitem${i}`}>
                 <w.name w:val={`01-${(i + 2).toString().padStart(2, "0")} 号の細分${i}`}/>
                 <w.basedOn w:val="DefaultParagraph"/>
                 <w.qFormat/>
                 <w.pPr>
                     <w.ind w:leftChars={`${(i + 1) * 100}`} w:hangingChars="100"/>
                 </w.pPr>
-            </w.style>
+            </w.style> */}
 
             <w.style w:type="paragraph" w:customStyle="1" w:styleId={`Indent${i}`}>
                 <w.name w:val={`02-${(i).toString().padStart(2, "0")} インデント${i}`}/>

@@ -4,6 +4,7 @@ import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { loadEl } from "../../node/el";
 import * as std from "../../law/std";
 import { renderToStaticMarkup } from "./common";
+import formatXML from "../../util/formatXml";
 
 describe("Test HTML sentenceChildren", () => {
     /* eslint-disable no-irregular-whitespace */
@@ -86,10 +87,14 @@ describe("Test HTML sentenceChildren", () => {
         }) as std.Sentence;
         const expectedHTML = /*html*/`\
 この法律において「スパイクタイヤ」とは、積雪又は凍結の状態にある路面において滑ることを防止するために金属<ruby>鋲<rt>びよう</rt></ruby>その他これに類する物をその接地部に固定したタイヤをいう。
-`.replace(/\r?\n$/g, "").replace(/\r?\n\s*/g, "");
+`;
         const element = <HTMLSentenceChildren els={input.children} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
-        assert.strictEqual(rendered, expectedHTML);
+        const formatted = formatXML(rendered, { collapseContent: true });
+        assert.strictEqual(
+            formatted,
+            expectedHTML,
+        );
     });
 });
 
@@ -174,18 +179,38 @@ describe("Test DOCX sentenceChildren", () => {
                 },
             ],
         }) as std.Sentence;
-        const expectedXML = /*xml*/`\
-<w:r><w:t>この法律において</w:t></w:r>
-<w:r><w:t>「スパイクタイヤ」</w:t></w:r>
-<w:r><w:t>とは、積雪又は凍結の状態にある路面において滑ることを防止するために金属</w:t></w:r>
-<w:r><w:ruby>
-  <w:rubyBase><w:r><w:t>鋲</w:t></w:r></w:rubyBase>
-  <w:r><w:t>びよう</w:t></w:r>
-</w:ruby></w:r>
-<w:r><w:t>その他これに類する物をその接地部に固定したタイヤをいう。</w:t></w:r>
-`.replace(/\r?\n$/g, "").replace(/\r?\n\s*/g, "");
+        const expectedDOCX = /*xml*/`\
+<w:r>
+  <w:t>この法律において</w:t>
+</w:r>
+<w:r>
+  <w:t>「スパイクタイヤ」</w:t>
+</w:r>
+<w:r>
+  <w:t>とは、積雪又は凍結の状態にある路面において滑ることを防止するために金属</w:t>
+</w:r>
+<w:r>
+  <w:ruby>
+    <w:rubyBase>
+      <w:r>
+        <w:t>鋲</w:t>
+      </w:r>
+    </w:rubyBase>
+    <w:r>
+      <w:t>びよう</w:t>
+    </w:r>
+  </w:ruby>
+</w:r>
+<w:r>
+  <w:t>その他これに類する物をその接地部に固定したタイヤをいう。</w:t>
+</w:r>
+`;
         const element = <DOCXSentenceChildren els={input.children} docxOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
-        assert.strictEqual(rendered, expectedXML);
+        const formatted = formatXML(rendered, { collapseContent: true });
+        assert.strictEqual(
+            formatted,
+            expectedDOCX,
+        );
     });
 });

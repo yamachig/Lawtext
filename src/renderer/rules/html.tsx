@@ -1,8 +1,8 @@
 import React from "react";
 import * as std from "../../law/std";
-import { EL } from "../../node/el";
 
-export const MARGIN = "　";
+// eslint-disable-next-line no-irregular-whitespace
+export const HTMLMarginSpan: React.FC<React.HTMLAttributes<HTMLSpanElement>> = props => <span {...props}>　</span>;
 
 export interface HTMLComponentProps {
     htmlOptions: {
@@ -15,10 +15,12 @@ export interface HTMLComponentProps {
     }
 }
 
-export interface ELComponentProps<TEL extends EL> { el: TEL }
+// export interface ELComponentProps<TEL extends EL> {
+//     el: TEL,
+// }
 
-export function wrapHTMLComponent<P>(htmlComponentID: string, Component: React.ComponentType<P & HTMLComponentProps>) {
-    return ((props: P & HTMLComponentProps) => {
+export function wrapHTMLComponent<P, TComponentID extends string>(htmlComponentID: TComponentID, Component: React.ComponentType<P & HTMLComponentProps>) {
+    const ret = ((props: P & HTMLComponentProps) => {
         const { htmlOptions } = props;
         if (htmlOptions.WrapperComponent) {
             return (
@@ -29,13 +31,7 @@ export function wrapHTMLComponent<P>(htmlComponentID: string, Component: React.C
         } else {
             return <Component {...props} />;
         }
-    }) as React.FC<P & HTMLComponentProps>;
+    }) as React.FC<P & HTMLComponentProps> & {componentID: TComponentID};
+    ret.componentID = htmlComponentID;
+    return ret;
 }
-
-export const containerInfoOf = (el: EL | string): {tag: string, id: string | number} => {
-    if (typeof el === "string") {
-        return { tag: "", id: "" };
-    } else {
-        return { tag: el.tag, id: el.id };
-    }
-};

@@ -1,9 +1,18 @@
 import React from "react";
 
-
+export const DOCXMargin = "　";
 export interface DOCXComponentProps {
     // eslint-disable-next-line @typescript-eslint/ban-types
     docxOptions: {};
+}
+
+export function wrapDOCXComponent<P, TComponentID extends string>(docxComponentID: TComponentID, Component: React.ComponentType<P & DOCXComponentProps>) {
+    void docxComponentID;
+    const ret = ((props: P & DOCXComponentProps) => {
+        return <Component {...props} />;
+    }) as React.FC<P & DOCXComponentProps> & {componentID: TComponentID};
+    ret.componentID = docxComponentID;
+    return ret;
 }
 
 export type ComponentWithTag<TTag extends string> = {

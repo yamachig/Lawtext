@@ -8,13 +8,16 @@ import { renderDocxAsync } from "./docx";
 import os from "os";
 import path from "path";
 import fs from "fs";
+import formatXML from "../../util/formatXml";
+import htmlCSS from "./htmlCSS";
+import { promisify } from "util";
 
 const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 describe("Test HTML paragraphItem", () => {
     /* eslint-disable no-irregular-whitespace */
 
-    it("Success case", () => {
+    it("Success case", async () => {
         const input = loadEl({
             tag: "Item",
             attr: {
@@ -58,27 +61,48 @@ describe("Test HTML paragraphItem", () => {
         }) as std.Item;
         const expectedHTML = /*html*/`\
 <div class="paragraph-item-Item">
-  <div class="paragraph-item-main">
-    <span class="paragraph-item-title" style="font-weight:bold">一</span>
+  <p class="paragraph-item-main indent-2">
+    <span class="paragraph-item-title">一</span>
     <span class="paragraph-item-margin">　</span>
     <span class="paragraph-item-body">
       <span class="lawtext-column">法令</span>
       <span class="lawtext-column-margin">　</span>
       <span class="lawtext-column">法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</span>
     </span>
-  </div>
+  </p>
 </div>
-`.replace(/\r?\n$/g, "").replace(/\r?\n\s*/g, "");
+`;
         const element = <HTMLParagraphItem el={input} indent={1} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
-        assert.strictEqual(rendered, expectedHTML);
+        const formatted = formatXML(rendered, { collapseContent: true });
+        assert.strictEqual(
+            formatted,
+            expectedHTML,
+        );
+        const html = /*html*/`\
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+${htmlCSS}
+</style>
+</head>
+<body>
+${rendered}
+</body>
+</html>
+`;
+        const tempParsedHtml = path.join(tempDir, "renderer.paragraphItem.html");
+        await promisify(fs.writeFile)(tempParsedHtml, html);
+        console.log(`      Saved html: ${tempParsedHtml}`);
     });
 });
 
 describe("Test DOCX paragraphItem", () => {
     /* eslint-disable no-irregular-whitespace */
 
-    it("Success case", () => {
+    it("Success case", async () => {
         const input = loadEl({
             tag: "Item",
             attr: {
@@ -123,23 +147,35 @@ describe("Test DOCX paragraphItem", () => {
         const expectedDOCX = /*xml*/`\
 <w:p>
   <w:pPr>
-    <w:pStyle w:val="Item"></w:pStyle>
+    <w:pStyle w:val="IndentHanging1"></w:pStyle>
   </w:pPr>
-  <w:r><w:t>一</w:t></w:r>
-  <w:r><w:t>　</w:t></w:r>
-  <w:r><w:t>法令</w:t></w:r>
-  <w:r><w:t>　</w:t></w:r><w:r>
-  <w:t>法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</w:t></w:r>
+  <w:r>
+    <w:t>一</w:t>
+  </w:r>
+  <w:r>
+    <w:t>　</w:t>
+  </w:r>
+  <w:r>
+    <w:t>法令</w:t>
+  </w:r>
+  <w:r>
+    <w:t>　</w:t>
+  </w:r>
+  <w:r>
+    <w:t>法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</w:t>
+  </w:r>
 </w:p>
-`.replace(/\r?\n$/g, "").replace(/\r?\n\s*/g, "");
+`;
         const element = <DOCXParagraphItem el={input} indent={1} docxOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
-        assert.strictEqual(rendered, expectedDOCX);
-        renderDocxAsync(element)
-            .then(u8 => {
-                const tempParsedDocx = path.join(tempDir, "renderer.paragraphItem.docx");
-                fs.writeFileSync(tempParsedDocx, u8);
-                console.log(`Saved docx: ${tempParsedDocx}`);
-            });
+        const formatted = formatXML(rendered, { collapseContent: true });
+        assert.strictEqual(
+            formatted,
+            expectedDOCX,
+        );
+        const u8 = await renderDocxAsync(element);
+        const tempParsedDocx = path.join(tempDir, "renderer.paragraphItem.docx");
+        fs.writeFileSync(tempParsedDocx, u8);
+        console.log(`      Saved docx: ${tempParsedDocx}`);
     });
 });

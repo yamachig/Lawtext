@@ -6,7 +6,6 @@ import os from "os";
 import path from "path";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import prettifyXml from "prettify-xml";
 import { promisify } from "util";
 import xmldom from "@xmldom/xmldom";
 import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
@@ -18,6 +17,7 @@ import * as util from "../src/util";
 import { loader } from "./prepare_test";
 import { outerXML, xmlToJson } from "../src/node/el";
 import { ErrorMessage } from "../src/parser/cst/error";
+import formatXML from "../src/util/formatXml";
 
 const domParser = new xmldom.DOMParser();
 
@@ -323,7 +323,7 @@ ${errors.length > 7 ? "\n... more errors ..." : ""}
             analyze(parsedEL);
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const parsedXML = prettifyXml(outerXML(parsedEL)) as string;
+            const parsedXML = formatXML(outerXML(parsedEL)) as string;
             const parsedDOM = domParser.parseFromString(parsedXML);
             await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });
 

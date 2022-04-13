@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
-import { DOCXComponentProps, w } from "./docx";
-import { HTMLComponentProps, MARGIN, wrapHTMLComponent } from "./html";
+import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "./docx";
+import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "./html";
 import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 
 
@@ -10,7 +10,11 @@ interface ColumnsOrSentencesProps {
     els: (std.Sentence | std.Column | std.Table)[],
 }
 
-export const HTMLColumnsOrSentences = wrapHTMLComponent<HTMLComponentProps & ColumnsOrSentencesProps>("HTMLColumnsOrSentences", (props => {
+export const HTMLColumnsOrSentencesCSS = /*css*/`
+`;
+
+export const HTMLColumnsOrSentences = wrapHTMLComponent("HTMLColumnsOrSentences", ((props: HTMLComponentProps & ColumnsOrSentencesProps) => {
+
     const { els, htmlOptions } = props;
 
     const runs: JSX.Element[] = [];
@@ -22,7 +26,7 @@ export const HTMLColumnsOrSentences = wrapHTMLComponent<HTMLComponentProps & Col
 
         } else if (el.tag === "Column") {
             if (i !== 0) {
-                runs.push(<span className="lawtext-column-margin">{MARGIN}</span>);
+                runs.push(<HTMLMarginSpan className="lawtext-column-margin"/>);
             }
 
             const subruns: JSX.Element[] = [];
@@ -45,7 +49,8 @@ export const HTMLColumnsOrSentences = wrapHTMLComponent<HTMLComponentProps & Col
     </>;
 }));
 
-export const DOCXColumnsOrSentences: React.FC<DOCXComponentProps & ColumnsOrSentencesProps> = props => {
+export const DOCXColumnsOrSentences = wrapDOCXComponent("DOCXColumnsOrSentences", ((props: DOCXComponentProps & ColumnsOrSentencesProps) => {
+
     const { els, docxOptions } = props;
 
     const runs: JSX.Element[] = [];
@@ -58,7 +63,7 @@ export const DOCXColumnsOrSentences: React.FC<DOCXComponentProps & ColumnsOrSent
         } else if (el.tag === "Column") {
             if (i !== 0) {
                 runs.push(<>
-                    <w.r><w.t>{MARGIN}</w.t></w.r>
+                    <w.r><w.t>{DOCXMargin}</w.t></w.r>
                 </>);
             }
 
@@ -77,4 +82,4 @@ export const DOCXColumnsOrSentences: React.FC<DOCXComponentProps & ColumnsOrSent
     return <>
         {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
     </>;
-};
+}));
