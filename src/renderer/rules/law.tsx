@@ -6,6 +6,7 @@ import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
+import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
 
 
 export interface LawProps {
@@ -76,8 +77,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
             // blocks.push(<SupplProvisionComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
         } else if (std.isAppdxItem(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<AppdxTableComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+            bodyBlocks.push(<HTMLAppdxItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isEnactStatement(child)) {
             throw new NotImplementedError(child.tag);
@@ -157,7 +157,7 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
             // blocks.push(<SupplProvisionComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
         } else if (std.isAppdxItem(child)) {
-            // blocks.push(<AppdxTableComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+            blocks.push(<DOCXAppdxItem el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isEnactStatement(child)) {
             // blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} ls={props.ls} />);

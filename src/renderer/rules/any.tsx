@@ -1,6 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
+import { AppdxItemProps, DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
 import { ArticleProps, DOCXArticle, HTMLArticle } from "./article";
 import { ArticleGroupProps, DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { DOCXComponentProps, wrapDOCXComponent } from "./docx";
@@ -17,6 +18,7 @@ export type AnyELProps =
     | ParagraphItemProps
     | TableProps
     | ItemStructProps
+    | AppdxItemProps
 
 export const isLawProps = (props: AnyELProps): props is LawProps =>
     std.isLaw(props.el);
@@ -41,6 +43,10 @@ export const isItemStructProps = (props: AnyELProps): props is ItemStructProps =
     || std.isFormatStructTitle(props.el)
     || std.isStyleStructTitle(props.el);
 
+export const isAppdxItemProps = (props: AnyELProps): props is AppdxItemProps =>
+    std.isAppdxItem(props.el)
+    || std.isSupplProvisionAppdxItem(props.el);
+
 export const HTMLAnyEL = wrapHTMLComponent("HTMLAnyEL", ((props: HTMLComponentProps & AnyELProps) => {
     if (isLawProps(props)) {
         return <HTMLLaw {...props} />;
@@ -54,6 +60,8 @@ export const HTMLAnyEL = wrapHTMLComponent("HTMLAnyEL", ((props: HTMLComponentPr
         return <HTMLTable {...props} />;
     } else if (isItemStructProps(props)) {
         return <HTMLItemStruct {...props} />;
+    } else if (isAppdxItemProps(props)) {
+        return <HTMLAppdxItem {...props} />;
     }
     else { throw assertNever(props); }
 }));
@@ -71,6 +79,8 @@ export const DOCXAnyEL = wrapDOCXComponent("DOCXAnyEL", ((props: DOCXComponentPr
         return <DOCXTable {...props} />;
     } else if (isItemStructProps(props)) {
         return <DOCXItemStruct {...props} />;
+    } else if (isAppdxItemProps(props)) {
+        return <DOCXAppdxItem {...props} />;
     }
     else { throw assertNever(props); }
 }));

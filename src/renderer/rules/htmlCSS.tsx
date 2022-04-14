@@ -1,4 +1,5 @@
 import { range } from "../../util";
+import { HTMLAppdxItemCSS } from "./appdxItem";
 import { HTMLArticleCSS } from "./article";
 import { HTMLArticleGroupCSS } from "./articleGroup";
 import { HTMLColumnsOrSentencesCSS } from "./columnsOrSentences";
@@ -25,6 +26,7 @@ export const htmlCSS = [
     HTMLParagraphItemCSS,
     HTMLTableCSS,
     HTMLItemStructCSS,
+    HTMLAppdxItemCSS,
 ].join("\n");
 
 export default htmlCSS;
