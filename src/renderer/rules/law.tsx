@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
-import { assertNever } from "../../util";
+import { assertNever, NotImplementedError } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
@@ -65,21 +65,26 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
             continue;
 
         } else if (std.isTOC(child)) {
+            throw new NotImplementedError(child.tag);
             // blocks.push(<TOCComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
         } else if (child.tag === "MainProvision") {
             bodyBlocks.push(<HTMLArticleGroup el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isSupplProvision(child)) {
+            throw new NotImplementedError(child.tag);
             // blocks.push(<SupplProvisionComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
         } else if (std.isAppdxItem(child)) {
+            throw new NotImplementedError(child.tag);
             // blocks.push(<AppdxTableComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
         } else if (std.isEnactStatement(child)) {
+            throw new NotImplementedError(child.tag);
             // blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
         } else if (std.isPreamble(child)) {
+            throw new NotImplementedError(child.tag);
             // blocks.push(<PreambleComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
         }

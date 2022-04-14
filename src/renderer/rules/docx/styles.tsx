@@ -25,16 +25,6 @@ export const styles = (
             <w.uiPriority w:val="1"/>
         </w.style>
 
-        <w.style w:type="character" w:customStyle="1" w:styleId="Emphasis">
-            <w.name w:val="c01 強調文字"/>
-            <w.basedOn w:val="DefaultCharacter"/>
-            <w.uiPriority w:val="1"/>
-            <w.qFormat/>
-            <w.rPr>
-                <w.rFonts w:eastAsia="ＭＳ ゴシック"/>
-            </w.rPr>
-        </w.style>
-
         <w.style w:type="paragraph" w:default="1" w:styleId="DefaultParagraph">
             <w.name w:val="00 デフォルト段落"/>
             <w.qFormat/>
@@ -47,6 +37,36 @@ export const styles = (
             <w.rPr>
                 <w.rFonts w:ascii="ＭＳ 明朝" w:eastAsia="ＭＳ 明朝" w:hAnsi="ＭＳ 明朝"/>
                 <w.sz w:val={`${fontSizePt * 2}`}/>
+            </w.rPr>
+        </w.style>
+
+        <w.style w:type="table" w:default="1" w:styleId="DefaultTable">
+            <w.name w:val="t00 デフォルト表"/>
+            <w.tblPr>
+                <w.tblBorders>
+                    <w.top w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+                    <w.left w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+                    <w.bottom w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+                    <w.right w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+                    <w.insideH w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+                    <w.insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>
+                </w.tblBorders>
+                <w.tblCellMar>
+                    <w.top w:w={`${fontSizePt * 5}`} w:type="dxa"/>
+                    <w.left w:w={`${fontSizePt * 5}`} w:type="dxa"/>
+                    <w.bottom w:w={`${fontSizePt * 5}`} w:type="dxa"/>
+                    <w.right w:w={`${fontSizePt * 5}`} w:type="dxa"/>
+                </w.tblCellMar>
+            </w.tblPr>
+        </w.style>
+
+        <w.style w:type="character" w:customStyle="1" w:styleId="Emphasis">
+            <w.name w:val="c01 強調文字"/>
+            <w.basedOn w:val="DefaultCharacter"/>
+            <w.uiPriority w:val="1"/>
+            <w.qFormat/>
+            <w.rPr>
+                <w.rFonts w:eastAsia="ＭＳ ゴシック"/>
             </w.rPr>
         </w.style>
 
@@ -124,26 +144,6 @@ export const styles = (
                 </w.pPr>
             </w.style>
         </>))}
-
-        <w.style w:type="table" w:default="1" w:styleId="DefaultTable">
-            <w.name w:val="t00 デフォルト表"/>
-            <w.tblPr>
-                <w.tblBorders>
-                    <w.top w:val="single" w:sz="4" w:space="0" w:color="auto"/>
-                    <w.left w:val="single" w:sz="4" w:space="0" w:color="auto"/>
-                    <w.bottom w:val="single" w:sz="4" w:space="0" w:color="auto"/>
-                    <w.right w:val="single" w:sz="4" w:space="0" w:color="auto"/>
-                    <w.insideH w:val="single" w:sz="4" w:space="0" w:color="auto"/>
-                    <w.insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>
-                </w.tblBorders>
-                <w.tblCellMar>
-                    <w.top w:w={`${fontSizePt * 5}`} w:type="dxa"/>
-                    <w.left w:w={`${fontSizePt * 5}`} w:type="dxa"/>
-                    <w.bottom w:w={`${fontSizePt * 5}`} w:type="dxa"/>
-                    <w.right w:w={`${fontSizePt * 5}`} w:type="dxa"/>
-                </w.tblCellMar>
-            </w.tblPr>
-        </w.style>
 
     </w.styles>
 );

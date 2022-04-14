@@ -7,12 +7,14 @@ import { DOCXComponentProps, wrapDOCXComponent } from "./docx";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXLaw, HTMLLaw, LawProps } from "./law";
 import { DOCXParagraphItem, HTMLParagraphItem, ParagraphItemProps } from "./paragraphItem";
+import { DOCXTable, HTMLTable, TableProps } from "./table";
 
 export type AnyELProps =
     | LawProps
     | ArticleGroupProps
     | ArticleProps
     | ParagraphItemProps
+    | TableProps
 
 export const isLawProps = (props: AnyELProps): props is LawProps =>
     std.isLaw(props.el);
@@ -26,6 +28,9 @@ export const isArticleProps = (props: AnyELProps): props is ArticleProps =>
 export const isParagraphItemProps = (props: AnyELProps): props is ParagraphItemProps =>
     std.isParagraphItem(props.el);
 
+export const isTableProps = (props: AnyELProps): props is TableProps =>
+    std.isTable(props.el);
+
 export const HTMLAnyEL = wrapHTMLComponent("HTMLAnyEL", ((props: HTMLComponentProps & AnyELProps) => {
     if (isLawProps(props)) {
         return <HTMLLaw {...props} />;
@@ -35,6 +40,8 @@ export const HTMLAnyEL = wrapHTMLComponent("HTMLAnyEL", ((props: HTMLComponentPr
         return <HTMLArticle {...props} />;
     } else if (isParagraphItemProps(props)) {
         return <HTMLParagraphItem {...props} />;
+    } else if (isTableProps(props)) {
+        return <HTMLTable {...props} />;
     }
     else { throw assertNever(props); }
 }));
@@ -48,6 +55,8 @@ export const DOCXAnyEL = wrapDOCXComponent("DOCXAnyEL", ((props: DOCXComponentPr
         return <DOCXArticle {...props} />;
     } else if (isParagraphItemProps(props)) {
         return <DOCXParagraphItem {...props} />;
+    } else if (isTableProps(props)) {
+        return <DOCXTable {...props} />;
     }
     else { throw assertNever(props); }
 }));

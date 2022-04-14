@@ -5,6 +5,7 @@ import { HTMLColumnsOrSentencesCSS } from "./columnsOrSentences";
 import { HTMLLawCSS } from "./law";
 import { HTMLParagraphItemCSS } from "./paragraphItem";
 import { HTMLSentenceChildrenCSS } from "./sentenceChildren";
+import { HTMLTableCSS } from "./table";
 
 export const HTMLIndentCSS = [...range(0, 30)]
     .map(indent => /*css*/`
@@ -21,6 +22,7 @@ export const htmlCSS = [
     HTMLArticleGroupCSS,
     HTMLArticleCSS,
     HTMLParagraphItemCSS,
+    HTMLTableCSS,
 ].join("\n");
 
 export default htmlCSS;

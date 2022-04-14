@@ -55,11 +55,6 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                 } else if (cell.children.every(isSentence)) {
                     cellLine.sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
                 } else {
-                    // TODO: multiline
-                    // - 平成十四年法律第百三号 別表
-                    // - 平成十四年法律第百八十号 附則（平成三〇年六月一日法律第四〇号） 第四条
-                    // - 平成十一年法律第百二十七号 別記第一
-                    // - 平成三十年政令第四十七号 第一条 表 備考
                     cellLine.multilineIndicator = "|";
                     if (cellLine.attrEntries.length > 0) {
                         cellLine.attrEntries.slice(-1)[0].trailingSpace = " ";
