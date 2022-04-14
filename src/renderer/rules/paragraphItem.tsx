@@ -5,6 +5,7 @@ import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "./html";
 import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { DOCXColumnsOrSentences, HTMLColumnsOrSentences } from "./columnsOrSentences";
 import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "./docx";
+import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
 
 
 export interface ParagraphItemProps {
@@ -107,17 +108,8 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
         } else if (std.isParagraphItem(child)) {
             blocks.push(<HTMLParagraphItem el={child} indent={indent + 1} {...{ htmlOptions }} />); /* >>>> INDENT >>>> */
 
-        } else if (std.isTableStruct(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<TableStructComponent el={child} indent={indent + 1} {...{ htmlOptions }} />); /* >>>> INDENT >>>> */
-
-        } else if (std.isFigStruct(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<FigStructComponent el={child} indent={indent + 1} {...{ htmlOptions }} />); /* >>>> INDENT >>>> */
-
-        } else if (std.isStyleStruct(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<StyleStructComponent el={child} indent={indent + 1} {...{ htmlOptions }} />); /* >>>> INDENT >>>> */
+        } else if (std.isTableStruct(child) || std.isFigStruct(child) || std.isStyleStruct(child)) {
+            blocks.push(<HTMLItemStruct el={child} indent={indent + 1} {...{ htmlOptions }} />); /* >>>> INDENT >>>> */
 
         } else if (std.isList(child)) {
             throw new NotImplementedError(child.tag);
@@ -204,17 +196,8 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
         } else if (std.isParagraphItem(child)) {
             blocks.push(<DOCXParagraphItem el={child} indent={indent + 1} {...{ docxOptions }} />); /* >>>> INDENT >>>> */
 
-        } else if (std.isTableStruct(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<TableStructComponent el={child} indent={indent + 1} {...{ docxOptions }} />); /* >>>> INDENT >>>> */
-
-        } else if (std.isFigStruct(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<FigStructComponent el={child} indent={indent + 1} {...{ docxOptions }} />); /* >>>> INDENT >>>> */
-
-        } else if (std.isStyleStruct(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<StyleStructComponent el={child} indent={indent + 1} {...{ docxOptions }} />); /* >>>> INDENT >>>> */
+        } else if (std.isTableStruct(child) || std.isFigStruct(child) || std.isStyleStruct(child)) {
+            blocks.push(<DOCXItemStruct el={child} indent={indent + 1} {...{ docxOptions }} />); /* >>>> INDENT >>>> */
 
         } else if (std.isList(child)) {
             throw new NotImplementedError(child.tag);

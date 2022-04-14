@@ -15,7 +15,6 @@ export interface RemarksProps {
 export const HTMLRemarksCSS = /*css*/`
 .remarks {
     clear: both;
-    margin-top: 1em;
 }
 
 .remarks-label {
@@ -23,6 +22,11 @@ export const HTMLRemarksCSS = /*css*/`
     margin-top: 0;
     margin-bottom: 0;
     font-weight: bold;
+}
+
+.remarks-sentence {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 `;
 
@@ -52,7 +56,7 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
 
         } else if (std.isSentence(child)) {
             bodyBlocks.push(<>
-                <p className={`indent-${indent + 1}`}>
+                <p className={`remarks-sentence indent-${indent + 1}`}>
                     <HTMLSentenceChildren els={child.children} {...{ htmlOptions }} />
                 </p>
             </>);

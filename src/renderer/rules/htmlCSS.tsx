@@ -5,6 +5,7 @@ import { HTMLArticleGroupCSS } from "./articleGroup";
 import { HTMLColumnsOrSentencesCSS } from "./columnsOrSentences";
 import { HTMLItemStructCSS } from "./itemStruct";
 import { HTMLLawCSS } from "./law";
+import { HTMLNoteLikeCSS } from "./noteLike";
 import { HTMLParagraphItemCSS } from "./paragraphItem";
 import { HTMLRemarksCSS } from "./remarks";
 import { HTMLSentenceChildrenCSS } from "./sentenceChildren";
@@ -29,6 +30,7 @@ export const htmlCSS = [
     HTMLItemStructCSS,
     HTMLAppdxItemCSS,
     HTMLRemarksCSS,
+    HTMLNoteLikeCSS,
 ].join("\n");
 
 export default htmlCSS;

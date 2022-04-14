@@ -1,12 +1,13 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
-import { assertNever, NotImplementedError } from "../../util";
+import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
+import { DOCXNoteLike, HTMLNoteLike } from "./noteLike";
 
 
 export interface AppdxItemProps {
@@ -78,8 +79,7 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
             bodyBlocks.push(<HTMLParagraphItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isArithFormula(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
+            bodyBlocks.push(<HTMLNoteLike el={child} indent={indent} {...{ htmlOptions }} />);
 
         }
         else { assertNever(child); }
@@ -147,8 +147,7 @@ export const DOCXAppdxItem = wrapDOCXComponent("DOCXAppdxItem", ((props: DOCXCom
             blocks.push(<DOCXParagraphItem el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isArithFormula(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
+            blocks.push(<DOCXNoteLike el={child} indent={indent} {...{ docxOptions }} />);
 
         }
         else { assertNever(child); }

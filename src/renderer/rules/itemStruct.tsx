@@ -6,6 +6,7 @@ import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXTable, HTMLTable } from "./table";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
+import { DOCXNoteLike, HTMLNoteLike } from "./noteLike";
 
 
 export interface ItemStructProps {
@@ -72,8 +73,7 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
             // bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isNoteLike(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
+            bodyBlocks.push(<HTMLNoteLike el={child} indent={indent} {...{ htmlOptions }} />);
 
         }
         else { assertNever(child); }
@@ -140,8 +140,7 @@ export const DOCXItemStruct = wrapDOCXComponent("DOCXItemStruct", ((props: DOCXC
             // bodyBlocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isNoteLike(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
+            blocks.push(<DOCXNoteLike el={child} indent={indent} {...{ docxOptions }} />);
 
         }
         else { assertNever(child); }

@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
-import { assertNever, NotImplementedError } from "../../util";
+import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
@@ -10,6 +10,7 @@ import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { DOCXArticle, HTMLArticle } from "./article";
 import { newStdEL } from "../../law/std";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
+import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
 
 
 export interface TableProps {
@@ -131,8 +132,7 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
                     </>);
 
                 } else if (std.isFigStruct(child)) {
-                    throw new NotImplementedError(child.tag);
-                    // blocks.push(<FigStructComponent el={child} indent={0} key={child.id} ls={props.ls} />);
+                    blocks.push(<HTMLItemStruct el={child} indent={0} {...{ htmlOptions }} />);
 
                 } else if (std.isRemarks(child)) {
                     blocks.push(<HTMLRemarks el={child} indent={0} {...{ htmlOptions }} />);
@@ -371,8 +371,7 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
                     </>);
 
                 } else if (std.isFigStruct(child)) {
-                    throw new NotImplementedError(child.tag);
-                    // blocks.push(<FigStructComponent el={child} indent={0} key={child.id} ls={props.ls} />);
+                    blocks.push(<DOCXItemStruct el={child} indent={0} {...{ docxOptions }} />);
 
                 } else if (std.isRemarks(child)) {
                     blocks.push(<DOCXRemarks el={child} indent={0} {...{ docxOptions }} />);

@@ -8,6 +8,7 @@ import { DOCXComponentProps, wrapDOCXComponent } from "./docx";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXItemStruct, HTMLItemStruct, ItemStructProps } from "./itemStruct";
 import { DOCXLaw, HTMLLaw, LawProps } from "./law";
+import { DOCXNoteLike, HTMLNoteLike, NoteLikeProps } from "./noteLike";
 import { DOCXParagraphItem, HTMLParagraphItem, ParagraphItemProps } from "./paragraphItem";
 import { DOCXRemarks, HTMLRemarks, RemarksProps } from "./remarks";
 import { DOCXTable, HTMLTable, TableProps } from "./table";
@@ -21,6 +22,7 @@ export type AnyELProps =
     | ItemStructProps
     | AppdxItemProps
     | RemarksProps
+    | NoteLikeProps
 
 export const isLawProps = (props: AnyELProps): props is LawProps =>
     std.isLaw(props.el);
@@ -52,6 +54,10 @@ export const isAppdxItemProps = (props: AnyELProps): props is AppdxItemProps =>
 export const isRemarksProps = (props: AnyELProps): props is RemarksProps =>
     std.isRemarks(props.el);
 
+export const isNoteLikeProps = (props: AnyELProps): props is NoteLikeProps =>
+    std.isNoteLike(props.el)
+    || std.isArithFormula(props.el);
+
 export const HTMLAnyEL = wrapHTMLComponent("HTMLAnyEL", ((props: HTMLComponentProps & AnyELProps) => {
     if (isLawProps(props)) {
         return <HTMLLaw {...props} />;
@@ -69,6 +75,8 @@ export const HTMLAnyEL = wrapHTMLComponent("HTMLAnyEL", ((props: HTMLComponentPr
         return <HTMLAppdxItem {...props} />;
     } else if (isRemarksProps(props)) {
         return <HTMLRemarks {...props} />;
+    } else if (isNoteLikeProps(props)) {
+        return <HTMLNoteLike {...props} />;
     }
     else { throw assertNever(props); }
 }));
@@ -90,6 +98,8 @@ export const DOCXAnyEL = wrapDOCXComponent("DOCXAnyEL", ((props: DOCXComponentPr
         return <DOCXAppdxItem {...props} />;
     } else if (isRemarksProps(props)) {
         return <DOCXRemarks {...props} />;
+    } else if (isNoteLikeProps(props)) {
+        return <DOCXNoteLike {...props} />;
     }
     else { throw assertNever(props); }
 }));
