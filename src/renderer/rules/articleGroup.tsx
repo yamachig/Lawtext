@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXArticle, HTMLArticle } from "./article";
@@ -44,7 +44,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
         const titleIndent = std.articleGroupTitleTags.indexOf(ArticleGroupTitle.tag) + 2;
         blocks.push(<>
             <p className={`article-group-title indent-${indent + titleIndent}`}>
-                <HTMLSentenceChildren els={ArticleGroupTitle.children} {...{ htmlOptions }} />
+                <HTMLSentenceChildrenRun els={ArticleGroupTitle.children} {...{ htmlOptions }} />
             </p>
         </>);
     }
@@ -100,7 +100,7 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
                 <w.pPr>
                     <w.pStyle w:val={`IndentHanging${indent + titleIndent}`}/>
                 </w.pPr>
-                <DOCXSentenceChildren els={ArticleGroupTitle.children} emphasis={true} {...{ docxOptions }} />
+                <DOCXSentenceChildrenRun els={ArticleGroupTitle.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
         </>);
     }

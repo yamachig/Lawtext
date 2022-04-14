@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 
@@ -41,7 +41,7 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
     if (RemarksLabel) {
         blocks.push(<>
             <p className={`remarks-label indent-${indent}`}>
-                <HTMLSentenceChildren els={RemarksLabel.children} {...{ htmlOptions }} />
+                <HTMLSentenceChildrenRun els={RemarksLabel.children} {...{ htmlOptions }} />
             </p>
         </>);
     }
@@ -57,7 +57,7 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
         } else if (std.isSentence(child)) {
             bodyBlocks.push(<>
                 <p className={`remarks-sentence indent-${indent + 1}`}>
-                    <HTMLSentenceChildren els={child.children} {...{ htmlOptions }} />
+                    <HTMLSentenceChildrenRun els={child.children} {...{ htmlOptions }} />
                 </p>
             </>);
 
@@ -99,7 +99,7 @@ export const DOCXRemarks = wrapDOCXComponent("DOCXRemarks", ((props: DOCXCompone
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
-                <DOCXSentenceChildren els={RemarksLabel.children} emphasis={true} {...{ docxOptions }} />
+                <DOCXSentenceChildrenRun els={RemarksLabel.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
         </>);
     }
@@ -116,7 +116,7 @@ export const DOCXRemarks = wrapDOCXComponent("DOCXRemarks", ((props: DOCXCompone
                     <w.pPr>
                         <w.pStyle w:val={`Indent${indent + 1}`}/>
                     </w.pPr>
-                    <DOCXSentenceChildren els={child.children} {...{ docxOptions }} />
+                    <DOCXSentenceChildrenRun els={child.children} {...{ docxOptions }} />
                 </w.p>
             </>);
 

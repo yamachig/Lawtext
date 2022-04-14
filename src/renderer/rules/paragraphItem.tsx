@@ -2,10 +2,12 @@ import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
 import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
-import { DOCXColumnsOrSentences, HTMLColumnsOrSentences } from "./columnsOrSentences";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
+import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "./docx";
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
+import { DOCXList, HTMLList } from "./list";
+import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision";
 
 
 export interface ParagraphItemProps {
@@ -68,7 +70,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
     if (ParagraphCaption) {
         blocks.push(<>
             <p className={`paragraph-caption indent-${indent + 1}`}>
-                <HTMLSentenceChildren els={ParagraphCaption.children} {...{ htmlOptions }} />
+                <HTMLSentenceChildrenRun els={ParagraphCaption.children} {...{ htmlOptions }} />
             </p>
         </>);
     }
@@ -78,15 +80,15 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
             <p className={`paragraph-item-main indent-${indent}`}>
                 {Boolean(ParagraphItemTitle || ArticleTitle) && (<>
                     <span className={"paragraph-item-title"}>
-                        {ParagraphItemTitle && <HTMLSentenceChildren els={ParagraphItemTitle.children} {...{ htmlOptions }} />}
-                        {ArticleTitle && <HTMLSentenceChildren els={ArticleTitle.children} {...{ htmlOptions }} />}
+                        {ParagraphItemTitle && <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />}
+                        {ArticleTitle && <HTMLSentenceChildrenRun els={ArticleTitle.children} {...{ htmlOptions }} />}
                     </span>
                     {Boolean(ParagraphItemSentence) && (
                         <HTMLMarginSpan className="paragraph-item-margin"/>
                     )}
                 </>)}
                 <span className={"paragraph-item-body"}>
-                    <HTMLColumnsOrSentences
+                    <HTMLColumnsOrSentencesRun
                         els={ParagraphItemSentence?.children ?? []}
                         {...{ htmlOptions }}
                     />
@@ -112,12 +114,10 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
             blocks.push(<HTMLItemStruct el={child} indent={indent + 1} {...{ htmlOptions }} />); /* >>>> INDENT >>>> */
 
         } else if (std.isList(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<ListComponent el={child} indent={indent + 2} {...{ htmlOptions }} />); /* >>>> INDENT ++++ INDENT >>>> */
+            blocks.push(<HTMLList el={child} indent={indent + 2} {...{ htmlOptions }} />); /* >>>> INDENT ++++ INDENT >>>> */
 
         } else if (std.isAmendProvision(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<AmendProvisionComponent el={child} indent={indent} {...{ htmlOptions }} />);
+            blocks.push(<HTMLAmendProvision el={child} indent={indent + 1} {...{ htmlOptions }} />); /* >>>> INDENT >>>> */
 
         } else if (std.isClass(child)) {
             throw new NotImplementedError(child.tag);
@@ -155,7 +155,7 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent + 1}`}/>
                 </w.pPr>
-                <DOCXSentenceChildren els={ParagraphCaption.children} {...{ docxOptions }} />
+                <DOCXSentenceChildrenRun els={ParagraphCaption.children} {...{ docxOptions }} />
             </w.p>
         </>);
     }
@@ -170,12 +170,12 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
                         <w.pStyle w:val={`IndentFirstLine${indent}`}/>
                     )}
                 </w.pPr>
-                {ParagraphItemTitle && <DOCXSentenceChildren els={ParagraphItemTitle.children} {...{ docxOptions }} />}
-                {ArticleTitle && <DOCXSentenceChildren els={ArticleTitle.children} emphasis={true} {...{ docxOptions }} />}
+                {ParagraphItemTitle && <DOCXSentenceChildrenRun els={ParagraphItemTitle.children} {...{ docxOptions }} />}
+                {ArticleTitle && <DOCXSentenceChildrenRun els={ArticleTitle.children} emphasis={true} {...{ docxOptions }} />}
                 {Boolean((ParagraphItemTitle || ArticleTitle) && ParagraphItemSentence) && (
                     <w.r><w.t>{DOCXMargin}</w.t></w.r>
                 )}
-                <DOCXColumnsOrSentences
+                <DOCXColumnsOrSentencesRun
                     els={ParagraphItemSentence?.children ?? []}
                     {...{ docxOptions }}
                 />
@@ -200,12 +200,10 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
             blocks.push(<DOCXItemStruct el={child} indent={indent + 1} {...{ docxOptions }} />); /* >>>> INDENT >>>> */
 
         } else if (std.isList(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<ListComponent el={child} indent={indent + 2} {...{ docxOptions }} />); /* >>>> INDENT ++++ INDENT >>>> */
+            blocks.push(<DOCXList el={child} indent={indent + 2} {...{ docxOptions }} />); /* >>>> INDENT ++++ INDENT >>>> */
 
         } else if (std.isAmendProvision(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<AmendProvisionComponent el={child} indent={indent} {...{ docxOptions }} />);
+            blocks.push(<DOCXAmendProvision el={child} indent={indent + 1} {...{ docxOptions }} />); /* >>>> INDENT >>>> */
 
         } else if (std.isClass(child)) {
             throw new NotImplementedError(child.tag);

@@ -4,17 +4,19 @@ import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
+import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
 
-interface SentenceChildrenProps {
+interface SentenceChildrenRunProps {
     els: (string | SentenceChildEL)[];
 }
 
-export const HTMLSentenceChildrenCSS = /*css*/`
+export const HTMLSentenceChildrenRunCSS = /*css*/`
 `;
 
-export const HTMLSentenceChildren = wrapHTMLComponent("HTMLSentenceChildren", ((props: HTMLComponentProps & SentenceChildrenProps) => {
+export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRun", ((props: HTMLComponentProps & SentenceChildrenRunProps) => {
 
-    const { els, htmlOptions: { renderControlEL, ControlRunComponent } } = props;
+    const { els, htmlOptions } = props;
+    const { renderControlEL, ControlRunComponent } = htmlOptions;
     const runs: JSX.Element[] = [];
 
     for (const el of els) {
@@ -55,8 +57,7 @@ export const HTMLSentenceChildren = wrapHTMLComponent("HTMLSentenceChildren", ((
                 // runs.push(<QuoteStructRunComponent el={el} ls={props.ls} />);
 
             } else if (el.tag === "ArithFormula") {
-                throw new NotImplementedError(el.tag);
-                // runs.push(<ArithFormulaRunComponent el={el} ls={props.ls} />);
+                runs.push(<HTMLArithFormulaRun el={el} {...{ htmlOptions }} />);
 
             } else if (el.tag === "Line") {
                 throw new NotImplementedError(el.tag);
@@ -71,9 +72,9 @@ export const HTMLSentenceChildren = wrapHTMLComponent("HTMLSentenceChildren", ((
     </>;
 }));
 
-export const DOCXSentenceChildren = wrapDOCXComponent("DOCXSentenceChildren", ((props: DOCXComponentProps & SentenceChildrenProps & {emphasis?: boolean}) => {
+export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRun", ((props: DOCXComponentProps & SentenceChildrenRunProps & {emphasis?: boolean}) => {
 
-    const { els, emphasis } = props;
+    const { els, emphasis, docxOptions } = props;
     const runs: JSX.Element[] = [];
 
     for (const el of els) {
@@ -134,8 +135,7 @@ export const DOCXSentenceChildren = wrapDOCXComponent("DOCXSentenceChildren", ((
                 // runs.push(<QuoteStructRunComponent el={el} ls={props.ls} />);
 
             } else if (el.tag === "ArithFormula") {
-                throw new NotImplementedError(el.tag);
-                // runs.push(<ArithFormulaRunComponent el={el} ls={props.ls} />);
+                runs.push(<DOCXArithFormulaRun el={el} {...{ docxOptions }} />);
 
             } else if (el.tag === "Line") {
                 throw new NotImplementedError(el.tag);

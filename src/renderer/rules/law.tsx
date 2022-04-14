@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
@@ -40,7 +40,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
     if (LawTitle) {
         blocks.push(<>
             <p className={`law-title indent-${indent}`}>
-                <HTMLSentenceChildren els={LawTitle.children} {...{ htmlOptions }} />
+                <HTMLSentenceChildrenRun els={LawTitle.children} {...{ htmlOptions }} />
             </p>
         </>);
     }
@@ -52,7 +52,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
         if (!/[)）]$/.test(LawNumString)) LawNumChildren.push("）");
         blocks.push(<>
             <p className={`law-num indent-${indent}`}>
-                <HTMLSentenceChildren els={LawNumChildren} {...{ htmlOptions }} />
+                <HTMLSentenceChildrenRun els={LawNumChildren} {...{ htmlOptions }} />
             </p>
         </>);
     }
@@ -121,7 +121,7 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
-                <DOCXSentenceChildren els={LawTitle.children} emphasis={true} {...{ docxOptions }} />
+                <DOCXSentenceChildrenRun els={LawTitle.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
         </>);
     }
@@ -136,7 +136,7 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
-                <DOCXSentenceChildren els={LawNumChildren} emphasis={true} {...{ docxOptions }} />
+                <DOCXSentenceChildrenRun els={LawNumChildren} emphasis={true} {...{ docxOptions }} />
             </w.p>
         </>);
     }

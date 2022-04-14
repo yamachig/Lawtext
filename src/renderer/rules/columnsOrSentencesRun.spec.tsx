@@ -2,12 +2,12 @@ import React from "react";
 import { assert } from "chai";
 import { loadEl } from "../../node/el";
 import * as std from "../../law/std";
-import { DOCXColumnsOrSentences, HTMLColumnsOrSentences } from "./columnsOrSentences";
+import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { renderToStaticMarkup } from "./common";
 import formatXML from "../../util/formatXml";
 
 
-describe("Test HTML columnsOrSentences", () => {
+describe("Test HTML columnsOrSentencesRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", () => {
@@ -44,7 +44,7 @@ describe("Test HTML columnsOrSentences", () => {
 <span class="lawtext-column-margin">　</span>
 <span class="lawtext-column">法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</span>
 `;
-        const element = <HTMLColumnsOrSentences els={input.children} htmlOptions={{}} />;
+        const element = <HTMLColumnsOrSentencesRun els={input.children} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
         const formatted = formatXML(rendered, { collapseContent: true });
         assert.strictEqual(
@@ -55,7 +55,7 @@ describe("Test HTML columnsOrSentences", () => {
 });
 
 
-describe("Test DOCX columnsOrSentences", () => {
+describe("Test DOCX columnsOrSentencesRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", () => {
@@ -98,7 +98,7 @@ describe("Test DOCX columnsOrSentences", () => {
   <w:t>法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</w:t>
 </w:r>
 `;
-        const element = <DOCXColumnsOrSentences els={input.children} docxOptions={{}} />;
+        const element = <DOCXColumnsOrSentencesRun els={input.children} docxOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
         const formatted = formatXML(rendered, { collapseContent: true });
         assert.strictEqual(

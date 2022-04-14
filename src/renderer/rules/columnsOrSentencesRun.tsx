@@ -3,17 +3,17 @@ import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
 import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "./docx";
 import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 
 
-interface ColumnsOrSentencesProps {
+interface ColumnsOrSentencesRunProps {
     els: (std.Sentence | std.Column | std.Table)[],
 }
 
-export const HTMLColumnsOrSentencesCSS = /*css*/`
+export const HTMLColumnsOrSentencesRunCSS = /*css*/`
 `;
 
-export const HTMLColumnsOrSentences = wrapHTMLComponent("HTMLColumnsOrSentences", ((props: HTMLComponentProps & ColumnsOrSentencesProps) => {
+export const HTMLColumnsOrSentencesRun = wrapHTMLComponent("HTMLColumnsOrSentencesRun", ((props: HTMLComponentProps & ColumnsOrSentencesRunProps) => {
 
     const { els, htmlOptions } = props;
 
@@ -22,7 +22,7 @@ export const HTMLColumnsOrSentences = wrapHTMLComponent("HTMLColumnsOrSentences"
         const el = els[i];
 
         if (el.tag === "Sentence") {
-            runs.push(<HTMLSentenceChildren els={el.children} {...{ htmlOptions }} />);
+            runs.push(<HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />);
 
         } else if (el.tag === "Column") {
             if (i !== 0) {
@@ -32,7 +32,7 @@ export const HTMLColumnsOrSentences = wrapHTMLComponent("HTMLColumnsOrSentences"
             const subruns: JSX.Element[] = [];
             for (let j = 0; j < el.children.length; j++) {
                 const subel = el.children[j];
-                subruns.push(<HTMLSentenceChildren els={subel.children} key={j} {...{ htmlOptions }} />);
+                subruns.push(<HTMLSentenceChildrenRun els={subel.children} key={j} {...{ htmlOptions }} />);
             }
 
             runs.push(<span className="lawtext-column">{subruns}</span>);
@@ -49,7 +49,7 @@ export const HTMLColumnsOrSentences = wrapHTMLComponent("HTMLColumnsOrSentences"
     </>;
 }));
 
-export const DOCXColumnsOrSentences = wrapDOCXComponent("DOCXColumnsOrSentences", ((props: DOCXComponentProps & ColumnsOrSentencesProps) => {
+export const DOCXColumnsOrSentencesRun = wrapDOCXComponent("DOCXColumnsOrSentencesRun", ((props: DOCXComponentProps & ColumnsOrSentencesRunProps) => {
 
     const { els, docxOptions } = props;
 
@@ -58,7 +58,7 @@ export const DOCXColumnsOrSentences = wrapDOCXComponent("DOCXColumnsOrSentences"
         const el = els[i];
 
         if (el.tag === "Sentence") {
-            runs.push(<DOCXSentenceChildren els={el.children} {...{ docxOptions }} />);
+            runs.push(<DOCXSentenceChildrenRun els={el.children} {...{ docxOptions }} />);
 
         } else if (el.tag === "Column") {
             if (i !== 0) {
@@ -69,7 +69,7 @@ export const DOCXColumnsOrSentences = wrapDOCXComponent("DOCXColumnsOrSentences"
 
             for (let j = 0; j < el.children.length; j++) {
                 const subel = el.children[j];
-                runs.push(<DOCXSentenceChildren els={subel.children} key={j} {...{ docxOptions }} />);
+                runs.push(<DOCXSentenceChildrenRun els={subel.children} key={j} {...{ docxOptions }} />);
             }
 
         } else if (el.tag === "Table") {

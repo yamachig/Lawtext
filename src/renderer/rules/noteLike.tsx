@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { AnyELProps, DOCXAnyEL, HTMLAnyEL } from "./any";
 
 
 export interface NoteLikeProps {
-    el: std.NoteLike | std.ArithFormula,
+    el: std.NoteLike,
     indent: number,
 }
 
@@ -25,7 +25,7 @@ export const HTMLNoteLike = wrapHTMLComponent("HTMLNoteLike", ((props: HTMLCompo
         if (typeof child === "string") {
             blocks.push(<>
                 <p className={`indent-${indent}`}>
-                    <HTMLSentenceChildren els={[child]} {...{ htmlOptions }} />
+                    <HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />
                 </p>
             </>);
         } else {
@@ -53,7 +53,7 @@ export const DOCXNoteLike = wrapDOCXComponent("DOCXNoteLike", ((props: DOCXCompo
                     <w.pPr>
                         <w.pStyle w:val={`Indent${indent}`}/>
                     </w.pPr>
-                    <DOCXSentenceChildren els={[child]} {...{ docxOptions }} />
+                    <DOCXSentenceChildrenRun els={[child]} {...{ docxOptions }} />
                 </w.p>
             </>);
         } else {

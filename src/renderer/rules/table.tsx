@@ -2,10 +2,10 @@ import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
-import { DOCXColumnsOrSentences, HTMLColumnsOrSentences } from "./columnsOrSentences";
+import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { DOCXArticle, HTMLArticle } from "./article";
 import { newStdEL } from "../../law/std";
@@ -104,7 +104,7 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
     if (std.isTableHeaderColumn(el)) {
         blocks.push(<>
             <div>
-                <HTMLSentenceChildren els={el.children} {...{ htmlOptions }} />
+                <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
             </div>
         </>);
 
@@ -112,13 +112,13 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
         if (el.children.every(std.isColumn)) {
             blocks.push(<>
                 <div>
-                    <HTMLColumnsOrSentences els={el.children} {...{ htmlOptions }} />
+                    <HTMLColumnsOrSentencesRun els={el.children} {...{ htmlOptions }} />
                 </div>
             </>);
         } else if (el.children.every(std.isSentence)) {
             blocks.push(<>
                 <div>
-                    <HTMLColumnsOrSentences els={el.children} {...{ htmlOptions }} />
+                    <HTMLColumnsOrSentencesRun els={el.children} {...{ htmlOptions }} />
                 </div>
             </>);
         } else {
@@ -127,7 +127,7 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
                 if (child.tag === "Sentence" || child.tag === "Column") {
                     blocks.push(<>
                         <div>
-                            <HTMLColumnsOrSentences els={[child]} {...{ htmlOptions }} />
+                            <HTMLColumnsOrSentencesRun els={[child]} {...{ htmlOptions }} />
                         </div>
                     </>);
 
@@ -343,7 +343,7 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
     if (std.isTableHeaderColumn(el)) {
         blocks.push(<>
             <w.p>
-                <DOCXSentenceChildren els={el.children} {...{ docxOptions }} />
+                <DOCXSentenceChildrenRun els={el.children} {...{ docxOptions }} />
             </w.p>
         </>);
 
@@ -351,13 +351,13 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
         if (el.children.every(std.isColumn)) {
             blocks.push(<>
                 <w.p>
-                    <DOCXColumnsOrSentences els={el.children} {...{ docxOptions }} />
+                    <DOCXColumnsOrSentencesRun els={el.children} {...{ docxOptions }} />
                 </w.p>
             </>);
         } else if (el.children.every(std.isSentence)) {
             blocks.push(<>
                 <w.p>
-                    <DOCXColumnsOrSentences els={el.children} {...{ docxOptions }} />
+                    <DOCXColumnsOrSentencesRun els={el.children} {...{ docxOptions }} />
                 </w.p>
             </>);
         } else {
@@ -366,7 +366,7 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
                 if (child.tag === "Sentence" || child.tag === "Column") {
                     blocks.push(<>
                         <w.p>
-                            <DOCXColumnsOrSentences els={[child]} {...{ docxOptions }} />
+                            <DOCXColumnsOrSentencesRun els={[child]} {...{ docxOptions }} />
                         </w.p>
                     </>);
 

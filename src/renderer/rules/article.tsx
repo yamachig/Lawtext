@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 
@@ -37,7 +37,7 @@ export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLCompone
     if (ArticleCaption) {
         blocks.push(<>
             <p className={`article-caption indent-${indent + 1}`}>
-                <HTMLSentenceChildren els={ArticleCaption.children} {...{ htmlOptions }} />
+                <HTMLSentenceChildrenRun els={ArticleCaption.children} {...{ htmlOptions }} />
             </p>
         </>); /* >>>> INDENT >>>> */
     }
@@ -98,7 +98,7 @@ export const DOCXArticle = wrapDOCXComponent("DOCXArticle", ((props: DOCXCompone
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent + 1}`}/>
                 </w.pPr>
-                <DOCXSentenceChildren els={ArticleCaption.children} {...{ docxOptions }} />
+                <DOCXSentenceChildrenRun els={ArticleCaption.children} {...{ docxOptions }} />
             </w.p>
         </>); /* >>>> INDENT >>>> */
     }

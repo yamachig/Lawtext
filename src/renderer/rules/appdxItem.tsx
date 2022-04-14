@@ -2,12 +2,12 @@ import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
-import { DOCXNoteLike, HTMLNoteLike } from "./noteLike";
+import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
 
 
 export interface AppdxItemProps {
@@ -26,6 +26,11 @@ export const HTMLAppdxItemCSS = /*css*/`
     margin-top: 0;
     margin-bottom: 0;
     font-weight: bold;
+}
+
+.appdx-item-runs {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 `;
 
@@ -47,12 +52,12 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
             <p className={`appdx-item-head indent-${indent}`}>
                 {(AppdxItemTitle !== undefined) && <>
                     <span className="appdx-item-title">
-                        <HTMLSentenceChildren els={AppdxItemTitle.children} {...{ htmlOptions }} />
+                        <HTMLSentenceChildrenRun els={AppdxItemTitle.children} {...{ htmlOptions }} />
                     </span>
                 </>}
                 {(RelatedArticleNum !== undefined) && <>
                     <span className="related-article-num">
-                        <HTMLSentenceChildren els={RelatedArticleNum.children} {...{ htmlOptions }} />
+                        <HTMLSentenceChildrenRun els={RelatedArticleNum.children} {...{ htmlOptions }} />
                     </span>
                 </>}
             </p>
@@ -79,7 +84,11 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
             bodyBlocks.push(<HTMLParagraphItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isArithFormula(child)) {
-            bodyBlocks.push(<HTMLNoteLike el={child} indent={indent} {...{ htmlOptions }} />);
+            bodyBlocks.push(<>
+                <p className={`appdx-item-runs indent-${indent}`}>
+                    <HTMLArithFormulaRun el={child} {...{ htmlOptions }} />
+                </p>
+            </>);
 
         }
         else { assertNever(child); }
@@ -120,10 +129,10 @@ export const DOCXAppdxItem = wrapDOCXComponent("DOCXAppdxItem", ((props: DOCXCom
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
                 {(AppdxItemTitle !== undefined) && <>
-                    <DOCXSentenceChildren els={AppdxItemTitle.children} emphasis={true} {...{ docxOptions }} />
+                    <DOCXSentenceChildrenRun els={AppdxItemTitle.children} emphasis={true} {...{ docxOptions }} />
                 </>}
                 {(RelatedArticleNum !== undefined) && <>
-                    <DOCXSentenceChildren els={RelatedArticleNum.children} emphasis={true} {...{ docxOptions }} />
+                    <DOCXSentenceChildrenRun els={RelatedArticleNum.children} emphasis={true} {...{ docxOptions }} />
                 </>}
             </w.p>
         </>);
@@ -147,7 +156,14 @@ export const DOCXAppdxItem = wrapDOCXComponent("DOCXAppdxItem", ((props: DOCXCom
             blocks.push(<DOCXParagraphItem el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isArithFormula(child)) {
-            blocks.push(<DOCXNoteLike el={child} indent={indent} {...{ docxOptions }} />);
+            blocks.push(<>
+                <w.p>
+                    <w.pPr>
+                        <w.pStyle w:val={`Indent${indent}`}/>
+                    </w.pPr>
+                    <DOCXArithFormulaRun el={child} {...{ docxOptions }} />
+                </w.p>
+            </>);
 
         }
         else { assertNever(child); }

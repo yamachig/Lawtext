@@ -1,12 +1,12 @@
 import React from "react";
 import { assert } from "chai";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { loadEl } from "../../node/el";
 import * as std from "../../law/std";
 import { renderToStaticMarkup } from "./common";
 import formatXML from "../../util/formatXml";
 
-describe("Test HTML sentenceChildren", () => {
+describe("Test HTML sentenceChildrenRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", () => {
@@ -88,7 +88,7 @@ describe("Test HTML sentenceChildren", () => {
         const expectedHTML = /*html*/`\
 この法律において「スパイクタイヤ」とは、積雪又は凍結の状態にある路面において滑ることを防止するために金属<ruby>鋲<rt>びよう</rt></ruby>その他これに類する物をその接地部に固定したタイヤをいう。
 `;
-        const element = <HTMLSentenceChildren els={input.children} htmlOptions={{}} />;
+        const element = <HTMLSentenceChildrenRun els={input.children} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
         const formatted = formatXML(rendered, { collapseContent: true });
         assert.strictEqual(
@@ -99,7 +99,7 @@ describe("Test HTML sentenceChildren", () => {
 });
 
 
-describe("Test DOCX sentenceChildren", () => {
+describe("Test DOCX sentenceChildrenRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", () => {
@@ -205,7 +205,7 @@ describe("Test DOCX sentenceChildren", () => {
   <w:t>その他これに類する物をその接地部に固定したタイヤをいう。</w:t>
 </w:r>
 `;
-        const element = <DOCXSentenceChildren els={input.children} docxOptions={{}} />;
+        const element = <DOCXSentenceChildrenRun els={input.children} docxOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
         const formatted = formatXML(rendered, { collapseContent: true });
         assert.strictEqual(

@@ -1,12 +1,13 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
-import { assertNever, NotImplementedError } from "../../util";
+import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXTable, HTMLTable } from "./table";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
 import { DOCXNoteLike, HTMLNoteLike } from "./noteLike";
+import { DOCXFigRun, HTMLFigRun } from "./figRun";
 
 
 export interface ItemStructProps {
@@ -25,6 +26,11 @@ export const HTMLItemStructCSS = /*css*/`
     margin-top: 0;
     margin-bottom: 0;
     font-weight: bold;
+}
+
+.item-struct-runs {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 `;
 
@@ -45,7 +51,7 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
     if (ItemStructTitle) {
         blocks.push(<>
             <p className={`item-struct-title indent-${indent}`}>
-                <HTMLSentenceChildren els={ItemStructTitle.children} {...{ htmlOptions }} />
+                <HTMLSentenceChildrenRun els={ItemStructTitle.children} {...{ htmlOptions }} />
             </p>
         </>);
     }
@@ -69,8 +75,11 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
             bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isFig(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
+            bodyBlocks.push(<>
+                <p className={`item-struct-runs indent-${indent}`}>
+                    <HTMLFigRun el={child} {...{ htmlOptions }} />
+                </p>
+            </>);
 
         } else if (std.isNoteLike(child)) {
             bodyBlocks.push(<HTMLNoteLike el={child} indent={indent} {...{ htmlOptions }} />);
@@ -114,7 +123,7 @@ export const DOCXItemStruct = wrapDOCXComponent("DOCXItemStruct", ((props: DOCXC
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
-                <DOCXSentenceChildren els={ItemStructTitle.children} emphasis={true} {...{ docxOptions }} />
+                <DOCXSentenceChildrenRun els={ItemStructTitle.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
         </>);
     }
@@ -136,8 +145,7 @@ export const DOCXItemStruct = wrapDOCXComponent("DOCXItemStruct", ((props: DOCXC
             blocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isFig(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
+            blocks.push(<w.p><DOCXFigRun el={child} {...{ docxOptions }} /></w.p>);
 
         } else if (std.isNoteLike(child)) {
             blocks.push(<DOCXNoteLike el={child} indent={indent} {...{ docxOptions }} />);
