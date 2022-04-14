@@ -11,7 +11,7 @@ import xmldom from "@xmldom/xmldom";
 import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
 import { parse } from "../src/parser/lawtext";
 import { analyze } from "../src/analyzer";
-import { render as renderLawtext } from "../src/renderer/lawtext";
+import { renderLawtext } from "../src/renderer";
 import { TERMC, toTableText } from "../src/util/term";
 import * as util from "../src/util";
 import { loader } from "./prepare_test";

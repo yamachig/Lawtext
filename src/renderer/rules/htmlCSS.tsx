@@ -2,6 +2,7 @@ import { range } from "../../util";
 import { HTMLArticleCSS } from "./article";
 import { HTMLArticleGroupCSS } from "./articleGroup";
 import { HTMLColumnsOrSentencesCSS } from "./columnsOrSentences";
+import { HTMLItemStructCSS } from "./itemStruct";
 import { HTMLLawCSS } from "./law";
 import { HTMLParagraphItemCSS } from "./paragraphItem";
 import { HTMLSentenceChildrenCSS } from "./sentenceChildren";
@@ -23,6 +24,7 @@ export const htmlCSS = [
     HTMLArticleCSS,
     HTMLParagraphItemCSS,
     HTMLTableCSS,
+    HTMLItemStructCSS,
 ].join("\n");
 
 export default htmlCSS;

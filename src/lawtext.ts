@@ -133,13 +133,13 @@ export const main = (args: Args): void => {
             if (outtype === "lawtext") {
                 outtext = renderLawtext(law);
             } else if (outtype === "xml") {
-                outtext = renderer.renderXml(law, withControlEl);
+                outtext = renderer.renderXML(law, withControlEl);
             } else if (outtype === "json") {
                 outtext = JSON.stringify(law.json(withControlEl));
             } else if (outtype === "html") {
-                outtext = renderer.renderHtml(law);
+                outtext = renderer.renderHTML(law);
             } else if (outtype === "htmlfragment") {
-                outtext = renderer.renderHtmlfragment(law);
+                outtext = renderer.renderHTMLfragment(law);
             }
 
             if (outfile) {

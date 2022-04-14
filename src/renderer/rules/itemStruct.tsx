@@ -1,0 +1,154 @@
+import React, { Fragment } from "react";
+import * as std from "../../law/std";
+import { assertNever, NotImplementedError } from "../../util";
+import { HTMLComponentProps, wrapHTMLComponent } from "./html";
+import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
+import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
+import { DOCXTable, HTMLTable } from "./table";
+
+
+export interface ItemStructProps {
+    el: std.TableStruct | std.FigStruct | std.NoteStruct | std.FormatStruct | std.StyleStruct,
+    indent: number,
+}
+
+export const HTMLItemStructCSS = /*css*/`
+.item-struct {
+    clear: both;
+    margin-top: 1em;
+}
+
+.item-struct-title {
+    clear: both;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: bold;
+}
+`;
+
+export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLComponentProps & ItemStructProps) => {
+
+    const { el, htmlOptions, indent } = props;
+
+    const blocks: JSX.Element[] = [];
+
+    const ItemStructTitle = (el.children as (typeof el.children)[number][]).find(el => (
+        std.isTableStructTitle(el)
+        || std.isFigStructTitle(el)
+        || std.isNoteStructTitle(el)
+        || std.isFormatStructTitle(el)
+        || std.isStyleStructTitle(el)
+    )) as std.TableStructTitle | std.FigStructTitle | std.NoteStructTitle | std.FormatStructTitle | std.StyleStructTitle | undefined;
+
+    if (ItemStructTitle) {
+        blocks.push(<>
+            <p className={`item-struct-title indent-${indent}`}>
+                <HTMLSentenceChildren els={ItemStructTitle.children} {...{ htmlOptions }} />
+            </p>
+        </>);
+    }
+
+    const bodyBlocks: JSX.Element[] = [];
+
+    for (const child of el.children) {
+        if (
+            std.isTableStructTitle(child)
+            || std.isFigStructTitle(child)
+            || std.isNoteStructTitle(child)
+            || std.isFormatStructTitle(child)
+            || std.isStyleStructTitle(child)
+        ) {
+            continue;
+
+        } else if (std.isRemarks(child)) {
+            throw new NotImplementedError(child.tag);
+            // bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
+
+        } else if (std.isTable(child)) {
+            bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
+
+        } else if (std.isFig(child)) {
+            throw new NotImplementedError(child.tag);
+            // bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
+
+        } else if (std.isNoteLike(child)) {
+            throw new NotImplementedError(child.tag);
+            // bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
+
+        }
+        else { assertNever(child); }
+    }
+
+    if (bodyBlocks.length > 0) {
+        blocks.push(<>
+            <div className="item-struct-body">
+                {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            </div>
+        </>);
+    }
+
+    return (
+        <div className="item-struct">
+            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        </div>
+    );
+}));
+
+export const DOCXItemStruct = wrapDOCXComponent("DOCXItemStruct", ((props: DOCXComponentProps & ItemStructProps) => {
+
+    const { el, docxOptions, indent } = props;
+
+    const blocks: JSX.Element[] = [];
+
+    const ItemStructTitle = (el.children as (typeof el.children)[number][]).find(el => (
+        std.isTableStructTitle(el)
+        || std.isFigStructTitle(el)
+        || std.isNoteStructTitle(el)
+        || std.isFormatStructTitle(el)
+        || std.isStyleStructTitle(el)
+    )) as std.TableStructTitle | std.FigStructTitle | std.NoteStructTitle | std.FormatStructTitle | std.StyleStructTitle | undefined;
+
+    if (ItemStructTitle) {
+        blocks.push(<>
+            <w.p>
+                <w.pPr>
+                    <w.pStyle w:val={`Indent${indent}`}/>
+                </w.pPr>
+                <DOCXSentenceChildren els={ItemStructTitle.children} emphasis={true} {...{ docxOptions }} />
+            </w.p>
+        </>);
+    }
+
+    for (const child of el.children) {
+        if (
+            std.isTableStructTitle(child)
+            || std.isFigStructTitle(child)
+            || std.isNoteStructTitle(child)
+            || std.isFormatStructTitle(child)
+            || std.isStyleStructTitle(child)
+        ) {
+            continue;
+
+        } else if (std.isRemarks(child)) {
+            throw new NotImplementedError(child.tag);
+            // bodyBlocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
+
+        } else if (std.isTable(child)) {
+            blocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
+
+        } else if (std.isFig(child)) {
+            throw new NotImplementedError(child.tag);
+            // bodyBlocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
+
+        } else if (std.isNoteLike(child)) {
+            throw new NotImplementedError(child.tag);
+            // bodyBlocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (<>
+        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+    </>);
+}));
