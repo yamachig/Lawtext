@@ -2,6 +2,7 @@ import { range } from "../../util";
 import { HTMLArticleCSS } from "./article";
 import { HTMLArticleGroupCSS } from "./articleGroup";
 import { HTMLColumnsOrSentencesCSS } from "./columnsOrSentences";
+import { HTMLLawCSS } from "./law";
 import { HTMLParagraphItemCSS } from "./paragraphItem";
 import { HTMLSentenceChildrenCSS } from "./sentenceChildren";
 
@@ -16,9 +17,10 @@ export const htmlCSS = [
     HTMLIndentCSS,
     HTMLSentenceChildrenCSS,
     HTMLColumnsOrSentencesCSS,
-    HTMLParagraphItemCSS,
-    HTMLArticleCSS,
+    HTMLLawCSS,
     HTMLArticleGroupCSS,
+    HTMLArticleCSS,
+    HTMLParagraphItemCSS,
 ].join("\n");
 
 export default htmlCSS;

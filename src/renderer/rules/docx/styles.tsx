@@ -25,12 +25,6 @@ export const styles = (
             <w.uiPriority w:val="1"/>
         </w.style>
 
-        <w.style w:type="paragraph" w:customStyle="1" w:styleId="EmptyParagraph">
-            <w.name w:val="05 空の段落"/>
-            <w.basedOn w:val="DefaultParagraph"/>
-            <w.qFormat/>
-        </w.style>
-
         <w.style w:type="character" w:customStyle="1" w:styleId="Emphasis">
             <w.name w:val="c01 強調文字"/>
             <w.basedOn w:val="DefaultCharacter"/>
@@ -54,6 +48,12 @@ export const styles = (
                 <w.rFonts w:ascii="ＭＳ 明朝" w:eastAsia="ＭＳ 明朝" w:hAnsi="ＭＳ 明朝"/>
                 <w.sz w:val={`${fontSizePt * 2}`}/>
             </w.rPr>
+        </w.style>
+
+        <w.style w:type="paragraph" w:customStyle="1" w:styleId="EmptyParagraph">
+            <w.name w:val="05 空の段落"/>
+            <w.basedOn w:val="DefaultParagraph"/>
+            <w.qFormat/>
         </w.style>
 
         {/* <w.style w:type="paragraph" w:customStyle="1" w:styleId="Paragraph">

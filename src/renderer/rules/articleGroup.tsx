@@ -9,14 +9,19 @@ import { DOCXArticle, HTMLArticle } from "./article";
 
 
 export interface ArticleGroupProps {
-    el: std.ArticleGroup,
+    el: std.ArticleGroup | std.MainProvision,
     indent: number,
 }
 
 export const HTMLArticleGroupCSS = /*css*/`
+.main-provision {
+    clear: both;
+    margin-top: 1em;
+}
+
 .article-group {
     clear: both;
-    padding-top: 1em;
+    margin-top: 1em;
 }
 
 .article-group-title {
@@ -67,14 +72,14 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
 
     if (bodyBlocks.length > 0) {
         blocks.push(<>
-            <div className={"article-group-body"}>
+            <div className={std.isMainProvision(el) ? "main-provision-body" : "article-group-body"}>
                 {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
             </div>
         </>);
     }
 
     return (
-        <div className={"article-group"}>
+        <div className={std.isMainProvision(el) ? "main-provision" : "article-group"}>
             {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
         </div>
     );

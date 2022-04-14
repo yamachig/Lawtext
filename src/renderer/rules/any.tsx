@@ -5,15 +5,20 @@ import { ArticleProps, DOCXArticle, HTMLArticle } from "./article";
 import { ArticleGroupProps, DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { DOCXComponentProps, wrapDOCXComponent } from "./docx";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
+import { DOCXLaw, HTMLLaw, LawProps } from "./law";
 import { DOCXParagraphItem, HTMLParagraphItem, ParagraphItemProps } from "./paragraphItem";
 
 export type AnyELProps =
+    | LawProps
     | ArticleGroupProps
     | ArticleProps
     | ParagraphItemProps
 
+export const isLawProps = (props: AnyELProps): props is LawProps =>
+    std.isLaw(props.el);
+
 export const isArticleGroupProps = (props: AnyELProps): props is ArticleGroupProps =>
-    std.isArticleGroup(props.el);
+    std.isArticleGroup(props.el) || std.isMainProvision(props.el);
 
 export const isArticleProps = (props: AnyELProps): props is ArticleProps =>
     std.isArticle(props.el);
@@ -22,7 +27,9 @@ export const isParagraphItemProps = (props: AnyELProps): props is ParagraphItemP
     std.isParagraphItem(props.el);
 
 export const HTMLAnyEL = wrapHTMLComponent("HTMLAnyEL", ((props: HTMLComponentProps & AnyELProps) => {
-    if (isArticleGroupProps(props)) {
+    if (isLawProps(props)) {
+        return <HTMLLaw {...props} />;
+    } else if (isArticleGroupProps(props)) {
         return <HTMLArticleGroup {...props} />;
     } else if (isArticleProps(props)) {
         return <HTMLArticle {...props} />;
@@ -33,7 +40,9 @@ export const HTMLAnyEL = wrapHTMLComponent("HTMLAnyEL", ((props: HTMLComponentPr
 }));
 
 export const DOCXAnyEL = wrapDOCXComponent("DOCXAnyEL", ((props: DOCXComponentProps & AnyELProps) => {
-    if (isArticleGroupProps(props)) {
+    if (isLawProps(props)) {
+        return <DOCXLaw {...props} />;
+    } else if (isArticleGroupProps(props)) {
         return <DOCXArticleGroup {...props} />;
     } else if (isArticleProps(props)) {
         return <DOCXArticle {...props} />;
