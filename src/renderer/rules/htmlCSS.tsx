@@ -1,5 +1,6 @@
 import { range } from "../../util";
 import { HTMLArticleCSS } from "./article";
+import { HTMLArticleGroupCSS } from "./articleGroup";
 import { HTMLColumnsOrSentencesCSS } from "./columnsOrSentences";
 import { HTMLParagraphItemCSS } from "./paragraphItem";
 import { HTMLSentenceChildrenCSS } from "./sentenceChildren";
@@ -17,6 +18,7 @@ export const htmlCSS = [
     HTMLColumnsOrSentencesCSS,
     HTMLParagraphItemCSS,
     HTMLArticleCSS,
+    HTMLArticleGroupCSS,
 ].join("\n");
 
 export default htmlCSS;

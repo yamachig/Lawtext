@@ -69,7 +69,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
             <p className={`paragraph-caption indent-${indent + 1}`}>
                 <HTMLSentenceChildren els={ParagraphCaption.children} {...{ htmlOptions }} />
             </p>
-        </>); /* >>>> INDENT >>>> */
+        </>);
     }
 
     if (ParagraphItemTitle || ParagraphItemSentence) {
@@ -165,7 +165,7 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
                 </w.pPr>
                 <DOCXSentenceChildren els={ParagraphCaption.children} {...{ docxOptions }} />
             </w.p>
-        </>); /* >>>> INDENT >>>> */
+        </>);
     }
 
     if (ParagraphItemTitle || ParagraphItemSentence) {
