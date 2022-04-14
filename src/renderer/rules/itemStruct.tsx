@@ -5,6 +5,7 @@ import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXTable, HTMLTable } from "./table";
+import { DOCXRemarks, HTMLRemarks } from "./remarks";
 
 
 export interface ItemStructProps {
@@ -61,8 +62,7 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
             continue;
 
         } else if (std.isRemarks(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
+            bodyBlocks.push(<HTMLRemarks el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isTable(child)) {
             bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
@@ -130,8 +130,7 @@ export const DOCXItemStruct = wrapDOCXComponent("DOCXItemStruct", ((props: DOCXC
             continue;
 
         } else if (std.isRemarks(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
+            blocks.push(<DOCXRemarks el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isTable(child)) {
             blocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);

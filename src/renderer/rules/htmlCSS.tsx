@@ -6,6 +6,7 @@ import { HTMLColumnsOrSentencesCSS } from "./columnsOrSentences";
 import { HTMLItemStructCSS } from "./itemStruct";
 import { HTMLLawCSS } from "./law";
 import { HTMLParagraphItemCSS } from "./paragraphItem";
+import { HTMLRemarksCSS } from "./remarks";
 import { HTMLSentenceChildrenCSS } from "./sentenceChildren";
 import { HTMLTableCSS } from "./table";
 
@@ -27,6 +28,7 @@ export const htmlCSS = [
     HTMLTableCSS,
     HTMLItemStructCSS,
     HTMLAppdxItemCSS,
+    HTMLRemarksCSS,
 ].join("\n");
 
 export default htmlCSS;

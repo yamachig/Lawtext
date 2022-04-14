@@ -9,6 +9,7 @@ import { DOCXColumnsOrSentences, HTMLColumnsOrSentences } from "./columnsOrSente
 import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { DOCXArticle, HTMLArticle } from "./article";
 import { newStdEL } from "../../law/std";
+import { DOCXRemarks, HTMLRemarks } from "./remarks";
 
 
 export interface TableProps {
@@ -134,8 +135,7 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
                     // blocks.push(<FigStructComponent el={child} indent={0} key={child.id} ls={props.ls} />);
 
                 } else if (std.isRemarks(child)) {
-                    throw new NotImplementedError(child.tag);
-                    // blocks.push(<RemarksComponent el={child} indent={0} key={child.id} ls={props.ls} />);
+                    blocks.push(<HTMLRemarks el={child} indent={0} {...{ htmlOptions }} />);
 
                 } else if (std.isArticleGroup(child)) {
                     blocks.push(<>
@@ -375,8 +375,7 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
                     // blocks.push(<FigStructComponent el={child} indent={0} key={child.id} ls={props.ls} />);
 
                 } else if (std.isRemarks(child)) {
-                    throw new NotImplementedError(child.tag);
-                    // blocks.push(<RemarksComponent el={child} indent={0} key={child.id} ls={props.ls} />);
+                    blocks.push(<DOCXRemarks el={child} indent={0} {...{ docxOptions }} />);
 
                 } else if (std.isArticleGroup(child)) {
                     blocks.push(<>

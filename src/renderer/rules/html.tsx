@@ -15,10 +15,6 @@ export interface HTMLComponentProps {
     }
 }
 
-// export interface ELComponentProps<TEL extends EL> {
-//     el: TEL,
-// }
-
 export function wrapHTMLComponent<P, TComponentID extends string>(htmlComponentID: TComponentID, Component: React.ComponentType<P & HTMLComponentProps>) {
     const ret = ((props: P & HTMLComponentProps) => {
         const { htmlOptions } = props;

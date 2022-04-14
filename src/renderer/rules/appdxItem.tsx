@@ -6,6 +6,7 @@ import { DOCXSentenceChildren, HTMLSentenceChildren } from "./sentenceChildren";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
+import { DOCXRemarks, HTMLRemarks } from "./remarks";
 
 
 export interface AppdxItemProps {
@@ -68,8 +69,7 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
             continue;
 
         } else if (std.isRemarks(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
+            bodyBlocks.push(<HTMLRemarks el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isTableStruct(child) || std.isFigStruct(child) || std.isNoteLikeStruct(child)) {
             bodyBlocks.push(<HTMLItemStruct el={child} indent={indent} {...{ htmlOptions }} />);
@@ -138,8 +138,7 @@ export const DOCXAppdxItem = wrapDOCXComponent("DOCXAppdxItem", ((props: DOCXCom
             continue;
 
         } else if (std.isRemarks(child)) {
-            throw new NotImplementedError(child.tag);
-            // bodyBlocks.push(<DOCXTable el={child} indent={indent} {...{ docxOptions }} />);
+            blocks.push(<DOCXRemarks el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isTableStruct(child) || std.isFigStruct(child) || std.isNoteLikeStruct(child)) {
             blocks.push(<DOCXItemStruct el={child} indent={indent} {...{ docxOptions }} />);
