@@ -74,7 +74,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
 
     if (ParagraphItemTitle || ParagraphItemSentence) {
         blocks.push(<>
-            <p className={`paragraph-item-main indent-${indent + 1}`}>
+            <p className={`paragraph-item-main indent-${indent}`}>
                 {Boolean(ParagraphItemTitle || ArticleTitle) && (<>
                     <span className={"paragraph-item-title"}>
                         {ParagraphItemTitle && <HTMLSentenceChildren els={ParagraphItemTitle.children} {...{ htmlOptions }} />}

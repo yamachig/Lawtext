@@ -231,13 +231,13 @@ describe("Test HTML article", () => {
   <p class="article-caption indent-1">（定義）</p>
   <div class="article-body">
     <div class="paragraph-item-Paragraph">
-      <p class="paragraph-item-main indent-1">
+      <p class="paragraph-item-main indent-0">
         <span class="paragraph-item-title">第二条</span>
         <span class="paragraph-item-margin">　</span>
         <span class="paragraph-item-body">この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。</span>
       </p>
       <div class="paragraph-item-Item">
-        <p class="paragraph-item-main indent-2">
+        <p class="paragraph-item-main indent-1">
           <span class="paragraph-item-title">一</span>
           <span class="paragraph-item-margin">　</span>
           <span class="paragraph-item-body">
@@ -248,7 +248,7 @@ describe("Test HTML article", () => {
         </p>
       </div>
       <div class="paragraph-item-Item">
-        <p class="paragraph-item-main indent-2">
+        <p class="paragraph-item-main indent-1">
           <span class="paragraph-item-title">四</span>
           <span class="paragraph-item-margin">　</span>
           <span class="paragraph-item-body">
@@ -258,14 +258,14 @@ describe("Test HTML article", () => {
           </span>
         </p>
         <div class="paragraph-item-Subitem1">
-          <p class="paragraph-item-main indent-3">
+          <p class="paragraph-item-main indent-2">
             <span class="paragraph-item-title">イ</span>
             <span class="paragraph-item-margin">　</span>
             <span class="paragraph-item-body">事実上の行為及び事実上の行為をするに当たりその範囲、時期等を明らかにするために法令上必要とされている手続としての処分</span>
           </p>
         </div>
         <div class="paragraph-item-Subitem1">
-          <p class="paragraph-item-main indent-3">
+          <p class="paragraph-item-main indent-2">
             <span class="paragraph-item-title">ロ</span>
             <span class="paragraph-item-margin">　</span>
             <span class="paragraph-item-body">申請により求められた許認可等を拒否する処分その他申請に基づき当該申請をした者を名あて人としてされる処分</span>
@@ -274,7 +274,7 @@ describe("Test HTML article", () => {
       </div>
     </div>
     <div class="paragraph-item-Paragraph">
-      <p class="paragraph-item-main indent-1">
+      <p class="paragraph-item-main indent-0">
         <span class="paragraph-item-title">２</span>
         <span class="paragraph-item-margin">　</span>
         <span class="paragraph-item-body">次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。</span>

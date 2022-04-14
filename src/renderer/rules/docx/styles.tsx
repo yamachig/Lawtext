@@ -26,7 +26,7 @@ export const styles = (
         </w.style>
 
         <w.style w:type="paragraph" w:customStyle="1" w:styleId="EmptyParagraph">
-            <w.name w:val="04 空の段落"/>
+            <w.name w:val="05 空の段落"/>
             <w.basedOn w:val="DefaultParagraph"/>
             <w.qFormat/>
         </w.style>
@@ -74,7 +74,7 @@ export const styles = (
             </w.pPr>
         </w.style> */}
 
-        {[...range(1, 11)].map(i => (<>
+        {[...range(0, 11)].map(i => (<>
 
             {/* <w.style w:type="paragraph" w:customStyle="1" w:styleId={`Subitem${i}`}>
                 <w.name w:val={`01-${(i + 2).toString().padStart(2, "0")} 号の細分${i}`}/>
