@@ -3,7 +3,7 @@ import * as std from "../../law/std";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXComponentProps, wrapDOCXComponent, w } from "./docx";
 import { DOCXAnyELsToBlocks, HTMLAnyELsToBlocks } from "./any";
-import TextBoxRun from "./docx/textBoxRun";
+import TextBoxRun from "./docx/TextBoxRun";
 
 
 export interface ArithFormulaRunProps {
