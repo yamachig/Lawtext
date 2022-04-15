@@ -69,12 +69,8 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
             throw new NotImplementedError(child.tag);
             // blocks.push(<TOCComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-        } else if (child.tag === "MainProvision") {
+        } else if (std.isMainProvision(child) || std.isSupplProvision(child)) {
             bodyBlocks.push(<HTMLArticleGroup el={child} indent={indent} {...{ htmlOptions }} />);
-
-        } else if (std.isSupplProvision(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<SupplProvisionComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
         } else if (std.isAppdxItem(child)) {
             bodyBlocks.push(<HTMLAppdxItem el={child} indent={indent} {...{ htmlOptions }} />);
@@ -150,11 +146,8 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
         } else if (std.isTOC(child)) {
             // blocks.push(<TOCComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
-        } else if (child.tag === "MainProvision") {
+        } else if (std.isMainProvision(child) || std.isSupplProvision(child)) {
             blocks.push(<DOCXArticleGroup el={child} indent={indent} {...{ docxOptions }} />);
-
-        } else if (std.isSupplProvision(child)) {
-            // blocks.push(<SupplProvisionComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
 
         } else if (std.isAppdxItem(child)) {
             blocks.push(<DOCXAppdxItem el={child} indent={indent} {...{ docxOptions }} />);

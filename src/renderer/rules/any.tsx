@@ -50,7 +50,7 @@ export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JS
         if (std.isLaw(el)) {
             flushRuns();
             blocks.push(<HTMLLaw el={el} indent={indent} {...{ htmlOptions }} />);
-        } else if (std.isArticleGroup(el) || std.isMainProvision(el)) {
+        } else if (std.isArticleGroup(el) || std.isMainProvision(el) || std.isSupplProvision(el)) {
             flushRuns();
             blocks.push(<HTMLArticleGroup el={el} indent={indent} {...{ htmlOptions }} />);
         } else if (std.isArticle(el)) {
@@ -154,7 +154,7 @@ export const DOCXAnyELsToBlocks = (props: DOCXComponentProps & AnyELsProps): (JS
         if (std.isLaw(el)) {
             flushRuns();
             blocks.push(<DOCXLaw el={el} indent={indent} {...{ docxOptions }} />);
-        } else if (std.isArticleGroup(el) || std.isMainProvision(el)) {
+        } else if (std.isArticleGroup(el) || std.isMainProvision(el) || std.isSupplProvision(el)) {
             flushRuns();
             blocks.push(<DOCXArticleGroup el={el} indent={indent} {...{ docxOptions }} />);
         } else if (std.isArticle(el)) {
