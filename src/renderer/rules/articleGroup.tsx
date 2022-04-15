@@ -7,6 +7,7 @@ import { DOCXComponentProps, w, wrapDOCXComponent, DOCXMargin } from "./docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXArticle, HTMLArticle } from "./article";
 import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
+import EmptyParagraph from "./docx/EmptyParagraph";
 
 
 export interface ArticleGroupProps {
@@ -17,12 +18,10 @@ export interface ArticleGroupProps {
 export const HTMLArticleGroupCSS = /*css*/`
 .main-provision {
     clear: both;
-    margin-top: 1em;
 }
 
 .article-group {
     clear: both;
-    margin-top: 1em;
 }
 
 .article-group-title {
@@ -34,7 +33,6 @@ export const HTMLArticleGroupCSS = /*css*/`
 
 .suppl-provision {
     clear: both;
-    margin-top: 1em;
 }
 
 .suppl-provision-label {
@@ -57,6 +55,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
 
     if (ArticleGroupTitle) {
         const titleIndent = std.articleGroupTitleTags.indexOf(ArticleGroupTitle.tag) + 2;
+        if (blocks.length > 0) blocks.push(<p className="empty"><br/></p>);
         blocks.push(<>
             <p className={`article-group-title indent-${indent + titleIndent}`}>
                 <HTMLSentenceChildrenRun els={ArticleGroupTitle.children} {...{ htmlOptions }} />
@@ -65,8 +64,9 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
     }
 
     if (SupplProvisionLabel && std.isSupplProvision(el)) {
-        const Extract = el.attr.Extract === "true" ? <>${HTMLMarginSpan}抄</> : "";
+        const Extract = el.attr.Extract === "true" ? <><HTMLMarginSpan/>抄</> : "";
         const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
+        if (blocks.length > 0) blocks.push(<p className="empty"><br/></p>);
         blocks.push(<>
             <p className={`suppl-provision-label indent-${indent + 3}`}>
                 <HTMLSentenceChildrenRun els={SupplProvisionLabel.children} {...{ htmlOptions }} />{AmendLawNum}
@@ -85,15 +85,19 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
             continue;
 
         } else if (std.isArticle(child)) {
+            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
             bodyBlocks.push(<HTMLArticle el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isParagraph(child)) {
+            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
             bodyBlocks.push(<HTMLParagraphItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isArticleGroup(child)) {
+            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
             bodyBlocks.push(<HTMLArticleGroup el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isSupplProvisionAppdxItem(child)) {
+            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
             bodyBlocks.push(<HTMLAppdxItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         }
@@ -109,6 +113,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
     );
 
     if (bodyBlocks.length > 0) {
+        if (blocks.length > 0) blocks.push(<p className="empty"><br/></p>);
         blocks.push(<>
             <div className={`${classNameBase}-body`}>
                 {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
@@ -135,6 +140,7 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
 
     if (ArticleGroupTitle) {
         const titleIndent = std.articleGroupTitleTags.indexOf(ArticleGroupTitle.tag) + 2;
+        if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
         blocks.push(<>
             <w.p>
                 <w.pPr>
@@ -148,6 +154,7 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
     if (SupplProvisionLabel && std.isSupplProvision(el)) {
         const Extract = el.attr.Extract === "true" ? <>${DOCXMargin}抄</> : "";
         const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
+        if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
         blocks.push(<>
             <w.p>
                 <w.pPr>
@@ -168,15 +175,19 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
             continue;
 
         } else if (std.isArticle(child)) {
+            if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
             blocks.push(<DOCXArticle el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isParagraph(child)) {
+            if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
             blocks.push(<DOCXParagraphItem el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isArticleGroup(child)) {
+            if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
             blocks.push(<DOCXArticleGroup el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isSupplProvisionAppdxItem(child)) {
+            if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
             blocks.push(<DOCXAppdxItem el={child} indent={indent} {...{ docxOptions }} />);
 
         }

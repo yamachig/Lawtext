@@ -11,7 +11,7 @@ import xmldom from "@xmldom/xmldom";
 import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
 import { parse } from "../src/parser/lawtext";
 import { analyze } from "../src/analyzer";
-import { renderLawtext } from "../src/renderer";
+import { renderDocxAsync, renderHTML, renderLawtext } from "../src/renderer";
 import { TERMC, toTableText } from "../src/util/term";
 import * as util from "../src/util";
 import { loader } from "./prepare_test";
@@ -255,11 +255,11 @@ const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
 
 describe("Test Renderes", () => {
 
-    const lawNums = [""];
-    lawNums.splice(0, lawNums.length);
+    const lawNums = ["昭和二十五年法律第百三十一号"];
+    // lawNums.splice(0, lawNums.length);
 
     for (const lawNum of lawNums) {
-        it(`Render and Parse Lawtext: ${lawNum}`, async () => {
+        it(`Render and Parse: ${lawNum}`, async () => {
         // const [list, listByLawnum] = await getLawList();
         // chai.assert(false);
 
@@ -270,6 +270,8 @@ describe("Test Renderes", () => {
             console.log(`${TERMC.CYAN}Temporary directory: "${tempDir}"${TERMC.DEFAULT}`);
             const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
             const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);
+            const tempRenderedHTML = path.join(tempDir, `${lawNum}.rendered.html`);
+            const tempRenderedDocx = path.join(tempDir, `${lawNum}.rendered.docx`);
             const tempParsedXml = path.join(tempDir, `${lawNum}.parsed.xml`);
             await promisify(fsExtra.ensureDir)(tempDir);
 
@@ -290,7 +292,12 @@ describe("Test Renderes", () => {
                 throw e;
             }
 
+            const html = renderHTML(origEL);
+            const docx = await renderDocxAsync(origEL);
+
             await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });
+            await promisify(fs.writeFile)(tempRenderedHTML, html, { encoding: "utf-8" });
+            await promisify(fs.writeFile)(tempRenderedDocx, docx);
 
             let parsedEL;
             let errors: ErrorMessage[];
@@ -356,12 +363,16 @@ ${errors.length > 7 ? "\n... more errors ..." : ""}
                     legend,
                     `Original XML: "${tempOrigXml}"`,
                     `Rendered Lawtext: "${tempRenderedLawtext}"`,
+                    `Rendered HTML: "${tempRenderedHTML}"`,
+                    `Rendered Docx: "${tempRenderedDocx}"`,
                     `Parsed XML: "${tempParsedXml}"`,
                     `Most serious status: ${mssStr}`,
                     toTableText(table, LIMIT_WIDTH),
                     legend,
                     `View XML: "${tempOrigXml}"`,
                     `Rendered Lawtext: "${tempRenderedLawtext}"`,
+                    `Rendered HTML: "${tempRenderedHTML}"`,
+                    `Rendered Docx: "${tempRenderedDocx}"`,
                     `Parsed XML: "${tempParsedXml}"`,
                     `Most serious status: ${mssStr}`,
                     "",

@@ -107,8 +107,8 @@ export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRu
                 runs.push(<w.r>
                     {emphasis ? <w.rStyle w:val="Emphasis"/> : null}
                     <w.ruby>
+                        <w.rt><w.r><w.t>{rt}</w.t></w.r></w.rt>
                         <w.rubyBase><w.r><w.t>{rb}</w.t></w.r></w.rubyBase>
-                        <w.r><w.t>{rt}</w.t></w.r>
                     </w.ruby>
                 </w.r>);
 

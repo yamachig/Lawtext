@@ -16,7 +16,6 @@ export interface ArticleProps {
 export const HTMLArticleCSS = /*css*/`
 .article {
     clear: both;
-    margin-top: 1em;
 }
 
 .article-caption {

@@ -22,12 +22,22 @@ import { HTMLTOCCSS } from "./toc";
 export const HTMLIndentCSS = [...range(0, 30)]
     .map(indent => /*css*/`
 .indent-${indent} {
-    margin-left: ${indent}em;
+    margin-left: var(--margin-left);
+    --margin-left: ${indent}em;
 }
 `).join("\n");
 
+export const HTMLAdditionalCSS = /*css*/`
+.empty {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+`;
+
 export const htmlCSS = [
     HTMLIndentCSS,
+    HTMLAdditionalCSS,
+
     HTMLAnyELsCSS,
     HTMLLawCSS,
     HTMLArticleGroupCSS,

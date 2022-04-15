@@ -216,14 +216,16 @@ describe("Test DOCX sentenceChildrenRun", () => {
 </w:r>
 <w:r>
   <w:ruby>
+    <w:rt>
+      <w:r>
+        <w:t>びよう</w:t>
+      </w:r>
+    </w:rt>
     <w:rubyBase>
       <w:r>
         <w:t>鋲</w:t>
       </w:r>
     </w:rubyBase>
-    <w:r>
-      <w:t>びよう</w:t>
-    </w:r>
   </w:ruby>
 </w:r>
 <w:r>

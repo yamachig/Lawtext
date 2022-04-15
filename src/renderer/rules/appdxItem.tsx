@@ -18,7 +18,6 @@ export interface AppdxItemProps {
 export const HTMLAppdxItemCSS = /*css*/`
 .appdx-item {
     clear: both;
-    margin-top: 1em;
 }
 
 .appdx-item-head {

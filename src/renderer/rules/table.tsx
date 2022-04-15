@@ -23,7 +23,7 @@ export const HTMLTableCSS = /*css*/`
     border-collapse: collapse;
     text-indent: 0;
     table-layout: fixed;
-    width: 100%;
+    width: calc(100% - var(--margin-left));
 }
 
 .table-column {

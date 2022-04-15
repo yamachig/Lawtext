@@ -9,6 +9,7 @@ import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildr
 import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXTOC, HTMLTOC } from "./toc";
+import EmptyParagraph from "./docx/EmptyParagraph";
 
 
 export interface EnactStatementProps {
@@ -163,18 +164,23 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
             continue;
 
         } else if (std.isTOC(child)) {
+            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
             bodyBlocks.push(<HTMLTOC el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isMainProvision(child) || std.isSupplProvision(child)) {
+            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
             bodyBlocks.push(<HTMLArticleGroup el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isAppdxItem(child)) {
+            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
             bodyBlocks.push(<HTMLAppdxItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isEnactStatement(child)) {
+            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
             bodyBlocks.push(<HTMLEnactStatement el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isPreamble(child)) {
+            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
             bodyBlocks.push(<HTMLPreamble el={child} indent={indent} {...{ htmlOptions }} />);
 
         }
@@ -182,6 +188,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
     }
 
     if (bodyBlocks.length > 0) {
+        if (blocks.length > 0) blocks.push(<p className="empty"><br/></p>);
         blocks.push(<>
             <div className={"law-body"}>
                 {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
@@ -238,18 +245,23 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
             continue;
 
         } else if (std.isTOC(child)) {
+            if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
             blocks.push(<DOCXTOC el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isMainProvision(child) || std.isSupplProvision(child)) {
+            if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
             blocks.push(<DOCXArticleGroup el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isAppdxItem(child)) {
+            if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
             blocks.push(<DOCXAppdxItem el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isEnactStatement(child)) {
+            if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
             blocks.push(<DOCXEnactStatement el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isPreamble(child)) {
+            if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
             blocks.push(<DOCXPreamble el={child} indent={indent} {...{ docxOptions }} />);
 
         }

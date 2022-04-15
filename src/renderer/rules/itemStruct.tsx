@@ -18,7 +18,6 @@ export interface ItemStructProps {
 export const HTMLItemStructCSS = /*css*/`
 .item-struct {
     clear: both;
-    margin-top: 1em;
 }
 
 .item-struct-title {

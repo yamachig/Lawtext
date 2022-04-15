@@ -152,9 +152,15 @@ describe("Test HTML articleGroup", () => {
         const expectedHTML = /*html*/`\
 <div class="article-group">
   <p class="article-group-title indent-4">第三章　不利益処分</p>
+  <p class="empty">
+    <br/>
+  </p>
   <div class="article-group-body">
     <div class="article-group">
       <p class="article-group-title indent-5">第一節　通則</p>
+      <p class="empty">
+        <br/>
+      </p>
       <div class="article-group-body">
         <div class="article">
           <p class="article-caption indent-2">（処分の基準）</p>
@@ -170,8 +176,14 @@ describe("Test HTML articleGroup", () => {
         </div>
       </div>
     </div>
+    <p class="empty">
+      <br/>
+    </p>
     <div class="article-group">
       <p class="article-group-title indent-5">第二節　聴聞</p>
+      <p class="empty">
+        <br/>
+      </p>
       <div class="article-group-body">
         <div class="article">
           <p class="article-caption indent-2">（聴聞の通知の方式）</p>
@@ -364,12 +376,22 @@ describe("Test DOCX articleGroup", () => {
 </w:p>
 <w:p>
   <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"></w:pStyle>
+  </w:pPr>
+</w:p>
+<w:p>
+  <w:pPr>
     <w:pStyle w:val="IndentHanging5"></w:pStyle>
   </w:pPr>
   <w:r>
     <w:rStyle w:val="Emphasis"></w:rStyle>
     <w:t>第一節　通則</w:t>
   </w:r>
+</w:p>
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"></w:pStyle>
+  </w:pPr>
 </w:p>
 <w:p>
   <w:pPr>
@@ -396,12 +418,22 @@ describe("Test DOCX articleGroup", () => {
 </w:p>
 <w:p>
   <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"></w:pStyle>
+  </w:pPr>
+</w:p>
+<w:p>
+  <w:pPr>
     <w:pStyle w:val="IndentHanging5"></w:pStyle>
   </w:pPr>
   <w:r>
     <w:rStyle w:val="Emphasis"></w:rStyle>
     <w:t>第二節　聴聞</w:t>
   </w:r>
+</w:p>
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"></w:pStyle>
+  </w:pPr>
 </w:p>
 <w:p>
   <w:pPr>

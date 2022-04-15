@@ -138,11 +138,17 @@ describe("Test HTML law", () => {
 <div class="law">
   <p class="law-title indent-0">行政手続法</p>
   <p class="law-num indent-0">（平成五年法律第八十八号）</p>
+  <p class="empty">
+    <br/>
+  </p>
   <div class="law-body">
     <div class="main-provision">
       <div class="main-provision-body">
         <div class="article-group">
           <p class="article-group-title indent-3">第一章　総則</p>
+          <p class="empty">
+            <br/>
+          </p>
           <div class="article-group-body">
             <div class="article">
               <p class="article-caption indent-1">（目的等）</p>
@@ -346,12 +352,22 @@ describe("Test DOCX law", () => {
 </w:p>
 <w:p>
   <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"></w:pStyle>
+  </w:pPr>
+</w:p>
+<w:p>
+  <w:pPr>
     <w:pStyle w:val="IndentHanging3"></w:pStyle>
   </w:pPr>
   <w:r>
     <w:rStyle w:val="Emphasis"></w:rStyle>
     <w:t>第一章　総則</w:t>
   </w:r>
+</w:p>
+<w:p>
+  <w:pPr>
+    <w:pStyle w:val="EmptyParagraph"></w:pStyle>
+  </w:pPr>
 </w:p>
 <w:p>
   <w:pPr>
