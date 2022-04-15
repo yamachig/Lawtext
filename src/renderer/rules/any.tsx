@@ -28,6 +28,11 @@ export interface AnyELsProps {
 }
 
 export const HTMLAnyELsCSS = /*css*/`
+.any-els-tag {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .any-els-runs {
     margin-top: 0;
     margin-bottom: 0;
@@ -96,6 +101,13 @@ export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JS
         } else if (std.isTOCItem(el)) {
             flushRuns();
             blocks.push(<HTMLTOCItem el={el} indent={indent} {...{ htmlOptions }} />);
+        } else if (std.isArticleGroupTitle(el)) {
+            flushRuns();
+            blocks.push(<>
+                <p className={`any-els-tag any-els-tag-${el.tag} indent-${indent}`}>
+                    <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
+                </p>
+            </>);
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;
@@ -212,6 +224,16 @@ export const DOCXAnyELsToBlocks = (props: DOCXComponentProps & AnyELsProps): (JS
         } else if (std.isTOCItem(el)) {
             flushRuns();
             blocks.push(<DOCXTOCItem el={el} indent={indent} {...{ docxOptions }} />);
+        } else if (std.isArticleGroupTitle(el)) {
+            flushRuns();
+            blocks.push(<>
+                <w.p>
+                    <w.pPr>
+                        <w.pStyle w:val={`Indent${indent}`}/>
+                    </w.pPr>
+                    <DOCXSentenceChildrenRun els={el.children} emphasis={true} {...{ docxOptions }} />
+                </w.p>
+            </>);
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;
