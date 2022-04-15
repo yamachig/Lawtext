@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
-import { assertNever, NotImplementedError } from "../../util";
+import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
@@ -8,6 +8,7 @@ import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
 import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
+import { DOCXTOC, HTMLTOC } from "./toc";
 
 
 export interface EnactStatementProps {
@@ -162,8 +163,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
             continue;
 
         } else if (std.isTOC(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<TOCComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+            bodyBlocks.push(<HTMLTOC el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isMainProvision(child) || std.isSupplProvision(child)) {
             bodyBlocks.push(<HTMLArticleGroup el={child} indent={indent} {...{ htmlOptions }} />);
@@ -238,7 +238,7 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
             continue;
 
         } else if (std.isTOC(child)) {
-            // blocks.push(<TOCComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+            blocks.push(<DOCXTOC el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isMainProvision(child) || std.isSupplProvision(child)) {
             blocks.push(<DOCXArticleGroup el={child} indent={indent} {...{ docxOptions }} />);

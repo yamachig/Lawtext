@@ -20,6 +20,7 @@ import { DOCXRemarks, HTMLRemarks } from "./remarks";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXSupplNote, HTMLSupplNote } from "./supplNote";
 import { DOCXTable, HTMLTable } from "./table";
+import { DOCXTOC, DOCXTOCItem, HTMLTOC, HTMLTOCItem } from "./toc";
 
 export interface AnyELsProps {
     els: (std.StdEL | std.__EL | string)[],
@@ -89,6 +90,12 @@ export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JS
         } else if (std.isPreamble(el)) {
             flushRuns();
             blocks.push(<HTMLPreamble el={el} indent={indent} {...{ htmlOptions }} />);
+        } else if (std.isTOC(el)) {
+            flushRuns();
+            blocks.push(<HTMLTOC el={el} indent={indent} {...{ htmlOptions }} />);
+        } else if (std.isTOCItem(el)) {
+            flushRuns();
+            blocks.push(<HTMLTOCItem el={el} indent={indent} {...{ htmlOptions }} />);
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;
@@ -199,6 +206,12 @@ export const DOCXAnyELsToBlocks = (props: DOCXComponentProps & AnyELsProps): (JS
         } else if (std.isPreamble(el)) {
             flushRuns();
             blocks.push(<DOCXPreamble el={el} indent={indent} {...{ docxOptions }} />);
+        } else if (std.isTOC(el)) {
+            flushRuns();
+            blocks.push(<DOCXTOC el={el} indent={indent} {...{ docxOptions }} />);
+        } else if (std.isTOCItem(el)) {
+            flushRuns();
+            blocks.push(<DOCXTOCItem el={el} indent={indent} {...{ docxOptions }} />);
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;

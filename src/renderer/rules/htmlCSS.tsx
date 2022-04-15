@@ -16,6 +16,7 @@ import { HTMLRemarksCSS } from "./remarks";
 import { HTMLSentenceChildrenRunCSS } from "./sentenceChildrenRun";
 import { HTMLSupplNoteCSS } from "./supplNote";
 import { HTMLTableCSS } from "./table";
+import { HTMLTOCCSS } from "./toc";
 
 export const HTMLIndentCSS = [...range(0, 30)]
     .map(indent => /*css*/`
@@ -41,6 +42,7 @@ export const htmlCSS = [
     HTMLSupplNoteCSS,
     HTMLEnactStatementCSS,
     HTMLPreambleCSS,
+    HTMLTOCCSS,
 
     HTMLSentenceChildrenRunCSS,
     HTMLColumnsOrSentencesRunCSS,
