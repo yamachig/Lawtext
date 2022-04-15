@@ -12,6 +12,7 @@ import { HTMLEnactStatementCSS, HTMLLawCSS, HTMLPreambleCSS } from "./law";
 import { HTMLListCSS } from "./list";
 import { HTMLNoteLikeCSS } from "./noteLike";
 import { HTMLParagraphItemCSS } from "./paragraphItem";
+import { HTMLQuoteStructRunCSS } from "./quoteStructRun";
 import { HTMLRemarksCSS } from "./remarks";
 import { HTMLSentenceChildrenRunCSS } from "./sentenceChildrenRun";
 import { HTMLSupplNoteCSS } from "./supplNote";
@@ -48,6 +49,7 @@ export const htmlCSS = [
     HTMLColumnsOrSentencesRunCSS,
     HTMLFigRunCSS,
     HTMLArithFormulaRunCSS,
+    HTMLQuoteStructRunCSS,
 ].join("\n");
 
 export default htmlCSS;

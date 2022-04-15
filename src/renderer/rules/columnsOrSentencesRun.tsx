@@ -1,9 +1,11 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
-import { assertNever, NotImplementedError } from "../../util";
+import { assertNever } from "../../util";
 import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "./docx";
+import TextBoxRun from "./docx/textBoxRun";
 import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "./html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
+import { DOCXTable, HTMLTable } from "./table";
 
 
 interface ColumnsOrSentencesRunProps {
@@ -21,10 +23,10 @@ export const HTMLColumnsOrSentencesRun = wrapHTMLComponent("HTMLColumnsOrSentenc
     for (let i = 0; i < els.length; i++) {
         const el = els[i];
 
-        if (el.tag === "Sentence") {
+        if (std.isSentence(el)) {
             runs.push(<HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />);
 
-        } else if (el.tag === "Column") {
+        } else if (std.isColumn(el)) {
             if (i !== 0) {
                 runs.push(<HTMLMarginSpan className="lawtext-column-margin"/>);
             }
@@ -37,8 +39,12 @@ export const HTMLColumnsOrSentencesRun = wrapHTMLComponent("HTMLColumnsOrSentenc
 
             runs.push(<span className="lawtext-column">{subruns}</span>);
 
-        } else if (el.tag === "Table") {
-            throw new NotImplementedError(el.tag);
+        } else if (std.isTable(el)) {
+            runs.push(<>
+                <span style={{ display: "inline-block" }}>
+                    <HTMLTable el={el} indent={0} {...{ htmlOptions }} />
+                </span>
+            </>);
 
         }
         else { assertNever(el); }
@@ -57,10 +63,10 @@ export const DOCXColumnsOrSentencesRun = wrapDOCXComponent("DOCXColumnsOrSentenc
     for (let i = 0; i < els.length; i++) {
         const el = els[i];
 
-        if (el.tag === "Sentence") {
+        if (std.isSentence(el)) {
             runs.push(<DOCXSentenceChildrenRun els={el.children} {...{ docxOptions }} />);
 
-        } else if (el.tag === "Column") {
+        } else if (std.isColumn(el)) {
             if (i !== 0) {
                 runs.push(<>
                     <w.r><w.t>{DOCXMargin}</w.t></w.r>
@@ -72,8 +78,12 @@ export const DOCXColumnsOrSentencesRun = wrapDOCXComponent("DOCXColumnsOrSentenc
                 runs.push(<DOCXSentenceChildrenRun els={subel.children} key={j} {...{ docxOptions }} />);
             }
 
-        } else if (el.tag === "Table") {
-            throw new NotImplementedError(el.tag);
+        } else if (std.isTable(el)) {
+            runs.push(<>
+                <TextBoxRun id={10000 + el.id} name={`Table${el.id}`}>
+                    <DOCXTable el={el} indent={0} {...{ docxOptions }} />
+                </TextBoxRun>
+            </>);
 
         }
         else { assertNever(el); }
