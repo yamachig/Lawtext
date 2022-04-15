@@ -1,6 +1,6 @@
 import React from "react";
 import { range } from "../../../util";
-import { w } from "./component";
+import { w } from "./tags";
 
 const fontSizePt = 10.5;
 

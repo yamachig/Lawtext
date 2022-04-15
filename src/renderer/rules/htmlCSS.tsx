@@ -1,5 +1,6 @@
 import { range } from "../../util";
 import { HTMLAmendProvisionCSS } from "./amendProvision";
+import { HTMLAnyELsCSS } from "./any";
 import { HTMLAppdxItemCSS } from "./appdxItem";
 import { HTMLArithFormulaRunCSS } from "./arithFormulaRun";
 import { HTMLArticleCSS } from "./article";
@@ -24,6 +25,7 @@ export const HTMLIndentCSS = [...range(0, 30)]
 
 export const htmlCSS = [
     HTMLIndentCSS,
+    HTMLAnyELsCSS,
     HTMLSentenceChildrenRunCSS,
     HTMLColumnsOrSentencesRunCSS,
     HTMLLawCSS,

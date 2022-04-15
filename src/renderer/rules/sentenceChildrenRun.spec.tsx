@@ -5,11 +5,19 @@ import { loadEl } from "../../node/el";
 import * as std from "../../law/std";
 import { renderToStaticMarkup } from "./common";
 import formatXML from "../../util/formatXml";
+import htmlCSS from "./htmlCSS";
+import path from "path";
+import { promisify } from "util";
+import fs from "fs";
+import os from "os";
+import { renderDocxAsync, w } from "./docx";
+
+const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 describe("Test HTML sentenceChildrenRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
-    it("Success case", () => {
+    it("Success case", async () => {
         const input = loadEl({
             tag: "Sentence",
             attr: {},
@@ -95,6 +103,23 @@ describe("Test HTML sentenceChildrenRun", () => {
             formatted,
             expectedHTML,
         );
+        const html = /*html*/`\
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+${htmlCSS}
+</style>
+</head>
+<body>
+${rendered}
+</body>
+</html>
+`;
+        const tempParsedHtml = path.join(tempDir, "renderer.sentenceChildrenRun.html");
+        await promisify(fs.writeFile)(tempParsedHtml, html);
+        console.log(`      Saved html: ${tempParsedHtml}`);
     });
 });
 
@@ -102,7 +127,7 @@ describe("Test HTML sentenceChildrenRun", () => {
 describe("Test DOCX sentenceChildrenRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
-    it("Success case", () => {
+    it("Success case", async () => {
 
         const input = loadEl({
             tag: "Sentence",
@@ -212,5 +237,9 @@ describe("Test DOCX sentenceChildrenRun", () => {
             formatted,
             expectedDOCX,
         );
+        const u8 = await renderDocxAsync(<w.p>{element}</w.p>);
+        const tempParsedDocx = path.join(tempDir, "renderer.sentenceChildrenRun.docx");
+        fs.writeFileSync(tempParsedDocx, u8);
+        console.log(`      Saved docx: ${tempParsedDocx}`);
     });
 });

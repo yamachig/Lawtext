@@ -5,12 +5,20 @@ import * as std from "../../law/std";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { renderToStaticMarkup } from "./common";
 import formatXML from "../../util/formatXml";
+import htmlCSS from "./htmlCSS";
+import path from "path";
+import { promisify } from "util";
+import fs from "fs";
+import os from "os";
+import { renderDocxAsync, w } from "./docx";
+
+const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 
 describe("Test HTML columnsOrSentencesRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
-    it("Success case", () => {
+    it("Success case", async () => {
         const input = loadEl({
             tag: "ItemSentence",
             attr: {},
@@ -51,6 +59,23 @@ describe("Test HTML columnsOrSentencesRun", () => {
             formatted,
             expectedHTML,
         );
+        const html = /*html*/`\
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+${htmlCSS}
+</style>
+</head>
+<body>
+${rendered}
+</body>
+</html>
+`;
+        const tempParsedHtml = path.join(tempDir, "renderer.columnsOrSentencesRun.html");
+        await promisify(fs.writeFile)(tempParsedHtml, html);
+        console.log(`      Saved html: ${tempParsedHtml}`);
     });
 });
 
@@ -58,7 +83,7 @@ describe("Test HTML columnsOrSentencesRun", () => {
 describe("Test DOCX columnsOrSentencesRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
-    it("Success case", () => {
+    it("Success case", async () => {
         const input = loadEl({
             tag: "ItemSentence",
             attr: {},
@@ -105,5 +130,9 @@ describe("Test DOCX columnsOrSentencesRun", () => {
             formatted,
             expectedDOCX,
         );
+        const u8 = await renderDocxAsync(<w.p>{element}</w.p>);
+        const tempParsedDocx = path.join(tempDir, "renderer.columnsOrSentencesRun.docx");
+        fs.writeFileSync(tempParsedDocx, u8);
+        console.log(`      Saved docx: ${tempParsedDocx}`);
     });
 });

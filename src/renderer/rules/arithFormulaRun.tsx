@@ -1,12 +1,8 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
-import { AnyELProps, DOCXAnyEL, HTMLAnyEL } from "./any";
-import { isSentenceChildEL } from "../../node/cst/inline";
-import { DOCXFigRun, HTMLFigRun } from "./figRun";
-import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
+import { DOCXComponentProps, wrapDOCXComponent, w, wp, wps, a } from "./docx";
+import { DOCXAnyELsToBlocks, HTMLAnyELs } from "./any";
 
 
 export interface ArithFormulaRunProps {
@@ -24,109 +20,81 @@ export const HTMLArithFormulaRun = wrapHTMLComponent("HTMLArithFormulaRun", ((pr
 
     const { el, htmlOptions } = props;
 
-    const blocks: JSX.Element[] = [];
-    let currentRuns: JSX.Element[] = [];
-    const flushRuns = () => {
-        if (currentRuns.length > 0) {
-            blocks.push(<>
-                <p className="arith-formula-runs">
-                    {currentRuns.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
-                </p>
-            </>);
-            currentRuns = [];
-        }
-    };
-
-    for (const child of el.children) {
-        if (typeof child === "string") {
-            currentRuns.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);
-
-        } else if (std.isSentence(child)) {
-            currentRuns.push(<HTMLColumnsOrSentencesRun els={[child]} {...{ htmlOptions }} />);
-
-        } else if (isSentenceChildEL(child)) {
-            currentRuns.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);
-
-        } else if (std.isFig(child)) {
-            currentRuns.push(<HTMLFigRun el={child} {...{ htmlOptions }} />);
-
-        } else {
-            flushRuns();
-            blocks.push(<HTMLAnyEL {...({ el: child, indent: 0 } as AnyELProps)} {...{ htmlOptions }} />);
-
-        }
-    }
-
-    if (currentRuns.length > 0 || blocks.length == 0) {
-        return (<>
-            <span className="arith-formula">
-                {currentRuns.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
-            </span>
-        </>);
-
-    } else {
-        flushRuns();
-
-        return (
-            <span className="arith-formula" style={{ display: "inline-block" }}>
-                {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
-            </span>
-        );
-    }
+    return (
+        <span className="arith-formula" style={{ display: "inline-block" }}>
+            <HTMLAnyELs els={el.children} indent={0} {...{ htmlOptions }} />
+        </span>
+    );
 }));
 
 export const DOCXArithFormulaRun = wrapDOCXComponent("DOCXArithFormulaRun", ((props: DOCXComponentProps & ArithFormulaRunProps) => {
 
     const { el, docxOptions } = props;
 
-    const blocks: JSX.Element[] = [];
-    let currentRuns: JSX.Element[] = [];
-    const flushRuns = () => {
-        if (currentRuns.length > 0) {
-            blocks.push(<>
-                <w.p className="arith-formula-runs">
-                    {currentRuns.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
-                </w.p>
-            </>);
-            currentRuns = [];
-        }
-    };
+    const rawBlocks = DOCXAnyELsToBlocks({
+        els: el.children,
+        indent: 0,
+        docxOptions,
+    });
 
-    for (const child of el.children) {
-        if (typeof child === "string") {
-            currentRuns.push(<DOCXSentenceChildrenRun els={[child]} {...{ docxOptions }} />);
-
-        } else if (std.isSentence(child)) {
-            currentRuns.push(<DOCXColumnsOrSentencesRun els={[child]} {...{ docxOptions }} />);
-
-        } else if (isSentenceChildEL(child)) {
-            currentRuns.push(<DOCXSentenceChildrenRun els={[child]} {...{ docxOptions }} />);
-
-        } else if (std.isFig(child)) {
-            currentRuns.push(<DOCXFigRun el={child} {...{ docxOptions }} />);
-
-        } else {
-            flushRuns();
-            blocks.push(<DOCXAnyEL {...({ el: child, indent: 0 } as AnyELProps)} {...{ docxOptions }} />);
-
-        }
-    }
-
-    if (currentRuns.length > 0 || blocks.length == 0) {
-        return (<>
-            {currentRuns.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
-        </>);
-
-    } else {
-        flushRuns();
-
-        const runs = blocks.map((block =>
-            (block.props.children as JSX.Element[] | undefined)
-                ?.filter(c => c.type === "w:r") ?? []
-        )).flat();
+    if (rawBlocks.every(Array.isArray)) {
+        const runs = (rawBlocks as JSX.Element[][]).flat();
 
         return (<>
             {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+        </>);
+
+    } else {
+
+        const blocks: JSX.Element[] = [];
+
+        for (const rawBlock of rawBlocks) {
+            if (Array.isArray(rawBlock)) {
+                blocks.push(<>
+                    <w.p>
+                        {rawBlock.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+                    </w.p>
+                </>);
+            } else {
+                blocks.push(rawBlock);
+            }
+        }
+
+        return (<>
+            <w.r>
+                <w.drawing>
+                    <wp.inline distT="0" distB="0" distL="0" distR="0">
+                        <wp.extent cx="0" cy="0" />
+                        <wp.docPr id={10000 + el.id} name={`ArithFormula${el.id}`} />
+                        <a.graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+                            <a.graphicData uri="http://schemas.microsoft.com/office/word/2010/wordprocessingShape">
+                                <wps.wsp>
+                                    <wps.cNvSpPr txBox="1">
+                                        <a.spLocks noChangeArrowheads="1" />
+                                    </wps.cNvSpPr>
+                                    <wps.spPr bwMode="auto">
+                                        <a.xfrm>
+                                            <a.off x="0" y="0" />
+                                        </a.xfrm>
+                                        <a.prstGeom prst="rect">
+                                            <a.avLst />
+                                        </a.prstGeom>
+                                        <a.noFill />
+                                    </wps.spPr>
+                                    <wps.txbx>
+                                        <w.txbxContent>
+                                            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                                        </w.txbxContent>
+                                    </wps.txbx>
+                                    <wps.bodyPr rot="0" vert="horz" wrap="none" lIns="0" tIns="0" rIns="0" bIns="0" anchor="t" anchorCtr="0">
+                                        <a.spAutoFit />
+                                    </wps.bodyPr>
+                                </wps.wsp>
+                            </a.graphicData>
+                        </a.graphic>
+                    </wp.inline>
+                </w.drawing>
+            </w.r>
         </>);
     }
 }));

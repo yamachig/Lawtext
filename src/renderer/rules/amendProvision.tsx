@@ -4,7 +4,7 @@ import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
-import { AnyELProps, DOCXAnyEL, HTMLAnyEL } from "./any";
+import { DOCXAnyELs, HTMLAnyELs } from "./any";
 
 
 export interface AmendProvisionProps {
@@ -36,9 +36,11 @@ export const HTMLAmendProvision = wrapHTMLComponent("HTMLAmendProvision", ((prop
             </>);
 
         } else if (std.isNewProvision(child)) {
-            for (const subchild of child.children) {
-                blocks.push(<HTMLAnyEL {...({ el: subchild, indent: indent + 1 } as AnyELProps)} {...{ htmlOptions }} />);
-            }
+            blocks.push(<>
+                <div className="new-provision">
+                    <HTMLAnyELs els={child.children} indent={indent + 1} {...{ htmlOptions }} />
+                </div>
+            </>);
         }
         else { throw assertNever(child); }
     }
@@ -71,9 +73,7 @@ export const DOCXAmendProvision = wrapDOCXComponent("DOCXAmendProvision", ((prop
             </>);
 
         } else if (std.isNewProvision(child)) {
-            for (const subchild of child.children) {
-                blocks.push(<DOCXAnyEL {...({ el: subchild, indent: indent + 1 } as AnyELProps)} {...{ docxOptions }} />);
-            }
+            blocks.push(<DOCXAnyELs els={child.children} indent={indent + 1} {...{ docxOptions }} />);
         }
         else { throw assertNever(child); }
     }

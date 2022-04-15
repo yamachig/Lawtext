@@ -4,15 +4,17 @@ import * as std from "../../law/std";
 // eslint-disable-next-line no-irregular-whitespace
 export const HTMLMarginSpan: React.FC<React.HTMLAttributes<HTMLSpanElement>> = props => <span {...props}>　</span>;
 
+export interface HTMLOptions {
+    WrapperComponent?: React.ComponentType<React.PropsWithChildren<{
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        htmlComponentID: string;
+    }>>;
+    ControlRunComponent?: React.ComponentType<HTMLComponentProps & {el: std.__EL}>;
+    renderControlEL?: boolean;
+}
+
 export interface HTMLComponentProps {
-    htmlOptions: {
-        WrapperComponent?: React.ComponentType<React.PropsWithChildren<{
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            htmlComponentID: string;
-        }>>;
-        ControlRunComponent?: React.ComponentType<HTMLComponentProps & {el: std.__EL}>;
-        renderControlEL?: boolean;
-    }
+    htmlOptions: HTMLOptions;
 }
 
 export function wrapHTMLComponent<P, TComponentID extends string>(htmlComponentID: TComponentID, Component: React.ComponentType<P & HTMLComponentProps>) {
