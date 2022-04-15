@@ -12,7 +12,7 @@ import { DOCXComponentProps, wrapDOCXComponent, w } from "./docx";
 import { DOCXFigRun, HTMLFigRun } from "./figRun";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
-import { DOCXLaw, HTMLLaw } from "./law";
+import { DOCXEnactStatement, DOCXLaw, DOCXPreamble, HTMLEnactStatement, HTMLLaw, HTMLPreamble } from "./law";
 import { DOCXList, HTMLList } from "./list";
 import { DOCXNoteLike, HTMLNoteLike } from "./noteLike";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
@@ -83,6 +83,12 @@ export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JS
         } else if (std.isSupplNote(el)) {
             flushRuns();
             blocks.push(<HTMLSupplNote el={el} indent={indent} {...{ htmlOptions }} />);
+        } else if (std.isEnactStatement(el)) {
+            flushRuns();
+            blocks.push(<HTMLEnactStatement el={el} indent={indent} {...{ htmlOptions }} />);
+        } else if (std.isPreamble(el)) {
+            flushRuns();
+            blocks.push(<HTMLPreamble el={el} indent={indent} {...{ htmlOptions }} />);
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;
@@ -187,6 +193,12 @@ export const DOCXAnyELsToBlocks = (props: DOCXComponentProps & AnyELsProps): (JS
         } else if (std.isSupplNote(el)) {
             flushRuns();
             blocks.push(<DOCXSupplNote el={el} indent={indent} {...{ docxOptions }} />);
+        } else if (std.isEnactStatement(el)) {
+            flushRuns();
+            blocks.push(<DOCXEnactStatement el={el} indent={indent} {...{ docxOptions }} />);
+        } else if (std.isPreamble(el)) {
+            flushRuns();
+            blocks.push(<DOCXPreamble el={el} indent={indent} {...{ docxOptions }} />);
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;

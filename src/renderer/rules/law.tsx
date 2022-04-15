@@ -7,6 +7,102 @@ import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
 import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
+import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
+
+
+export interface EnactStatementProps {
+    el: std.EnactStatement,
+    indent: number,
+}
+
+export const HTMLEnactStatementCSS = /*css*/`
+.enact-statement {
+    clear: both;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+`;
+
+export const HTMLEnactStatement = wrapHTMLComponent("HTMLEnactStatement", ((props: HTMLComponentProps & EnactStatementProps) => {
+
+    const { el, htmlOptions, indent } = props;
+
+    return (
+        <p className={`enact-statement indent-${indent}`}>
+            <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
+        </p>
+    );
+}));
+
+export const DOCXEnactStatement = wrapDOCXComponent("DOCXEnactStatement", ((props: DOCXComponentProps & EnactStatementProps) => {
+
+    const { el, docxOptions, indent } = props;
+
+    return (
+        <w.p>
+            <w.pPr>
+                <w.pStyle w:val={`Indent${indent}`}/>
+            </w.pPr>
+            <DOCXSentenceChildrenRun els={el.children} {...{ docxOptions }} />
+        </w.p>
+    );
+}));
+export interface PreambleProps {
+    el: std.Preamble,
+    indent: number,
+}
+
+export const HTMLPreambleCSS = /*css*/`
+.preamble {
+    clear: both;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+`;
+
+export const HTMLPreamble = wrapHTMLComponent("HTMLPreamble", ((props: HTMLComponentProps & PreambleProps) => {
+
+    const { el, htmlOptions, indent } = props;
+
+    const blocks: JSX.Element[] = [];
+
+    for (const child of el.children) {
+        if (
+            std.isParagraph(child)
+        ) {
+            blocks.push(<HTMLParagraphItem el={child} indent={indent} {...{ htmlOptions }} />);
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (
+        <div className={"preamble"}>
+            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        </div>
+    );
+}));
+
+export const DOCXPreamble = wrapDOCXComponent("DOCXPreamble", ((props: DOCXComponentProps & PreambleProps) => {
+
+    const { el, docxOptions, indent } = props;
+
+    const blocks: JSX.Element[] = [];
+
+    for (const child of el.children) {
+        if (
+            std.isParagraph(child)
+        ) {
+            blocks.push(<DOCXParagraphItem el={child} indent={indent} {...{ docxOptions }} />);
+
+        }
+        else { assertNever(child); }
+    }
+
+    return (<>
+        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+    </>);
+}));
 
 
 export interface LawProps {
@@ -76,12 +172,10 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
             bodyBlocks.push(<HTMLAppdxItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isEnactStatement(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+            bodyBlocks.push(<HTMLEnactStatement el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isPreamble(child)) {
-            throw new NotImplementedError(child.tag);
-            // blocks.push(<PreambleComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+            bodyBlocks.push(<HTMLPreamble el={child} indent={indent} {...{ htmlOptions }} />);
 
         }
         else { assertNever(child); }
@@ -153,10 +247,10 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
             blocks.push(<DOCXAppdxItem el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isEnactStatement(child)) {
-            // blocks.push(<EnactStatementComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+            blocks.push(<DOCXEnactStatement el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isPreamble(child)) {
-            // blocks.push(<PreambleComponent el={child} indent={indent} key={child.id} ls={props.ls} />);
+            blocks.push(<DOCXPreamble el={child} indent={indent} {...{ docxOptions }} />);
 
         }
         else { assertNever(child); }

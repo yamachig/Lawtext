@@ -8,7 +8,7 @@ import { HTMLArticleGroupCSS } from "./articleGroup";
 import { HTMLColumnsOrSentencesRunCSS } from "./columnsOrSentencesRun";
 import { HTMLFigRunCSS } from "./figRun";
 import { HTMLItemStructCSS } from "./itemStruct";
-import { HTMLLawCSS } from "./law";
+import { HTMLEnactStatementCSS, HTMLLawCSS, HTMLPreambleCSS } from "./law";
 import { HTMLListCSS } from "./list";
 import { HTMLNoteLikeCSS } from "./noteLike";
 import { HTMLParagraphItemCSS } from "./paragraphItem";
@@ -39,6 +39,8 @@ export const htmlCSS = [
     HTMLListCSS,
     HTMLAmendProvisionCSS,
     HTMLSupplNoteCSS,
+    HTMLEnactStatementCSS,
+    HTMLPreambleCSS,
 
     HTMLSentenceChildrenRunCSS,
     HTMLColumnsOrSentencesRunCSS,
