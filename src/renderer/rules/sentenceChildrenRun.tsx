@@ -5,6 +5,7 @@ import { assertNever, NotImplementedError } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
+import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun";
 
 interface SentenceChildrenRunProps {
     els: (string | SentenceChildEL)[];
@@ -53,8 +54,7 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
                 runs.push(<sup>{el.text}</sup>);
 
             } else if (el.tag === "QuoteStruct") {
-                throw new NotImplementedError(el.tag);
-                // runs.push(<QuoteStructRunComponent el={el} ls={props.ls} />);
+                runs.push(<HTMLQuoteStructRun el={el} {...{ htmlOptions }} />);
 
             } else if (el.tag === "ArithFormula") {
                 runs.push(<HTMLArithFormulaRun el={el} {...{ htmlOptions }} />);
@@ -131,8 +131,7 @@ export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRu
                 runs.push(<sub>{el.text}</sub>);
 
             } else if (el.tag === "QuoteStruct") {
-                throw new NotImplementedError(el.tag);
-                // runs.push(<QuoteStructRunComponent el={el} ls={props.ls} />);
+                runs.push(<DOCXQuoteStructRun el={el} {...{ docxOptions }} />);
 
             } else if (el.tag === "ArithFormula") {
                 runs.push(<DOCXArithFormulaRun el={el} {...{ docxOptions }} />);
