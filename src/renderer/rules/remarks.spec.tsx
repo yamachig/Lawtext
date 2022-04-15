@@ -36,9 +36,9 @@ describe("Test HTML remarks", () => {
         }) as std.Remarks;
         const expectedHTML = /*html*/`\
 <div class="remarks">
-  <p class="remarks-label indent-0">備考</p>
+  <div class="remarks-label indent-0">備考</div>
   <div class="remarks-body">
-    <p class="remarks-sentence indent-1">路程の計算については、水路及び陸路四分の一キロメートルをもつて鉄道一キロメートルとみなす。</p>
+    <div class="remarks-sentence indent-1">路程の計算については、水路及び陸路四分の一キロメートルをもつて鉄道一キロメートルとみなす。</div>
   </div>
 </div>
 `;

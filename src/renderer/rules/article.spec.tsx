@@ -228,16 +228,16 @@ describe("Test HTML article", () => {
         }) as std.Article;
         const expectedHTML = /*html*/`\
 <div class="article">
-  <p class="article-caption indent-1">（定義）</p>
+  <div class="article-caption indent-1">（定義）</div>
   <div class="article-body">
     <div class="paragraph-item-Paragraph">
-      <p class="paragraph-item-main indent-0">
+      <div class="paragraph-item-main indent-0">
         <span class="paragraph-item-title">第二条</span>
         <span class="paragraph-item-margin">　</span>
         <span class="paragraph-item-body">この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。</span>
-      </p>
+      </div>
       <div class="paragraph-item-Item">
-        <p class="paragraph-item-main indent-1">
+        <div class="paragraph-item-main indent-1">
           <span class="paragraph-item-title">一</span>
           <span class="paragraph-item-margin">　</span>
           <span class="paragraph-item-body">
@@ -245,10 +245,10 @@ describe("Test HTML article", () => {
             <span class="lawtext-column-margin">　</span>
             <span class="lawtext-column">法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</span>
           </span>
-        </p>
+        </div>
       </div>
       <div class="paragraph-item-Item">
-        <p class="paragraph-item-main indent-1">
+        <div class="paragraph-item-main indent-1">
           <span class="paragraph-item-title">四</span>
           <span class="paragraph-item-margin">　</span>
           <span class="paragraph-item-body">
@@ -256,29 +256,29 @@ describe("Test HTML article", () => {
             <span class="lawtext-column-margin">　</span>
             <span class="lawtext-column">行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。</span>
           </span>
-        </p>
+        </div>
         <div class="paragraph-item-Subitem1">
-          <p class="paragraph-item-main indent-2">
+          <div class="paragraph-item-main indent-2">
             <span class="paragraph-item-title">イ</span>
             <span class="paragraph-item-margin">　</span>
             <span class="paragraph-item-body">事実上の行為及び事実上の行為をするに当たりその範囲、時期等を明らかにするために法令上必要とされている手続としての処分</span>
-          </p>
+          </div>
         </div>
         <div class="paragraph-item-Subitem1">
-          <p class="paragraph-item-main indent-2">
+          <div class="paragraph-item-main indent-2">
             <span class="paragraph-item-title">ロ</span>
             <span class="paragraph-item-margin">　</span>
             <span class="paragraph-item-body">申請により求められた許認可等を拒否する処分その他申請に基づき当該申請をした者を名あて人としてされる処分</span>
-          </p>
+          </div>
         </div>
       </div>
     </div>
     <div class="paragraph-item-Paragraph">
-      <p class="paragraph-item-main indent-0">
+      <div class="paragraph-item-main indent-0">
         <span class="paragraph-item-title">２</span>
         <span class="paragraph-item-margin">　</span>
         <span class="paragraph-item-body">次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。</span>
-      </p>
+      </div>
     </div>
   </div>
 </div>

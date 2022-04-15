@@ -146,9 +146,9 @@ describe("Test HTML noteLike", () => {
         const expectedHTML = /*html*/`\
 <div class="note-like">
   <div class="remarks">
-    <p class="remarks-label indent-1">備考</p>
+    <div class="remarks-label indent-1">備考</div>
     <div class="remarks-body">
-      <p class="remarks-sentence indent-2">備考文１</p>
+      <div class="remarks-sentence indent-2">備考文１</div>
     </div>
   </div>
   <div class="note-like">
@@ -182,7 +182,7 @@ describe("Test HTML noteLike", () => {
   </div>
   <div class="remarks">
     <div class="remarks-body">
-      <p class="remarks-sentence indent-2">備考文２</p>
+      <div class="remarks-sentence indent-2">備考文２</div>
     </div>
   </div>
 </div>

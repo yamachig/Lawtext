@@ -28,9 +28,9 @@ export const HTMLList = wrapHTMLComponent("HTMLList", ((props: HTMLComponentProp
 
         if (std.isListOrSublistSentence(child)) {
             blocks.push(<>
-                <p className={`list-main indent-${indent}`}>
+                <div className={`list-main indent-${indent}`}>
                     <HTMLColumnsOrSentencesRun els={child.children} {...{ htmlOptions }} />
-                </p>
+                </div>
             </>);
 
         } else if (std.isListOrSublist(child)) {

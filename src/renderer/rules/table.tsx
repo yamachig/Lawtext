@@ -58,7 +58,9 @@ export const HTMLTable = wrapHTMLComponent("HTMLTable", ((props: HTMLComponentPr
 
     return (
         <table className={`table indent-${indent}`}>
-            {rows.map((row, i) => <Fragment key={i}>{row}</Fragment>)}
+            <tbody>
+                {rows.map((row, i) => <Fragment key={i}>{row}</Fragment>)}
+            </tbody>
         </table>
     );
 }));

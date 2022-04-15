@@ -23,9 +23,9 @@ export const HTMLSupplNote = wrapHTMLComponent("HTMLSupplNote", ((props: HTMLCom
     const { el, htmlOptions, indent } = props;
 
     return (
-        <p className={`suppl-note indent-${indent}`}>
+        <div className={`suppl-note indent-${indent}`}>
             <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
-        </p>
+        </div>
     );
 }));
 

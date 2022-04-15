@@ -41,9 +41,9 @@ export const HTMLTOC = wrapHTMLComponent("HTMLTOC", ((props: HTMLComponentProps 
 
     if (TOCLabel) {
         blocks.push(<>
-            <p className={`toc-label indent-${indent}`}>
+            <div className={`toc-label indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={TOCLabel.children} {...{ htmlOptions }} />
-            </p>
+            </div>
         </>);
     }
 
@@ -131,10 +131,10 @@ export const HTMLTOCItem = wrapHTMLComponent("HTMLTOCItem", ((props: HTMLCompone
 
     if (TOCItemTitle || ArticleRange) {
         blocks.push(<>
-            <p className={`toc-item-main indent-${indent}`}>
+            <div className={`toc-item-main indent-${indent}`}>
                 {(TOCItemTitle !== undefined) && <HTMLSentenceChildrenRun els={TOCItemTitle.children} {...{ htmlOptions }} />}
                 {(ArticleRange !== undefined) && <HTMLSentenceChildrenRun els={ArticleRange.children} {...{ htmlOptions }} />}
-            </p>
+            </div>
         </>);
     }
 
@@ -159,9 +159,9 @@ export const HTMLTOCItem = wrapHTMLComponent("HTMLTOCItem", ((props: HTMLCompone
             while (j < el.children.length && (typeof el.children[j] === "string" || isSentenceChildEL(el.children[j] as EL))) j++;
             const sentenceChildren = el.children.slice(i, j) as (SentenceChildEL | string)[];
             blocks.push(<>
-                <p className={`toc-item-main indent-${indent}`}>
+                <div className={`toc-item-main indent-${indent}`}>
                     <HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />
-                </p>
+                </div>
             </>);
             i = j - 1;
 

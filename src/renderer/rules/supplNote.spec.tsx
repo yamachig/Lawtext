@@ -24,7 +24,7 @@ describe("Test HTML supplNote", () => {
             children: ["（罰則　第百十九条第一項第一号の二、同条第二項、第百二十一条第一項第一号）"],
         }) as std.SupplNote;
         const expectedHTML = /*html*/`\
-<p class="suppl-note indent-0">（罰則　第百十九条第一項第一号の二、同条第二項、第百二十一条第一項第一号）</p>
+<div class="suppl-note indent-0">（罰則　第百十九条第一項第一号の二、同条第二項、第百二十一条第一項第一号）</div>
 `;
         const element = <HTMLSupplNote el={input} indent={0} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);

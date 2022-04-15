@@ -43,9 +43,9 @@ export const HTMLArithFormulaRun = wrapHTMLComponent("HTMLArithFormulaRun", ((pr
         for (const rawBlock of rawBlocks) {
             if (Array.isArray(rawBlock)) {
                 blocks.push(<>
-                    <p className="arith-formula-runs">
+                    <div className="arith-formula-runs">
                         {rawBlock.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
-                    </p>
+                    </div>
                 </>);
             } else {
                 blocks.push(rawBlock);

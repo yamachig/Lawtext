@@ -117,7 +117,7 @@ ${rendered}
             ],
         }) as std.Sentence;
         const expectedHTML = /*html*/`\
-testtest1<span class="arith-formula" style="display:inline-block"><div class="paragraph-item-Item"><p class="paragraph-item-main indent-0"><span class="paragraph-item-title">一</span><span class="paragraph-item-margin">　</span><span class="paragraph-item-body"><span class="lawtext-column">法令</span><span class="lawtext-column-margin">　</span><span class="lawtext-column">法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</span></span></p></div></span>testtest2
+testtest1<span class="arith-formula" style="display:inline-block"><div class="paragraph-item-Item"><div class="paragraph-item-main indent-0"><span class="paragraph-item-title">一</span><span class="paragraph-item-margin">　</span><span class="paragraph-item-body"><span class="lawtext-column">法令</span><span class="lawtext-column-margin">　</span><span class="lawtext-column">法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</span></span></div></div></span>testtest2
 `;
         const element = <HTMLColumnsOrSentencesRun els={[input]} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);

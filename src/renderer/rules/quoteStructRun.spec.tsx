@@ -124,7 +124,7 @@ describe("Test HTML quoteStructRun", () => {
         const expectedHTML = /*html*/`\
 <span class="quote-struct" style="display:inline-block">
   <div class="item-struct">
-    <p class="item-struct-title indent-0">表一</p>
+    <div class="item-struct-title indent-0">表一</div>
     <div class="item-struct-body">
       <table class="table indent-0">
         <tr class="table-row">

@@ -4,13 +4,16 @@ import * as std from "../../law/std";
 // eslint-disable-next-line no-irregular-whitespace
 export const HTMLMarginSpan: React.FC<React.HTMLAttributes<HTMLSpanElement>> = props => <span {...props}>　</span>;
 
+export type WrapperComponentProps = {
+    htmlComponentID: string;
+    childProps: HTMLComponentProps;
+    ChildComponent: React.ComponentType<HTMLComponentProps>;
+};
 export interface HTMLOptions {
-    WrapperComponent?: React.ComponentType<React.PropsWithChildren<{
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        htmlComponentID: string;
-    }>>;
+    WrapComponent?: React.FC<WrapperComponentProps>;
     ControlRunComponent?: React.ComponentType<HTMLComponentProps & {el: std.__EL}>;
     renderControlEL?: boolean;
+    options?: object;
 }
 
 export interface HTMLComponentProps {
@@ -20,11 +23,13 @@ export interface HTMLComponentProps {
 export function wrapHTMLComponent<P, TComponentID extends string>(htmlComponentID: TComponentID, Component: React.ComponentType<P & HTMLComponentProps>) {
     const ret = ((props: P & HTMLComponentProps) => {
         const { htmlOptions } = props;
-        if (htmlOptions.WrapperComponent) {
+        if (htmlOptions.WrapComponent) {
             return (
-                <htmlOptions.WrapperComponent {...{ htmlComponentID }}>
-                    <Component {...props} />
-                </htmlOptions.WrapperComponent>
+                <htmlOptions.WrapComponent
+                    htmlComponentID={htmlComponentID}
+                    childProps={props}
+                    ChildComponent={Component as React.ComponentType<HTMLComponentProps>}
+                />
             );
         } else {
             return <Component {...props} />;

@@ -151,49 +151,49 @@ describe("Test HTML articleGroup", () => {
         }) as std.ArticleGroup;
         const expectedHTML = /*html*/`\
 <div class="article-group">
-  <p class="article-group-title indent-4">第三章　不利益処分</p>
-  <p class="empty">
+  <div class="article-group-title indent-4">第三章　不利益処分</div>
+  <div class="empty">
     <br/>
-  </p>
+  </div>
   <div class="article-group-body">
     <div class="article-group">
-      <p class="article-group-title indent-5">第一節　通則</p>
-      <p class="empty">
+      <div class="article-group-title indent-5">第一節　通則</div>
+      <div class="empty">
         <br/>
-      </p>
+      </div>
       <div class="article-group-body">
         <div class="article">
-          <p class="article-caption indent-2">（処分の基準）</p>
+          <div class="article-caption indent-2">（処分の基準）</div>
           <div class="article-body">
             <div class="paragraph-item-Paragraph">
-              <p class="paragraph-item-main indent-1">
+              <div class="paragraph-item-main indent-1">
                 <span class="paragraph-item-title">第十二条</span>
                 <span class="paragraph-item-margin">　</span>
                 <span class="paragraph-item-body">行政庁は、処分基準を定め、かつ、これを公にしておくよう努めなければならない。</span>
-              </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <p class="empty">
+    <div class="empty">
       <br/>
-    </p>
+    </div>
     <div class="article-group">
-      <p class="article-group-title indent-5">第二節　聴聞</p>
-      <p class="empty">
+      <div class="article-group-title indent-5">第二節　聴聞</div>
+      <div class="empty">
         <br/>
-      </p>
+      </div>
       <div class="article-group-body">
         <div class="article">
-          <p class="article-caption indent-2">（聴聞の通知の方式）</p>
+          <div class="article-caption indent-2">（聴聞の通知の方式）</div>
           <div class="article-body">
             <div class="paragraph-item-Paragraph">
-              <p class="paragraph-item-main indent-1">
+              <div class="paragraph-item-main indent-1">
                 <span class="paragraph-item-title">第十五条</span>
                 <span class="paragraph-item-margin">　</span>
                 <span class="paragraph-item-body">行政庁は、聴聞を行うに当たっては、聴聞を行うべき期日までに相当な期間をおいて、不利益処分の名あて人となるべき者に対し、次に掲げる事項を書面により通知しなければならない。</span>
-              </p>
+              </div>
             </div>
           </div>
         </div>

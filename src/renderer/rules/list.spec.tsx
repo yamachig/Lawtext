@@ -54,9 +54,9 @@ describe("Test HTML list", () => {
         }) as std.List;
         const expectedHTML = /*html*/`\
 <div class="list-List">
-  <p class="list-main indent-1">管区行政評価局</p>
+  <div class="list-main indent-1">管区行政評価局</div>
   <div class="list-Sublist1">
-    <p class="list-main indent-3">総合通信局</p>
+    <div class="list-main indent-3">総合通信局</div>
   </div>
 </div>
 `;

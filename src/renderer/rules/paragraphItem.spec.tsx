@@ -61,7 +61,7 @@ describe("Test HTML paragraphItem", () => {
         }) as std.Item;
         const expectedHTML = /*html*/`\
 <div class="paragraph-item-Item">
-  <p class="paragraph-item-main indent-1">
+  <div class="paragraph-item-main indent-1">
     <span class="paragraph-item-title">一</span>
     <span class="paragraph-item-margin">　</span>
     <span class="paragraph-item-body">
@@ -69,7 +69,7 @@ describe("Test HTML paragraphItem", () => {
       <span class="lawtext-column-margin">　</span>
       <span class="lawtext-column">法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</span>
     </span>
-  </p>
+  </div>
 </div>
 `;
         const element = <HTMLParagraphItem el={input} indent={1} htmlOptions={{}} />;

@@ -117,7 +117,7 @@ describe("Test HTML itemStruct", () => {
         }) as std.TableStruct;
         const expectedHTML = /*html*/`\
 <div class="item-struct">
-  <p class="item-struct-title indent-1">表一</p>
+  <div class="item-struct-title indent-1">表一</div>
   <div class="item-struct-body">
     <table class="table indent-1">
       <tr class="table-row">

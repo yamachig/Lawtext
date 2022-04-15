@@ -49,9 +49,9 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
 
     if (ItemStructTitle) {
         blocks.push(<>
-            <p className={`item-struct-title indent-${indent}`}>
+            <div className={`item-struct-title indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={ItemStructTitle.children} {...{ htmlOptions }} />
-            </p>
+            </div>
         </>);
     }
 
@@ -75,9 +75,9 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
 
         } else if (std.isFig(child)) {
             bodyBlocks.push(<>
-                <p className={`item-struct-runs indent-${indent}`}>
+                <div className={`item-struct-runs indent-${indent}`}>
                     <HTMLFigRun el={child} {...{ htmlOptions }} />
-                </p>
+                </div>
             </>);
 
         } else if (std.isNoteLike(child)) {

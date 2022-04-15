@@ -36,9 +36,9 @@ export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLCompone
 
     if (ArticleCaption) {
         blocks.push(<>
-            <p className={`article-caption indent-${indent + 1}`}>
+            <div className={`article-caption indent-${indent + 1}`}>
                 <HTMLSentenceChildrenRun els={ArticleCaption.children} {...{ htmlOptions }} />
-            </p>
+            </div>
         </>); /* >>>> INDENT >>>> */
     }
 

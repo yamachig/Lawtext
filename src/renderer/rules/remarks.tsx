@@ -40,9 +40,9 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
 
     if (RemarksLabel) {
         blocks.push(<>
-            <p className={`remarks-label indent-${indent}`}>
+            <div className={`remarks-label indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={RemarksLabel.children} {...{ htmlOptions }} />
-            </p>
+            </div>
         </>);
     }
 
@@ -56,9 +56,9 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
 
         } else if (std.isSentence(child)) {
             bodyBlocks.push(<>
-                <p className={`remarks-sentence indent-${indent + 1}`}>
+                <div className={`remarks-sentence indent-${indent + 1}`}>
                     <HTMLSentenceChildrenRun els={child.children} {...{ htmlOptions }} />
-                </p>
+                </div>
             </>);
 
         } else if (std.isItem(child)) {

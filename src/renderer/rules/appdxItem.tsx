@@ -48,7 +48,7 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
 
     if (AppdxItemTitle || RelatedArticleNum) {
         blocks.push(<>
-            <p className={`appdx-item-head indent-${indent}`}>
+            <div className={`appdx-item-head indent-${indent}`}>
                 {(AppdxItemTitle !== undefined) && <>
                     <span className="appdx-item-title">
                         <HTMLSentenceChildrenRun els={AppdxItemTitle.children} {...{ htmlOptions }} />
@@ -59,7 +59,7 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
                         <HTMLSentenceChildrenRun els={RelatedArticleNum.children} {...{ htmlOptions }} />
                     </span>
                 </>}
-            </p>
+            </div>
         </>);
     }
 
@@ -84,9 +84,9 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
 
         } else if (std.isArithFormula(child)) {
             bodyBlocks.push(<>
-                <p className={`appdx-item-runs indent-${indent}`}>
+                <div className={`appdx-item-runs indent-${indent}`}>
                     <HTMLArithFormulaRun el={child} {...{ htmlOptions }} />
-                </p>
+                </div>
             </>);
 
         }

@@ -136,36 +136,36 @@ describe("Test HTML law", () => {
         }) as std.Law;
         const expectedHTML = /*html*/`\
 <div class="law">
-  <p class="law-title indent-0">行政手続法</p>
-  <p class="law-num indent-0">（平成五年法律第八十八号）</p>
-  <p class="empty">
+  <div class="law-title indent-0">行政手続法</div>
+  <div class="law-num indent-0">（平成五年法律第八十八号）</div>
+  <div class="empty">
     <br/>
-  </p>
+  </div>
   <div class="law-body">
     <div class="main-provision">
       <div class="main-provision-body">
         <div class="article-group">
-          <p class="article-group-title indent-3">第一章　総則</p>
-          <p class="empty">
+          <div class="article-group-title indent-3">第一章　総則</div>
+          <div class="empty">
             <br/>
-          </p>
+          </div>
           <div class="article-group-body">
             <div class="article">
-              <p class="article-caption indent-1">（目的等）</p>
+              <div class="article-caption indent-1">（目的等）</div>
               <div class="article-body">
                 <div class="paragraph-item-Paragraph">
-                  <p class="paragraph-item-main indent-0">
+                  <div class="paragraph-item-main indent-0">
                     <span class="paragraph-item-title">第一条</span>
                     <span class="paragraph-item-margin">　</span>
                     <span class="paragraph-item-body">この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。</span>
-                  </p>
+                  </div>
                 </div>
                 <div class="paragraph-item-Paragraph">
-                  <p class="paragraph-item-main indent-0">
+                  <div class="paragraph-item-main indent-0">
                     <span class="paragraph-item-title">２</span>
                     <span class="paragraph-item-margin">　</span>
                     <span class="paragraph-item-body">処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。</span>
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>

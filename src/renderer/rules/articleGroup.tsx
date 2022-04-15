@@ -55,23 +55,23 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
 
     if (ArticleGroupTitle) {
         const titleIndent = std.articleGroupTitleTags.indexOf(ArticleGroupTitle.tag) + 2;
-        if (blocks.length > 0) blocks.push(<p className="empty"><br/></p>);
+        if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
         blocks.push(<>
-            <p className={`article-group-title indent-${indent + titleIndent}`}>
+            <div className={`article-group-title indent-${indent + titleIndent}`}>
                 <HTMLSentenceChildrenRun els={ArticleGroupTitle.children} {...{ htmlOptions }} />
-            </p>
+            </div>
         </>);
     }
 
     if (SupplProvisionLabel && std.isSupplProvision(el)) {
         const Extract = el.attr.Extract === "true" ? <><HTMLMarginSpan/>抄</> : "";
         const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
-        if (blocks.length > 0) blocks.push(<p className="empty"><br/></p>);
+        if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
         blocks.push(<>
-            <p className={`suppl-provision-label indent-${indent + 3}`}>
+            <div className={`suppl-provision-label indent-${indent + 3}`}>
                 <HTMLSentenceChildrenRun els={SupplProvisionLabel.children} {...{ htmlOptions }} />{AmendLawNum}
                 {Extract}
-            </p>
+            </div>
         </>);
     }
 
@@ -85,19 +85,19 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
             continue;
 
         } else if (std.isArticle(child)) {
-            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLArticle el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isParagraph(child)) {
-            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLParagraphItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isArticleGroup(child)) {
-            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLArticleGroup el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isSupplProvisionAppdxItem(child)) {
-            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLAppdxItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         }
@@ -113,7 +113,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
     );
 
     if (bodyBlocks.length > 0) {
-        if (blocks.length > 0) blocks.push(<p className="empty"><br/></p>);
+        if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
         blocks.push(<>
             <div className={`${classNameBase}-body`}>
                 {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}

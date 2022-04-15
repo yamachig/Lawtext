@@ -86,17 +86,17 @@ describe("Test HTML amendProvision", () => {
         }) as std.AmendProvision;
         const expectedHTML = /*html*/`\
 <div class="amend-provision">
-  <p class="amend-provision-main indent-1">第十七条の次に次の一条を加える。</p>
+  <div class="amend-provision-main indent-1">第十七条の次に次の一条を加える。</div>
   <div class="new-provision">
     <div class="article">
-      <p class="article-caption indent-3">（株式等の取得及び保有）</p>
+      <div class="article-caption indent-3">（株式等の取得及び保有）</div>
       <div class="article-body">
         <div class="paragraph-item-Paragraph">
-          <p class="paragraph-item-main indent-2">
+          <div class="paragraph-item-main indent-2">
             <span class="paragraph-item-title">第十七条の二</span>
             <span class="paragraph-item-margin">　</span>
             <span class="paragraph-item-body">機構は、科学技術・イノベーション創出の活性化に関する法律（平成二十年法律第六十三号）第三十四条の五第一項及び第二項の規定による株式又は新株予約権の取得及び保有を行うことができる。</span>
-          </p>
+          </div>
         </div>
       </div>
     </div>

@@ -104,9 +104,9 @@ export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JS
         } else if (std.isArticleGroupTitle(el)) {
             flushRuns();
             blocks.push(<>
-                <p className={`any-els-tag any-els-tag-${el.tag} indent-${indent}`}>
+                <div className={`any-els-tag any-els-tag-${el.tag} indent-${indent}`}>
                     <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
-                </p>
+                </div>
             </>);
         } else if (std.isSentence(el)) {
             let j = i + 1;
@@ -148,9 +148,9 @@ export const HTMLAnyELs = wrapHTMLComponent("HTMLAnyELs", ((props: HTMLComponent
     for (const rawBlock of rawBlocks) {
         if (Array.isArray(rawBlock)) {
             blocks.push(<>
-                <p className={`any-els-runs indent-${indent}`}>
+                <div className={`any-els-runs indent-${indent}`}>
                     {rawBlock.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
-                </p>
+                </div>
             </>);
         } else {
             blocks.push(rawBlock);

@@ -69,15 +69,15 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
 
     if (ParagraphCaption) {
         blocks.push(<>
-            <p className={`paragraph-caption indent-${indent + 1}`}>
+            <div className={`paragraph-caption indent-${indent + 1}`}>
                 <HTMLSentenceChildrenRun els={ParagraphCaption.children} {...{ htmlOptions }} />
-            </p>
+            </div>
         </>);
     }
 
     if (ParagraphItemTitle || ParagraphItemSentence) {
         blocks.push(<>
-            <p className={`paragraph-item-main indent-${indent}`}>
+            <div className={`paragraph-item-main indent-${indent}`}>
                 {Boolean(ParagraphItemTitle || ArticleTitle) && (<>
                     <span className={"paragraph-item-title"}>
                         {ParagraphItemTitle && <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />}
@@ -93,7 +93,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
                         {...{ htmlOptions }}
                     />
                 </span>
-            </p>
+            </div>
         </>);
     }
 

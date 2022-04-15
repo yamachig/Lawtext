@@ -43,9 +43,9 @@ export const HTMLQuoteStructRun = wrapHTMLComponent("HTMLQuoteStructRun", ((prop
         for (const rawBlock of rawBlocks) {
             if (Array.isArray(rawBlock)) {
                 blocks.push(<>
-                    <p className="quote-struct-runs">
+                    <div className="quote-struct-runs">
                         {rawBlock.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
-                    </p>
+                    </div>
                 </>);
             } else {
                 blocks.push(rawBlock);

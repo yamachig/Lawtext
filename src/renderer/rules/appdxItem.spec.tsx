@@ -76,10 +76,10 @@ describe("Test HTML appdxItem", () => {
         }) as std.AppdxItem;
         const expectedHTML = /*html*/`\
 <div class="appdx-item">
-  <p class="appdx-item-head indent-1">
+  <div class="appdx-item-head indent-1">
     <span class="appdx-item-title">付録別表第二</span>
     <span class="related-article-num">（第十九条、第二十一条関係）</span>
-  </p>
+  </div>
   <div class="appdx-item-body">
     <div class="item-struct">
       <div class="item-struct-body">

@@ -30,9 +30,9 @@ export const HTMLEnactStatement = wrapHTMLComponent("HTMLEnactStatement", ((prop
     const { el, htmlOptions, indent } = props;
 
     return (
-        <p className={`enact-statement indent-${indent}`}>
+        <div className={`enact-statement indent-${indent}`}>
             <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
-        </p>
+        </div>
     );
 }));
 
@@ -137,9 +137,9 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
 
     if (LawTitle) {
         blocks.push(<>
-            <p className={`law-title indent-${indent}`}>
+            <div className={`law-title indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={LawTitle.children} {...{ htmlOptions }} />
-            </p>
+            </div>
         </>);
     }
 
@@ -149,9 +149,9 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
         if (!/^[(（]/.test(LawNumString)) LawNumChildren.unshift("（");
         if (!/[)）]$/.test(LawNumString)) LawNumChildren.push("）");
         blocks.push(<>
-            <p className={`law-num indent-${indent}`}>
+            <div className={`law-num indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={LawNumChildren} {...{ htmlOptions }} />
-            </p>
+            </div>
         </>);
     }
 
@@ -164,23 +164,23 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
             continue;
 
         } else if (std.isTOC(child)) {
-            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLTOC el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isMainProvision(child) || std.isSupplProvision(child)) {
-            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLArticleGroup el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isAppdxItem(child)) {
-            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLAppdxItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isEnactStatement(child)) {
-            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLEnactStatement el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isPreamble(child)) {
-            if (bodyBlocks.length > 0) bodyBlocks.push(<p className="empty"><br/></p>);
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLPreamble el={child} indent={indent} {...{ htmlOptions }} />);
 
         }
@@ -188,7 +188,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
     }
 
     if (bodyBlocks.length > 0) {
-        if (blocks.length > 0) blocks.push(<p className="empty"><br/></p>);
+        if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
         blocks.push(<>
             <div className={"law-body"}>
                 {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}

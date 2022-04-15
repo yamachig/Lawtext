@@ -30,9 +30,9 @@ export const HTMLAmendProvision = wrapHTMLComponent("HTMLAmendProvision", ((prop
 
         if (std.isAmendProvisionSentence(child)) {
             blocks.push(<>
-                <p className={`amend-provision-main indent-${indent}`}>
+                <div className={`amend-provision-main indent-${indent}`}>
                     <HTMLColumnsOrSentencesRun els={child.children} {...{ htmlOptions }} />
-                </p>
+                </div>
             </>);
 
         } else if (std.isNewProvision(child)) {
