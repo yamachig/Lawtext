@@ -1,10 +1,11 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
-import { assertNever, NotImplementedError } from "../../util";
+import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
+import { DOCXSupplNote, HTMLSupplNote } from "./supplNote";
 
 
 export interface ArticleProps {
@@ -61,7 +62,7 @@ export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLCompone
             continue;
 
         } else if (child.tag === "SupplNote") {
-            throw new NotImplementedError(child.tag);
+            bodyBlocks.push(<HTMLSupplNote el={child} indent={indent} {...{ htmlOptions }}/>);
 
         }
         else { assertNever(child); }
@@ -122,7 +123,7 @@ export const DOCXArticle = wrapDOCXComponent("DOCXArticle", ((props: DOCXCompone
             continue;
 
         } else if (child.tag === "SupplNote") {
-            throw new NotImplementedError(child.tag);
+            bodyBlocks.push(<DOCXSupplNote el={child} indent={indent} {...{ docxOptions }}/>);
 
         }
         else { assertNever(child); }

@@ -18,6 +18,7 @@ import { DOCXNoteLike, HTMLNoteLike } from "./noteLike";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
+import { DOCXSupplNote, HTMLSupplNote } from "./supplNote";
 import { DOCXTable, HTMLTable } from "./table";
 
 export interface AnyELsProps {
@@ -79,6 +80,9 @@ export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JS
         } else if (std.isAmendProvision(el)) {
             flushRuns();
             blocks.push(<HTMLAmendProvision el={el} indent={indent} {...{ htmlOptions }} />);
+        } else if (std.isSupplNote(el)) {
+            flushRuns();
+            blocks.push(<HTMLSupplNote el={el} indent={indent} {...{ htmlOptions }} />);
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;
@@ -180,6 +184,9 @@ export const DOCXAnyELsToBlocks = (props: DOCXComponentProps & AnyELsProps): (JS
         } else if (std.isAmendProvision(el)) {
             flushRuns();
             blocks.push(<DOCXAmendProvision el={el} indent={indent} {...{ docxOptions }} />);
+        } else if (std.isSupplNote(el)) {
+            flushRuns();
+            blocks.push(<DOCXSupplNote el={el} indent={indent} {...{ docxOptions }} />);
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;

@@ -14,6 +14,7 @@ import { HTMLNoteLikeCSS } from "./noteLike";
 import { HTMLParagraphItemCSS } from "./paragraphItem";
 import { HTMLRemarksCSS } from "./remarks";
 import { HTMLSentenceChildrenRunCSS } from "./sentenceChildrenRun";
+import { HTMLSupplNoteCSS } from "./supplNote";
 import { HTMLTableCSS } from "./table";
 
 export const HTMLIndentCSS = [...range(0, 30)]
@@ -26,8 +27,6 @@ export const HTMLIndentCSS = [...range(0, 30)]
 export const htmlCSS = [
     HTMLIndentCSS,
     HTMLAnyELsCSS,
-    HTMLSentenceChildrenRunCSS,
-    HTMLColumnsOrSentencesRunCSS,
     HTMLLawCSS,
     HTMLArticleGroupCSS,
     HTMLArticleCSS,
@@ -39,6 +38,10 @@ export const htmlCSS = [
     HTMLNoteLikeCSS,
     HTMLListCSS,
     HTMLAmendProvisionCSS,
+    HTMLSupplNoteCSS,
+
+    HTMLSentenceChildrenRunCSS,
+    HTMLColumnsOrSentencesRunCSS,
     HTMLFigRunCSS,
     HTMLArithFormulaRunCSS,
 ].join("\n");
