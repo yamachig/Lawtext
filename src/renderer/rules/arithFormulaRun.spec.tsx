@@ -11,7 +11,7 @@ import { promisify } from "util";
 import fs from "fs";
 import os from "os";
 import { renderDocxAsync, w } from "./docx";
-import { DOCXColumnsOrSentencesRun } from "./columnsOrSentencesRun";
+import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 
 const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
@@ -31,9 +31,7 @@ describe("Test HTML arithFormulaRun", () => {
             ],
         }) as std.ArithFormula;
         const expectedHTML = /*html*/`\
-<span class="arith-formula" style="display:inline-block">
-  <p class="any-els-runs indent-0">Ｐｃ′／Ｐｃ×０．８＋Ｐｉ′／Ｐｉ×０．２</p>
-</span>
+<span class="arith-formula">Ｐｃ′／Ｐｃ×０．８＋Ｐｉ′／Ｐｉ×０．２</span>
 `;
         const element = <HTMLArithFormulaRun el={input} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
@@ -57,7 +55,93 @@ ${rendered}
 </body>
 </html>
 `;
-        const tempParsedHtml = path.join(tempDir, "renderer.arithFormulaRun.html");
+        const tempParsedHtml = path.join(tempDir, "renderer.arithFormulaRun-1.html");
+        await promisify(fs.writeFile)(tempParsedHtml, html);
+        console.log(`      Saved html: ${tempParsedHtml}`);
+    });
+
+    it("Success case", async () => {
+        const input = loadEl({
+            tag: "Sentence",
+            attr: {},
+            children: [
+                "testtest1",
+                {
+                    tag: "ArithFormula",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Item",
+                            attr: {
+                                Delete: "false",
+                            },
+                            children: [
+                                {
+                                    tag: "ItemTitle",
+                                    attr: {},
+                                    children: ["一"],
+                                },
+                                {
+                                    tag: "ItemSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Column",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: ["法令"],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            tag: "Column",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: ["法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。"],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                "testtest2",
+            ],
+        }) as std.Sentence;
+        const expectedHTML = /*html*/`\
+testtest1<span class="arith-formula" style="display:inline-block"><div class="paragraph-item-Item"><p class="paragraph-item-main indent-0"><span class="paragraph-item-title">一</span><span class="paragraph-item-margin">　</span><span class="paragraph-item-body"><span class="lawtext-column">法令</span><span class="lawtext-column-margin">　</span><span class="lawtext-column">法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。</span></span></p></div></span>testtest2
+`;
+        const element = <HTMLColumnsOrSentencesRun els={[input]} htmlOptions={{}} />;
+        const rendered = renderToStaticMarkup(element);
+        console;
+        const formatted = formatXML(rendered, { collapseContent: true });
+        assert.strictEqual(
+            formatted,
+            expectedHTML,
+        );
+        const html = /*html*/`\
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+${htmlCSS}
+</style>
+</head>
+<body>
+${rendered}
+</body>
+</html>
+`;
+        const tempParsedHtml = path.join(tempDir, "renderer.arithFormulaRun-2.html");
         await promisify(fs.writeFile)(tempParsedHtml, html);
         console.log(`      Saved html: ${tempParsedHtml}`);
     });

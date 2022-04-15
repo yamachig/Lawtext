@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXComponentProps, wrapDOCXComponent, w, wp, wps, a } from "./docx";
-import { DOCXAnyELsToBlocks, HTMLAnyELs } from "./any";
+import { DOCXAnyELsToBlocks, HTMLAnyELsToBlocks } from "./any";
 
 
 export interface ArithFormulaRunProps {
@@ -20,11 +20,43 @@ export const HTMLArithFormulaRun = wrapHTMLComponent("HTMLArithFormulaRun", ((pr
 
     const { el, htmlOptions } = props;
 
-    return (
-        <span className="arith-formula" style={{ display: "inline-block" }}>
-            <HTMLAnyELs els={el.children} indent={0} {...{ htmlOptions }} />
-        </span>
-    );
+    const rawBlocks = HTMLAnyELsToBlocks({
+        els: el.children,
+        indent: 0,
+        htmlOptions,
+    });
+
+    if (rawBlocks.every(Array.isArray)) {
+        const runs = (rawBlocks as JSX.Element[][]).flat();
+
+        return (<>
+            <span className="arith-formula">
+                {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+            </span>
+        </>);
+
+    } else {
+
+        const blocks: JSX.Element[] = [];
+
+        for (const rawBlock of rawBlocks) {
+            if (Array.isArray(rawBlock)) {
+                blocks.push(<>
+                    <p className="arith-formula-runs">
+                        {rawBlock.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+                    </p>
+                </>);
+            } else {
+                blocks.push(rawBlock);
+            }
+        }
+
+        return (
+            <span className="arith-formula" style={{ display: "inline-block" }}>
+                {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            </span>
+        );
+    }
 }));
 
 export const DOCXArithFormulaRun = wrapDOCXComponent("DOCXArithFormulaRun", ((props: DOCXComponentProps & ArithFormulaRunProps) => {
