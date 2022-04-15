@@ -231,7 +231,7 @@ export const downloadLawtext = async (
 export const downloadXml = async (
     law: std.Law,
 ): Promise<void> => {
-    const xml = renderer.renderXml(law);
+    const xml = renderer.renderXML(law);
     const blob = new Blob(
         [xml],
         { type: "application/xml" },

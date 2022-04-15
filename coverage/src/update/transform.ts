@@ -3,7 +3,7 @@ import { DOMParser } from "@xmldom/xmldom";
 import * as law_diff from "lawtext/dist/src/diff/law_diff";
 import { parse } from "lawtext/dist/src/parser/lawtext";
 import * as analyzer from "lawtext/dist/src/analyzer";
-import { render as renderLawtext } from "lawtext/dist/src/renderer/lawtext";
+import { renderLawtext } from "lawtext/dist/src/renderer";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
 import { EL, xmlToJson } from "lawtext/dist/src/node/el";
 import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
