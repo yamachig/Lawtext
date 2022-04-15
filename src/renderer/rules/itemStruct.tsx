@@ -22,15 +22,9 @@ export const HTMLItemStructCSS = /*css*/`
 
 .item-struct-title {
     clear: both;
-    margin-top: 0;
-    margin-bottom: 0;
     font-weight: bold;
 }
 
-.item-struct-runs {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 `;
 
 export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLComponentProps & ItemStructProps) => {

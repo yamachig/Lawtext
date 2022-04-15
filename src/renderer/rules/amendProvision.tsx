@@ -14,8 +14,6 @@ export interface AmendProvisionProps {
 
 export const HTMLAmendProvisionCSS = /*css*/`
 .amend-provision-main {    
-    margin-top: 0;
-    margin-bottom: 0;
     text-indent: 1em;
 }
 `;

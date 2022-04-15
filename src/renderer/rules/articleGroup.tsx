@@ -26,8 +26,6 @@ export const HTMLArticleGroupCSS = /*css*/`
 
 .article-group-title {
     clear: both;
-    margin-top: 0;
-    margin-bottom: 0;
     font-weight: bold;
 }
 
@@ -37,8 +35,6 @@ export const HTMLArticleGroupCSS = /*css*/`
 
 .suppl-provision-label {
     clear: both;
-    margin-top: 0;
-    margin-bottom: 0;
     font-weight: bold;
 }
 `;

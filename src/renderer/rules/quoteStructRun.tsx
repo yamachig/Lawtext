@@ -11,10 +11,6 @@ export interface QuoteStructRunProps {
 }
 
 export const HTMLQuoteStructRunCSS = /*css*/`
-.quote-struct-runs {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 `;
 
 export const HTMLQuoteStructRun = wrapHTMLComponent("HTMLQuoteStructRun", ((props: HTMLComponentProps & QuoteStructRunProps) => {

@@ -28,10 +28,6 @@ export const HTMLIndentCSS = [...range(0, 30)]
 `).join("\n");
 
 export const HTMLAdditionalCSS = /*css*/`
-.empty {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 `;
 
 export const htmlCSS = [

@@ -18,10 +18,6 @@ export const HTMLArticleCSS = /*css*/`
     clear: both;
 }
 
-.article-caption {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 `;
 
 export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLComponentProps & ArticleProps) => {

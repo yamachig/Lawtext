@@ -19,15 +19,9 @@ export const HTMLRemarksCSS = /*css*/`
 
 .remarks-label {
     clear: both;
-    margin-top: 0;
-    margin-bottom: 0;
     font-weight: bold;
 }
 
-.remarks-sentence {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 `;
 
 export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLComponentProps & RemarksProps) => {

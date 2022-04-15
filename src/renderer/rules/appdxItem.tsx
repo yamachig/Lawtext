@@ -22,15 +22,9 @@ export const HTMLAppdxItemCSS = /*css*/`
 
 .appdx-item-head {
     clear: both;
-    margin-top: 0;
-    margin-bottom: 0;
     font-weight: bold;
 }
 
-.appdx-item-runs {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 `;
 
 export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLComponentProps & AppdxItemProps) => {

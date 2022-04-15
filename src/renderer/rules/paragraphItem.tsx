@@ -41,14 +41,8 @@ ${
     font-weight: bold;
 }
 
-.paragraph-caption {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 
 .paragraph-item-main {
-    margin-top: 0;
-    margin-bottom: 0;
     padding-left: 1em;
     text-indent: -1em;
 }

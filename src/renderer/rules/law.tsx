@@ -20,8 +20,6 @@ export interface EnactStatementProps {
 export const HTMLEnactStatementCSS = /*css*/`
 .enact-statement {
     clear: both;
-    margin-top: 0;
-    margin-bottom: 0;
 }
 `;
 
@@ -57,8 +55,6 @@ export interface PreambleProps {
 export const HTMLPreambleCSS = /*css*/`
 .preamble {
     clear: both;
-    margin-top: 0;
-    margin-bottom: 0;
 }
 `;
 
@@ -114,14 +110,10 @@ export interface LawProps {
 
 export const HTMLLawCSS = /*css*/`
 .law-title {
-    margin-top: 0;
-    margin-bottom: 0;
     font-weight: bold;
 }
 
 .law-num {
-    margin-top: 0;
-    margin-bottom: 0;
     font-weight: bold;
 }
 `;

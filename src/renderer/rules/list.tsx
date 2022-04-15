@@ -13,8 +13,6 @@ export interface ListProps {
 
 export const HTMLListCSS = /*css*/`
 .list-main {    
-    margin-top: 0;
-    margin-bottom: 0;
 }
 `;
 

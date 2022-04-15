@@ -13,8 +13,6 @@ export interface SupplNoteProps {
 export const HTMLSupplNoteCSS = /*css*/`
 .suppl-note {
     clear: both;
-    margin-top: 0;
-    margin-bottom: 0;
 }
 `;
 

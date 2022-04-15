@@ -28,15 +28,7 @@ export interface AnyELsProps {
 }
 
 export const HTMLAnyELsCSS = /*css*/`
-.any-els-tag {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 
-.any-els-runs {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 `;
 
 export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JSX.Element[] | JSX.Element)[] => {

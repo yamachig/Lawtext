@@ -20,15 +20,9 @@ export const HTMLTOCCSS = /*css*/`
 
 .toc-label {
     clear: both;
-    margin-top: 0;
-    margin-bottom: 0;
     font-weight: bold;
 }
 
-.toc-item-main {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 `;
 
 export const HTMLTOC = wrapHTMLComponent("HTMLTOC", ((props: HTMLComponentProps & TOCProps) => {

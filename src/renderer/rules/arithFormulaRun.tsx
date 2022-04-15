@@ -11,10 +11,6 @@ export interface ArithFormulaRunProps {
 }
 
 export const HTMLArithFormulaRunCSS = /*css*/`
-.arith-formula-runs {
-    margin-top: 0;
-    margin-bottom: 0;
-}
 `;
 
 export const HTMLArithFormulaRun = wrapHTMLComponent("HTMLArithFormulaRun", ((props: HTMLComponentProps & ArithFormulaRunProps) => {
