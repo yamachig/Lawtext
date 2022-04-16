@@ -7,6 +7,8 @@ import { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/rend
 import { LawViewOptions } from "./common";
 import { useObserved } from "./useObserved";
 import { WrapHTMLControlRun } from "./ControlRun";
+import { EL } from "lawtext/dist/src/node/el";
+import * as std from "lawtext/dist/src/law/std";
 
 
 export const useAfterMountTasks = (origSetState: OrigSetLawtextAppPageState) => {
@@ -104,9 +106,16 @@ class LawErrorCatcher extends ErrorCatcher {
 export const WrapLawComponent: React.FC<WrapperComponentProps> = props => {
     const { htmlComponentID, childProps, ChildComponent } = props;
     const options = childProps.htmlOptions.options as LawViewOptions;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const el = (childProps as any).el;
+
+    const elID = (el instanceof EL) && (std.isLaw(el) || std.isPreamble(el) || std.isTOC(el) || std.isAppdxItem(el) || std.isSupplProvisionAppdxItem(el) || std.isSupplProvision(el) || std.isArticleGroup(el) || std.isArticle(el)) && el.id;
 
     return (<>
         <LawErrorCatcher onError={options.onError}>
+            {(typeof elID === "number") && <>
+                <a className="law-anchor" data-el_id={elID.toString()} />
+            </>}
             {
                 (htmlComponentID === "HTMLSentenceChildrenRun")
                     ? <>

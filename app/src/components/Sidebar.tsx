@@ -190,20 +190,19 @@ const LawNavDiv = styled.div`
 `;
 
 
-const NavLawTitle: React.FC<{lawTitle: std.LawTitle, indent: number}> = props => {
+const NavLaw: React.FC<{law: std.Law, indent: number}> = props => {
     const onClick = () => {
-        scrollToLawAnchor(props.lawTitle.id.toString());
+        scrollToLawAnchor(props.law.id.toString());
     };
 
     return (
         <TOCItemDiv
-            key={props.lawTitle.id}
             style={{
                 paddingLeft: (props.indent + 2) + "em",
             }}
             onClick={onClick}
         >
-            {props.lawTitle.text}
+            {props.law.children.find(std.isLawBody)?.children.find(std.isLawTitle)?.text ?? ""}
         </TOCItemDiv>
     );
 };
@@ -215,7 +214,6 @@ const NavEnactStatement: React.FC<{enactStatement: std.EnactStatement, indent: n
 
     return (
         <TOCItemDiv
-            key={props.enactStatement.id}
             style={{
                 paddingLeft: (props.indent + 2) + "em",
             }}
@@ -233,7 +231,6 @@ const NavPreamble: React.FC<{preamble: std.Preamble, indent: number}> = props =>
 
     return (
         <TOCItemDiv
-            key={props.preamble.id}
             style={{
                 paddingLeft: (props.indent + 2) + "em",
             }}
@@ -253,7 +250,6 @@ const NavTOC: React.FC<{toc: std.TOC, indent: number}> = props => {
 
     return tocLabel ? (
         <TOCItemDiv
-            key={props.toc.id}
             style={{
                 paddingLeft: (props.indent + 2) + "em",
             }}
@@ -269,17 +265,17 @@ const NavArticleGroup: React.FC<{
     indent: number,
 }> = props => {
     return (<>
-        {[...props.articleGroup.children].map((el) => {
-            if (el.tag === "Part" || el.tag === "Chapter" || el.tag === "Section" || el.tag === "Subsection" || el.tag === "Division") {
+        {[...props.articleGroup.children].map((el, i) => {
+            if (std.isArticleGroup(el)) {
                 return <NavArticleGroup
-                    key={el.id}
+                    key={i}
                     articleGroup={el}
                     indent={props.articleGroup.tag === "MainProvision" ? props.indent : props.indent + 1}
                 />;
 
-            } else if (el.tag === "Article") {
+            } else if (std.isArticle(el)) {
                 return <NavArticle
-                    key={el.id}
+                    key={i}
                     article={el}
                     indent={props.articleGroup.tag === "MainProvision" ? props.indent : props.indent + 1}
                 />;
@@ -291,7 +287,7 @@ const NavArticleGroup: React.FC<{
 
                 return (
                     <TOCItemDiv
-                        key={el.id}
+                        key={i}
                         style={{
                             paddingLeft: (props.indent + 2) + "em",
                         }}
@@ -305,8 +301,7 @@ const NavArticleGroup: React.FC<{
             } else {
                 console.error(`unexpected element! ${JSON.stringify(el, undefined, 2)}`);
                 return <NavAnyLaw
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    key={(el as any).id}
+                    key={i}
                     el={el}
                     indent={props.indent}
                 />;
@@ -334,7 +329,6 @@ const NavArticle: React.FC<{article: std.Article, indent: number}> = props => {
 
         return (
             <TOCItemDiv
-                key={props.article.id}
                 style={{
                     paddingLeft: (props.indent + 2) + "em",
                 }}
@@ -364,7 +358,6 @@ const NavSupplProvision: React.FC<{supplProvision: std.SupplProvision, indent: n
 
         return (
             <TOCItemDiv
-                key={props.supplProvision.id}
                 style={{
                     paddingLeft: (props.indent + 2) + "em",
                 }}
@@ -389,7 +382,6 @@ const NavAppdxTable: React.FC<{appdxTable: std.AppdxTable, indent: number}> = pr
 
         return (
             <TOCItemDiv
-                key={props.appdxTable.id}
                 style={{
                     paddingLeft: (props.indent + 2) + "em",
                 }}
@@ -413,7 +405,6 @@ const NavAppdxStyle: React.FC<{appdxStyle: std.AppdxStyle, indent: number}> = pr
         };
         return (
             <TOCItemDiv
-                key={props.appdxStyle.id}
                 style={{
                     paddingLeft: (props.indent + 2) + "em",
                 }}
@@ -437,7 +428,6 @@ const NavAppdxFig: React.FC<{appdxFig: std.AppdxFig, indent: number}> = props =>
         };
         return (
             <TOCItemDiv
-                key={props.appdxFig.id}
                 style={{
                     paddingLeft: (props.indent + 2) + "em",
                 }}
@@ -461,7 +451,6 @@ const NavAppdxFormat: React.FC<{appdxFig: std.AppdxFormat, indent: number}> = pr
         };
         return (
             <TOCItemDiv
-                key={props.appdxFig.id}
                 style={{
                     paddingLeft: (props.indent + 2) + "em",
                 }}
@@ -485,7 +474,6 @@ const NavAppdxNote: React.FC<{appdxFig: std.AppdxNote, indent: number}> = props 
         };
         return (
             <TOCItemDiv
-                key={props.appdxFig.id}
                 style={{
                     paddingLeft: (props.indent + 2) + "em",
                 }}
@@ -510,7 +498,6 @@ const NavAppdx: React.FC<{appdxFig: std.Appdx, indent: number}> = props => {
         };
         return (
             <TOCItemDiv
-                key={props.appdxFig.id}
                 style={{
                     paddingLeft: (props.indent + 2) + "em",
                 }}
@@ -534,7 +521,6 @@ const NavAnyLaw: React.FC<{el: EL, indent: number}> = props => {
         };
         return (
             <TOCItemDiv
-                key={props.el.id}
                 style={{
                     paddingLeft: (props.indent + 2) + "em",
                 }}
@@ -552,31 +538,31 @@ const NavAnyLaw: React.FC<{el: EL, indent: number}> = props => {
 const LawBody: React.FC<{lawBody: std.LawBody}> = props => {
     return (
         <>
-            {props.lawBody.children.map(el => {
+            {props.lawBody.children.map((el, i) => {
                 if (el.tag === "LawTitle") {
-                    return <NavLawTitle key={el.id} lawTitle={el} indent={0} />;
+                    return null;
                 } else if (el.tag === "EnactStatement") {
-                    return <NavEnactStatement key={el.id} enactStatement={el} indent={0} />;
+                    return <NavEnactStatement key={i} enactStatement={el} indent={0} />;
                 } else if (el.tag === "TOC") {
-                    return <NavTOC key={el.id} toc={el} indent={0} />;
+                    return <NavTOC key={i} toc={el} indent={0} />;
                 } else if (el.tag === "Preamble") {
-                    return <NavPreamble key={el.id} preamble={el} indent={0} />;
+                    return <NavPreamble key={i} preamble={el} indent={0} />;
                 } else if (el.tag === "MainProvision") {
-                    return <NavArticleGroup key={el.id} articleGroup={el} indent={0} />;
+                    return <NavArticleGroup key={i} articleGroup={el} indent={0} />;
                 } else if (el.tag === "SupplProvision") {
-                    return <NavSupplProvision key={el.id} supplProvision={el} indent={0} />;
+                    return <NavSupplProvision key={i} supplProvision={el} indent={0} />;
                 } else if (el.tag === "AppdxTable") {
-                    return <NavAppdxTable key={el.id} appdxTable={el} indent={0} />;
+                    return <NavAppdxTable key={i} appdxTable={el} indent={0} />;
                 } else if (el.tag === "AppdxStyle") {
-                    return <NavAppdxStyle key={el.id} appdxStyle={el} indent={0} />;
+                    return <NavAppdxStyle key={i} appdxStyle={el} indent={0} />;
                 } else if (el.tag === "AppdxFig") {
-                    return <NavAppdxFig key={el.id} appdxFig={el} indent={0} />;
+                    return <NavAppdxFig key={i} appdxFig={el} indent={0} />;
                 } else if (el.tag === "AppdxNote") {
-                    return <NavAppdxNote key={el.id} appdxFig={el} indent={0} />;
+                    return <NavAppdxNote key={i} appdxFig={el} indent={0} />;
                 } else if (el.tag === "AppdxFormat") {
-                    return <NavAppdxFormat key={el.id} appdxFig={el} indent={0} />;
+                    return <NavAppdxFormat key={i} appdxFig={el} indent={0} />;
                 } else if (el.tag === "Appdx") {
-                    return <NavAppdx key={el.id} appdxFig={el} indent={0} />;
+                    return <NavAppdx key={i} appdxFig={el} indent={0} />;
                 } else {
                     return assertNever(el);
                 }
@@ -590,6 +576,7 @@ const NavBlock: React.FC<{law: std.Law | null}> = props => {
         const lawBody = props.law.children.find((el) => el.tag === "LawBody") as std.LawBody;
         return (
             <LawNavDiv>
+                <NavLaw law={props.law} indent={0} />
                 <LawBody lawBody={lawBody}/>
             </LawNavDiv>
         );
