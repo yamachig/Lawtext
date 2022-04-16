@@ -1,10 +1,10 @@
-import $ from "jquery";
 import * as std from "lawtext/dist/src/law/std";
 import { EL } from "lawtext/dist/src/node/el";
 import * as renderer from "lawtext/dist/src/renderer";
 import render_lawtext from "lawtext/dist/src/renderer/lawtext";
 import { saveAs } from "file-saver";
 import { getLawTitleWithNum } from "@appsrc/law_util";
+import { newStdEL } from "lawtext/dist/src/law/std";
 
 
 interface SelectionRange {
@@ -26,17 +26,21 @@ interface SelectionRange {
 const tobeDownloadedRange = (): SelectionRange | null => {
     const getPos = (node: Node) => {
         if (!node.parentNode) return null;
-        const el = $(node.parentNode as HTMLElement);
+        const el = node.parentNode as HTMLElement;
 
-        const containerEl = el.data("container_info")
-            ? el
-            : el.parents("[data-container_info]").last();
-        if (!containerEl) return null;
-        const containerInfo = containerEl.data("container_info");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const findData = (el: HTMLElement, key: string): any | null => {
+            const containerInfo = el.parentElement
+                ? findData(el.parentElement as HTMLElement, key)
+                : null;
+            if (containerInfo) return containerInfo;
+            return el.dataset[key] ? JSON.parse(el.dataset[key] ?? "") : null;
+        };
 
-        const toplevelContainerEl = el.closest("[data-toplevel_container_info]");
-        if (!toplevelContainerEl) return null;
-        const toplevelContainerInfo = toplevelContainerEl.data("toplevel_container_info");
+        const containerInfo = findData(el, "container_info");
+
+        const toplevelContainerInfo = findData(el, "toplevel_container_info");
+        if (!toplevelContainerInfo) return null;
 
         return {
             container_tag: toplevelContainerInfo.tag,
@@ -77,19 +81,19 @@ const getLawRange = (origLaw: EL, range: SelectionRange) => {
         origLaw.attr,
     );
 
-    const origLawNum = origLaw.children.find((el) => typeof el !== "string" && el.tag === "LawNum") as EL;
+    const origLawNum = origLaw.children.find(std.isLawNum);
     if (origLawNum) {
         law.append(origLawNum);
     }
 
-    const origLawBody = origLaw.children.find((el) => typeof el !== "string" && el.tag === "LawBody") as EL;
-    const lawBody = new EL(
-        origLawBody.tag,
-        origLawBody.attr,
+    const origLawBody = origLaw.children.find(std.isLawBody);
+    const lawBody = newStdEL(
+        "LawBody",
+        origLawBody?.attr ?? {},
     );
     law.append(lawBody);
 
-    const origLawTitle = origLawBody.children.find((el) => typeof el !== "string" && el.tag === "LawTitle");
+    const origLawTitle = origLawBody?.children.find(std.isLawTitle);
     if (origLawTitle) {
         lawBody.append(origLawTitle);
     }
@@ -108,7 +112,7 @@ const getLawRange = (origLaw: EL, range: SelectionRange) => {
         return ret;
     };
 
-    for (const toplevel of origLawBody.children) {
+    for (const toplevel of origLawBody?.children ?? []) {
         const toplevelInfo = containerInfoOf(toplevel);
         if (typeof toplevel === "string") continue;
         if (
@@ -177,7 +181,7 @@ const getLawRange = (origLaw: EL, range: SelectionRange) => {
         }
 
         if (containerChildren.length > 0) {
-            const supplProvisionLabel = toplevel.children.find((el) => typeof el !== "string" && el.tag === "SupplProvisionLabel");
+            const supplProvisionLabel = (toplevel.children as (typeof toplevel.children)[number][]).find(std.isSupplProvisionLabel);
             if (supplProvisionLabel) containerChildren.unshift(supplProvisionLabel);
             lawBody.append(new EL(
                 toplevel.tag,

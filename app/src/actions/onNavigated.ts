@@ -3,7 +3,6 @@ import * as util from "lawtext/dist/src/util";
 import { LawDataResult, Timing, toLawData } from "lawtext/dist/src/data/lawdata";
 import { navigateLawData } from "@appsrc/lawdata/navigateLawData";
 import { downloadLawtext } from "./download";
-import $ from "jquery";
 import { getLawTitleWithNum } from "@appsrc/law_util";
 import { showErrorModal } from "./showErrorModal";
 import { LawDataProps } from "@appsrc/lawdata/common";
@@ -74,15 +73,15 @@ export const onNavigated = async (
         console.error("onNavigated: error during loading the law...");
         console.error(lawDataResult.error);
         const errStr = lawDataResult.error.toString();
-        const pre = $("<pre>")
-            .css({ "white-space": "pre-wrap" })
-            .css({ "line-height": "1.2em" })
-            .css({ "padding": "1em 0" })
-            .html(errStr);
+        const pre = document.createElement("pre");
+        pre.textContent = errStr;
+        pre.style.whiteSpace = "pre-wrap";
+        pre.style.lineHeight = "1.2em";
+        pre.style.padding = "1em 0";
 
         showErrorModal(
             "法令の読み込み時にエラーが発生しました",
-            (pre[0]).outerHTML,
+            pre.outerHTML,
         );
 
         origSetState(s => ({

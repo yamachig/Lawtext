@@ -9,6 +9,7 @@ import { useObserved } from "./useObserved";
 import { WrapHTMLControlRun } from "./ControlRun";
 import { EL } from "lawtext/dist/src/node/el";
 import * as std from "lawtext/dist/src/law/std";
+import { containerInfoOf } from "../actions/download";
 
 
 export const useAfterMountTasks = (origSetState: OrigSetLawtextAppPageState) => {
@@ -111,24 +112,50 @@ export const WrapLawComponent: React.FC<WrapperComponentProps> = props => {
 
     const elID = (el instanceof EL) && (std.isLaw(el) || std.isPreamble(el) || std.isTOC(el) || std.isAppdxItem(el) || std.isSupplProvisionAppdxItem(el) || std.isSupplProvision(el) || std.isArticleGroup(el) || std.isArticle(el)) && el.id;
 
+    const dataset = []as [string, unknown][];
+
+    if (
+        (el instanceof EL)
+        && (std.isTOC(el) || std.isAppdxItem(el) || std.isSupplProvision(el) || std.isMainProvision(el))
+    ){
+        dataset.push(["data-toplevel_container_info", JSON.stringify(containerInfoOf(el))]);
+    }
+
+    if (
+        (el instanceof EL)
+        && (std.isArticle(el) || std.isParagraph(el))
+    ){
+        dataset.push(["data-container_info", JSON.stringify(containerInfoOf(el))]);
+    }
+
+    const DatasetWrapper = (
+        dataset.length === 0
+            ? React.Fragment
+            : (props: React.PropsWithChildren<unknown>) => {
+                return <div {...props} {...Object.fromEntries(dataset)} />;
+            }
+    );
+
     return (<>
         <LawErrorCatcher onError={options.onError}>
             {(typeof elID === "number") && <>
                 <a className="law-anchor" data-el_id={elID.toString()} />
             </>}
-            {
-                (htmlComponentID === "HTMLSentenceChildrenRun")
-                    ? <>
-                        <WrapHTMLSentenceChildrenRun {...props}/>
-                    </>
-                    : (htmlComponentID === "HTMLControlRun")
+            <DatasetWrapper>
+                {
+                    (htmlComponentID === "HTMLSentenceChildrenRun")
                         ? <>
-                            <WrapHTMLControlRun {...props}/>
+                            <WrapHTMLSentenceChildrenRun {...props}/>
                         </>
-                        : <>
-                            <ChildComponent {...childProps} />
-                        </>
-            }
+                        : (htmlComponentID === "HTMLControlRun")
+                            ? <>
+                                <WrapHTMLControlRun {...props}/>
+                            </>
+                            : <>
+                                <ChildComponent {...childProps} />
+                            </>
+                }
+            </DatasetWrapper>
         </LawErrorCatcher>
     </>);
 };
