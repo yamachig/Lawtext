@@ -94,7 +94,7 @@ export const styles = (
             </w.pPr>
         </w.style> */}
 
-        {[...range(0, 11)].map(i => (<>
+        {[...range(0, 11)].map(i => (<React.Fragment key={100 + i}>
 
             {/* <w.style w:type="paragraph" w:customStyle="1" w:styleId={`Subitem${i}`}>
                 <w.name w:val={`01-${(i + 2).toString().padStart(2, "0")} 号の細分${i}`}/>
@@ -132,9 +132,9 @@ export const styles = (
                 </w.tblPr>
             </w.style>
 
-        </>))}
+        </React.Fragment>))}
 
-        {[...range(0, 11)].map(i => (<>
+        {[...range(0, 11)].map(i => (<React.Fragment key={200 + i}>
             <w.style w:type="paragraph" w:customStyle="1" w:styleId={`IndentFirstLine${i}`}>
                 <w.name w:val={`04-${(i).toString().padStart(2, "0")} 字下げインデント${i}`}/>
                 <w.basedOn w:val="DefaultParagraph"/>
@@ -143,7 +143,7 @@ export const styles = (
                     <w.ind w:leftChars={`${i * 100}`} w:firstLineChars="100"/>
                 </w.pPr>
             </w.style>
-        </>))}
+        </React.Fragment>))}
 
     </w.styles>
 );
