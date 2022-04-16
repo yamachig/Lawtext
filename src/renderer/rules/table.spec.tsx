@@ -153,44 +153,46 @@ describe("Test HTML table", () => {
         }) as std.Table;
         const expectedHTML = /*html*/`\
 <table class="table indent-0">
-  <tr class="table-row">
-    <th class="table-header-column">
-      <div>項</div>
-    </th>
-    <th class="table-header-column">
-      <div>種名</div>
-    </th>
-  </tr>
-  <tr class="table-row">
-    <td class="table-column" colSpan="2">
-      <div>
-        <span class="lawtext-column">（１）</span>
-        <span class="lawtext-column-margin">　</span>
-        <span class="lawtext-column">かも科</span>
-      </div>
-    </td>
-  </tr>
-  <tr class="table-row">
-    <td class="table-column">
-      <div>１</div>
-    </td>
-    <td class="table-column">
-      <div>シジュウカラガン</div>
-    </td>
-  </tr>
-  <tr class="table-row">
-    <td class="table-column" rowspan="2">
-      <div>２</div>
-    </td>
-    <td class="table-column">
-      <div>２．１</div>
-    </td>
-  </tr>
-  <tr class="table-row">
-    <td class="table-column">
-      <div>２．２</div>
-    </td>
-  </tr>
+  <tbody>
+    <tr class="table-row">
+      <th class="table-header-column">
+        <div>項</div>
+      </th>
+      <th class="table-header-column">
+        <div>種名</div>
+      </th>
+    </tr>
+    <tr class="table-row">
+      <td class="table-column" colSpan="2">
+        <div>
+          <span class="lawtext-column">（１）</span>
+          <span class="lawtext-column-margin">　</span>
+          <span class="lawtext-column">かも科</span>
+        </div>
+      </td>
+    </tr>
+    <tr class="table-row">
+      <td class="table-column">
+        <div>１</div>
+      </td>
+      <td class="table-column">
+        <div>シジュウカラガン</div>
+      </td>
+    </tr>
+    <tr class="table-row">
+      <td class="table-column" rowspan="2">
+        <div>２</div>
+      </td>
+      <td class="table-column">
+        <div>２．１</div>
+      </td>
+    </tr>
+    <tr class="table-row">
+      <td class="table-column">
+        <div>２．２</div>
+      </td>
+    </tr>
+  </tbody>
 </table>
 `;
         const element = <HTMLTable el={input} indent={0} htmlOptions={{}} />;

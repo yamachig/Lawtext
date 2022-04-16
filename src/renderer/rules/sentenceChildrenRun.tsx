@@ -6,6 +6,7 @@ import { HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
 import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
 import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun";
+import { HTMLControlRun } from "./controlRun";
 
 interface SentenceChildrenRunProps {
     els: (string | SentenceChildEL)[];
@@ -17,7 +18,7 @@ export const HTMLSentenceChildrenRunCSS = /*css*/`
 export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRun", ((props: HTMLComponentProps & SentenceChildrenRunProps) => {
 
     const { els, htmlOptions } = props;
-    const { renderControlEL, ControlRunComponent } = htmlOptions;
+    const { renderControlEL } = htmlOptions;
     const runs: JSX.Element[] = [];
 
     for (const el of els) {
@@ -25,8 +26,8 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
             runs.push(<>{el}</>);
 
         } else if (el.isControl) {
-            if (renderControlEL && ControlRunComponent) {
-                runs.push(<ControlRunComponent el={el} {...props} />);
+            if (renderControlEL) {
+                runs.push(<HTMLControlRun el={el} {...props} />);
             } else {
                 runs.push(<>{el.text}</>);
             }

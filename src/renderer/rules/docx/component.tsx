@@ -1,9 +1,13 @@
 import React from "react";
 
 export const DOCXMargin = "　";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface DOCXOptions {
+}
 export interface DOCXComponentProps {
     // eslint-disable-next-line @typescript-eslint/ban-types
-    docxOptions: {};
+    docxOptions: DOCXOptions;
 }
 
 export function wrapDOCXComponent<P, TComponentID extends string>(docxComponentID: TComponentID, Component: React.ComponentType<P & DOCXComponentProps>) {

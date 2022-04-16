@@ -6,6 +6,7 @@ import { HTMLArithFormulaRunCSS } from "./arithFormulaRun";
 import { HTMLArticleCSS } from "./article";
 import { HTMLArticleGroupCSS } from "./articleGroup";
 import { HTMLColumnsOrSentencesRunCSS } from "./columnsOrSentencesRun";
+import { HTMLControlRunCSS } from "./controlRun";
 import { HTMLFigRunCSS } from "./figRun";
 import { HTMLItemStructCSS } from "./itemStruct";
 import { HTMLEnactStatementCSS, HTMLLawCSS, HTMLPreambleCSS } from "./law";
@@ -56,6 +57,8 @@ export const htmlCSS = [
     HTMLFigRunCSS,
     HTMLArithFormulaRunCSS,
     HTMLQuoteStructRunCSS,
+
+    HTMLControlRunCSS,
 ].join("\n");
 
 export default htmlCSS;

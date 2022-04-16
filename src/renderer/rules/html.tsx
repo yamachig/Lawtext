@@ -1,5 +1,4 @@
 import React from "react";
-import * as std from "../../law/std";
 
 // eslint-disable-next-line no-irregular-whitespace
 export const HTMLMarginSpan: React.FC<React.HTMLAttributes<HTMLSpanElement>> = props => <span {...props}>　</span>;
@@ -11,7 +10,6 @@ export type WrapperComponentProps = {
 };
 export interface HTMLOptions {
     WrapComponent?: React.FC<WrapperComponentProps>;
-    ControlRunComponent?: React.ComponentType<HTMLComponentProps & {el: std.__EL}>;
     renderControlEL?: boolean;
     options?: object;
 }

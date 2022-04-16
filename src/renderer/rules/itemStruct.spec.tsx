@@ -120,31 +120,33 @@ describe("Test HTML itemStruct", () => {
   <div class="item-struct-title indent-1">表一</div>
   <div class="item-struct-body">
     <table class="table indent-1">
-      <tr class="table-row">
-        <th class="table-header-column">
-          <div>項</div>
-        </th>
-        <th class="table-header-column">
-          <div>種名</div>
-        </th>
-      </tr>
-      <tr class="table-row">
-        <td class="table-column" colSpan="2">
-          <div>
-            <span class="lawtext-column">（１）</span>
-            <span class="lawtext-column-margin">　</span>
-            <span class="lawtext-column">かも科</span>
-          </div>
-        </td>
-      </tr>
-      <tr class="table-row">
-        <td class="table-column">
-          <div>１</div>
-        </td>
-        <td class="table-column">
-          <div>シジュウカラガン</div>
-        </td>
-      </tr>
+      <tbody>
+        <tr class="table-row">
+          <th class="table-header-column">
+            <div>項</div>
+          </th>
+          <th class="table-header-column">
+            <div>種名</div>
+          </th>
+        </tr>
+        <tr class="table-row">
+          <td class="table-column" colSpan="2">
+            <div>
+              <span class="lawtext-column">（１）</span>
+              <span class="lawtext-column-margin">　</span>
+              <span class="lawtext-column">かも科</span>
+            </div>
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td class="table-column">
+            <div>１</div>
+          </td>
+          <td class="table-column">
+            <div>シジュウカラガン</div>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </div>

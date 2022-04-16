@@ -84,14 +84,16 @@ describe("Test HTML appdxItem", () => {
     <div class="item-struct">
       <div class="item-struct-body">
         <table class="table indent-1">
-          <tr class="table-row">
-            <td class="table-column">
-              <div>情報照会者</div>
-            </td>
-            <td class="table-column">
-              <div>事務</div>
-            </td>
-          </tr>
+          <tbody>
+            <tr class="table-row">
+              <td class="table-column">
+                <div>情報照会者</div>
+              </td>
+              <td class="table-column">
+                <div>事務</div>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>

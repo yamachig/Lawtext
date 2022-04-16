@@ -5,9 +5,10 @@ import { HTMLLaw } from "./rules/law";
 import htmlCSS from "./rules/htmlCSS";
 import { renderToStaticMarkup } from "./rules/common";
 import { HTMLAnyELs } from "./rules/any";
+import { HTMLOptions } from "./rules/html";
 
-export const renderHTML = (elOrJsonEL: JsonEL | EL): string => {
-    const rendered = renderHTMLfragment(elOrJsonEL);
+export const renderHTML = (elOrJsonEL: JsonEL | EL, htmlOptions?: HTMLOptions): string => {
+    const rendered = renderHTMLfragment(elOrJsonEL, htmlOptions);
     const html = /*html*/`\
 <!DOCTYPE html>
 <html lang="ja">
@@ -25,17 +26,17 @@ ${rendered}
     return html;
 };
 
-export const renderHTMLfragment = (elOrJsonEL: JsonEL | EL): string => {
+export const renderHTMLfragment = (elOrJsonEL: JsonEL | EL, htmlOptions?: HTMLOptions): string => {
     const el = loadEl(elOrJsonEL);
     const element = std.isLaw(el)
-        ? <HTMLLaw el={el} indent={0} htmlOptions={{}} />
-        : <HTMLAnyELs els={[el as std.StdEL | std.__EL]} indent={0} htmlOptions={{}}/>;
+        ? <HTMLLaw el={el} indent={0} htmlOptions={htmlOptions ?? {}} />
+        : <HTMLAnyELs els={[el as std.StdEL | std.__EL]} indent={0} htmlOptions={htmlOptions ?? {}}/>;
     const rendered = renderToStaticMarkup(element);
     return rendered;
 };
 
-export const renderElementsFragment = (elements: (JsonEL | EL)[]): string => {
-    return elements.map(renderHTMLfragment).join("\n");
+export const renderElementsFragment = (elements: (JsonEL | EL)[], htmlOptions?: HTMLOptions): string => {
+    return elements.map(e => renderHTMLfragment(e, htmlOptions)).join("\n");
 };
 
 export default renderHTML;
