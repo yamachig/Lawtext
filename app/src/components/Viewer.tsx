@@ -6,7 +6,7 @@ import { ResolvedType } from "lawtext/dist/src/util";
 import { saveListJson } from "@appsrc/lawdata/saveListJson";
 import { ensureFetch, storedLoader } from "@appsrc/lawdata/loaders";
 import { openFile } from "@appsrc/actions/openFile";
-import { ErrorCatcher } from "./ErrorCatcher";
+import { ErrorCatcher } from "./LawView/ErrorCatcher";
 
 
 const ViewerMessagesDiv = styled.div`

@@ -443,7 +443,7 @@ enum RowType {
     Remove,
 }
 
-function withRowTag<T>(type: RowType, f: (RowTag: React.ComponentType) => T) {
+function withRowTag<T>(type: RowType, f: (RowTag: React.FC<React.PropsWithChildren<unknown>>) => T) {
     const RowTag =
             type === RowType.Empty ? EmptyRow :
                 type === RowType.NoProblem ? NoProblemRow :

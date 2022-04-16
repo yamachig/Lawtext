@@ -30,7 +30,7 @@ export class ErrorCatcher extends React.Component<React.PropsWithChildren<{ onEr
     protected renderError(): JSX.Element | JSX.Element[] | null | undefined {
         return (
             <ErrorComponentDiv className="alert alert-danger">
-                にエラーが発生しました：
+                エラーが発生しました：
                 {this.state.error && this.state.error.toString()}
             </ErrorComponentDiv>
         );

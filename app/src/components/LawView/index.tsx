@@ -1,13 +1,15 @@
 import React, { useCallback, useMemo } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { HTMLLaw } from "lawtext/dist/src/renderer/rules/law";
-import { LawtextAppPageStateStruct, OrigSetLawtextAppPageState } from "./LawtextAppPageState";
+import { LawtextAppPageStateStruct, OrigSetLawtextAppPageState } from "../LawtextAppPageState";
 import { LawData } from "@appsrc/lawdata/common";
-import { HTMLOptions } from "lawtext/dist/src/renderer/rules/html";
+import { HTMLOptions, GetFigDataInfo } from "lawtext/dist/src/renderer/rules/html";
 import htmlCSS from "lawtext/dist/src/renderer/rules/htmlCSS";
-import { ControlGlobalStyle } from "./ControlRun";
+import { ControlGlobalStyle } from "../ControlRun";
 import { LawViewOptions } from "./common";
-import { WrapLawComponent, useAfterMountTasks } from "./LawWrapper";
+import { WrapLawComponent } from "./LawWrapper";
+import useAfterMountTasks from "./useAfterMountTask";
+import getFigDataInfoWithLawData from "../../lawdata/getFigDataInfoWithLawData";
 
 
 const GlobalStyle = createGlobalStyle`
@@ -63,6 +65,10 @@ const LawDataComponent: React.FC<{
 
     const { addAfterMountTask } = useAfterMountTasks(origSetState);
 
+    const getFigDataInfo = useCallback((src: string, forceSync: boolean) => {
+        return getFigDataInfoWithLawData({ lawData, src, forceSync });
+    }, [lawData]) as GetFigDataInfo;
+
     const options: LawViewOptions = useMemo(() => ({
         onError,
         lawData,
@@ -72,6 +78,7 @@ const LawDataComponent: React.FC<{
     const htmlOptions: HTMLOptions = {
         WrapComponent: WrapLawComponent,
         renderControlEL: true,
+        getFigDataInfo,
         options,
     };
 

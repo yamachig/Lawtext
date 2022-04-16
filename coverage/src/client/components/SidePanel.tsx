@@ -1,7 +1,6 @@
 import { LawCoverage } from "../../lawCoverage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import { arrayMove, SortableContainer, SortableElement } from "react-sortable-hoc";
 import styled from "styled-components";
 import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedLawtextStatus, LawDiffStatus, OriginalLawStatus, ParsedLawStatus, RenderedLawtextStatus, SortDirection, SortKey } from "./FilterInfo";
 import LawCoverageInfoCard from "./LawCoverageInfoCard";
@@ -155,7 +154,7 @@ export const FilterInfoSortItem = SortableElement((props: FilterInfoSortItemProp
             </NullItem>
         );
     }
-});
+}) as React.FC<FilterInfoSortItemProps & SortableElementProps>;
 
 
 interface FilterInfoSortContainerProps {

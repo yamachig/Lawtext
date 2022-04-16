@@ -8,7 +8,7 @@ import { HTMLParagraphItem } from "lawtext/dist/src/renderer/rules/paragraphItem
 import { HTMLControlRunProps } from "lawtext/dist/src/renderer/rules/controlRun";
 import { HTMLTable } from "lawtext/dist/src/renderer/rules/table";
 import styled, { createGlobalStyle } from "styled-components";
-import { em, LawViewOptions } from "./common";
+import { em, LawViewOptions } from "./LawView/common";
 import { EL } from "lawtext/dist/src/node/el";
 import { NotImplementedError } from "lawtext/dist/src/util";
 import AnimateHeight from "react-animate-height";
