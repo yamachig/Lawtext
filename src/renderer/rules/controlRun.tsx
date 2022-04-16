@@ -113,7 +113,7 @@ export const HTMLControlRun = wrapHTMLComponent("HTMLControlRun", ((props: HTMLC
 
 interface __ParenthesesProps { el: std.__EL }
 
-const __Parentheses = wrapHTMLComponent("__Parentheses", ((props: HTMLComponentProps & __ParenthesesProps) => {
+const __Parentheses = (props: HTMLComponentProps & __ParenthesesProps) => {
     const { el, htmlOptions } = props;
 
     const blocks: JSX.Element[] = [];
@@ -146,12 +146,12 @@ const __Parentheses = wrapHTMLComponent("__Parentheses", ((props: HTMLComponentP
             {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
         </span>
     );
-}));
+};
 
 
 interface __PStartProps { el: std.__EL }
 
-const __PStart = wrapHTMLComponent("__PStart", ((props: HTMLComponentProps & __PStartProps) => {
+const __PStart = (props: HTMLComponentProps & __PStartProps) => {
     const { el, htmlOptions } = props;
     return (
         <span
@@ -161,11 +161,11 @@ const __PStart = wrapHTMLComponent("__PStart", ((props: HTMLComponentProps & __P
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>
     );
-}));
+};
 
 interface __PContentProps { el: std.__EL }
 
-const __PContent = wrapHTMLComponent("__PContent", ((props: HTMLComponentProps & __PContentProps) => {
+const __PContent = (props: HTMLComponentProps & __PContentProps) => {
     const { el, htmlOptions } = props;
     return (
         <span
@@ -175,12 +175,12 @@ const __PContent = wrapHTMLComponent("__PContent", ((props: HTMLComponentProps &
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>
     );
-}));
+};
 
 
 interface __PEndProps { el: std.__EL }
 
-const __PEnd = wrapHTMLComponent("__PEnd", ((props: HTMLComponentProps & __PEndProps) => {
+const __PEnd = (props: HTMLComponentProps & __PEndProps) => {
     const { el, htmlOptions } = props;
     return (
         <span
@@ -190,12 +190,12 @@ const __PEnd = wrapHTMLComponent("__PEnd", ((props: HTMLComponentProps & __PEndP
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>
     );
-}));
+};
 
 
 interface __MismatchStartParenthesisProps { el: std.__EL }
 
-const __MismatchStartParenthesis = wrapHTMLComponent("__MismatchStartParenthesis", ((props: HTMLComponentProps & __MismatchStartParenthesisProps) => {
+const __MismatchStartParenthesis = (props: HTMLComponentProps & __MismatchStartParenthesisProps) => {
     const { el, htmlOptions } = props;
     return (
         <span
@@ -205,11 +205,11 @@ const __MismatchStartParenthesis = wrapHTMLComponent("__MismatchStartParenthesis
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>
     );
-}));
+};
 
 interface __MismatchEndParenthesisProps { el: std.__EL }
 
-const __MismatchEndParenthesis = wrapHTMLComponent("__MismatchEndParenthesis", ((props: HTMLComponentProps & __MismatchEndParenthesisProps) => {
+const __MismatchEndParenthesis = (props: HTMLComponentProps & __MismatchEndParenthesisProps) => {
     const { el, htmlOptions } = props;
     return (
         <span
@@ -219,4 +219,4 @@ const __MismatchEndParenthesis = wrapHTMLComponent("__MismatchEndParenthesis", (
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>
     );
-}));
+};

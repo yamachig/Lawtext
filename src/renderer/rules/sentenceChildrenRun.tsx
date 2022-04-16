@@ -19,17 +19,17 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
 
     const { els, htmlOptions } = props;
     const { renderControlEL } = htmlOptions;
-    const runs: JSX.Element[] = [];
+    const runs: (JSX.Element | string)[] = [];
 
     for (const el of els) {
-        if (typeof el === "string" || el instanceof String) {
-            runs.push(<>{el}</>);
+        if (typeof el === "string") {
+            runs.push(el);
 
         } else if (el.isControl) {
             if (renderControlEL) {
                 runs.push(<HTMLControlRun el={el} {...props} />);
             } else {
-                runs.push(<>{el.text}</>);
+                runs.push(el.text);
             }
 
         } else {
