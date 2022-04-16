@@ -71,6 +71,7 @@ const LawDataComponent: React.FC<{
 
     const htmlOptions: HTMLOptions = {
         WrapComponent: WrapLawComponent,
+        renderControlEL: true,
         options,
     };
 

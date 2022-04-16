@@ -1,7 +1,7 @@
 
 import React from "react";
 import * as std from "lawtext/dist/src/law/std";
-import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent, WrapperComponentProps } from "lawtext/dist/src/renderer/rules/html";
+import { HTMLComponentProps, HTMLMarginSpan, WrapperComponentProps } from "lawtext/dist/src/renderer/rules/html";
 import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
 import { HTMLArticle } from "lawtext/dist/src/renderer/rules/article";
 import { HTMLParagraphItem } from "lawtext/dist/src/renderer/rules/paragraphItem";
@@ -56,7 +56,7 @@ const DeclarationSpan = styled.span`
 
 interface ____DeclarationProps { el: std.__EL }
 
-const ____Declaration = wrapHTMLComponent("____Declaration", ((props: HTMLComponentProps & ____DeclarationProps) => {
+const ____Declaration = (props: HTMLComponentProps & ____DeclarationProps) => {
     const { el, htmlOptions } = props;
     return (
         <DeclarationSpan
@@ -65,7 +65,7 @@ const ____Declaration = wrapHTMLComponent("____Declaration", ((props: HTMLCompon
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </DeclarationSpan>
     );
-}));
+};
 
 
 const VarRefSpan = styled.span`
@@ -87,18 +87,18 @@ enum VarRefFloatState {
     OPEN,
 }
 
-const VarRefFloatBlockInnerSpan = styled.span`
-    float: right;
+const VarRefFloatBlockInnerSpan = styled.div`
+    position: relative;
     width: 100%;
     font-size: 1rem;
     padding: 0.5em;
 `;
 
-const VarRefArrowSpan = styled.span`
+const VarRefArrowSpan = styled.div`
     position: absolute;
     border-style: solid;
     border-width: 0 0.5em 0.5em 0.5em;
-    border-color: transparent transparent rgba(127, 127, 127, 0.15) transparent;
+    border-color: transparent transparent rgba(125, 125, 125) transparent;
     margin: -0.5em 0 0 0;
 `;
 
@@ -107,20 +107,21 @@ const VarRefWindowSpan = styled.span`
     width: 100%;
     padding: 0.5em;
     border-radius: 0.2em;
-    background-color: rgba(127, 127, 127, 0.15);
+    border: 1px solid rgba(125, 125, 125);
+    background-color: rgba(240, 240, 240);
 `;
 
 interface ____VarRefProps { el: std.__EL }
 
 interface ____VarRefState { mode: VarRefFloatState, arrowLeft: string }
 
-const ____VarRef = wrapHTMLComponent("____VarRef", ((props: HTMLComponentProps & ____VarRefProps) => {
+const ____VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
     const { el, htmlOptions } = props;
 
     const refText = React.useRef<HTMLSpanElement>(null);
     const refWindow = React.useRef<HTMLSpanElement>(null);
 
-    const [state, setState] = React.useState<____VarRefState>({ mode: VarRefFloatState.HIDDEN, arrowLeft: "0" });
+    const [state, setState] = React.useState<____VarRefState>({ mode: VarRefFloatState.HIDDEN, arrowLeft: "" });
 
     React.useEffect(() => {
         window.addEventListener("resize", updateSize);
@@ -136,7 +137,7 @@ const ____VarRef = wrapHTMLComponent("____VarRef", ((props: HTMLComponentProps &
             setState(prevState => ({ ...prevState, mode: VarRefFloatState.OPEN }));
             setTimeout(() => {
                 updateSize();
-            }, 30);
+            }, 0);
         }
     };
 
@@ -170,8 +171,7 @@ const ____VarRef = wrapHTMLComponent("____VarRef", ((props: HTMLComponentProps &
                 <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
             </VarRefTextSpan>
 
-            <AnimateHeight
-                height={state.mode === VarRefFloatState.OPEN ? "auto" : 0}
+            <div
                 style={{
                     float: "right",
                     width: "100%",
@@ -180,30 +180,46 @@ const ____VarRef = wrapHTMLComponent("____VarRef", ((props: HTMLComponentProps &
                     textIndent: 0,
                     fontSize: 0,
                     fontWeight: "normal",
-                    overflow: "hidden",
                     position: "relative",
                     color: "initial",
                 }}
-                onAnimationEnd={animateHeightOnAnimationEnd}
             >
-                {(state.mode !== VarRefFloatState.HIDDEN) && (
-                    <VarRefFloatBlockInnerSpan>
-                        <VarRefArrowSpan style={{ marginLeft: state.arrowLeft }} />
-                        <VarRefWindowSpan ref={refWindow}>
-                            <VarRefView el={props.el} {...{ htmlOptions }} />
-                        </VarRefWindowSpan>
-                    </VarRefFloatBlockInnerSpan>
-                )}
-            </AnimateHeight>
+
+                <AnimateHeight
+                    height={state.mode === VarRefFloatState.OPEN ? "auto" : 0}
+                    style={{
+                        width: "100%",
+                        padding: 0,
+                        margin: 0,
+                        textIndent: 0,
+                        fontSize: 0,
+                        fontWeight: "normal",
+                        // overflow: "hidden",
+                        position: "absolute",
+                        color: "initial",
+                    }}
+                    onAnimationEnd={animateHeightOnAnimationEnd}
+                    duration={100}
+                >
+                    {(state.mode !== VarRefFloatState.HIDDEN) && (
+                        <VarRefFloatBlockInnerSpan>
+                            <VarRefArrowSpan style={state.arrowLeft ? { marginLeft: state.arrowLeft } : { visibility: "hidden" }} />
+                            <VarRefWindowSpan ref={refWindow}>
+                                <VarRefView el={props.el} {...{ htmlOptions }} />
+                            </VarRefWindowSpan>
+                        </VarRefFloatBlockInnerSpan>
+                    )}
+                </AnimateHeight>
+            </div>
 
         </VarRefSpan>
     );
-}));
+};
 
 
 interface VarRefViewProps { el: std.__EL }
 
-const VarRefView = wrapHTMLComponent("VarRefView", ((props: HTMLComponentProps & VarRefViewProps) => {
+const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
     const { el, htmlOptions } = props;
     const options = htmlOptions.options as LawViewOptions;
 
@@ -313,7 +329,7 @@ const VarRefView = wrapHTMLComponent("VarRefView", ((props: HTMLComponentProps &
         throw new NotImplementedError(lastContainerEl.tag);
 
     }
-}));
+};
 
 
 const LawNumA = styled.a`
@@ -321,12 +337,12 @@ const LawNumA = styled.a`
 
 interface ____LawNumProps { el: std.__EL }
 
-const ____LawNum = wrapHTMLComponent("____LawNum", ((props: HTMLComponentProps & ____LawNumProps) => {
+const ____LawNum = (props: HTMLComponentProps & ____LawNumProps) => {
     const { el, htmlOptions } = props;
     return (
         <LawNumA href={`#/${el.text}`} target="_blank">
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </LawNumA>
     );
-}));
+};
 

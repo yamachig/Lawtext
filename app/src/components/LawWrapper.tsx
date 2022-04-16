@@ -3,9 +3,8 @@ import styled from "styled-components";
 import { omit } from "lawtext/dist/src/util";
 import { OrigSetLawtextAppPageState } from "./LawtextAppPageState";
 import { ErrorCatcher } from "./ErrorCatcher";
-import { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/rules/html";
+import { WrapperComponentProps } from "lawtext/dist/src/renderer/rules/html";
 import { LawViewOptions } from "./common";
-import { useObserved } from "./useObserved";
 import { WrapHTMLControlRun } from "./ControlRun";
 import { EL } from "lawtext/dist/src/node/el";
 import * as std from "lawtext/dist/src/law/std";
@@ -112,7 +111,16 @@ export const WrapLawComponent: React.FC<WrapperComponentProps> = props => {
 
     const elID = (el instanceof EL) && (std.isLaw(el) || std.isPreamble(el) || std.isTOC(el) || std.isAppdxItem(el) || std.isSupplProvisionAppdxItem(el) || std.isSupplProvision(el) || std.isArticleGroup(el) || std.isArticle(el)) && el.id;
 
-    const dataset = []as [string, unknown][];
+    const baseElement = (
+        // (htmlComponentID === "HTMLSentenceChildrenRun")
+        //     ? <WrapHTMLSentenceChildrenRun {...props}/>
+        //     :
+        (htmlComponentID === "HTMLControlRun")
+            ? <WrapHTMLControlRun {...props}/>
+            : <ChildComponent {...childProps} />
+    );
+
+    const dataset = [] as [string, unknown][];
 
     if (
         (el instanceof EL)
@@ -128,60 +136,51 @@ export const WrapLawComponent: React.FC<WrapperComponentProps> = props => {
         dataset.push(["data-container_info", JSON.stringify(containerInfoOf(el))]);
     }
 
-    const DatasetWrapper = (
-        dataset.length === 0
-            ? React.Fragment
-            : (props: React.PropsWithChildren<unknown>) => {
-                return <div {...props} {...Object.fromEntries(dataset)} />;
-            }
+    const withDatasetElement = (
+        dataset.length > 0
+            ? <div {...props} {...Object.fromEntries(dataset)}>{baseElement}</div>
+            : baseElement
+    );
+
+    const catchError = (el instanceof EL)
+    && (std.isLaw(el) || std.isPreamble(el) || std.isTOC(el) || std.isAppdxItem(el) || std.isSupplProvisionAppdxItem(el) || std.isSupplProvision(el) || std.isArticleGroup(el) || std.isArticle(el) || std.isParagraphItem(el));
+
+    const withCatcherElement = (
+        catchError
+            ? <LawErrorCatcher onError={options.onError}>{withDatasetElement}</LawErrorCatcher>
+            : withDatasetElement
     );
 
     return (<>
-        <LawErrorCatcher onError={options.onError}>
-            {(typeof elID === "number") && <>
-                <a className="law-anchor" data-el_id={elID.toString()} />
-            </>}
-            <DatasetWrapper>
-                {
-                    (htmlComponentID === "HTMLSentenceChildrenRun")
-                        ? <>
-                            <WrapHTMLSentenceChildrenRun {...props}/>
-                        </>
-                        : (htmlComponentID === "HTMLControlRun")
-                            ? <>
-                                <WrapHTMLControlRun {...props}/>
-                            </>
-                            : <>
-                                <ChildComponent {...childProps} />
-                            </>
-                }
-            </DatasetWrapper>
-        </LawErrorCatcher>
+        {(typeof elID === "number") &&
+            <a className="law-anchor" data-el_id={elID.toString()} />
+        }
+        {withCatcherElement}
     </>);
 };
 
-export const WrapHTMLSentenceChildrenRun: React.FC<WrapperComponentProps> = props => {
-    const { childProps, ChildComponent } = props;
-    const options = childProps.htmlOptions.options as LawViewOptions;
-    const { addAfterMountTask } = options;
+// export const WrapHTMLSentenceChildrenRun: React.FC<WrapperComponentProps> = props => {
+//     const { childProps, ChildComponent } = props;
+//     const options = childProps.htmlOptions.options as LawViewOptions;
+//     const { addAfterMountTask } = options;
 
-    const { observed, observedRef, forceObserved } = useObserved();
+//     const { observed, observedRef, forceObserved } = useObserved();
 
-    React.useEffect(() => {
-        addAfterMountTask(forceObserved);
-    }, [forceObserved, addAfterMountTask]);
+//     React.useEffect(() => {
+//         addAfterMountTask(forceObserved);
+//     }, [forceObserved, addAfterMountTask]);
 
-    const newChildProps: HTMLComponentProps = {
-        ...childProps,
-        htmlOptions: {
-            ...childProps.htmlOptions,
-            renderControlEL: observed,
-        },
-    };
+//     const newChildProps: HTMLComponentProps = {
+//         ...childProps,
+//         htmlOptions: {
+//             ...childProps.htmlOptions,
+//             renderControlEL: observed || true,
+//         },
+//     };
 
-    return (<>
-        <span ref={observedRef}>
-            <ChildComponent {...newChildProps} />
-        </span>
-    </>);
-};
+//     return (
+//         <span ref={observedRef}>
+//             <ChildComponent {...newChildProps} />
+//         </span>
+//     );
+// };
