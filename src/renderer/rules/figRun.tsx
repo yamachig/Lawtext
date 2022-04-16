@@ -1,7 +1,8 @@
 import React from "react";
 import * as std from "../../law/std";
-import { HTMLComponentProps, wrapHTMLComponent } from "./html";
+import { FigData, HTMLComponentProps, wrapHTMLComponent } from "./html";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
+import { NotImplementedError } from "../../util";
 
 
 export interface FigRunProps {
@@ -9,19 +10,54 @@ export interface FigRunProps {
 }
 
 export const HTMLFigRunCSS = /*css*/`
-.fig-src {
+.fig-iframe {
+    width: 100%;
+    height: 80vh;
+    border: 1px solid gray;
+}
 
+.fig-img {
+    max-width: 100%;
 }
 `;
 
 export const HTMLFigRun = wrapHTMLComponent("HTMLFigRun", ((props: HTMLComponentProps & FigRunProps) => {
 
-    const { el } = props;
+    const { el, htmlOptions } = props;
+    const { getFigDataInfo: getFigData } = htmlOptions;
+
+    if (el.children.length > 0) {
+        throw new NotImplementedError(el.outerXML());
+    }
+
+    if (getFigData) {
+        const figData = getFigData(el.attr.src, true);
+        return figData === null ? (
+            <>[{el.attr.src}]</>
+        ) : (
+            <HTMLFigRunWithFigData {...props} figData={figData.figData} />
+        );
+    } else {
+        return (
+            <span className="fig-src">{el.attr.src}</span>
+        );
+    }
+}));
+
+export const HTMLFigRunWithFigData = (props: HTMLComponentProps & FigRunProps & { figData: FigData }) => {
+
+    const { el, figData } = props;
 
     return (
-        <span className="fig-src">{el.attr.src}</span>
+        figData.type.includes("pdf") ? (
+            <iframe className="fig-iframe" src={figData.url} />
+        ) : figData.type.startsWith("image/") ? (
+            <img className="fig-img" src={figData.url} />
+        ) : (
+            <a className="fig-link" href={figData.url} type={figData.type} target="_blank" rel="noreferrer">{el.attr.src}</a>
+        )
     );
-}));
+};
 
 export const DOCXFigRun = wrapDOCXComponent("DOCXFigRun", ((props: DOCXComponentProps & FigRunProps) => {
 
