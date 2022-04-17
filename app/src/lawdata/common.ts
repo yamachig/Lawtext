@@ -10,7 +10,6 @@ export const isStoredLawDataProps = (props: LawDataProps):
 
 export interface ElawsLawDataProps extends BaseXMLLawDataProps {
     source: "elaws",
-    pict: Map<string, Blob> | null,
 }
 export const isElawsLawDataProps = (props: LawDataProps):
     props is ElawsLawDataProps =>

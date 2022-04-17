@@ -29,26 +29,38 @@ export const onNavigated = async (
 
     if (!lawSearchKey) {
         console.log("onNavigated: detected the top page.");
-        origSetState(s => ({
-            ...s,
-            navigatedLawSearchKey: lawSearchKey,
-            law: null,
-            loadingLaw: false,
-            viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
-        }));
+        origSetState(s => {
+            const { law: oldLaw } = s;
+            if (oldLaw && ("xml" in oldLaw)) {
+                oldLaw.lawXMLStruct?.clean();
+            }
+            return {
+                ...s,
+                navigatedLawSearchKey: lawSearchKey,
+                law: null,
+                loadingLaw: false,
+                viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
+            };
+        });
         return;
     }
 
-    origSetState(s => ({
-        ...s,
-        navigatedLawSearchKey: lawSearchKey,
-        law: null,
-        loadingLaw: true,
-        viewerMessages: {
-            ...s.viewerMessages,
-            loadingLaw: "法令を読み込んでいます...",
-        },
-    }));
+    origSetState(s => {
+        const { law: oldLaw } = s;
+        if (oldLaw && ("xml" in oldLaw)) {
+            oldLaw.lawXMLStruct?.clean();
+        }
+        return {
+            ...s,
+            navigatedLawSearchKey: lawSearchKey,
+            law: null,
+            loadingLaw: true,
+            viewerMessages: {
+                ...s.viewerMessages,
+                loadingLaw: "法令を読み込んでいます...",
+            },
+        };
+    });
 
     const toDownloadSample = (lawSearchKey.startsWith("(sample)"));
     let lawDataResult: LawDataResult<LawDataProps>;
@@ -61,6 +73,7 @@ export const onNavigated = async (
         lawDataResult = await toLawData({
             source: "file_xml",
             xml: sampleXml,
+            lawXMLStruct: null,
         }, onMessage, timing);
     } else {
         onMessage("法令を検索しています...");
@@ -110,12 +123,18 @@ export const onNavigated = async (
     await util.wait(30);
     const start = new Date();
 
-    origSetState(s => ({
-        ...s,
-        law: lawData,
-        loadingLaw: false,
-        viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
-    }));
+    origSetState(s => {
+        const { law: oldLaw } = s;
+        if (oldLaw && ("xml" in oldLaw)) {
+            oldLaw.lawXMLStruct?.clean();
+        }
+        return {
+            ...s,
+            law: lawData,
+            loadingLaw: false,
+            viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
+        };
+    });
 
     timing.updateComponents = (new Date()).getTime() - start.getTime();
 

@@ -1,24 +1,9 @@
 import { getTempLaw } from "../actions/temp_law";
-import { fetchLawData } from "lawtext/dist/src/elaws_api";
-import JSZip from "jszip";
-import path from "path";
 import { ElawsLawDataProps, StoredLawDataProps, TempXMLLawDataProps, TempLawtextLawDataProps } from "./common";
-import { storedLoader } from "./loaders";
+import { elawsLoader, storedLoader } from "./loaders";
 import { searchLawnum } from "./searchLawNum";
 import * as util from "lawtext/dist/src/util";
 import { LawDataResult, Timing, toLawData } from "lawtext/dist/src/data/lawdata";
-
-const pictMimeDict = {
-    ".jpeg": "image/jpeg",
-    ".jpg": "image/jpeg",
-    ".png": "image/png",
-    ".pdf": "application/pdf",
-    ".bmp": "image/bmp",
-    ".gif": "image/gif",
-    ".svg": "image/svg+xml",
-    ".tif": "image/tiff",
-    ".tiff": "image/tiff",
-} as const;
 
 export const navigateLawData = async (
     lawSearchKey: string,
@@ -35,6 +20,7 @@ export const navigateLawData = async (
             return toLawData({
                 source: "temp_xml",
                 xml: text,
+                lawXMLStruct: null,
             }, onMessage, timing);
         } else {
             onMessage("Lawtextをパースしています...");
@@ -68,17 +54,17 @@ export const navigateLawData = async (
 
         onMessage("保存されている法令XMLの取得を試みています...");
         // console.log("navigateLawData: fetching stored law data...");
-        const [loadDataTime, xml] = lawInfo && await util.withTime(storedLoader.loadLawXMLByInfo.bind(storedLoader))(lawInfo);
+        const [loadDataTime, lawXMLStruct] = lawInfo && await util.withTime(storedLoader.loadLawXMLStructByInfo.bind(storedLoader))(lawInfo);
         timing.loadData = loadDataTime;
-        if (!xml) throw null;
 
         onMessage("法令XMLをパースしています...");
         // console.log("navigateLawData: parsing law xml...");
         await util.wait(30);
         return toLawData({
             source: "stored",
-            xml,
+            xml: lawXMLStruct.xml,
             lawPath: lawInfo.Path,
+            lawXMLStruct,
         }, onMessage, timing);
     } catch {
         //
@@ -87,33 +73,16 @@ export const navigateLawData = async (
     try {
         onMessage("e-Gov 法令APIから法令XMLを取得しています...");
         console.log(`navigateLawData: fetching law data via e-LAWS API for "${lawnum}"...`);
-        const [loadDataTime, elawsLawData] = await util.withTime(fetchLawData)(lawnum);
+        const [loadDataTime, lawXMLStruct] = await util.withTime(elawsLoader.loadLawXMLStructByInfo.bind(storedLoader))(lawnum);
         timing.loadData = loadDataTime;
-
-        let pict: Map<string, Blob> | null = null;
-        if (elawsLawData.imageData) {
-            onMessage("画像情報を読み込んでいます...");
-            // console.log("navigateLawData: extracting pict...");
-            const start = new Date();
-            pict = new Map();
-            const zip = await JSZip.loadAsync(elawsLawData.imageData);
-            for (const relPath in zip.files) {
-                const buf = await zip.files[relPath].async("arraybuffer");
-                const ext = path.extname(relPath) as keyof typeof pictMimeDict;
-                const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
-                const blob = new Blob([buf], { type });
-                pict.set(`./pict/${relPath}`, blob);
-            }
-            timing.extractPict = (new Date()).getTime() - start.getTime();
-        }
 
         onMessage("法令XMLをパースしています...");
         // console.log("navigateLawData: parsing law xml...");
         await util.wait(30);
         return toLawData({
             source: "elaws",
-            xml: elawsLawData.xml,
-            pict,
+            xml: lawXMLStruct.xml,
+            lawXMLStruct,
         }, onMessage, timing);
 
     } catch (error) {

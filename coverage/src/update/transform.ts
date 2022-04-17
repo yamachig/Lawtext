@@ -42,7 +42,7 @@ export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Prom
         const requiredms = new Map<string, number>();
         const lap = new Lap();
 
-        const origXML = await loader.loadLawXMLByInfo(lawInfo);
+        const origXML = await loader.loadLawXMLStructByInfo(lawInfo);
         requiredms.set("loadXML", lap.lapms());
 
         const origEL = xmlToJson(origXML) as Law;

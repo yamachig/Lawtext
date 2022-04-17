@@ -21,7 +21,7 @@ const render = async (lawNum: string) => {
 
     const lawInfo = await loader.getLawInfoByLawNum(lawNum);
     if (lawInfo === null) throw Error("LawInfo not found");
-    const origXML = await loader.loadLawXMLByInfo(lawInfo);
+    const { xml: origXML } = await loader.loadLawXMLStructByInfo(lawInfo);
     if (origXML === null) throw Error("XML not found");
 
     const origEL = xmlToJson(origXML);
@@ -33,6 +33,8 @@ const render = async (lawNum: string) => {
             el: origEL as std.Law,
             xml: origXML,
             analysis,
+            pictURL: new Map(),
+            lawXMLStruct: null,
         },
         loadingLaw: false,
         viewerMessages: {},
