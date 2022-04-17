@@ -1,6 +1,6 @@
 import React from "react";
 import * as std from "../../law/std";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXComponentProps, wrapDOCXComponent, w } from "../common/docx";
 import { DOCXAnyELsToBlocks, HTMLAnyELsToBlocks } from "./any";
 import TextBoxRun from "../common/docx/TextBoxRun";
@@ -28,7 +28,7 @@ export const HTMLArithFormulaRun = wrapHTMLComponent("HTMLArithFormulaRun", ((pr
         const runs = (rawBlocks as JSX.Element[][]).flat();
 
         return ((
-            <span className="arith-formula">
+            <span className="arith-formula" {...elProps(el, htmlOptions)}>
                 {withKey(runs)}
             </span>
         ));
@@ -50,7 +50,7 @@ export const HTMLArithFormulaRun = wrapHTMLComponent("HTMLArithFormulaRun", ((pr
         }
 
         return (
-            <span className="arith-formula" style={{ display: "inline-block" }}>
+            <span className="arith-formula" style={{ display: "inline-block" }} {...elProps(el, htmlOptions)}>
                 {withKey(blocks)}
             </span>
         );

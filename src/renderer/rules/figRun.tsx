@@ -1,6 +1,6 @@
 import React from "react";
 import * as std from "../../law/std";
-import { FigData, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, FigData, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { NotImplementedError } from "../../util";
 
@@ -35,31 +35,38 @@ export const HTMLFigRun = wrapHTMLComponent("HTMLFigRun", ((props: HTMLComponent
         return figData === null ? (
             <>[{el.attr.src}]</>
         ) : (
-            <HTMLFigRunWithFigData {...props} figData={figData} />
+            <HTMLFigRunWithFigData {...props} figData={figData} fig={el} />
         );
     } else {
         return (
-            <span className="fig-src">{el.attr.src}</span>
+            <span className="fig-src" {...elProps(el, htmlOptions)}>{el.attr.src}</span>
         );
     }
 }));
 
-export const HTMLFigRunWithFigData = (props: HTMLComponentProps & FigRunProps & { figData: FigData }) => {
+export const HTMLFigRunWithFigData = (props: HTMLComponentProps & FigRunProps & { figData: FigData, fig: std.Fig }) => {
 
-    const { el, figData, htmlOptions } = props;
+    const { el, figData, htmlOptions, fig } = props;
     const { renderPDFAsLink } = htmlOptions;
 
     return (
         figData.type.startsWith("image/")
             ? (
-                <img className="fig-img" src={figData.url} />
+                <img className="fig-img" src={figData.url} {...elProps(fig, htmlOptions)} />
             )
             : ((!renderPDFAsLink) && figData.type.includes("pdf"))
                 ? (
-                    <iframe className="fig-iframe" src={figData.url} sandbox="allow-scripts" />
+                    <iframe className="fig-iframe" src={figData.url} sandbox="allow-scripts" {...elProps(fig, htmlOptions)} />
                 )
                 : (
-                    <a className="fig-link" href={figData.url} type={figData.type} target="_blank" rel="noreferrer">{el.attr.src}</a>
+                    <a
+                        className="fig-link"
+                        href={figData.url}
+                        type={figData.type}
+                        target="_blank"
+                        rel="noreferrer"
+                        {...elProps(fig, htmlOptions)}
+                    >{el.attr.src}</a>
                 )
     );
 };

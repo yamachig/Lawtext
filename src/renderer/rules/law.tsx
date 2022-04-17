@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
@@ -29,7 +29,7 @@ export const HTMLEnactStatement = wrapHTMLComponent("HTMLEnactStatement", ((prop
     const { el, htmlOptions, indent } = props;
 
     return (
-        <div className={`enact-statement indent-${indent}`}>
+        <div className={`enact-statement indent-${indent}`} {...elProps(el, htmlOptions)}>
             <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
         </div>
     );
@@ -76,7 +76,7 @@ export const HTMLPreamble = wrapHTMLComponent("HTMLPreamble", ((props: HTMLCompo
     }
 
     return (
-        <div className={"preamble"}>
+        <div className={"preamble"} {...elProps(el, htmlOptions)}>
             {withKey(blocks)}
         </div>
     );
@@ -130,7 +130,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
 
     if (LawTitle) {
         blocks.push((
-            <div className={`law-title indent-${indent}`}>
+            <div className={`law-title indent-${indent}`} {...elProps(LawTitle, htmlOptions)}>
                 <HTMLSentenceChildrenRun els={LawTitle.children} {...{ htmlOptions }} />
             </div>
         ));
@@ -142,7 +142,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
         if (!/^[(（]/.test(LawNumString)) LawNumChildren.unshift("（");
         if (!/[)）]$/.test(LawNumString)) LawNumChildren.push("）");
         blocks.push((
-            <div className={`law-num indent-${indent}`}>
+            <div className={`law-num indent-${indent}`} {...elProps(LawNum, htmlOptions)}>
                 <HTMLSentenceChildrenRun els={LawNumChildren} {...{ htmlOptions }} />
             </div>
         ));
@@ -190,7 +190,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
     }
 
     return (
-        <div className={"law"}>
+        <div className={"law"} {...elProps(el, htmlOptions)}>
             {withKey(blocks)}
         </div>
     );

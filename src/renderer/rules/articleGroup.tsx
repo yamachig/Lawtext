@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent, HTMLMarginSpan } from "../common/html";
+import { HTMLComponentProps, wrapHTMLComponent, HTMLMarginSpan, elProps } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent, DOCXMargin } from "../common/docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
@@ -54,7 +54,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
         const titleIndent = std.articleGroupTitleTags.indexOf(ArticleGroupTitle.tag) + 2;
         if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
         blocks.push((
-            <div className={`article-group-title indent-${indent + titleIndent}`}>
+            <div className={`article-group-title indent-${indent + titleIndent}`} {...elProps(ArticleGroupTitle, htmlOptions)}>
                 <HTMLSentenceChildrenRun els={ArticleGroupTitle.children} {...{ htmlOptions }} />
             </div>
         ));
@@ -65,7 +65,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
         const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
         if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
         blocks.push((
-            <div className={`suppl-provision-label indent-${indent + 3}`}>
+            <div className={`suppl-provision-label indent-${indent + 3}`} {...elProps(SupplProvisionLabel, htmlOptions)}>
                 <HTMLSentenceChildrenRun els={SupplProvisionLabel.children} {...{ htmlOptions }} />{AmendLawNum}
                 {Extract}
             </div>
@@ -119,7 +119,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
     }
 
     return (
-        <div className={classNameBase}>
+        <div className={classNameBase} {...elProps(el, htmlOptions)}>
             {withKey(blocks)}
         </div>
     );

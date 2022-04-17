@@ -1,6 +1,6 @@
 import React from "react";
 import * as std from "../../law/std";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXComponentProps, wrapDOCXComponent } from "../common/docx";
 import { DOCXAnyELs, HTMLAnyELs } from "./any";
 
@@ -19,7 +19,7 @@ export const HTMLNoteLike = wrapHTMLComponent("HTMLNoteLike", ((props: HTMLCompo
     const { el, htmlOptions, indent } = props;
 
     return (
-        <div className="note-like">
+        <div className="note-like" {...elProps(el, htmlOptions)}>
             <HTMLAnyELs els={el.children} indent={indent} {...{ htmlOptions }}/>
         </div>
     );

@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
-import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "../common/docx";
@@ -64,7 +64,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
 
     if (ParagraphCaption) {
         blocks.push((
-            <div className={`paragraph-caption indent-${indent + 1}`}>
+            <div className={`paragraph-caption indent-${indent + 1}`} {...elProps(ParagraphCaption, htmlOptions)}>
                 <HTMLSentenceChildrenRun els={ParagraphCaption.children} {...{ htmlOptions }} />
             </div>
         ));
@@ -75,10 +75,16 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
             <div className={`paragraph-item-main indent-${indent}`}>
                 {Boolean(ParagraphItemTitle || ArticleTitle) && ((
                     <>
-                        <span className={"paragraph-item-title"}>
-                            {ParagraphItemTitle && <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />}
-                            {ArticleTitle && <HTMLSentenceChildrenRun els={ArticleTitle.children} {...{ htmlOptions }} />}
-                        </span>
+                        {ParagraphItemTitle && (
+                            <span className={"paragraph-item-title"} {...elProps(ParagraphItemTitle, htmlOptions)}>
+                                <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />
+                            </span>
+                        )}
+                        {ArticleTitle && (
+                            <span className={"paragraph-item-title"} {...elProps(ArticleTitle, htmlOptions)}>
+                                <HTMLSentenceChildrenRun els={ArticleTitle.children} {...{ htmlOptions }} />
+                            </span>
+                        )}
                         {Boolean(ParagraphItemSentence) && (
                             <HTMLMarginSpan className="paragraph-item-margin"/>
                         )}
@@ -126,6 +132,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
     return (
         <div
             className={`paragraph-item-${el.tag}`}
+            {...elProps(el, htmlOptions)}
         >
             {withKey(blocks)}
         </div>

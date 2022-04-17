@@ -1,7 +1,7 @@
 
 import React from "react";
 import * as std from "../../law/std";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { HTMLSentenceChildrenRun } from "../../renderer/rules/sentenceChildrenRun";
 import { NotImplementedError } from "../../util";
 import { SentenceChildEL } from "../../node/cst/inline";
@@ -158,6 +158,7 @@ const __PStart = (props: HTMLComponentProps & __PStartProps) => {
         <span
             className="control-start-parenthesis"
             data-parentheses_type={el.attr.type}
+            {...elProps(el, htmlOptions)}
         >
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>
@@ -172,6 +173,7 @@ const __PContent = (props: HTMLComponentProps & __PContentProps) => {
         <span
             className="control-parentheses-content"
             data-parentheses_type={el.attr.type}
+            {...elProps(el, htmlOptions)}
         >
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>
@@ -187,6 +189,7 @@ const __PEnd = (props: HTMLComponentProps & __PEndProps) => {
         <span
             className="control-end-parenthesis"
             data-parentheses_type={el.attr.type}
+            {...elProps(el, htmlOptions)}
         >
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>
@@ -202,6 +205,7 @@ const __MismatchStartParenthesis = (props: HTMLComponentProps & __MismatchStartP
         <span
             className="control-mismatch-end-parenthesis"
             data-parentheses_type={el.attr.type}
+            {...elProps(el, htmlOptions)}
         >
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>
@@ -216,6 +220,7 @@ const __MismatchEndParenthesis = (props: HTMLComponentProps & __MismatchEndParen
         <span
             className="control-mismatch-end-parenthesis"
             data-parentheses_type={el.attr.type}
+            {...elProps(el, htmlOptions)}
         >
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </span>

@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXAnyELs, HTMLAnyELs } from "./any";
@@ -36,7 +36,7 @@ export const HTMLAmendProvision = wrapHTMLComponent("HTMLAmendProvision", ((prop
 
         } else if (std.isNewProvision(child)) {
             blocks.push((
-                <div className="new-provision">
+                <div className="new-provision" {...elProps(child, htmlOptions)}>
                     <HTMLAnyELs els={child.children} indent={indent + 1} {...{ htmlOptions }} />
                 </div>
             ));
@@ -47,6 +47,7 @@ export const HTMLAmendProvision = wrapHTMLComponent("HTMLAmendProvision", ((prop
     return (
         <div
             className="amend-provision"
+            {...elProps(el, htmlOptions)}
         >
             {withKey(blocks)}
         </div>

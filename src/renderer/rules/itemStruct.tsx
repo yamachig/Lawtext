@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXTable, HTMLTable } from "./table";
@@ -44,7 +44,7 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
 
     if (ItemStructTitle) {
         blocks.push((
-            <div className={`item-struct-title indent-${indent}`}>
+            <div className={`item-struct-title indent-${indent}`} {...elProps(ItemStructTitle, htmlOptions)}>
                 <HTMLSentenceChildrenRun els={ItemStructTitle.children} {...{ htmlOptions }} />
             </div>
         ));
@@ -91,7 +91,7 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
     }
 
     return (
-        <div className="item-struct">
+        <div className="item-struct" {...elProps(el, htmlOptions)}>
             {withKey(blocks)}
         </div>
     );

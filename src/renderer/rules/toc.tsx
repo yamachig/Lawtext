@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { isSentenceChildEL, SentenceChildEL } from "../../node/cst/inline";
@@ -36,7 +36,7 @@ export const HTMLTOC = wrapHTMLComponent("HTMLTOC", ((props: HTMLComponentProps 
 
     if (TOCLabel) {
         blocks.push((
-            <div className={`toc-label indent-${indent}`}>
+            <div className={`toc-label indent-${indent}`} {...elProps(TOCLabel, htmlOptions)}>
                 <HTMLSentenceChildrenRun els={TOCLabel.children} {...{ htmlOptions }} />
             </div>
         ));
@@ -66,7 +66,7 @@ export const HTMLTOC = wrapHTMLComponent("HTMLTOC", ((props: HTMLComponentProps 
     }
 
     return (
-        <div className={"toc"}>
+        <div className={"toc"} {...elProps(el, htmlOptions)}>
             {withKey(blocks)}
         </div>
     );
@@ -127,8 +127,16 @@ export const HTMLTOCItem = wrapHTMLComponent("HTMLTOCItem", ((props: HTMLCompone
     if (TOCItemTitle || ArticleRange) {
         blocks.push((
             <div className={`toc-item-main indent-${indent}`}>
-                {(TOCItemTitle !== undefined) && <HTMLSentenceChildrenRun els={TOCItemTitle.children} {...{ htmlOptions }} />}
-                {(ArticleRange !== undefined) && <HTMLSentenceChildrenRun els={ArticleRange.children} {...{ htmlOptions }} />}
+                {(TOCItemTitle !== undefined) && (
+                    <span className={"toc-item-title"} {...elProps(TOCItemTitle, htmlOptions)}>
+                        <HTMLSentenceChildrenRun els={TOCItemTitle.children} {...{ htmlOptions }} />
+                    </span>
+                )}
+                {(ArticleRange !== undefined) && (
+                    <span className={"article-range"} {...elProps(ArticleRange, htmlOptions)}>
+                        <HTMLSentenceChildrenRun els={ArticleRange.children} {...{ htmlOptions }} />
+                    </span>
+                )}
             </div>
         ));
     }
@@ -167,6 +175,7 @@ export const HTMLTOCItem = wrapHTMLComponent("HTMLTOCItem", ((props: HTMLCompone
     return (
         <div
             className={`toc-item-${el.tag}`}
+            {...elProps(el, htmlOptions)}
         >
             {withKey(blocks)}
         </div>

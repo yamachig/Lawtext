@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
@@ -33,7 +33,7 @@ export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLCompone
 
     if (ArticleCaption) {
         blocks.push((
-            <div className={`article-caption indent-${indent + 1}`}>
+            <div className={`article-caption indent-${indent + 1}`} {...elProps(ArticleCaption, htmlOptions)}>
                 <HTMLSentenceChildrenRun els={ArticleCaption.children} {...{ htmlOptions }} />
             </div>
         )); /* >>>> INDENT >>>> */
@@ -73,7 +73,7 @@ export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLCompone
     }
 
     return (
-        <div className={"article"}>
+        <div className={"article"} {...elProps(el, htmlOptions)}>
             {withKey(blocks)}
         </div>
     );

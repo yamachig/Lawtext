@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
@@ -58,7 +58,7 @@ export const HTMLTable = wrapHTMLComponent("HTMLTable", ((props: HTMLComponentPr
     }
 
     return (
-        <table className={`table indent-${indent}`}>
+        <table className={`table indent-${indent}`} {...elProps(el, htmlOptions)}>
             <tbody>
                 {withKey(rows)}
             </tbody>
@@ -88,7 +88,7 @@ export const HTMLTableRow = wrapHTMLComponent("HTMLTableRow", ((props: HTMLCompo
     }
 
     return (
-        <tr className={"table-row"}>
+        <tr className={"table-row"} {...elProps(el, htmlOptions)}>
             {withKey(columns)}
         </tr>
     );
@@ -178,13 +178,13 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
 
     if (std.isTableHeaderColumn(el)) {
         return (
-            <th className={"table-header-column"} {...attr}>
+            <th className={"table-header-column"} {...attr} {...elProps(el, htmlOptions)}>
                 {withKey(blocks)}
             </th>
         );
     } else {
         return (
-            <td className={"table-column"} {...attr}>
+            <td className={"table-column"} {...attr} {...elProps(el, htmlOptions)}>
                 {withKey(blocks)}
             </td>
         );

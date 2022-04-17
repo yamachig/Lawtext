@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
@@ -35,7 +35,7 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
 
     if (RemarksLabel) {
         blocks.push((
-            <div className={`remarks-label indent-${indent}`}>
+            <div className={`remarks-label indent-${indent}`} {...elProps(RemarksLabel, htmlOptions)}>
                 <HTMLSentenceChildrenRun els={RemarksLabel.children} {...{ htmlOptions }} />
             </div>
         ));
@@ -51,7 +51,7 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
 
         } else if (std.isSentence(child)) {
             bodyBlocks.push((
-                <div className={`remarks-sentence indent-${indent + 1}`}>
+                <div className={`remarks-sentence indent-${indent + 1}`} {...elProps(child, htmlOptions)}>
                     <HTMLSentenceChildrenRun els={child.children} {...{ htmlOptions }} />
                 </div>
             ));
@@ -74,7 +74,7 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
     }
 
     return (
-        <div className={"remarks"}>
+        <div className={"remarks"} {...elProps(el, htmlOptions)}>
             {withKey(blocks)}
         </div>
     );

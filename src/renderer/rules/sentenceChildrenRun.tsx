@@ -2,7 +2,7 @@ import React from "react";
 import { SentenceChildEL } from "../../node/cst/inline";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
 import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun";
@@ -47,13 +47,13 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
                     .filter(c => !(typeof c === "string") && std.isRt(c)) as std.Rt[])
                     .map(c => c.text)
                     .join("");
-                runs.push(<ruby>{rb}<rt>{rt}</rt></ruby>);
+                runs.push(<ruby {...elProps(el, htmlOptions)}>{rb}<rt>{rt}</rt></ruby>);
 
             } else if (el.tag === "Sub") {
-                runs.push(<sub>{el.text}</sub>);
+                runs.push(<sub {...elProps(el, htmlOptions)}>{el.text}</sub>);
 
             } else if (el.tag === "Sup") {
-                runs.push(<sup>{el.text}</sup>);
+                runs.push(<sup {...elProps(el, htmlOptions)}>{el.text}</sup>);
 
             } else if (el.tag === "QuoteStruct") {
                 runs.push(<HTMLQuoteStructRun el={el} {...{ htmlOptions }} />);

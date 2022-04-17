@@ -1,6 +1,6 @@
 import React from "react";
 import * as std from "../../law/std";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 
@@ -21,7 +21,7 @@ export const HTMLSupplNote = wrapHTMLComponent("HTMLSupplNote", ((props: HTMLCom
     const { el, htmlOptions, indent } = props;
 
     return (
-        <div className={`suppl-note indent-${indent}`}>
+        <div className={`suppl-note indent-${indent}`} {...elProps(el, htmlOptions)}>
             <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
         </div>
     );

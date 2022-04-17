@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
@@ -45,12 +45,12 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
         blocks.push((
             <div className={`appdx-item-head indent-${indent}`}>
                 {(AppdxItemTitle !== undefined) && (
-                    <span className="appdx-item-title">
+                    <span className="appdx-item-title" {...elProps(AppdxItemTitle, htmlOptions)}>
                         <HTMLSentenceChildrenRun els={AppdxItemTitle.children} {...{ htmlOptions }} />
                     </span>
                 )}
                 {(RelatedArticleNum !== undefined) && (
-                    <span className="related-article-num">
+                    <span className="related-article-num" {...elProps(RelatedArticleNum, htmlOptions)}>
                         <HTMLSentenceChildrenRun els={RelatedArticleNum.children} {...{ htmlOptions }} />
                     </span>
                 )}
@@ -79,7 +79,7 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
 
         } else if (std.isArithFormula(child)) {
             bodyBlocks.push((
-                <div className={`appdx-item-runs indent-${indent}`}>
+                <div className={`appdx-item-runs indent-${indent}`} {...elProps(child, htmlOptions)}>
                     <HTMLArithFormulaRun el={child} {...{ htmlOptions }} />
                 </div>
             ));
@@ -97,7 +97,7 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
     }
 
     return (
-        <div className="appdx-item">
+        <div className="appdx-item" {...elProps(el, htmlOptions)}>
             {withKey(blocks)}
         </div>
     );

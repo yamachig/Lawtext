@@ -1,4 +1,5 @@
 import React from "react";
+import { EL } from "../../node/el";
 
 // eslint-disable-next-line no-irregular-whitespace
 export const HTMLMarginSpan: React.FC<React.HTMLAttributes<HTMLSpanElement>> = props => <span {...props}>　</span>;
@@ -25,6 +26,7 @@ export interface HTMLOptions {
     renderControlEL?: boolean;
     getFigData?: GetFigData;
     renderPDFAsLink?: boolean;
+    annotateLawtextRange?: boolean;
     options?: object;
 }
 
@@ -50,3 +52,11 @@ export function wrapHTMLComponent<P, TComponentID extends string>(htmlComponentI
     ret.componentID = htmlComponentID;
     return ret;
 }
+
+export const elProps = (el: EL, htmlOptions: HTMLOptions) => {
+    const ret: Record<string, string> = {};
+    if (htmlOptions.annotateLawtextRange && el.range) {
+        ret["data-lawtext_range"] = JSON.stringify(el.range);
+    }
+    return ret;
+};

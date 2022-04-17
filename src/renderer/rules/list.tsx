@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { withKey } from "../common";
@@ -27,7 +27,7 @@ export const HTMLList = wrapHTMLComponent("HTMLList", ((props: HTMLComponentProp
 
         if (std.isListOrSublistSentence(child)) {
             blocks.push((
-                <div className={`list-main indent-${indent}`}>
+                <div className={`list-main indent-${indent}`} {...elProps(child, htmlOptions)}>
                     <HTMLColumnsOrSentencesRun els={child.children} {...{ htmlOptions }} />
                 </div>
             ));
@@ -42,6 +42,7 @@ export const HTMLList = wrapHTMLComponent("HTMLList", ((props: HTMLComponentProp
     return (
         <div
             className={`list-${el.tag}`}
+            {...elProps(el, htmlOptions)}
         >
             {withKey(blocks)}
         </div>

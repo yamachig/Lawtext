@@ -4,7 +4,7 @@ import { assertNever } from "../../util";
 import { withKey } from "../common";
 import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "../common/docx";
 import TextBoxRun from "../common/docx/TextBoxRun";
-import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
+import { elProps, HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXTable, HTMLTable } from "./table";
 
@@ -38,11 +38,11 @@ export const HTMLColumnsOrSentencesRun = wrapHTMLComponent("HTMLColumnsOrSentenc
                 subruns.push(<HTMLSentenceChildrenRun els={subel.children} {...{ htmlOptions }} />);
             }
 
-            runs.push(<span className="lawtext-column">{withKey(subruns)}</span>);
+            runs.push(<span className="lawtext-column" {...elProps(el, htmlOptions)}>{withKey(subruns)}</span>);
 
         } else if (std.isTable(el)) {
             runs.push((
-                <span style={{ display: "inline-block" }}>
+                <span style={{ display: "inline-block" }} {...elProps(el, htmlOptions)}>
                     <HTMLTable el={el} indent={0} {...{ htmlOptions }} />
                 </span>
             ));
