@@ -2,14 +2,21 @@ import * as std from "../law/std";
 import * as analyzer from "../analyzer";
 import * as util from "../util";
 import { parse } from "../parser/lawtext";
-import { xmlToJson } from "../node/el";
+import { EL, xmlToJson } from "../node/el";
 import { ErrorMessage } from "../parser/cst/error";
+import { LawXMLStruct } from "./loaders/common";
+import { ElawsLawData } from "../elaws_api";
 
 
-export interface LawDataCore {el: std.Law, analysis: analyzer.Analysis}
+export interface LawDataCore {
+    el: std.Law,
+    analysis: analyzer.Analysis,
+    pictURL: Map<string, {url: string, type: string}>;
+}
 
 export interface BaseXMLLawDataProps {
     xml: string,
+    lawXMLStruct: LawXMLStruct | null,
 }
 export interface BaseLawtextLawDataProps {
     lawtext: string,
@@ -46,6 +53,16 @@ Timing {
     }
 }
 
+function *findFig(el: EL): Iterable<std.Fig> {
+    if (std.isFig(el)) {
+        yield el;
+    }
+    for (const child of el.children) {
+        if (typeof child === "string") continue;
+        yield* findFig(child);
+    }
+}
+
 export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
     props: TLawDataProps,
     onMessage: (message: string) => unknown,
@@ -73,12 +90,39 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
             const [analyzeTime, analysis] = await util.withTime(analyzer.analyze)(el);
             timing.analyze = analyzeTime;
 
+            const pictURL = new Map<string, {url: string, type: string}>();
+            const lawXMLStruct = _props.lawXMLStruct;
+            if (lawXMLStruct) {
+                onMessage("画像情報を読み込んでいます...");
+                await util.wait(30);
+                const start = new Date();
+                if (lawXMLStruct instanceof ElawsLawData) {
+                    const pict = await lawXMLStruct.ensurePict();
+                    if (pict) {
+                        for (const [src] of pict.entries()) {
+                            const url = await lawXMLStruct.getPictFileOrBlobURL(src);
+                            if (url) pictURL.set(src, url);
+                        }
+                    }
+                } else {
+                    for (const fig of findFig(el)) {
+                        const src = fig.attr.src;
+                        if (!src) continue;
+                        const url = await lawXMLStruct.getPictFileOrBlobURL(src);
+                        if (url) pictURL.set(src, url);
+                    }
+                }
+                timing.extractPict = (new Date()).getTime() - start.getTime();
+            }
+
+
             return {
                 ok: true,
                 lawData: {
                     ...(_props as typeof props),
                     el: el as std.Law,
                     analysis,
+                    pictURL,
                 },
             };
         } else if ("lawtext" in _props) {
@@ -101,6 +145,7 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
                     ...(_props as typeof props),
                     el: el as std.Law,
                     analysis,
+                    pictURL: new Map(),
                 },
                 lawtextErrors: errors,
             };

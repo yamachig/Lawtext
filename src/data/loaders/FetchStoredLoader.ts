@@ -1,5 +1,5 @@
 import iconv from "iconv-lite";
-import { csvTextToLawInfos, jsonTextToLawInfos, LawInfosStruct, Loader } from "./common";
+import { csvTextToLawInfos, jsonTextToLawInfos, LawInfosStruct, LawXMLStruct, Loader } from "./common";
 import { BaseLawInfo } from "../lawinfo";
 import * as data_paths from "../paths";
 import path from "path";
@@ -35,6 +35,33 @@ const fetchSjisText = async (textPath: string) => {
     }
 };
 
+export class StoredLawXML extends LawXMLStruct {
+    constructor(
+        public lawdataPath: string,
+        public lawInfo: BaseLawInfo,
+        private _xml: string,
+    ) {
+        super();
+    }
+    public get xml(): string {
+        return this._xml;
+    }
+    public async getPictFileOrBlobURL(src: string): Promise<{url: string, type: string} | null> {
+        const url = path.join(this.lawdataPath, this.lawInfo.Path, src);
+        const res = await fetch(url, { method: "HEAD" });
+        if (!res.ok) return null;
+        return { url, type: res.headers.get("Content-Type") ?? "" };
+    }
+    public async getPictBlob(src: string): Promise<Blob | null> {
+        const url = path.join(this.lawdataPath, this.lawInfo.Path, src);
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        return res.blob();
+    }
+
+}
+
+
 export class FetchStoredLoader extends Loader {
 
     public constructor(
@@ -59,11 +86,11 @@ export class FetchStoredLoader extends Loader {
         return csvTextToLawInfos(text);
     }
 
-    public async loadLawXMLByInfo(lawInfo: BaseLawInfo): Promise<string> {
+    public async loadLawXMLStructByInfo(lawInfo: BaseLawInfo): Promise<StoredLawXML> {
         const filepath = path.join(this.lawdataPath, lawInfo.Path, lawInfo.XmlName);
         const text = await fetchText(filepath);
         if (text === null) throw new Error("Text cannot be fetched");
-        return text;
+        return new StoredLawXML(this.lawdataPath, lawInfo, text);
     }
 
     public async listCSVExists(): Promise<boolean> {

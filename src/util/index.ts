@@ -53,3 +53,16 @@ export const assertNever = (x: never): never => {
 };
 
 export type Diff<T, U> = T extends U ? never : T;
+
+
+export const pictMimeDict = {
+    ".jpeg": "image/jpeg",
+    ".jpg": "image/jpeg",
+    ".png": "image/png",
+    ".pdf": "application/pdf",
+    ".bmp": "image/bmp",
+    ".gif": "image/gif",
+    ".svg": "image/svg+xml",
+    ".tif": "image/tiff",
+    ".tiff": "image/tiff",
+} as const;

@@ -1,6 +1,6 @@
 import { LawInfosStruct, lawInfosToByLawnumAndID, Loader } from "./common";
 import { BaseLawInfo, LawInfo } from "../lawinfo";
-import { fetchLawNameList, fetchLawData } from "../../elaws_api";
+import { fetchLawNameList, fetchLawData, ElawsLawData } from "../../elaws_api";
 
 const fetchBaseLawInfosFromElaws = async (): Promise<BaseLawInfo[]> => {
     const lawNameList = await fetchLawNameList();
@@ -30,9 +30,8 @@ export class FetchElawsLoader extends Loader {
         return fetchBaseLawInfosFromElaws();
     }
 
-    public async loadLawXMLByInfo(lawInfo: BaseLawInfo): Promise<string> {
-        const lawData = await fetchLawData(lawInfo.LawID);
-        return lawData.xml;
+    public async loadLawXMLStructByInfo(lawInfoOrLawID: BaseLawInfo | string): Promise<ElawsLawData> {
+        return fetchLawData(typeof lawInfoOrLawID === "string" ? lawInfoOrLawID : lawInfoOrLawID.LawID);
     }
 
 }

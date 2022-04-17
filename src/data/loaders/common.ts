@@ -6,14 +6,23 @@ export interface LawInfosStruct {
     lawInfosByLawID: { [index: string]: LawInfo[] },
 }
 
+export abstract class LawXMLStruct {
+    public abstract get xml(): string;
+    public abstract getPictFileOrBlobURL(src: string): Promise<{url: string, type: string} | null>;
+    public abstract getPictBlob(src: string): Promise<Blob | null>;
+    public clean(): void {
+        /* */
+    }
+}
+
 export abstract class Loader {
     public abstract loadLawInfosStruct(): Promise<LawInfosStruct>;
     public abstract loadBaseLawInfosFromCSV(): Promise<BaseLawInfo[]>;
-    public abstract loadLawXMLByInfo(info: BaseLawInfo): Promise<string>;
+    public abstract loadLawXMLStructByInfo(info: BaseLawInfo): Promise<LawXMLStruct>;
 
     protected _cache = {
         lawListStruct: null as LawInfosStruct | null,
-    }
+    };
 
     public async cacheLawListStruct(): Promise<LawInfosStruct> {
         if (this._cache.lawListStruct === null) {
@@ -70,7 +79,7 @@ export abstract class Loader {
         const generator = new LawListGenerator();
         for (const baseLawInfo of baseLawInfos) {
             progress(currentLength / baseLawInfos.length, `${baseLawInfo.LawNum}：${baseLawInfo.LawTitle}`);
-            const xml = await this.loadLawXMLByInfo(baseLawInfo);
+            const { xml } = await this.loadLawXMLStructByInfo(baseLawInfo);
             if (xml === null) {
                 console.error("XML cannot fetched", baseLawInfo);
                 continue;

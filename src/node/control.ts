@@ -12,10 +12,10 @@ export type ParenthesesType = typeof parenthesesTypeStrings[number];
 export class __Parentheses extends EL {
 
     public content: string;
-    public get isControl(): true {
+    public override get isControl(): true {
         return true;
     }
-    public attr: {
+    public override attr: {
         type: ParenthesesType,
         depth: string,
     };
@@ -51,7 +51,7 @@ export class __Parentheses extends EL {
 
 
 export class __Text extends EL {
-    public get isControl(): true {
+    public override get isControl(): true {
         return true;
     }
 
@@ -65,7 +65,7 @@ export class __Text extends EL {
 
 
 export class __MatchFail extends EL {
-    public get isControl(): true {
+    public override get isControl(): true {
         return true;
     }
 

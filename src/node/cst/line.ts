@@ -396,7 +396,7 @@ type ParagraphItemLineOptions<TTag extends (typeof paragraphItemTags)[number] | 
 
 export class ParagraphItemLine<TTag extends (typeof paragraphItemTags)[number] | null = (typeof paragraphItemTags)[number] | null> extends WithControlsLine<LineType.PIT> {
     public mainTag: TTag;
-    public controls: Controls;
+    public override controls: Controls;
     public title: string;
     public midSpace: string;
     public sentencesArray: SentencesArray;

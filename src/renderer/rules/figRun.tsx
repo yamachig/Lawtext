@@ -24,18 +24,18 @@ export const HTMLFigRunCSS = /*css*/`
 export const HTMLFigRun = wrapHTMLComponent("HTMLFigRun", ((props: HTMLComponentProps & FigRunProps) => {
 
     const { el, htmlOptions } = props;
-    const { getFigDataInfo: getFigData } = htmlOptions;
+    const { getFigData: getFigData } = htmlOptions;
 
     if (el.children.length > 0) {
         throw new NotImplementedError(el.outerXML());
     }
 
     if (getFigData) {
-        const figData = getFigData(el.attr.src, true);
+        const figData = getFigData(el.attr.src);
         return figData === null ? (
             <>[{el.attr.src}]</>
         ) : (
-            <HTMLFigRunWithFigData {...props} figData={figData.figData} />
+            <HTMLFigRunWithFigData {...props} figData={figData} />
         );
     } else {
         return (

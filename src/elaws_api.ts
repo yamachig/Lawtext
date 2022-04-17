@@ -1,4 +1,7 @@
-import { decodeBase64 } from "./util";
+import JSZip from "jszip";
+import path from "path";
+import { LawXMLStruct } from "./data/loaders/common";
+import { decodeBase64, pictMimeDict } from "./util";
 import { fetch as nodeFetch } from "./util/node-fetch";
 const fetch: typeof window.fetch = (global["window"] && window.fetch) || nodeFetch;
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
@@ -76,13 +79,25 @@ export const fetchLawNameList = async (): Promise<LawNameListInfo[]> => {
     return lawNameList;
 };
 
-export class ElawsLawData {
+
+export class ElawsLawData extends LawXMLStruct {
     constructor(
-        public lawID: string,
-        public law: Element,
-        public imageData: Uint8Array | null,
+        public readonly lawID: string,
+        public readonly law: Element,
+        public readonly imageData: Uint8Array | null,
         private _xml: string | null = null,
-    ) { }
+    ) {
+        super();
+    }
+    private blobURLs: string[] = [];
+    public override clean() {
+        console.log(`Revoking ${this.blobURLs.length} blob URLs`);
+        while (this.blobURLs.length > 0) {
+            const url = this.blobURLs.pop();
+            if (url) URL.revokeObjectURL(url);
+        }
+    }
+    private _pict: Map<string, Blob> | null = null;
     private getXml() {
         const doc = this.law.ownerDocument.implementation.createDocument("", "", null);
         doc.appendChild(doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\""));
@@ -92,6 +107,31 @@ export class ElawsLawData {
     public get xml(): string {
         this._xml = this._xml === null ? this.getXml() : this._xml;
         return this._xml;
+    }
+    public async getPictFileOrBlobURL(src: string): Promise<{url: string, type: string} | null> {
+        const blob = await this.getPictBlob(src);
+        if (!blob) return null;
+        const url = URL.createObjectURL(blob);
+        this.blobURLs.push(url);
+        return { url, type: blob.type };
+    }
+    public async ensurePict(): Promise<Map<string, Blob> | null> {
+        if (!this.imageData) return null;
+        if (!this._pict) {
+            this._pict = new Map();
+            const zip = await JSZip.loadAsync(this.imageData);
+            for (const relPath in zip.files) {
+                const buf = await zip.files[relPath].async("arraybuffer");
+                const ext = path.extname(relPath) as keyof typeof pictMimeDict;
+                const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
+                const blob = new Blob([buf], { type });
+                this._pict.set(`./pict/${relPath}`, blob);
+            }
+        }
+        return this._pict;
+    }
+    public async getPictBlob(src: string): Promise<Blob | null> {
+        return (await this.ensurePict())?.get(src) ?? null;
     }
 }
 

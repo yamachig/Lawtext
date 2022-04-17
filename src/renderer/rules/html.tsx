@@ -14,23 +14,16 @@ export interface FigData {
     type: string,
 }
 
-export interface FigDataInfo {
-    figData: FigData,
-    cleaner: () => void,
-}
-
-export type GetFigDataInfo = (
-     <TForceSync extends (boolean | undefined)=undefined>
-     (src: string, forceSync?: TForceSync) =>
-        | FigDataInfo
+export type GetFigData = (
+     (src: string) =>
+        | FigData
         | null
-        | (TForceSync extends true ? never : Promise<FigDataInfo | null>)
 );
 
 export interface HTMLOptions {
     WrapComponent?: React.FC<WrapperComponentProps>;
     renderControlEL?: boolean;
-    getFigDataInfo?: GetFigDataInfo;
+    getFigData?: GetFigData;
     options?: object;
 }
 

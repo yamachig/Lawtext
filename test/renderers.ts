@@ -265,7 +265,7 @@ describe("Test Renderes", () => {
 
             const lawInfo = await loader.getLawInfoByLawNum(lawNum);
             if (lawInfo === null) throw Error("LawInfo not found");
-            const origXML = await loader.loadLawXMLByInfo(lawInfo);
+            const { xml: origXML } = await loader.loadLawXMLStructByInfo(lawInfo);
             if (origXML === null) throw new Error(`XML cannot be fetched: ${lawNum}`);
             console.log(`${TERMC.CYAN}Temporary directory: "${tempDir}"${TERMC.DEFAULT}`);
             const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);

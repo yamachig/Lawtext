@@ -1,10 +1,11 @@
 import iconv from "iconv-lite";
-import { csvTextToLawInfos, jsonTextToLawInfos, LawInfosStruct, Loader } from "./common";
+import { csvTextToLawInfos, jsonTextToLawInfos, LawInfosStruct, LawXMLStruct, Loader } from "./common";
 import { BaseLawInfo } from "../lawinfo";
 import * as data_paths from "../paths";
 import { promisify } from "util";
 import fs from "fs";
 import path from "path";
+import { pictMimeDict } from "../../util";
 
 const readText = async (textPath: string) => {
     try {
@@ -25,6 +26,36 @@ const readSjisText = async (textPath: string) => {
         return null;
     }
 };
+
+export class FSStoredLawXML extends LawXMLStruct {
+    constructor(
+        public lawdataPath: string,
+        public lawInfo: BaseLawInfo,
+        private _xml: string,
+    ) {
+        super();
+    }
+    public get xml(): string {
+        return this._xml;
+    }
+    public async getPictFileOrBlobURL(src: string): Promise<{url: string, type: string} | null> {
+        const url = path.join(this.lawdataPath, this.lawInfo.Path, src);
+        // const res = await fetch(url, { method: "HEAD" });
+        // if (!res.ok) return null;
+        const ext = path.extname(src) as keyof typeof pictMimeDict;
+        const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
+        return { url, type };
+    }
+    public async getPictBlob(src: string): Promise<Blob | null> {
+        const _url = await this.getPictFileOrBlobURL(src);
+        if (!_url) return null;
+        const { url, type } = _url;
+        const buf = await promisify(fs.readFile)(url);
+        if (!buf) return null;
+        return new Blob([buf], { type });
+    }
+
+}
 
 export class FSStoredLoader extends Loader {
 
@@ -54,11 +85,11 @@ export class FSStoredLoader extends Loader {
         return path.join(this.lawdataPath, lawInfo.Path, lawInfo.XmlName);
     }
 
-    public async loadLawXMLByInfo(lawInfo: BaseLawInfo): Promise<string> {
+    public async loadLawXMLStructByInfo(lawInfo: BaseLawInfo): Promise<FSStoredLawXML> {
         const filepath = this.getXmlPath(lawInfo);
         const text = await readText(filepath);
         if (text === null) throw new Error(`Text cannot be fetched: ${filepath}`);
-        return text;
+        return new FSStoredLawXML(this.lawdataPath, lawInfo, text);
     }
 
     public async listCSVExists(): Promise<boolean> {

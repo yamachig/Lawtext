@@ -598,7 +598,7 @@ export class LawQueryItem extends LawInfo implements QueryItem {
                 this._cache.xml = elawsLawData.xml;
                 this._cache.imageData = elawsLawData.imageData;
             } else {
-                this._cache.xml = await this.loader.loadLawXMLByInfo(this);
+                this._cache.xml = (await this.loader.loadLawXMLStructByInfo(this)).xml;
             }
         }
         return this._cache.xml;
