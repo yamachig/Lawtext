@@ -5,7 +5,7 @@ import { LawtextAppPageStateStruct, OrigSetLawtextAppPageState } from "../Lawtex
 import { LawData } from "@appsrc/lawdata/common";
 import { HTMLOptions, GetFigData } from "lawtext/dist/src/renderer/common/html";
 import htmlCSS from "lawtext/dist/src/renderer/rules/htmlCSS";
-import { ControlGlobalStyle } from "../ControlRun";
+import { ControlGlobalStyle } from "./ControlRun";
 import { LawViewOptions } from "./common";
 import { WrapLawComponent } from "./LawWrapper";
 import useAfterMountTasks from "./useAfterMountTask";

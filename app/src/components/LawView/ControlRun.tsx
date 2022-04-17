@@ -8,7 +8,7 @@ import { HTMLParagraphItem } from "lawtext/dist/src/renderer/rules/paragraphItem
 import { HTMLControlRunProps } from "lawtext/dist/src/renderer/rules/controlRun";
 import { HTMLTable } from "lawtext/dist/src/renderer/rules/table";
 import styled, { createGlobalStyle } from "styled-components";
-import { em, LawViewOptions } from "./LawView/common";
+import { em, LawViewOptions } from "./common";
 import { EL } from "lawtext/dist/src/node/el";
 import { NotImplementedError } from "lawtext/dist/src/util";
 import AnimateHeight from "react-animate-height";
@@ -124,7 +124,6 @@ const ____VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
     const [state, setState] = React.useState<____VarRefState>({ mode: VarRefFloatState.HIDDEN, arrowLeft: "" });
 
     React.useEffect(() => {
-        window.addEventListener("resize", updateSize);
         return () => {
             window.removeEventListener("resize", updateSize);
         };
@@ -133,10 +132,12 @@ const ____VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
     const varRefTextSpanOnClick = (/* e: React.MouseEvent<HTMLSpanElement> */) => {
         if (state.mode === VarRefFloatState.OPEN) {
             setState(prevState => ({ ...prevState, mode: VarRefFloatState.CLOSED }));
+            window.removeEventListener("resize", updateSize);
         } else {
             setState(prevState => ({ ...prevState, mode: VarRefFloatState.OPEN }));
             setTimeout(() => {
                 updateSize();
+                window.addEventListener("resize", updateSize);
             }, 0);
         }
     };
