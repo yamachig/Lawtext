@@ -24,6 +24,7 @@ export interface HTMLOptions {
     WrapComponent?: React.FC<WrapperComponentProps>;
     renderControlEL?: boolean;
     getFigData?: GetFigData;
+    renderPDFAsLink?: boolean;
     options?: object;
 }
 

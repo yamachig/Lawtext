@@ -24,7 +24,7 @@ export const HTMLFigRunCSS = /*css*/`
 export const HTMLFigRun = wrapHTMLComponent("HTMLFigRun", ((props: HTMLComponentProps & FigRunProps) => {
 
     const { el, htmlOptions } = props;
-    const { getFigData: getFigData } = htmlOptions;
+    const { getFigData } = htmlOptions;
 
     if (el.children.length > 0) {
         throw new NotImplementedError(el.outerXML());
@@ -46,16 +46,21 @@ export const HTMLFigRun = wrapHTMLComponent("HTMLFigRun", ((props: HTMLComponent
 
 export const HTMLFigRunWithFigData = (props: HTMLComponentProps & FigRunProps & { figData: FigData }) => {
 
-    const { el, figData } = props;
+    const { el, figData, htmlOptions } = props;
+    const { renderPDFAsLink } = htmlOptions;
 
     return (
-        figData.type.includes("pdf") ? (
-            <iframe className="fig-iframe" src={figData.url} />
-        ) : figData.type.startsWith("image/") ? (
-            <img className="fig-img" src={figData.url} />
-        ) : (
-            <a className="fig-link" href={figData.url} type={figData.type} target="_blank" rel="noreferrer">{el.attr.src}</a>
-        )
+        figData.type.startsWith("image/")
+            ? (
+                <img className="fig-img" src={figData.url} />
+            )
+            : ((!renderPDFAsLink) && figData.type.includes("pdf"))
+                ? (
+                    <iframe className="fig-iframe" src={figData.url} sandbox="allow-scripts" />
+                )
+                : (
+                    <a className="fig-link" href={figData.url} type={figData.type} target="_blank" rel="noreferrer">{el.attr.src}</a>
+                )
     );
 };
 
