@@ -2,7 +2,7 @@ import React from "react";
 import { EL, JsonEL, loadEl } from "../node/el";
 import * as std from "../law/std";
 import { DOCXLaw } from "./rules/law";
-import { DOCXOptions, renderDocxAsync as innerRenderDocxAsync } from "./rules/docx";
+import { DOCXOptions, renderDocxAsync as innerRenderDocxAsync } from "./common/docx";
 import { DOCXAnyELs } from "./rules/any";
 
 

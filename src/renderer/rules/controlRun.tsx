@@ -1,7 +1,7 @@
 
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
-import { HTMLComponentProps, wrapHTMLComponent } from "../../renderer/rules/html";
+import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { HTMLSentenceChildrenRun } from "../../renderer/rules/sentenceChildrenRun";
 import { NotImplementedError } from "../../util";
 import { SentenceChildEL } from "../../node/cst/inline";

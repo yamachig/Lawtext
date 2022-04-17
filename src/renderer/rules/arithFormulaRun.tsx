@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
-import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXComponentProps, wrapDOCXComponent, w } from "./docx";
+import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { DOCXComponentProps, wrapDOCXComponent, w } from "../common/docx";
 import { DOCXAnyELsToBlocks, HTMLAnyELsToBlocks } from "./any";
-import TextBoxRun from "./docx/TextBoxRun";
+import TextBoxRun from "../common/docx/TextBoxRun";
 
 
 export interface ArithFormulaRunProps {

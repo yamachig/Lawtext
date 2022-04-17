@@ -1,8 +1,8 @@
 import React from "react";
 import * as std from "../../law/std";
-import { HTMLComponentProps, wrapHTMLComponent } from "./html";
+import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
+import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 
 
 export interface SupplNoteProps {

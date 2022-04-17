@@ -1,10 +1,10 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
-import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "./html";
+import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
-import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "./docx";
+import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
 import { DOCXList, HTMLList } from "./list";
 import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision";

@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
-import { HTMLComponentProps, wrapHTMLComponent } from "./html";
-import { DOCXComponentProps, wrapDOCXComponent } from "./docx";
+import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { DOCXComponentProps, wrapDOCXComponent } from "../common/docx";
 import { DOCXAnyELs, HTMLAnyELs } from "./any";
 
 

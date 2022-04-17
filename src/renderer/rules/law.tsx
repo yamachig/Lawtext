@@ -1,15 +1,15 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "./html";
+import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
+import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
 import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXTOC, HTMLTOC } from "./toc";
-import EmptyParagraph from "./docx/EmptyParagraph";
+import EmptyParagraph from "../common/docx/EmptyParagraph";
 
 
 export interface EnactStatementProps {

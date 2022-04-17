@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "./docx";
-import TextBoxRun from "./docx/TextBoxRun";
-import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "./html";
+import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "../common/docx";
+import TextBoxRun from "../common/docx/TextBoxRun";
+import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXTable, HTMLTable } from "./table";
 

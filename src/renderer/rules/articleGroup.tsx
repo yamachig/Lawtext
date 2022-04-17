@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent, HTMLMarginSpan } from "./html";
+import { HTMLComponentProps, wrapHTMLComponent, HTMLMarginSpan } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXComponentProps, w, wrapDOCXComponent, DOCXMargin } from "./docx";
+import { DOCXComponentProps, w, wrapDOCXComponent, DOCXMargin } from "../common/docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXArticle, HTMLArticle } from "./article";
 import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
-import EmptyParagraph from "./docx/EmptyParagraph";
+import EmptyParagraph from "../common/docx/EmptyParagraph";
 
 
 export interface ArticleGroupProps {

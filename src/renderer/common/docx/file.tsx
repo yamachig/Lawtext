@@ -1,6 +1,6 @@
 import React from "react";
 import JSZip from "jszip";
-import { renderToStaticMarkup } from "../common";
+import { renderToStaticMarkup } from "..";
 import { w } from "./tags";
 import contentTypes from "./files/contentTypes";
 import rels from "./files/rels";

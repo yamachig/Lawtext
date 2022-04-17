@@ -3,14 +3,14 @@ import { assert } from "chai";
 import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun";
 import { loadEl } from "../../node/el";
 import * as std from "../../law/std";
-import { renderToStaticMarkup } from "./common";
+import { renderToStaticMarkup } from "../common";
 import formatXML from "../../util/formatXml";
 import htmlCSS from "./htmlCSS";
 import path from "path";
 import { promisify } from "util";
 import fs from "fs";
 import os from "os";
-import { renderDocxAsync, w } from "./docx";
+import { renderDocxAsync, w } from "../common/docx";
 
 const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 

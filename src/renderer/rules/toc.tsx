@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent } from "./html";
+import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXComponentProps, w, wrapDOCXComponent } from "./docx";
+import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { isSentenceChildEL, SentenceChildEL } from "../../node/cst/inline";
 import { EL } from "../../node/el";
 
