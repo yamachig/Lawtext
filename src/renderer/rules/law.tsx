@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
@@ -10,6 +10,7 @@ import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXTOC, HTMLTOC } from "./toc";
 import EmptyParagraph from "../common/docx/EmptyParagraph";
+import { withKey } from "../common";
 
 
 export interface EnactStatementProps {
@@ -76,7 +77,7 @@ export const HTMLPreamble = wrapHTMLComponent("HTMLPreamble", ((props: HTMLCompo
 
     return (
         <div className={"preamble"}>
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -98,7 +99,7 @@ export const DOCXPreamble = wrapDOCXComponent("DOCXPreamble", ((props: DOCXCompo
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));
 
@@ -128,11 +129,11 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
     const LawNum = el.children.find(std.isLawNum);
 
     if (LawTitle) {
-        blocks.push(<>
+        blocks.push((
             <div className={`law-title indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={LawTitle.children} {...{ htmlOptions }} />
             </div>
-        </>);
+        ));
     }
 
     if (LawNum) {
@@ -140,11 +141,11 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
         const LawNumChildren = [...LawNum.children];
         if (!/^[(（]/.test(LawNumString)) LawNumChildren.unshift("（");
         if (!/[)）]$/.test(LawNumString)) LawNumChildren.push("）");
-        blocks.push(<>
+        blocks.push((
             <div className={`law-num indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={LawNumChildren} {...{ htmlOptions }} />
             </div>
-        </>);
+        ));
     }
 
     const bodyBlocks: JSX.Element[] = [];
@@ -181,16 +182,16 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
 
     if (bodyBlocks.length > 0) {
         if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
-        blocks.push(<>
+        blocks.push((
             <div className={"law-body"}>
-                {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(bodyBlocks)}
             </div>
-        </>);
+        ));
     }
 
     return (
         <div className={"law"}>
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -205,14 +206,14 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
     const LawNum = el.children.find(std.isLawNum);
 
     if (LawTitle) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={LawTitle.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
-        </>);
+        ));
     }
 
     if (LawNum) {
@@ -220,14 +221,14 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
         const LawNumChildren = [...LawNum.children];
         if (!/^[(（]/.test(LawNumString)) LawNumChildren.unshift("（");
         if (!/[)）]$/.test(LawNumString)) LawNumChildren.push("）");
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={LawNumChildren} emphasis={true} {...{ docxOptions }} />
             </w.p>
-        </>);
+        ));
     }
 
     for (const child of el.children.find(std.isLawBody)?.children ?? []) {
@@ -261,6 +262,6 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));

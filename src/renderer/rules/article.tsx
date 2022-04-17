@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
@@ -6,6 +6,7 @@ import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChil
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXSupplNote, HTMLSupplNote } from "./supplNote";
+import { withKey } from "../common";
 
 
 export interface ArticleProps {
@@ -31,11 +32,11 @@ export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLCompone
     const Paragraphs = el.children.filter(std.isParagraph);
 
     if (ArticleCaption) {
-        blocks.push(<>
+        blocks.push((
             <div className={`article-caption indent-${indent + 1}`}>
                 <HTMLSentenceChildrenRun els={ArticleCaption.children} {...{ htmlOptions }} />
             </div>
-        </>); /* >>>> INDENT >>>> */
+        )); /* >>>> INDENT >>>> */
     }
 
     const bodyBlocks: JSX.Element[] = [];
@@ -64,16 +65,16 @@ export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLCompone
     }
 
     if (bodyBlocks.length > 0) {
-        blocks.push(<>
+        blocks.push((
             <div className={"article-body"}>
-                {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(bodyBlocks)}
             </div>
-        </>);
+        ));
     }
 
     return (
         <div className={"article"}>
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -89,14 +90,14 @@ export const DOCXArticle = wrapDOCXComponent("DOCXArticle", ((props: DOCXCompone
     const Paragraphs = el.children.filter(std.isParagraph);
 
     if (ArticleCaption) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent + 1}`}/>
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={ArticleCaption.children} {...{ docxOptions }} />
             </w.p>
-        </>); /* >>>> INDENT >>>> */
+        )); /* >>>> INDENT >>>> */
     }
 
     const bodyBlocks: JSX.Element[] = [];
@@ -126,11 +127,11 @@ export const DOCXArticle = wrapDOCXComponent("DOCXArticle", ((props: DOCXCompone
 
     if (bodyBlocks.length > 0) {
         blocks.push(<>
-            {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(bodyBlocks)}
         </>);
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));

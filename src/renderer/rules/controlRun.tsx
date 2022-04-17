@@ -1,10 +1,11 @@
 
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { HTMLSentenceChildrenRun } from "../../renderer/rules/sentenceChildrenRun";
 import { NotImplementedError } from "../../util";
 import { SentenceChildEL } from "../../node/cst/inline";
+import { withKey } from "../common";
 
 
 export const HTMLControlRunCSS = /*css*/`
@@ -124,13 +125,13 @@ const __Parentheses = (props: HTMLComponentProps & __ParenthesesProps) => {
             throw new NotImplementedError("string");
 
         } else if (child.tag === "__PStart") {
-            blocks.push(<__PStart el={child as std.__EL} key={child.id} {...{ htmlOptions }} />);
+            blocks.push(<__PStart el={child as std.__EL} {...{ htmlOptions }} />);
 
         } else if (child.tag === "__PContent") {
-            blocks.push(<__PContent el={child as std.__EL} key={child.id} {...{ htmlOptions }} />);
+            blocks.push(<__PContent el={child as std.__EL} {...{ htmlOptions }} />);
 
         } else if (child.tag === "__PEnd") {
-            blocks.push(<__PEnd el={child as std.__EL} key={child.id} {...{ htmlOptions }} />);
+            blocks.push(<__PEnd el={child as std.__EL} {...{ htmlOptions }} />);
 
         } else {
             throw new NotImplementedError(child.tag);
@@ -143,7 +144,7 @@ const __Parentheses = (props: HTMLComponentProps & __ParenthesesProps) => {
             data-parentheses_type={el.attr.type}
             data-parentheses_depth={el.attr.depth}
         >
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </span>
     );
 };

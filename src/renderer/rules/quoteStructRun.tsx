@@ -1,9 +1,10 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXComponentProps, wrapDOCXComponent, w } from "../common/docx";
 import { DOCXAnyELsToBlocks, HTMLAnyELsToBlocks } from "./any";
 import TextBoxRun from "../common/docx/TextBoxRun";
+import { withKey } from "../common";
 
 
 export interface QuoteStructRunProps {
@@ -26,11 +27,11 @@ export const HTMLQuoteStructRun = wrapHTMLComponent("HTMLQuoteStructRun", ((prop
     if (rawBlocks.every(Array.isArray)) {
         const runs = (rawBlocks as JSX.Element[][]).flat();
 
-        return (<>
+        return ((
             <span className="quote-struct">
-                {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+                {withKey(runs)}
             </span>
-        </>);
+        ));
 
     } else {
 
@@ -38,11 +39,11 @@ export const HTMLQuoteStructRun = wrapHTMLComponent("HTMLQuoteStructRun", ((prop
 
         for (const rawBlock of rawBlocks) {
             if (Array.isArray(rawBlock)) {
-                blocks.push(<>
+                blocks.push((
                     <div className="quote-struct-runs">
-                        {rawBlock.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+                        {withKey(rawBlock)}
                     </div>
-                </>);
+                ));
             } else {
                 blocks.push(rawBlock);
             }
@@ -50,7 +51,7 @@ export const HTMLQuoteStructRun = wrapHTMLComponent("HTMLQuoteStructRun", ((prop
 
         return (
             <span className="quote-struct" style={{ display: "inline-block" }}>
-                {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(blocks)}
             </span>
         );
     }
@@ -70,7 +71,7 @@ export const DOCXQuoteStructRun = wrapDOCXComponent("DOCXQuoteStructRun", ((prop
         const runs = (rawBlocks as JSX.Element[][]).flat();
 
         return (<>
-            {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+            {withKey(runs)}
         </>);
 
     } else {
@@ -79,11 +80,11 @@ export const DOCXQuoteStructRun = wrapDOCXComponent("DOCXQuoteStructRun", ((prop
 
         for (const rawBlock of rawBlocks) {
             if (Array.isArray(rawBlock)) {
-                blocks.push(<>
+                blocks.push((
                     <w.p>
-                        {rawBlock.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+                        {withKey(rawBlock)}
                     </w.p>
-                </>);
+                ));
             } else {
                 blocks.push(rawBlock);
             }
@@ -91,7 +92,7 @@ export const DOCXQuoteStructRun = wrapDOCXComponent("DOCXQuoteStructRun", ((prop
 
         return (
             <TextBoxRun id={10000 + el.id} name={`QuoteStruct${el.id}`}>
-                {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(blocks)}
             </TextBoxRun>
         );
     }

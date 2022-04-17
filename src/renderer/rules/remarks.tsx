@@ -1,10 +1,11 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
+import { withKey } from "../common";
 
 
 export interface RemarksProps {
@@ -33,11 +34,11 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
     const RemarksLabel = el.children.find(std.isRemarksLabel);
 
     if (RemarksLabel) {
-        blocks.push(<>
+        blocks.push((
             <div className={`remarks-label indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={RemarksLabel.children} {...{ htmlOptions }} />
             </div>
-        </>);
+        ));
     }
 
     const bodyBlocks: JSX.Element[] = [];
@@ -49,32 +50,32 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
             continue;
 
         } else if (std.isSentence(child)) {
-            bodyBlocks.push(<>
+            bodyBlocks.push((
                 <div className={`remarks-sentence indent-${indent + 1}`}>
                     <HTMLSentenceChildrenRun els={child.children} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
 
         } else if (std.isItem(child)) {
-            bodyBlocks.push(<>
+            bodyBlocks.push((
                 <HTMLParagraphItem el={child} indent={indent + 1} {...{ htmlOptions }} />
-            </>);
+            ));
 
         }
         else { assertNever(child); }
     }
 
     if (bodyBlocks.length > 0) {
-        blocks.push(<>
+        blocks.push((
             <div className={"remarks-body"}>
-                {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(bodyBlocks)}
             </div>
-        </>);
+        ));
     }
 
     return (
         <div className={"remarks"}>
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -88,14 +89,14 @@ export const DOCXRemarks = wrapDOCXComponent("DOCXRemarks", ((props: DOCXCompone
     const RemarksLabel = el.children.find(std.isRemarksLabel);
 
     if (RemarksLabel) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={RemarksLabel.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
-        </>);
+        ));
     }
 
     for (const child of el.children) {
@@ -105,14 +106,14 @@ export const DOCXRemarks = wrapDOCXComponent("DOCXRemarks", ((props: DOCXCompone
             continue;
 
         } else if (std.isSentence(child)) {
-            blocks.push(<>
+            blocks.push((
                 <w.p>
                     <w.pPr>
                         <w.pStyle w:val={`Indent${indent + 1}`}/>
                     </w.pPr>
                     <DOCXSentenceChildrenRun els={child.children} {...{ docxOptions }} />
                 </w.p>
-            </>);
+            ));
 
         } else if (std.isItem(child)) {
             blocks.push(<DOCXParagraphItem el={child} indent={indent + 1} {...{ docxOptions }} />);
@@ -122,6 +123,6 @@ export const DOCXRemarks = wrapDOCXComponent("DOCXRemarks", ((props: DOCXCompone
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
@@ -6,6 +6,7 @@ import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChil
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { isSentenceChildEL, SentenceChildEL } from "../../node/cst/inline";
 import { EL } from "../../node/el";
+import { withKey } from "../common";
 
 
 export interface TOCProps {
@@ -34,11 +35,11 @@ export const HTMLTOC = wrapHTMLComponent("HTMLTOC", ((props: HTMLComponentProps 
     const TOCLabel = el.children.find(std.isTOCLabel);
 
     if (TOCLabel) {
-        blocks.push(<>
+        blocks.push((
             <div className={`toc-label indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={TOCLabel.children} {...{ htmlOptions }} />
             </div>
-        </>);
+        ));
     }
 
     const bodyBlocks: JSX.Element[] = [];
@@ -57,16 +58,16 @@ export const HTMLTOC = wrapHTMLComponent("HTMLTOC", ((props: HTMLComponentProps 
     }
 
     if (bodyBlocks.length > 0) {
-        blocks.push(<>
+        blocks.push((
             <div className={"toc-body"}>
-                {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(bodyBlocks)}
             </div>
-        </>);
+        ));
     }
 
     return (
         <div className={"toc"}>
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -80,14 +81,14 @@ export const DOCXTOC = wrapDOCXComponent("DOCXTOC", ((props: DOCXComponentProps 
     const TOCLabel = el.children.find(std.isTOCLabel);
 
     if (TOCLabel) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={TOCLabel.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
-        </>);
+        ));
     }
 
     for (const child of el.children) {
@@ -104,7 +105,7 @@ export const DOCXTOC = wrapDOCXComponent("DOCXTOC", ((props: DOCXComponentProps 
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));
 
@@ -124,12 +125,12 @@ export const HTMLTOCItem = wrapHTMLComponent("HTMLTOCItem", ((props: HTMLCompone
     const ArticleRange = (el.children as (typeof el.children)[number][]).find(c => std.isArticleRange(c) || std.isArticleCaption(c)) as std.ArticleRange | std.ArticleCaption | undefined;
 
     if (TOCItemTitle || ArticleRange) {
-        blocks.push(<>
+        blocks.push((
             <div className={`toc-item-main indent-${indent}`}>
                 {(TOCItemTitle !== undefined) && <HTMLSentenceChildrenRun els={TOCItemTitle.children} {...{ htmlOptions }} />}
                 {(ArticleRange !== undefined) && <HTMLSentenceChildrenRun els={ArticleRange.children} {...{ htmlOptions }} />}
             </div>
-        </>);
+        ));
     }
 
     for (let i = 0; i < el.children.length; i++) {
@@ -152,11 +153,11 @@ export const HTMLTOCItem = wrapHTMLComponent("HTMLTOCItem", ((props: HTMLCompone
             let j = i + 1;
             while (j < el.children.length && (typeof el.children[j] === "string" || isSentenceChildEL(el.children[j] as EL))) j++;
             const sentenceChildren = el.children.slice(i, j) as (SentenceChildEL | string)[];
-            blocks.push(<>
+            blocks.push((
                 <div className={`toc-item-main indent-${indent}`}>
                     <HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
             i = j - 1;
 
         }
@@ -167,7 +168,7 @@ export const HTMLTOCItem = wrapHTMLComponent("HTMLTOCItem", ((props: HTMLCompone
         <div
             className={`toc-item-${el.tag}`}
         >
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -182,7 +183,7 @@ export const DOCXTOCItem = wrapDOCXComponent("DOCXTOCItem", ((props: DOCXCompone
     const ArticleRange = (el.children as (typeof el.children)[number][]).find(c => std.isArticleRange(c) || std.isArticleCaption(c)) as std.ArticleRange | std.ArticleCaption | undefined;
 
     if (TOCItemTitle || ArticleRange) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
@@ -190,7 +191,7 @@ export const DOCXTOCItem = wrapDOCXComponent("DOCXTOCItem", ((props: DOCXCompone
                 {(TOCItemTitle !== undefined) && <DOCXSentenceChildrenRun els={TOCItemTitle.children} {...{ docxOptions }} />}
                 {(ArticleRange !== undefined) && <DOCXSentenceChildrenRun els={ArticleRange.children} {...{ docxOptions }} />}
             </w.p>
-        </>);
+        ));
     }
 
     for (let i = 0; i < el.children.length; i++) {
@@ -213,14 +214,14 @@ export const DOCXTOCItem = wrapDOCXComponent("DOCXTOCItem", ((props: DOCXCompone
             let j = i + 1;
             while (j < el.children.length && (typeof el.children[j] === "string" || isSentenceChildEL(el.children[j] as EL))) j++;
             const sentenceChildren = el.children.slice(i, j) as (SentenceChildEL | string)[];
-            blocks.push(<>
+            blocks.push((
                 <w.p>
                     <w.pPr>
                         <w.pStyle w:val={`Indent${indent}`}/>
                     </w.pPr>
                     <DOCXSentenceChildrenRun els={sentenceChildren} {...{ docxOptions }} />
                 </w.p>
-            </>);
+            ));
             i = j - 1;
 
         }
@@ -228,6 +229,6 @@ export const DOCXTOCItem = wrapDOCXComponent("DOCXTOCItem", ((props: DOCXCompone
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </> );
 }));

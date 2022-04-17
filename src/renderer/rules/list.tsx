@@ -1,9 +1,10 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
+import { withKey } from "../common";
 
 
 export interface ListProps {
@@ -25,11 +26,11 @@ export const HTMLList = wrapHTMLComponent("HTMLList", ((props: HTMLComponentProp
     for (const child of el.children) {
 
         if (std.isListOrSublistSentence(child)) {
-            blocks.push(<>
+            blocks.push((
                 <div className={`list-main indent-${indent}`}>
                     <HTMLColumnsOrSentencesRun els={child.children} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
 
         } else if (std.isListOrSublist(child)) {
             blocks.push(<HTMLList el={child} indent={indent + 2} {...{ htmlOptions }} />);
@@ -42,7 +43,7 @@ export const HTMLList = wrapHTMLComponent("HTMLList", ((props: HTMLComponentProp
         <div
             className={`list-${el.tag}`}
         >
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -56,14 +57,14 @@ export const DOCXList = wrapDOCXComponent("DOCXList", ((props: DOCXComponentProp
     for (const child of el.children) {
 
         if (std.isListOrSublistSentence(child)) {
-            blocks.push(<>
+            blocks.push((
                 <w.p>
                     <w.pPr>
                         <w.pStyle w:val={`Indent${indent}`}/>
                     </w.pPr>
                     <DOCXColumnsOrSentencesRun els={child.children} {...{ docxOptions }} />
                 </w.p>
-            </>);
+            ));
 
         } else if (std.isListOrSublist(child)) {
             blocks.push(<DOCXList el={child} indent={indent + 2} {...{ docxOptions }} />);
@@ -74,7 +75,7 @@ export const DOCXList = wrapDOCXComponent("DOCXList", ((props: DOCXComponentProp
 
     return (
         <>
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </>
     );
 }));

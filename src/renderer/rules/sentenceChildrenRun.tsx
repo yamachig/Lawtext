@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { SentenceChildEL } from "../../node/cst/inline";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
@@ -7,6 +7,7 @@ import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
 import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun";
 import { HTMLControlRun } from "./controlRun";
+import { withKey } from "../common";
 
 interface SentenceChildrenRunProps {
     els: (string | SentenceChildEL)[];
@@ -69,7 +70,7 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
     }
 
     return <>
-        {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+        {withKey(runs)}
     </>;
 }));
 
@@ -146,6 +147,6 @@ export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRu
     }
 
     return <>
-        {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+        {withKey(runs)}
     </>;
 }));

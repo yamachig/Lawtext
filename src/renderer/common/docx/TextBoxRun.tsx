@@ -3,7 +3,7 @@ import { w, wp, a, wps } from "./tags";
 
 export const TextBoxRun: React.FC<React.PropsWithChildren<{id: string | number, name: string}>> = props => {
 
-    return (<>
+    return (
         <w.r>
             <w.drawing>
                 <wp.inline distT="0" distB="0" distL="0" distR="0">
@@ -38,7 +38,7 @@ export const TextBoxRun: React.FC<React.PropsWithChildren<{id: string | number, 
                 </wp.inline>
             </w.drawing>
         </w.r>
-    </>);
+    );
 };
 
 export default TextBoxRun;

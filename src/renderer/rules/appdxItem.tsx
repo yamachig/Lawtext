@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
@@ -8,6 +8,7 @@ import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
 import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
+import { withKey } from "../common";
 
 
 export interface AppdxItemProps {
@@ -41,20 +42,20 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
     const RelatedArticleNum = (el.children as (typeof el.children)[number][]).find(std.isRelatedArticleNum);
 
     if (AppdxItemTitle || RelatedArticleNum) {
-        blocks.push(<>
+        blocks.push((
             <div className={`appdx-item-head indent-${indent}`}>
-                {(AppdxItemTitle !== undefined) && <>
+                {(AppdxItemTitle !== undefined) && (
                     <span className="appdx-item-title">
                         <HTMLSentenceChildrenRun els={AppdxItemTitle.children} {...{ htmlOptions }} />
                     </span>
-                </>}
-                {(RelatedArticleNum !== undefined) && <>
+                )}
+                {(RelatedArticleNum !== undefined) && (
                     <span className="related-article-num">
                         <HTMLSentenceChildrenRun els={RelatedArticleNum.children} {...{ htmlOptions }} />
                     </span>
-                </>}
+                )}
             </div>
-        </>);
+        ));
     }
 
     const bodyBlocks: JSX.Element[] = [];
@@ -77,27 +78,27 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
             bodyBlocks.push(<HTMLParagraphItem el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isArithFormula(child)) {
-            bodyBlocks.push(<>
+            bodyBlocks.push((
                 <div className={`appdx-item-runs indent-${indent}`}>
                     <HTMLArithFormulaRun el={child} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
 
         }
         else { assertNever(child); }
     }
 
     if (bodyBlocks.length > 0) {
-        blocks.push(<>
+        blocks.push((
             <div className="appdx-item-body">
-                {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(bodyBlocks)}
             </div>
-        </>);
+        ));
     }
 
     return (
         <div className="appdx-item">
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -116,19 +117,19 @@ export const DOCXAppdxItem = wrapDOCXComponent("DOCXAppdxItem", ((props: DOCXCom
     const RelatedArticleNum = (el.children as (typeof el.children)[number][]).find(std.isRelatedArticleNum);
 
     if (AppdxItemTitle || RelatedArticleNum) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
-                {(AppdxItemTitle !== undefined) && <>
+                {(AppdxItemTitle !== undefined) && (
                     <DOCXSentenceChildrenRun els={AppdxItemTitle.children} emphasis={true} {...{ docxOptions }} />
-                </>}
-                {(RelatedArticleNum !== undefined) && <>
+                )}
+                {(RelatedArticleNum !== undefined) && (
                     <DOCXSentenceChildrenRun els={RelatedArticleNum.children} emphasis={true} {...{ docxOptions }} />
-                </>}
+                )}
             </w.p>
-        </>);
+        ));
     }
 
     for (const child of el.children) {
@@ -149,20 +150,20 @@ export const DOCXAppdxItem = wrapDOCXComponent("DOCXAppdxItem", ((props: DOCXCom
             blocks.push(<DOCXParagraphItem el={child} indent={indent} {...{ docxOptions }} />);
 
         } else if (std.isArithFormula(child)) {
-            blocks.push(<>
+            blocks.push((
                 <w.p>
                     <w.pPr>
                         <w.pStyle w:val={`Indent${indent}`}/>
                     </w.pPr>
                     <DOCXArithFormulaRun el={child} {...{ docxOptions }} />
                 </w.p>
-            </>);
+            ));
 
         }
         else { assertNever(child); }
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));

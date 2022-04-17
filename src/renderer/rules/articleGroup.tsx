@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent, HTMLMarginSpan } from "../common/html";
@@ -8,6 +8,7 @@ import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXArticle, HTMLArticle } from "./article";
 import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
 import EmptyParagraph from "../common/docx/EmptyParagraph";
+import { withKey } from "../common";
 
 
 export interface ArticleGroupProps {
@@ -52,23 +53,23 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
     if (ArticleGroupTitle) {
         const titleIndent = std.articleGroupTitleTags.indexOf(ArticleGroupTitle.tag) + 2;
         if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
-        blocks.push(<>
+        blocks.push((
             <div className={`article-group-title indent-${indent + titleIndent}`}>
                 <HTMLSentenceChildrenRun els={ArticleGroupTitle.children} {...{ htmlOptions }} />
             </div>
-        </>);
+        ));
     }
 
     if (SupplProvisionLabel && std.isSupplProvision(el)) {
         const Extract = el.attr.Extract === "true" ? <><HTMLMarginSpan/>抄</> : "";
         const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
         if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
-        blocks.push(<>
+        blocks.push((
             <div className={`suppl-provision-label indent-${indent + 3}`}>
                 <HTMLSentenceChildrenRun els={SupplProvisionLabel.children} {...{ htmlOptions }} />{AmendLawNum}
                 {Extract}
             </div>
-        </>);
+        ));
     }
 
     const bodyBlocks: JSX.Element[] = [];
@@ -110,16 +111,16 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
 
     if (bodyBlocks.length > 0) {
         if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
-        blocks.push(<>
+        blocks.push((
             <div className={`${classNameBase}-body`}>
-                {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(bodyBlocks)}
             </div>
-        </>);
+        ));
     }
 
     return (
         <div className={classNameBase}>
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -137,21 +138,21 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
     if (ArticleGroupTitle) {
         const titleIndent = std.articleGroupTitleTags.indexOf(ArticleGroupTitle.tag) + 2;
         if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`IndentHanging${indent + titleIndent}`}/>
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={ArticleGroupTitle.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
-        </>);
+        ));
     }
 
     if (SupplProvisionLabel && std.isSupplProvision(el)) {
         const Extract = el.attr.Extract === "true" ? <>${DOCXMargin}抄</> : "";
         const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
         if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`IndentHanging${indent + 3}`}/>
@@ -160,7 +161,7 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
                 {AmendLawNum}
                 {Extract}
             </w.p>
-        </>);
+        ));
     }
 
     for (const child of el.children) {
@@ -191,6 +192,6 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));

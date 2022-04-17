@@ -1,10 +1,11 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXAnyELs, HTMLAnyELs } from "./any";
+import { withKey } from "../common";
 
 
 export interface AmendProvisionProps {
@@ -27,18 +28,18 @@ export const HTMLAmendProvision = wrapHTMLComponent("HTMLAmendProvision", ((prop
     for (const child of el.children) {
 
         if (std.isAmendProvisionSentence(child)) {
-            blocks.push(<>
+            blocks.push((
                 <div className={`amend-provision-main indent-${indent}`}>
                     <HTMLColumnsOrSentencesRun els={child.children} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
 
         } else if (std.isNewProvision(child)) {
-            blocks.push(<>
+            blocks.push((
                 <div className="new-provision">
                     <HTMLAnyELs els={child.children} indent={indent + 1} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
         }
         else { throw assertNever(child); }
     }
@@ -47,7 +48,7 @@ export const HTMLAmendProvision = wrapHTMLComponent("HTMLAmendProvision", ((prop
         <div
             className="amend-provision"
         >
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -61,14 +62,14 @@ export const DOCXAmendProvision = wrapDOCXComponent("DOCXAmendProvision", ((prop
     for (const child of el.children) {
 
         if (std.isAmendProvisionSentence(child)) {
-            blocks.push(<>
+            blocks.push((
                 <w.p>
                     <w.pPr>
                         <w.pStyle w:val={`Indent${indent}`}/>
                     </w.pPr>
                     <DOCXColumnsOrSentencesRun els={child.children} {...{ docxOptions }} />
                 </w.p>
-            </>);
+            ));
 
         } else if (std.isNewProvision(child)) {
             blocks.push(<DOCXAnyELs els={child.children} indent={indent + 1} {...{ docxOptions }} />);
@@ -77,6 +78,6 @@ export const DOCXAmendProvision = wrapDOCXComponent("DOCXAmendProvision", ((prop
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { isSentenceChildEL, SentenceChildEL } from "../../node/cst/inline";
 import { EL } from "../../node/el";
@@ -21,6 +21,7 @@ import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChil
 import { DOCXSupplNote, HTMLSupplNote } from "./supplNote";
 import { DOCXTable, HTMLTable } from "./table";
 import { DOCXTOC, DOCXTOCItem, HTMLTOC, HTMLTOCItem } from "./toc";
+import { withKey } from "../common";
 
 export interface AnyELsProps {
     els: (std.StdEL | std.__EL | string)[],
@@ -95,11 +96,11 @@ export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JS
             blocks.push(<HTMLTOCItem el={el} indent={indent} {...{ htmlOptions }} />);
         } else if (std.isArticleGroupTitle(el)) {
             flushRuns();
-            blocks.push(<>
+            blocks.push((
                 <div className={`any-els-tag any-els-tag-${el.tag} indent-${indent}`}>
                     <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;
@@ -139,18 +140,18 @@ export const HTMLAnyELs = wrapHTMLComponent("HTMLAnyELs", ((props: HTMLComponent
 
     for (const rawBlock of rawBlocks) {
         if (Array.isArray(rawBlock)) {
-            blocks.push(<>
+            blocks.push((
                 <div className={`any-els-runs indent-${indent}`}>
-                    {rawBlock.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+                    {withKey(rawBlock)}
                 </div>
-            </>);
+            ));
         } else {
             blocks.push(rawBlock);
         }
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));
 
@@ -218,14 +219,14 @@ export const DOCXAnyELsToBlocks = (props: DOCXComponentProps & AnyELsProps): (JS
             blocks.push(<DOCXTOCItem el={el} indent={indent} {...{ docxOptions }} />);
         } else if (std.isArticleGroupTitle(el)) {
             flushRuns();
-            blocks.push(<>
+            blocks.push((
                 <w.p>
                     <w.pPr>
                         <w.pStyle w:val={`Indent${indent}`}/>
                     </w.pPr>
                     <DOCXSentenceChildrenRun els={el.children} emphasis={true} {...{ docxOptions }} />
                 </w.p>
-            </>);
+            ));
         } else if (std.isSentence(el)) {
             let j = i + 1;
             while (j < els.length && std.isSentence(els[j])) j++;
@@ -265,21 +266,21 @@ export const DOCXAnyELs = wrapDOCXComponent("DOCXAnyELs", ((props: DOCXComponent
 
     for (const rawBlock of rawBlocks) {
         if (Array.isArray(rawBlock)) {
-            blocks.push(<>
+            blocks.push((
                 <w.p>
                     <w.pPr>
                         <w.pStyle w:val={`Indent${indent}`}/>
                     </w.pPr>
-                    {rawBlock.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+                    {withKey(rawBlock)}
                 </w.p>
-            </>);
+            ));
         } else {
             blocks.push(rawBlock);
         }
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));
 

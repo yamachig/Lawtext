@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
@@ -8,6 +8,7 @@ import { DOCXTable, HTMLTable } from "./table";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
 import { DOCXNoteLike, HTMLNoteLike } from "./noteLike";
 import { DOCXFigRun, HTMLFigRun } from "./figRun";
+import { withKey } from "../common";
 
 
 export interface ItemStructProps {
@@ -42,11 +43,11 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
     )) as std.TableStructTitle | std.FigStructTitle | std.NoteStructTitle | std.FormatStructTitle | std.StyleStructTitle | undefined;
 
     if (ItemStructTitle) {
-        blocks.push(<>
+        blocks.push((
             <div className={`item-struct-title indent-${indent}`}>
                 <HTMLSentenceChildrenRun els={ItemStructTitle.children} {...{ htmlOptions }} />
             </div>
-        </>);
+        ));
     }
 
     const bodyBlocks: JSX.Element[] = [];
@@ -68,11 +69,11 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
             bodyBlocks.push(<HTMLTable el={child} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isFig(child)) {
-            bodyBlocks.push(<>
+            bodyBlocks.push((
                 <div className={`item-struct-runs indent-${indent}`}>
                     <HTMLFigRun el={child} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
 
         } else if (std.isNoteLike(child)) {
             bodyBlocks.push(<HTMLNoteLike el={child} indent={indent} {...{ htmlOptions }} />);
@@ -82,16 +83,16 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
     }
 
     if (bodyBlocks.length > 0) {
-        blocks.push(<>
+        blocks.push((
             <div className="item-struct-body">
-                {bodyBlocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(bodyBlocks)}
             </div>
-        </>);
+        ));
     }
 
     return (
         <div className="item-struct">
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -111,14 +112,14 @@ export const DOCXItemStruct = wrapDOCXComponent("DOCXItemStruct", ((props: DOCXC
     )) as std.TableStructTitle | std.FigStructTitle | std.NoteStructTitle | std.FormatStructTitle | std.StyleStructTitle | undefined;
 
     if (ItemStructTitle) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={ItemStructTitle.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
-        </>);
+        ));
     }
 
     for (const child of el.children) {
@@ -148,6 +149,6 @@ export const DOCXItemStruct = wrapDOCXComponent("DOCXItemStruct", ((props: DOCXC
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));

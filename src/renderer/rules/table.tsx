@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { HTMLComponentProps, wrapHTMLComponent } from "../common/html";
@@ -11,6 +11,7 @@ import { DOCXArticle, HTMLArticle } from "./article";
 import { newStdEL } from "../../law/std";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
+import { withKey } from "../common";
 
 
 export interface TableProps {
@@ -59,7 +60,7 @@ export const HTMLTable = wrapHTMLComponent("HTMLTable", ((props: HTMLComponentPr
     return (
         <table className={`table indent-${indent}`}>
             <tbody>
-                {rows.map((row, i) => <Fragment key={i}>{row}</Fragment>)}
+                {withKey(rows)}
             </tbody>
         </table>
     );
@@ -88,7 +89,7 @@ export const HTMLTableRow = wrapHTMLComponent("HTMLTableRow", ((props: HTMLCompo
 
     return (
         <tr className={"table-row"}>
-            {columns.map((column, i) => <Fragment key={i}>{column}</Fragment>)}
+            {withKey(columns)}
         </tr>
     );
 }));
@@ -104,34 +105,34 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
     const blocks: JSX.Element[] = [];
 
     if (std.isTableHeaderColumn(el)) {
-        blocks.push(<>
+        blocks.push((
             <div>
                 <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
             </div>
-        </>);
+        ));
 
     } else if (std.isTableColumn(el)) {
         if (el.children.every(std.isColumn)) {
-            blocks.push(<>
+            blocks.push((
                 <div>
                     <HTMLColumnsOrSentencesRun els={el.children} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
         } else if (el.children.every(std.isSentence)) {
-            blocks.push(<>
+            blocks.push((
                 <div>
                     <HTMLColumnsOrSentencesRun els={el.children} {...{ htmlOptions }} />
                 </div>
-            </>);
+            ));
         } else {
             for (const child of el.children) {
 
                 if (child.tag === "Sentence" || child.tag === "Column") {
-                    blocks.push(<>
+                    blocks.push((
                         <div>
                             <HTMLColumnsOrSentencesRun els={[child]} {...{ htmlOptions }} />
                         </div>
-                    </>);
+                    ));
 
                 } else if (std.isFigStruct(child)) {
                     blocks.push(<HTMLItemStruct el={child} indent={0} {...{ htmlOptions }} />);
@@ -140,19 +141,19 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
                     blocks.push(<HTMLRemarks el={child} indent={0} {...{ htmlOptions }} />);
 
                 } else if (std.isArticleGroup(child)) {
-                    blocks.push(<>
+                    blocks.push((
                         <HTMLArticleGroup el={child} indent={0} {...{ htmlOptions }} />
-                    </>);
+                    ));
 
                 } else if (std.isArticle(child)) {
-                    blocks.push(<>
+                    blocks.push((
                         <HTMLArticle el={child} indent={0} {...{ htmlOptions }} />
-                    </>);
+                    ));
 
                 } else if (std.isParagraphItem(child)) {
-                    blocks.push(<>
+                    blocks.push((
                         <HTMLParagraphItem el={child} indent={0} {...{ htmlOptions }} />
-                    </>);
+                    ));
                 }
                 else { assertNever(child); }
             }
@@ -178,13 +179,13 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
     if (std.isTableHeaderColumn(el)) {
         return (
             <th className={"table-header-column"} {...attr}>
-                {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(blocks)}
             </th>
         );
     } else {
         return (
             <td className={"table-column"} {...attr}>
-                {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(blocks)}
             </td>
         );
     }
@@ -286,7 +287,7 @@ export const DOCXTable = wrapDOCXComponent("DOCXTable", ((props: DOCXComponentPr
             <w.tblPr>
                 <w.tblStyle w:val={`IndentTable${indent}`}/>
             </w.tblPr>
-            {rows.map((row, i) => <Fragment key={i}>{row}</Fragment>)}
+            {withKey(rows)}
         </w.tbl>
     );
 }));
@@ -314,7 +315,7 @@ export const DOCXTableRow = wrapDOCXComponent("DOCXTableRow", ((props: DOCXCompo
 
     return (
         <w.tr>
-            {columns.map((column, i) => <Fragment key={i}>{column}</Fragment>)}
+            {withKey(columns)}
         </w.tr>
     );
 }));
@@ -343,34 +344,34 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
     const blocks: JSX.Element[] = [];
 
     if (std.isTableHeaderColumn(el)) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <DOCXSentenceChildrenRun els={el.children} {...{ docxOptions }} />
             </w.p>
-        </>);
+        ));
 
     } else if (std.isTableColumn(el)) {
         if (el.children.every(std.isColumn)) {
-            blocks.push(<>
+            blocks.push((
                 <w.p>
                     <DOCXColumnsOrSentencesRun els={el.children} {...{ docxOptions }} />
                 </w.p>
-            </>);
+            ));
         } else if (el.children.every(std.isSentence)) {
-            blocks.push(<>
+            blocks.push((
                 <w.p>
                     <DOCXColumnsOrSentencesRun els={el.children} {...{ docxOptions }} />
                 </w.p>
-            </>);
+            ));
         } else {
             for (const child of el.children) {
 
                 if (child.tag === "Sentence" || child.tag === "Column") {
-                    blocks.push(<>
+                    blocks.push((
                         <w.p>
                             <DOCXColumnsOrSentencesRun els={[child]} {...{ docxOptions }} />
                         </w.p>
-                    </>);
+                    ));
 
                 } else if (std.isFigStruct(child)) {
                     blocks.push(<DOCXItemStruct el={child} indent={0} {...{ docxOptions }} />);
@@ -379,19 +380,19 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
                     blocks.push(<DOCXRemarks el={child} indent={0} {...{ docxOptions }} />);
 
                 } else if (std.isArticleGroup(child)) {
-                    blocks.push(<>
+                    blocks.push((
                         <DOCXArticleGroup el={child} indent={0} {...{ docxOptions }} />
-                    </>);
+                    ));
 
                 } else if (std.isArticle(child)) {
-                    blocks.push(<>
+                    blocks.push((
                         <DOCXArticle el={child} indent={0} {...{ docxOptions }} />
-                    </>);
+                    ));
 
                 } else if (std.isParagraphItem(child)) {
-                    blocks.push(<>
+                    blocks.push((
                         <DOCXParagraphItem el={child} indent={0} {...{ docxOptions }} />
-                    </>);
+                    ));
                 }
                 else { assertNever(child); }
             }
@@ -418,16 +419,16 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
                     {(el.attr.rowspan !== undefined) && <w.vMerge w:val="restart"/>}
                     {(el.attr.Align !== undefined) && <w.jc w:val={el.attr.Align}/>}
                     {(el.attr.Valign !== undefined) && <w.vAlign w:val={valignDict[el.attr.Valign]}/>}
-                    {((el.attr.BorderTop ?? el.attr.BorderBottom ?? el.attr.BorderLeft ?? el.attr.BorderRight) !== undefined) && <>
+                    {((el.attr.BorderTop ?? el.attr.BorderBottom ?? el.attr.BorderLeft ?? el.attr.BorderRight) !== undefined) && (
                         <w.tcBorders>
                             {(el.attr.BorderTop !== undefined) && <w.top w:val={borderDict[el.attr.BorderTop]}/>}
                             {(el.attr.BorderBottom !== undefined) && <w.bottom w:val={borderDict[el.attr.BorderBottom]}/>}
                             {(el.attr.BorderLeft !== undefined) && <w.left w:val={borderDict[el.attr.BorderLeft]}/>}
                             {(el.attr.BorderRight !== undefined) && <w.right w:val={borderDict[el.attr.BorderRight]}/>}
                         </w.tcBorders>
-                    </>}
+                    )}
                 </w.tcPr>
-                {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+                {withKey(blocks)}
             </w.tc>
         );
     }

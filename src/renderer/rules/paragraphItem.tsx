@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever, NotImplementedError } from "../../util";
 import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
@@ -8,6 +8,7 @@ import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "../common/
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
 import { DOCXList, HTMLList } from "./list";
 import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision";
+import { withKey } from "../common";
 
 
 export interface ParagraphItemProps {
@@ -62,25 +63,27 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
     const ParagraphItemSentence = (el.children as (typeof el.children)[number][]).find(std.isParagraphItemSentence);
 
     if (ParagraphCaption) {
-        blocks.push(<>
+        blocks.push((
             <div className={`paragraph-caption indent-${indent + 1}`}>
                 <HTMLSentenceChildrenRun els={ParagraphCaption.children} {...{ htmlOptions }} />
             </div>
-        </>);
+        ));
     }
 
     if (ParagraphItemTitle || ParagraphItemSentence) {
-        blocks.push(<>
+        blocks.push((
             <div className={`paragraph-item-main indent-${indent}`}>
-                {Boolean(ParagraphItemTitle || ArticleTitle) && (<>
-                    <span className={"paragraph-item-title"}>
-                        {ParagraphItemTitle && <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />}
-                        {ArticleTitle && <HTMLSentenceChildrenRun els={ArticleTitle.children} {...{ htmlOptions }} />}
-                    </span>
-                    {Boolean(ParagraphItemSentence) && (
-                        <HTMLMarginSpan className="paragraph-item-margin"/>
-                    )}
-                </>)}
+                {Boolean(ParagraphItemTitle || ArticleTitle) && ((
+                    <>
+                        <span className={"paragraph-item-title"}>
+                            {ParagraphItemTitle && <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />}
+                            {ArticleTitle && <HTMLSentenceChildrenRun els={ArticleTitle.children} {...{ htmlOptions }} />}
+                        </span>
+                        {Boolean(ParagraphItemSentence) && (
+                            <HTMLMarginSpan className="paragraph-item-margin"/>
+                        )}
+                    </>
+                ))}
                 <span className={"paragraph-item-body"}>
                     <HTMLColumnsOrSentencesRun
                         els={ParagraphItemSentence?.children ?? []}
@@ -88,7 +91,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
                     />
                 </span>
             </div>
-        </>);
+        ));
     }
 
     for (const child of el.children) {
@@ -124,7 +127,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
         <div
             className={`paragraph-item-${el.tag}`}
         >
-            {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+            {withKey(blocks)}
         </div>
     );
 }));
@@ -144,18 +147,18 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
     const ParagraphItemSentence = (el.children as (typeof el.children)[number][]).find(std.isParagraphItemSentence);
 
     if (ParagraphCaption) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent + 1}`}/>
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={ParagraphCaption.children} {...{ docxOptions }} />
             </w.p>
-        </>);
+        ));
     }
 
     if (ParagraphItemTitle || ParagraphItemSentence) {
-        blocks.push(<>
+        blocks.push((
             <w.p>
                 <w.pPr>
                     {(ArticleTitle || ParagraphItemTitle) ? (
@@ -174,7 +177,7 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
                     {...{ docxOptions }}
                 />
             </w.p>
-        </>);
+        ));
     }
 
     for (const child of el.children) {
@@ -207,6 +210,6 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
     }
 
     return (<>
-        {blocks.map((block, i) => <Fragment key={i}>{block}</Fragment>)}
+        {withKey(blocks)}
     </>);
 }));

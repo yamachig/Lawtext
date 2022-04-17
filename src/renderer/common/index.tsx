@@ -60,3 +60,16 @@ export const renderToStaticMarkup = (element: React.ReactElement<any, string | R
         revertConsole();
     }
 };
+
+export const withKey = (els: (JSX.Element | string)[], baseKey = 0) => {
+    const ret: (JSX.Element | string)[] = [];
+    for (let i = 0; i < els.length; i++) {
+        const el = els[i];
+        if (typeof el === "string") {
+            ret.push(el);
+        } else {
+            ret.push(React.cloneElement(el, { key: baseKey + i }));
+        }
+    }
+    return ret;
+};

@@ -1,6 +1,7 @@
-import React, { Fragment } from "react";
+import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
+import { withKey } from "../common";
 import { DOCXComponentProps, DOCXMargin, w, wrapDOCXComponent } from "../common/docx";
 import TextBoxRun from "../common/docx/TextBoxRun";
 import { HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
@@ -34,24 +35,24 @@ export const HTMLColumnsOrSentencesRun = wrapHTMLComponent("HTMLColumnsOrSentenc
             const subruns: JSX.Element[] = [];
             for (let j = 0; j < el.children.length; j++) {
                 const subel = el.children[j];
-                subruns.push(<HTMLSentenceChildrenRun els={subel.children} key={j} {...{ htmlOptions }} />);
+                subruns.push(<HTMLSentenceChildrenRun els={subel.children} {...{ htmlOptions }} />);
             }
 
-            runs.push(<span className="lawtext-column">{subruns}</span>);
+            runs.push(<span className="lawtext-column">{withKey(subruns)}</span>);
 
         } else if (std.isTable(el)) {
-            runs.push(<>
+            runs.push((
                 <span style={{ display: "inline-block" }}>
                     <HTMLTable el={el} indent={0} {...{ htmlOptions }} />
                 </span>
-            </>);
+            ));
 
         }
         else { assertNever(el); }
     }
 
     return <>
-        {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+        {withKey(runs)}
     </>;
 }));
 
@@ -68,28 +69,28 @@ export const DOCXColumnsOrSentencesRun = wrapDOCXComponent("DOCXColumnsOrSentenc
 
         } else if (std.isColumn(el)) {
             if (i !== 0) {
-                runs.push(<>
+                runs.push((
                     <w.r><w.t>{DOCXMargin}</w.t></w.r>
-                </>);
+                ));
             }
 
             for (let j = 0; j < el.children.length; j++) {
                 const subel = el.children[j];
-                runs.push(<DOCXSentenceChildrenRun els={subel.children} key={j} {...{ docxOptions }} />);
+                runs.push(<DOCXSentenceChildrenRun els={subel.children} {...{ docxOptions }} />);
             }
 
         } else if (std.isTable(el)) {
-            runs.push(<>
+            runs.push((
                 <TextBoxRun id={10000 + el.id} name={`Table${el.id}`}>
                     <DOCXTable el={el} indent={0} {...{ docxOptions }} />
                 </TextBoxRun>
-            </>);
+            ));
 
         }
         else { assertNever(el); }
     }
 
     return <>
-        {runs.map((run, i) => <Fragment key={i}>{run}</Fragment>)}
+        {withKey(runs)}
     </>;
 }));
