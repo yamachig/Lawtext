@@ -1,7 +1,7 @@
 import React, { } from "react";
 import styled from "styled-components";
 import { ErrorCatcher } from "./ErrorCatcher";
-import { WrapperComponentProps } from "lawtext/dist/src/renderer/rules/html";
+import { WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
 import { LawViewOptions } from "./common";
 import { WrapHTMLControlRun } from "../ControlRun";
 import { EL } from "lawtext/dist/src/node/el";

@@ -1,7 +1,7 @@
 
 import React from "react";
 import * as std from "lawtext/dist/src/law/std";
-import { HTMLComponentProps, HTMLMarginSpan, WrapperComponentProps } from "lawtext/dist/src/renderer/rules/html";
+import { HTMLComponentProps, HTMLMarginSpan, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
 import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
 import { HTMLArticle } from "lawtext/dist/src/renderer/rules/article";
 import { HTMLParagraphItem } from "lawtext/dist/src/renderer/rules/paragraphItem";

@@ -1,6 +1,6 @@
 import React, { } from "react";
 import styled from "styled-components";
-import { FigData, WrapperComponentProps } from "lawtext/dist/src/renderer/rules/html";
+import { FigData, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
 import * as std from "lawtext/dist/src/law/std";
 import { NotImplementedError } from "lawtext/dist/src/util";
 import { useObserved } from "../useObserved";
