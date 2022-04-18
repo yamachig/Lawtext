@@ -57,6 +57,7 @@ export const elProps = (el: EL, htmlOptions: HTMLOptions) => {
     const ret: Record<string, string> = {};
     if (htmlOptions.annotateLawtextRange && el.range) {
         ret["data-lawtext_range"] = JSON.stringify(el.range);
+        ret["data-el_id"] = JSON.stringify(el.id);
     }
     return ret;
 };

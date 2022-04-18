@@ -27,7 +27,7 @@ ${rendered}
 };
 
 export const renderHTMLfragment = (elOrJsonEL: JsonEL | EL, htmlOptions?: HTMLOptions): string => {
-    const el = loadEl(elOrJsonEL);
+    const el = elOrJsonEL instanceof EL ? elOrJsonEL : loadEl(elOrJsonEL);
     const element = std.isLaw(el)
         ? <HTMLLaw el={el} indent={0} htmlOptions={htmlOptions ?? {}} />
         : <HTMLAnyELs els={[el as std.StdEL | std.__EL]} indent={0} htmlOptions={htmlOptions ?? {}}/>;
