@@ -1,6 +1,12 @@
 Lawtext: Manageable plain text format and utility tools for laws
 ========================================================================
 
+[![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
+
+- [Visual Studio Code拡張はこちら / Visual Studio Code Extension that provides the Lawtext language server](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext)
+
+------------
+
 **Lawtext** は、法令標準XMLと相互変換可能な法令のプレーンテキストフォーマットです。読みやすく、人の手により編集しやすいように設計されています。
 
 Lawtextを用いると、既存のソースコード管理ツールを法令管理にそのまま活用することができます。また、法令標準XMLを使用する高度な法令管理ツールと共存することができます。これにより、法令文書のオープン化を容易にし、編集作業をより安全にし、法令執務の創造性を高めることができます。
@@ -76,14 +82,6 @@ Lawtext is currently under development; however, the essential feature is alread
 </Law>
 ```
 </details>
-
-------------
-
-### Lawtext を用いた編集作業のイメージ / Example of editing a law using Lawtext
-
-[![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
-
-- [Lawtextを構文ハイライトするVisual Studio Code拡張 / Visual Studio Code Extension that highlights the Lawtext syntax](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext)
 
 ------------
 
@@ -226,7 +224,7 @@ Lawtextは次のような特徴があります：
 
 - **法令標準XMLと相互変換できる**：Lawtextは法令標準XMLにコンパイルすることができます。したがって、Lawtextは、e-LAWSや、法令標準XMLを活用するあらゆるシステムと互換性があります。さらに、法令標準XMLを逆にLawtextに変換することもできます。そのため、公開されているあらゆる法令のLawtextを入手することが可能です。Lawtextでも、法令標準XMLでも、好きな方で保存・共有することができます。
 
-- **既存の汎用ソースコード管理・編集ツールを活用できる**：Lawtextは、GitHubのようなオンラインのソースコードリポジトリでもうまく表示できます（[例](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)）。そのほかにも、既存の汎用的なソースコード管理・編集ツールを効果的に活用することができます。一例として、 [Lawtextを構文ハイライトするVisual Studio Code拡張](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) を提供しています。
+- **既存の汎用ソースコード管理・編集ツールを活用できる**：Lawtextは、GitHubのようなオンラインのソースコードリポジトリでもうまく表示できます（[例](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)）。そのほかにも、既存の汎用的なソースコード管理・編集ツールを効果的に活用することができます。一例として、 [Lawtextの編集を支援するVisual Studio Code拡張](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) を提供しています。
 
   [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
 
