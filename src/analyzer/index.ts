@@ -491,7 +491,12 @@ const detectLawname = (spans: Span[], spanIndex: number) => {
     const lawnameTextIndex = lawnameSpan.text.length - lawnameLength;
     const lawName = lawnameSpan.text.slice(lawnameTextIndex);
 
-    const lawnumEl = new EL("____LawNum", {}, [lawNum]);
+    const lawNumRange = lawnumSpan.el.range ? [
+        lawnumSpan.el.range[0] + match.index,
+        lawnumSpan.el.range[0] + match.index + lawNum.length,
+    ] as [number, number] : null;
+
+    const lawnumEl = new EL("____LawNum", {}, [lawNum], lawNumRange);
 
     if (
         lawnumSpan.text.length <= lawNum.length &&
