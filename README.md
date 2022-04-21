@@ -81,7 +81,7 @@ Lawtext is currently under development; however, the essential feature is alread
 
 ### Lawtext を用いた編集作業のイメージ / Example of editing a law using Lawtext
 
-[![vscode-screenshot1](https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png)](https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png)
+[![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
 
 - [Lawtextを構文ハイライトするVisual Studio Code拡張 / Visual Studio Code Extension that highlights the Lawtext syntax](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext)
 
@@ -228,7 +228,7 @@ Lawtextは次のような特徴があります：
 
 - **既存の汎用ソースコード管理・編集ツールを活用できる**：Lawtextは、GitHubのようなオンラインのソースコードリポジトリでもうまく表示できます（[例](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)）。そのほかにも、既存の汎用的なソースコード管理・編集ツールを効果的に活用することができます。一例として、 [Lawtextを構文ハイライトするVisual Studio Code拡張](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) を提供しています。
 
-  [![vscode-screenshot1](https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png)](https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png)
+  [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
 
 
 ### Lawtext-app
@@ -351,9 +351,9 @@ Lawtext has these features:
     ```
 
 - You can compile a Lawtext to a standard law XML. It means Lawtext is compatible with e-LAWS and any system utilizing standard law XML. Moreover, reversely, a standard law XML, can be converted to a Lawtext. Therefore, you can obtain the Lawtext of any existing law available online. You can store and share law documents in both forms of Lawtext or standard law XML as you like.
-- Lawtext works effectively with existing source code management tools. For example, [the Lawtext syntax highlighter for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) is available.
+- Lawtext works effectively with existing source code management tools. For example, [the Lawtext language server for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) is available.
 
-  [![vscode-screenshot1](https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png)](https://github.com/yamachig/Lawtext/wiki/images/vscode-screenshot1.png)
+  [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
 
 - You can display Lawtext appropriately in an online source code repository such as GitHub ([example](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)).
 

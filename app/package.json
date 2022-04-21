@@ -100,9 +100,9 @@
         "lawtext": "file:../core",
         "node-fetch": "^3.2.3",
         "popper.js": "^1.16.1",
-        "react": "^18",
+        "react": "^18.0.0",
         "react-animate-height": "^2.1.0",
-        "react-dom": "^18",
+        "react-dom": "^18.0.0",
         "react-router-dom": "^6.3.0",
         "styled-components": "^5.3.5",
         "whatwg-fetch": "^3.6.2"
