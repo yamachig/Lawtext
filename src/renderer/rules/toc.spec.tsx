@@ -240,43 +240,80 @@ describe("Test HTML toc", () => {
       <div class="toc-item-main indent-1">前文</div>
     </div>
     <div class="toc-item-TOCArticle">
-      <div class="toc-item-main indent-1">第一条都市計画法の施行期日</div>
-    </div>
-    <div class="toc-item-TOCChapter">
-      <div class="toc-item-main indent-1">第一章　総則（第一条―第四条）</div>
-    </div>
-    <div class="toc-item-TOCChapter">
-      <div class="toc-item-main indent-1">第二章　申請に対する処分（第五条―第十一条）</div>
-    </div>
-    <div class="toc-item-TOCChapter">
-      <div class="toc-item-main indent-1">第三章　不利益処分</div>
-      <div class="toc-item-TOCSection">
-        <div class="toc-item-main indent-2">第一節　通則（第十二条―第十四条）</div>
-      </div>
-      <div class="toc-item-TOCSection">
-        <div class="toc-item-main indent-2">第二節　聴聞（第十五条―第二十八条）</div>
-      </div>
-      <div class="toc-item-TOCSection">
-        <div class="toc-item-main indent-2">第三節　弁明の機会の付与（第二十九条―第三十一条）</div>
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">第一条</span>
+        <span class="article-range">都市計画法の施行期日</span>
       </div>
     </div>
     <div class="toc-item-TOCChapter">
-      <div class="toc-item-main indent-1">第四章　行政指導（第三十二条―第三十六条の二）</div>
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">第一章　総則</span>
+        <span class="article-range">（第一条―第四条）</span>
+      </div>
     </div>
     <div class="toc-item-TOCChapter">
-      <div class="toc-item-main indent-1">第四章の二　処分等の求め（第三十六条の三）</div>
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">第二章　申請に対する処分</span>
+        <span class="article-range">（第五条―第十一条）</span>
+      </div>
     </div>
     <div class="toc-item-TOCChapter">
-      <div class="toc-item-main indent-1">第五章　届出（第三十七条）</div>
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">第三章　不利益処分</span>
+      </div>
+      <div class="toc-item-TOCSection">
+        <div class="toc-item-main indent-2">
+          <span class="toc-item-title">第一節　通則</span>
+          <span class="article-range">（第十二条―第十四条）</span>
+        </div>
+      </div>
+      <div class="toc-item-TOCSection">
+        <div class="toc-item-main indent-2">
+          <span class="toc-item-title">第二節　聴聞</span>
+          <span class="article-range">（第十五条―第二十八条）</span>
+        </div>
+      </div>
+      <div class="toc-item-TOCSection">
+        <div class="toc-item-main indent-2">
+          <span class="toc-item-title">第三節　弁明の機会の付与</span>
+          <span class="article-range">（第二十九条―第三十一条）</span>
+        </div>
+      </div>
     </div>
     <div class="toc-item-TOCChapter">
-      <div class="toc-item-main indent-1">第六章　意見公募手続等（第三十八条―第四十五条）</div>
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">第四章　行政指導</span>
+        <span class="article-range">（第三十二条―第三十六条の二）</span>
+      </div>
     </div>
     <div class="toc-item-TOCChapter">
-      <div class="toc-item-main indent-1">第七章　補則（第四十六条）</div>
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">第四章の二　処分等の求め</span>
+        <span class="article-range">（第三十六条の三）</span>
+      </div>
+    </div>
+    <div class="toc-item-TOCChapter">
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">第五章　届出</span>
+        <span class="article-range">（第三十七条）</span>
+      </div>
+    </div>
+    <div class="toc-item-TOCChapter">
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">第六章　意見公募手続等</span>
+        <span class="article-range">（第三十八条―第四十五条）</span>
+      </div>
+    </div>
+    <div class="toc-item-TOCChapter">
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">第七章　補則</span>
+        <span class="article-range">（第四十六条）</span>
+      </div>
     </div>
     <div class="toc-item-TOCSupplProvision">
-      <div class="toc-item-main indent-1">附則</div>
+      <div class="toc-item-main indent-1">
+        <span class="toc-item-title">附則</span>
+      </div>
     </div>
   </div>
 </div>

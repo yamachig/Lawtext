@@ -155,7 +155,7 @@ describe("Test HTML law", () => {
               <div class="article-body">
                 <div class="paragraph-item-Paragraph">
                   <div class="paragraph-item-main indent-0">
-                    <span class="paragraph-item-title">第一条</span>
+                    <span class="article-title">第一条</span>
                     <span class="paragraph-item-margin">　</span>
                     <span class="paragraph-item-body">この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。</span>
                   </div>

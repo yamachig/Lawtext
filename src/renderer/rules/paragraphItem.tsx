@@ -75,13 +75,13 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
             <div className={`paragraph-item-main indent-${indent}`}>
                 {Boolean(ParagraphItemTitle || ArticleTitle) && ((
                     <>
-                        {ParagraphItemTitle && (
+                        {ParagraphItemTitle && ((!ArticleTitle) || (ParagraphItemTitle.children.length > 0)) && (
                             <span className={"paragraph-item-title"} {...elProps(ParagraphItemTitle, htmlOptions)}>
                                 <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />
                             </span>
                         )}
                         {ArticleTitle && (
-                            <span className={"paragraph-item-title"} {...elProps(ArticleTitle, htmlOptions)}>
+                            <span className={"article-title"} {...elProps(ArticleTitle, htmlOptions)}>
                                 <HTMLSentenceChildrenRun els={ArticleTitle.children} {...{ htmlOptions }} />
                             </span>
                         )}

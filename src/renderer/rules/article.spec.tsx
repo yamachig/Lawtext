@@ -232,7 +232,7 @@ describe("Test HTML article", () => {
   <div class="article-body">
     <div class="paragraph-item-Paragraph">
       <div class="paragraph-item-main indent-0">
-        <span class="paragraph-item-title">第二条</span>
+        <span class="article-title">第二条</span>
         <span class="paragraph-item-margin">　</span>
         <span class="paragraph-item-body">この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。</span>
       </div>

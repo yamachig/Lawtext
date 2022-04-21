@@ -167,7 +167,7 @@ describe("Test HTML articleGroup", () => {
           <div class="article-body">
             <div class="paragraph-item-Paragraph">
               <div class="paragraph-item-main indent-1">
-                <span class="paragraph-item-title">第十二条</span>
+                <span class="article-title">第十二条</span>
                 <span class="paragraph-item-margin">　</span>
                 <span class="paragraph-item-body">行政庁は、処分基準を定め、かつ、これを公にしておくよう努めなければならない。</span>
               </div>
@@ -190,7 +190,7 @@ describe("Test HTML articleGroup", () => {
           <div class="article-body">
             <div class="paragraph-item-Paragraph">
               <div class="paragraph-item-main indent-1">
-                <span class="paragraph-item-title">第十五条</span>
+                <span class="article-title">第十五条</span>
                 <span class="paragraph-item-margin">　</span>
                 <span class="paragraph-item-body">行政庁は、聴聞を行うに当たっては、聴聞を行うべき期日までに相当な期間をおいて、不利益処分の名あて人となるべき者に対し、次に掲げる事項を書面により通知しなければならない。</span>
               </div>

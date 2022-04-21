@@ -93,7 +93,7 @@ describe("Test HTML amendProvision", () => {
       <div class="article-body">
         <div class="paragraph-item-Paragraph">
           <div class="paragraph-item-main indent-2">
-            <span class="paragraph-item-title">第十七条の二</span>
+            <span class="article-title">第十七条の二</span>
             <span class="paragraph-item-margin">　</span>
             <span class="paragraph-item-body">機構は、科学技術・イノベーション創出の活性化に関する法律（平成二十年法律第六十三号）第三十四条の五第一項及び第二項の規定による株式又は新株予約権の取得及び保有を行うことができる。</span>
           </div>
