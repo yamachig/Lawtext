@@ -66,3 +66,24 @@ export const pictMimeDict = {
     ".tif": "image/tiff",
     ".tiff": "image/tiff",
 } as const;
+
+export const throttle = <TArgs extends unknown[]>(func: (...args: TArgs) => unknown, waitms: number, initialWaitms?: number) => {
+    let timer: NodeJS.Timeout| undefined = undefined;
+    const lastArgsObj: {args?: TArgs} = {};
+    const dispatchLastArgs = () => {
+        if (lastArgsObj.args) {
+            const args = lastArgsObj.args;
+            lastArgsObj.args = undefined;
+            func(...args);
+            timer = setTimeout(dispatchLastArgs, waitms);
+        } else {
+            timer = undefined;
+        }
+    };
+    return (...args: TArgs) => {
+        lastArgsObj.args = args;
+        if (timer === undefined) {
+            timer = setTimeout(dispatchLastArgs, initialWaitms ?? waitms);
+        }
+    };
+};
