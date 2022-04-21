@@ -35,3 +35,5 @@ export class FetchElawsLoader extends Loader {
     }
 
 }
+
+export default FetchElawsLoader;

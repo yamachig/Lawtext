@@ -100,3 +100,5 @@ export class FSStoredLoader extends Loader {
         return promisify(fs.exists)(this.listJsonPath);
     }
 }
+
+export default FSStoredLoader;

@@ -111,3 +111,5 @@ export class FetchStoredLoader extends Loader {
         }
     }
 }
+
+export default FetchStoredLoader;
