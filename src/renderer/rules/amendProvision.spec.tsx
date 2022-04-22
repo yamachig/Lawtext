@@ -1,6 +1,6 @@
 import React from "react";
 import { assert } from "chai";
-import { loadEl } from "../../node/el";
+import loadEL from "../../node/el/loadEL";
 import * as std from "../../law/std";
 import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision";
 import { renderToStaticMarkup } from "../common";
@@ -18,7 +18,7 @@ describe("Test HTML amendProvision", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "AmendProvision",
             attr: {},
             children: [
@@ -134,7 +134,7 @@ describe("Test DOCX amendProvision", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "AmendProvision",
             attr: {},
             children: [

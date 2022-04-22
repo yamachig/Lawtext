@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { isSub, __EL } from "../../../law/std";
-import { ParenthesesType, __Parentheses, __Text } from "../../../node/control";
+import { ParenthesesType, __Parentheses, __Text } from "../../../node/el/control";
 import { EL } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
 import { factory } from "../factory";
@@ -435,21 +435,20 @@ export const makeParenthesesInline = (
                     .action(({ text, range }) => ({ text: text(), range: range() }))
                 )
             , "end")
-            .action(({ text, start, content, end, state }) => {
+            .action(({ start, content, end, state }) => {
                 return {
-                    value: new __Parentheses(
-                        parenthesisType,
-                        state.parenthesesDepth,
-                        start.text,
-                        end.text,
-                        content.value.map(c => c.value),
-                        text(),
-                        {
+                    value: new __Parentheses({
+                        type: parenthesisType,
+                        depth: state.parenthesesDepth,
+                        start: start.text,
+                        end: end.text,
+                        content: content.value.map(c => c.value),
+                        range: {
                             start: start.range,
                             end: end.range,
                             content: content.range,
                         },
-                    ),
+                    }),
                     errors: content.value.map(c => c.errors).flat(),
                 };
             })
@@ -525,21 +524,20 @@ export const $SQUARE_PARENTHESES_INLINE: WithErrorRule<__Parentheses> = factory
                 .action(({ text, range }) => ({ text: text(), range: range() }))
             )
         , "end")
-        .action(({ text, start, content, end, state }) => {
+        .action(({ start, content, end, state }) => {
             return {
-                value: new __Parentheses(
-                    "square",
-                    state.parenthesesDepth,
-                    start.text,
-                    end.text,
-                    content.value.map(c => c.value),
-                    text(),
-                    {
+                value: new __Parentheses({
+                    type: "square",
+                    depth: state.parenthesesDepth,
+                    start: start.text,
+                    end: end.text,
+                    content: content.value.map(c => c.value),
+                    range: {
                         start: start.range,
                         end: end.range,
                         content: content.range,
                     },
-                ),
+                }),
                 errors: content.value.map(c => c.errors).flat(),
             };
         })

@@ -1,7 +1,7 @@
 import React from "react";
 import { assert } from "chai";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { loadEl } from "../../node/el";
+import loadEL from "../../node/el/loadEL";
 import * as std from "../../law/std";
 import { renderToStaticMarkup } from "../common";
 import formatXML from "../../util/formatXml";
@@ -18,7 +18,7 @@ describe("Test HTML sentenceChildrenRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "Sentence",
             attr: {},
             children: [
@@ -129,7 +129,7 @@ describe("Test DOCX sentenceChildrenRun", () => {
 
     it("Success case", async () => {
 
-        const input = loadEl({
+        const input = loadEL({
             tag: "Sentence",
             attr: {},
             children: [

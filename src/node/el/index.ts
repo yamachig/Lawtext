@@ -77,7 +77,7 @@ export class EL implements JsonEL {
         return this.tag[0] === "_";
     }
 
-    public copy(deep = true): EL {
+    public copy(deep = true, copyID = false): EL {
         const el = new EL(
             this.tag,
             { ...this.attr },
@@ -87,6 +87,7 @@ export class EL implements JsonEL {
                     : [...this.children]
             ),
             this.range && [...this.range],
+            copyID ? this.id : undefined,
         );
         return el;
     }
@@ -233,35 +234,6 @@ export const rangeOfELs = (els: unknown[]): [start: number, end: number] | null 
         }
     }
     return (start !== null && end !== null) ? [start, end] : null;
-};
-
-export const loadEl = <T extends JsonEL | string>(rawLaw: T): T extends string ? string : EL => {
-    if (typeof rawLaw === "string") {
-        return rawLaw as unknown as T extends string ? string : EL;
-    } else {
-        if (!rawLaw.children) {
-            console.error("[load_el]", rawLaw);
-        }
-        const attr = { ...rawLaw.attr };
-        let id = undefined as number | undefined;
-        let range = undefined as [number, number] | undefined;
-        if ("__id" in rawLaw.attr) {
-            id = JSON.parse(rawLaw.attr["__id"] ?? "");
-            delete attr["__id"];
-        }
-        if ("__range" in rawLaw.attr) {
-            range = JSON.parse(rawLaw.attr["__range"] ?? "");
-            delete attr["__range"];
-        }
-        const el = new EL(
-            rawLaw.tag,
-            attr,
-            rawLaw.children.map(loadEl),
-            range,
-            id,
-        );
-        return el as unknown as T extends string ? string : EL;
-    }
 };
 
 export const elementToJson = (el: Element): EL => {

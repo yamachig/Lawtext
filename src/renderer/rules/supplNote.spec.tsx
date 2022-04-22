@@ -1,6 +1,6 @@
 import React from "react";
 import { assert } from "chai";
-import { loadEl } from "../../node/el";
+import loadEL from "../../node/el/loadEL";
 import * as std from "../../law/std";
 import { DOCXSupplNote, HTMLSupplNote } from "./supplNote";
 import { renderToStaticMarkup } from "../common";
@@ -18,7 +18,7 @@ describe("Test HTML supplNote", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "SupplNote",
             attr: {},
             children: ["（罰則　第百十九条第一項第一号の二、同条第二項、第百二十一条第一項第一号）"],
@@ -57,7 +57,7 @@ describe("Test DOCX supplNote", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "SupplNote",
             attr: {},
             children: ["（罰則　第百十九条第一項第一号の二、同条第二項、第百二十一条第一項第一号）"],

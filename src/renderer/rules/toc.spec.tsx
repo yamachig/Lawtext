@@ -1,6 +1,6 @@
 import React from "react";
 import { assert } from "chai";
-import { loadEl } from "../../node/el";
+import loadEL from "../../node/el/loadEL";
 import * as std from "../../law/std";
 import { DOCXTOC, HTMLTOC } from "./toc";
 import { renderToStaticMarkup } from "../common";
@@ -18,7 +18,7 @@ describe("Test HTML toc", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "TOC",
             attr: {},
             children: [
@@ -349,7 +349,7 @@ describe("Test DOCX toc", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "TOC",
             attr: {},
             children: [

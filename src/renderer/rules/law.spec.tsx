@@ -1,6 +1,6 @@
 import React from "react";
 import { assert } from "chai";
-import { loadEl } from "../../node/el";
+import loadEL from "../../node/el/loadEL";
 import * as std from "../../law/std";
 import { DOCXLaw, HTMLLaw } from "./law";
 import { renderToStaticMarkup } from "../common";
@@ -18,7 +18,7 @@ describe("Test HTML law", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "Law",
             attr: {
                 Era: "Heisei",
@@ -207,7 +207,7 @@ describe("Test DOCX law", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "Law",
             attr: {
                 Era: "Heisei",

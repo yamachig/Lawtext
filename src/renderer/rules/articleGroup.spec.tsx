@@ -1,6 +1,6 @@
 import React from "react";
 import { assert } from "chai";
-import { loadEl } from "../../node/el";
+import loadEL from "../../node/el/loadEL";
 import * as std from "../../law/std";
 import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
 import { renderToStaticMarkup } from "../common";
@@ -18,7 +18,7 @@ describe("Test HTML articleGroup", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "Chapter",
             attr: {
                 Delete: "false",
@@ -233,7 +233,7 @@ describe("Test DOCX articleGroup", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "Chapter",
             attr: {
                 Delete: "false",

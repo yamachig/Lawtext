@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { EL } from "../../../node/el";
-import { __Text } from "../../../node/control";
+import { __Text } from "../../../node/el/control";
 import { factory } from "../factory";
 import { WithErrorRule } from "../util";
 import { $_ } from "./lexical";

@@ -1,13 +1,14 @@
 import { assert } from "chai";
 import { MatchResult } from "generic-parser/lib/core";
 import { isLawNum, isLawTitle } from "../../law/std";
-import { __Text } from "../../node/control";
+import { __Text } from "../../node/el/control";
 import { Line } from "../../node/cst/line";
-import { EL, JsonEL, loadEl, rangeOfELs } from "../../node/el";
+import { EL, JsonEL, rangeOfELs } from "../../node/el";
 import { ErrorMessage } from "../cst/error";
 import parse from "../cst/parse";
 import { Env, initialEnv } from "./env";
 import { toVirtualLines, VirtualLine } from "./virtualLine";
+import loadEL from "../../node/el/loadEL";
 
 
 export const testLawtextToStd = <
@@ -108,9 +109,9 @@ export const testLawtextToStd = <
 
     let renderedLines: Line[];
     if (Array.isArray(expectedValue)) {
-        renderedLines = toLines((expectedValue as unknown as JsonEL[]).map(v => loadEl(v)) as TEL);
+        renderedLines = toLines((expectedValue as unknown as JsonEL[]).map(v => loadEL(v)) as TEL);
     } else {
-        renderedLines = toLines(loadEl(expectedValue as unknown as JsonEL) as TEL);
+        renderedLines = toLines(loadEL(expectedValue as unknown as JsonEL) as TEL);
     }
     const renderedText = renderedLines.map(l => l.text()).join("").replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1").replace(/(?<!\n)$/, "\r\n").replace(/(?:\r?\n)+$/, "\r\n");
     assert.strictEqual(renderedText, expectedRendered);

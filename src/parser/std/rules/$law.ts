@@ -322,7 +322,7 @@ export const $law: WithErrorRule<std.Law> = factory
             if (lawTitleLines?.value.lawNumLine) {
                 const parentheses = isSingleParentheses(lawTitleLines.value.lawNumLine);
                 const lawNum = parentheses
-                    ? parentheses.content
+                    ? parentheses.content.text
                     : sentencesArrayToString(lawTitleLines.value.lawNumLine.line.sentencesArray);
                 law.append(newStdEL(
                     "LawNum",

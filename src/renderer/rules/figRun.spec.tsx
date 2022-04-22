@@ -1,7 +1,7 @@
 import React from "react";
 import { assert } from "chai";
 import { DOCXFigRun, HTMLFigRun } from "./figRun";
-import { loadEl } from "../../node/el";
+import loadEL from "../../node/el/loadEL";
 import * as std from "../../law/std";
 import { renderToStaticMarkup } from "../common";
 import formatXML from "../../util/formatXml";
@@ -18,7 +18,7 @@ describe("Test HTML figRun", () => {
     /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
-        const input = loadEl({
+        const input = loadEL({
             tag: "Fig",
             attr: { src: "./pict/S27F03901000056-005.jpg" },
             children: [],
@@ -59,7 +59,7 @@ describe("Test DOCX figRun", () => {
 
     it("Success case", async () => {
 
-        const input = loadEl({
+        const input = loadEL({
             tag: "Fig",
             attr: { src: "./pict/S27F03901000056-005.jpg" },
             children: [],

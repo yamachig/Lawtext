@@ -6,7 +6,8 @@ import * as analyzer from "./analyzer";
 import { parse } from "./parser/lawtext";
 import * as renderer from "./renderer";
 import renderLawtext from "./renderer/lawtext";
-import { EL, JsonEL, xmlToJson, loadEl } from "./node/el";
+import { EL, JsonEL, xmlToJson } from "./node/el";
+import loadEL from "./node/el/loadEL";
 
 
 interface Args {
@@ -92,7 +93,7 @@ export const main = (args: Args): void => {
         } else if (intype === "json") {
             const rawLaw = JSON.parse(intext) as JsonEL;
             try {
-                law = loadEl(rawLaw) as EL;
+                law = loadEL(rawLaw) as EL;
             } catch (e) {
                 console.error("[loading json at main]", e);
                 throw e;
@@ -109,7 +110,7 @@ export const main = (args: Args): void => {
                 throw e;
             }
             if (noanalyze) {
-                law = loadEl(law.json()) as EL;
+                law = loadEL(law.json()) as EL;
             }
         }
 

@@ -1,11 +1,12 @@
 import React from "react";
-import { EL, JsonEL, loadEl } from "../node/el";
+import { EL, JsonEL } from "../node/el";
 import * as std from "../law/std";
 import { HTMLLaw } from "./rules/law";
 import htmlCSS from "./rules/htmlCSS";
 import { renderToStaticMarkup } from "./common";
 import { HTMLAnyELs } from "./rules/any";
 import { HTMLOptions } from "./common/html";
+import loadEL from "../node/el/loadEL";
 
 export const renderHTML = (elOrJsonEL: JsonEL | EL, htmlOptions?: HTMLOptions): string => {
     const rendered = renderHTMLfragment(elOrJsonEL, htmlOptions);
@@ -27,7 +28,7 @@ ${rendered}
 };
 
 export const renderHTMLfragment = (elOrJsonEL: JsonEL | EL, htmlOptions?: HTMLOptions): string => {
-    const el = elOrJsonEL instanceof EL ? elOrJsonEL : loadEl(elOrJsonEL);
+    const el = elOrJsonEL instanceof EL ? elOrJsonEL : loadEL(elOrJsonEL);
     const element = std.isLaw(el)
         ? <HTMLLaw el={el} indent={0} htmlOptions={htmlOptions ?? {}} />
         : <HTMLAnyELs els={[el as std.StdEL | std.__EL]} indent={0} htmlOptions={htmlOptions ?? {}}/>;

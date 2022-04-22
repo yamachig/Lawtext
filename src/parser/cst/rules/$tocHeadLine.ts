@@ -2,7 +2,7 @@ import factory from "../factory";
 import { newStdEL } from "../../../law/std";
 import $indents from "./$indents";
 import { TOCHeadLine } from "../../../node/cst/line";
-import { __Text } from "../../../node/control";
+import { __Text } from "../../../node/el/control";
 import { $_EOL } from "./lexical";
 import { WithErrorRule } from "../util";
 

@@ -8,7 +8,7 @@ import { mergeAdjacentTexts, WithErrorRule } from "../util";
 import { articleGroupType } from "../../../law/num";
 import { Control } from "../../../node/cst/inline";
 import makeRangesRule from "./makeRangesRule";
-import { __Text } from "../../../node/control";
+import { __Text } from "../../../node/el/control";
 
 const { $ranges: $articleGroupRanges } = makeRangesRule(() => $articleGroupNum);
 

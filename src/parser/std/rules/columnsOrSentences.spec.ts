@@ -1,9 +1,9 @@
 import { assert } from "chai";
 import { initialEnv as cstInitialEnv } from "../../cst/env";
-import { loadEl } from "../../../node/el";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import $sentencesArray, { sentencesArrayToString } from "../../cst/rules/$sentencesArray";
 import * as std from "../../../law/std";
+import loadEL from "../../../node/el/loadEL";
 
 const cstEnv = cstInitialEnv({});
 
@@ -78,7 +78,7 @@ describe("Test sentencesArrayToColumnsOrSentences and columnsOrSentencesToSenten
             assert.deepStrictEqual(sentencesArray.map(s => s.json(true)), expectedSTD);
         }
 
-        const sentencesArray = columnsOrSentencesToSentencesArray(expectedSTD.map(loadEl) as std.Column[]);
+        const sentencesArray = columnsOrSentencesToSentencesArray(expectedSTD.map(loadEL) as std.Column[]);
         const text = sentencesArrayToString(sentencesArray);
         assert.strictEqual(text, expectedRendered);
     });
@@ -129,7 +129,7 @@ describe("Test sentencesArrayToColumnsOrSentences and columnsOrSentencesToSenten
             assert.deepStrictEqual(sentencesArray.map(s => s.json(true)), expectedSTD);
         }
 
-        const sentencesArray = columnsOrSentencesToSentencesArray(expectedSTD.map(loadEl) as std.Column[]);
+        const sentencesArray = columnsOrSentencesToSentencesArray(expectedSTD.map(loadEL) as std.Column[]);
         const text = sentencesArrayToString(sentencesArray);
         assert.strictEqual(text, expectedRendered);
     });

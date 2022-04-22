@@ -1,9 +1,9 @@
 import { assert } from "chai";
 import { initialEnv } from "../env";
-import { loadEl } from "../../../node/el";
 import * as std from "../../../law/std";
 import $sentencesArray, { sentencesArrayToString } from "./$sentencesArray";
 import { ErrorMessage } from "../error";
+import loadEL from "../../../node/el/loadEL";
 
 const env = initialEnv({});
 
@@ -83,7 +83,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
 
         const text = sentencesArrayToString(
             expectedCST.map(col =>
-                ({ ...col, sentences: col.sentences.map(loadEl) as std.Sentence[] })
+                ({ ...col, sentences: col.sentences.map(loadEL) as std.Sentence[] })
             )
         );
         assert.strictEqual(text, expectedRendered);
