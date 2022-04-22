@@ -4,7 +4,8 @@ import { BaseLawInfo } from "../lawinfo";
 import * as data_paths from "../paths";
 import path from "path";
 import { fetch as nodeFetch } from "../../util/node-fetch";
-const fetch: typeof window.fetch = (global["window"] && window.fetch) || nodeFetch;
+const fetch: typeof window.fetch = (global["fetch"]) || (global["window"] && window.fetch) || nodeFetch;
+console.log(`fetch: ${fetch}`);
 
 const fetchText = async (textPath: string) => {
     try {
