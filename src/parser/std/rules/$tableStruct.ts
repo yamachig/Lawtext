@@ -9,9 +9,13 @@ import { AttrEntry, Control, Sentences } from "../../../node/cst/inline";
 import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import $any, { anyToLines } from "./$any";
+import { anyToLines } from "./$any";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 import { rangeOfELs } from "../../../node/el";
+import $article from "./$article";
+import $articleGroup from "./$articleGroup";
+import { $requireControlParagraphItem } from "./$paragraphItem";
+import $figStruct from "./$figStruct";
 
 
 export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] => {
@@ -134,7 +138,32 @@ export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: st
 const $tableCellChildrenBlock = makeDoubleIndentBlockWithCaptureRule(
     "$tableCellChildrenBlock",
     (factory
-        .ref(() => $any)
+        .choice(c => c
+            .orSequence(s => s
+                .and(r => r.choice(c => c
+                    .or(() => $articleGroup) // Resets indentation
+                    .or(() => $article)
+                    .or(() => $requireControlParagraphItem)
+                    .or(() => $figStruct)
+                    .or(() => $remarks)
+                ), "any")
+                .action(({ any }) => ({ value: [any.value], errors: any.errors }))
+            )
+            .or(r => r
+                .oneMatch(({ item }) => {
+                    if (
+                        item.type === LineType.OTH
+                    ) {
+                        return {
+                            value: sentencesArrayToColumnsOrSentences(item.line.sentencesArray),
+                            errors: [],
+                        };
+                    } else {
+                        return null;
+                    }
+                })
+            )
+        )
     ),
 );
 
