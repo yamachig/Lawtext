@@ -1,5 +1,5 @@
-import { Container } from "./container";
-import { EL } from "./el";
+import { Container } from ".";
+import { EL } from "../el";
 
 export class Env {
     public lawType: string;

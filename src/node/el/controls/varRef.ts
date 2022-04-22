@@ -1,19 +1,19 @@
-import { EL } from "../../node/el";
+import { EL } from "..";
+import { SpanTextPos } from "../../span/spanTextPos";
 import { ____Declaration } from "./declaration";
-import { Pos } from "./pos";
 
 
 export interface VarRefOptions {
     refName: string,
     declaration: ____Declaration,
-    refPos: Pos,
+    refPos: SpanTextPos,
     range: [start: number, end: number] | null,
 }
 
 export class ____VarRef extends EL {
     public refName: string;
     public declaration: ____Declaration;
-    public refPos: Pos;
+    public refPos: SpanTextPos;
     constructor(options: VarRefOptions) {
         super("____VarRef", {}, [], options.range);
 

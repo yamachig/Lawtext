@@ -1,5 +1,5 @@
-import { EL } from "./el";
-import { Env } from "./env";
+import { EL } from "../el";
+import { Env } from "../container/env";
 
 export class Span {
     public index: number;

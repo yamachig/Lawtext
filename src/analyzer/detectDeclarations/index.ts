@@ -1,5 +1,5 @@
 import { Span } from "../../node/span";
-import { Declarations } from "../common/declaration";
+import { Declarations } from "../common/declarations";
 import detectLawname from "./detectLawname";
 import detectNameInline from "./detectNameInline";
 import detectNameList from "./detectNameList";

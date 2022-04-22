@@ -1,5 +1,5 @@
 import { newStdEL } from "../../../law/std";
-import { __Text } from "../../../node/el/control";
+import { __Text } from "../../../node/el/controls";
 import { factory } from "../factory";
 import $sentenceChildren, { $PERIOD_SENTENCE_FRAGMENT, sentenceChildrenToString } from "./$sentenceChildren";
 import { $_, $__ } from "./lexical";

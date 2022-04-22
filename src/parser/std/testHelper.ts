@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { MatchResult } from "generic-parser/lib/core";
 import { isLawNum, isLawTitle } from "../../law/std";
-import { __Text } from "../../node/el/control";
+import { __Text } from "../../node/el/controls";
 import { Line } from "../../node/cst/line";
 import { EL, rangeOfELs } from "../../node/el";
 import { ErrorMessage } from "../cst/error";

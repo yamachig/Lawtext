@@ -2,17 +2,12 @@ import { throwError } from "../util";
 import { Container, ContainerType } from "../node/container";
 import { Span } from "../node/span";
 import { EL } from "../node/el";
-import { RelPos, Pointer, Ranges } from "../node/pointer";
+import { RelPos, Pointer, Ranges } from "../node/container/pointer";
 import { $ranges } from "./range";
 import { initialEnv } from "../parser/cst/env";
 import { getContainerType, ignoreSpanTag } from "./common";
+import { SpanTextRange } from "../node/span/spanTextPos";
 
-export interface ScopeRange {
-    startSpanIndex: number,
-    startTextIndex: number,
-    endSpanIndex: number, // half open
-    endTextIndex: number, // half open
-}
 
 const parseRanges = (text: string): Ranges => { // closed
     if (text === "") return [];
@@ -159,8 +154,8 @@ const locateRanges = (origRanges: Ranges, currentSpan: Span) => {
     return ranges;
 };
 
-export const getScope = (currentSpan: Span, scopeText: string, following: boolean, followingIndex: number): ScopeRange[] => {
-    const ret: ScopeRange[] = [];
+export const getScope = (currentSpan: Span, scopeText: string, following: boolean, followingIndex: number): SpanTextRange[] => {
+    const ret: SpanTextRange[] = [];
     const ranges = locateRanges(parseRanges(scopeText), currentSpan);
     for (const [from, to] of ranges) {
         const fromc = from[from.length - 1].locatedContainer;

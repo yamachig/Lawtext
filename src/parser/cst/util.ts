@@ -1,5 +1,5 @@
 import { Rule, Empty } from "generic-parser/lib/core";
-import { __Text } from "../../node/el/control";
+import { __Text } from "../../node/el/controls";
 import { SentenceChildEL } from "../../node/cst/inline";
 import { EL } from "../../node/el";
 import { Env } from "./env";

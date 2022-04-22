@@ -4,8 +4,8 @@ import detectDeclarations from "./detectDeclarations";
 import detectVariableReferences from "./detectVariableReferences";
 import { Container } from "../node/container";
 import { Span } from "../node/span";
-import { Declarations } from "./common/declaration";
-import { ____VarRef } from "./common/varRef";
+import { Declarations } from "./common/declarations";
+import { ____VarRef } from "../node/el/controls/varRef";
 
 
 export interface Analysis {

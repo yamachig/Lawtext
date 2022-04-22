@@ -1,4 +1,4 @@
-import { EL } from "./el";
+import { EL } from "../el";
 
 export enum ContainerType {
     // eslint-disable-next-line no-unused-vars

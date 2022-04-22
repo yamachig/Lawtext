@@ -1,5 +1,5 @@
 import { EL } from ".";
-import { controlFromEL } from "./control";
+import { controlFromEL } from "./controls";
 import { JsonEL } from "./jsonEL";
 
 

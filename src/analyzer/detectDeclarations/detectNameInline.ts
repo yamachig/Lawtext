@@ -1,7 +1,7 @@
 import { Span } from "../../node/span";
-import { ____Declaration } from "../common/declaration";
-import { Pos } from "../common/pos";
+import { SpanTextPos } from "../../node/span/spanTextPos";
 import getScope from "../getScope";
+import { ____Declaration } from "../../node/el/controls/declaration";
 
 
 export const detectNameInline = (spans: Span[], spanIndex: number) => {
@@ -38,7 +38,7 @@ export const detectNameInline = (spans: Span[], spanIndex: number) => {
                 },
             ];
 
-        const namePos: Pos = {
+        const namePos: SpanTextPos = {
             spanIndex: nameSpan.index,
             textIndex: 0,
             length: nameSpan.text.length,

@@ -1,8 +1,8 @@
 import { Span } from "../node/span";
 import { EL } from "../node/el";
-import { Declarations } from "./common/declaration";
-import { ____VarRef } from "./common/varRef";
-import { Pos } from "./common/pos";
+import { Declarations } from "./common/declarations";
+import { ____VarRef } from "../node/el/controls/varRef";
+import { SpanTextPos } from "../node/span/spanTextPos";
 
 
 export const detectVariableReferences = (spans: Span[], declarations: Declarations) => {
@@ -32,7 +32,7 @@ export const detectVariableReferences = (spans: Span[], declarations: Declaratio
                     searchIndex = index + declaration.name.length;
 
                     if (textScope.start <= index && index < textScope.end) {
-                        const refPos: Pos = {
+                        const refPos: SpanTextPos = {
                             spanIndex: span.index,
                             textIndex: index + indexOffset,
                             length: declaration.name.length,

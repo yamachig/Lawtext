@@ -1,5 +1,5 @@
 import { Rule, Empty } from "generic-parser/lib/core";
-import { __Parentheses } from "../../node/el/control";
+import { __Parentheses } from "../../node/el/controls";
 import { SentencesArray } from "../../node/cst/inline";
 import { Line, LineType } from "../../node/cst/line";
 import { ErrorMessage } from "../cst/error";

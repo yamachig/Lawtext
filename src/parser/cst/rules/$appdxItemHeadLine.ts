@@ -4,7 +4,7 @@ import $indents from "./$indents";
 import { AppdxItemHeadLine } from "../../../node/cst/line";
 import { $_EOL } from "./lexical";
 import { mergeAdjacentTexts, WithErrorRule } from "../util";
-import { __Parentheses } from "../../../node/el/control";
+import { __Parentheses } from "../../../node/el/controls";
 import { $appdxControl, $appdxFigControl, $appdxFormatControl, $appdxNoteControl, $appdxStyleControl, $appdxTableControl, $autoTagControl } from "./$tagControl";
 import { ChoiceRule } from "generic-parser/lib/rules/choice";
 import { Env } from "../env";

@@ -10,7 +10,7 @@ import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { mergeAdjacentTexts, mergeAdjacentTextsWithString } from "../../cst/util";
 import { VirtualOnlyLineType } from "../virtualLine";
 import { ErrorMessage } from "../../cst/error";
-import { __Parentheses, __Text } from "../../../node/el/control";
+import { __Parentheses, __Text } from "../../../node/el/controls";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 import { rangeOfELs } from "../../../node/el";
 

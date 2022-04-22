@@ -3,8 +3,8 @@ import * as std from "../../law/std";
 import { lawTypes } from "../../law/num";
 import { isJsonEL } from "../../node/el/jsonEL";
 import getScope from "../getScope";
-import { Pos } from "../common/pos";
-import { ____Declaration } from "../common/declaration";
+import { SpanTextPos } from "../../node/span/spanTextPos";
+import { ____Declaration } from "../../node/el/controls/declaration";
 
 
 export const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => {
@@ -100,7 +100,7 @@ export const detectNameList = (spans: Span[], spanIndex: number): ____Declaratio
                     spanIndex, // followingIndex
                 );
 
-        const namePos: Pos = {
+        const namePos: SpanTextPos = {
             spanIndex: nameSpan.index,
             textIndex: 0,
             length: nameSpan.text.length,

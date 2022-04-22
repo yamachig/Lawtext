@@ -1,14 +1,4 @@
-import { EL } from ".";
-
-export const controlFromEL = (el: EL): EL => {
-    if (el.tag === "__Parentheses") {
-        return Object.setPrototypeOf(el.copy(false, true), __Parentheses.prototype);
-    } else if (el.tag === "__Text") {
-        return Object.setPrototypeOf(el.copy(false, true), __Text.prototype);
-    } else {
-        return el;
-    }
-};
+import { EL } from "..";
 
 export const parenthesesTypeStrings = [
     "round",
@@ -63,19 +53,5 @@ export class __Parentheses extends EL {
         this.children.push(new EL("__PStart", { type }, [start], range && range.start));
         this.children.push(new EL("__PContent", { type }, content, range && range.content));
         this.children.push(new EL("__PEnd", { type }, [end], range && range.end));
-    }
-}
-
-
-export class __Text extends EL {
-    public override get isControl(): true {
-        return true;
-    }
-
-    constructor(
-        text: string,
-        range: [start: number, end: number] | null = null,
-    ) {
-        super("__Text", {}, [text], range);
     }
 }

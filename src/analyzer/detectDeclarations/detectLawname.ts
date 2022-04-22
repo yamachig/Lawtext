@@ -5,8 +5,8 @@ import { LAWNUM_TABLE, KEY_LENGTH } from "../../law/lawNumTable";
 import { Span } from "../../node/span";
 import { EL } from "../../node/el";
 import getScope from "../getScope";
-import { Pos } from "../common/pos";
-import { ____Declaration } from "../common/declaration";
+import { SpanTextPos } from "../../node/span/spanTextPos";
+import { ____Declaration } from "../../node/el/controls/declaration";
 
 export const getLawNameLength = (lawNum: string): number => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -64,7 +64,7 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
                 },
             ];
 
-            const namePos: Pos = {
+            const namePos: SpanTextPos = {
                 spanIndex: lawnameSpan.index,
                 textIndex: lawnameTextIndex,
                 length: lawnameLength,
@@ -127,7 +127,7 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
                     },
                 ];
 
-            const namePos: Pos = {
+            const namePos: SpanTextPos = {
                 spanIndex: nameSpan.index,
                 textIndex: 0,
                 length: nameSpan.text.length,

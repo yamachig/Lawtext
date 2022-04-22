@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { isSub, __EL } from "../../../law/std";
-import { ParenthesesType, __Parentheses, __Text } from "../../../node/el/control";
+import { ParenthesesType, __Parentheses, __Text } from "../../../node/el/controls";
 import { EL } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
 import { factory } from "../factory";

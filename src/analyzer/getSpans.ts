@@ -1,5 +1,5 @@
 import { Container, ContainerType } from "../node/container";
-import { Env } from "../node/env";
+import { Env } from "../node/container/env";
 import { Span } from "../node/span";
 import { EL } from "../node/el";
 import { containerTags, getContainerType, ignoreSpanTag } from "./common";
