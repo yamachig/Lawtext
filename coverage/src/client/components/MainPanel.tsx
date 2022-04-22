@@ -6,7 +6,7 @@ import styled from "styled-components";
 import LawCoverageInfoCard, { LawCoverageInfoCardStatus } from "./LawCoverageInfoCard";
 import { LawtextDashboardPageStateStruct, useDetailLawCoverageStruct } from "./LawtextDashboardPageState";
 import { LawCoverage } from "../../lawCoverage";
-import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedLawtextStatus, OriginalLawStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus } from "./FilterInfo";
+import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedHTMLStatus, getRenderedDocxStatus, getRenderedLawtextStatus, OriginalLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus } from "./FilterInfo";
 
 
 type ZipItem<T extends unknown[][]> = { [I in keyof T]: T[I] extends Array<infer U> ? U : never };
@@ -503,7 +503,7 @@ const LawDiffResultItems: React.FC<{lawCoverage: LawCoverage}> = props => {
     );
 };
 
-export const convertStatus = (s: OriginalLawStatus | RenderedLawtextStatus | ParsedLawStatus | LawDiffStatus): LawCoverageInfoCardStatus => {
+export const convertStatus = (s: OriginalLawStatus | RenderedHTMLStatus | RenderedDocxStatus | RenderedLawtextStatus | ParsedLawStatus | LawDiffStatus): LawCoverageInfoCardStatus => {
     if (s === "Null") {
         return LawCoverageInfoCardStatus.NULL;
     } else if (s === "Success" || s === "NoProblem") {
@@ -565,6 +565,36 @@ export const LawCoverageInfoDetail: React.FC<{
                             </div>
                             {"error" in lawCoverage.originalLaw.info && (
                                 <pre>{lawCoverage.originalLaw.info.error as string}</pre>
+                            )}
+                            <hr />
+                        </div>
+                    )}
+                    {lawCoverage.renderedHTML && (
+                        <div>
+                            <h3 className="text-muted">Rendered HTML</h3>
+                            <div style={{ width: "7rem", marginBottom: "1em" }}>
+                                <LawCoverageInfoCard
+                                    status={convertStatus(getRenderedHTMLStatus(lawCoverage))}
+                                    date={lawCoverage.updateDate}
+                                />
+                            </div>
+                            {"error" in lawCoverage.renderedHTML.info && (
+                                <pre>{lawCoverage.renderedHTML.info.error as string}</pre>
+                            )}
+                            <hr />
+                        </div>
+                    )}
+                    {lawCoverage.renderedDocx && (
+                        <div>
+                            <h3 className="text-muted">Rendered Docx</h3>
+                            <div style={{ width: "7rem", marginBottom: "1em" }}>
+                                <LawCoverageInfoCard
+                                    status={convertStatus(getRenderedDocxStatus(lawCoverage))}
+                                    date={lawCoverage.updateDate}
+                                />
+                            </div>
+                            {"error" in lawCoverage.renderedDocx.info && (
+                                <pre>{lawCoverage.renderedDocx.info.error as string}</pre>
                             )}
                             <hr />
                         </div>

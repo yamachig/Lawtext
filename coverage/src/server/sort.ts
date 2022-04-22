@@ -31,6 +31,24 @@ export const forSortAgg = {
         },
     },
     Num: { $ifNull: ["$Num", 0] },
+    RenderedHTMLStatus: {
+        $switch: {
+            branches: [
+                { case: { $not: "$renderedHTML" }, then: 2 },
+                { case: { $not: "$renderedHTML.ok" }, then: 0 },
+            ],
+            default: 1,
+        },
+    },
+    RenderedDocxStatus: {
+        $switch: {
+            branches: [
+                { case: { $not: "$renderedDocx" }, then: 2 },
+                { case: { $not: "$renderedDocx.ok" }, then: 0 },
+            ],
+            default: 1,
+        },
+    },
     RenderedLawtextStatus: {
         $switch: {
             branches: [
@@ -81,6 +99,12 @@ export const transformSort = (sort: [key:SortKey, direction:SortDirection][]) =>
         case SortKey.LawType:
             sortObj["forSort.LawType"] = direction === SortDirection.Asc ? 1 : -1;
             break;
+        case SortKey.RenderedHTMLStatus:
+            sortObj["forSort.RenderedHTMLStatus"] = direction === SortDirection.Asc ? 1 : -1;
+            break;
+        case SortKey.RenderedDocxStatus:
+            sortObj["forSort.RenderedDocxStatus"] = direction === SortDirection.Asc ? 1 : -1;
+            break;
         case SortKey.RenderedLawtextStatus:
             sortObj["forSort.RenderedLawtextStatus"] = direction === SortDirection.Asc ? 1 : -1;
             break;
@@ -118,6 +142,8 @@ export const sortedLawCoverages = async (db: ConnectionInfo, sort: [key:SortKey,
                     // Num: true,
                     updateDate: true,
                     "originalLaw.ok.requiredms": true,
+                    "renderedHTML.ok.requiredms": true,
+                    "renderedDocx.ok.requiredms": true,
                     "renderedLawtext.ok.requiredms": true,
                     "parsedLaw.ok.requiredms": true,
                     "parsedLaw.hasError": true,

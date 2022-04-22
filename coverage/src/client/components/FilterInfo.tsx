@@ -7,6 +7,8 @@ export enum SortKey {
     ID = "ID",
     LawNum = "LawNum",
     LawType = "LawType",
+    RenderedHTMLStatus = "RenderedHTMLStatus",
+    RenderedDocxStatus = "RenderedDocxStatus",
     RenderedLawtextStatus = "RenderedLawtextStatus",
     ParsedLawStatus = "ParsedLawStatus",
     LawDiffStatus = "LawDiffStatus",
@@ -27,6 +29,30 @@ export const getOriginalLawStatus = (lawCoverage: LawCoverage): OriginalLawStatu
     if (!lawCoverage.originalLaw) return OriginalLawStatus.Null;
     else if (!lawCoverage.originalLaw.ok) return OriginalLawStatus.Fail;
     else return OriginalLawStatus.Success;
+};
+
+export enum RenderedHTMLStatus {
+    Fail = "Fail",
+    Success = "Success",
+    Null = "Null",
+}
+
+export const getRenderedHTMLStatus = (lawCoverage: LawCoverage): RenderedHTMLStatus => {
+    if (!lawCoverage.renderedHTML) return RenderedHTMLStatus.Null;
+    else if (!lawCoverage.renderedHTML.ok) return RenderedHTMLStatus.Fail;
+    else return RenderedHTMLStatus.Success;
+};
+
+export enum RenderedDocxStatus {
+    Fail = "Fail",
+    Success = "Success",
+    Null = "Null",
+}
+
+export const getRenderedDocxStatus = (lawCoverage: LawCoverage): RenderedDocxStatus => {
+    if (!lawCoverage.renderedDocx) return RenderedDocxStatus.Null;
+    else if (!lawCoverage.renderedDocx.ok) return RenderedDocxStatus.Fail;
+    else return RenderedDocxStatus.Success;
 };
 
 export enum RenderedLawtextStatus {

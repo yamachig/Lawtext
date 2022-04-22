@@ -4,7 +4,7 @@ import { parseLawNum } from "lawtext/dist/src/law/num";
 import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { Era, LawCoverage, LawType } from "../lawCoverage";
 import { ConnectionInfo } from "../connection";
-import { getLawDiff, getOriginalLaw, getParsedLaw, getRenderedLawtext } from "./transform";
+import { getLawDiff, getOriginalLaw, getParsedLaw, getRenderedDocx, getRenderedHTML, getRenderedLawtext } from "./transform";
 
 
 export const update = async (lawInfo: BaseLawInfo, maxDiffLength: number, db: ConnectionInfo, loader: Loader) => {
@@ -12,6 +12,14 @@ export const update = async (lawInfo: BaseLawInfo, maxDiffLength: number, db: Co
     const updateDate = new Date();
 
     const { origEL, origXML, lawNumStruct: lawNumStructFromXML, originalLaw } = await getOriginalLaw(lawInfo, loader);
+
+    const { renderedHTML } = origEL
+        ? await getRenderedHTML(origEL)
+        : { renderedHTML: null };
+
+    const { renderedDocx } = origEL
+        ? await getRenderedDocx(origEL)
+        : { renderedDocx: null };
 
     const { lawtext, renderedLawtext } = origEL
         ? await getRenderedLawtext(origEL)
@@ -35,6 +43,8 @@ export const update = async (lawInfo: BaseLawInfo, maxDiffLength: number, db: Co
         Num: lawNumStruct.Num ?? null,
         updateDate,
         originalLaw,
+        renderedHTML,
+        renderedDocx,
         renderedLawtext,
         parsedLaw,
         lawDiff,

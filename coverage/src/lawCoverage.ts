@@ -22,6 +22,8 @@ export enum SortKey {
     ID = "ID",
     LawNum = "LawNum",
     LawType = "LawType",
+    RenderedHTMLStatus = "RenderedHTMLStatus",
+    RenderedDocxStatus = "RenderedDocxStatus",
     RenderedLawtextStatus = "RenderedLawtextStatus",
     ParsedLawStatus = "ParsedLawStatus",
     LawDiffStatus = "LawDiffStatus",
@@ -53,6 +55,18 @@ export enum OriginalLawStatus {
     Null = "Null",
 }
 
+export enum RenderedHTMLStatus {
+    Fail = "Fail",
+    Success = "Success",
+    Null = "Null",
+}
+
+export enum RenderedDocxStatus {
+    Fail = "Fail",
+    Success = "Success",
+    Null = "Null",
+}
+
 export enum RenderedLawtextStatus {
     Fail = "Fail",
     Success = "Success",
@@ -76,6 +90,8 @@ export enum LawDiffStatus {
 
 export interface LawCoverageCounts {
     OriginalLawStatus: Record<OriginalLawStatus, number>;
+    RenderedHTMLStatus: Record<RenderedHTMLStatus, number>;
+    RenderedDocxStatus: Record<RenderedDocxStatus, number>;
     RenderedLawtextStatus: Record<RenderedLawtextStatus, number>;
     ParsedLawStatus: Record<ParsedLawStatus, number>;
     LawDiffStatus: Record<LawDiffStatus, number>;
@@ -95,12 +111,28 @@ export interface LawCoverage extends BaseLawInfo {
         } | null,
         info: Record<string, unknown>,
     } | null,
+
+    renderedHTML: {
+        ok: {
+            requiredms: Map<string, number>,
+        } | null,
+        info: Record<string, unknown>,
+    } | null,
+
+    renderedDocx: {
+        ok: {
+            requiredms: Map<string, number>,
+        } | null,
+        info: Record<string, unknown>,
+    } | null,
+
     renderedLawtext: {
         ok: {
             requiredms: Map<string, number>,
         } | null,
         info: Record<string, unknown>,
     } | null,
+
     parsedLaw: {
         ok: {
             requiredms: Map<string, number>,
@@ -108,6 +140,7 @@ export interface LawCoverage extends BaseLawInfo {
         hasError: boolean,
         info: Record<string, unknown>,
     } | null,
+
     lawDiff: {
         ok: {
             mostSeriousStatus: law_diff.ProblemStatus,

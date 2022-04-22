@@ -43,6 +43,36 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
         }, { minimize: false }),
     },
 
+    renderedHTML: {
+        required: true,
+        nullable: true,
+        type: new mongoose.Schema<LawCoverage["renderedHTML"]>({
+            ok: {
+                required: true,
+                nullable: true,
+                type: new mongoose.Schema<DeNull<DeNull<LawCoverage["renderedHTML"]>["ok"]>>({
+                    requiredms: { type: mongoose.Schema.Types.Map, of: Number, required: true },
+                }, { minimize: false }),
+            },
+            info: { type: Object, required: true },
+        }, { minimize: false }),
+    },
+
+    renderedDocx: {
+        required: true,
+        nullable: true,
+        type: new mongoose.Schema<LawCoverage["renderedDocx"]>({
+            ok: {
+                required: true,
+                nullable: true,
+                type: new mongoose.Schema<DeNull<DeNull<LawCoverage["renderedDocx"]>["ok"]>>({
+                    requiredms: { type: mongoose.Schema.Types.Map, of: Number, required: true },
+                }, { minimize: false }),
+            },
+            info: { type: Object, required: true },
+        }, { minimize: false }),
+    },
+
     renderedLawtext: {
         required: true,
         nullable: true,

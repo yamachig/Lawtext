@@ -21,6 +21,8 @@ export const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo
     } else {
         const orConditions: mongoose.FilterQuery<LawCoverage>[] = [
             { originalLaw: null },
+            { "originalLaw.ok": { $ne: null }, renderedHTML: null },
+            { "originalLaw.ok": { $ne: null }, renderedDocx: null },
             { "originalLaw.ok": { $ne: null }, renderedLawtext: null },
             { "renderedLawtext.ok": { $ne: null }, parsedLaw: null },
             { "parsedLaw.ok": { $ne: null }, lawDiff: null },
@@ -28,6 +30,8 @@ export const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo
         if (args.retry) {
             orConditions.push(
                 { "originalLaw.ok": null },
+                { "renderedHTML.ok": null },
+                { "renderedDocx.ok": null },
                 { "renderedLawtext.ok": null },
                 // { "renderedLawtext.ok.mostSeriousStatus": law_diff.ProblemStatus.Error },
                 { "parsedLaw.ok": null },

@@ -2,11 +2,25 @@ import { LawCoverage } from "../../lawCoverage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import styled from "styled-components";
-import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedLawtextStatus, LawDiffStatus, OriginalLawStatus, ParsedLawStatus, RenderedLawtextStatus, SortDirection, SortKey } from "./FilterInfo";
+import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedHTMLStatus, getRenderedDocxStatus, getRenderedLawtextStatus, LawDiffStatus, OriginalLawStatus, ParsedLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, SortDirection, SortKey } from "./FilterInfo";
 import LawCoverageInfoCard from "./LawCoverageInfoCard";
 import { LawCoveragesStruct, LawtextDashboardPageStateStruct, useLawCoverageCounts, useLawCoveragesStruct } from "./LawtextDashboardPageState";
 import { convertStatus } from "./MainPanel";
-
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from "@dnd-kit/core";
+import {
+    arrayMove,
+    horizontalListSortingStrategy,
+    SortableContext,
+    sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
 
 interface FilterInfoSortItemProps {
     sort: (
@@ -21,7 +35,9 @@ const KeyToName = {
     [SortKey.ID]: "ID",
     [SortKey.LawNum]: "番号",
     [SortKey.LawType]: "種別",
-    [SortKey.RenderedLawtextStatus]: "Rendered",
+    [SortKey.RenderedHTMLStatus]: "RenderedHTML",
+    [SortKey.RenderedDocxStatus]: "RenderedDocx",
+    [SortKey.RenderedLawtextStatus]: "RenderedLawtext",
     [SortKey.ParsedLawStatus]: "Parsed",
     [SortKey.LawDiffStatus]: "Diff",
 };
@@ -125,7 +141,7 @@ const ButtonDummy = styled(ButtonBase)`
         pointer-events: none;
     `;
 
-export const FilterInfoSortItem = SortableElement((props: FilterInfoSortItemProps) => {
+export const FilterInfoSortItem = (props: FilterInfoSortItemProps) => {
     if (Array.isArray(props.sort)) {
         const [key, dir] = props.sort;
         const ButtonTag = dir === SortDirection.Asc ? ButtonOff : ButtonOn;
@@ -154,7 +170,7 @@ export const FilterInfoSortItem = SortableElement((props: FilterInfoSortItemProp
             </NullItem>
         );
     }
-}) as React.FC<FilterInfoSortItemProps & SortableElementProps>;
+};
 
 
 interface FilterInfoSortContainerProps {
@@ -164,9 +180,18 @@ interface FilterInfoSortContainerProps {
         SortKey
     >,
     directionButtonClick: (sortKey: SortKey) => void;
+    onDragEnd: (event: DragEndEvent) => void;
 }
 
-export const FilterInfoSortContainer = SortableContainer((props: FilterInfoSortContainerProps) => {
+export const FilterInfoSortContainer = (props: FilterInfoSortContainerProps) => {
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        }),
+    );
+
     const directionButtonClick = (sort: FilterInfoSortContainerProps["sort"][0]) => () => {
         if (sort) {
             if (Array.isArray(sort)) props.directionButtonClick(sort[0]);
@@ -175,17 +200,27 @@ export const FilterInfoSortContainer = SortableContainer((props: FilterInfoSortC
     };
     return (
         <div className="d-flex flex-row">
-            {props.sort.map((sort, i) => (
-                <FilterInfoSortItem
-                    sort={sort}
-                    key={`${sort}`}
-                    index={i}
-                    directionButtonClick={directionButtonClick(sort)}
-                />
-            ))}
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={props.onDragEnd}
+            >
+                <SortableContext
+                    items={props.sort.map(v => Array.isArray(v) ? v[0] : v ?? "")}
+                    strategy={horizontalListSortingStrategy}
+                >
+                    {props.sort.map((sort) => (
+                        <FilterInfoSortItem
+                            sort={sort}
+                            key={sort?.[0] ?? ""}
+                            directionButtonClick={directionButtonClick(sort)}
+                        />
+                    ))}
+                </SortableContext>
+            </DndContext>
         </div>
     );
-});
+};
 
 
 export const FilterInfoFilterContainer: React.FC<LawtextDashboardPageStateStruct> = props => {
@@ -209,7 +244,35 @@ export const FilterInfoFilterContainer: React.FC<LawtextDashboardPageStateStruct
             </div>
             <div>
                 <small style={{ verticalAlign: "middle" }}>
-                    Rendered:{" "}
+                    RenderedHTML:{" "}
+                    {counts.RenderedHTMLStatus[RenderedHTMLStatus.Fail] !== 0 &&
+                        <><span className="badge bg-dark">{counts.RenderedHTMLStatus[RenderedHTMLStatus.Fail]} Fails</span>&nbsp;</>
+                    }
+                    {counts.RenderedHTMLStatus[RenderedHTMLStatus.Success] !== 0 &&
+                        <><span className="badge bg-success">{counts.RenderedHTMLStatus[RenderedHTMLStatus.Success]} Success</span>&nbsp;</>
+                    }
+                    {counts.RenderedHTMLStatus[RenderedHTMLStatus.Null] !== 0 &&
+                        <><span className="badge bg-light text-dark">{counts.RenderedHTMLStatus[RenderedHTMLStatus.Null]} Null</span>&nbsp;</>
+                    }
+                </small>
+            </div>
+            <div>
+                <small style={{ verticalAlign: "middle" }}>
+                    RenderedDocx:{" "}
+                    {counts.RenderedDocxStatus[RenderedDocxStatus.Fail] !== 0 &&
+                        <><span className="badge bg-dark">{counts.RenderedDocxStatus[RenderedDocxStatus.Fail]} Fails</span>&nbsp;</>
+                    }
+                    {counts.RenderedDocxStatus[RenderedDocxStatus.Success] !== 0 &&
+                        <><span className="badge bg-success">{counts.RenderedDocxStatus[RenderedDocxStatus.Success]} Success</span>&nbsp;</>
+                    }
+                    {counts.RenderedDocxStatus[RenderedDocxStatus.Null] !== 0 &&
+                        <><span className="badge bg-light text-dark">{counts.RenderedDocxStatus[RenderedDocxStatus.Null]} Null</span>&nbsp;</>
+                    }
+                </small>
+            </div>
+            <div>
+                <small style={{ verticalAlign: "middle" }}>
+                    RenderedLawtext:{" "}
                     {counts.RenderedLawtextStatus[RenderedLawtextStatus.Fail] !== 0 &&
                         <><span className="badge bg-dark">{counts.RenderedLawtextStatus[RenderedLawtextStatus.Fail]} Fails</span>&nbsp;</>
                     }
@@ -406,6 +469,17 @@ const FilterControl: React.FC<LawtextDashboardPageStateStruct> = props => {
         };
     });
 
+    const onDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        const items = state.sort.map(v => Array.isArray(v) ? v[0] : v ?? "");
+
+        if (active.id !== over?.id) {
+            const oldIndex = items.indexOf(active.id as SortKey);
+            const newIndex = items.indexOf(over?.id as SortKey);
+            onFilterControlSortEnd(oldIndex, newIndex, props, state, setState);
+        }
+    };
+
     return (
         <FilterControlTag>
             <div>
@@ -413,8 +487,7 @@ const FilterControl: React.FC<LawtextDashboardPageStateStruct> = props => {
                 <div style={{ display: "inline-block" }}>
                     <FilterInfoSortContainer
                         sort={state.sort}
-                        axis="x"
-                        onSortEnd={({ oldIndex, newIndex }) => onFilterControlSortEnd(oldIndex, newIndex, props, state, setState)}
+                        onDragEnd={onDragEnd}
                         directionButtonClick={key => filterControlDirectionButtonClick(key, props, state, setState)}
                     />
                 </div>
@@ -455,6 +528,38 @@ const LawCoverageListItem: React.FC<LawtextDashboardPageStateStruct & {lawCovera
                     <div className="d-flex flex-column" style={{ flex: "1 0 1rem" }}>
                         <div style={{ textAlign: "center" }}>
                             {lawCoverage.originalLaw?.ok && (
+                                <small><FontAwesomeIcon icon="arrow-right" /></small>
+                            )}
+                        </div>
+                    </div>
+
+                    <LawCoverageInfoCard
+                        status={convertStatus(getRenderedHTMLStatus(lawCoverage))}
+                        header={
+                            <span>Rendered HTML</span>
+                        }
+                        date={lawCoverage.updateDate}
+                    />
+
+                    <div className="d-flex flex-column" style={{ flex: "1 0 1rem" }}>
+                        <div style={{ textAlign: "center" }}>
+                            {lawCoverage.renderedHTML?.ok && (
+                                <small><FontAwesomeIcon icon="arrow-right" /></small>
+                            )}
+                        </div>
+                    </div>
+
+                    <LawCoverageInfoCard
+                        status={convertStatus(getRenderedDocxStatus(lawCoverage))}
+                        header={
+                            <span>Rendered Docx</span>
+                        }
+                        date={lawCoverage.updateDate}
+                    />
+
+                    <div className="d-flex flex-column" style={{ flex: "1 0 1rem" }}>
+                        <div style={{ textAlign: "center" }}>
+                            {lawCoverage.renderedDocx?.ok && (
                                 <small><FontAwesomeIcon icon="arrow-right" /></small>
                             )}
                         </div>

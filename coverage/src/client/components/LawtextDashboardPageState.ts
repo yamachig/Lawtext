@@ -63,6 +63,8 @@ const getInitialState = (): BaseLawtextDashboardPageState => ({
         from: 0,
         to: ITEMS_PER_PAGE - 1,
         sort: [
+            [SortKey.RenderedHTMLStatus, SortDirection.Asc],
+            [SortKey.RenderedDocxStatus, SortDirection.Asc],
             [SortKey.RenderedLawtextStatus, SortDirection.Asc],
             [SortKey.ParsedLawStatus, SortDirection.Asc],
             [SortKey.LawDiffStatus, SortDirection.Asc],

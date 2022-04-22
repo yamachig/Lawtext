@@ -3,7 +3,7 @@ import { DOMParser } from "@xmldom/xmldom";
 import * as law_diff from "lawtext/dist/src/diff/law_diff";
 import { parse } from "lawtext/dist/src/parser/lawtext";
 import * as analyzer from "lawtext/dist/src/analyzer";
-import { renderLawtext } from "lawtext/dist/src/renderer";
+import { renderDocxAsync, renderHTML, renderLawtext } from "lawtext/dist/src/renderer";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
 import { EL, xmlToJson } from "lawtext/dist/src/node/el";
 import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
@@ -42,7 +42,8 @@ export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Prom
         const requiredms = new Map<string, number>();
         const lap = new Lap();
 
-        const origXML = await loader.loadLawXMLStructByInfo(lawInfo);
+        const xmlStruct = await loader.loadLawXMLStructByInfo(lawInfo);
+        const origXML = xmlStruct.xml;
         requiredms.set("loadXML", lap.lapms());
 
         const origEL = xmlToJson(origXML) as Law;
@@ -73,6 +74,70 @@ export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Prom
             origXML: null,
             lawNumStruct: null,
             originalLaw: {
+                ok: null,
+                info: { error: (e as Error).stack },
+            },
+        };
+    }
+};
+
+
+export const getRenderedHTML = async (origEL: EL): Promise<{
+    html: string | null,
+    renderedHTML: DeNull<LawCoverage["renderedHTML"]>,
+}> => {
+    try {
+        const requiredms = new Map<string, number>();
+        const lap = new Lap();
+
+        const html = renderHTML(origEL);
+        requiredms.set("renderHTML", lap.lapms());
+
+        return {
+            html,
+            renderedHTML: {
+                ok: {
+                    requiredms,
+                },
+                info: {},
+            },
+        };
+    } catch (e) {
+        return {
+            html: null,
+            renderedHTML: {
+                ok: null,
+                info: { error: (e as Error).stack },
+            },
+        };
+    }
+};
+
+
+export const getRenderedDocx = async (origEL: EL): Promise<{
+    docx: Uint8Array | Buffer | null,
+    renderedDocx: DeNull<LawCoverage["renderedDocx"]>,
+}> => {
+    try {
+        const requiredms = new Map<string, number>();
+        const lap = new Lap();
+
+        const docx = await renderDocxAsync(origEL);
+        requiredms.set("renderDocxAsync", lap.lapms());
+
+        return {
+            docx,
+            renderedDocx: {
+                ok: {
+                    requiredms,
+                },
+                info: {},
+            },
+        };
+    } catch (e) {
+        return {
+            docx: null,
+            renderedDocx: {
                 ok: null,
                 info: { error: (e as Error).stack },
             },
