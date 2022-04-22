@@ -2,7 +2,6 @@
 
 import * as argparse from "argparse";
 import * as fs from "fs";
-import * as analyzer from "./analyzer";
 import { parse } from "./parser/lawtext";
 import * as renderer from "./renderer";
 import renderLawtext from "./renderer/lawtext";
@@ -10,6 +9,7 @@ import { EL } from "./node/el";
 import loadEL from "./node/el/loadEL";
 import { xmlToEL } from "./node/el/xmlToEL";
 import { JsonEL } from "./node/el/jsonEL";
+import addControls from "./parser/addControls";
 
 
 interface Args {
@@ -90,7 +90,7 @@ export const main = (args: Args): void => {
         if (intype === "xml") {
             law = xmlToEL(intext);
             if (!noanalyze) {
-                analyzer.stdxmlToExt(law);
+                addControls(law);
             }
         } else if (intype === "json") {
             const rawLaw = JSON.parse(intext) as JsonEL;
