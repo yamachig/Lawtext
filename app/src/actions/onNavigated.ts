@@ -30,10 +30,10 @@ export const onNavigated = async (
     if (!lawSearchKey) {
         console.log("onNavigated: detected the top page.");
         origSetState(s => {
-            const { law: oldLaw } = s;
-            if (oldLaw && ("xml" in oldLaw)) {
-                oldLaw.lawXMLStruct?.clean();
-            }
+            // const { law: oldLaw } = s;
+            // if (oldLaw && ("xml" in oldLaw)) {
+            //     oldLaw.lawXMLStruct?.clean();
+            // }
             return {
                 ...s,
                 navigatedLawSearchKey: lawSearchKey,
@@ -46,10 +46,10 @@ export const onNavigated = async (
     }
 
     origSetState(s => {
-        const { law: oldLaw } = s;
-        if (oldLaw && ("xml" in oldLaw)) {
-            oldLaw.lawXMLStruct?.clean();
-        }
+        // const { law: oldLaw } = s;
+        // if (oldLaw && ("xml" in oldLaw)) {
+        //     oldLaw.lawXMLStruct?.clean();
+        // }
         return {
             ...s,
             navigatedLawSearchKey: lawSearchKey,
@@ -124,10 +124,10 @@ export const onNavigated = async (
     const start = new Date();
 
     origSetState(s => {
-        const { law: oldLaw } = s;
-        if (oldLaw && ("xml" in oldLaw)) {
-            oldLaw.lawXMLStruct?.clean();
-        }
+        // const { law: oldLaw } = s;
+        // if (oldLaw && ("xml" in oldLaw)) {
+        //     oldLaw.lawXMLStruct?.clean();
+        // }
         return {
             ...s,
             law: lawData,
