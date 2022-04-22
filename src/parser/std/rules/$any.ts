@@ -17,6 +17,7 @@ import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines, noteLi
 import $preamble, { preambleToLines } from "./$preamble";
 import $tableStruct, { tableStructToLines, tableToLines } from "./$tableStruct";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
+import $articleGroup from "./$articleGroup";
 
 
 export const anyToLines = (any: (std.StdEL | std.__EL | string), indentTexts: string[]): Line[] => {
@@ -73,7 +74,7 @@ export const $any: WithErrorRule<(std.StdEL | std.__EL | string)[]> = factory
                 // .or(() => $amendProvision) // Same as (Sentence | Column)[]
                 .or(() => $arithFormula)
                 .or(() => $article)
-                // .or(() => $articleGroup) // Resets indentation
+                .or(() => $articleGroup) // Resets indentation
                 .or(() => $fig) // Capture before $figStruct
                 .or(() => $figStruct)
                 .or(() => $list) // Capture before $tableStruct
