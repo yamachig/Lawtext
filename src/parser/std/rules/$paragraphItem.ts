@@ -5,7 +5,7 @@ import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences 
 import CST from "../toCSTSettings";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { assertNever, Diff, NotImplementedError } from "../../../util";
-import { AttrEntry, Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
+import { AttrEntries, AttrEntry, Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
 import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory, { VirtualLineRuleFactory } from "../factory";
 import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
@@ -476,18 +476,18 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
                 }
             }
 
-            // if (firstParagraphItemLine.line.sentencesArray.length >= 1) {
-            //     const replacedAttrEntries: AttrEntries = [];
-            //     for (const attrEntry of firstParagraphItemLine.line.sentencesArray[0].attrEntries) {
-            //         if (attrEntry.entry[0] === "OldNum") {
-            //             (paragraphItem as std.Paragraph).attr.OldNum = attrEntry.entry[1];
-            //         } else {
-            //             replacedAttrEntries.push(attrEntry);
-            //         }
-            //     }
-            //     firstParagraphItemLine.line.sentencesArray[0].attrEntries.splice(0);
-            //     firstParagraphItemLine.line.sentencesArray[0].attrEntries.push(...replacedAttrEntries);
-            // }
+            if (firstParagraphItemLine.line.sentencesArray.length >= 1) {
+                const replacedAttrEntries: AttrEntries = [];
+                for (const attrEntry of firstParagraphItemLine.line.sentencesArray[0].attrEntries) {
+                    if (attrEntry.entry[0] === "OldNum") {
+                        (paragraphItem as std.Paragraph).attr.OldNum = attrEntry.entry[1];
+                    } else {
+                        replacedAttrEntries.push(attrEntry);
+                    }
+                }
+                firstParagraphItemLine.line.sentencesArray[0].attrEntries.splice(0);
+                firstParagraphItemLine.line.sentencesArray[0].attrEntries.push(...replacedAttrEntries);
+            }
 
 
             if (captionLine) {

@@ -38,6 +38,10 @@ ${
     clear: both;
 }
 
+.article-title {
+    font-weight: bold;
+}
+
 .paragraph-item-title {
     font-weight: bold;
 }
@@ -61,6 +65,11 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
     }
     const ParagraphItemTitle = (el.children as (typeof el.children)[number][]).find(std.isParagraphItemTitle);
     const ParagraphItemSentence = (el.children as (typeof el.children)[number][]).find(std.isParagraphItemSentence);
+    const OldParatraphNum = (
+        (std.isParagraph(el) && el.attr.OldNum === "true")
+            ? String.fromCharCode("①".charCodeAt(0) - 1 + Number(el.attr.Num))
+            : undefined
+    );
 
     if (ParagraphCaption) {
         blocks.push((
@@ -73,9 +82,9 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
     if (ParagraphItemTitle || ParagraphItemSentence) {
         blocks.push((
             <div className={`paragraph-item-main indent-${indent}`}>
-                {Boolean(ParagraphItemTitle || ArticleTitle) && ((
+                {Boolean(ParagraphItemTitle || ArticleTitle || OldParatraphNum) && ((
                     <>
-                        {ParagraphItemTitle && ((!ArticleTitle) || (ParagraphItemTitle.children.length > 0)) && (
+                        {ParagraphItemTitle && ((!ArticleTitle && !OldParatraphNum) || (ParagraphItemTitle.children.length > 0)) && (
                             <span className={"paragraph-item-title"} {...elProps(ParagraphItemTitle, htmlOptions)}>
                                 <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />
                             </span>
@@ -83,6 +92,11 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
                         {ArticleTitle && (
                             <span className={"article-title"} {...elProps(ArticleTitle, htmlOptions)}>
                                 <HTMLSentenceChildrenRun els={ArticleTitle.children} {...{ htmlOptions }} />
+                            </span>
+                        )}
+                        {OldParatraphNum && (
+                            <span className={"old-paragraph-num"}>
+                                <HTMLSentenceChildrenRun els={[OldParatraphNum]} {...{ htmlOptions }} />
                             </span>
                         )}
                         {Boolean(ParagraphItemSentence) && (
@@ -152,6 +166,11 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
     }
     const ParagraphItemTitle = (el.children as (typeof el.children)[number][]).find(std.isParagraphItemTitle);
     const ParagraphItemSentence = (el.children as (typeof el.children)[number][]).find(std.isParagraphItemSentence);
+    const OldParatraphNum = (
+        (std.isParagraph(el) && el.attr.OldNum === "true")
+            ? String.fromCharCode("①".charCodeAt(0) - 1 + Number(el.attr.Num))
+            : undefined
+    );
 
     if (ParagraphCaption) {
         blocks.push((
@@ -174,8 +193,15 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
                         <w.pStyle w:val={`IndentFirstLine${indent}`}/>
                     )}
                 </w.pPr>
-                {ParagraphItemTitle && <DOCXSentenceChildrenRun els={ParagraphItemTitle.children} {...{ docxOptions }} />}
-                {ArticleTitle && <DOCXSentenceChildrenRun els={ArticleTitle.children} emphasis={true} {...{ docxOptions }} />}
+                {ParagraphItemTitle && ((!ArticleTitle && !OldParatraphNum) || (ParagraphItemTitle.children.length > 0)) && (
+                    <DOCXSentenceChildrenRun els={ParagraphItemTitle.children} {...{ docxOptions }} />
+                )}
+                {ArticleTitle && (
+                    <DOCXSentenceChildrenRun els={ArticleTitle.children} emphasis={true} {...{ docxOptions }} />
+                )}
+                {OldParatraphNum && (
+                    <DOCXSentenceChildrenRun els={[OldParatraphNum]} {...{ docxOptions }} />
+                )}
                 {Boolean((ParagraphItemTitle || ArticleTitle) && ParagraphItemSentence) && (
                     <w.r><w.t>{DOCXMargin}</w.t></w.r>
                 )}

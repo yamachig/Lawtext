@@ -367,8 +367,13 @@ export class ArticleLine extends IndentsLine<LineType.ART> {
     }
     public get sentencesArrayRange(): [number, number] | null {
         if (this.sentencesArray.length > 0) {
-            const sentences = this.sentencesArray.flat().map(ss => ss.sentences).flat();
-            return rangeOfELs(sentences);
+            const ranges = this.sentencesArray.flat().map(ss => [
+                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
+                ss.leadingSpaceRange,
+                ...ss.sentences.map(s => s.range),
+            ]).flat().filter(r => r !== null) as [start: number, end: number][];
+            if (ranges.length === 0) return null;
+            return [ranges[0][0], ranges[ranges.length - 1][1]];
         } else {
             const base = this.midSpaceRange;
             if (!base) return null;
@@ -421,8 +426,13 @@ export class ParagraphItemLine<TTag extends (typeof paragraphItemTags)[number] |
     }
     public get sentencesArrayRange(): [number, number] | null {
         if (this.sentencesArray.length > 0) {
-            const sentences = this.sentencesArray.flat().map(ss => ss.sentences).flat();
-            return rangeOfELs(sentences);
+            const ranges = this.sentencesArray.flat().map(ss => [
+                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
+                ss.leadingSpaceRange,
+                ...ss.sentences.map(s => s.range),
+            ]).flat().filter(r => r !== null) as [start: number, end: number][];
+            if (ranges.length === 0) return null;
+            return [ranges[0][0], ranges[ranges.length - 1][1]];
         } else {
             const base = this.midSpaceRange;
             if (!base) return null;
@@ -523,8 +533,13 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
     }
     public get sentencesArrayRange(): [number, number] | null {
         if (this.sentencesArray.length > 0) {
-            const sentences = this.sentencesArray.flat().map(ss => ss.sentences).flat();
-            return rangeOfELs(sentences);
+            const ranges = this.sentencesArray.flat().map(ss => [
+                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
+                ss.leadingSpaceRange,
+                ...ss.sentences.map(s => s.range),
+            ]).flat().filter(r => r !== null) as [start: number, end: number][];
+            if (ranges.length === 0) return null;
+            return [ranges[0][0], ranges[ranges.length - 1][1]];
         } else {
             const base = this.multilineIndicatorRange;
             if (!base) return null;
@@ -560,8 +575,13 @@ export class OtherLine extends WithControlsLine<LineType.OTH> {
     }
     public get sentencesArrayRange(): [number, number] | null {
         if (this.sentencesArray.length > 0) {
-            const sentences = this.sentencesArray.flat().map(ss => ss.sentences).flat();
-            return rangeOfELs(sentences);
+            const ranges = this.sentencesArray.flat().map(ss => [
+                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
+                ss.leadingSpaceRange,
+                ...ss.sentences.map(s => s.range),
+            ]).flat().filter(r => r !== null) as [start: number, end: number][];
+            if (ranges.length === 0) return null;
+            return [ranges[0][0], ranges[ranges.length - 1][1]];
         } else {
             const pos = this.controlsEndPos;
             return (pos !== null) ? [pos, pos] : null;

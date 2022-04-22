@@ -185,7 +185,12 @@ export const $article: WithErrorRule<std.Article> = factory
 
             article.append(paragraphItemFromAuto("Paragraph", firstParagraph) as std.Paragraph);
 
-            article.extend(otherParagraphs.map(p => p.value));
+            article.extend(otherParagraphs.map((p, i) => {
+                if (std.isParagraph(p.value) && p.value.attr.OldNum === "true") {
+                    p.value.attr.Num = (i + 2).toString();
+                }
+                return p.value;
+            }));
 
             article.extend(supplNotes.map(n => n.value));
 
