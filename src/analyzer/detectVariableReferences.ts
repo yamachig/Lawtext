@@ -21,7 +21,7 @@ export const detectVariableReferences = (spans: Span[], declarations: Declaratio
             let nextIndexOffset = 0;
             for (const child of span.el.children) {
                 const indexOffset = nextIndexOffset;
-                nextIndexOffset += (child instanceof EL ? child.text : child).length;
+                nextIndexOffset += (child instanceof EL ? child.text() : child).length;
                 if (child instanceof EL) continue;
 
                 let searchIndex = 0;
