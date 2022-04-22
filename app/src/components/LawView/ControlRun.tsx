@@ -13,6 +13,8 @@ import { EL } from "lawtext/dist/src/node/el";
 import { NotImplementedError } from "lawtext/dist/src/util";
 import AnimateHeight from "react-animate-height";
 import { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
+import { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration";
+import { ____VarRef } from "lawtext/dist/src/node/el/controls/varRef";
 
 
 export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
@@ -20,10 +22,10 @@ export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
     const { el, htmlOptions } = childProps as HTMLComponentProps & HTMLControlRunProps;
 
     if (el.tag === "____Declaration") {
-        return <____Declaration el={el} {...{ htmlOptions }} />;
+        return <Declaration el={el as ____Declaration} {...{ htmlOptions }} />;
 
     } else if (el.tag === "____VarRef") {
-        return <____VarRef el={el} {...{ htmlOptions }} />;
+        return <VarRef el={el as ____VarRef} {...{ htmlOptions }} />;
 
     } else if (el.tag === "____LawNum") {
         return <____LawNum el={el} {...{ htmlOptions }} />;
@@ -54,14 +56,12 @@ const DeclarationSpan = styled.span`
     color: rgb(40, 167, 69);
 `;
 
-interface ____DeclarationProps { el: std.__EL }
+interface ____DeclarationProps { el: ____Declaration }
 
-const ____Declaration = (props: HTMLComponentProps & ____DeclarationProps) => {
+const Declaration = (props: HTMLComponentProps & ____DeclarationProps) => {
     const { el, htmlOptions } = props;
     return (
-        <DeclarationSpan
-            data-lawtext_declaration_index={el.attr.declaration_index}
-        >
+        <DeclarationSpan>
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </DeclarationSpan>
     );
@@ -111,11 +111,11 @@ const VarRefWindowSpan = styled.span`
     background-color: rgba(240, 240, 240);
 `;
 
-interface ____VarRefProps { el: std.__EL }
+interface ____VarRefProps { el: ____VarRef }
 
 interface ____VarRefState { mode: VarRefFloatState, arrowLeft: string }
 
-const ____VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
+const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
     const { el, htmlOptions } = props;
 
     const refText = React.useRef<HTMLSpanElement>(null);
@@ -218,7 +218,7 @@ const ____VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
 };
 
 
-interface VarRefViewProps { el: std.__EL }
+interface VarRefViewProps { el: ____VarRef }
 
 const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
     const { el, htmlOptions } = props;
@@ -227,9 +227,8 @@ const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
     const analysis = options.lawData.analysis;
     if (!analysis) return null;
 
-    const declarationIndex = Number(el.attr.ref_declaration_index);
-    const declaration = analysis.declarations.get(declarationIndex);
-    const declContainer = analysis.spans[declaration.namePos.spanIndex].env.container;
+    const declaration = analysis.declarations.get(el.attr.declarationID);
+    const declContainer = analysis.spans[declaration.namePos().spanIndex].env.container;
     const containerStack = declContainer.linealAscendant(c => {
         if (std.isParagraph(c.el)) {
             const paragraphNum = c.el.children.find(std.isParagraphNum);
