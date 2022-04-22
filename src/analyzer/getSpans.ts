@@ -4,6 +4,12 @@ import { Span } from "../node/span";
 import { EL } from "../node/el";
 import { containerTags, getContainerType, ignoreSpanTag } from "./common";
 
+export interface SpansStruct {
+    spans: [EL, Env][];
+    containers: Container[];
+    rootContainer: Container;
+}
+
 export const getSpans = (el: EL): {spans: Span[], containers: Container[], rootContainer: Container} => {
 
     const spans: Span[] = [];

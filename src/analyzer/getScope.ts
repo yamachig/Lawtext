@@ -7,24 +7,11 @@ import { $ranges } from "./range";
 import { initialEnv } from "../parser/cst/env";
 import { getContainerType, ignoreSpanTag } from "./common";
 
-export interface ScopeRangeOptions {
+export interface ScopeRange {
     startSpanIndex: number,
     startTextIndex: number,
     endSpanIndex: number, // half open
     endTextIndex: number, // half open
-}
-
-export class ScopeRange {
-    public startSpanIndex: number;
-    public startTextIndex: number;
-    public endSpanIndex: number;
-    public endTextIndex: number;
-    constructor(options: ScopeRangeOptions) {
-        this.startSpanIndex = options.startSpanIndex;
-        this.startTextIndex = options.startTextIndex;
-        this.endSpanIndex = options.endSpanIndex;
-        this.endTextIndex = options.endTextIndex;
-    }
 }
 
 const parseRanges = (text: string): Ranges => { // closed
@@ -180,19 +167,19 @@ export const getScope = (currentSpan: Span, scopeText: string, following: boolea
         const toc = to[to.length - 1].locatedContainer;
         if (fromc && toc) {
             if (following) {
-                ret.push(new ScopeRange({
+                ret.push({
                     startSpanIndex: followingIndex,
                     startTextIndex: 0,
                     endSpanIndex: toc.spanRange[1],
                     endTextIndex: 0,
-                }));
+                });
             } else {
-                ret.push(new ScopeRange({
+                ret.push({
                     startSpanIndex: fromc.spanRange[0],
                     startTextIndex: 0,
                     endSpanIndex: toc.spanRange[1],
                     endTextIndex: 0,
-                }));
+                });
             }
         } else {
             // console.warn("Scope couldn't be detected:", { from, to });

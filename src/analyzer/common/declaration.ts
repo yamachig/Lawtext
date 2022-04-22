@@ -41,9 +41,9 @@ export class ____Declaration extends EL {
     }
 
     public get nameRange(): [number, number] | null {
-        return this.namePos.span.el.range && [
-            this.namePos.span.el.range[0] + this.namePos.textIndex,
-            this.namePos.span.el.range[0] + this.namePos.textIndex + this.namePos.length,
+        return this.namePos.range && [
+            this.namePos.range[0] + this.namePos.textIndex,
+            this.namePos.range[0] + this.namePos.textIndex + this.namePos.length,
         ];
     }
 }

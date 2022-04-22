@@ -4,7 +4,7 @@ import sha512 from "hash.js/lib/hash/sha/512";
 import { LAWNUM_TABLE, KEY_LENGTH } from "../../law/lawNumTable";
 import { Span } from "../../node/span";
 import { EL } from "../../node/el";
-import getScope, { ScopeRange } from "../getScope";
+import getScope from "../getScope";
 import { Pos } from "../common/pos";
 import { ____Declaration } from "../common/declaration";
 
@@ -56,21 +56,20 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
             afterSpan.el.attr.type === "round"
         ) {
             const scope = [
-                new ScopeRange({
+                {
                     startSpanIndex: afterSpan.index + 1,
                     startTextIndex: 0,
                     endSpanIndex: spans.length, // half open
                     endTextIndex: 0, // half open
-                }),
+                },
             ];
 
-            const namePos = new Pos({
-                span: lawnameSpan,
+            const namePos: Pos = {
                 spanIndex: lawnameSpan.index,
                 textIndex: lawnameTextIndex,
                 length: lawnameLength,
-                env: lawnameSpan.env,
-            });
+                range: lawnameSpan.el.range,
+            };
 
             const range = lawnameSpan.el.range ? [
                 lawnameSpan.el.range[0] + lawnameTextIndex,
@@ -120,21 +119,20 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
             const scope = scopeText
                 ? getScope(lawnumSpan, scopeText, following, nameAfterSpan.index)
                 : [
-                    new ScopeRange({
+                    {
                         startSpanIndex: nameAfterSpan.index,
                         startTextIndex: 0,
                         endSpanIndex: spans.length,
                         endTextIndex: 0,
-                    }),
+                    },
                 ];
 
-            const namePos = new Pos({
-                span: nameSpan,
+            const namePos: Pos = {
                 spanIndex: nameSpan.index,
                 textIndex: 0,
                 length: nameSpan.text.length,
-                env: nameSpan.env,
-            });
+                range: nameSpan.el.range,
+            };
 
             const range = lawnameSpan.el.range ? [
                 lawnameSpan.el.range[0] + lawnameTextIndex,

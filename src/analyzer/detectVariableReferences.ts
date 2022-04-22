@@ -32,13 +32,15 @@ export const detectVariableReferences = (spans: Span[], declarations: Declaratio
                     searchIndex = index + declaration.name.length;
 
                     if (textScope.start <= index && index < textScope.end) {
-                        const refPos = new Pos({
-                            span: span,       // span
-                            spanIndex: span.index, // span_index
-                            textIndex: index + indexOffset,      // text_index
-                            length: declaration.name.length, // length
-                            env: span.env,   // env
-                        });
+                        const refPos: Pos = {
+                            spanIndex: span.index,
+                            textIndex: index + indexOffset,
+                            length: declaration.name.length,
+                            range: span.el.range && [
+                                span.el.range[0] + index + indexOffset,
+                                span.el.range[0] + index + indexOffset + declaration.name.length,
+                            ],
+                        };
 
                         const range = span.el.range ? [
                             span.el.range[0] + index + indexOffset,

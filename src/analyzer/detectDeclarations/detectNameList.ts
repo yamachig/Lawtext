@@ -2,7 +2,7 @@ import { Span } from "../../node/span";
 import * as std from "../../law/std";
 import { lawTypes } from "../../law/num";
 import { isJsonEL } from "../../node/el/jsonEL";
-import getScope, { ScopeRange } from "../getScope";
+import getScope from "../getScope";
 import { Pos } from "../common/pos";
 import { ____Declaration } from "../common/declaration";
 
@@ -74,24 +74,24 @@ export const detectNameList = (spans: Span[], spanIndex: number): ____Declaratio
 
         const scope = !scopeText
             ? [
-                new ScopeRange({
+                {
                     startSpanIndex: spanIndex,
                     startTextIndex: 0,
                     endSpanIndex: spans.length,
                     endTextIndex: 0,
-                }),
+                },
             ]
             : lawTypes.some(([ptn]) => {
                 const re = new RegExp(`^この${ptn}`);
                 return re.exec(scopeText);
             })
                 ? [
-                    new ScopeRange({
+                    {
                         startSpanIndex: 0,
                         startTextIndex: 0,
                         endSpanIndex: spans.length,
                         endTextIndex: 0,
-                    }),
+                    },
                 ]
                 : getScope(
                     spans[spanIndex], // currentSpan
@@ -100,13 +100,12 @@ export const detectNameList = (spans: Span[], spanIndex: number): ____Declaratio
                     spanIndex, // followingIndex
                 );
 
-        const namePos = new Pos({
-            span: nameSpan,       // span
-            spanIndex: nameSpan.index, // span_index
-            textIndex: 0,               // text_index
-            length: nameSpan.text.length, // length
-            env: nameSpan.env,   // env
-        });
+        const namePos: Pos = {
+            spanIndex: nameSpan.index,
+            textIndex: 0,
+            length: nameSpan.text.length,
+            range: nameSpan.el.range,
+        };
 
         const range = nameSpan.el.range ? [
             nameSpan.el.range[0],

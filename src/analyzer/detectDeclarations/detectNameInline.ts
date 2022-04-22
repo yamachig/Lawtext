@@ -1,7 +1,7 @@
 import { Span } from "../../node/span";
 import { ____Declaration } from "../common/declaration";
 import { Pos } from "../common/pos";
-import getScope, { ScopeRange } from "../getScope";
+import getScope from "../getScope";
 
 
 export const detectNameInline = (spans: Span[], spanIndex: number) => {
@@ -30,21 +30,20 @@ export const detectNameInline = (spans: Span[], spanIndex: number) => {
         const scope = scopeText
             ? getScope(nameBeforeSpan, scopeText, following, nameAfterSpan.index)
             : [
-                new ScopeRange({
+                {
                     startSpanIndex: nameAfterSpan.index,
                     startTextIndex: 0,
                     endSpanIndex: spans.length,
                     endTextIndex: 0,
-                }),
+                },
             ];
 
-        const namePos = new Pos({
-            span: nameSpan,
+        const namePos: Pos = {
             spanIndex: nameSpan.index,
             textIndex: 0,
             length: nameSpan.text.length,
-            env: nameSpan.env,
-        });
+            range: nameSpan.el.range,
+        };
 
         const range = nameSpan.el.range ? [
             nameSpan.el.range[0],
