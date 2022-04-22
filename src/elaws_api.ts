@@ -4,7 +4,6 @@ import { LawXMLStruct } from "./data/loaders/common";
 import { decodeBase64, pictMimeDict } from "./util";
 import { fetch as nodeFetch } from "./util/node-fetch";
 const fetch: typeof window.fetch = (global["fetch"]) || (global["window"] && window.fetch) || nodeFetch;
-console.log(`fetch: ${fetch}`);
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
