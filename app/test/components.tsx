@@ -4,7 +4,7 @@ import { it } from "mocha";
 import ReactDOMServer from "react-dom/server";
 import { analyze } from "lawtext/dist/src/analyzer";
 import * as std from "lawtext/dist/src/law/std";
-import { xmlToJson } from "lawtext/dist/src/node/el";
+import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
 import { LawView } from "@appsrc/components/LawView";
 import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 import path from "path";
@@ -34,7 +34,7 @@ const renderAllLaws = async () => {
             const { xml: origXML } = await loader.loadLawXMLStructByInfo(lawInfo);
             if (origXML === null) throw Error("XML not found");
 
-            const origEL = xmlToJson(origXML);
+            const origEL = xmlToEL(origXML);
             const analysis = analyze(origEL);
 
             let currentState: BaseLawtextAppPageState = {
