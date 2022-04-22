@@ -46,13 +46,13 @@ export class FSStoredLawXML extends LawXMLStruct {
         const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
         return { url, type };
     }
-    public async getPictBlob(src: string): Promise<Blob | null> {
+    public async getPictBlob(src: string): Promise<{buf: ArrayBuffer, type: string} | null> {
         const _url = await this.getPictFileOrBlobURL(src);
         if (!_url) return null;
         const { url, type } = _url;
         const buf = await promisify(fs.readFile)(url);
         if (!buf) return null;
-        return new Blob([buf], { type });
+        return { buf, type };
     }
 
 }

@@ -52,11 +52,12 @@ export class StoredLawXML extends LawXMLStruct {
         if (!res.ok) return null;
         return { url, type: res.headers.get("Content-Type") ?? "" };
     }
-    public async getPictBlob(src: string): Promise<Blob | null> {
+    public async getPictBlob(src: string): Promise<{buf: ArrayBuffer, type: string} | null> {
         const url = path.join(this.lawdataPath, this.lawInfo.Path, src);
         const res = await fetch(url);
         if (!res.ok) return null;
-        return res.blob();
+        const blob = await res.blob();
+        return { buf: await blob.arrayBuffer(), type: res.headers.get("Content-Type") ?? "" };
     }
 
 }

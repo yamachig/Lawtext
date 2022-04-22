@@ -9,10 +9,10 @@ export interface LawInfosStruct {
 export abstract class LawXMLStruct {
     public abstract get xml(): string;
     public abstract getPictFileOrBlobURL(src: string): Promise<{url: string, type: string} | null>;
-    public abstract getPictBlob(src: string): Promise<Blob | null>;
-    public clean(): void {
-        /* */
-    }
+    public abstract getPictBlob(src: string): Promise<{buf: ArrayBuffer, type: string} | null>;
+    // public clean(): void {
+    /* */
+    // }
 }
 
 export abstract class Loader {

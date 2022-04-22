@@ -10,6 +10,8 @@ const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser
 const XMLSerializer: typeof window.XMLSerializer = (global["window"] && window.XMLSerializer) || require("@xmldom/xmldom").XMLSerializer;
 const domParser = new DOMParser();
 const xmlSerializer = new XMLSerializer();
+// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+// const Blob: typeof window.Blob = (global["window"] && window.Blob) || require("buffer").Blob;
 
 export const lawlistsURL = "https://elaws.e-gov.go.jp/api/1/lawlists/1";
 export const lawdataURL = "https://elaws.e-gov.go.jp/api/1/lawdata/";
@@ -89,15 +91,15 @@ export class ElawsLawData extends LawXMLStruct {
     ) {
         super();
     }
-    private blobURLs: string[] = [];
-    public override clean() {
-        console.log(`Revoking ${this.blobURLs.length} blob URLs`);
-        while (this.blobURLs.length > 0) {
-            const url = this.blobURLs.pop();
-            if (url) URL.revokeObjectURL(url);
-        }
-    }
-    private _pict: Map<string, Blob> | null = null;
+    // private blobURLs: string[] = [];
+    // public override clean() {
+    // console.log(`Revoking ${this.blobURLs.length} blob URLs`);
+    // while (this.blobURLs.length > 0) {
+    //     const url = this.blobURLs.pop();
+    //     if (url) URL.revokeObjectURL(url);
+    // }
+    // }
+    private _pict: Map<string, {buf: ArrayBuffer, type: string}> | null = null;
     private getXml() {
         const doc = this.law.ownerDocument.implementation.createDocument("", "", null);
         doc.appendChild(doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\""));
@@ -109,13 +111,14 @@ export class ElawsLawData extends LawXMLStruct {
         return this._xml;
     }
     public async getPictFileOrBlobURL(src: string): Promise<{url: string, type: string} | null> {
-        const blob = await this.getPictBlob(src);
-        if (!blob) return null;
-        const url = URL.createObjectURL(blob);
-        this.blobURLs.push(url);
-        return { url, type: blob.type };
+        const _buf = await this.getPictBlob(src);
+        if (!_buf) return null;
+        const { buf, type } = _buf;
+        const url = `data:${type};base64,${Buffer.from(buf).toString("base64")}`;
+        // this.blobURLs.push(url);
+        return { url, type };
     }
-    public async ensurePict(): Promise<Map<string, Blob> | null> {
+    public async ensurePict(): Promise<Map<string, {buf: ArrayBuffer, type: string}> | null> {
         if (!this.imageData) return null;
         if (!this._pict) {
             this._pict = new Map();
@@ -124,13 +127,13 @@ export class ElawsLawData extends LawXMLStruct {
                 const buf = await zip.files[relPath].async("arraybuffer");
                 const ext = path.extname(relPath) as keyof typeof pictMimeDict;
                 const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
-                const blob = new Blob([buf], { type });
-                this._pict.set(`./pict/${relPath}`, blob);
+                // const blob = new Blob([buf], { type });
+                this._pict.set(`./pict/${relPath}`, { buf, type });
             }
         }
         return this._pict;
     }
-    public async getPictBlob(src: string): Promise<Blob | null> {
+    public async getPictBlob(src: string): Promise<{buf: ArrayBuffer, type: string} | null> {
         return (await this.ensurePict())?.get(src) ?? null;
     }
 }
@@ -147,7 +150,7 @@ export const fetchLawData = async (lawIDOrLawNum: string): Promise<ElawsLawData>
     }
 
     const elImageData = elApplData.getElementsByTagName("ImageData").item(0);
-    const imageData = elImageData ? decodeBase64(elImageData.innerHTML) : null;
+    const imageData = (elImageData && elImageData.textContent) ? decodeBase64(elImageData.textContent) : null;
 
     return new ElawsLawData(
         elApplData.getElementsByTagName("LawId").item(0)?.textContent ?? "",
