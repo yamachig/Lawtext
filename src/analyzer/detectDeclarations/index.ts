@@ -14,12 +14,10 @@ export const detectDeclarations = (spans: Span[]) => {
             detectLawname(spans, spanIndex) ||
             detectNameInline(spans, spanIndex);
         if (declaration) {
-            declaration.attr.declaration_index = String(declarations.length);
             declarations.add(declaration);
         }
 
         for (const declaration of detectNameList(spans, spanIndex)) {
-            declaration.attr.declaration_index = String(declarations.length);
             declarations.add(declaration);
         }
     }

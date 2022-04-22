@@ -3,6 +3,7 @@ import { SpanTextPos, SpanTextRange } from "../../span/spanTextPos";
 
 
 export interface DeclarationOptions {
+    declarationID: string,
     type: string,
     name: string,
     value: string | null,
@@ -12,37 +13,56 @@ export interface DeclarationOptions {
 }
 
 export class ____Declaration extends EL {
-    public type: string;
-    public name: string;
-    public scope: SpanTextRange[];
-    public value: string | null;
-    public namePos: SpanTextPos;
+    public override attr: {
+        declarationID: string,
+        type: string,
+        name: string,
+        value?: string,
+        scope: string,
+        namePos: string,
+    };
+    private scopeCache: [str: string, value: SpanTextRange[]] | null = null;
+    public scope(): SpanTextRange[] {
+        if (this.scopeCache !== null && this.scopeCache[0] === this.attr.scope) {
+            return this.scopeCache[1];
+        } else {
+            const scope = JSON.parse(this.attr.scope) as SpanTextRange[];
+            this.scopeCache = [this.attr.scope, scope];
+            return scope;
+        }
+    }
+    private namePosCache: [str: string, value: SpanTextPos] | null = null;
+    public namePos(): SpanTextPos {
+        if (this.namePosCache !== null && this.namePosCache[0] === this.attr.namePos) {
+            return this.namePosCache[1];
+        } else {
+            const namePos = JSON.parse(this.attr.namePos) as SpanTextPos;
+            this.namePosCache = [this.attr.namePos, namePos];
+            return namePos;
+        }
+    }
     constructor(options: DeclarationOptions) {
         super("____Declaration", {}, [], options.range);
 
-        this.type = options.type;
-        this.name = options.name;
-        this.value = options.value;
-        this.scope = options.scope;
-        this.namePos = options.namePos;
+        const { declarationID: id, type, name, value, scope, namePos } = options;
 
-        this.attr.type = this.type;
-        this.attr.name = this.name;
-        if (this.value !== null) this.attr.value = this.value;
-        this.attr.scope = JSON.stringify(this.scope);
-        this.attr.name_pos = JSON.stringify({
-            span_index: this.namePos.spanIndex,
-            text_index: this.namePos.textIndex,
-            length: this.namePos.length,
-        });
+        this.attr = {
+            declarationID: id,
+            type,
+            name,
+            scope: JSON.stringify(scope),
+            namePos: JSON.stringify(namePos),
+        };
+        if (value !== null) this.attr.value = value;
 
-        this.children.push(this.name);
+        this.children.push(name);
     }
 
     public get nameRange(): [number, number] | null {
-        return this.namePos.range && [
-            this.namePos.range[0] + this.namePos.textIndex,
-            this.namePos.range[0] + this.namePos.textIndex + this.namePos.length,
+        const namePos = this.namePos();
+        return namePos.range && [
+            namePos.range[0] + namePos.textIndex,
+            namePos.range[0] + namePos.textIndex + namePos.length,
         ];
     }
 }

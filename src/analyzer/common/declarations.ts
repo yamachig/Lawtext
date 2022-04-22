@@ -3,16 +3,13 @@ import { ____Declaration } from "../../node/el/controls/declaration";
 
 
 export class Declarations {
-    public declarations: ____Declaration[];
-    constructor() {
-        this.declarations = [];
-    }
+    public db: Map<string, ____Declaration> = new Map();
 
     public getInSpan(spanIndex: number): ____Declaration[] {
         const declarations: ____Declaration[] = [];
-        for (const declaration of this.declarations) {
+        for (const declaration of this.db.values()) {
             if (
-                declaration.scope.some(range =>
+                declaration.scope().some(range =>
                     range.startSpanIndex <= spanIndex &&
                     spanIndex < range.endSpanIndex,
                 )
@@ -20,19 +17,19 @@ export class Declarations {
                 declarations.push(declaration);
             }
         }
-        declarations.sort((a, b) => -(a.name.length - b.name.length));
+        declarations.sort((a, b) => -(a.attr.name.length - b.attr.name.length));
         return declarations;
     }
 
     public add(declaration: ____Declaration): void {
-        this.declarations.push(declaration);
+        this.db.set(declaration.attr.declarationID, declaration);
     }
 
     get length(): number {
-        return this.declarations.length;
+        return this.db.size;
     }
 
-    public get(index: number): ____Declaration {
-        return this.declarations[index];
+    public get(declarationID: string): ____Declaration {
+        return this.db.get(declarationID) as ____Declaration;
     }
 }

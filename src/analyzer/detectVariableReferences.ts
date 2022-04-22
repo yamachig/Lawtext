@@ -26,19 +26,19 @@ export const detectVariableReferences = (spans: Span[], declarations: Declaratio
 
                 let searchIndex = 0;
                 while (true) {
-                    const index = child.indexOf(declaration.name, searchIndex);
+                    const index = child.indexOf(declaration.attr.name, searchIndex);
                     if (index < 0) break;
 
-                    searchIndex = index + declaration.name.length;
+                    searchIndex = index + declaration.attr.name.length;
 
                     if (textScope.start <= index && index < textScope.end) {
                         const refPos: SpanTextPos = {
                             spanIndex: span.index,
                             textIndex: index + indexOffset,
-                            length: declaration.name.length,
+                            length: declaration.attr.name.length,
                             range: span.el.range && [
                                 span.el.range[0] + index + indexOffset,
-                                span.el.range[0] + index + indexOffset + declaration.name.length,
+                                span.el.range[0] + index + indexOffset + declaration.attr.name.length,
                             ],
                         };
 
@@ -48,8 +48,8 @@ export const detectVariableReferences = (spans: Span[], declarations: Declaratio
                         ] as [number, number] : null;
 
                         const varref = new ____VarRef({
-                            refName: declaration.name,
-                            declaration: declaration,
+                            refName: declaration.attr.name,
+                            declarationID: declaration.attr.declarationID,
                             refPos: refPos,
                             range,
                         });

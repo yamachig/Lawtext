@@ -50,7 +50,10 @@ export const detectNameInline = (spans: Span[], spanIndex: number) => {
             nameSpan.el.range[0] + nameSpan.text.length,
         ] as [number, number] : null;
 
+        const declarationID = `decl-span_${namePos.spanIndex}-text_${namePos.textIndex}-len_${namePos.length}`;
+
         const declaration = new ____Declaration({
+            declarationID,
             type: "Keyword",
             name: nameSpan.text,
             value: null,

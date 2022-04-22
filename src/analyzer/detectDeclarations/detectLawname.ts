@@ -76,7 +76,10 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
                 lawnameSpan.el.range[0] + lawnameTextIndex + lawnameLength,
             ] as [number, number] : null;
 
+            const declarationID = `decl-span_${namePos.spanIndex}-text_${namePos.textIndex}-len_${namePos.length}`;
+
             const declaration = new ____Declaration({
+                declarationID,
                 type: "LawName",
                 name: lawName,
                 value: lawNum,
@@ -139,7 +142,10 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
                 lawnameSpan.el.range[0] + lawnameTextIndex + lawnameLength,
             ] as [number, number] : null;
 
+            const declarationID = `decl-span_${namePos.spanIndex}-text_${namePos.textIndex}-len_${namePos.length}`;
+
             const declaration = new ____Declaration({
+                declarationID,
                 type: "LawName",
                 name: nameSpan.text,
                 value: lawNum,

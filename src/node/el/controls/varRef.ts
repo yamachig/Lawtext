@@ -1,28 +1,41 @@
 import { EL } from "..";
 import { SpanTextPos } from "../../span/spanTextPos";
-import { ____Declaration } from "./declaration";
 
 
 export interface VarRefOptions {
     refName: string,
-    declaration: ____Declaration,
+    declarationID: string,
     refPos: SpanTextPos,
     range: [start: number, end: number] | null,
 }
 
 export class ____VarRef extends EL {
-    public refName: string;
-    public declaration: ____Declaration;
-    public refPos: SpanTextPos;
+    private refPosCache: [str: string, value: SpanTextPos] | null = null;
+    public refPos(): SpanTextPos {
+        if (this.refPosCache !== null && this.refPosCache[0] === this.attr.refPos) {
+            return this.refPosCache[1];
+        } else {
+            const refPos = JSON.parse(this.attr.refPos) as SpanTextPos;
+            this.refPosCache = [this.attr.refPos, refPos];
+            return refPos;
+        }
+    }
+    public override attr: {
+        refName: string,
+        declarationID: string,
+        refPos: string,
+    };
     constructor(options: VarRefOptions) {
         super("____VarRef", {}, [], options.range);
 
-        this.refName = options.refName;
-        this.declaration = options.declaration;
-        this.refPos = options.refPos;
+        const { refName, declarationID, refPos } = options;
 
-        this.attr.ref_declaration_index = this.declaration.attr.declaration_index;
+        this.attr = {
+            refName,
+            declarationID,
+            refPos: JSON.stringify(refPos),
+        };
 
-        this.children.push(this.refName);
+        this.children.push(refName);
     }
 }
