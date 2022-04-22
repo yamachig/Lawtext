@@ -229,7 +229,7 @@ const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
 
     const declarationIndex = Number(el.attr.ref_declaration_index);
     const declaration = analysis.declarations.get(declarationIndex);
-    const declContainer = declaration.namePos.env.container;
+    const declContainer = analysis.spans[declaration.namePos.spanIndex].env.container;
     const containerStack = declContainer.linealAscendant(c => {
         if (std.isParagraph(c.el)) {
             const paragraphNum = c.el.children.find(std.isParagraphNum);
