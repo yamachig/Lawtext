@@ -202,7 +202,7 @@ const NavLaw: React.FC<{law: std.Law, indent: number}> = props => {
             }}
             onClick={onClick}
         >
-            {props.law.children.find(std.isLawBody)?.children.find(std.isLawTitle)?.text ?? ""}
+            {props.law.children.find(std.isLawBody)?.children.find(std.isLawTitle)?.text() ?? ""}
         </TOCItemDiv>
     );
 };
@@ -255,7 +255,7 @@ const NavTOC: React.FC<{toc: std.TOC, indent: number}> = props => {
             }}
             onClick={onClick}
         >
-            {tocLabel.text}
+            {tocLabel.text()}
         </TOCItemDiv>
     ) : null;
 };
@@ -292,9 +292,9 @@ const NavArticleGroup: React.FC<{
                             paddingLeft: (props.indent + 2) + "em",
                         }}
                         onClick={onClick}
-                        title={el.text}
+                        title={el.text()}
                     >
-                        {el.text}
+                        {el.text()}
                     </TOCItemDiv>
                 );
 
@@ -316,10 +316,10 @@ const NavArticle: React.FC<{article: std.Article, indent: number}> = props => {
     const articleTitle = props.article.children.find((el) => el.tag === "ArticleTitle") as std.ArticleCaption | undefined;
 
     if (articleTitle) {
-        const name = articleTitle.text;
+        const name = articleTitle.text();
         let text = name;
         if (articleCaption) {
-            const appendText = articleCaption.text;
+            const appendText = articleCaption.text();
             text += (appendText[0] === "（" ? "" : "　") + appendText;
         }
 
@@ -347,7 +347,7 @@ const NavSupplProvision: React.FC<{supplProvision: std.SupplProvision, indent: n
     const supplProvisionLabel = props.supplProvision.children.find((el) => el.tag === "SupplProvisionLabel") as std.SupplProvisionLabel | undefined;
 
     if (supplProvisionLabel) {
-        const name = supplProvisionLabel.text;
+        const name = supplProvisionLabel.text();
         const amendLawNum = props.supplProvision.attr.AmendLawNum || "";
         // eslint-disable-next-line no-irregular-whitespace
         const text = (name + (amendLawNum ? ("（" + amendLawNum + "）") : "")).replace(/[\s　]+/, "");
@@ -386,9 +386,9 @@ const NavAppdxTable: React.FC<{appdxTable: std.AppdxTable, indent: number}> = pr
                     paddingLeft: (props.indent + 2) + "em",
                 }}
                 onClick={onClick}
-                title={appdxTableTitle.text}
+                title={appdxTableTitle.text()}
             >
-                {appdxTableTitle.text}
+                {appdxTableTitle.text()}
             </TOCItemDiv>
         );
     } else {
@@ -409,9 +409,9 @@ const NavAppdxStyle: React.FC<{appdxStyle: std.AppdxStyle, indent: number}> = pr
                     paddingLeft: (props.indent + 2) + "em",
                 }}
                 onClick={onClick}
-                title={appdxStyleTitle.text}
+                title={appdxStyleTitle.text()}
             >
-                {appdxStyleTitle.text}
+                {appdxStyleTitle.text()}
             </TOCItemDiv>
         );
     } else {
@@ -432,9 +432,9 @@ const NavAppdxFig: React.FC<{appdxFig: std.AppdxFig, indent: number}> = props =>
                     paddingLeft: (props.indent + 2) + "em",
                 }}
                 onClick={onClick}
-                title={AppdxFigTitle.text}
+                title={AppdxFigTitle.text()}
             >
-                {AppdxFigTitle.text}
+                {AppdxFigTitle.text()}
             </TOCItemDiv>
         );
     } else {
@@ -455,9 +455,9 @@ const NavAppdxFormat: React.FC<{appdxFig: std.AppdxFormat, indent: number}> = pr
                     paddingLeft: (props.indent + 2) + "em",
                 }}
                 onClick={onClick}
-                title={appdxFormatTitle.text}
+                title={appdxFormatTitle.text()}
             >
-                {appdxFormatTitle.text}
+                {appdxFormatTitle.text()}
             </TOCItemDiv>
         );
     } else {
@@ -478,9 +478,9 @@ const NavAppdxNote: React.FC<{appdxFig: std.AppdxNote, indent: number}> = props 
                     paddingLeft: (props.indent + 2) + "em",
                 }}
                 onClick={onClick}
-                title={appdxNoteTitle.text}
+                title={appdxNoteTitle.text()}
             >
-                {appdxNoteTitle.text}
+                {appdxNoteTitle.text()}
             </TOCItemDiv>
         );
     } else {
@@ -502,9 +502,9 @@ const NavAppdx: React.FC<{appdxFig: std.Appdx, indent: number}> = props => {
                     paddingLeft: (props.indent + 2) + "em",
                 }}
                 onClick={onClick}
-                title={ArithFormulaNum.text}
+                title={ArithFormulaNum.text()}
             >
-                {ArithFormulaNum.text}
+                {ArithFormulaNum.text()}
             </TOCItemDiv>
         );
     } else {
@@ -525,9 +525,9 @@ const NavAnyLaw: React.FC<{el: EL, indent: number}> = props => {
                     paddingLeft: (props.indent + 2) + "em",
                 }}
                 onClick={onClick}
-                title={titleEL.text}
+                title={titleEL.text()}
             >
-                {titleEL.text}
+                {titleEL.text()}
             </TOCItemDiv>
         );
     } else {

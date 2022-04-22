@@ -32,8 +32,8 @@ export const getLawTitleWithNum = (law: std.Law): string => {
     const lawBody = law.children.find((el) => el.tag === "LawBody") as std.LawBody;
     const lawTitle = lawBody && lawBody.children.find((el) => el.tag === "LawTitle") as std.LawTitle;
 
-    let sLawNum = lawNum ? lawNum.text : "";
-    const sLawTitle = lawTitle ? lawTitle.text : "";
+    let sLawNum = lawNum ? lawNum.text() : "";
+    const sLawTitle = lawTitle ? lawTitle.text() : "";
     sLawNum = (sLawNum && sLawTitle) ? (`（${sLawNum}）`) : sLawNum;
 
     return sLawTitle + sLawNum;

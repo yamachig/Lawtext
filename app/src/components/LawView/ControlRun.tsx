@@ -237,7 +237,7 @@ const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
             if (
                 std.isArticle(c.parent.el) &&
                 c.parent.children.filter(pc => std.isParagraph(pc.el)).length === 1 &&
-                paragraphNum && paragraphNum.text === ""
+                paragraphNum && paragraphNum.text() === ""
             ) {
                 return false;
             } else {
@@ -264,23 +264,23 @@ const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
         } else if (std.isArticle(container.el)) {
             const articleTitle = container.el.children
                 .find(std.isArticleTitle);
-            if (articleTitle) names.push(articleTitle.text);
+            if (articleTitle) names.push(articleTitle.text());
 
         } else if (std.isParagraph(container.el)) {
             const paragraphNum = container.el.children
                 .find(std.isParagraphNum);
-            if (paragraphNum) names.push(paragraphNum.text || "１");
+            if (paragraphNum) names.push(paragraphNum.text() || "１");
 
         } else if (std.isParagraphItem(container.el)) {
             const itemTitle = (container.el.children as EL[])
                 .find(std.isParagraphItemTitle);
-            if (itemTitle) names.push(itemTitle.text);
+            if (itemTitle) names.push(itemTitle.text());
 
         } else if (std.isTableStruct(container.el)) {
             const tableStructTitleEl = container.el.children
                 .find(std.isTableStructTitle);
             const tableStructTitle = tableStructTitleEl
-                ? tableStructTitleEl.text
+                ? tableStructTitleEl.text()
                 : "表";
             names.push(tableStructTitle + "（抜粋）");
 
@@ -341,7 +341,7 @@ interface ____LawNumProps { el: std.__EL }
 const ____LawNum = (props: HTMLComponentProps & ____LawNumProps) => {
     const { el, htmlOptions } = props;
     return (
-        <LawNumA href={`#/${el.text}`} target="_blank">
+        <LawNumA href={`#/${el.text()}`} target="_blank">
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </LawNumA>
     );

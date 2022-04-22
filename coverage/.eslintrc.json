@@ -47,6 +47,7 @@
         "no-trailing-spaces": "error",
         "eol-last": ["error", "always"],
         "keyword-spacing": "error",
+        "no-implicit-coercion": "error",
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
         "react/jsx-no-target-blank": ["error", { "enforceDynamicLinks": "always" }],

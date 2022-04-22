@@ -217,7 +217,7 @@ export const getParsedLaw = async (lawtext: string): Promise<{
                 ok: {
                     requiredms,
                 },
-                hasError: !!errorText,
+                hasError: Boolean(errorText),
                 info: {
                     ...(
                         errorText

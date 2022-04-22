@@ -83,7 +83,7 @@ const getLawRange = (origLaw: EL, range: SelectionRange) => {
 
     const origLawNum = origLaw.children.find(std.isLawNum);
     if (origLawNum) {
-        law.append(origLawNum);
+        law.children.push(origLawNum);
     }
 
     const origLawBody = origLaw.children.find(std.isLawBody);
@@ -91,11 +91,11 @@ const getLawRange = (origLaw: EL, range: SelectionRange) => {
         "LawBody",
         origLawBody?.attr ?? {},
     );
-    law.append(lawBody);
+    law.children.push(lawBody);
 
     const origLawTitle = origLawBody?.children.find(std.isLawTitle);
     if (origLawTitle) {
-        lawBody.append(origLawTitle);
+        lawBody.children.push(origLawTitle);
     }
 
 
@@ -183,7 +183,7 @@ const getLawRange = (origLaw: EL, range: SelectionRange) => {
         if (containerChildren.length > 0) {
             const supplProvisionLabel = (toplevel.children as (typeof toplevel.children)[number][]).find(std.isSupplProvisionLabel);
             if (supplProvisionLabel) containerChildren.unshift(supplProvisionLabel);
-            lawBody.append(new EL(
+            lawBody.children.push(newStdEL(
                 toplevel.tag,
                 toplevel.attr,
                 containerChildren,
