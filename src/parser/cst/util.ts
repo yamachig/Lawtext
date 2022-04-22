@@ -38,9 +38,9 @@ export const mergeAdjacentTextsWithString = <T extends SentenceChildEL>(inline: 
             && lastItem?.tag === "__Text"
             && (typeof item === "string" || item.tag === "__Text")
         ) {
-            const itemText = typeof item === "string" ? item : item.text;
+            const itemText = typeof item === "string" ? item : item.text();
             const replacedTail = new __Text(
-                lastItem.text + itemText,
+                lastItem.text() + itemText,
                 (lastItem.range ? [lastItem.range[0], lastItem.range[1] + itemText.length] : null)
             );
             result.splice(-1, 1);
@@ -60,7 +60,7 @@ export const mergeAdjacentTextsWithString = <T extends SentenceChildEL>(inline: 
 export const separateTrailingSpaces = <T extends SentenceChildEL>(inline: (string | T)[]): { inline: (T | __Text)[], spaces: string} => {
     const ret = { inline: mergeAdjacentTextsWithString(inline), spaces: "" };
     if (ret.inline.slice(-1)[0]?.tag === "__Text") {
-        const m = /^(.*?)(\s+)$/.exec(ret.inline.slice(-1)[0].text);
+        const m = /^(.*?)(\s+)$/.exec(ret.inline.slice(-1)[0].text());
         if (m) {
             const orig = ret.inline.splice(-1, 1);
             if (m[1] !== "") {

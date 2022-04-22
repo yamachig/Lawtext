@@ -125,7 +125,7 @@ const assertELVaridity = (el: EL | string, lawtext: string, testGap: boolean): v
 
     if (el instanceof __Text && el.range) {
         assert.strictEqual(
-            el.text,
+            el.text(),
             lawtext.slice(el.range[0], el.range[1]),
             `${el.tag} has mismatch text: range: ${JSON.stringify(el.range)}`,
         );

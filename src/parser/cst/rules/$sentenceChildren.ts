@@ -20,7 +20,7 @@ export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): st
         } else if (el.tag === "__CapturedXML" || el.tag === "__UnexpectedXML") {
             runs.push(/* $$$$$$ */el.children.map(c => typeof c === "string" ? c : c.outerXML()).join("")/* $$$$$$ */);
         } else if (el.isControl) {
-            runs.push(/* $$$$$$ */el.text.replace(/\r|\n/g, "")/* $$$$$$ */);
+            runs.push(/* $$$$$$ */el.text().replace(/\r|\n/g, "")/* $$$$$$ */);
 
         } else if (el.tag === "Ruby" || el.tag === "Sub" || el.tag === "Sup" || el.tag === "QuoteStruct") {
             runs.push(/* $$$$$$ */el.outerXML()/* $$$$$$ */);
@@ -153,7 +153,7 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                     const last = texts[texts.length - 1];
                     if (tail) {
                         if (last.value instanceof __Text) {
-                            last.value.text += tail.text;
+                            last.value.children.splice(0, last.value.children.length, last.value.text() + tail.text);
                             if (last.value.range) last.value.range[1] += tail.text.length;
                         } else {
                             texts.push({ value: new __Text(tail.text, tail.range), errors: [] });

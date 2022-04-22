@@ -205,7 +205,7 @@ export class ____Declaration extends EL {
             length: this.namePos.length,
         });
 
-        this.append(this.name);
+        this.children.push(this.name);
     }
 
     public get nameRange(): [number, number] | null {
@@ -256,7 +256,7 @@ export class ____VarRef extends EL {
 
         this.attr.ref_declaration_index = this.declaration.attr.declaration_index;
 
-        this.append(this.refName);
+        this.children.push(this.refName);
     }
 }
 
@@ -369,7 +369,7 @@ const locatePointer = (
                 if (c.el.tag !== head.tag) return false;
                 const titleEl = c.el.children.find(el =>
                     el instanceof EL && el.tag === `${c.el.tag}Title`) as EL;
-                return (new RegExp(`^${head.name}(?:[(（]|\\s|$)`)).exec(titleEl.text) !== null;
+                return (new RegExp(`^${head.name}(?:[(（]|\\s|$)`)).exec(titleEl.text()) !== null;
             });
 
             locatedPointer = origPointer;
@@ -703,8 +703,8 @@ const detectNameList = (spans: Span[], spanIndex: number): ____Declaration[] => 
             const [nameCol, valCol] = sentence.children;
             if (!isJsonEL(nameCol) || !isJsonEL(valCol)) continue;
 
-            name = nameCol.text;
-            value = valCol.text;
+            name = nameCol.text();
+            value = valCol.text();
 
             for (let i = item.spanRange[0]; i < item.spanRange[1]; i++) {
                 if (spans[i].env.parents.includes(nameCol)) nameSpan = spans[i];

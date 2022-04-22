@@ -143,7 +143,7 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
         , "childrenAndErrors")
         .action(({ headLine, childrenAndErrors, newErrorMessage }) => {
 
-            const children: (std.ArticleGroup | std.Article)[] = [];
+            const children: (Diff<std.ArticleGroup, std.Part> | std.Article)[] = [];
             const errors: ErrorMessage[] = [];
 
             for (const child of childrenAndErrors) {
@@ -156,7 +156,7 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
                         ],
                     ));
                 } else {
-                    children.push(child.value);
+                    children.push(child.value as Diff<std.ArticleGroup, std.Part>);
                     errors.push(...child.errors);
                 }
             }
@@ -166,7 +166,7 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
                 { Delete: "false", Hide: "false" },
             );
 
-            articleGroup.append(newStdEL(
+            (articleGroup.children as (typeof articleGroup.children)[number][]).push(newStdEL(
                 std.articleGroupTitleTags[std.articleGroupTags.indexOf(headLine.line.mainTag)],
                 {},
                 headLine.line.title,
@@ -176,13 +176,13 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
             const num = parseNamedNum(
                 typeof headLine.line.title[0] === "string"
                     ? headLine.line.title[0]
-                    : headLine.line.title[0]?.text
+                    : headLine.line.title[0]?.text()
             );
             if (num) {
                 articleGroup.attr.Num = num;
             }
 
-            articleGroup.extend(children);
+            (articleGroup.children as (typeof articleGroup.children)[number][]).push(...children);
 
             const pos = headLine.line.indentsEndPos;
             const range = rangeOfELs(articleGroup.children) ?? (pos !== null ? [pos, pos] : null);

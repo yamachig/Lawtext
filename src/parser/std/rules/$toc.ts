@@ -45,7 +45,7 @@ export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] =
         const sentenceChildren = mergeAdjacentTextsWithString([
             ...(articleGroupTitle?.children ?? []),
             ...(
-                /^[(（]/.exec(articleRange?.text ?? "（")
+                /^[(（]/.exec(articleRange?.text() ?? "（")
                     ? []
                     : [CST.MARGIN]
             ),

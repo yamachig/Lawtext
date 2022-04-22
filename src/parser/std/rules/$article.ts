@@ -140,7 +140,7 @@ export const $article: WithErrorRule<std.Article> = factory
             article.attr.Hide = "false";
 
             if (captionLine) {
-                article.append(
+                article.children.push(
                     newStdEL(
                         "ArticleCaption",
                         {},
@@ -154,7 +154,7 @@ export const $article: WithErrorRule<std.Article> = factory
             }
 
             if (firstParagraphItemLine.line.title) {
-                article.append(
+                article.children.push(
                     newStdEL(
                         "ArticleTitle",
                         {},
@@ -167,8 +167,8 @@ export const $article: WithErrorRule<std.Article> = factory
             firstParagraph.attr.OldStyle = "false";
 
             const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
-            firstParagraph.append(newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null));
-            firstParagraph.append(
+            firstParagraph.children.push(newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null));
+            firstParagraph.children.push(
                 newStdEL(
                     "ParagraphSentence",
                     {},
@@ -178,21 +178,21 @@ export const $article: WithErrorRule<std.Article> = factory
             );
 
             if (firstAutoParagraphChildren) {
-                firstParagraph.extend(firstAutoParagraphChildren.value);
+                firstParagraph.children.push(...(firstAutoParagraphChildren.value as std.Paragraph["children"]));
             }
 
             firstParagraph.range = rangeOfELs(firstParagraph.children);
 
-            article.append(paragraphItemFromAuto("Paragraph", firstParagraph) as std.Paragraph);
+            article.children.push(paragraphItemFromAuto("Paragraph", firstParagraph) as std.Paragraph);
 
-            article.extend(otherParagraphs.map((p, i) => {
+            article.children.push(...otherParagraphs.map((p, i) => {
                 if (std.isParagraph(p.value) && p.value.attr.OldNum === "true") {
                     p.value.attr.Num = (i + 2).toString();
                 }
-                return p.value;
+                return p.value as std.Paragraph;
             }));
 
-            article.extend(supplNotes.map(n => n.value));
+            article.children.push(...supplNotes.map(n => n.value));
 
             const pos = captionLine ? captionLine.line.indentsEndPos : firstParagraphItemLine.line.indentsEndPos;
             const range = rangeOfELs(article.children) ?? (pos !== null ? [pos, pos] : null);

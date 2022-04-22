@@ -140,8 +140,8 @@ export const paragraphItemToLines = (
         }));
     } else if (
         noControl
-        && ParagraphCaption.every(c => (typeof c !== "string" && !c.text) && !c)
-        && ParagraphItemTitle.every(c => (typeof c !== "string" && !c.text) && !c)
+        && ParagraphCaption.every(c => (typeof c !== "string" && !c.text()) && !c)
+        && ParagraphItemTitle.every(c => (typeof c !== "string" && !c.text()) && !c)
         // && paragraphItemTitleStr.length > 0
     ) {
         lines.push(new ParagraphItemLine({
@@ -325,7 +325,7 @@ export const $autoParagraphItemChildrenOuter: WithErrorRule<
                         const lastText = firstParagraphItemLine.line
                             .sentencesArray.slice(-1)[0]
                             ?.sentences.slice(-1)[0]
-                            ?.text ?? "";
+                            ?.text() ?? "";
                         const m = /.*?の一部を次のように(?:改正す|改め)る。$/.exec(lastText);
                         return m !== null;
                     }))
@@ -491,7 +491,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
 
 
             if (captionLine) {
-                paragraphItem.append(
+                (paragraphItem.children as (typeof paragraphItem.children)[number][]).push(
                     newStdEL(
                         "ParagraphCaption",
                         {},
@@ -505,7 +505,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
                 );
             }
 
-            paragraphItem.append(
+            (paragraphItem.children as (typeof paragraphItem.children)[number][]).push(
                 newStdEL(
                     tag !== "__AutoParagraphItem"
                         ? std.paragraphItemTitleTags[std.paragraphItemTags.indexOf(tag)]
@@ -518,7 +518,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
 
             const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
             const paragraphItemSentencePos = firstParagraphItemLine.line.indentsEndPos;
-            paragraphItem.append(
+            (paragraphItem.children as (typeof paragraphItem.children)[number][]).push(
                 newStdEL(
                     tag !== "__AutoParagraphItem"
                         ? std.paragraphItemSentenceTags[std.paragraphItemTags.indexOf(tag)]
@@ -529,7 +529,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
                 ));
 
             if (tailChildren) {
-                paragraphItem.extend(tailChildren.value);
+                (paragraphItem.children as (typeof paragraphItem.children)[number][]).push(...tailChildren.value);
             }
 
             const pos = captionLine ? captionLine.line.indentsEndPos : firstParagraphItemLine.line.indentsEndPos;
@@ -619,7 +619,7 @@ export const $noControlAnonymParagraph: WithErrorRule<std.Paragraph> = factory
             );
 
             if (tailChildren) {
-                paragraph.extend(tailChildren.value);
+                paragraph.children.push(...(tailChildren.value as std.Paragraph["children"]));
             }
 
             const pos = firstParagraphItemLine.line.indentsEndPos;

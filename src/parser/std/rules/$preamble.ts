@@ -33,7 +33,7 @@ export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): 
 
     for (const paragraph of preamble.children) {
 
-        if (paragraph.children.filter(isParagraphItemTitle).some(el => el.text !== "")) {
+        if (paragraph.children.filter(isParagraphItemTitle).some(el => el.text() !== "")) {
             lines.push(...paragraphItemToLines(paragraph, childrenIndentTexts, { defaultTag: "Paragraph" }));
         } else {
             lines.push(...paragraphItemToLines(paragraph, childrenIndentTexts, { noControl: true }));

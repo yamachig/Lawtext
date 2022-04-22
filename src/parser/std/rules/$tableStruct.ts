@@ -418,7 +418,7 @@ export const $tableStruct: WithErrorRule<std.TableStruct> = factory
                 const children: std.TableStruct["children"] = [];
                 const errors: ErrorMessage[] = [];
 
-                const tableStructTitleText = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.text).join("");
+                const tableStructTitleText = titleLine.line.sentencesArray.map(ss => ss.sentences).flat().map(s => s.text()).join("");
                 const tableStructTitle = tableStructTitleText ? newStdEL(
                     "TableStructTitle",
                     {},

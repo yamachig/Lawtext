@@ -11,6 +11,6 @@ export class Span {
         this.el = el;
         this.env = env;
 
-        this.text = el.text;
+        this.text = el.text();
     }
 }

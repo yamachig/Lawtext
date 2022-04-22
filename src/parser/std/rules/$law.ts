@@ -322,9 +322,9 @@ export const $law: WithErrorRule<std.Law> = factory
             if (lawTitleLines?.value.lawNumLine) {
                 const parentheses = isSingleParentheses(lawTitleLines.value.lawNumLine);
                 const lawNum = parentheses
-                    ? parentheses.content.text
+                    ? parentheses.content.text()
                     : sentencesArrayToString(lawTitleLines.value.lawNumLine.line.sentencesArray);
-                law.append(newStdEL(
+                law.children.push(newStdEL(
                     "LawNum",
                     {},
                     [lawNum],
@@ -339,10 +339,10 @@ export const $law: WithErrorRule<std.Law> = factory
             }
 
             const lawBody = newStdEL("LawBody");
-            law.append(lawBody);
+            law.children.push(lawBody);
 
             if (lawTitleLines) {
-                lawBody.append(newStdEL(
+                lawBody.children.push(newStdEL(
                     "LawTitle",
                     {},
                     forceSentencesArrayToSentenceChildren(lawTitleLines.value.lawNameLine.line.sentencesArray),
@@ -350,26 +350,26 @@ export const $law: WithErrorRule<std.Law> = factory
                 ));
             }
 
-            lawBody.extend(enactStatements.map(v => v.value));
+            lawBody.children.push(...enactStatements.map(v => v.value));
             errors.push(...enactStatements.map(v => v.errors).flat());
 
             if (toc) {
-                lawBody.append(toc.value);
+                lawBody.children.push(toc.value);
                 errors.push(...toc.errors);
             }
 
             for (const preamble of preambles) {
-                lawBody.append(preamble.value);
+                lawBody.children.push(preamble.value);
                 errors.push(...preamble.errors);
             }
 
             for (const [mainProvision, errorLines] of mainProvisionAndErrors) {
                 const lastChild = lawBody.children.length > 0 ? lawBody.children[lawBody.children.length - 1] : null;
                 if (lastChild && isMainProvision(lastChild)) {
-                    lastChild.extend(mainProvision.value.children);
+                    lastChild.children.push(...mainProvision.value.children);
                     Object.assign(lastChild.attr, { ...mainProvision.value.attr, ...lastChild.attr });
                 } else {
-                    lawBody.append(mainProvision.value);
+                    lawBody.children.push(mainProvision.value);
                 }
                 errors.push(...mainProvision.errors);
                 for (const errorLine of errorLines) {
@@ -381,7 +381,7 @@ export const $law: WithErrorRule<std.Law> = factory
             }
 
             for (const [supplOrAppdxItem, errorLines] of supplOrAppdxItemAndErrors) {
-                lawBody.append(supplOrAppdxItem.value);
+                lawBody.children.push(supplOrAppdxItem.value);
                 errors.push(...supplOrAppdxItem.errors);
                 for (const errorLine of errorLines) {
                     errors.push(newErrorMessage(

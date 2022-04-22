@@ -143,7 +143,7 @@ export const $periodSentences: WithErrorRule<std.Sentence[]> = factory
                 if (fragments.length >= 2) sentence.attr.Num = String(i + 1);
                 if (
                     sentence_content[0] instanceof __Text &&
-                    sentence_content[0].text.match(/^ただし、|但し、/)
+                    sentence_content[0].text().match(/^ただし、|但し、/)
                 ) {
                     proviso_indices.push(i);
                 }

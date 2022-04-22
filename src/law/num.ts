@@ -205,7 +205,7 @@ export const setItemNum = (els: EL[]): void => {
         let kanaMode = KanaMode.Iroha;
         for (const child of items[0].children) {
             if (std.isParagraphItemTitle(child)) {
-                if (/ア/.exec(child.text)) {
+                if (/ア/.exec(child.text())) {
                     kanaMode = KanaMode.Aiu;
                     break;
                 }
@@ -215,7 +215,7 @@ export const setItemNum = (els: EL[]): void => {
             let paragraphItemTitle = "";
             for (const child of item.children) {
                 if (std.isParagraphItemTitle(child)) {
-                    paragraphItemTitle = child.text;
+                    paragraphItemTitle = child.text();
                     break;
                 }
             }

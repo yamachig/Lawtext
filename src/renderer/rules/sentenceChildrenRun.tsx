@@ -30,7 +30,7 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
             if (renderControlEL) {
                 runs.push(<HTMLControlRun el={el} {...props} />);
             } else {
-                runs.push(el.text);
+                runs.push(el.text());
             }
 
         } else {
@@ -40,20 +40,20 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
                         (typeof c === "string")
                             ? c
                             : !std.isRt(c)
-                                ? c.text
+                                ? c.text()
                                 : "",
                     ).join("");
                 const rt = (el.children
                     .filter(c => !(typeof c === "string") && std.isRt(c)) as std.Rt[])
-                    .map(c => c.text)
+                    .map(c => c.text())
                     .join("");
                 runs.push(<ruby {...elProps(el, htmlOptions)}>{rb}<rt>{rt}</rt></ruby>);
 
             } else if (el.tag === "Sub") {
-                runs.push(<sub {...elProps(el, htmlOptions)}>{el.text}</sub>);
+                runs.push(<sub {...elProps(el, htmlOptions)}>{el.text()}</sub>);
 
             } else if (el.tag === "Sup") {
-                runs.push(<sup {...elProps(el, htmlOptions)}>{el.text}</sup>);
+                runs.push(<sup {...elProps(el, htmlOptions)}>{el.text()}</sup>);
 
             } else if (el.tag === "QuoteStruct") {
                 runs.push(<HTMLQuoteStructRun el={el} {...{ htmlOptions }} />);
@@ -89,7 +89,7 @@ export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRu
         } else if (el.isControl) {
             runs.push(<w.r>
                 {emphasis ? <w.rStyle w:val="Emphasis"/> : null}
-                <w.t>{el.text}</w.t>
+                <w.t>{el.text()}</w.t>
             </w.r>);
 
         } else {
@@ -99,12 +99,12 @@ export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRu
                         (typeof c === "string")
                             ? c
                             : !std.isRt(c)
-                                ? c.text
+                                ? c.text()
                                 : "",
                     ).join("");
                 const rt = (el.children
                     .filter(c => !(typeof c === "string") && std.isRt(c)) as std.Rt[])
-                    .map(c => c.text)
+                    .map(c => c.text())
                     .join("");
                 runs.push(<w.r>
                     {emphasis ? <w.rStyle w:val="Emphasis"/> : null}
@@ -119,18 +119,18 @@ export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRu
                     <w.rPr>
                         <w.vertAlign w:val="subscript"/>
                     </w.rPr>
-                    <w.t>{el.text}</w.t>
+                    <w.t>{el.text()}</w.t>
                 </w.r>);
-                runs.push(<sub>{el.text}</sub>);
+                runs.push(<sub>{el.text()}</sub>);
 
             } else if (el.tag === "Sup") {
                 runs.push(<w.r>
                     <w.rPr>
                         <w.vertAlign w:val="superscript"/>
                     </w.rPr>
-                    <w.t>{el.text}</w.t>
+                    <w.t>{el.text()}</w.t>
                 </w.r>);
-                runs.push(<sub>{el.text}</sub>);
+                runs.push(<sub>{el.text()}</sub>);
 
             } else if (el.tag === "QuoteStruct") {
                 runs.push(<DOCXQuoteStructRun el={el} {...{ docxOptions }} />);

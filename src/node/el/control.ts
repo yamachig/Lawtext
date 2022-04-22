@@ -60,9 +60,9 @@ export class __Parentheses extends EL {
         if (range){
             this.range = [range.start[0], range.end[1]];
         }
-        this.append(new EL("__PStart", { type }, [start], range && range.start));
-        this.append(new EL("__PContent", { type }, content, range && range.content));
-        this.append(new EL("__PEnd", { type }, [end], range && range.end));
+        this.children.push(new EL("__PStart", { type }, [start], range && range.start));
+        this.children.push(new EL("__PContent", { type }, content, range && range.content));
+        this.children.push(new EL("__PEnd", { type }, [end], range && range.end));
     }
 }
 

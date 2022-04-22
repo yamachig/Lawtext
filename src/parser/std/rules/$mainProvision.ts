@@ -14,7 +14,7 @@ export const mainProvisionToLines = (mainProvision: std.MainProvision, indentTex
     const lines: Line[] = [];
 
     const paragraphs = mainProvision.children.filter(isParagraph);
-    const isSingleAnonymParagraph = paragraphs.length === 1 && paragraphs.every(p => p.children.filter(isParagraphItemTitle).every(el => el.text === ""));
+    const isSingleAnonymParagraph = paragraphs.length === 1 && paragraphs.every(p => p.children.filter(isParagraphItemTitle).every(el => el.text() === ""));
 
     for (const child of mainProvision.children) {
         if (isParagraphItem(child)) {

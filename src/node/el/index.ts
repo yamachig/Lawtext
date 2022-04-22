@@ -6,7 +6,7 @@ export class EL implements JsonEL {
     public tag: string;
     public attr: { [key: string]: string | undefined };
     public children: Array<EL | string>;
-    public textCache: string | null;
+    // public textCache: string | null;
     public id: number;
 
     public range: [start: number, end: number] | null;
@@ -26,7 +26,7 @@ export class EL implements JsonEL {
         this.children = children;
         this.range = range;
 
-        this.textCache = null;
+        // this.textCache = null;
         this.id = id ?? ++currentID;
     }
 
@@ -47,32 +47,6 @@ export class EL implements JsonEL {
             copyID ? this.id : undefined,
         );
         return el;
-    }
-
-    public append(child: EL | string): EL {
-        if (child !== undefined && child !== null) {
-            // if(!(child instanceof EL) && !(child instanceof String || (typeof child === "string"))) {
-            //     error("child is not EL or String.");
-            // }
-            this.children.push(child);
-            this.textCache = null;
-        }
-        return this;
-    }
-
-    public extend(children: Array<EL | string>): EL {
-        // if(!Array.isArray(children)) {
-        //     error(`${JSON.stringify(children).slice(0,100)} is not Array.`);
-        // }
-        // for(let i = 0; i < children.length; i++) {
-        //     let child = children[i];
-        //     if(!(child instanceof EL) && !(child instanceof String || (typeof child === "string"))) {
-        //         error("child is not EL or String.");
-        //     }
-        // }
-        this.children = this.children.concat(children);
-        this.textCache = null;
-        return this;
     }
 
     public json(withControlEl = false, withProperties = false): JsonEL {
@@ -114,16 +88,10 @@ export class EL implements JsonEL {
         };
     }
 
-    get text(): string {
-        if (this.textCache === null) {
-            this.textCache = this.children.map(child => child instanceof EL ? child.text : child).join("");
-        }
-        return this.textCache;
-    }
-
-    set text(t: string) {
-        this.children = [t];
-        this.textCache = null;
+    public text(): string {
+        if (this.children.length === 0) return "";
+        if (this.children.length === 1 && typeof this.children[0] === "string") return this.children[0];
+        return this.children.map(child => child instanceof EL ? child.text() : child).join("");
     }
 
     public wrapXML(inner: string): string {
@@ -146,7 +114,7 @@ export class EL implements JsonEL {
         for (let i = 0; i < this.children.length; i++) {
             const child = this.children[i];
             const cStart = nextCStart;
-            const cEnd = cStart + (child instanceof EL ? child.text : child).length; // half open
+            const cEnd = cStart + (child instanceof EL ? child.text() : child).length; // half open
             nextCStart = cEnd;
 
             if (cStart <= start && start < cEnd) {
@@ -167,7 +135,6 @@ export class EL implements JsonEL {
                             ...this.children.slice(i + 1),
                         ];
                         this.children = newChildren;
-                        this.textCache = null;
                     }
                 } else {
                     throw new Error("Attempted to replace across elements.");
