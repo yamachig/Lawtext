@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { Controls } from "../../../node/cst/inline";
 import { LineType } from "../../../node/cst/line";
-import { JsonEL } from "../../../node/el";
+import { JsonEL } from "../../../node/el/jsonEL";
 import { initialEnv } from "../env";
 import $appdxItemHeadLine from "./$appdxItemHeadLine";
 

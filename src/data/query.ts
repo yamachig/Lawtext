@@ -1,10 +1,11 @@
 import { fetchLawData } from "../elaws_api";
 import { assertNever } from "../util";
-import { EL, elementToJson } from "../node/el";
+import { EL } from "../node/el";
 import { LawInfo } from "./lawinfo";
 import { Loader } from "./loaders/common";
 import { FetchElawsLoader } from "./loaders/FetchElawsLoader";
 import { WorkersPool } from "./workersPool";
+import { elementToEL } from "../node/el/xmlToEL";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;
 const domParser = new DOMParser();
@@ -621,7 +622,7 @@ export class LawQueryItem extends LawInfo implements QueryItem {
         if (this._cache.el === null) {
             const doc = await this.getDocument();
             if (doc === null) return null;
-            this._cache.el = elementToJson(doc.documentElement);
+            this._cache.el = elementToEL(doc.documentElement);
         }
         return this._cache.el ;
     }

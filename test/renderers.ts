@@ -15,9 +15,10 @@ import { renderDocxAsync, renderHTML, renderLawtext } from "../src/renderer";
 import { TERMC, toTableText } from "../src/util/term";
 import * as util from "../src/util";
 import { loader } from "./prepare_test";
-import { outerXML, xmlToJson } from "../src/node/el";
 import { ErrorMessage } from "../src/parser/cst/error";
 import formatXML from "../src/util/formatXml";
+import { xmlToEL } from "../src/node/el/xmlToEL";
+import { outerXML } from "../src/node/el/elToXML";
 
 const domParser = new xmldom.DOMParser();
 
@@ -278,7 +279,7 @@ describe("Test Renderes", () => {
             const origDOM = domParser.parseFromString(origXML);
             await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
 
-            const origEL = xmlToJson(origXML);
+            const origEL = xmlToEL(origXML);
 
             let lawtext;
             try {

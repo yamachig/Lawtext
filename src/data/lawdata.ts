@@ -2,10 +2,11 @@ import * as std from "../law/std";
 import * as analyzer from "../analyzer";
 import * as util from "../util";
 import { parse } from "../parser/lawtext";
-import { EL, xmlToJson } from "../node/el";
+import { EL } from "../node/el";
 import { ErrorMessage } from "../parser/cst/error";
 import { LawXMLStruct } from "./loaders/common";
 import { ElawsLawData } from "../elaws_api";
+import { xmlToEL } from "../node/el/xmlToEL";
 
 
 export interface LawDataCore {
@@ -75,7 +76,7 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
             onMessage("法令XMLをパースしています...");
             // console.log("toLawData: parsing law xml...");
             await util.wait(30);
-            const [parseXMLOrLawtextTime, el] = await util.withTime(xmlToJson)(_props.xml);
+            const [parseXMLOrLawtextTime, el] = await util.withTime(xmlToEL)(_props.xml);
             timing.parseXMLOrLawtext = parseXMLOrLawtextTime;
 
             onMessage("制御タグを追加しています...");

@@ -1,6 +1,7 @@
 import * as fs from "fs";
-import { EL, xmlToJson } from "../src/node/el";
+import { EL } from "../src/node/el";
 import path from "path";
+import { xmlToEL } from "../src/node/el/xmlToEL";
 
 // const Node = {
 //     TEXT_NODE: 3,
@@ -14,7 +15,7 @@ while (!fs.existsSync(path.join(rootDir, "package.json"))) {
     rootDir = newRootDir;
 }
 
-const schema = xmlToJson(fs.readFileSync(path.join(rootDir, "/bin/stdLaw.xsd"), "utf-8"));
+const schema = xmlToEL(fs.readFileSync(path.join(rootDir, "/bin/stdLaw.xsd"), "utf-8"));
 
 const elementIfs: string[] = [];
 const newStdELConditions: string[] = [];

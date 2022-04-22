@@ -6,8 +6,10 @@ import * as analyzer from "./analyzer";
 import { parse } from "./parser/lawtext";
 import * as renderer from "./renderer";
 import renderLawtext from "./renderer/lawtext";
-import { EL, JsonEL, xmlToJson } from "./node/el";
+import { EL } from "./node/el";
 import loadEL from "./node/el/loadEL";
+import { xmlToEL } from "./node/el/xmlToEL";
+import { JsonEL } from "./node/el/jsonEL";
 
 
 interface Args {
@@ -86,7 +88,7 @@ export const main = (args: Args): void => {
     }).then((intext: string) => {
 
         if (intype === "xml") {
-            law = xmlToJson(intext);
+            law = xmlToEL(intext);
             if (!noanalyze) {
                 analyzer.stdxmlToExt(law);
             }

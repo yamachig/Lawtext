@@ -7,13 +7,14 @@ import { throwError } from "../util";
 import { Container, ContainerType } from "../node/container";
 import { Env } from "../node/env";
 import { Span } from "../node/span";
-import { EL, isJsonEL } from "../node/el";
+import { EL } from "../node/el";
 import { RelPos, Pointer, Ranges } from "../node/pointer";
 import { $ranges } from "./range";
 import { initialEnv } from "../parser/cst/env";
 import { $sentenceChildren } from "../parser/cst/rules/$sentenceChildren";
 import * as std from "../law/std";
 import { lawTypes } from "../law/num";
+import { isJsonEL } from "../node/el/jsonEL";
 
 export const getLawNameLength = (lawNum: string): number => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access

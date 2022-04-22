@@ -1,6 +1,6 @@
 import * as xpath from "xpath";
+import { JsonEL } from "../node/el/jsonEL";
 import * as util from "../util";
-import { JsonEL } from "../node/el";
 import { compare, EditTable } from "./edit_table";
 
 export enum TagType {

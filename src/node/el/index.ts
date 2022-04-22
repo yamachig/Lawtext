@@ -1,48 +1,5 @@
-import { DOMParser } from "@xmldom/xmldom";
-
-const NodeType = {
-    TEXT_NODE: 3,
-    ELEMENT_NODE: 1,
-};
-
-export interface JsonEL {
-    tag: string
-    attr: { [key: string]: string | undefined }
-    children: Array<JsonEL | string>
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-export const isJsonEL = (object: any): object is JsonEL => {
-    return "tag" in object && "attr" in object && "children" in object;
-};
-
-export const wrapXML = (el: JsonEL, inner: string): string => {
-    const attr = Object.keys(el.attr).map(key => ` ${key}="${el.attr[key] ?? ""}"`).join("");
-    if (inner) {
-        return `<${el.tag}${attr}>${inner}</${el.tag}>`;
-    } else {
-        return `<${el.tag}${attr}/>`;
-    }
-};
-
-export const outerXML = (el: JsonEL, withControlEl = false): string => {
-    const inner = innerXML(el, withControlEl);
-    if (withControlEl || el.tag[0] !== "_") {
-        return wrapXML(el, inner);
-    } else {
-        return inner;
-    }
-};
-
-export const innerXML = (el: JsonEL, withControlEl = false): string => {
-    if (!el.children) console.error(el);
-    return el.children.map(child =>
-        (child instanceof String || (typeof child === "string"))
-            ? child.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
-            : outerXML(child, withControlEl),
-    ).join("");
-};
-
+import { innerXML, outerXML, wrapXML } from "./elToXML";
+import { JsonEL } from "./jsonEL";
 
 let currentID = 0;
 export class EL implements JsonEL {
@@ -234,38 +191,4 @@ export const rangeOfELs = (els: unknown[]): [start: number, end: number] | null 
         }
     }
     return (start !== null && end !== null) ? [start, end] : null;
-};
-
-export const elementToJson = (el: Element): EL => {
-    const children: Array<EL | string> = [];
-    for (const node of Array.from(el.childNodes)) {
-        if (node.nodeType === NodeType.TEXT_NODE) {
-            const text = (node.nodeValue || "")
-                .replace(/^[ \r\n\t]+/, "")
-                .replace(/[ \r\n\t]+$/, "");
-            if (text) {
-                children.push(text);
-            }
-        } else if (node.nodeType === NodeType.ELEMENT_NODE) {
-            children.push(elementToJson(node as Element));
-        } else {
-            // console.log(node);
-        }
-    }
-    const attr: Record<string, string> = {};
-    for (const at of Array.from(el.attributes)) {
-        attr[at.name] = at.value;
-    }
-    return new EL(
-        el.tagName,
-        attr,
-        children,
-    );
-};
-
-export const xmlToJson = (xml: string): EL => {
-    const parser = new DOMParser();
-    const dom = parser.parseFromString(xml, "text/xml");
-    if (!dom.documentElement) throw new Error("never");
-    return elementToJson(dom.documentElement);
 };

@@ -1,4 +1,5 @@
-import { EL, JsonEL } from "../node/el";
+import { EL } from "../node/el";
+import { JsonEL } from "../node/el/jsonEL";
 import loadEL from "../node/el/loadEL";
 
 export const renderXML = (elOrJsonEL: JsonEL | EL, withControlEl = false): string => {
