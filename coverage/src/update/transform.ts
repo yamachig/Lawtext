@@ -5,10 +5,11 @@ import { parse } from "lawtext/dist/src/parser/lawtext";
 import * as analyzer from "lawtext/dist/src/analyzer";
 import { renderDocxAsync, renderHTML, renderLawtext } from "lawtext/dist/src/renderer";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
-import { EL, xmlToJson } from "lawtext/dist/src/node/el";
+import { EL } from "lawtext/dist/src/node/el";
 import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { Era, LawCoverage, LawType } from "../lawCoverage";
 import { Law } from "lawtext/dist/src/law/std";
+import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
 
 const domParser = new DOMParser();
 type DeNull<T> = T extends null ? never : T;
@@ -46,8 +47,8 @@ export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Prom
         const origXML = xmlStruct.xml;
         requiredms.set("loadXML", lap.lapms());
 
-        const origEL = xmlToJson(origXML) as Law;
-        requiredms.set("xmlToJson", lap.lapms());
+        const origEL = xmlToEL(origXML) as Law;
+        requiredms.set("xmlToEL", lap.lapms());
 
         const Year = Number(origEL.attr.Year);
         const Num = Number(origEL.attr.Num);

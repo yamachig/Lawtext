@@ -1,6 +1,7 @@
 import { LawCoverage, LawCoverageCounts, toSortString } from "../../lawCoverage";
 import { ComparableEL, TagType } from "lawtext/dist/src/diff/law_diff";
-import { EL, xmlToJson } from "lawtext/dist/src/node/el";
+import { EL } from "lawtext/dist/src/node/el";
+import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
 import React from "react";
 import { FilterInfo, filterInfoEqual, SortDirection, SortKey } from "./FilterInfo";
 import { useParams, useNavigate } from "react-router-dom";
@@ -14,7 +15,7 @@ export class LawXMLData {
     public els: Array<[ComparableEL, TagType]>;
     constructor(xml: string) {
         this.dom = domParser.parseFromString(xml, "text/xml");
-        this.el = xmlToJson(xml);
+        this.el = xmlToEL(xml);
         this.root = new ComparableEL(this.el);
         this.els = [...this.root.allList()];
     }
