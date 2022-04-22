@@ -20,7 +20,9 @@ import {
     horizontalListSortingStrategy,
     SortableContext,
     sortableKeyboardCoordinates,
+    useSortable,
 } from "@dnd-kit/sortable";
+import { CSS, Transform } from "@dnd-kit/utilities";
 
 interface FilterInfoSortItemProps {
     sort: (
@@ -29,15 +31,16 @@ interface FilterInfoSortItemProps {
         SortKey
     ),
     directionButtonClick: () => void;
+    sortableID: string;
 }
 
 const KeyToName = {
     [SortKey.ID]: "ID",
     [SortKey.LawNum]: "番号",
     [SortKey.LawType]: "種別",
-    [SortKey.RenderedHTMLStatus]: "RenderedHTML",
-    [SortKey.RenderedDocxStatus]: "RenderedDocx",
-    [SortKey.RenderedLawtextStatus]: "RenderedLawtext",
+    [SortKey.RenderedHTMLStatus]: "HTML",
+    [SortKey.RenderedDocxStatus]: "Docx",
+    [SortKey.RenderedLawtextStatus]: "Rendered",
     [SortKey.ParsedLawStatus]: "Parsed",
     [SortKey.LawDiffStatus]: "Diff",
 };
@@ -142,11 +145,24 @@ const ButtonDummy = styled(ButtonBase)`
     `;
 
 export const FilterInfoSortItem = (props: FilterInfoSortItemProps) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id: props.sortableID });
+
+    const style = {
+        transform: CSS.Transform.toString({ ...transform, scaleX: 1, scaleY: 1 } as Transform),
+        transition,
+    };
+
     if (Array.isArray(props.sort)) {
         const [key, dir] = props.sort;
         const ButtonTag = dir === SortDirection.Asc ? ButtonOff : ButtonOn;
         return (
-            <ActiveItem>
+            <ActiveItem ref={setNodeRef} style={style} {...attributes} {...listeners}>
                 <span style={{ verticalAlign: "middle" }}>{KeyToName[key]}</span>
                 <ButtonTag onClick={props.directionButtonClick}>
                     <FontAwesomeIcon icon="exchange-alt" style={{ pointerEvents: "none" }} />
@@ -156,7 +172,7 @@ export const FilterInfoSortItem = (props: FilterInfoSortItemProps) => {
     } else if (props.sort) {
         const key = props.sort;
         return (
-            <RestItem>
+            <RestItem ref={setNodeRef} style={style} {...attributes} {...listeners}>
                 <span style={{ verticalAlign: "middle" }}>{KeyToName[key]}</span>
                 <ButtonDummy disabled={true}>
                     <FontAwesomeIcon icon="minus" style={{ pointerEvents: "none" }} />
@@ -165,7 +181,7 @@ export const FilterInfoSortItem = (props: FilterInfoSortItemProps) => {
         );
     } else {
         return (
-            <NullItem>
+            <NullItem ref={setNodeRef} style={style} {...attributes} {...listeners}>
                 <span style={{ verticalAlign: "middle" }}><FontAwesomeIcon icon="arrow-left" /></span>
             </NullItem>
         );
@@ -206,13 +222,14 @@ export const FilterInfoSortContainer = (props: FilterInfoSortContainerProps) => 
                 onDragEnd={props.onDragEnd}
             >
                 <SortableContext
-                    items={props.sort.map(v => Array.isArray(v) ? v[0] : v ?? "")}
+                    items={props.sort.map(v => Array.isArray(v) ? v[0] : v ?? "null")}
                     strategy={horizontalListSortingStrategy}
                 >
                     {props.sort.map((sort) => (
                         <FilterInfoSortItem
                             sort={sort}
-                            key={sort?.[0] ?? ""}
+                            sortableID={Array.isArray(sort) ? sort[0] : (sort ?? "null")}
+                            key={Array.isArray(sort) ? sort[0] : (sort ?? "null")}
                             directionButtonClick={directionButtonClick(sort)}
                         />
                     ))}
@@ -471,7 +488,7 @@ const FilterControl: React.FC<LawtextDashboardPageStateStruct> = props => {
 
     const onDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
-        const items = state.sort.map(v => Array.isArray(v) ? v[0] : v ?? "");
+        const items = state.sort.map(v => Array.isArray(v) ? v[0] : v ?? "null");
 
         if (active.id !== over?.id) {
             const oldIndex = items.indexOf(active.id as SortKey);
@@ -520,7 +537,7 @@ const LawCoverageListItem: React.FC<LawtextDashboardPageStateStruct & {lawCovera
                     <LawCoverageInfoCard
                         status={convertStatus(getOriginalLawStatus(lawCoverage))}
                         header={
-                            <span>Original XML</span>
+                            <span>Orig</span>
                         }
                         date={lawCoverage.updateDate}
                     />
@@ -536,7 +553,7 @@ const LawCoverageListItem: React.FC<LawtextDashboardPageStateStruct & {lawCovera
                     <LawCoverageInfoCard
                         status={convertStatus(getRenderedHTMLStatus(lawCoverage))}
                         header={
-                            <span>Rendered HTML</span>
+                            <span>HTML</span>
                         }
                         date={lawCoverage.updateDate}
                     />
@@ -552,7 +569,7 @@ const LawCoverageListItem: React.FC<LawtextDashboardPageStateStruct & {lawCovera
                     <LawCoverageInfoCard
                         status={convertStatus(getRenderedDocxStatus(lawCoverage))}
                         header={
-                            <span>Rendered Docx</span>
+                            <span>Docx</span>
                         }
                         date={lawCoverage.updateDate}
                     />
@@ -568,7 +585,7 @@ const LawCoverageListItem: React.FC<LawtextDashboardPageStateStruct & {lawCovera
                     <LawCoverageInfoCard
                         status={convertStatus(getRenderedLawtextStatus(lawCoverage))}
                         header={
-                            <span>Rendered Lawtext</span>
+                            <span>Render</span>
                         }
                         date={lawCoverage.updateDate}
                     />
@@ -584,7 +601,7 @@ const LawCoverageListItem: React.FC<LawtextDashboardPageStateStruct & {lawCovera
                     <LawCoverageInfoCard
                         status={convertStatus(getParsedLawStatus(lawCoverage))}
                         header={
-                            <span>Parsed XML</span>
+                            <span>Parse</span>
                         }
                         date={lawCoverage.updateDate}
                     />
@@ -600,7 +617,7 @@ const LawCoverageListItem: React.FC<LawtextDashboardPageStateStruct & {lawCovera
                     <LawCoverageInfoCard
                         status={convertStatus(getLawDiffStatus(lawCoverage))}
                         header={
-                            <span>Difference</span>
+                            <span>Diff</span>
                         }
                         date={lawCoverage.updateDate}
                     />

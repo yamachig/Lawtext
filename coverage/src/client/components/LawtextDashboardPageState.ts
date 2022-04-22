@@ -45,7 +45,7 @@ export interface BaseLawtextDashboardPageState {
     } | null,
 }
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 4;
 
 const getInitialState = (): BaseLawtextDashboardPageState => ({
     loading: 0,

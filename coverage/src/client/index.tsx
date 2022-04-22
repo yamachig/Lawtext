@@ -16,7 +16,7 @@ import {
 import "bootstrap";
 import * as moment from "moment";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as ReactDOM from "react-dom/client";
 import { Route, Routes } from "react-router-dom";
 import { HashRouter } from "react-router-dom";
 import { LawtextDashboardPage } from "./components/LawtextDashboardPage";
@@ -38,14 +38,15 @@ library.add(
     faTimes,
 );
 
-
-ReactDOM.render(
-    <HashRouter>
-        <Routes>
-            <Route path=":LawID" element={<LawtextDashboardPage/>} />
-            <Route path="" element={<LawtextDashboardPage/>} />
-        </Routes>
-    </HashRouter>
-    ,
-    document.getElementById("root"),
-);
+const rootEL = document.getElementById("root");
+if (rootEL) {
+    const root = ReactDOM.createRoot(rootEL);
+    root.render((
+        <HashRouter>
+            <Routes>
+                <Route path=":LawID" element={<LawtextDashboardPage/>} />
+                <Route path="" element={<LawtextDashboardPage/>} />
+            </Routes>
+        </HashRouter>
+    ));
+}

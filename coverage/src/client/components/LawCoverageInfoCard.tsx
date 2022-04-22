@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { assertNever } from "lawtext/dist/src/util";
-import moment from "moment";
 import * as React from "react";
 import styled from "styled-components";
 
@@ -36,12 +35,6 @@ const StatusLeft = styled.div`
         padding: .1em;
         text-align: center;
         flex: 0 0 4em;
-    `;
-
-const StatusRight = styled.div`
-        padding: .1em;
-        text-align: center;
-        flex: 1 1;
     `;
 
 const NullTag = styled(BaseTag)`
@@ -84,9 +77,8 @@ export const LawCoverageInfoCard: React.FC<{
                         props.status === LawCoverageInfoCardStatus.ERROR ? ErrorTag :
                             assertNever(props.status);
 
-    const mm = moment(props.date);
     return (
-        <Tag className="d-flex flex-column" style={{ flex: "0 0 7rem" }}>
+        <Tag className="d-flex flex-column" style={{ flex: "0 0 4rem" }}>
             {props.header && (
                 <div className="header">
                     {props.header}
@@ -95,31 +87,26 @@ export const LawCoverageInfoCard: React.FC<{
             {(props.status !== LawCoverageInfoCardStatus.NULL || props.body) && (
                 <div className="body d-flex flex-column">
                     {props.status !== LawCoverageInfoCardStatus.NULL && (
-                        <div className="body d-flex flex-row">
-                            <StatusLeft>
-                                {props.status === LawCoverageInfoCardStatus.SUCCESS && (
-                                    <span style={{ color: "#28a745" }}>
-                                        <FontAwesomeIcon icon="check-circle" />
+                        <>
+                            {props.status === LawCoverageInfoCardStatus.SUCCESS && (
+                                <span style={{ color: "#28a745" }}>
+                                    <FontAwesomeIcon icon="check-circle" />
                                             &nbsp;OK
-                                    </span>
-                                )}
-                                {props.status === LawCoverageInfoCardStatus.WARNING && (
-                                    <span>
-                                        <FontAwesomeIcon icon="exclamation-triangle" />
+                                </span>
+                            )}
+                            {props.status === LawCoverageInfoCardStatus.WARNING && (
+                                <span>
+                                    <FontAwesomeIcon icon="exclamation-triangle" />
                                             &nbsp;Wn
-                                    </span>
-                                )}
-                                {props.status === LawCoverageInfoCardStatus.ERROR && (
-                                    <span>
-                                        <FontAwesomeIcon icon="times" />
+                                </span>
+                            )}
+                            {props.status === LawCoverageInfoCardStatus.ERROR && (
+                                <span>
+                                    <FontAwesomeIcon icon="times" />
                                             &nbsp;Err
-                                    </span>
-                                )}
-                            </StatusLeft>
-                            <StatusRight>
-                                {mm.fromNow()}
-                            </StatusRight>
-                        </div>
+                                </span>
+                            )}
+                        </>
                     )}
                     {props.body}
                 </div>
