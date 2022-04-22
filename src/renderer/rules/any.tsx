@@ -94,7 +94,7 @@ export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JS
         } else if (std.isTOCItem(el)) {
             flushRuns();
             blocks.push(<HTMLTOCItem el={el} indent={indent} {...{ htmlOptions }} />);
-        } else if (std.isArticleGroupTitle(el)) {
+        } else if (std.isArticleGroupTitle(el) || std.isLawTitle(el)) {
             flushRuns();
             blocks.push((
                 <div className={`any-els-tag any-els-tag-${el.tag} indent-${indent}`}>
@@ -217,7 +217,7 @@ export const DOCXAnyELsToBlocks = (props: DOCXComponentProps & AnyELsProps): (JS
         } else if (std.isTOCItem(el)) {
             flushRuns();
             blocks.push(<DOCXTOCItem el={el} indent={indent} {...{ docxOptions }} />);
-        } else if (std.isArticleGroupTitle(el)) {
+        } else if (std.isArticleGroupTitle(el) || std.isLawTitle(el)) {
             flushRuns();
             blocks.push((
                 <w.p>
