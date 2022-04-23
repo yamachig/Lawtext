@@ -158,7 +158,7 @@ const locateRanges = (origRanges: __Ranges, currentSpan: Span) => {
         const from = locatePointer(origFrom, prevLocatedPointerInfo, currentSpan);
         prevLocatedPointerInfo = from;
         let to: LocatedPointerInfo | null;
-        if (origFrom === origTo) {
+        if (!origTo) {
             to = from;
         } else {
             to = locatePointer(origTo, prevLocatedPointerInfo, currentSpan);

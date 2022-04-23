@@ -301,7 +301,7 @@ describe("Test DOCX quoteStructRun", () => {
   <w:drawing>
     <wp:inline distT="0" distB="0" distL="0" distR="0">
       <wp:extent cx="0" cy="0"></wp:extent>
-      <wp:docPr id="17815" name="QuoteStruct7815"></wp:docPr>
+      <wp:docPr id="${input.id + 10000}" name="QuoteStruct${input.id}"></wp:docPr>
       <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
         <a:graphicData uri="http://schemas.microsoft.com/office/word/2010/wordprocessingShape">
           <wps:wsp>

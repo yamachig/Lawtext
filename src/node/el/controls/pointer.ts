@@ -86,7 +86,7 @@ export class __Pointer extends EL {
 export interface RangeOptions {
     from: __Pointer,
     midChildren: (EL | string)[],
-    to: __Pointer, // closed
+    to: __Pointer | null, // closed
     trailingChildren: (EL | string)[],
     range: [start: number, end: number] | null,
 }
@@ -99,17 +99,14 @@ export class __Range extends EL {
             [
                 options.from,
                 ...options.midChildren,
-                options.to,
+                ...(options.to ? [options.to] : []),
                 ...options.trailingChildren,
             ],
             options.range,
         );
     }
-    public pointers(): [__Pointer, __Pointer] {
-        return [
-            this.children[0] as __Pointer,
-            this.children[this.children.length - 1] as __Pointer,
-        ];
+    public pointers(): [__Pointer] | [__Pointer, __Pointer] {
+        return this.children.filter(c => typeof c !== "string" && c.tag === "__Pointer") as [__Pointer] | [__Pointer, __Pointer];
     }
 }
 

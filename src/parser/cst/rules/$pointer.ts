@@ -12,7 +12,7 @@ const makeRange: RangeMaker<__Pointer, __Range> = (from, midText, to, trailingTe
     return new __Range({
         from,
         midChildren: midText ? [new __Text(midText.text, midText.range)] : [],
-        to: to ?? from,
+        to,
         trailingChildren: trailingText ? [new __Text(trailingText.text, trailingText.range)] : [],
         range,
     });
@@ -274,10 +274,3 @@ export const $pointerFragment = factory
         ),
     )
     ;
-
-export const rules = {
-    ranges: $pointerRanges,
-    range: $pointerRange,
-    pointer: $pointer,
-    pointer_fragment: $pointerFragment,
-};
