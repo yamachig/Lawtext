@@ -4,10 +4,13 @@ import { initialEnv } from "../parser/cst/env";
 import $pointerRanges from "./stringParser/rules/$pointerRanges";
 import { __Text } from "../node/el/controls";
 import { ignoreAnalysisTag } from "./common";
+import { ErrorMessage } from "../parser/cst/error";
+import { WithErrorValue } from "../parser/std/util";
 
-export const detectPointerRanges = (elToBeModified: std.StdEL | std.__EL) => {
+export const detectPointerRanges = (elToBeModified: std.StdEL | std.__EL): WithErrorValue<____PointerRanges[]> => {
 
     const pointerRangesList: ____PointerRanges[] = [];
+    const errors: ErrorMessage[] = [];
 
     for (let childIndex = 0; childIndex < elToBeModified.children.length; childIndex++) {
         const child = elToBeModified.children[childIndex];
@@ -22,6 +25,7 @@ export const detectPointerRanges = (elToBeModified: std.StdEL | std.__EL) => {
                     initialEnv({ baseOffset: child.range ? child.range[0] : 0 }),
                 );
                 if (result.ok) {
+                    errors.push(...result.value.errors);
                     const newItems: (std.StdEL | std.__EL)[] = [];
                     newItems.push(new __Text(
                         text.substring(0, textIndex),
@@ -45,11 +49,13 @@ export const detectPointerRanges = (elToBeModified: std.StdEL | std.__EL) => {
             continue;
 
         } else {
-            pointerRangesList.push(...detectPointerRanges(child as std.StdEL | std.__EL));
+            const newResult = detectPointerRanges(child as std.StdEL | std.__EL);
+            pointerRangesList.push(...newResult.value);
+            errors.push(...newResult.errors);
         }
     }
 
-    return pointerRangesList;
+    return { value: pointerRangesList, errors } as const;
 };
 
 export default detectPointerRanges;

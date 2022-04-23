@@ -8,6 +8,7 @@ import { ____VarRef } from "../node/el/controls/varRef";
 import detectPointerRanges from "./detectPointerRanges";
 import * as std from "../law/std";
 import { ____PointerRanges } from "../node/el/controls";
+import { ErrorMessage } from "../parser/cst/error";
 
 
 export interface Analysis {
@@ -17,19 +18,26 @@ export interface Analysis {
     spans: Span[],
     containers: Map<string, Container>,
     rootContainer: Container,
+    errors: ErrorMessage[],
 }
 
 export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
-    const pointerRangesList = detectPointerRanges(elToBeModified);
+    const errors: ErrorMessage[] = [];
+
+    const detectPointerRangesResult = detectPointerRanges(elToBeModified);
+    errors.push(...detectPointerRangesResult.errors);
+
     const { spans, containers, rootContainer } = getSpans(elToBeModified);
     const declarations = detectDeclarations(spans);
     const variableReferences = detectVariableReferences(spans, declarations);
+
     return {
-        pointerRangesList,
+        pointerRangesList: detectPointerRangesResult.value,
         declarations,
         variableReferences,
         spans,
         containers,
         rootContainer,
+        errors,
     };
 };

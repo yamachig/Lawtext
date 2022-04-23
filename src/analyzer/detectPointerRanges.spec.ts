@@ -75,6 +75,7 @@ describe("Test detectPointerRanges", () => {
                 ],
             },
         ];
+        const expectedErrorMessages: string[] = [];
         const expectedModifiedInput = {
             tag: "Subitem1",
             attr: {},
@@ -146,13 +147,15 @@ describe("Test detectPointerRanges", () => {
             ],
         };
 
-        const pointerRangesList = detectPointerRanges(inputElToBeModified);
+        const result = detectPointerRanges(inputElToBeModified);
 
-        // console.log(JSON.stringify(pointerRangesList.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            pointerRangesList.map(r => r.json(true)),
+            result.value.map(r => r.json(true)),
             expected,
         );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
 
         // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
         assert.deepStrictEqual(
