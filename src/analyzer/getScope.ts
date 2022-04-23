@@ -3,7 +3,7 @@ import { Container, ContainerType } from "../node/container";
 import { Span } from "../node/span";
 import { EL } from "../node/el";
 import { initialEnv } from "../parser/cst/env";
-import { getContainerType, ignoreSpanTag } from "./common";
+import { getContainerType, ignoreAnalysisTag } from "./common";
 import { SpanTextRange } from "../node/span/spanTextPos";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import { $pointerRanges } from "./stringParser/rules/$pointerRanges";
@@ -31,7 +31,7 @@ const locatePointer = (
     const headType = getContainerType(head.attr.targetType);
     const currentContainer = currentSpan.env.container;
 
-    if ((ignoreSpanTag as readonly string[]).indexOf(head.attr.targetType) >= 0) {
+    if ((ignoreAnalysisTag as readonly string[]).indexOf(head.attr.targetType) >= 0) {
         locatedFragments = origPointer.fragments();
 
     } else if (head.attr.relPos === RelPos.SAME) {

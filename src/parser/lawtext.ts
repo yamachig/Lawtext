@@ -6,7 +6,7 @@ import { toVirtualLines } from "./std/virtualLine";
 export const parse = (lawtext: string) => {
     const lines = cstParse(lawtext);
     const vls = toVirtualLines(lines.value);
-    const env = initialEnv(lawtext, {});
+    const env = initialEnv({ target: lawtext });
     const law = $law.match(0, vls, env);
     if (law.ok) {
         return {

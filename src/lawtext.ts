@@ -5,11 +5,11 @@ import * as fs from "fs";
 import { parse } from "./parser/lawtext";
 import * as renderer from "./renderer";
 import renderLawtext from "./renderer/lawtext";
-import { EL } from "./node/el";
 import loadEL from "./node/el/loadEL";
 import { xmlToEL } from "./node/el/xmlToEL";
 import { JsonEL } from "./node/el/jsonEL";
 import addSentenceChildrenControls from "./parser/addSentenceChildrenControls";
+import * as std from "./law/std";
 
 
 interface Args {
@@ -65,7 +65,7 @@ export const main = (args: Args): void => {
         }
     }
 
-    let law: EL | null = null;
+    let law: std.Law | null = null;
     // let analysis: {} | null = null;
 
     void new Promise<string>((resolve /**/) => {
@@ -88,14 +88,14 @@ export const main = (args: Args): void => {
     }).then((intext: string) => {
 
         if (intype === "xml") {
-            law = xmlToEL(intext);
+            law = xmlToEL(intext) as std.Law;
             if (!noanalyze) {
                 addSentenceChildrenControls(law);
             }
         } else if (intype === "json") {
             const rawLaw = JSON.parse(intext) as JsonEL;
             try {
-                law = loadEL(rawLaw) as EL;
+                law = loadEL(rawLaw) as std.Law;
             } catch (e) {
                 console.error("[loading json at main]", e);
                 throw e;
@@ -112,7 +112,7 @@ export const main = (args: Args): void => {
                 throw e;
             }
             if (noanalyze) {
-                law = loadEL(law.json()) as EL;
+                law = loadEL(law.json()) as std.Law;
             }
         }
 

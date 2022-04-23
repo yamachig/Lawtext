@@ -1,9 +1,8 @@
-import { EL } from "../node/el";
+import * as std from "../law/std";
 import { initialEnv } from "./cst/env";
 import $sentenceChildren from "./cst/rules/$sentenceChildren";
 
-
-export const addSentenceChildrenControls = (elToBeModified: EL): EL => {
+export const addSentenceChildrenControls = <TEL extends std.StdEL | std.__EL>(elToBeModified: TEL): TEL => {
     if (["LawNum", "QuoteStruct"].indexOf(elToBeModified.tag) < 0) {
         const isMixed = elToBeModified.children.some(child => typeof child === "string" || child instanceof String);
         if (isMixed) {
@@ -15,7 +14,7 @@ export const addSentenceChildrenControls = (elToBeModified: EL): EL => {
                 throw new Error(message);
             }
         } else {
-            elToBeModified.children = (elToBeModified.children as EL[]).map(addSentenceChildrenControls);
+            elToBeModified.children = (elToBeModified.children as (std.StdEL | std.__EL)[]).map(addSentenceChildrenControls);
         }
     }
     return elToBeModified;

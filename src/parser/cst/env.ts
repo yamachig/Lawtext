@@ -11,7 +11,13 @@ export interface Env extends BaseEnv<string, StringPos> {
     newErrorMessage: (message: string, range: [start: number, end: number]) => ErrorMessage;
 }
 
-export const initialEnv = (options: Record<string | number | symbol, unknown>): Env => {
+export interface InitialEnvOptions {
+    options?: Record<string | number | symbol, unknown>,
+    baseOffset?: number,
+}
+
+export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
+    const { options = {}, baseOffset = 0 } = initialEnvOptions;
     let target = "";
     const registerCurrentRangeTarget = (start: number, end: number, _target: string) => {
         void start;
@@ -54,6 +60,7 @@ export const initialEnv = (options: Record<string | number | symbol, unknown>): 
         state,
         onMatchFail,
         newErrorMessage,
+        baseOffset,
     };
 };
 

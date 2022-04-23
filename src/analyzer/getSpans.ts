@@ -2,7 +2,7 @@ import { Container, ContainerType } from "../node/container";
 import { Env } from "../node/container/env";
 import { isSpanEL, Span } from "../node/span";
 import { EL } from "../node/el";
-import { containerTags, getContainerType, ignoreSpanTag } from "./common";
+import { containerTags, getContainerType, ignoreAnalysisTag } from "./common";
 
 export interface SpansStruct {
     spans: Span[];
@@ -21,7 +21,7 @@ export const getSpans = (el: EL): SpansStruct => {
 
         if (!el.tag) return;
 
-        if ((ignoreSpanTag as readonly string[]).indexOf(el.tag) >= 0) return;
+        if ((ignoreAnalysisTag as readonly string[]).indexOf(el.tag) >= 0) return;
 
         const env = origEnv.copy();
 

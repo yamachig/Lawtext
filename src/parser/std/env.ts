@@ -11,7 +11,14 @@ export interface Env extends BaseEnv<VirtualLine[], BasePos> {
     stringOffsetToPos: (target: string, offset: number) => StringPos;
 }
 
-export const initialEnv = (target: string, options: Record<string | number | symbol, unknown>): Env => {
+export interface InitialEnvOptions {
+    target: string,
+    options?: Record<string | number | symbol, unknown>,
+    baseOffset?: number,
+}
+
+export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
+    const { target, options = {}, baseOffset = 0 } = initialEnvOptions;
     const registerCurrentRangeTarget = () => { /**/ };
     const offsetToPos = (_: VirtualLine[], offset: number) => ({ offset });
     const stringOffsetToPos = getMemorizedStringOffsetToPos();
@@ -49,6 +56,7 @@ export const initialEnv = (target: string, options: Record<string | number | sym
         state,
         newErrorMessage,
         stringOffsetToPos,
+        baseOffset,
     };
 };
 

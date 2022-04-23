@@ -24,7 +24,7 @@ export const testLawtextToStd = <
         toLines: (el: TEL) => Line[],
     ): void => {
     const lawtext = lawtextWithMarker.replace(/!(?:\\\[\d+\])?/g, "");
-    const env = initialEnv(lawtext, {});
+    const env = initialEnv({ target: lawtext });
     const markerPositions: number[] = [];
     const markerMemo = new Map<string, number>();
     let accMarkerLength = 0;
@@ -118,39 +118,41 @@ export const testLawtextToStd = <
     assert.strictEqual(renderedText, expectedRendered);
 };
 
-const assertELVaridity = (el: EL | string, lawtext: string, testGap: boolean): void => {
+export const assertELVaridity = (el: EL | string, lawtext?: string, testGap?: boolean): void => {
     if (typeof el === "string") return;
 
     assert.isNotNull(el.range, `${el.tag} has no range`);
 
-    if (el instanceof __Text && el.range) {
-        assert.strictEqual(
-            el.text(),
-            lawtext.slice(el.range[0], el.range[1]),
-            `${el.tag} has mismatch text: range: ${JSON.stringify(el.range)}`,
-        );
-    }
+    if (lawtext !== undefined) {
+        if (el instanceof __Text && el.range) {
+            assert.strictEqual(
+                el.text(),
+                lawtext.slice(el.range[0], el.range[1]),
+                `${el.tag} has mismatch text: range: ${JSON.stringify(el.range)}`,
+            );
+        }
 
-    for (const [i, child] of el.children.entries()) {
-        assertELVaridity(child, lawtext, testGap);
-        if (typeof child === "string") continue;
-        if (i > 0 && typeof el.children[i - 1] !== "string") {
-            const prevChild = el.children[i - 1] as EL;
-            if (prevChild.range && child.range && !isLawNum(prevChild)) {
-                assert.isTrue(
-                    (prevChild.range[1] <= child.range[0]),
-                    `${child.tag} has invalid range: ${JSON.stringify(child.range)}, prev: ${prevChild.tag} ${JSON.stringify(prevChild.range)}, parent: ${el.tag}`,
-                );
-                if (testGap && !isLawTitle(prevChild)) {
-                    if (prevChild.range[1] <= child.range[0]) {
-                        const gapText = lawtext.slice(prevChild.range[1], child.range[0]);
-                        const gatTextWOControl = gapText
-                            .replace(/:(?:\w|-)+:/g, "")
-                            .replace(/\[\w+="\w+"\]/g, "")
-                            .replace(/^\s+#/mg, "")
-                            .replace(/^\s+(?:\*\s+[*-]|[*-])(?:\s*\|)?/mg, "")
-                            .trim();
-                        assert.isTrue(gatTextWOControl.length === 0, `Invalid gap text between ${prevChild.tag} and ${child.tag}: ${gapText}, without control: ${gatTextWOControl}, gap range: ${JSON.stringify([prevChild.range[1], child.range[0]])}, parent: ${el.tag}`);
+        for (const [i, child] of el.children.entries()) {
+            assertELVaridity(child, lawtext, testGap);
+            if (typeof child === "string") continue;
+            if (i > 0 && typeof el.children[i - 1] !== "string") {
+                const prevChild = el.children[i - 1] as EL;
+                if (prevChild.range && child.range && !isLawNum(prevChild)) {
+                    assert.isTrue(
+                        (prevChild.range[1] <= child.range[0]),
+                        `${child.tag} has invalid range: ${JSON.stringify(child.range)}, prev: ${prevChild.tag} ${JSON.stringify(prevChild.range)}, parent: ${el.tag}`,
+                    );
+                    if (testGap && !isLawTitle(prevChild)) {
+                        if (prevChild.range[1] <= child.range[0]) {
+                            const gapText = lawtext.slice(prevChild.range[1], child.range[0]);
+                            const gatTextWOControl = gapText
+                                .replace(/:(?:\w|-)+:/g, "")
+                                .replace(/\[\w+="\w+"\]/g, "")
+                                .replace(/^\s+#/mg, "")
+                                .replace(/^\s+(?:\*\s+[*-]|[*-])(?:\s*\|)?/mg, "")
+                                .trim();
+                            assert.isTrue(gatTextWOControl.length === 0, `Invalid gap text between ${prevChild.tag} and ${child.tag}: ${gapText}, without control: ${gatTextWOControl}, gap range: ${JSON.stringify([prevChild.range[1], child.range[0]])}, parent: ${el.tag}`);
+                        }
                     }
                 }
             }

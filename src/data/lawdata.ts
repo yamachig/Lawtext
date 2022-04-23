@@ -83,13 +83,13 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
             onMessage("制御タグを追加しています...");
             // console.log("onNavigated: adding control tags...");
             await util.wait(30);
-            const [addControlTagsTime] = await util.withTime(addSentenceChildrenControls)(el);
+            const [addControlTagsTime] = await util.withTime(addSentenceChildrenControls)(el as std.Law);
             timing.addControlTags = addControlTagsTime;
 
             onMessage("法令を解析しています...");
             // console.log("onNavigated: analysing law...");
             await util.wait(30);
-            const [analyzeTime, analysis] = await util.withTime(analyzer.analyze)(el);
+            const [analyzeTime, analysis] = await util.withTime(analyzer.analyze)(el as std.Law);
             timing.analyze = analyzeTime;
 
             const pictURL = new Map<string, {url: string, type: string}>();

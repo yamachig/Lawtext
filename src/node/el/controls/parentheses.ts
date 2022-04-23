@@ -51,7 +51,7 @@ export class __Parentheses extends EL {
         this.children = [
             new __PStart(type, start, range && range.start),
             new __PContent(type, content, range && range.content),
-            new __PEnd(type, end, range && range.start),
+            new __PEnd(type, end, range && range.end),
         ];
         if (range){
             this.range = [range.start[0], range.end[1]];
