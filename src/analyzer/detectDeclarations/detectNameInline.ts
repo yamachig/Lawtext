@@ -14,8 +14,8 @@ export const detectNameInline = (spans: Span[], spanIndex: number) => {
         nameAfterSpan,
     ] = spans.slice(spanIndex, spanIndex + 5);
 
-    const scopeMatch = /(以下)?(?:([^。]+?)において)?(?:単に)?$/.exec(nameBeforeSpan.text);
-    const nameAfterMatch = /^という。/.exec(nameAfterSpan.text);
+    const scopeMatch = /(以下)?(?:([^。]+?)において)?(?:単に)?$/.exec(nameBeforeSpan.el.text());
+    const nameAfterMatch = /^という。/.exec(nameAfterSpan.el.text());
     if (
         scopeMatch &&
         nameStartSpan.el.tag === "__PStart" &&
@@ -24,6 +24,7 @@ export const detectNameInline = (spans: Span[], spanIndex: number) => {
         nameEndSpan.el.attr.type === "square" &&
         nameAfterMatch
     ) {
+        const name = nameSpan.el.text();
         const following = scopeMatch[1] !== undefined;
         const scopeText = scopeMatch[2] || null;
 
@@ -41,13 +42,13 @@ export const detectNameInline = (spans: Span[], spanIndex: number) => {
         const namePos: SpanTextPos = {
             spanIndex: nameSpan.index,
             textIndex: 0,
-            length: nameSpan.text.length,
+            length: name.length,
             range: nameSpan.el.range,
         };
 
         const range = nameSpan.el.range ? [
             nameSpan.el.range[0],
-            nameSpan.el.range[0] + nameSpan.text.length,
+            nameSpan.el.range[0] + name.length,
         ] as [number, number] : null;
 
         const declarationID = `decl-span_${namePos.spanIndex}-text_${namePos.textIndex}-len_${namePos.length}`;
@@ -55,14 +56,14 @@ export const detectNameInline = (spans: Span[], spanIndex: number) => {
         const declaration = new ____Declaration({
             declarationID,
             type: "Keyword",
-            name: nameSpan.text,
+            name,
             value: null,
             scope: scope,
             namePos: namePos,
             range,
         });
 
-        nameSpan.el.replaceSpan(0, nameSpan.text.length, declaration);
+        nameSpan.el.replaceSpan(0, name.length, declaration);
         return declaration;
     }
 

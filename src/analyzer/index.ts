@@ -12,7 +12,7 @@ export interface Analysis {
     declarations: Declarations,
     variableReferences: ____VarRef[],
     spans: Span[],
-    containers: Container[],
+    containers: Map<string, Container>,
     rootContainer: Container,
 }
 

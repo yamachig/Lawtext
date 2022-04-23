@@ -11,10 +11,10 @@ export const detectNameList = (spans: Span[], spanIndex: number): ____Declaratio
     const ret: ____Declaration[] = [];
 
     let columnsMode = true;
-    let paragraphMatch = /([^。\r\n]+?)において、?[次左]の各号に掲げる用語の意義は、(?:それぞれ)?当該各号に定めるところによる。$/.exec(spans[spanIndex].text);
+    let paragraphMatch = /([^。\r\n]+?)において、?[次左]の各号に掲げる用語の意義は、(?:それぞれ)?当該各号に定めるところによる。$/.exec(spans[spanIndex].el.text());
     if (!paragraphMatch) {
         columnsMode = false;
-        paragraphMatch = /^(.+?)(?:及びこの法律に基づく命令)?(?:において次に掲げる用語は、|の規定の解釈に(?:ついて|関して)は、)次の定義に従うものとする。$/.exec(spans[spanIndex].text);
+        paragraphMatch = /^(.+?)(?:及びこの法律に基づく命令)?(?:において次に掲げる用語は、|の規定の解釈に(?:ついて|関して)は、)次の定義に従うものとする。$/.exec(spans[spanIndex].el.text());
         if (!paragraphMatch) return ret;
     }
 
@@ -53,7 +53,7 @@ export const detectNameList = (spans: Span[], spanIndex: number): ____Declaratio
                 nameEndSpan,
                 ...nameAfterSpans
             ] = spans.slice(defStartSpanI, item.spanRange[1]);
-            const nameAfterSpansText = nameAfterSpans.map(s => s.text).join();
+            const nameAfterSpansText = nameAfterSpans.map(s => s.el.text()).join();
             const nameAfterMatch = /^とは、(.+)をいう。(?!）)/.exec(nameAfterSpansText);
             if (
                 nameStartSpan.el.tag === "__PStart" &&
@@ -63,7 +63,7 @@ export const detectNameList = (spans: Span[], spanIndex: number): ____Declaratio
                 nameAfterMatch
             ) {
                 nameSpan = _nameSpan;
-                name = nameSpan.text;
+                name = nameSpan.el.text();
                 value = nameAfterMatch[1];
             }
         }
@@ -103,13 +103,13 @@ export const detectNameList = (spans: Span[], spanIndex: number): ____Declaratio
         const namePos: SpanTextPos = {
             spanIndex: nameSpan.index,
             textIndex: 0,
-            length: nameSpan.text.length,
+            length: name.length,
             range: nameSpan.el.range,
         };
 
         const range = nameSpan.el.range ? [
             nameSpan.el.range[0],
-            nameSpan.el.range[0] + nameSpan.text.length,
+            nameSpan.el.range[0] + name.length,
         ] as [number, number] : null;
 
         const declarationID = `decl-span_${namePos.spanIndex}-text_${namePos.textIndex}-len_${namePos.length}`;
@@ -124,7 +124,7 @@ export const detectNameList = (spans: Span[], spanIndex: number): ____Declaratio
             range,
         });
 
-        nameSpan.el.replaceSpan(0, nameSpan.text.length, declaration);
+        nameSpan.el.replaceSpan(0, name.length, declaration);
 
         ret.push(declaration);
     }

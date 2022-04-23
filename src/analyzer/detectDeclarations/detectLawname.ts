@@ -23,19 +23,21 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
         startSpan,
         lawnumSpan,
     ] = spans.slice(spanIndex, spanIndex + 3);
+    const lawnameSpanText = lawnameSpan.el.text();
+    const lawnumSpanText = lawnumSpan.el.text();
 
     if (!(
         startSpan.el.tag === "__PStart" &&
         startSpan.el.attr.type === "round"
     )) return null;
 
-    const match = /^(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年\S+?第[〇一二三四五六七八九十百千]+号/.exec(lawnumSpan.text);
+    const match = /^(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年\S+?第[〇一二三四五六七八九十百千]+号/.exec(lawnumSpanText);
     if (!match) return null;
 
     const lawNum = match[0];
     const lawnameLength = getLawNameLength(lawNum);
-    const lawnameTextIndex = lawnameSpan.text.length - lawnameLength;
-    const lawName = lawnameSpan.text.slice(lawnameTextIndex);
+    const lawnameTextIndex = lawnameSpanText.length - lawnameLength;
+    const lawName = lawnameSpanText.slice(lawnameTextIndex);
 
     const lawNumRange = lawnumSpan.el.range ? [
         lawnumSpan.el.range[0] + match.index,
@@ -45,7 +47,7 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
     const lawnumEl = new EL("____LawNum", {}, [lawNum], lawNumRange);
 
     if (
-        lawnumSpan.text.length <= lawNum.length &&
+        lawnumSpanText.length <= lawNum.length &&
         lawnumSpan.index + 1 < spans.length
     ) {
 
@@ -95,8 +97,8 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
         }
 
     } else if (
-        lawNum.length < lawnumSpan.text.length &&
-        lawnumSpan.text[lawNum.length] === "。" &&
+        lawNum.length < lawnumSpanText.length &&
+        lawnumSpanText[lawNum.length] === "。" &&
         lawnumSpan.index + 5 < spans.length
     ) {
         const [
@@ -105,9 +107,10 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
             nameEndSpan,
             nameAfterSpan,
         ] = spans.slice(lawnumSpan.index + 1, lawnumSpan.index + 5);
+        const name = nameSpan.el.text();
 
-        const scopeMatch = /^(以下)?(?:([^。]+?)において)?(?:単に)?$/.exec(lawnumSpan.text.slice(lawNum.length + 1));
-        const nameAfterMatch = /^という。/.exec(nameAfterSpan.text);
+        const scopeMatch = /^(以下)?(?:([^。]+?)において)?(?:単に)?$/.exec(lawnumSpanText.slice(lawNum.length + 1));
+        const nameAfterMatch = /^という。/.exec(nameAfterSpan.el.text());
         if (
             scopeMatch &&
             nameStartSpan.el.tag === "__PStart" &&
@@ -133,7 +136,7 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
             const namePos: SpanTextPos = {
                 spanIndex: nameSpan.index,
                 textIndex: 0,
-                length: nameSpan.text.length,
+                length: name.length,
                 range: nameSpan.el.range,
             };
 
@@ -147,7 +150,7 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
             const declaration = new ____Declaration({
                 declarationID,
                 type: "LawName",
-                name: nameSpan.text,
+                name,
                 value: lawNum,
                 scope: scope,
                 namePos: namePos,
@@ -155,7 +158,7 @@ export const detectLawname = (spans: Span[], spanIndex: number) => {
             });
 
             lawnameSpan.el.replaceSpan(lawnameTextIndex, lawnameTextIndex + lawnameLength, new EL("____DeclarationVal", {}, [lawName]));
-            nameSpan.el.replaceSpan(0, nameSpan.text.length, declaration);
+            nameSpan.el.replaceSpan(0, name.length, declaration);
             lawnumSpan.el.replaceSpan(0, lawNum.length, lawnumEl);
             return declaration;
         }

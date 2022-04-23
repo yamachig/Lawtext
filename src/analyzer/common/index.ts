@@ -3,7 +3,7 @@ import * as std from "../../law/std";
 
 export const rootContainerTags = ["Law"] as const;
 
-export const toplevelContainerTags = ["EnactStatement", "MainProvision", "AppdxTable", "AppdxStyle"] as const;
+export const toplevelContainerTags = ["EnactStatement", "MainProvision", ...std.appdxItemTags] as const;
 
 export const articleContainerTags = std.articleGroupTags;
 

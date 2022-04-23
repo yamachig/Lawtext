@@ -5,15 +5,15 @@ import { EL } from "../node/el";
 import { containerTags, getContainerType, ignoreSpanTag } from "./common";
 
 export interface SpansStruct {
-    spans: [EL, Env][];
-    containers: Container[];
+    spans: Span[];
+    containers: Map<string, Container>;
     rootContainer: Container;
 }
 
-export const getSpans = (el: EL): {spans: Span[], containers: Container[], rootContainer: Container} => {
+export const getSpans = (el: EL): SpansStruct => {
 
     const spans: Span[] = [];
-    const containers: Container[] = [];
+    const containers: Map<string, Container> = new Map();
 
     let rootContainer: Container | null = null;
 
@@ -39,7 +39,7 @@ export const getSpans = (el: EL): {spans: Span[], containers: Container[], rootC
 
         if (isMixed) {
             el.attr.span_index = String(spans.length);
-            spans.push(new Span(spans.length, el, env));
+            spans.push(new Span({ index: spans.length, el, env }));
             return;
 
         } else {
@@ -50,9 +50,10 @@ export const getSpans = (el: EL): {spans: Span[], containers: Container[], rootC
             let container: Container | null = null;
             if (isContainer) {
                 const type = getContainerType(el.tag);
-                container = new Container(el, type);
+                const containerID = `container-${containers.size}-tag_${el.tag}-type_${type}`;
+                container = new Container({ containerID, el, type });
                 env.addContainer(container);
-                containers.push(container);
+                containers.set(containerID, container);
                 if (type === ContainerType.ROOT) rootContainer = container;
             }
 

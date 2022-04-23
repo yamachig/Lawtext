@@ -2,91 +2,95 @@ import { throwError } from "../util";
 import { Container, ContainerType } from "../node/container";
 import { Span } from "../node/span";
 import { EL } from "../node/el";
-import { RelPos, Pointer, Ranges } from "../node/container/pointer";
-import { $ranges } from "./range";
 import { initialEnv } from "../parser/cst/env";
 import { getContainerType, ignoreSpanTag } from "./common";
 import { SpanTextRange } from "../node/span/spanTextPos";
+import { RelPos, __PF, __Pointer, __Ranges } from "../node/el/controls/pointer";
+import { $pointerRanges } from "../parser/cst/rules/$pointer";
 
 
-const parseRanges = (text: string): Ranges => { // closed
-    if (text === "") return [];
-    const result = $ranges.match(0, text, initialEnv({}));
+const parseRanges = (text: string): __Ranges | null => { // closed
+    if (text === "") return null;
+    const result = $pointerRanges.match(0, text, initialEnv({}));
     if (result.ok) return result.value.value;
-    else return [];
+    else return null;
 };
 
+type LocatedPointerInfo = [fragment: __PF, container: Container][];
+
 const locatePointer = (
-    origPointer: Pointer,
-    prevPointer: Pointer | null,
+    origPointer: __Pointer,
+    prevLocatedPointerInfo: LocatedPointerInfo | null,
     currentSpan: Span,
-): Pointer => {
+): LocatedPointerInfo => {
 
-    let locatedPointer: Pointer;
+    let locatedFragments: __PF[];
+    let headContainer: Container | null = null;
 
-    const head = origPointer[0];
+    const head = origPointer.fragments()[0];
     const headType = getContainerType(head.tag);
     const currentContainer = currentSpan.env.container;
 
     if ((ignoreSpanTag as readonly string[]).indexOf(head.tag) >= 0) {
-        locatedPointer = origPointer;
+        locatedFragments = origPointer.fragments();
 
-    } else if (head.relPos === RelPos.SAME) {
-        // console.warn("RelPos.SAME is detected. Skipping:", currentSpan, origPointer);
-        const copy = head.copy();
-        copy.locatedContainer = currentContainer
+    } else if (head.attr.relPos === RelPos.SAME) {
+        if (origPointer.fragments().length !== 1) {
+            console.warn("RelPos.SAME with multiple fragments", currentSpan, origPointer);
+        }
+        headContainer = currentContainer
             .thisOrClosest(c => c.type === ContainerType.TOPLEVEL);
-        locatedPointer = [copy];
+        locatedFragments = [head];
 
     } else if (
-        head.relPos === RelPos.HERE ||
-        head.relPos === RelPos.PREV ||
-        head.relPos === RelPos.NEXT
+        head.attr.relPos === RelPos.HERE ||
+        head.attr.relPos === RelPos.PREV ||
+        head.attr.relPos === RelPos.NEXT
     ) {
         const scopeContainer = currentContainer
             .thisOrClosest(c => c.el.tag === head.tag);
 
         if (scopeContainer) {
-            head.locatedContainer =
-                (head.relPos === RelPos.HERE)
+            headContainer =
+                (head.attr.relPos === RelPos.HERE)
                     ? scopeContainer
                     : (headType === ContainerType.ARTICLES)
-                        ? (head.relPos === RelPos.PREV)
+                        ? (head.attr.relPos === RelPos.PREV)
                             ? scopeContainer.prev(c => c.el.tag === head.tag)
-                            : (head.relPos === RelPos.NEXT)
+                            : (head.attr.relPos === RelPos.NEXT)
                                 ? scopeContainer.next(c => c.el.tag === head.tag)
                                 : throwError()
-                        : (head.relPos === RelPos.PREV)
+                        : (head.attr.relPos === RelPos.PREV)
                             ? scopeContainer.prevSub(c => c.el.tag === head.tag)
-                            : (head.relPos === RelPos.NEXT)
+                            : (head.attr.relPos === RelPos.NEXT)
                                 ? scopeContainer.nextSub(c => c.el.tag === head.tag)
                                 : throwError();
         }
 
-        locatedPointer = origPointer;
+        locatedFragments = origPointer.fragments();
 
     } else {
-        const foundIndex = prevPointer
-            ? prevPointer.findIndex(fragment => fragment.tag === head.tag)
+        const foundIndex = prevLocatedPointerInfo
+            ? prevLocatedPointerInfo.findIndex(([fragment]) => fragment.tag === head.tag)
             : -1;
         if (
-            prevPointer &&
+            prevLocatedPointerInfo &&
             1 <= foundIndex
         ) {
-            locatedPointer = [
-                ...prevPointer.slice(0, foundIndex),
-                ...origPointer,
+            locatedFragments = [
+                ...prevLocatedPointerInfo.slice(0, foundIndex).map(([fragment]) => fragment),
+                ...origPointer.fragments(),
             ];
 
         } else if (headType === ContainerType.TOPLEVEL) {
-            head.locatedContainer = currentContainer.findAncestorChildrenSub(c => {
+            headContainer = currentContainer.findAncestorChildrenSub(c => {
                 if (c.el.tag !== head.tag) return false;
                 const titleEl = c.el.children.find(el =>
                     el instanceof EL && el.tag === `${c.el.tag}Title`) as EL;
-                return (new RegExp(`^${head.name}(?:[(（]|\\s|$)`)).exec(titleEl.text()) !== null;
+                return (new RegExp(`^${head.attr.name}(?:[(（]|\\s|$)`)).exec(titleEl.text()) !== null;
             });
 
-            locatedPointer = origPointer;
+            locatedFragments = origPointer.fragments();
 
         } else {
             const func = (c: Container) =>
@@ -94,59 +98,71 @@ const locatePointer = (
                     c.el.tag === head.tag ||
                     head.tag === "SUBITEM" && /^Subitem\d+$/.exec(c.el.tag) !== null
                 ) &&
-                (c.el.attr.Num || null) === head.num;
-            head.locatedContainer =
+                (c.el.attr.Num || null) === head.attr.num;
+            headContainer =
                 headType === ContainerType.ARTICLES
                     ? currentContainer.findAncestorChildren(func)
                     : currentContainer.findAncestorChildrenSub(func);
 
-            locatedPointer = origPointer;
+            locatedFragments = origPointer.fragments();
         }
     }
 
-    if (locatedPointer[0].locatedContainer) {
-        let parentContainer = locatedPointer[0].locatedContainer;
-        for (const fragment of locatedPointer.slice(1)) {
-            if (!parentContainer) break;
+    const ret: LocatedPointerInfo = [];
+
+    if (headContainer) {
+        ret.push([locatedFragments[0], headContainer]);
+
+        let parentContainer = headContainer;
+        for (const fragment of locatedFragments.slice(1)) {
+            // if (!parentContainer) break;
             // let fragment_rank = container_tags.indexOf(fragment.tag);
             // if (fragment_rank < 0) fragment_rank = Number.POSITIVE_INFINITY;
-            fragment.locatedContainer =
+            const container =
                 parentContainer.find(
                     c =>
                         (
                             (
-                                c.el.tag === fragment.tag ||
-                                fragment.tag === "SUBITEM" &&
-                                /^Subitem\d+$/.exec(c.el.tag) !== null
-                            ) &&
-                            (c.el.attr.Num || null) === fragment.num
-                        ) ||
-                        fragment.tag === "PROVISO" &&
-                        c.el.tag === "Sentence" &&
-                        c.el.attr.Function === "proviso",
+                                (c.el.tag === fragment.tag)
+                                || (
+                                    (fragment.tag === "SUBITEM")
+                                    && (/^Subitem\d+$/.exec(c.el.tag) !== null)
+                                )
+                            )
+                            && ((c.el.attr.Num ?? null) === fragment.attr.num)
+                        )
+                        || (
+                            (fragment.tag === "PROVISO")
+                            && (c.el.tag === "Sentence")
+                            && (c.el.attr.Function === "proviso")
+                        ),
                     // c => fragment_rank < container_tags.indexOf(c.el.tag),
                 );
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            parentContainer = fragment.locatedContainer!;
+            if (container) {
+                ret.push([fragment, container]);
+                parentContainer = container;
+            } else {
+                break;
+            }
         }
     }
 
-    return locatedPointer;
+    return ret;
 };
 
-const locateRanges = (origRanges: Ranges, currentSpan: Span) => {
-    const ranges: Ranges = [];
+const locateRanges = (origRanges: __Ranges, currentSpan: Span) => {
+    const ranges: [LocatedPointerInfo, LocatedPointerInfo][] = [];
 
-    let prevPointer: Pointer | null = null;
-    for (const [origFrom, origTo] of origRanges) {
-        const from = locatePointer(origFrom, prevPointer, currentSpan);
-        prevPointer = from;
-        let to: Pointer | null;
+    let prevLocatedPointerInfo: LocatedPointerInfo | null = null;
+    for (const [origFrom, origTo] of origRanges.ranges().map(r => r.pointers())) {
+        const from = locatePointer(origFrom, prevLocatedPointerInfo, currentSpan);
+        prevLocatedPointerInfo = from;
+        let to: LocatedPointerInfo | null;
         if (origFrom === origTo) {
             to = from;
         } else {
-            to = locatePointer(origTo, prevPointer, currentSpan);
-            prevPointer = to;
+            to = locatePointer(origTo, prevLocatedPointerInfo, currentSpan);
+            prevLocatedPointerInfo = to;
         }
         ranges.push([from, to]);
     }
@@ -156,10 +172,12 @@ const locateRanges = (origRanges: Ranges, currentSpan: Span) => {
 
 export const getScope = (currentSpan: Span, scopeText: string, following: boolean, followingIndex: number): SpanTextRange[] => {
     const ret: SpanTextRange[] = [];
-    const ranges = locateRanges(parseRanges(scopeText), currentSpan);
+    const origRanges = parseRanges(scopeText);
+    if (!origRanges) return ret;
+    const ranges = locateRanges(origRanges, currentSpan);
     for (const [from, to] of ranges) {
-        const fromc = from[from.length - 1].locatedContainer;
-        const toc = to[to.length - 1].locatedContainer;
+        const [, fromc] = from[from.length - 1];
+        const [, toc] = to[to.length - 1];
         if (fromc && toc) {
             if (following) {
                 ret.push({

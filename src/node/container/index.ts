@@ -15,25 +15,37 @@ export enum ContainerType {
 interface IterableIterator<T> extends Iterator<T, void, undefined> {
     [Symbol.iterator](): IterableIterator<T>;
 }
+
+export interface ContainerOptions {
+    containerID: string,
+    el: EL,
+    type: ContainerType,
+    spanRange?: [number, number],
+    parent?: Container | null,
+    children?: Container[],
+    subParent?: Container | null,
+    subChildren?: Container[],
+}
 export class Container {
+    public containerID: string;
     public el: EL;
     public type: ContainerType;
     public spanRange: [number, number]; // half open
     public parent: Container | null;
     public children: Container[];
+    public subParent: Container | null; // skips ARTICLES
+    public subChildren: Container[]; // skips ARTICLES
 
-    public subParent: Container | null;
-    public subChildren: Container[];
-
-    constructor(
-        el: EL,
-        type: ContainerType,
-        spanRange: [number, number] = [NaN, NaN],
-        parent: Container | null = null,
-        children: Container[] = [],
-        subParent: Container | null = null,
-        subChildren: Container[] = [],
-    ) {
+    constructor(options: ContainerOptions) {
+        const { containerID, el, type, spanRange, parent, children, subParent, subChildren } = {
+            spanRange: [NaN, NaN] as [number, number],
+            parent: null as Container | null,
+            children: [] as Container[],
+            subParent: null as Container | null,
+            subChildren: [] as Container[],
+            ...options,
+        };
+        this.containerID = containerID;
         this.el = el;
         this.type = type;
         this.spanRange = spanRange;
