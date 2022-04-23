@@ -46,6 +46,7 @@ export class EL implements JsonEL {
             this.range && [...this.range],
             copyID ? this.id : undefined,
         );
+        Object.setPrototypeOf(el, Object.getPrototypeOf(this));
         return el;
     }
 

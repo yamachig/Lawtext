@@ -10,6 +10,9 @@ export interface VarRefOptions {
 }
 
 export class ____VarRef extends EL {
+    public override get isControl(): true {
+        return true;
+    }
     private refPosCache: [str: string, value: SpanTextPos] | null = null;
     public refPos(): SpanTextPos {
         if (this.refPosCache !== null && this.refPosCache[0] === this.attr.refPos) {

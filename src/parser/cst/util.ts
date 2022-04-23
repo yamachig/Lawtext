@@ -4,6 +4,7 @@ import { SentenceChildEL } from "../../node/cst/inline";
 import { EL } from "../../node/el";
 import { Env } from "./env";
 import { ErrorMessage } from "./error";
+import { __Ranges } from "../../node/el/controls/pointer";
 
 export type ValueRule<TValue> = Rule<string, TValue, Env, Empty>
 export type WithErrorRule<TValue> = Rule<string, { value: TValue, errors: ErrorMessage[] }, Env, Empty>
@@ -23,6 +24,20 @@ export const assertAllELsHaveRange = (elOrELs: EL | EL[]): void => {
             throw new Error(`${el.tag} has no range`);
         }
     }
+};
+
+export const cancelPointerRanges = (inline: SentenceChildEL[]): SentenceChildEL[] => {
+    const result: SentenceChildEL[] = [];
+    for (const el of inline) {
+        if (el instanceof __Ranges) {
+            result.push(new __Text(el.text(), el.range));
+        } else {
+            const newEL = el.copy(false) as SentenceChildEL;
+            newEL.children = el.children.map(c => typeof c === "string" ? [c] : cancelPointerRanges([c as SentenceChildEL])).flat();
+            result.push(newEL);
+        }
+    }
+    return result;
 };
 
 export const mergeAdjacentTexts = <T extends SentenceChildEL>(inline: T[]): (T | __Text)[] => {

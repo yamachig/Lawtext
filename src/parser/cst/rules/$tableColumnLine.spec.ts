@@ -59,25 +59,59 @@ describe("Test $tableColumnLine", () => {
                         attr: {},
                         children: [
                             {
-                                tag: "__Text",
+                                tag: "__Ranges",
                                 attr: {},
-                                children: ["前条第一項"],
-                            },
-                        ],
-                    },
-                ],
-            },
+                                children: [
+                                    {
+                                        tag: "__Range",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "__Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "__PF",
+                                                        attr: {
+                                                            relPos: "PREV",
+                                                            targetType: "Article",
+                                                            name: "前条"
+                                                        },
+                                                        children: ["前条"]
+                                                    },
+                                                    {
+                                                        tag: "__PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Paragraph",
+                                                            name: "第一項",
+                                                            num: "1"
+                                                        },
+                                                        children: ["第一項"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
         ];
         const result = $tableColumnLine.abstract().match(offset, target, env);
         assert.deepInclude(result, expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
+            const resultColumns = result.value.value.sentencesArray.map(c => ({
+                ...c,
+                sentences: c.sentences.map(s => s.json(true))
+            }));
+            // console.log(JSON.stringify(resultColumns, null, 2));
             assert.deepStrictEqual(
-                result.value.value.sentencesArray.map(c => ({
-                    ...c,
-                    sentences: c.sentences.map(s => s.json(true))
-                })),
+                resultColumns,
                 expectedColumns,
             );
         }

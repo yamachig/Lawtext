@@ -9,6 +9,8 @@ import { $_EOL, $__ } from "./lexical";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $xml from "./$xml";
+import { $pointerRanges } from "./$pointer";
+import { __Ranges } from "../../../node/el/controls/pointer";
 
 
 export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): string => {
@@ -75,6 +77,7 @@ export const $INLINE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
         .and(r => r
             .oneOrMore(r => r
                 .choice(c => c
+                    .or(() => $pointerRanges)
                     .or(r => r
                         .sequence(c => c
                             .and(r => r
@@ -114,6 +117,7 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                         .sequence(c => c
                             .and(r => r
                                 .choice(c => c
+                                    .or(() => $pointerRanges)
                                     .or(r => r
                                         .sequence(c => c
                                             .and(r => r
@@ -179,35 +183,39 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
     )
 ;
 
-export const $OUTSIDE_PARENTHESES_INLINE: WithErrorRule<__Text> = factory
+export const $OUTSIDE_PARENTHESES_INLINE: WithErrorRule<__Text | __Ranges> = factory
     .withName("OUTSIDE_PARENTHESES_INLINE")
-    .sequence(c => c
-        .and(r => r
-            .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
-        , "plain")
-        .action(({ plain, range }) => {
-            return {
-                value: new __Text(plain, range()),
-                errors: [],
-            };
-        })
+    .choice(c => c
+        .or(() => $pointerRanges)
+        .orSequence(s => s
+            .and(r => r
+                .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
+            , "plain")
+            .action(({ plain, range }) => {
+                return {
+                    value: new __Text(plain, range()),
+                    errors: [],
+                };
+            })
+        )
     )
 ;
 
-export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<__Text> = factory
+export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<__Text | __Ranges> = factory
     .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES")
-    .action(r => r
-        .sequence(c => c
+    .choice(c => c
+        .or(() => $pointerRanges)
+        .orSequence(s => s
             .and(r => r
                 .regExp(/^((?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」])+/)
-            , "plain"),
+            , "plain")
+            .action(({ plain, range }) => {
+                return {
+                    value: new __Text(plain, range()),
+                    errors: [],
+                };
+            })
         )
-    , (({ plain, range }) => {
-        return {
-            value: new __Text(plain, range()),
-            errors: [],
-        };
-    }),
     )
 ;
 

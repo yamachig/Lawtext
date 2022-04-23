@@ -42,6 +42,9 @@ export interface PFOptions {
 }
 
 export class __PF extends EL {
+    public override get isControl(): true {
+        return true;
+    }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -79,6 +82,9 @@ export interface PointerOptions {
 }
 
 export class __Pointer extends EL {
+    public override get isControl(): true {
+        return true;
+    }
     constructor(options: PointerOptions) {
         super("__Pointer", {}, options.children as (EL | string)[], options.range);
     }
@@ -96,6 +102,9 @@ export interface RangeOptions {
 }
 
 export class __Range extends EL {
+    public override get isControl(): true {
+        return true;
+    }
     constructor(options: RangeOptions) {
         super(
             "__Range",
@@ -120,6 +129,9 @@ export interface RangesOptions {
 }
 
 export class __Ranges extends EL {
+    public override get isControl(): true {
+        return true;
+    }
     constructor(options: RangesOptions) {
         super("__Ranges", {}, options.children, options.range);
     }

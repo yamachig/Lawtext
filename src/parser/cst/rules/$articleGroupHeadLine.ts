@@ -4,7 +4,7 @@ import $articleGroupNum from "./$articleGroupNum";
 import $indents from "./$indents";
 import { ArticleGroupHeadLine } from "../../../node/cst/line";
 import { $__, $_EOL, $_ } from "./lexical";
-import { mergeAdjacentTexts, WithErrorRule } from "../util";
+import { cancelPointerRanges, mergeAdjacentTexts, WithErrorRule } from "../util";
 import { articleGroupType } from "../../../law/num";
 import { Control } from "../../../node/cst/inline";
 import makeRangesRule from "./makeRangesRule";
@@ -74,7 +74,7 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
                 ...articleGroupNum.ranges.errors,
                 ...(tail?.inline.errors ?? []),
             ];
-            const sentenceChildren = mergeAdjacentTexts([
+            const sentenceChildren = mergeAdjacentTexts(cancelPointerRanges([
                 new __Text(articleGroupNum.text, articleGroupNum.range),
                 ...(
                     tail
@@ -84,7 +84,7 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
                         ]
                         : []
                 ),
-            ]);
+            ]));
             return {
                 value: new ArticleGroupHeadLine({
                     range: range(),

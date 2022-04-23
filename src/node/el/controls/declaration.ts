@@ -21,6 +21,9 @@ export class ____Declaration extends EL {
         scope: string,
         namePos: string,
     };
+    public override get isControl(): true {
+        return true;
+    }
     private scopeCache: [str: string, value: SpanTextRange[]] | null = null;
     public scope(): SpanTextRange[] {
         if (this.scopeCache !== null && this.scopeCache[0] === this.attr.scope) {
