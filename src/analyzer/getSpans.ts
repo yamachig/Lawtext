@@ -1,8 +1,8 @@
 import { Container, ContainerType } from "../node/container";
 import { Env } from "../node/container/env";
-import { Span } from "../node/span";
+import { isSpanEL, Span } from "../node/span";
 import { EL } from "../node/el";
-import { containerTags, getContainerType, ignoreSpanTag, spanTag } from "./common";
+import { containerTags, getContainerType, ignoreSpanTag } from "./common";
 
 export interface SpansStruct {
     spans: Span[];
@@ -37,7 +37,7 @@ export const getSpans = (el: EL): SpansStruct => {
             // console.warn(`unexpected mixed content! ${JSON.stringify(el)}`);
         }
 
-        if ((spanTag as readonly string[]).includes(el.tag)) {
+        if (isSpanEL(el)) {
             spans.push(new Span({ index: spans.length, el, env }));
             return;
             // } if (isMixed) {

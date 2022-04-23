@@ -3,7 +3,7 @@ import $sentenceChildren from "./$sentenceChildren";
 import $indents from "./$indents";
 import { AppdxItemHeadLine } from "../../../node/cst/line";
 import { $_EOL } from "./lexical";
-import { cancelPointerRanges, mergeAdjacentTexts, WithErrorRule } from "../util";
+import { mergeAdjacentTexts, WithErrorRule } from "../util";
 import { __Parentheses } from "../../../node/el/controls";
 import { $appdxControl, $appdxFigControl, $appdxFormatControl, $appdxNoteControl, $appdxStyleControl, $appdxTableControl, $autoTagControl } from "./$tagControl";
 import { ChoiceRule } from "generic-parser/lib/rules/choice";
@@ -80,7 +80,7 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
         , "tail")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, tagControl: { tag, control }, tail, lineEndText }) => {
-            const inline = mergeAdjacentTexts(cancelPointerRanges(tail?.value ?? []));
+            const inline = mergeAdjacentTexts(tail?.value ?? []);
             const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
             const [title, relatedArticleNum] = (
                 lastItem instanceof __Parentheses

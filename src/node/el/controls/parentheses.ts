@@ -1,4 +1,5 @@
 import { EL } from "..";
+import { SentenceChildEL } from "../../cst/inline";
 
 export const parenthesesTypeStrings = [
     "round",
@@ -13,7 +14,7 @@ export interface ParenthesesOptions {
     depth: number,
     start: string,
     end: string,
-    content: Array<string | EL>,
+    content: SentenceChildEL[],
     range: {
         start: [start: number, end: number],
         content: [start: number, end: number],
@@ -22,23 +23,23 @@ export interface ParenthesesOptions {
 }
 
 export class __Parentheses extends EL {
-
-    public get content(): EL {
-        return this.children.find(c => typeof c !== "string" && c.tag === "__PContent") as EL;
-    }
-    public get start(): EL {
-        return this.children.find(c => typeof c !== "string" && c.tag === "__PStart") as EL;
-    }
-    public get end(): EL {
-        return this.children.find(c => typeof c !== "string" && c.tag === "__PEnd") as EL;
-    }
-    public override get isControl(): true {
-        return true;
-    }
+    public override tag = "__Parentheses" as const;
+    public override get isControl(): true { return true; }
     public override attr: {
         type: ParenthesesType,
         depth: string,
     };
+    public override children: SentenceChildEL[];
+
+    public get content(): __PContent {
+        return this.children.find(c => c instanceof __PContent) as __PContent;
+    }
+    public get start(): __PStart {
+        return this.children.find(c => c instanceof __PStart) as __PStart;
+    }
+    public get end(): __PEnd {
+        return this.children.find(c => c instanceof __PEnd) as __PEnd;
+    }
 
     constructor(options: ParenthesesOptions) {
         super("__Parentheses");
@@ -47,11 +48,73 @@ export class __Parentheses extends EL {
             type,
             depth: `${depth}`,
         };
+        this.children = [
+            new __PStart(type, start, range && range.start),
+            new __PContent(type, content, range && range.content),
+            new __PEnd(type, end, range && range.start),
+        ];
         if (range){
             this.range = [range.start[0], range.end[1]];
         }
-        this.children.push(new EL("__PStart", { type }, [start], range && range.start));
-        this.children.push(new EL("__PContent", { type }, content, range && range.content));
-        this.children.push(new EL("__PEnd", { type }, [end], range && range.end));
+    }
+}
+
+
+export class __PContent extends EL {
+    public override tag = "__PContent" as const;
+    public override get isControl(): true { return true; }
+    public override attr: {
+        type: ParenthesesType,
+    };
+    public override children: SentenceChildEL[];
+
+    constructor(
+        type: ParenthesesType,
+        content: SentenceChildEL[],
+        range: [start: number, end: number] | null = null,
+    ) {
+        super("__PContent", {}, [], range);
+        this.attr = { type };
+        this.children = content;
+    }
+}
+
+
+export class __PStart extends EL {
+    public override tag = "__PStart" as const;
+    public override get isControl(): true { return true; }
+    public override attr: {
+        type: ParenthesesType,
+    };
+    public override children: [string];
+
+    constructor(
+        type: ParenthesesType,
+        text: string,
+        range: [start: number, end: number] | null = null,
+    ) {
+        super("__PStart", {}, [], range);
+        this.attr = { type };
+        this.children = [text];
+    }
+}
+
+
+export class __PEnd extends EL {
+    public override tag = "__PEnd" as const;
+    public override get isControl(): true { return true; }
+    public override attr: {
+        type: ParenthesesType,
+    };
+    public override children: [string];
+
+    constructor(
+        type: ParenthesesType,
+        text: string,
+        range: [start: number, end: number] | null = null,
+    ) {
+        super("__PEnd", {}, [], range);
+        this.attr = { type };
+        this.children = [text];
     }
 }

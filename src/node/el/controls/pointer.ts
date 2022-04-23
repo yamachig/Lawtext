@@ -1,5 +1,6 @@
 import { EL } from "..";
 import * as std from "../../../law/std";
+import { SentenceChildEL } from "../../cst/inline";
 
 export enum RelPos {
     PREV = "PREV",
@@ -41,14 +42,11 @@ export interface PFOptions {
     // locatedContainerID?: string | null,
 }
 
-export class __PF extends EL {
-    public override get isControl(): true {
-        return true;
-    }
-
+export class ____PF extends EL {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    public override tag: unknown = "__PF" as unknown;
+    public override tag: unknown = "____PF" as unknown;
+    public override get isControl(): true { return true; }
     public override attr: {
         relPos: RelPos,
         targetType: PointerTargetType,
@@ -56,8 +54,10 @@ export class __PF extends EL {
         num?: string,
         // locatedContainerID?: string,
     };
+    public override children: [string];
+
     constructor(options: PFOptions) {
-        super("__PF", {}, [], options.range);
+        super("____PF", {}, [], options.range);
 
         const { relPos, targetType, name, num } = {
             // locatedContainerID: null,
@@ -72,70 +72,76 @@ export class __PF extends EL {
         if (num) this.attr.num = num;
         // if (locatedContainerID) this.attr.locatedContainerID = locatedContainerID;
 
-        this.children.push(name);
+        this.children = [name];
     }
 }
 
 export interface PointerOptions {
-    children: (__PF | EL | string)[],
+    children: (____PF | SentenceChildEL)[],
     range: [start: number, end: number] | null,
 }
 
-export class __Pointer extends EL {
-    public override get isControl(): true {
-        return true;
-    }
+export class ____Pointer extends EL {
+    public override tag = "____Pointer" as const;
+    public override get isControl(): true { return true; }
+    public override children: SentenceChildEL[];
+
     constructor(options: PointerOptions) {
-        super("__Pointer", {}, options.children as (EL | string)[], options.range);
+        super("____Pointer", {}, [], options.range);
+        this.children = options.children as SentenceChildEL[];
     }
-    public fragments(): __PF[] {
-        return this.children.filter(c => typeof c !== "string" && c.tag === "__PF") as __PF[];
+    public fragments(): ____PF[] {
+        return this.children.filter(c => c instanceof ____PF) as ____PF[];
     }
 }
 
-export interface RangeOptions {
-    from: __Pointer,
-    midChildren: (EL | string)[],
-    to: __Pointer | null, // closed
-    trailingChildren: (EL | string)[],
+export interface PointerRangeOptions {
+    from: ____Pointer,
+    midChildren: SentenceChildEL[],
+    to: ____Pointer | null, // closed
+    trailingChildren: SentenceChildEL[],
     range: [start: number, end: number] | null,
 }
 
-export class __Range extends EL {
-    public override get isControl(): true {
-        return true;
-    }
-    constructor(options: RangeOptions) {
+export class ____PointerRange extends EL {
+    public override tag = "____PointerRange" as const;
+    public override get isControl(): true { return true; }
+    public override children: (____Pointer | SentenceChildEL)[];
+
+    constructor(options: PointerRangeOptions) {
         super(
-            "__Range",
+            "____PointerRange",
             {},
-            [
-                options.from,
-                ...options.midChildren,
-                ...(options.to ? [options.to] : []),
-                ...options.trailingChildren,
-            ],
+            [],
             options.range,
         );
+        this.children = [
+            options.from,
+            ...options.midChildren,
+            ...(options.to ? [options.to] : []),
+            ...options.trailingChildren,
+        ];
     }
-    public pointers(): [__Pointer] | [__Pointer, __Pointer] {
-        return this.children.filter(c => typeof c !== "string" && c.tag === "__Pointer") as [__Pointer] | [__Pointer, __Pointer];
+    public pointers(): [____Pointer] | [____Pointer, ____Pointer] {
+        return this.children.filter(c => c instanceof ____Pointer) as [____Pointer] | [____Pointer, ____Pointer];
     }
 }
 
-export interface RangesOptions {
-    children: (__Range | EL | string)[],
+export interface PointerRangesOptions {
+    children: (____PointerRange | SentenceChildEL)[],
     range: [start: number, end: number] | null,
 }
 
-export class __Ranges extends EL {
-    public override get isControl(): true {
-        return true;
+export class ____PointerRanges extends EL {
+    public override tag = "____PointerRanges" as const;
+    public override get isControl(): true { return true; }
+    public override children: (____PointerRange | SentenceChildEL)[];
+
+    constructor(options: PointerRangesOptions) {
+        super("____PointerRanges", {}, [], options.range);
+        this.children = options.children;
     }
-    constructor(options: RangesOptions) {
-        super("__Ranges", {}, options.children, options.range);
-    }
-    public ranges(): __Range[] {
-        return this.children.filter(c => typeof c !== "string" && c.tag === "__Range") as __Range[];
+    public ranges(): ____PointerRange[] {
+        return this.children.filter(c => c instanceof ____PointerRange) as ____PointerRange[];
     }
 }

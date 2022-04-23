@@ -1,15 +1,15 @@
 /* eslint-disable no-irregular-whitespace */
 import { articleGroupType, parseNamedNum } from "../../../law/num";
-import { EL } from "../../../node/el";
+import { SentenceChildEL } from "../../../node/cst/inline";
 import { __Text } from "../../../node/el/controls";
-import { RelPos, __PF, __Pointer, __Range, __Ranges } from "../../../node/el/controls/pointer";
-import { ErrorMessage } from "../error";
-import { factory } from "../factory";
-import { $irohaChar, $kanjiDigits, $romanDigits } from "./lexical";
-import makeRangesRule, { RangeMaker, RangesMaker } from "./makeRangesRule";
+import { RelPos, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls/pointer";
+import { ErrorMessage } from "../../../parser/cst/error";
+import { factory } from "../../../parser/cst/factory";
+import { $irohaChar, $kanjiDigits, $romanDigits } from "../../../parser/cst/rules/lexical";
+import makeRangesRule, { RangeMaker, RangesMaker } from "../../../parser/cst/rules/makeRangesRule";
 
-const makeRange: RangeMaker<__Pointer, __Range> = (from, midText, to, trailingText, range) => {
-    return new __Range({
+const makeRange: RangeMaker<____Pointer, ____PointerRange> = (from, midText, to, trailingText, range) => {
+    return new ____PointerRange({
         from,
         midChildren: midText ? [new __Text(midText.text, midText.range)] : [],
         to,
@@ -18,8 +18,8 @@ const makeRange: RangeMaker<__Pointer, __Range> = (from, midText, to, trailingTe
     });
 };
 
-const makeRanges: RangesMaker<__Range, __Ranges> = (first, midText, rest, range) => {
-    const children: (__Range | EL | string)[] = [];
+const makeRanges: RangesMaker<____PointerRange, ____PointerRanges> = (first, midText, rest, range) => {
+    const children: (____PointerRange | SentenceChildEL)[] = [];
     const errors: ErrorMessage[] = [];
 
     children.push(first.value);
@@ -33,7 +33,7 @@ const makeRanges: RangesMaker<__Range, __Ranges> = (first, midText, rest, range)
     }
 
     return {
-        value: new __Ranges({
+        value: new ____PointerRanges({
             children,
             range,
         }),
@@ -54,11 +54,11 @@ export const $pointer = factory
     .sequence(s => s
         .and(r => r.oneOrMore(() => $pointerFragment), "fragments")
         .action(({ fragments, range }) => {
-            return new __Pointer({
+            return new ____Pointer({
                 children: fragments,
                 range: range(),
             });
-        })
+        }),
     )
     ;
 
@@ -81,7 +81,7 @@ export const $pointerFragment = factory
                     ),
                 )
             , (({ text, type_char, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.NAMED,
                     targetType: articleGroupType[type_char],
                     name: text(),
@@ -98,7 +98,7 @@ export const $pointerFragment = factory
                     .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
                 )
             , (({ text, type_char, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.NEXT,
                     targetType: (type_char === "表")
                         ? "TableStruct"
@@ -117,7 +117,7 @@ export const $pointerFragment = factory
                     .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
                 )
             , (({ text, type_char, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.PREV,
                     targetType: (type_char === "表")
                         ? "TableStruct"
@@ -141,7 +141,7 @@ export const $pointerFragment = factory
                     .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
                 )
             , (({ text, type_char, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.HERE,
                     targetType: (type_char === "表")
                         ? "TableStruct"
@@ -160,7 +160,7 @@ export const $pointerFragment = factory
                     .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
                 )
             , (({ text, type_char, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.SAME,
                     targetType: (type_char === "表")
                         ? "TableStruct"
@@ -179,7 +179,7 @@ export const $pointerFragment = factory
                     .and(r => r.seqEqual("則" as const), "type_char"),
                 )
             , (({ text, type_char, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.NAMED,
                     targetType: articleGroupType[type_char],
                     name: text(),
@@ -203,7 +203,7 @@ export const $pointerFragment = factory
                     ),
                 )
             , (({ text, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.NAMED,
                     targetType: "AppdxTable",
                     name: text(),
@@ -217,7 +217,7 @@ export const $pointerFragment = factory
             .action(r => r
                 .seqEqual("前段")
             , (({ text, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.NAMED,
                     targetType: "FIRSTPART",
                     name: text(),
@@ -231,7 +231,7 @@ export const $pointerFragment = factory
             .action(r => r
                 .seqEqual("後段")
             , (({ text, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.NAMED,
                     targetType: "LATTERPART",
                     name: text(),
@@ -245,7 +245,7 @@ export const $pointerFragment = factory
             .action(r => r
                 .seqEqual("ただし書")
             , (({ text, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.NAMED,
                     targetType: "PROVISO",
                     name: text(),
@@ -262,7 +262,7 @@ export const $pointerFragment = factory
                     .or(() => $romanDigits),
                 )
             , (({ text, range }) => {
-                return new __PF({
+                return new ____PF({
                     relPos: RelPos.NAMED,
                     targetType: "SUBITEM",
                     name: text(),
@@ -274,3 +274,5 @@ export const $pointerFragment = factory
         ),
     )
     ;
+
+export default $pointerRanges;

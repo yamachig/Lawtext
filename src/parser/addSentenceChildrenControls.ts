@@ -3,7 +3,7 @@ import { initialEnv } from "./cst/env";
 import $sentenceChildren from "./cst/rules/$sentenceChildren";
 
 
-export const addControls = (elToBeModified: EL): EL => {
+export const addSentenceChildrenControls = (elToBeModified: EL): EL => {
     if (["LawNum", "QuoteStruct"].indexOf(elToBeModified.tag) < 0) {
         const isMixed = elToBeModified.children.some(child => typeof child === "string" || child instanceof String);
         if (isMixed) {
@@ -15,10 +15,10 @@ export const addControls = (elToBeModified: EL): EL => {
                 throw new Error(message);
             }
         } else {
-            elToBeModified.children = (elToBeModified.children as EL[]).map(addControls);
+            elToBeModified.children = (elToBeModified.children as EL[]).map(addSentenceChildrenControls);
         }
     }
     return elToBeModified;
 };
 
-export default addControls;
+export default addSentenceChildrenControls;

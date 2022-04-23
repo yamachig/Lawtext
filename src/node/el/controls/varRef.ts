@@ -10,9 +10,14 @@ export interface VarRefOptions {
 }
 
 export class ____VarRef extends EL {
-    public override get isControl(): true {
-        return true;
-    }
+    public override tag = "____VarRef" as const;
+    public override get isControl(): true { return true; }
+    public override attr: {
+        refName: string,
+        declarationID: string,
+        refPos: string,
+    };
+
     private refPosCache: [str: string, value: SpanTextPos] | null = null;
     public refPos(): SpanTextPos {
         if (this.refPosCache !== null && this.refPosCache[0] === this.attr.refPos) {
@@ -23,11 +28,7 @@ export class ____VarRef extends EL {
             return refPos;
         }
     }
-    public override attr: {
-        refName: string,
-        declarationID: string,
-        refPos: string,
-    };
+
     constructor(options: VarRefOptions) {
         super("____VarRef", {}, [], options.range);
 

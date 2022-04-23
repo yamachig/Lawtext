@@ -13,6 +13,8 @@ export interface DeclarationOptions {
 }
 
 export class ____Declaration extends EL {
+    public override tag = "____Declaration" as const;
+    public override get isControl(): true { return true; }
     public override attr: {
         declarationID: string,
         type: string,
@@ -21,9 +23,8 @@ export class ____Declaration extends EL {
         scope: string,
         namePos: string,
     };
-    public override get isControl(): true {
-        return true;
-    }
+    public override children: [string];
+
     private scopeCache: [str: string, value: SpanTextRange[]] | null = null;
     public scope(): SpanTextRange[] {
         if (this.scopeCache !== null && this.scopeCache[0] === this.attr.scope) {
@@ -58,7 +59,7 @@ export class ____Declaration extends EL {
         };
         if (value !== null) this.attr.value = value;
 
-        this.children.push(name);
+        this.children = [name];
     }
 
     public get nameRange(): [number, number] | null {

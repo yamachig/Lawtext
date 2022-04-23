@@ -9,8 +9,6 @@ import { $_EOL, $__ } from "./lexical";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $xml from "./$xml";
-import { $pointerRanges } from "./$pointer";
-import { __Ranges } from "../../../node/el/controls/pointer";
 
 
 export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): string => {
@@ -77,7 +75,7 @@ export const $INLINE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
         .and(r => r
             .oneOrMore(r => r
                 .choice(c => c
-                    .or(() => $pointerRanges)
+                    // .or(() => $pointerRanges)
                     .or(r => r
                         .sequence(c => c
                             .and(r => r
@@ -117,7 +115,7 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                         .sequence(c => c
                             .and(r => r
                                 .choice(c => c
-                                    .or(() => $pointerRanges)
+                                    // .or(() => $pointerRanges)
                                     .or(r => r
                                         .sequence(c => c
                                             .and(r => r
@@ -183,10 +181,10 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
     )
 ;
 
-export const $OUTSIDE_PARENTHESES_INLINE: WithErrorRule<__Text | __Ranges> = factory
+export const $OUTSIDE_PARENTHESES_INLINE: WithErrorRule<__Text> = factory
     .withName("OUTSIDE_PARENTHESES_INLINE")
     .choice(c => c
-        .or(() => $pointerRanges)
+        // .or(() => $pointerRanges)
         .orSequence(s => s
             .and(r => r
                 .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
@@ -201,10 +199,10 @@ export const $OUTSIDE_PARENTHESES_INLINE: WithErrorRule<__Text | __Ranges> = fac
     )
 ;
 
-export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<__Text | __Ranges> = factory
+export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<__Text> = factory
     .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES")
     .choice(c => c
-        .or(() => $pointerRanges)
+        // .or(() => $pointerRanges)
         .orSequence(s => s
             .and(r => r
                 .regExp(/^((?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」])+/)
@@ -539,7 +537,7 @@ export const $SQUARE_PARENTHESES_INLINE: WithErrorRule<__Parentheses> = factory
                     depth: state.parenthesesDepth,
                     start: start.text,
                     end: end.text,
-                    content: content.value.map(c => c.value),
+                    content: content.value.map(c => c.value as SentenceChildEL),
                     range: {
                         start: start.range,
                         end: end.range,

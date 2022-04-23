@@ -5,26 +5,26 @@ import { EL } from "../node/el";
 import { initialEnv } from "../parser/cst/env";
 import { getContainerType, ignoreSpanTag } from "./common";
 import { SpanTextRange } from "../node/span/spanTextPos";
-import { RelPos, __PF, __Pointer, __Ranges } from "../node/el/controls/pointer";
-import { $pointerRanges } from "../parser/cst/rules/$pointer";
+import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
+import { $pointerRanges } from "./stringParser/rules/$pointerRanges";
 
 
-const parseRanges = (text: string): __Ranges | null => { // closed
+const parseRanges = (text: string): ____PointerRanges | null => { // closed
     if (text === "") return null;
     const result = $pointerRanges.match(0, text, initialEnv({}));
     if (result.ok) return result.value.value;
     else return null;
 };
 
-type LocatedPointerInfo = [fragment: __PF, container: Container][];
+type LocatedPointerInfo = [fragment: ____PF, container: Container][];
 
 const locatePointer = (
-    origPointer: __Pointer,
+    origPointer: ____Pointer,
     prevLocatedPointerInfo: LocatedPointerInfo | null,
     currentSpan: Span,
 ): LocatedPointerInfo => {
 
-    let locatedFragments: __PF[];
+    let locatedFragments: ____PF[];
     let headContainer: Container | null = null;
 
     const head = origPointer.fragments()[0];
@@ -151,7 +151,7 @@ const locatePointer = (
     return ret;
 };
 
-const locateRanges = (origRanges: __Ranges, currentSpan: Span) => {
+const locateRanges = (origRanges: ____PointerRanges, currentSpan: Span) => {
     const ranges: [LocatedPointerInfo, LocatedPointerInfo][] = [];
 
     let prevLocatedPointerInfo: LocatedPointerInfo | null = null;
@@ -174,9 +174,9 @@ const locateRanges = (origRanges: __Ranges, currentSpan: Span) => {
     return ranges;
 };
 
-export const getScope = (currentSpan: Span, origRangesOrText: string | __Ranges, following: boolean, followingIndex: number): SpanTextRange[] => {
+export const getScope = (currentSpan: Span, origRangesOrText: string | ____PointerRanges, following: boolean, followingIndex: number): SpanTextRange[] => {
     const ret: SpanTextRange[] = [];
-    const origRanges = origRangesOrText instanceof __Ranges ? origRangesOrText : parseRanges(origRangesOrText);
+    const origRanges = origRangesOrText instanceof ____PointerRanges ? origRangesOrText : parseRanges(origRangesOrText);
     if (!origRanges) return ret;
     const ranges = locateRanges(origRanges, currentSpan);
     for (const [from, to] of ranges) {
