@@ -31,6 +31,13 @@ export const getContainerType = (tag: string): ContainerType => {
     else return ContainerType.SPANS;
 };
 
+export const spanTag = [
+    "__Text",
+    "__PStart",
+    "__PEnd",
+    "__Ranges",
+] as const;
+
 export const ignoreSpanTag = [
     "LawNum",
     "LawTitle",

@@ -42,6 +42,10 @@ export interface PFOptions {
 }
 
 export class __PF extends EL {
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    public override tag: unknown = "__PF" as unknown;
     public override attr: {
         relPos: RelPos,
         targetType: PointerTargetType,
@@ -76,7 +80,7 @@ export interface PointerOptions {
 
 export class __Pointer extends EL {
     constructor(options: PointerOptions) {
-        super("__Pointer", {}, options.children, options.range);
+        super("__Pointer", {}, options.children as (EL | string)[], options.range);
     }
     public fragments(): __PF[] {
         return this.children.filter(c => typeof c !== "string" && c.tag === "__PF") as __PF[];
