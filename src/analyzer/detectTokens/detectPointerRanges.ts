@@ -1,11 +1,11 @@
-import { ____PointerRanges } from "../node/el/controls/pointer";
-import * as std from "../law/std";
-import { initialEnv } from "../parser/cst/env";
-import $pointerRanges from "./stringParser/rules/$pointerRanges";
-import { __Text } from "../node/el/controls";
-import { ignoreAnalysisTag } from "./common";
-import { ErrorMessage } from "../parser/cst/error";
-import { WithErrorValue } from "../parser/std/util";
+import { ____PointerRanges } from "../../node/el/controls/pointer";
+import * as std from "../../law/std";
+import { initialEnv } from "../../parser/cst/env";
+import $pointerRanges from "../stringParser/rules/$pointerRanges";
+import { __Text } from "../../node/el/controls";
+import { ignoreAnalysisTag } from "../common";
+import { ErrorMessage } from "../../parser/cst/error";
+import { WithErrorValue } from "../../parser/std/util";
 
 export const detectPointerRanges = (elToBeModified: std.StdEL | std.__EL): WithErrorValue<____PointerRanges[]> => {
 

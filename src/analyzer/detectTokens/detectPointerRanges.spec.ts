@@ -1,8 +1,8 @@
 import { assert } from "chai";
-import * as std from "../law/std";
-import { JsonEL } from "../node/el/jsonEL";
-import loadEL from "../node/el/loadEL";
-import addSentenceChildrenControls from "../parser/addSentenceChildrenControls";
+import * as std from "../../law/std";
+import { JsonEL } from "../../node/el/jsonEL";
+import loadEL from "../../node/el/loadEL";
+import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
 import detectPointerRanges from "./detectPointerRanges";
 
 describe("Test detectPointerRanges", () => {

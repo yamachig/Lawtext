@@ -3,14 +3,12 @@ import detectDeclarations from "./detectDeclarations";
 import detectVariableReferences from "./detectVariableReferences";
 import { Declarations } from "./common/declarations";
 import { ____VarRef } from "../node/el/controls/varRef";
-import detectPointerRanges from "./detectPointerRanges";
 import * as std from "../law/std";
-import { ____PointerRanges } from "../node/el/controls";
 import { ErrorMessage } from "../parser/cst/error";
+import detectTokens, { TokensStruct } from "./detectTokens";
 
 
-export interface Analysis extends SpansStruct {
-    pointerRangesList: ____PointerRanges[],
+export interface Analysis extends TokensStruct, SpansStruct {
     declarations: Declarations,
     variableReferences: ____VarRef[],
     errors: ErrorMessage[],
@@ -19,8 +17,8 @@ export interface Analysis extends SpansStruct {
 export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
     const errors: ErrorMessage[] = [];
 
-    const detectPointerRangesResult = detectPointerRanges(elToBeModified);
-    errors.push(...detectPointerRangesResult.errors);
+    const detectTokensResult = detectTokens(elToBeModified);
+    errors.push(...detectTokensResult.errors);
 
     const spansStruct = getSpans(elToBeModified);
 
@@ -31,7 +29,7 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
     const variableReferences = detectVariableReferences(spansStruct.spans, declarations);
 
     return {
-        pointerRangesList: detectPointerRangesResult.value,
+        ...detectTokensResult.value,
         declarations,
         variableReferences,
         ...spansStruct,

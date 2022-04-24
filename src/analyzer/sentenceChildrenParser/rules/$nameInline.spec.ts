@@ -5,7 +5,7 @@ import $nameInline from "./$nameInline";
 import * as std from "../../../law/std";
 import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
 import { SentenceChildEL } from "../../../node/cst/inline";
-import detectPointerRanges from "../../detectPointerRanges";
+import detectTokens from "../../detectTokens";
 
 const env = initialEnv({ target: "" });
 
@@ -19,7 +19,7 @@ describe("Test $nameInline", () => {
             children: ["次条第二項において単に「命令」という。）又は規則"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        detectPointerRanges(origEL);
+        detectTokens(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];

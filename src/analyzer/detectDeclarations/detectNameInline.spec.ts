@@ -3,7 +3,7 @@ import * as std from "../../law/std";
 import { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
 import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
-import detectPointerRanges from "../detectPointerRanges";
+import detectTokens from "../detectTokens";
 import getSpans from "../getSpans";
 import detectNameInline from "./detectNameInline";
 
@@ -34,7 +34,7 @@ describe("Test detectNameInline", () => {
             ],
         }) as std.Subitem1;
         addSentenceChildrenControls(inputElToBeModified);
-        detectPointerRanges(inputElToBeModified);
+        detectTokens(inputElToBeModified);
         const spansStruct = getSpans(inputElToBeModified);
 
         const expected: JsonEL[] = [

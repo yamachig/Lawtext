@@ -4,6 +4,7 @@ import { __Parentheses, __PContent, __PEnd, __PStart } from "./parentheses";
 import { ____Declaration } from "./declaration";
 import { ____VarRef } from "./varRef";
 import { ____PointerRanges, ____PointerRange, ____Pointer, ____PF } from "./pointer";
+import { ____LawNum } from "./lawNum";
 
 
 export * from "./text";
@@ -11,6 +12,7 @@ export * from "./parentheses";
 export * from "./varRef";
 export * from "./declaration";
 export * from "./pointer";
+export * from "./lawNum";
 
 export const controlFromEL = (el: EL): EL => {
     if (el.tag === "__Text") {
@@ -35,6 +37,8 @@ export const controlFromEL = (el: EL): EL => {
         return Object.setPrototypeOf(el.copy(false, true), ____Pointer.prototype);
     } else if (el.tag === "____PF") {
         return Object.setPrototypeOf(el.copy(false, true), ____PF.prototype);
+    } else if (el.tag === "____LawNum") {
+        return Object.setPrototypeOf(el.copy(false, true), ____LawNum.prototype);
     } else {
         return el;
     }

@@ -1,7 +1,6 @@
 import { Env } from "../container/env";
-import { __PEnd, __PStart, __Text } from "../el/controls";
+import { __PEnd, __PStart, __Text, ____PointerRanges, ____LawNum } from "../el/controls";
 import * as std from "../../law/std";
-import { ____PointerRanges } from "../el/controls/pointer";
 import { EL } from "../el";
 
 export const spanTags = [
@@ -10,6 +9,7 @@ export const spanTags = [
     "__PStart",
     "__PEnd",
     "____PointerRanges",
+    "____LawNum",
 ] as const;
 
 export type SpanEL = (
@@ -18,6 +18,7 @@ export type SpanEL = (
     | __PStart
     | __PEnd
     | ____PointerRanges
+    | ____LawNum
 );
 
 export const isSpanEL = (el: EL | string): el is SpanEL =>
