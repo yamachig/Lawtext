@@ -5,9 +5,9 @@ import loadEL from "../../node/el/loadEL";
 import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
 import detectTokens from "../detectTokens";
 import getSpans from "../getSpans";
-import detectNameInline from "./detectNameInline";
+import detectDeclarations from ".";
 
-describe("Test detectNameInline", () => {
+describe("Test detectDeclarations", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
@@ -217,7 +217,7 @@ describe("Test detectNameInline", () => {
         }
           ;
 
-        const result = detectNameInline(inputElToBeModified, spansStruct, spansStruct.rootContainer);
+        const result = detectDeclarations(inputElToBeModified, spansStruct, spansStruct.rootContainer);
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(

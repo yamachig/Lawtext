@@ -1,11 +1,11 @@
 import getSpans, { SpansStruct } from "./getSpans";
-import detectDeclarations from "./detectDeclarations";
 import detectVariableReferences from "./detectVariableReferences";
 import { Declarations } from "./common/declarations";
 import { ____VarRef } from "../node/el/controls/varRef";
 import * as std from "../law/std";
 import { ErrorMessage } from "../parser/cst/error";
 import detectTokens, { TokensStruct } from "./detectTokens";
+import detectDeclarations from "./detectDeclarations";
 
 
 export interface Analysis extends TokensStruct, SpansStruct {
@@ -22,8 +22,9 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
 
     const spansStruct = getSpans(elToBeModified);
 
-    const detectDeclarationsResult = detectDeclarations(elToBeModified, spansStruct);
-    const declarations = detectDeclarationsResult.value;
+    const detectDeclarationsResult = detectDeclarations(elToBeModified, spansStruct, spansStruct.rootContainer);
+    const declarations = new Declarations();
+    for (const declaration of detectDeclarationsResult.value) declarations.add(declaration);
     errors.push(...detectDeclarationsResult.errors);
 
     const variableReferences = detectVariableReferences(spansStruct.spans, declarations);
