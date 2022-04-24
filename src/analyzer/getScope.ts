@@ -1,6 +1,5 @@
 import { throwError } from "../util";
 import { Container, ContainerType } from "../node/container";
-import { Span } from "../node/span";
 import { EL } from "../node/el";
 import { initialEnv } from "../parser/cst/env";
 import { getContainerType, ignoreAnalysisTag } from "./common";
@@ -21,7 +20,7 @@ type LocatedPointerInfo = [fragment: ____PF, container: Container][];
 const locatePointer = (
     origPointer: ____Pointer,
     prevLocatedPointerInfo: LocatedPointerInfo | null,
-    currentSpan: Span,
+    currentContainer: Container,
 ): LocatedPointerInfo => {
 
     let locatedFragments: ____PF[];
@@ -29,7 +28,6 @@ const locatePointer = (
 
     const head = origPointer.fragments()[0];
     const headType = getContainerType(head.attr.targetType);
-    const currentContainer = currentSpan.env.container;
 
     if ((ignoreAnalysisTag as readonly string[]).indexOf(head.attr.targetType) >= 0) {
         locatedFragments = origPointer.fragments();
@@ -151,18 +149,18 @@ const locatePointer = (
     return ret;
 };
 
-const locateRanges = (origRanges: ____PointerRanges, currentSpan: Span) => {
+const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container) => {
     const ranges: [LocatedPointerInfo, LocatedPointerInfo][] = [];
 
     let prevLocatedPointerInfo: LocatedPointerInfo | null = null;
     for (const [origFrom, origTo] of origRanges.ranges().map(r => r.pointers())) {
-        const from = locatePointer(origFrom, prevLocatedPointerInfo, currentSpan);
+        const from = locatePointer(origFrom, prevLocatedPointerInfo, currentContainer);
         prevLocatedPointerInfo = from;
         let to: LocatedPointerInfo | null;
         if (!origTo) {
             to = from;
         } else {
-            to = locatePointer(origTo, prevLocatedPointerInfo, currentSpan);
+            to = locatePointer(origTo, prevLocatedPointerInfo, currentContainer);
             prevLocatedPointerInfo = to;
         }
         ranges.push([from, to]);
@@ -174,11 +172,11 @@ const locateRanges = (origRanges: ____PointerRanges, currentSpan: Span) => {
     return ranges;
 };
 
-export const getScope = (currentSpan: Span, origRangesOrText: string | ____PointerRanges, following: boolean, followingIndex: number): SpanTextRange[] => {
+export const getScope = (currentContainer: Container, origRangesOrText: string | ____PointerRanges, following: boolean, followingIndex: number): SpanTextRange[] => {
     const ret: SpanTextRange[] = [];
     const origRanges = origRangesOrText instanceof ____PointerRanges ? origRangesOrText : parseRanges(origRangesOrText);
     if (!origRanges) return ret;
-    const ranges = locateRanges(origRanges, currentSpan);
+    const ranges = locateRanges(origRanges, currentContainer);
     for (const [from, to] of ranges) {
         if (from.length === 0 || to.length === 0) {
             continue;

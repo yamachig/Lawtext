@@ -7,7 +7,7 @@ export const toplevelContainerTags = ["EnactStatement", "MainProvision", ...std.
 
 export const articleContainerTags = std.articleGroupTags;
 
-export const spanContainerTags = [
+export const spansContainerTags = [
     "Article",
     ...std.paragraphItemTags,
     "Table",
@@ -20,14 +20,14 @@ export const containerTags = [
     ...rootContainerTags,
     ...toplevelContainerTags,
     ...articleContainerTags,
-    ...spanContainerTags,
+    ...spansContainerTags,
 ] as const;
 
 export const getContainerType = (tag: string): ContainerType => {
     if ((rootContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.ROOT;
     else if ((toplevelContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.TOPLEVEL;
     else if ((articleContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.ARTICLES;
-    else if ((spanContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.SPANS;
+    else if ((spansContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.SPANS;
     else return ContainerType.SPANS;
 };
 

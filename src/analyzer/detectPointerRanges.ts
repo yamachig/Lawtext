@@ -27,21 +27,29 @@ export const detectPointerRanges = (elToBeModified: std.StdEL | std.__EL): WithE
                 if (result.ok) {
                     errors.push(...result.value.errors);
                     const newItems: (std.StdEL | std.__EL)[] = [];
-                    newItems.push(new __Text(
-                        text.substring(0, textIndex),
-                        child.range && [child.range[0], child.range[0] + textIndex],
-                    ));
+
+                    if (textIndex > 0) {
+                        newItems.push(new __Text(
+                            text.substring(0, textIndex),
+                            child.range && [child.range[0], child.range[0] + textIndex],
+                        ));
+                    }
+
                     newItems.push(result.value.value);
                     pointerRangesList.push(result.value.value);
+
                     if (result.nextOffset < text.length) {
                         newItems.push(new __Text(text.substring(result.nextOffset)));
                     }
+
                     elToBeModified.children.splice(
                         childIndex,
                         1,
                         ...newItems,
                     );
-                    childIndex += 1;
+
+                    if (textIndex > 0) childIndex += 1;
+
                     break;
                 }
             }

@@ -1,73 +1,115 @@
-import { Span } from "../../node/span";
-import { SpanTextPos } from "../../node/span/spanTextPos";
+import { SpansStruct } from "../getSpans";
+import * as std from "../../law/std";
+import { WithErrorValue } from "../../parser/std/util";
+import { ErrorMessage } from "../../parser/cst/error";
+import { __Parentheses, ____Declaration } from "../../node/el/controls";
+import { Container } from "../../node/container";
+import { isSpanEL } from "../../node/span";
+import { ignoreAnalysisTag } from "../common";
+import $nameInline from "../sentenceChildrenParser/rules/$nameInline";
+import { initialEnv } from "../sentenceChildrenParser/env";
+import { SentenceChildEL } from "../../node/cst/inline";
 import getScope from "../getScope";
-import { ____Declaration } from "../../node/el/controls/declaration";
+import { SpanTextPos } from "../../node/span/spanTextPos";
 
 
-export const detectNameInline = (spans: Span[], spanIndex: number) => {
-    if (spans.length < spanIndex + 5) return null;
-    const [
-        nameBeforeSpan,
-        nameStartSpan,
-        nameSpan,
-        nameEndSpan,
-        nameAfterSpan,
-    ] = spans.slice(spanIndex, spanIndex + 5);
+export const detectNameInline = (elToBeModified: std.StdEL | std.__EL, spansStruct: SpansStruct, prevContainer: Container): WithErrorValue<____Declaration[]> => {
 
-    const scopeMatch = /(以下)?(?:([^。]+?)において)?(?:単に)?$/.exec(nameBeforeSpan.el.text());
-    const nameAfterMatch = /^という。/.exec(nameAfterSpan.el.text());
-    if (
-        scopeMatch &&
-        nameStartSpan.el.tag === "__PStart" &&
-        nameStartSpan.el.attr.type === "square" &&
-        nameEndSpan.el.tag === "__PEnd" &&
-        nameEndSpan.el.attr.type === "square" &&
-        nameAfterMatch
-    ) {
-        const name = nameSpan.el.text();
-        const following = scopeMatch[1] !== undefined;
-        const scopeText = scopeMatch[2] || null;
+    const declarations: ____Declaration[] = [];
+    const errors: ErrorMessage[] = [];
 
-        const scope = scopeText
-            ? getScope(nameBeforeSpan, scopeText, following, nameAfterSpan.index)
-            : [
-                {
-                    startSpanIndex: nameAfterSpan.index,
-                    startTextIndex: 0,
-                    endSpanIndex: spans.length,
-                    endTextIndex: 0,
-                },
-            ];
+    const container = spansStruct.containersByEL.get(elToBeModified) ?? prevContainer;
 
-        const namePos: SpanTextPos = {
-            spanIndex: nameSpan.index,
-            textIndex: 0,
-            length: name.length,
-            range: nameSpan.el.range,
-        };
+    if (elToBeModified.children.some(isSpanEL)) {
+        for (let childIndex = 0; childIndex < elToBeModified.children.length; childIndex++) {
+            const result = $nameInline.match(
+                childIndex,
+                (elToBeModified.children as SentenceChildEL[]),
+                initialEnv({ target: "" }),
+            );
 
-        const range = nameSpan.el.range ? [
-            nameSpan.el.range[0],
-            nameSpan.el.range[0] + name.length,
-        ] as [number, number] : null;
+            if (result.ok) {
+                const { nameSquareParenthesesOffset, following, pointerRanges } = result.value.value;
 
-        const declarationID = `decl-span_${namePos.spanIndex}-text_${namePos.textIndex}-len_${namePos.length}`;
+                const nameSquareParentheses = elToBeModified.children[nameSquareParenthesesOffset] as __Parentheses;
 
-        const declaration = new ____Declaration({
-            declarationID,
-            type: "Keyword",
-            name,
-            value: null,
-            scope: scope,
-            namePos: namePos,
-            range,
-        });
+                errors.push(...result.value.errors);
 
-        nameSpan.el.replaceSpan(0, name.length, declaration);
-        return declaration;
+                const name = nameSquareParentheses.content.text();
+
+                const nameSpanIndex = (spansStruct.spansByEL.get(nameSquareParentheses)?.index ?? Number.NaN);
+
+                const scope = pointerRanges
+                    ? getScope(
+                        container,
+                        pointerRanges,
+                        following,
+                        nameSpanIndex + 1,
+                    )
+                    : [
+                        {
+                            startSpanIndex: nameSpanIndex + 1,
+                            startTextIndex: 0,
+                            endSpanIndex: spansStruct.spans.length,
+                            endTextIndex: 0,
+                        },
+                    ];
+
+                const namePos: SpanTextPos = {
+                    spanIndex: nameSpanIndex,
+                    textIndex: 0,
+                    length: name.length,
+                    range: nameSquareParentheses.content.range,
+                };
+
+                const declarationID = `decl-span_${Number.isFinite(nameSpanIndex) ? nameSpanIndex : nameSquareParentheses.content.id}-len_${name.length}`;
+
+                const declaration = new ____Declaration({
+                    declarationID,
+                    type: "Keyword",
+                    name,
+                    value: null,
+                    scope: scope,
+                    namePos: namePos,
+                    range: nameSquareParentheses.content.range,
+                });
+                declarations.push(declaration);
+
+                nameSquareParentheses.content.children.splice(
+                    0,
+                    nameSquareParentheses.content.children.length,
+                    declaration,
+                );
+
+                childIndex = result.nextOffset - 2;
+            }
+        }
+
     }
 
-    return null;
+
+    for (const child of elToBeModified.children) {
+        if (typeof child === "string") {
+            continue;
+
+        } else if ((ignoreAnalysisTag as readonly string[]).includes(child.tag)) {
+            continue;
+
+        } else {
+            const detectLawnameResult = detectNameInline(
+                child as std.StdEL | std.__EL,
+                spansStruct,
+                container,
+            );
+            declarations.push(...detectLawnameResult.value);
+            errors.push(...detectLawnameResult.errors);
+
+        }
+
+    }
+
+
+    return { value: declarations, errors };
 };
 
 export default detectNameInline;

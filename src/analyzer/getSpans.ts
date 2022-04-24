@@ -1,4 +1,4 @@
-import { Container, ContainerType } from "../node/container";
+import { Container } from "../node/container";
 import { Env } from "../node/container/env";
 import { isSpanEL, Span } from "../node/span";
 import { EL } from "../node/el";
@@ -6,14 +6,18 @@ import { containerTags, getContainerType, ignoreAnalysisTag } from "./common";
 
 export interface SpansStruct {
     spans: Span[];
+    spansByEL: Map<EL, Span>;
     containers: Map<string, Container>;
+    containersByEL: Map<EL, Container>;
     rootContainer: Container;
 }
 
 export const getSpans = (el: EL): SpansStruct => {
 
     const spans: Span[] = [];
+    const spansByEL: Map<EL, Span> = new Map();
     const containers: Map<string, Container> = new Map();
+    const containersByEL: Map<EL, Container> = new Map();
 
     let rootContainer: Container | null = null;
 
@@ -38,7 +42,9 @@ export const getSpans = (el: EL): SpansStruct => {
         }
 
         if (isSpanEL(el)) {
-            spans.push(new Span({ index: spans.length, el, env }));
+            const span = new Span({ index: spans.length, el, env });
+            spans.push(span);
+            spansByEL.set(el, span);
             return;
             // } if (isMixed) {
             //     // el.attr.span_index = String(spans.length);
@@ -57,7 +63,9 @@ export const getSpans = (el: EL): SpansStruct => {
                 container = new Container({ containerID, el, type });
                 env.addContainer(container);
                 containers.set(containerID, container);
-                if (type === ContainerType.ROOT) rootContainer = container;
+                containersByEL.set(el, container);
+                if (!rootContainer) rootContainer = container;
+                // if (type === ContainerType.ROOT) rootContainer = container;
             }
 
             const startSpanIndex = spans.length;
@@ -75,7 +83,7 @@ export const getSpans = (el: EL): SpansStruct => {
 
     if (!rootContainer) throw new Error();
 
-    return { spans, containers, rootContainer };
+    return { spans, spansByEL, containers, containersByEL, rootContainer };
 };
 
 export default getSpans;

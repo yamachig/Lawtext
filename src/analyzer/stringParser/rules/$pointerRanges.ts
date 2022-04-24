@@ -58,7 +58,7 @@ export const $pointer = factory
                 children: fragments,
                 range: range(),
             });
-        }),
+        })
     )
     ;
 
@@ -75,10 +75,10 @@ export const $pointerFragment = factory
                         .zeroOrMore(r => r
                             .sequence(c => c
                                 .and(r => r.seqEqual("の"))
-                                .and(() => $kanjiDigits),
-                            ),
-                        ),
-                    ),
+                                .and(() => $kanjiDigits)
+                            )
+                        )
+                    )
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
@@ -88,14 +88,14 @@ export const $pointerFragment = factory
                     num: parseNamedNum(text()),
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
                 .sequence(c => c
                     .and(r => r.seqEqual("次"))
-                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
+                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char")
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
@@ -107,8 +107,8 @@ export const $pointerFragment = factory
                     num: null,
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
@@ -126,8 +126,8 @@ export const $pointerFragment = factory
                     num: null,
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
@@ -135,10 +135,10 @@ export const $pointerFragment = factory
                     .and(r => r
                         .choice(c => c
                             .or(r => r.seqEqual("この"))
-                            .or(r => r.seqEqual("本")),
-                        ),
+                            .or(r => r.seqEqual("本"))
+                        )
                     )
-                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
+                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char")
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
@@ -150,14 +150,14 @@ export const $pointerFragment = factory
                     num: null,
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
                 .sequence(c => c
                     .and(r => r.seqEqual("同"))
-                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
+                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char")
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
@@ -169,8 +169,8 @@ export const $pointerFragment = factory
                     num: null,
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
@@ -186,8 +186,8 @@ export const $pointerFragment = factory
                     num: null,
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
@@ -198,9 +198,9 @@ export const $pointerFragment = factory
                             .sequence(c => c
                                 .and(r => r.seqEqual("第"))
                                 .and(() => $kanjiDigits),
-                            ),
-                        ),
-                    ),
+                            )
+                        )
+                    )
                 )
             , (({ text, range }) => {
                 return new ____PF({
@@ -210,8 +210,8 @@ export const $pointerFragment = factory
                     num: parseNamedNum(text()),
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
@@ -224,8 +224,8 @@ export const $pointerFragment = factory
                     num: null,
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
@@ -238,8 +238,8 @@ export const $pointerFragment = factory
                     num: null,
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
@@ -252,8 +252,8 @@ export const $pointerFragment = factory
                     num: null,
                     range: range(),
                 });
-            }),
-            ),
+            })
+            )
         )
         .or(r => r
             .action(r => r
@@ -269,9 +269,9 @@ export const $pointerFragment = factory
                     num: parseNamedNum(text()),
                     range: range(),
                 });
-            }),
-            ),
-        ),
+            })
+            )
+        )
     )
     ;
 
