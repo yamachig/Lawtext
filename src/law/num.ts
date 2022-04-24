@@ -2,8 +2,8 @@ import { EL } from "../node/el";
 import * as std from "./std";
 import { assertNever, Diff } from "../util";
 
-
-export const reLawnum = /(?:(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年(?:(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[―〇一二三四五六七八九]+)|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)|明治三十二年勅令|大正十二年内務省・鉄道省令|昭和五年逓信省・鉄道省令|昭和九年逓信省・農林省令|人事院規則一〇―一五)/;
+export const ptnLawNum = "(明治|大正|昭和|平成|令和)([一二三四五六七八九十]+)年(\\S+?)(?:第([一二三四五六七八九十百千]+)号)";
+// export const reLawnum = /(?:(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年(?:(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[―〇一二三四五六七八九]+)|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)|明治三十二年勅令|大正十二年内務省・鉄道省令|昭和五年逓信省・鉄道省令|昭和九年逓信省・農林省令|人事院規則一〇―一五)/;
 
 export const eras = {
     "明治": "Meiji", "大正": "Taisho",
@@ -28,7 +28,7 @@ export const getLawtype = (text: string): (typeof lawTypes)[number][1] | null =>
     return null;
 };
 
-export const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
+const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 
 export const parseKanjiNum = (text: string): number | null => {
     const m = reKanjiNum.exec(text);
@@ -47,12 +47,13 @@ export const kanjiDigits = {
     "五": 5, "六": 6, "七": 7, "八": 8, "九": 9,
 };
 
-export const reNamedNum = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
 export const irohaChars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
-export const reIrohaChar = /[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン]/;
 export const aiuChars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-export const reAiuChar = /[アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン]/;
-export const reItemNum = /^\D*(\d+)\D*$/;
+
+const reNamedNum = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
+const reIrohaChar = new RegExp(`[${irohaChars}]`);
+const reAiuChar = new RegExp(`[${aiuChars}]`);
+const reItemNum = /^\D*(\d+)\D*$/;
 
 export const parseRomanNum = (text: string): number => {
     let num = 0;
@@ -171,6 +172,7 @@ interface LawNumStruct {
     Num: number | null,
 }
 
+const reLawNum = new RegExp(`^${ptnLawNum}$`);
 export const parseLawNum = (lawNum: string): LawNumStruct => {
 
     const ret: LawNumStruct = {
@@ -179,7 +181,7 @@ export const parseLawNum = (lawNum: string): LawNumStruct => {
         LawType: null,
         Num: null,
     };
-    const m = lawNum.match(/^(明治|大正|昭和|平成|令和)([一二三四五六七八九十]+)年(\S+?)(?:第([一二三四五六七八九十百千]+)号)?$/);
+    const m = lawNum.match(reLawNum);
     if (m) {
         const [era, year, law_type, num] = m.slice(1);
         if (era in eras) ret.Era = eras[era as keyof typeof eras];

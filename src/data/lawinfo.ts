@@ -1,4 +1,4 @@
-import { reLawnum } from "../law/num";
+import { ptnLawNum } from "../law/num";
 
 export type LawInfoListItem = [
     LawID: string,
@@ -147,7 +147,7 @@ export class LawInfo implements BaseLawInfo {
 
     public addReferencingLawNums(xml: string): void {
         // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
-        for (const m of xml.match(new RegExp(reLawnum, "g")) || []) {
+        for (const m of xml.match(new RegExp(ptnLawNum, "g")) || []) {
             if (m !== this.LawNum) this.ReferencingLawNums.add(m);
         }
     }
