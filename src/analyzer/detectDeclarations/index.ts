@@ -2,7 +2,7 @@ import { SpansStruct } from "../getSpans";
 import * as std from "../../law/std";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
-import { processNameInline } from "./detectNameInline";
+import { processNameInline } from "./processNameInline";
 import { ____Declaration } from "../../node/el/controls";
 import { isSpanEL } from "../../node/span";
 import { Container } from "../../node/container";

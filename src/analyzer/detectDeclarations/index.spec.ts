@@ -9,7 +9,7 @@ import detectDeclarations from ".";
 
 describe("Test detectDeclarations", () => {
 
-    it("Success case", () => {
+    it("Success case: nameInline", () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
