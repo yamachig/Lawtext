@@ -1,14 +1,14 @@
 import { ____PointerRanges } from "../../node/el/controls/pointer";
-import * as std from "../../law/std";
 import { initialEnv } from "../../parser/cst/env";
 import $pointerRanges from "../stringParser/rules/$pointerRanges";
 import { __Text } from "../../node/el/controls";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
+import { SentenceChildEL } from "../../node/cst/inline";
 
 export const matchPointerRanges = (textEL: __Text): (
     | WithErrorValue<{
-        newItems: (std.StdEL | std.__EL)[],
+        newItems: SentenceChildEL[],
         pointerRanges: ____PointerRanges,
         proceedOffset: number,
     }>
@@ -25,7 +25,7 @@ export const matchPointerRanges = (textEL: __Text): (
         if (result.ok) {
             const pointerRanges = result.value.value;
             errors.push(...result.value.errors);
-            const newItems: (std.StdEL | std.__EL)[] = [];
+            const newItems: SentenceChildEL[] = [];
 
             if (textIndex > 0) {
                 newItems.push(new __Text(

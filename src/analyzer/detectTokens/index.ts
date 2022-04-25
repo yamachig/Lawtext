@@ -3,6 +3,7 @@ import { __Text, ____LawNum, ____PointerRanges } from "../../node/el/controls";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
 import { ignoreAnalysisTag } from "../common";
+import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import matchLawNum from "./matchLawNum";
 import { matchPointerRanges } from "./matchPointerRanges";
 
@@ -12,7 +13,7 @@ export interface TokensStruct {
 }
 
 
-export const detectTokens = (elToBeModified: std.StdEL | std.__EL): WithErrorValue<TokensStruct> => {
+export const detectTokensOfEL = (elToBeModified: std.StdEL | std.__EL): WithErrorValue<TokensStruct> => {
 
     const pointerRangesList: ____PointerRanges[] = [];
     const lawNums: ____LawNum[] = [];
@@ -66,11 +67,34 @@ export const detectTokens = (elToBeModified: std.StdEL | std.__EL): WithErrorVal
             continue;
 
         } else {
-            const newResult = detectTokens(child as std.StdEL | std.__EL);
+            const newResult = detectTokensOfEL(child as std.StdEL | std.__EL);
             pointerRangesList.push(...newResult.value.pointerRangesList);
             lawNums.push(...newResult.value.lawNums);
             errors.push(...newResult.errors);
         }
+    }
+
+    return {
+        value: {
+            pointerRangesList,
+            lawNums,
+        },
+        errors,
+    };
+};
+
+
+export const detectTokens = (sentenceEnvsStruct: SentenceEnvsStruct): WithErrorValue<TokensStruct> => {
+
+    const pointerRangesList: ____PointerRanges[] = [];
+    const lawNums: ____LawNum[] = [];
+    const errors: ErrorMessage[] = [];
+
+    for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
+        const newResult = detectTokensOfEL(sentenceEnv.el);
+        pointerRangesList.push(...newResult.value.pointerRangesList);
+        lawNums.push(...newResult.value.lawNums);
+        errors.push(...newResult.errors);
     }
 
     return {

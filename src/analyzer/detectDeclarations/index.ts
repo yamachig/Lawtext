@@ -1,27 +1,30 @@
-import { SpansStruct } from "../getSpans";
+import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import * as std from "../../law/std";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
 import { processNameInline } from "./processNameInline";
 import { ____Declaration } from "../../node/el/controls";
-import { isSpanEL } from "../../node/span";
 import { Container } from "../../node/container";
 import { ignoreAnalysisTag } from "../common";
+import { isSentenceLike } from "../../node/container/sentenceEnv";
 
 
-export const detectDeclarations = (elToBeModified: std.StdEL | std.__EL, spansStruct: SpansStruct, prevContainer: Container): WithErrorValue<____Declaration[]> => {
+export const detectDeclarationsOfEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnvsStruct: SentenceEnvsStruct, prevContainer: Container): WithErrorValue<____Declaration[]> => {
 
     const declarations: ____Declaration[] = [];
     const errors: ErrorMessage[] = [];
 
-    const container = spansStruct.containersByEL.get(elToBeModified) ?? prevContainer;
+    const container = sentenceEnvsStruct.containersByEL.get(elToBeModified) ?? prevContainer;
 
-    if (elToBeModified.children.some(isSpanEL)) {
+    if (isSentenceLike(elToBeModified)) {
+
+        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(elToBeModified);
+        if (!sentenceEnv) throw new Error("sentenceEnv not found");
 
         {
             const result = processNameInline(
-                elToBeModified.children as (std.StdEL | std.__EL)[],
-                spansStruct,
+                sentenceEnv,
+                sentenceEnvsStruct,
                 container,
             );
             if (result){
@@ -41,9 +44,9 @@ export const detectDeclarations = (elToBeModified: std.StdEL | std.__EL, spansSt
             continue;
 
         } else {
-            const detectLawnameResult = detectDeclarations(
+            const detectLawnameResult = detectDeclarationsOfEL(
                 child as std.StdEL | std.__EL,
-                spansStruct,
+                sentenceEnvsStruct,
                 container,
             );
             declarations.push(...detectLawnameResult.value);
@@ -51,6 +54,24 @@ export const detectDeclarations = (elToBeModified: std.StdEL | std.__EL, spansSt
 
         }
 
+    }
+
+
+    return { value: declarations, errors };
+};
+
+
+export const detectDeclarations = (sentenceEnvsStruct: SentenceEnvsStruct): WithErrorValue<____Declaration[]> => {
+
+    const declarations: ____Declaration[] = [];
+    const errors: ErrorMessage[] = [];
+
+    for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
+        const result = detectDeclarationsOfEL(sentenceEnv.el, sentenceEnvsStruct, sentenceEnvsStruct.rootContainer);
+        if (result){
+            declarations.push(...result.value);
+            errors.push(...result.errors);
+        }
     }
 
 

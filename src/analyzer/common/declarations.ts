@@ -5,13 +5,13 @@ import { ____Declaration } from "../../node/el/controls/declaration";
 export class Declarations {
     public db: Map<string, ____Declaration> = new Map();
 
-    public getInSpan(spanIndex: number): ____Declaration[] {
+    public getInSpan(sentenceIndex: number): ____Declaration[] {
         const declarations: ____Declaration[] = [];
         for (const declaration of this.db.values()) {
             if (
                 declaration.scope().some(range =>
-                    range.startSpanIndex <= spanIndex &&
-                    spanIndex < range.endSpanIndex,
+                    range.start.sentenceIndex <= sentenceIndex &&
+                    sentenceIndex < range.end.sentenceIndex,
                 )
             ) {
                 declarations.push(declaration);

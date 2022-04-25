@@ -4,6 +4,7 @@ import { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
 import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
 import detectTokens from ".";
+import getSentenceEnvs from "../getSentenceEnvs";
 
 describe("Test detectTokens", () => {
 
@@ -231,7 +232,8 @@ describe("Test detectTokens", () => {
             ],
         };
 
-        const result = detectTokens(inputElToBeModified);
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const result = detectTokens(sentenceEnvsStruct);
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -437,7 +439,8 @@ describe("Test detectTokens", () => {
         }
           ;
 
-        const result = detectTokens(inputElToBeModified);
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const result = detectTokens(sentenceEnvsStruct);
 
         // console.log(JSON.stringify(result.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -641,9 +644,10 @@ describe("Test detectTokens", () => {
                 },
             ],
         }
-          ;
+        ;
 
-        const result = detectTokens(inputElToBeModified);
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const result = detectTokens(sentenceEnvsStruct);
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -932,7 +936,8 @@ describe("Test detectTokens", () => {
             ],
         };
 
-        const result = detectTokens(inputElToBeModified);
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const result = detectTokens(sentenceEnvsStruct);
 
         // console.log(JSON.stringify(result.value.lawNums.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(

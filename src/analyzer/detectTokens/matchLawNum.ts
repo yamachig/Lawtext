@@ -1,14 +1,14 @@
-import * as std from "../../law/std";
 import { __Text, ____LawNum } from "../../node/el/controls";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
 import { ptnLawNum } from "../../law/num";
+import { SentenceChildEL } from "../../node/cst/inline";
 
 const reLawNum = new RegExp(`${ptnLawNum}`);
 
 export const matchLawNum = (textEL: __Text): (
     | WithErrorValue<{
-        newItems: (std.StdEL | std.__EL)[],
+        newItems: SentenceChildEL[],
         lawNum: ____LawNum,
         proceedOffset: number,
     }>
@@ -20,7 +20,7 @@ export const matchLawNum = (textEL: __Text): (
     const match = reLawNum.exec(text);
     if (!match) return null;
 
-    const newItems: (std.StdEL | std.__EL)[] = [];
+    const newItems: SentenceChildEL[] = [];
 
     if (match.index > 0) {
         newItems.push(new __Text(

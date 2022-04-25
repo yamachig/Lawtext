@@ -4,7 +4,7 @@ import { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
 import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
 import detectTokens from "../detectTokens";
-import getSpans from "../getSpans";
+import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from ".";
 
 describe("Test detectDeclarations", () => {
@@ -34,8 +34,8 @@ describe("Test detectDeclarations", () => {
             ],
         }) as std.Subitem1;
         addSentenceChildrenControls(inputElToBeModified);
-        detectTokens(inputElToBeModified);
-        const spansStruct = getSpans(inputElToBeModified);
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        detectTokens(sentenceEnvsStruct);
 
         const expected: JsonEL[] = [
             {
@@ -217,7 +217,7 @@ describe("Test detectDeclarations", () => {
         }
           ;
 
-        const result = detectDeclarations(inputElToBeModified, spansStruct, spansStruct.rootContainer);
+        const result = detectDeclarations(sentenceEnvsStruct);
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(

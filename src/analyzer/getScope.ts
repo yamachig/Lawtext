@@ -3,9 +3,9 @@ import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
 import { initialEnv } from "../parser/cst/env";
 import { getContainerType, ignoreAnalysisTag } from "./common";
-import { SpanTextRange } from "../node/span/spanTextPos";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import { $pointerRanges } from "./stringParser/rules/$pointerRanges";
+import { SentenceTextRange } from "../node/container/sentenceEnv";
 
 
 const parseRanges = (text: string): ____PointerRanges | null => { // closed
@@ -172,8 +172,13 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
     return ranges;
 };
 
-export const getScope = (currentContainer: Container, origRangesOrText: string | ____PointerRanges, following: boolean, followingIndex: number): SpanTextRange[] => {
-    const ret: SpanTextRange[] = [];
+export const getScope = (
+    currentContainer: Container,
+    origRangesOrText: string | ____PointerRanges,
+    following: boolean,
+    followingStartSentenceIndex: number,
+): SentenceTextRange[] => {
+    const ret: SentenceTextRange[] = [];
     const origRanges = origRangesOrText instanceof ____PointerRanges ? origRangesOrText : parseRanges(origRangesOrText);
     if (!origRanges) return ret;
     const ranges = locateRanges(origRanges, currentContainer);
@@ -185,17 +190,25 @@ export const getScope = (currentContainer: Container, origRangesOrText: string |
         const [, toc] = to[to.length - 1];
         if (following) {
             ret.push({
-                startSpanIndex: followingIndex,
-                startTextIndex: 0,
-                endSpanIndex: toc.spanRange[1],
-                endTextIndex: 0,
+                start: {
+                    sentenceIndex: followingStartSentenceIndex,
+                    textOffset: 0,
+                },
+                end: {
+                    sentenceIndex: toc.sentenceRange[1],
+                    textOffset: 0,
+                },
             });
         } else {
             ret.push({
-                startSpanIndex: fromc.spanRange[0],
-                startTextIndex: 0,
-                endSpanIndex: toc.spanRange[1],
-                endTextIndex: 0,
+                start: {
+                    sentenceIndex: fromc.sentenceRange[0],
+                    textOffset: 0,
+                },
+                end: {
+                    sentenceIndex: toc.sentenceRange[1],
+                    textOffset: 0,
+                },
             });
         }
     }

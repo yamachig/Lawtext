@@ -1,14 +1,13 @@
 import { innerXML, outerXML, wrapXML } from "./elToXML";
 import { JsonEL } from "./jsonEL";
 
+
 let currentID = 0;
 export class EL implements JsonEL {
     public tag: string;
     public attr: { [key: string]: string | undefined };
     public children: Array<EL | string>;
-    // public textCache: string | null;
     public id: number;
-
     public range: [start: number, end: number] | null;
 
     constructor(

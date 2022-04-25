@@ -1,5 +1,5 @@
 import { EL } from "../";
-import { SpanTextPos, SpanTextRange } from "../../span/spanTextPos";
+import { SentenceTextRange } from "../../container/sentenceEnv";
 
 
 export interface DeclarationOptions {
@@ -7,8 +7,8 @@ export interface DeclarationOptions {
     type: string,
     name: string,
     value: string | null,
-    scope: SpanTextRange[],
-    namePos: SpanTextPos,
+    scope: SentenceTextRange[],
+    nameSentenceTextRange: SentenceTextRange,
     range: [start: number, end: number] | null,
 }
 
@@ -21,52 +21,48 @@ export class ____Declaration extends EL {
         name: string,
         value?: string,
         scope: string,
-        namePos: string,
+        nameSentenceTextRange: string,
     };
     public override children: [string];
 
-    private scopeCache: [str: string, value: SpanTextRange[]] | null = null;
-    public scope(): SpanTextRange[] {
+    private scopeCache: [str: string, value: SentenceTextRange[]] | null = null;
+    public scope(): SentenceTextRange[] {
         if (this.scopeCache !== null && this.scopeCache[0] === this.attr.scope) {
             return this.scopeCache[1];
         } else {
-            const scope = JSON.parse(this.attr.scope) as SpanTextRange[];
+            const scope = JSON.parse(this.attr.scope) as SentenceTextRange[];
             this.scopeCache = [this.attr.scope, scope];
             return scope;
         }
     }
-    private namePosCache: [str: string, value: SpanTextPos] | null = null;
-    public namePos(): SpanTextPos {
-        if (this.namePosCache !== null && this.namePosCache[0] === this.attr.namePos) {
-            return this.namePosCache[1];
+    private nameSentenceTextRangeCache: [str: string, value: SentenceTextRange] | null = null;
+    public get nameSentenceTextRange(): SentenceTextRange {
+        if (this.nameSentenceTextRangeCache !== null && this.nameSentenceTextRangeCache[0] === this.attr.nameSentenceTextRange) {
+            return this.nameSentenceTextRangeCache[1];
         } else {
-            const namePos = JSON.parse(this.attr.namePos) as SpanTextPos;
-            this.namePosCache = [this.attr.namePos, namePos];
-            return namePos;
+            const nameSentenceTextRange = JSON.parse(this.attr.nameSentenceTextRange) as SentenceTextRange;
+            this.nameSentenceTextRangeCache = [this.attr.nameSentenceTextRange, nameSentenceTextRange];
+            return nameSentenceTextRange;
         }
+    }
+    public set nameSentenceTextRange(value: SentenceTextRange) {
+        this.attr.nameSentenceTextRange = JSON.stringify(value);
+        this.nameSentenceTextRangeCache = [this.attr.nameSentenceTextRange, value];
     }
     constructor(options: DeclarationOptions) {
         super("____Declaration", {}, [], options.range);
 
-        const { declarationID: id, type, name, value, scope, namePos } = options;
+        const { declarationID: id, type, name, value, scope, nameSentenceTextRange } = options;
 
         this.attr = {
             declarationID: id,
             type,
             name,
             scope: JSON.stringify(scope),
-            namePos: JSON.stringify(namePos),
+            nameSentenceTextRange: JSON.stringify(nameSentenceTextRange),
         };
         if (value !== null) this.attr.value = value;
 
         this.children = [name];
-    }
-
-    public get nameRange(): [number, number] | null {
-        const namePos = this.namePos();
-        return namePos.range && [
-            namePos.range[0] + namePos.textIndex,
-            namePos.range[0] + namePos.textIndex + namePos.length,
-        ];
     }
 }

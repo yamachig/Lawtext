@@ -32,10 +32,12 @@ export const getContainerType = (tag: string): ContainerType => {
 };
 
 export const ignoreAnalysisTag = [
-    "LawNum",
-    "LawTitle",
-    "TOC",
-    "ArticleTitle",
-    ...std.paragraphItemTitleTags,
-    "SupplProvision",
+    "QuoteStruct",
+    "NewProvision",
+    // "LawNum",
+    // "LawTitle",
+    // "TOC",
+    // "ArticleTitle",
+    // ...std.paragraphItemTitleTags,
+    // "SupplProvision",
 ] as const;

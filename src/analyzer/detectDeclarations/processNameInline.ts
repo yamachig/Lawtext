@@ -1,18 +1,17 @@
-import { SpansStruct } from "../getSpans";
-import * as std from "../../law/std";
+import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { __Parentheses, ____Declaration } from "../../node/el/controls";
-import { Container } from "../../node/container";
+import { Container, ContainerType } from "../../node/container";
 import $nameInline from "../sentenceChildrenParser/rules/$nameInline";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
 import getScope from "../getScope";
-import { SpanTextPos } from "../../node/span/spanTextPos";
+import { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 
 export const processNameInline = (
-    els: (std.StdEL | std.__EL)[],
-    spansStruct: SpansStruct,
+    sentenceEnv: SentenceEnv,
+    _sentenceEnvsStruct: SentenceEnvsStruct,
     container: Container,
 ): (
     | WithErrorValue<{
@@ -22,48 +21,61 @@ export const processNameInline = (
 ) => {
     const errors: ErrorMessage[] = [];
 
-    for (let i = 0; i < els.length; i++) {
+    for (let i = 0; i < sentenceEnv.el.children.length; i++) {
         const result = $nameInline.match(
             i,
-            (els as SentenceChildEL[]),
+            (sentenceEnv.el.children as SentenceChildEL[]),
             initialEnv({ target: "" }),
         );
 
         if (result.ok) {
             const { nameSquareParenthesesOffset, following, pointerRanges } = result.value.value;
 
-            const nameSquareParentheses = els[nameSquareParenthesesOffset] as __Parentheses;
+            const nameSquareParentheses = sentenceEnv.el.children[nameSquareParenthesesOffset] as __Parentheses;
 
             errors.push(...result.value.errors);
 
             const name = nameSquareParentheses.content.text();
 
-            const nameSpanIndex = (spansStruct.spansByEL.get(nameSquareParentheses)?.index ?? Number.NaN);
+            const scope = (
+                pointerRanges
+                    ? getScope(
+                        container,
+                        pointerRanges,
+                        following,
+                        sentenceEnv.index + 1,
+                    )
+                    : [
+                        {
+                            start: {
+                                sentenceIndex: sentenceEnv.index + 1,
+                                textOffset: 0,
+                            },
+                            end: {
+                                sentenceIndex: [...sentenceEnv.container.parents(p => p.type === ContainerType.TOPLEVEL)][0].sentenceRange[1] + 1,
+                                textOffset: 0,
+                            },
+                        },
+                    ]
+            );
 
-            const scope = pointerRanges
-                ? getScope(
-                    container,
-                    pointerRanges,
-                    following,
-                    nameSpanIndex + 1,
-                )
-                : [
-                    {
-                        startSpanIndex: nameSpanIndex + 1,
-                        startTextIndex: 0,
-                        endSpanIndex: spansStruct.spans.length,
-                        endTextIndex: 0,
-                    },
-                ];
+            const nameTextRange = sentenceEnv.textRageOfEL(nameSquareParentheses.content);
+            if (!nameTextRange) {
+                throw new Error("nameTextRange is null");
+            }
 
-            const namePos: SpanTextPos = {
-                spanIndex: nameSpanIndex,
-                textIndex: 0,
-                length: name.length,
-                range: nameSquareParentheses.content.range,
+            const nameSentenceTextRange: SentenceTextRange = {
+                start: {
+                    sentenceIndex: sentenceEnv.index,
+                    textOffset: nameTextRange[0],
+                },
+                end: {
+                    sentenceIndex: sentenceEnv.index,
+                    textOffset: nameTextRange[1],
+                },
             };
 
-            const declarationID = `decl-span_${Number.isFinite(nameSpanIndex) ? nameSpanIndex : nameSquareParentheses.content.id}-len_${name.length}`;
+            const declarationID = `decl-sentence_${sentenceEnv.index}-text_${nameTextRange[0]}_${nameTextRange[1]}`;
 
             const declaration = new ____Declaration({
                 declarationID,
@@ -71,7 +83,7 @@ export const processNameInline = (
                 name,
                 value: null,
                 scope: scope,
-                namePos: namePos,
+                nameSentenceTextRange,
                 range: nameSquareParentheses.content.range,
             });
 

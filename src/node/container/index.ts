@@ -20,7 +20,7 @@ export interface ContainerOptions {
     containerID: string,
     el: EL,
     type: ContainerType,
-    spanRange?: [number, number],
+    sentenceRange?: [number, number], // half open
     parent?: Container | null,
     children?: Container[],
     subParent?: Container | null,
@@ -30,15 +30,15 @@ export class Container {
     public containerID: string;
     public el: EL;
     public type: ContainerType;
-    public spanRange: [number, number]; // half open
+    public sentenceRange: [number, number]; // half open
     public parent: Container | null;
     public children: Container[];
     public subParent: Container | null; // skips ARTICLES
     public subChildren: Container[]; // skips ARTICLES
 
     constructor(options: ContainerOptions) {
-        const { containerID, el, type, spanRange, parent, children, subParent, subChildren } = {
-            spanRange: [NaN, NaN] as [number, number],
+        const { containerID, el, type, sentenceRange: spanRange, parent, children, subParent, subChildren } = {
+            sentenceRange: [NaN, NaN] as [number, number],
             parent: null as Container | null,
             children: [] as Container[],
             subParent: null as Container | null,
@@ -48,7 +48,7 @@ export class Container {
         this.containerID = containerID;
         this.el = el;
         this.type = type;
-        this.spanRange = spanRange;
+        this.sentenceRange = spanRange;
         this.parent = parent;
         this.children = children;
         this.subParent = subParent;
