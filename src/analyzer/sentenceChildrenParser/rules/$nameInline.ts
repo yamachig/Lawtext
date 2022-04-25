@@ -4,7 +4,7 @@ import factory from "../factory";
 import { WithErrorRule } from "../util";
 
 export const $nameInline: WithErrorRule<{
-    nameSquareParenthesesOffset: number,
+    nameSquareParentheses: __Parentheses,
     following: boolean,
     pointerRanges: ____PointerRanges | null,
 }> = factory
@@ -45,13 +45,13 @@ export const $nameInline: WithErrorRule<{
             .assert(({ following, pointerRanges }) => following || pointerRanges)
         )
         .and(r => r
-            .oneMatch(({ item, offset }) => {
+            .oneMatch(({ item }) => {
                 if (
                     (item instanceof __Parentheses)
                         && item.attr.type === "square"
-                ) { return offset(); } else { return null; }
+                ) { return item; } else { return null; }
             })
-        , "nameSquareParenthesesOffset")
+        , "nameSquareParentheses")
         .andOmit(r => r
             .zeroOrOne(r => r
                 .oneMatch(({ item }) => {
@@ -62,11 +62,11 @@ export const $nameInline: WithErrorRule<{
                 })
             )
         )
-        .action(({ following, pointerRanges, nameSquareParenthesesOffset }) => {
+        .action(({ following, pointerRanges, nameSquareParentheses }) => {
             const value = {
                 following: Boolean(following),
                 pointerRanges,
-                nameSquareParenthesesOffset,
+                nameSquareParentheses,
             };
             return { value, errors: [] };
         })

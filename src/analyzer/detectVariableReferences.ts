@@ -1,7 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { Span } from "../node/out__old__span";
 import { EL } from "../node/el";
 import { Declarations } from "./common/declarations";
 import { ____VarRef } from "../node/el/controls/varRef";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { SpanTextPos } from "../node/out__old__span/spanTextPos";
 import { SentenceEnvsStruct } from "./getSentenceEnvs";
 

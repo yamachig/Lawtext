@@ -62,6 +62,43 @@ describe("Test $nameInline", () => {
                 }
             ]
         };
+        const expectedNameSquareParentheses = {
+            tag: "__Parentheses",
+            attr: {
+                type: "square",
+                depth: "1"
+            },
+            children: [
+                {
+                    tag: "__PStart",
+                    attr: {
+                        type: "square"
+                    },
+                    children: ["「"]
+                },
+                {
+                    tag: "__PContent",
+                    attr: {
+                        type: "square"
+                    },
+                    children: [
+                        {
+                            tag: "__Text",
+                            attr: {},
+                            children: ["命令"]
+                        }
+                    ]
+                },
+                {
+                    tag: "__PEnd",
+                    attr: {
+                        type: "square"
+                    },
+                    children: ["」"]
+                }
+            ]
+        }
+          ;
 
         const result = $nameInline.abstract().match(0, input, env);
         assert.isTrue(result.ok);
@@ -69,7 +106,8 @@ describe("Test $nameInline", () => {
             // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.pointerRanges?.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.value.following, false);
-            assert.deepStrictEqual(result.value.value.nameSquareParenthesesOffset, 2);
+            // console.log(JSON.stringify(result.value.value.nameSquareParentheses.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.nameSquareParentheses.json(true), expectedNameSquareParentheses);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });

@@ -1,6 +1,6 @@
 import { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
-import { __Parentheses, ____Declaration } from "../../node/el/controls";
+import { ____Declaration } from "../../node/el/controls";
 import { Container, ContainerType } from "../../node/container";
 import $nameInline from "../sentenceChildrenParser/rules/$nameInline";
 import { initialEnv } from "../sentenceChildrenParser/env";
@@ -29,9 +29,7 @@ export const processNameInline = (
         );
 
         if (result.ok) {
-            const { nameSquareParenthesesOffset, following, pointerRanges } = result.value.value;
-
-            const nameSquareParentheses = elToBeModified.children[nameSquareParenthesesOffset] as __Parentheses;
+            const { nameSquareParentheses, following, pointerRanges } = result.value.value;
 
             errors.push(...result.value.errors);
 
