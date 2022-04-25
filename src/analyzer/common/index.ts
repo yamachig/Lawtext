@@ -1,5 +1,6 @@
 import { ContainerType } from "../../node/container";
 import * as std from "../../law/std";
+import { EL } from "../../node/el";
 
 export const rootContainerTags = ["Law"] as const;
 
@@ -31,7 +32,7 @@ export const getContainerType = (tag: string): ContainerType => {
     else return ContainerType.SENTENCES;
 };
 
-export const ignoreAnalysisTag = [
+export const ignoreAnalysisTags = [
     "QuoteStruct",
     "NewProvision",
     "SupplProvision",
@@ -42,3 +43,13 @@ export const ignoreAnalysisTag = [
     // ...std.paragraphItemTitleTags,
     // "SupplProvision",
 ] as const;
+
+export type IgnoreAnalysis = (
+    | std.QuoteStruct
+    | std.NewProvision
+    | std.SupplProvision
+);
+
+export const isIgnoreAnalysis = (el: EL | string): el is IgnoreAnalysis =>
+    (typeof el !== "string") && (ignoreAnalysisTags as readonly string[]).includes(el.tag);
+

@@ -8,7 +8,7 @@ import { WithErrorValue } from "../../parser/std/util";
 import { SentenceChildEL } from "../../node/cst/inline";
 import { ErrorMessage } from "../../parser/cst/error";
 import { isSentenceText, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
-import { ignoreAnalysisTag } from "../common";
+import { ignoreAnalysisTags } from "../common";
 
 export const matchVariableReference = (textEL: __Text, sentenceEnv: SentenceEnv, declarations: Declarations): (
     | WithErrorValue<{
@@ -131,7 +131,7 @@ export const detectVariableReferencesOfEL = (elToBeModified: std.StdEL | std.__E
         } else if (isSentenceText(child)) {
             continue;
 
-        } else if ((ignoreAnalysisTag as readonly string[]).includes(child.tag)) {
+        } else if ((ignoreAnalysisTags as readonly string[]).includes(child.tag)) {
             continue;
 
         } else {

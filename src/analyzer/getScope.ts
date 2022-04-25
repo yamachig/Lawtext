@@ -2,7 +2,7 @@ import { throwError } from "../util";
 import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
 import { initialEnv } from "../parser/cst/env";
-import { getContainerType, ignoreAnalysisTag } from "./common";
+import { getContainerType, ignoreAnalysisTags } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import { $pointerRanges } from "./stringParser/rules/$pointerRanges";
 import { SentenceTextPos, SentenceTextRange } from "../node/container/sentenceEnv";
@@ -29,7 +29,7 @@ const locatePointer = (
     const head = origPointer.fragments()[0];
     const headType = getContainerType(head.attr.targetType);
 
-    if ((ignoreAnalysisTag as readonly string[]).indexOf(head.attr.targetType) >= 0) {
+    if ((ignoreAnalysisTags as readonly string[]).indexOf(head.attr.targetType) >= 0) {
         locatedFragments = origPointer.fragments();
 
     } else if (head.attr.relPos === RelPos.SAME) {

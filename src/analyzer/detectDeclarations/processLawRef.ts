@@ -5,7 +5,7 @@ import { LAWNUM_TABLE, KEY_LENGTH } from "../../law/lawNumTable";
 import { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { __Text, ____Declaration } from "../../node/el/controls";
-import { Container, ContainerType } from "../../node/container";
+import { ContainerType } from "../../node/container";
 import $lawRef from "../sentenceChildrenParser/rules/$lawRef";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
@@ -23,7 +23,6 @@ export const getLawNameLength = (lawNum: string): number => {
 export const processLawRef = (
     elToBeModified: std.StdEL | std.__EL,
     sentenceEnv: SentenceEnv,
-    container: Container,
 ): (
     WithErrorValue<{
         declarations: ____Declaration[],
@@ -54,7 +53,7 @@ export const processLawRef = (
                 const scope = (
                     pointerRanges
                         ? getScope(
-                            container,
+                            sentenceEnv.container,
                             pointerRanges,
                             following ? {
                                 sentenceIndex: sentenceEnv.index,

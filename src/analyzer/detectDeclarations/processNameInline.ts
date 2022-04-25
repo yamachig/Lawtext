@@ -1,7 +1,7 @@
 import { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { ____Declaration } from "../../node/el/controls";
-import { Container, ContainerType } from "../../node/container";
+import { ContainerType } from "../../node/container";
 import $nameInline from "../sentenceChildrenParser/rules/$nameInline";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
@@ -12,7 +12,6 @@ import * as std from "../../law/std";
 export const processNameInline = (
     elToBeModified: std.StdEL | std.__EL,
     sentenceEnv: SentenceEnv,
-    container: Container,
 ): (
     WithErrorValue<{
         declarations: ____Declaration[],
@@ -38,7 +37,7 @@ export const processNameInline = (
             const scope = (
                 pointerRanges
                     ? getScope(
-                        container,
+                        sentenceEnv.container,
                         pointerRanges,
                         following ? {
                             sentenceIndex: sentenceEnv.index,
