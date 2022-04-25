@@ -1,11 +1,12 @@
-import { Span } from "../node/span";
+import { Span } from "../node/out__old__span";
 import { EL } from "../node/el";
 import { Declarations } from "./common/declarations";
 import { ____VarRef } from "../node/el/controls/varRef";
-import { SpanTextPos } from "../node/span/spanTextPos";
+import { SpanTextPos } from "../node/out__old__span/spanTextPos";
+import { SentenceEnvsStruct } from "./getSentenceEnvs";
 
 
-export const detectVariableReferences = (spans: Span[], declarations: Declarations) => {
+export const detectVariableReferences = (_sentenceEnvsStruct: SentenceEnvsStruct, declarations: Declarations) => {
 
     let variableReferences: ____VarRef[] = [];
 
@@ -50,7 +51,9 @@ export const detectVariableReferences = (spans: Span[], declarations: Declaratio
                         const varref = new ____VarRef({
                             refName: declaration.attr.name,
                             declarationID: declaration.attr.declarationID,
-                            refPos: refPos,
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            refSentenceTextRange: refPos,
                             range,
                         });
                         span.el.replaceSpan(index + indexOffset, searchIndex + indexOffset, varref);
@@ -63,6 +66,8 @@ export const detectVariableReferences = (spans: Span[], declarations: Declaratio
         return ret;
     };
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     for (const span of spans) {
         const varrefs = detect(span);
         if (varrefs) {
