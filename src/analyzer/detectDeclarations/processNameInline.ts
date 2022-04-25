@@ -40,17 +40,19 @@ export const processNameInline = (
                     ? getScope(
                         container,
                         pointerRanges,
-                        following,
-                        sentenceEnv.index + 1,
+                        following ? {
+                            sentenceIndex: sentenceEnv.index,
+                            textOffset: sentenceEnv.textRageOfEL(nameSquareParentheses)?.[1] ?? 0,
+                        } : undefined,
                     )
                     : [
                         {
                             start: {
-                                sentenceIndex: sentenceEnv.index + 1,
-                                textOffset: 0,
+                                sentenceIndex: sentenceEnv.index,
+                                textOffset: sentenceEnv.textRageOfEL(nameSquareParentheses)?.[1] ?? 0,
                             },
                             end: {
-                                sentenceIndex: [...sentenceEnv.container.parents(p => p.type === ContainerType.TOPLEVEL || p.type === ContainerType.ROOT)][0].sentenceRange[1] + 1,
+                                sentenceIndex: (sentenceEnv.container.thisOrClosest(p => p.type === ContainerType.TOPLEVEL || p.type === ContainerType.ROOT)?.sentenceRange[1] ?? Number.NaN) + 1,
                                 textOffset: 0,
                             },
                         },

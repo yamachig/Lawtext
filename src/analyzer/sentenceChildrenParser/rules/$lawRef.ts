@@ -5,7 +5,7 @@ import { WithErrorRule } from "../util";
 
 interface LawRefInfo {
     lawNum: ____LawNum,
-    nameInfo: {
+    aliasInfo: {
         nameSquareParentheses: __Parentheses,
         following: boolean,
         pointerRanges: ____PointerRanges | null,
@@ -87,13 +87,13 @@ export const $lawNum: WithErrorRule<LawRefInfo> = factory
                     })
                 )
             )
-        , "nameInfo")
-        .action(({ lawNum, nameInfo }) => {
+        , "aliasInfo")
+        .action(({ lawNum, aliasInfo }) => {
             const value = {
                 lawNum,
-                nameInfo: nameInfo?.value ?? null,
+                aliasInfo: aliasInfo?.value ?? null,
             };
-            return { value, errors: [...(nameInfo?.errors ?? [])] };
+            return { value, errors: [...(aliasInfo?.errors ?? [])] };
         })
     )
     ;

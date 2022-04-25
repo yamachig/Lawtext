@@ -5,7 +5,7 @@ import { initialEnv } from "../parser/cst/env";
 import { getContainerType, ignoreAnalysisTag } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import { $pointerRanges } from "./stringParser/rules/$pointerRanges";
-import { SentenceTextRange } from "../node/container/sentenceEnv";
+import { SentenceTextPos, SentenceTextRange } from "../node/container/sentenceEnv";
 
 
 const parseRanges = (text: string): ____PointerRanges | null => { // closed
@@ -175,8 +175,7 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
 export const getScope = (
     currentContainer: Container,
     origRangesOrText: string | ____PointerRanges,
-    following: boolean,
-    followingStartSentenceIndex: number,
+    followingStartPos?: SentenceTextPos,
 ): SentenceTextRange[] => {
     const ret: SentenceTextRange[] = [];
     const origRanges = origRangesOrText instanceof ____PointerRanges ? origRangesOrText : parseRanges(origRangesOrText);
@@ -188,12 +187,9 @@ export const getScope = (
         }
         const [, fromc] = from[from.length - 1];
         const [, toc] = to[to.length - 1];
-        if (following) {
+        if (followingStartPos) {
             ret.push({
-                start: {
-                    sentenceIndex: followingStartSentenceIndex,
-                    textOffset: 0,
-                },
+                start: followingStartPos,
                 end: {
                     sentenceIndex: toc.sentenceRange[1],
                     textOffset: 0,

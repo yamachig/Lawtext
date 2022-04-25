@@ -84,12 +84,12 @@ describe("Test $lawRef", () => {
             assert.deepStrictEqual(result.value.value.lawRefInfo.lawNum.json(true), expectedLawNum);
 
             // console.log(JSON.stringify(result.value.value.lawRefInfo.nameInfo?.pointerRanges?.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.lawRefInfo.nameInfo?.pointerRanges, null);
+            assert.deepStrictEqual(result.value.value.lawRefInfo.aliasInfo?.pointerRanges, null);
 
-            assert.deepStrictEqual(result.value.value.lawRefInfo.nameInfo?.following, true);
+            assert.deepStrictEqual(result.value.value.lawRefInfo.aliasInfo?.following, true);
 
             // console.log(JSON.stringify(result.value.value.lawRefInfo.nameInfo?.nameSquareParentheses.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.lawRefInfo.nameInfo?.nameSquareParentheses.json(true), expectedNameSquareParentheses);
+            assert.deepStrictEqual(result.value.value.lawRefInfo.aliasInfo?.nameSquareParentheses.json(true), expectedNameSquareParentheses);
 
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
