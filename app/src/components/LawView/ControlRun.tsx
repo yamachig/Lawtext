@@ -228,7 +228,7 @@ const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
     if (!analysis) return null;
 
     const declaration = analysis.declarations.get(el.attr.declarationID);
-    const declContainer = analysis.spans[declaration.namePos().spanIndex].env.container;
+    const declContainer = analysis.sentenceEnvs[declaration.nameSentenceTextRange.start.sentenceIndex].container;
     const containerStack = declContainer.linealAscendant(c => {
         if (std.isParagraph(c.el)) {
             const paragraphNum = c.el.children.find(std.isParagraphNum);

@@ -24,7 +24,7 @@ const render = async (lawNum: string) => {
     const { xml: origXML } = await loader.loadLawXMLStructByInfo(lawInfo);
     if (origXML === null) throw Error("XML not found");
 
-    const origEL = xmlToEL(origXML);
+    const origEL = xmlToEL(origXML) as std.Law;
     const analysis = analyze(origEL);
 
     let currentState: BaseLawtextAppPageState = {
