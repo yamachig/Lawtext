@@ -25,12 +25,12 @@ export const processLawRef = (
     sentenceEnv: SentenceEnv,
     container: Container,
 ): (
-    | WithErrorValue<{
-        declaration: ____Declaration,
+    WithErrorValue<{
+        declarations: ____Declaration[],
     }>
-    | null
 ) => {
     const errors: ErrorMessage[] = [];
+    const declarations: ____Declaration[] = [];
 
     for (let i = 0; i < elToBeModified.children.length; i++) {
         const result = $lawRef.match(
@@ -112,17 +112,13 @@ export const processLawRef = (
                     nameSentenceTextRange,
                     range: nameSquareParentheses.content.range,
                 });
+                declarations.push(declaration);
 
                 nameSquareParentheses.content.children.splice(
                     0,
                     nameSquareParentheses.content.children.length,
                     declaration,
                 );
-
-                return {
-                    value: { declaration },
-                    errors,
-                };
 
             } else {
                 const name = lawNameCandidate.text().slice(-lawNameLength);
@@ -170,6 +166,7 @@ export const processLawRef = (
                         lawNameCandidate.range[1],
                     ],
                 });
+                declarations.push(declaration);
 
                 elToBeModified.children.splice(
                     i,
@@ -185,13 +182,12 @@ export const processLawRef = (
                 );
                 i++;
 
-                return {
-                    value: { declaration },
-                    errors,
-                };
-
             }
         }
     }
-    return null;
+
+    return {
+        value: { declarations },
+        errors,
+    };
 };

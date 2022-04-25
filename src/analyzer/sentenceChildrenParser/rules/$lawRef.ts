@@ -63,7 +63,8 @@ export const $lawNum: WithErrorRule<LawRefInfo> = factory
                         .oneMatch(({ item }) => {
                             if (
                                 (item instanceof __Parentheses)
-                                    && item.attr.type === "square"
+                                && item.attr.type === "square"
+                                && item.content.children.every(c => c instanceof __Text)
                             ) { return item; } else { return null; }
                         })
                     , "nameSquareParentheses")

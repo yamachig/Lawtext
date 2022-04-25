@@ -14,12 +14,12 @@ export const processNameInline = (
     sentenceEnv: SentenceEnv,
     container: Container,
 ): (
-    | WithErrorValue<{
-        declaration: ____Declaration,
+    WithErrorValue<{
+        declarations: ____Declaration[],
     }>
-    | null
 ) => {
     const errors: ErrorMessage[] = [];
+    const declarations: ____Declaration[] = [];
 
     for (let i = 0; i < elToBeModified.children.length; i++) {
         const result = $nameInline.match(
@@ -96,18 +96,18 @@ export const processNameInline = (
                 nameSentenceTextRange,
                 range: nameSquareParentheses.content.range,
             });
+            declarations.push(declaration);
 
             nameSquareParentheses.content.children.splice(
                 0,
                 nameSquareParentheses.content.children.length,
                 declaration,
             );
-
-            return {
-                value: { declaration },
-                errors,
-            };
         }
     }
-    return null;
+
+    return {
+        value: { declarations },
+        errors,
+    };
 };

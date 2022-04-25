@@ -7,6 +7,7 @@ import { ____Declaration } from "../../node/el/controls";
 import { Container } from "../../node/container";
 import { ignoreAnalysisTag } from "../common";
 import { SentenceEnv } from "../../node/container/sentenceEnv";
+import { processLawRef } from "./processLawRef";
 
 
 export const detectDeclarationsOfEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnv: SentenceEnv, container: Container): WithErrorValue<____Declaration[]> => {
@@ -15,13 +16,25 @@ export const detectDeclarationsOfEL = (elToBeModified: std.StdEL | std.__EL, sen
     const errors: ErrorMessage[] = [];
 
     {
+        const result = processLawRef(
+            elToBeModified,
+            sentenceEnv,
+            container,
+        );
+        if (result){
+            declarations.push(...result.value.declarations);
+            errors.push(...result.errors);
+        }
+    }
+
+    {
         const result = processNameInline(
             elToBeModified,
             sentenceEnv,
             container,
         );
         if (result){
-            declarations.push(result.value.declaration);
+            declarations.push(...result.value.declarations);
             errors.push(...result.errors);
         }
     }

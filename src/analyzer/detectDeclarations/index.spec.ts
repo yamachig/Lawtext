@@ -267,10 +267,11 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_43_49",
-                    type: "Keyword",
+                    type: "LawName",
                     name: "通則法改正法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":39},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
+                    value: "平成二十六年法律第六十六号",
                 },
                 children: ["通則法改正法"],
             },
@@ -358,10 +359,11 @@ describe("Test detectDeclarations", () => {
                                                                     tag: "____Declaration",
                                                                     attr: {
                                                                         declarationID: "decl-sentence_0-text_43_49",
-                                                                        type: "Keyword",
+                                                                        type: "LawName",
                                                                         name: "通則法改正法",
-                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":39},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
+                                                                        value: "平成二十六年法律第六十六号",
                                                                     },
                                                                     children: ["通則法改正法"],
                                                                 },
@@ -396,6 +398,256 @@ describe("Test detectDeclarations", () => {
                                     tag: "__Text",
                                     attr: {},
                                     children: ["の施行の日から施行する。"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const result = detectDeclarations(sentenceEnvsStruct);
+
+        // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            result.value.map(r => r.json(true)),
+            expected,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
+        assert.deepStrictEqual(
+            inputElToBeModified.json(true),
+            expectedModifiedInput,
+        );
+    });
+
+    it("Success case: lawRef", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const inputElToBeModified = loadEL({
+            tag: "Subitem1",
+            attr: {},
+            children: [
+                {
+                    tag: "Subitem1Title",
+                    attr: {},
+                    children: ["イ"],
+                },
+                {
+                    tag: "Subitem1Sentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: ["国の機関相互間の関係について定める命令等並びに地方自治法（昭和二十二年法律第六十七号）第二編第十一章に規定する国と普通地方公共団体との関係及び普通地方公共団体相互間の関係その他の国と地方公共団体との関係及び地方公共団体相互間の関係について定める命令等（第一項の規定によりこの法律の規定を適用しないこととされる処分に係る命令等を含む。）"],
+                        },
+                    ],
+                },
+            ],
+        }) as std.Subitem1;
+        addSentenceChildrenControls(inputElToBeModified);
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        detectTokens(sentenceEnvsStruct);
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_23_28",
+                    type: "LawName",
+                    name: "地方自治法",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":42},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
+                    value: "昭和二十二年法律第六十七号",
+                },
+                children: ["地方自治法"],
+            },
+        ] ;
+        const expectedErrorMessages: string[] = [];
+        const expectedModifiedInput = {
+            tag: "Subitem1",
+            attr: {},
+            children: [
+                {
+                    tag: "Subitem1Title",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "__Text",
+                            attr: {},
+                            children: ["イ"],
+                        },
+                    ],
+                },
+                {
+                    tag: "Subitem1Sentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["国の機関相互間の関係について定める命令等並びに"],
+                                },
+                                {
+                                    tag: "____Declaration",
+                                    attr: {
+                                        declarationID: "decl-sentence_0-text_23_28",
+                                        type: "LawName",
+                                        name: "地方自治法",
+                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":42},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
+                                        value: "昭和二十二年法律第六十七号",
+                                    },
+                                    children: ["地方自治法"],
+                                },
+                                {
+                                    tag: "__Parentheses",
+                                    attr: {
+                                        type: "round",
+                                        depth: "1",
+                                    },
+                                    children: [
+                                        {
+                                            tag: "__PStart",
+                                            attr: {
+                                                type: "round",
+                                            },
+                                            children: ["（"],
+                                        },
+                                        {
+                                            tag: "__PContent",
+                                            attr: {
+                                                type: "round",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "____LawNum",
+                                                    attr: {},
+                                                    children: ["昭和二十二年法律第六十七号"],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            tag: "__PEnd",
+                                            attr: {
+                                                type: "round",
+                                            },
+                                            children: ["）"],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "____PointerRanges",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "____PointerRange",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "____Pointer",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____PF",
+                                                            attr: {
+                                                                relPos: "NAMED",
+                                                                targetType: "Part",
+                                                                name: "第二編",
+                                                                num: "2",
+                                                            },
+                                                            children: ["第二編"],
+                                                        },
+                                                        {
+                                                            tag: "____PF",
+                                                            attr: {
+                                                                relPos: "NAMED",
+                                                                targetType: "Chapter",
+                                                                name: "第十一章",
+                                                                num: "11",
+                                                            },
+                                                            children: ["第十一章"],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["に規定する国と普通地方公共団体との関係及び普通地方公共団体相互間の関係その他の国と地方公共団体との関係及び地方公共団体相互間の関係について定める命令等"],
+                                },
+                                {
+                                    tag: "__Parentheses",
+                                    attr: {
+                                        type: "round",
+                                        depth: "1",
+                                    },
+                                    children: [
+                                        {
+                                            tag: "__PStart",
+                                            attr: {
+                                                type: "round",
+                                            },
+                                            children: ["（"],
+                                        },
+                                        {
+                                            tag: "__PContent",
+                                            attr: {
+                                                type: "round",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "____PointerRanges",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____PointerRange",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "____Pointer",
+                                                                    attr: {},
+                                                                    children: [
+                                                                        {
+                                                                            tag: "____PF",
+                                                                            attr: {
+                                                                                relPos: "NAMED",
+                                                                                targetType: "Paragraph",
+                                                                                name: "第一項",
+                                                                                num: "1",
+                                                                            },
+                                                                            children: ["第一項"],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["の規定によりこの法律の規定を適用しないこととされる処分に係る命令等を含む。"],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            tag: "__PEnd",
+                                            attr: {
+                                                type: "round",
+                                            },
+                                            children: ["）"],
+                                        },
+                                    ],
                                 },
                             ],
                         },
