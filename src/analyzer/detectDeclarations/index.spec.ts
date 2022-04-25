@@ -41,16 +41,16 @@ describe("Test detectDeclarations", () => {
             {
                 tag: "____Declaration",
                 attr: {
-                    declarationID: "decl-span_11-len_2",
+                    declarationID: "decl-sentence_0-text_36_38",
                     type: "Keyword",
                     name: "命令",
                     scope: "[]",
-                    namePos: "{\"spanIndex\":null,\"textIndex\":0,\"length\":2,\"range\":[36,38]}",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":36},\"end\":{\"sentenceIndex\":0,\"textOffset\":38}}",
                 },
                 children: ["命令"],
             },
         ];
-        const expectedErrorMessages: string[] = [];
+        const expectedErrorMessages: string[] = ["No scope found"];
         const expectedModifiedInput = {
             tag: "Subitem1",
             attr: {},
@@ -169,11 +169,11 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____Declaration",
                                                                     attr: {
-                                                                        declarationID: "decl-span_11-len_2",
+                                                                        declarationID: "decl-sentence_0-text_36_38",
                                                                         type: "Keyword",
                                                                         name: "命令",
                                                                         scope: "[]",
-                                                                        namePos: "{\"spanIndex\":null,\"textIndex\":0,\"length\":2,\"range\":[36,38]}",
+                                                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":36},\"end\":{\"sentenceIndex\":0,\"textOffset\":38}}",
                                                                     },
                                                                     children: ["命令"],
                                                                 },
@@ -215,7 +215,7 @@ describe("Test detectDeclarations", () => {
                 },
             ],
         }
-          ;
+        ;
 
         const result = detectDeclarations(sentenceEnvsStruct);
 

@@ -1,4 +1,4 @@
-import { Container } from "../node/container";
+import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
 import { containerTags, getContainerType, ignoreAnalysisTag } from "./common";
 import { isSentenceLike, SentenceEnv } from "../node/container/sentenceEnv";
@@ -21,18 +21,25 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
     let rootContainer: Container | null = null;
     const lawType = el.attr.LawType ?? "";
 
+    const dummyRootContainer = new Container({
+        containerID: "container-dummy-root",
+        type: ContainerType.ROOT,
+        el,
+    });
+
     const extract = (el: EL, prevContainer: Container | null, prevParentELs: EL[]) => {
 
         if ((ignoreAnalysisTag as readonly string[]).includes(el.tag)) return;
 
         if (isSentenceLike(el)) {
-            if (!prevContainer) throw new Error(`SentenceEnv: SentenceLike ${el.tag} has no container`);
+            const container = prevContainer ?? rootContainer ?? dummyRootContainer;
+            if (!rootContainer) rootContainer = container;
             const sentenceEnv = new SentenceEnv({
                 index: sentenceEnvs.length,
                 el,
                 lawType,
                 parentELs: [...prevParentELs],
-                container: prevContainer,
+                container,
             });
             sentenceEnvs.push(sentenceEnv);
             sentenceEnvByEL.set(el, sentenceEnv);
@@ -64,6 +71,8 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
     };
 
     extract(el, null, []);
+
+    dummyRootContainer.sentenceRange = [0, sentenceEnvs.length];
 
     if (!rootContainer) throw new Error();
 

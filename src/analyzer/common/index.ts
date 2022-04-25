@@ -7,7 +7,7 @@ export const toplevelContainerTags = ["EnactStatement", "MainProvision", ...std.
 
 export const articleContainerTags = std.articleGroupTags;
 
-export const spansContainerTags = [
+export const sentencesContainerTags = [
     "Article",
     ...std.paragraphItemTags,
     "Table",
@@ -20,20 +20,21 @@ export const containerTags = [
     ...rootContainerTags,
     ...toplevelContainerTags,
     ...articleContainerTags,
-    ...spansContainerTags,
+    ...sentencesContainerTags,
 ] as const;
 
 export const getContainerType = (tag: string): ContainerType => {
     if ((rootContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.ROOT;
     else if ((toplevelContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.TOPLEVEL;
     else if ((articleContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.ARTICLES;
-    else if ((spansContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.SPANS;
-    else return ContainerType.SPANS;
+    else if ((sentencesContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.SENTENCES;
+    else return ContainerType.SENTENCES;
 };
 
 export const ignoreAnalysisTag = [
     "QuoteStruct",
     "NewProvision",
+    "SupplProvision",
     // "LawNum",
     // "LawTitle",
     // "TOC",

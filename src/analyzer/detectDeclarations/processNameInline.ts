@@ -1,4 +1,3 @@
-import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { __Parentheses, ____Declaration } from "../../node/el/controls";
@@ -8,10 +7,11 @@ import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
 import getScope from "../getScope";
 import { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import * as std from "../../law/std";
 
 export const processNameInline = (
+    elToBeModified: std.StdEL | std.__EL,
     sentenceEnv: SentenceEnv,
-    _sentenceEnvsStruct: SentenceEnvsStruct,
     container: Container,
 ): (
     | WithErrorValue<{
@@ -21,17 +21,17 @@ export const processNameInline = (
 ) => {
     const errors: ErrorMessage[] = [];
 
-    for (let i = 0; i < sentenceEnv.el.children.length; i++) {
+    for (let i = 0; i < elToBeModified.children.length; i++) {
         const result = $nameInline.match(
             i,
-            (sentenceEnv.el.children as SentenceChildEL[]),
+            (elToBeModified.children as SentenceChildEL[]),
             initialEnv({ target: "" }),
         );
 
         if (result.ok) {
             const { nameSquareParenthesesOffset, following, pointerRanges } = result.value.value;
 
-            const nameSquareParentheses = sentenceEnv.el.children[nameSquareParenthesesOffset] as __Parentheses;
+            const nameSquareParentheses = elToBeModified.children[nameSquareParenthesesOffset] as __Parentheses;
 
             errors.push(...result.value.errors);
 
@@ -52,12 +52,22 @@ export const processNameInline = (
                                 textOffset: 0,
                             },
                             end: {
-                                sentenceIndex: [...sentenceEnv.container.parents(p => p.type === ContainerType.TOPLEVEL)][0].sentenceRange[1] + 1,
+                                sentenceIndex: [...sentenceEnv.container.parents(p => p.type === ContainerType.TOPLEVEL || p.type === ContainerType.ROOT)][0].sentenceRange[1] + 1,
                                 textOffset: 0,
                             },
                         },
                     ]
             );
+
+            if (scope.length === 0) {
+                errors.push(new ErrorMessage(
+                    "No scope found",
+                    [
+                        { offset: pointerRanges?.range?.[0] ?? 0, line: 0, column: 0 },
+                        { offset: pointerRanges?.range?.[1] ?? 0, line: 0, column: 0 },
+                    ],
+                ));
+            }
 
             const nameTextRange = sentenceEnv.textRageOfEL(nameSquareParentheses.content);
             if (!nameTextRange) {

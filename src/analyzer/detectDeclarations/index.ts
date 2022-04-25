@@ -6,33 +6,24 @@ import { processNameInline } from "./processNameInline";
 import { ____Declaration } from "../../node/el/controls";
 import { Container } from "../../node/container";
 import { ignoreAnalysisTag } from "../common";
-import { isSentenceLike } from "../../node/container/sentenceEnv";
+import { SentenceEnv } from "../../node/container/sentenceEnv";
 
 
-export const detectDeclarationsOfEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnvsStruct: SentenceEnvsStruct, prevContainer: Container): WithErrorValue<____Declaration[]> => {
+export const detectDeclarationsOfEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnv: SentenceEnv, container: Container): WithErrorValue<____Declaration[]> => {
 
     const declarations: ____Declaration[] = [];
     const errors: ErrorMessage[] = [];
 
-    const container = sentenceEnvsStruct.containersByEL.get(elToBeModified) ?? prevContainer;
-
-    if (isSentenceLike(elToBeModified)) {
-
-        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(elToBeModified);
-        if (!sentenceEnv) throw new Error("sentenceEnv not found");
-
-        {
-            const result = processNameInline(
-                sentenceEnv,
-                sentenceEnvsStruct,
-                container,
-            );
-            if (result){
-                declarations.push(result.value.declaration);
-                errors.push(...result.errors);
-            }
+    {
+        const result = processNameInline(
+            elToBeModified,
+            sentenceEnv,
+            container,
+        );
+        if (result){
+            declarations.push(result.value.declaration);
+            errors.push(...result.errors);
         }
-
     }
 
 
@@ -46,7 +37,7 @@ export const detectDeclarationsOfEL = (elToBeModified: std.StdEL | std.__EL, sen
         } else {
             const detectLawnameResult = detectDeclarationsOfEL(
                 child as std.StdEL | std.__EL,
-                sentenceEnvsStruct,
+                sentenceEnv,
                 container,
             );
             declarations.push(...detectLawnameResult.value);
@@ -67,7 +58,7 @@ export const detectDeclarations = (sentenceEnvsStruct: SentenceEnvsStruct): With
     const errors: ErrorMessage[] = [];
 
     for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
-        const result = detectDeclarationsOfEL(sentenceEnv.el, sentenceEnvsStruct, sentenceEnvsStruct.rootContainer);
+        const result = detectDeclarationsOfEL(sentenceEnv.el, sentenceEnv, sentenceEnv.container);
         if (result){
             declarations.push(...result.value);
             errors.push(...result.errors);

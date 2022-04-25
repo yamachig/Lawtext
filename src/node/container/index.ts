@@ -1,14 +1,10 @@
 import { EL } from "../el";
 
 export enum ContainerType {
-    // eslint-disable-next-line no-unused-vars
     ROOT = "ROOT",
-    // eslint-disable-next-line no-unused-vars
     TOPLEVEL = "TOPLEVEL",
-    // eslint-disable-next-line no-unused-vars
     ARTICLES = "ARTICLES",
-    // eslint-disable-next-line no-unused-vars
-    SPANS = "SPANS",
+    SENTENCES = "SENTENCES",
 }
 
 
