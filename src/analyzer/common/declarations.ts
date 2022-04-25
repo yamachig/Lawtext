@@ -1,24 +1,40 @@
 
+import { SentenceTextRange } from "../../node/container/sentenceEnv";
 import { ____Declaration } from "../../node/el/controls/declaration";
 
 
 export class Declarations {
     public db: Map<string, ____Declaration> = new Map();
 
-    public getInSpan(sentenceIndex: number): ____Declaration[] {
-        const declarations: ____Declaration[] = [];
+    public filterByRange(sentenceTextRange: SentenceTextRange): Declarations {
+        const declarations = new Declarations();
         for (const declaration of this.db.values()) {
             if (
-                declaration.scope().some(range =>
-                    range.start.sentenceIndex <= sentenceIndex &&
-                    sentenceIndex < range.end.sentenceIndex,
-                )
+                declaration.scope().some(range => (
+                    (
+                        (range.start.sentenceIndex < sentenceTextRange.start.sentenceIndex)
+                        || (
+                            (range.start.sentenceIndex === sentenceTextRange.start.sentenceIndex)
+                            && (range.start.textOffset <= sentenceTextRange.start.textOffset)
+                        )
+                    )
+                    && (
+                        (sentenceTextRange.end.sentenceIndex < range.end.sentenceIndex)
+                        || (
+                            (sentenceTextRange.end.sentenceIndex === range.end.sentenceIndex)
+                            && (sentenceTextRange.end.textOffset <= range.end.textOffset)
+                        )
+                    )
+                ))
             ) {
-                declarations.push(declaration);
+                declarations.add(declaration);
             }
         }
-        declarations.sort((a, b) => -(a.attr.name.length - b.attr.name.length));
         return declarations;
+    }
+
+    public values(): ____Declaration[] {
+        return [...this.db.values()].sort((a, b) => -(a.attr.name.length - b.attr.name.length));
     }
 
     public add(declaration: ____Declaration): void {

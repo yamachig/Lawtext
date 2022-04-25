@@ -97,7 +97,7 @@ const locatePointer = (
                     c.el.tag === head.attr.targetType ||
                     head.attr.targetType === "SUBITEM" && /^Subitem\d+$/.exec(c.el.tag) !== null
                 ) &&
-                (c.el.attr.Num || null) === head.attr.num;
+                (c.num || null) === head.attr.num;
             headContainer =
                 headType === ContainerType.ARTICLES
                     ? currentContainer.findAncestorChildren(func)
@@ -128,7 +128,7 @@ const locatePointer = (
                                     && (/^Subitem\d+$/.exec(c.el.tag) !== null)
                                 )
                             )
-                            && ((c.el.attr.Num ?? null) === fragment.attr.num)
+                            && ((c.num ?? null) === fragment.attr.num)
                         )
                         || (
                             (fragment.attr.targetType === "PROVISO")

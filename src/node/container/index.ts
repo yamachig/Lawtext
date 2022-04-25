@@ -1,3 +1,6 @@
+import { getContainerType } from "../../analyzer/common";
+import { parseNamedNum } from "../../law/num";
+import * as std from "../../law/std";
 import { EL } from "../el";
 
 export enum ContainerType {
@@ -15,7 +18,9 @@ interface IterableIterator<T> extends Iterator<T, void, undefined> {
 export interface ContainerOptions {
     containerID: string,
     el: EL,
-    type: ContainerType,
+    type?: ContainerType,
+    name?: string | null,
+    num?: string | null,
     sentenceRange?: [number, number], // half open
     parent?: Container | null,
     children?: Container[],
@@ -23,9 +28,11 @@ export interface ContainerOptions {
     subChildren?: Container[],
 }
 export class Container {
-    public containerID: string;
-    public el: EL;
-    public type: ContainerType;
+    public readonly containerID: string;
+    public readonly el: EL;
+    public readonly type: ContainerType;
+    public readonly name: string | null;
+    public readonly num: string | null;
     public sentenceRange: [number, number]; // half open
     public parent: Container | null;
     public children: Container[];
@@ -33,18 +40,35 @@ export class Container {
     public subChildren: Container[]; // skips ARTICLES
 
     constructor(options: ContainerOptions) {
-        const { containerID, el, type, sentenceRange: spanRange, parent, children, subParent, subChildren } = {
-            sentenceRange: [NaN, NaN] as [number, number],
-            parent: null as Container | null,
-            children: [] as Container[],
-            subParent: null as Container | null,
-            subChildren: [] as Container[],
-            ...options,
-        };
+        const {
+            containerID,
+            el,
+            type = getContainerType(el.tag),
+            name = (
+                (el.children.find(c => (
+                    std.isArticleTitle(c)
+                    || std.isParagraphItemTitle(c)
+                    || std.isArticleGroupTitle(c)
+                    || std.isAppdxItemTitle(c)
+                )) as EL | undefined)?.text()
+                ?? null
+            ),
+            num = (
+                (name && parseNamedNum(name))
+                || ((std.isParagraph(el) && "1") || null)
+            ),
+            sentenceRange = [NaN, NaN],
+            parent = null,
+            children = [],
+            subParent = null,
+            subChildren = [],
+        } = options;
         this.containerID = containerID;
         this.el = el;
         this.type = type;
-        this.sentenceRange = spanRange;
+        this.name = name;
+        this.num = num;
+        this.sentenceRange = sentenceRange;
         this.parent = parent;
         this.children = children;
         this.subParent = subParent;
