@@ -1,6 +1,6 @@
 import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
-import { containerTags, getContainerType, ignoreAnalysisTag } from "./common";
+import { containerTags, ignoreAnalysisTag } from "./common";
 import { isSentenceLike, SentenceEnv } from "../node/container/sentenceEnv";
 
 export interface SentenceEnvsStruct {
@@ -50,11 +50,9 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
             let container = prevContainer;
 
             if ((containerTags as readonly string[]).includes(el.tag)) {
-                const type = getContainerType(el.tag);
-                const containerID = `container-${containers.size}-tag_${el.tag}-type_${type}`;
-                container = new Container({ containerID, el, type });
+                container = new Container({ el });
                 if (prevContainer) prevContainer.addChild(container);
-                containers.set(containerID, container);
+                containers.set(container.containerID, container);
                 containersByEL.set(el, container);
                 if (!rootContainer) rootContainer = container;
             }

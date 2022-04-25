@@ -16,32 +16,36 @@ interface IterableIterator<T> extends Iterator<T, void, undefined> {
 }
 
 export interface ContainerOptions {
-    containerID: string,
+    containerID?: string,
     el: EL,
     type?: ContainerType,
     name?: string | null,
     num?: string | null,
     sentenceRange?: [number, number], // half open
-    parent?: Container | null,
-    children?: Container[],
-    subParent?: Container | null,
-    subChildren?: Container[],
+    // parent?: Container | null,
+    // children?: Container[],
+    // subParent?: Container | null,
+    // subChildren?: Container[],
 }
+
+let currentID = 0;
 export class Container {
-    public readonly containerID: string;
     public readonly el: EL;
+
+    public readonly containerID: string;
     public readonly type: ContainerType;
     public readonly name: string | null;
     public readonly num: string | null;
+
     public sentenceRange: [number, number]; // half open
-    public parent: Container | null;
-    public children: Container[];
-    public subParent: Container | null; // skips ARTICLES
-    public subChildren: Container[]; // skips ARTICLES
+
+    public parent: Container | null = null;
+    public children: Container[] = [];
+    public subParent: Container | null = null; // skips ARTICLES
+    public subChildren: Container[] = []; // skips ARTICLES
 
     constructor(options: ContainerOptions) {
         const {
-            containerID,
             el,
             type = getContainerType(el.tag),
             name = (
@@ -57,22 +61,25 @@ export class Container {
                 (name && parseNamedNum(name))
                 || ((std.isParagraph(el) && "1") || null)
             ),
+            containerID = `container-${currentID}-tag_${el.tag}-type_${type}`,
             sentenceRange = [NaN, NaN],
-            parent = null,
-            children = [],
-            subParent = null,
-            subChildren = [],
+            // parent = null,
+            // children = [],
+            // subParent = null,
+            // subChildren = [],
         } = options;
+        currentID++;
+
         this.containerID = containerID;
         this.el = el;
         this.type = type;
         this.name = name;
         this.num = num;
         this.sentenceRange = sentenceRange;
-        this.parent = parent;
-        this.children = children;
-        this.subParent = subParent;
-        this.subChildren = subChildren;
+        // this.parent = parent;
+        // this.children = children;
+        // this.subParent = subParent;
+        // this.subChildren = subChildren;
     }
 
     public addChild(child: Container): Container {
