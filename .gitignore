@@ -1,5 +1,6 @@
 *~
 *.pyc
+*.log
 *.cache
 *.DS_Store
 venv*

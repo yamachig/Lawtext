@@ -1,30 +1,6 @@
-import chai from "chai";
-import fs from "fs";
-import fsExtra from "fs-extra";
-import { it } from "mocha";
-import os from "os";
-import path from "path";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { promisify } from "util";
-import xmldom from "@xmldom/xmldom";
-import { DiffStatus, DiffTableItemData, lawDiff, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffMode, LawDiffNoDiffData, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
-import { parse } from "../src/parser/lawtext";
-import { analyze } from "../src/analyzer";
-import { renderDocxAsync, renderHTML, renderLawtext } from "../src/renderer";
-import { TERMC, toTableText } from "../src/util/term";
+import { DiffStatus, DiffTableItemData, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffNoDiffData, LawDiffResult, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
+import { TERMC } from "../src/util/term";
 import * as util from "../src/util";
-import { loader } from "./prepare_test";
-import { ErrorMessage } from "../src/parser/cst/error";
-import formatXML from "../src/util/formatXml";
-import { xmlToEL } from "../src/node/el/xmlToEL";
-import { outerXML } from "../src/node/el/elToXML";
-
-const domParser = new xmldom.DOMParser();
-
-const LIMIT_WIDTH = 34;
-
-const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 function* zipLongest<T>(lists: T[][], defaultValues: T[]) {
     if (lists.length !== defaultValues.length) throw new Error("Length mismatch");
@@ -254,134 +230,26 @@ const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
     return table;
 };
 
-describe("Test Renderes", () => {
+export const makeDiffTable = (diff: LawDiffResult<string>, origDOM: Node, parsedDOM: Node) => {
 
-    const lawNums = ["昭和二十五年法律第百三十一号"];
-    lawNums.splice(0, lawNums.length);
+    const table: string[][] = [];
 
-    for (const lawNum of lawNums) {
-        it(`Render and Parse: ${lawNum}`, async () => {
-        // const [list, listByLawnum] = await getLawList();
-        // chai.assert(false);
+    const diffData = makeDiffData(diff, origDOM, parsedDOM);
 
-            const lawInfo = await loader.getLawInfoByLawNum(lawNum);
-            if (lawInfo === null) throw Error("LawInfo not found");
-            const { xml: origXML } = await loader.loadLawXMLStructByInfo(lawInfo);
-            if (origXML === null) throw new Error(`XML cannot be fetched: ${lawNum}`);
-            console.log(`${TERMC.CYAN}Temporary directory: "${tempDir}"${TERMC.DEFAULT}`);
-            const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
-            const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);
-            const tempRenderedHTML = path.join(tempDir, `${lawNum}.rendered.html`);
-            const tempRenderedDocx = path.join(tempDir, `${lawNum}.rendered.docx`);
-            const tempParsedXml = path.join(tempDir, `${lawNum}.parsed.xml`);
-            await promisify(fsExtra.ensureDir)(tempDir);
+    for (const ditem of diffData) {
+        if (ditem.type === LawDiffType.ElementMismatch) {
+            table.push(...makeElementMismatchTable(ditem));
 
-            const origDOM = domParser.parseFromString(origXML);
-            await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
+        } else if (ditem.type === LawDiffType.ElementChange) {
+            table.push(...makeElementChangeTable(ditem));
 
-            const origEL = xmlToEL(origXML);
+        } else if (ditem.type === LawDiffType.NoDiff) {
+            table.push(...makeElementNoDiffTable(ditem));
 
-            let lawtext;
-            try {
-                lawtext = renderLawtext(origEL);
-            } catch (e) {
-                const msg = [
-                    `${TERMC.CYAN}Original XML: "${tempOrigXml}"${TERMC.DEFAULT}`,
-                    "",
-                ].join("\r\n");
-                console.error(msg);
-                throw e;
-            }
-
-            const html = renderHTML(origEL);
-            const docx = await renderDocxAsync(origEL);
-
-            await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });
-            await promisify(fs.writeFile)(tempRenderedHTML, html, { encoding: "utf-8" });
-            await promisify(fs.writeFile)(tempRenderedDocx, docx);
-
-            let parsedEL;
-            let errors: ErrorMessage[];
-            try {
-                const result = parse(lawtext);
-                parsedEL = result.value;
-                const ignoreErrorMessages = [
-                    "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
-                    "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
-                ];
-                errors = result.errors.filter(e => !ignoreErrorMessages.includes(e.message));
-                const allLines = lawtext.split("\n");
-                chai.assert(
-                    errors.length === 0,
-                    `\
-${errors.slice(0, 7).map(e => e.toString(allLines)).join("\n\n")}
-${errors.length > 7 ? "\n... more errors ..." : ""}
-`);
-                if (parsedEL === undefined) return;
-            } catch (e) {
-                const msg = [
-                    `Original XML: "${tempOrigXml}"`,
-                    `Rendered Lawtext: "${tempRenderedLawtext}"`,
-                    "",
-                ].join("\r\n");
-                console.error(msg);
-                throw e;
-            }
-
-            analyze(parsedEL);
-
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const parsedXML = formatXML(outerXML(parsedEL)) as string;
-            const parsedDOM = domParser.parseFromString(parsedXML);
-            await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });
-
-            const d = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.WarningAsNoDiff);
-            const table: string[][] = [];
-
-            const diffData = makeDiffData(d, origDOM, parsedDOM);
-
-            for (const ditem of diffData) {
-                if (ditem.type === LawDiffType.ElementMismatch) {
-                    table.push(...makeElementMismatchTable(ditem));
-
-                } else if (ditem.type === LawDiffType.ElementChange) {
-                    table.push(...makeElementChangeTable(ditem));
-
-                } else if (ditem.type === LawDiffType.NoDiff) {
-                    table.push(...makeElementNoDiffTable(ditem));
-
-                } else { util.assertNever(ditem); }
-            }
-
-            if (d.mostSeriousStatus !== ProblemStatus.NoProblem) {
-                const legend = `Legend: Error(${TERMC.YELLOW}*Change${TERMC.DEFAULT}, ${TERMC.GREEN}+Add${TERMC.DEFAULT}, ${TERMC.MAGENTA}-Remove${TERMC.DEFAULT}), ${TERMC.CYAN}Warning${TERMC.DEFAULT}, ${TERMC.BLUE}NoProblem${TERMC.DEFAULT}`;
-                const mssStr = (d.mostSeriousStatus === ProblemStatus.Error)
-                    ? `${TERMC.RED}Error${TERMC.DEFAULT}`
-                    : (d.mostSeriousStatus === ProblemStatus.Warning)
-                        ? `${TERMC.CYAN}Warning${TERMC.DEFAULT}`
-                        : util.assertNever(d.mostSeriousStatus);
-                const msg = [
-                    legend,
-                    `Original XML: "${tempOrigXml}"`,
-                    `Rendered Lawtext: "${tempRenderedLawtext}"`,
-                    `Rendered HTML: "${tempRenderedHTML}"`,
-                    `Rendered Docx: "${tempRenderedDocx}"`,
-                    `Parsed XML: "${tempParsedXml}"`,
-                    `Most serious status: ${mssStr}`,
-                    toTableText(table, LIMIT_WIDTH),
-                    legend,
-                    `View XML: "${tempOrigXml}"`,
-                    `Rendered Lawtext: "${tempRenderedLawtext}"`,
-                    `Rendered HTML: "${tempRenderedHTML}"`,
-                    `Rendered Docx: "${tempRenderedDocx}"`,
-                    `Parsed XML: "${tempParsedXml}"`,
-                    `Most serious status: ${mssStr}`,
-                    "",
-                ].join("\r\n");
-
-                chai.assert(false, `\x1b\r\n\r\n[39m${msg}`);
-            }
-
-        });
+        } else { util.assertNever(ditem); }
     }
-});
+
+    return table;
+};
+
+export default makeDiffTable;

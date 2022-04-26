@@ -1,11 +1,11 @@
 {
     "extension": ["js"],
     "exit": true,
-    "timeout": 10000,
+    "timeout": 20000,
     "enable-source-maps": true,
     "reporter": "mochawesome",
     "spec": [
         "dist/src/**/*.spec.js",
-        "dist/test/**/*.js"
+        "dist/test/**/*.spec.js"
     ]
 }
