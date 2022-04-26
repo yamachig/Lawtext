@@ -6,6 +6,7 @@ import { getContainerType, ignoreAnalysisTags } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import { $pointerRanges } from "./stringParser/rules/$pointerRanges";
 import { SentenceTextPos, SentenceTextRange } from "../node/container/sentenceEnv";
+import * as std from "../law/std";
 
 
 const parseRanges = (text: string): ____PointerRanges | null => { // closed
@@ -23,17 +24,18 @@ const locatePointer = (
     currentContainer: Container,
 ): LocatedPointerInfo => {
 
+    const origFragments = origPointer.fragments();
+    const head = origFragments[0];
+    const headType = getContainerType(head.attr.targetType);
+
     let locatedFragments: ____PF[];
     let headContainer: Container | null = null;
 
-    const head = origPointer.fragments()[0];
-    const headType = getContainerType(head.attr.targetType);
-
     if ((ignoreAnalysisTags as readonly string[]).indexOf(head.attr.targetType) >= 0) {
-        locatedFragments = origPointer.fragments();
+        locatedFragments = origFragments;
 
     } else if (head.attr.relPos === RelPos.SAME) {
-        locatedFragments = origPointer.fragments();
+        locatedFragments = origFragments;
         // if (origPointer.fragments().length !== 1) {
         //     console.warn("RelPos.SAME with multiple fragments", currentSpan, origPointer);
         // }
@@ -42,9 +44,9 @@ const locatePointer = (
         // locatedFragments = [head];
 
     } else if (
-        head.attr.relPos === RelPos.HERE ||
-        head.attr.relPos === RelPos.PREV ||
-        head.attr.relPos === RelPos.NEXT
+        (head.attr.relPos === RelPos.HERE)
+        || (head.attr.relPos === RelPos.PREV)
+        || (head.attr.relPos === RelPos.NEXT)
     ) {
         const scopeContainer = currentContainer
             .thisOrClosest(c => c.el.tag === head.attr.targetType);
@@ -66,19 +68,19 @@ const locatePointer = (
                                 : throwError();
         }
 
-        locatedFragments = origPointer.fragments();
+        locatedFragments = origFragments;
 
     } else {
         const foundIndex = prevLocatedPointerInfo
             ? prevLocatedPointerInfo.findIndex(([fragment]) => fragment.attr.targetType === head.attr.targetType)
             : -1;
         if (
-            prevLocatedPointerInfo &&
-            1 <= foundIndex
+            prevLocatedPointerInfo
+            && (1 <= foundIndex)
         ) {
             locatedFragments = [
                 ...prevLocatedPointerInfo.slice(0, foundIndex).map(([fragment]) => fragment),
-                ...origPointer.fragments(),
+                ...origFragments,
             ];
 
         } else if (headType === ContainerType.TOPLEVEL) {
@@ -89,28 +91,32 @@ const locatePointer = (
                 return (new RegExp(`^${head.attr.name}(?:[(（]|\\s|$)`)).exec(titleEl.text()) !== null;
             });
 
-            locatedFragments = origPointer.fragments();
+            locatedFragments = origFragments;
 
         } else {
-            const func = (c: Container) =>
+            const func = (c: Container) => (
                 (
-                    c.el.tag === head.attr.targetType ||
-                    head.attr.targetType === "SUBITEM" && /^Subitem\d+$/.exec(c.el.tag) !== null
-                ) &&
-                (c.num || null) === head.attr.num;
+                    (c.el.tag === head.attr.targetType)
+                    || (
+                        (head.attr.targetType === "SUBITEM")
+                        && (/^Subitem\d+$/.exec(c.el.tag) !== null)
+                    )
+                )
+                && ((c.num || null) === head.attr.num)
+            );
             headContainer =
                 headType === ContainerType.ARTICLES
                     ? currentContainer.findAncestorChildren(func)
                     : currentContainer.findAncestorChildrenSub(func);
 
-            locatedFragments = origPointer.fragments();
+            locatedFragments = origFragments;
         }
     }
 
-    const ret: LocatedPointerInfo = [];
+    const retOne: LocatedPointerInfo = [];
 
     if (headContainer) {
-        ret.push([locatedFragments[0], headContainer]);
+        retOne.push([locatedFragments[0], headContainer]);
 
         let parentContainer = headContainer;
         for (const fragment of locatedFragments.slice(1)) {
@@ -138,32 +144,70 @@ const locatePointer = (
                     // c => fragment_rank < container_tags.indexOf(c.el.tag),
                 );
             if (container) {
-                ret.push([fragment, container]);
+                retOne.push([fragment, container]);
                 parentContainer = container;
             } else {
                 break;
             }
         }
     }
+    return retOne;
 
-    return ret;
 };
 
 const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container) => {
     const ranges: [LocatedPointerInfo, LocatedPointerInfo][] = [];
+    const rangeELs = origRanges.ranges();
 
-    let prevLocatedPointerInfo: LocatedPointerInfo | null = null;
-    for (const [origFrom, origTo] of origRanges.ranges().map(r => r.pointers())) {
-        const from = locatePointer(origFrom, prevLocatedPointerInfo, currentContainer);
-        prevLocatedPointerInfo = from;
-        let to: LocatedPointerInfo | null;
-        if (!origTo) {
-            to = from;
-        } else {
-            to = locatePointer(origTo, prevLocatedPointerInfo, currentContainer);
-            prevLocatedPointerInfo = to;
+    let processed = false;
+    if (rangeELs.length === 1) {
+        const pointerELs = rangeELs[0].pointers();
+        if (pointerELs.length === 1) {
+            const fragments = pointerELs[0].fragments();
+            if (fragments.length === 1) {
+                const fragmentEL = fragments[0];
+
+                if (fragmentEL.attr.relPos === RelPos.HERE && fragmentEL.attr.targetType === "Law") {
+                    // "この法律" does not contain SupplProvision of other amendments.
+                    processed = true;
+                    for (const container of currentContainer.children) {
+                        if (std.isSupplProvision(container.el) && container.el.attr.AmendLawNum) {
+                            continue;
+                        }
+                        ranges.push([[[fragmentEL, container]], [[fragmentEL, container]]]);
+                    }
+
+                } else if (fragmentEL.attr.relPos === RelPos.PREV && fragmentEL.attr.count !== null) {
+                    processed = true;
+                    let count = fragmentEL.attr.count === "all" ? Number.MAX_SAFE_INTEGER : Number(fragmentEL.attr.count);
+
+                    const scopeContainer = currentContainer
+                        .thisOrClosest(c => c.el.tag === fragmentEL.attr.targetType);
+
+                    if (scopeContainer && count > 0) {
+                        for (const prevContainer of scopeContainer.prevAll(c => c.el.tag === fragmentEL.attr.targetType)) {
+                            ranges.unshift([[[fragmentEL, prevContainer]], [[fragmentEL, prevContainer]]]);
+                            count--;
+                            if (count <= 0) break;
+                        }
+                    }
+                }
+            }
         }
-        ranges.push([from, to]);
+    }
+
+    if (!processed) {
+        let prevLocatedPointerInfo: LocatedPointerInfo | null = null;
+        for (const [origFrom, origTo] of rangeELs.map(r => r.pointers())) {
+            const from = locatePointer(origFrom, prevLocatedPointerInfo, currentContainer);
+            prevLocatedPointerInfo = from;
+            if (!origTo) {
+                ranges.push([from, from]);
+            } else {
+                const to = locatePointer(origTo, prevLocatedPointerInfo, currentContainer);
+                ranges.push([from, to]);
+            }
+        }
         // if (!from || !to || from.length === 0 || to.length === 0) {
         //     console.warn("locateRanges: invalid range", origRanges, currentSpan, from, to);
         // }

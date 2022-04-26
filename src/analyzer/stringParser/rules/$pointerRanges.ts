@@ -51,27 +51,81 @@ export const { $ranges: $pointerRanges, $range: $pointerRange } = makeRangesRule
 
 export const $pointer = factory
     .withName("pointer")
-    .sequence(s => s
-        .and(r => r
-            .choice(c => c
-                .or(() => $anyWherePointerFragment)
-                .or(() => $firstOnlyPointerFragment)
-            )
-        , "first")
-        .and(r => r
-            .zeroOrMore(r => r
+    .choice(c => c
+        .orSequence(s => s
+            .and(r => r
                 .choice(c => c
                     .or(() => $anyWherePointerFragment)
-                    .or(() => $secondaryOnlyPointerFragment)
+                    .or(() => $firstOnlyPointerFragment)
                 )
+            , "first")
+            .and(r => r
+                .zeroOrMore(r => r
+                    .choice(c => c
+                        .or(() => $anyWherePointerFragment)
+                        .or(() => $secondaryOnlyPointerFragment)
+                    )
+                )
+            , "rest")
+            .action(({ first, rest, range }) => {
+                return new ____Pointer({
+                    children: [first, ...rest],
+                    range: range(),
+                });
+            })
+        )
+        .orSequence(s => s
+            .and(() => $singleOnlyPointerFragment, "single")
+            .action(({ single, range }) => {
+                return new ____Pointer({
+                    children: [single],
+                    range: range(),
+                });
+            })
+        )
+    )
+    ;
+
+export const $singleOnlyPointerFragment = factory
+    .withName("firstOnlyPointerFragment")
+    .choice(c => c
+        .or(r => r
+            .action(r => r
+                .sequence(c => c
+                    .and(r => r.seqEqual("前"))
+                    .and(r => r
+                        .choice(c => c
+                            .or(r => r.zeroOrOne(r => r.seqEqual("各" as const)))
+                            .or(r => r.zeroOrOne(() => $kanjiDigits))
+                        )
+                    , "count")
+                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
+                )
+            , (({ text, count, type_char, range }) => {
+                const targetType = (type_char === "表")
+                    ? "TableStruct"
+                    : articleGroupType[type_char];
+                if (count === "各") {
+                    return new ____PF({
+                        relPos: RelPos.PREV,
+                        targetType,
+                        count: "all",
+                        name: text(),
+                        range: range(),
+                    });
+                } else {
+                    const digits = count ? parseKanjiNum(count) : null;
+                    return new ____PF({
+                        relPos: RelPos.PREV,
+                        targetType,
+                        count: digits ? `${digits}` : null,
+                        name: text(),
+                        range: range(),
+                    });
+                }
+            })
             )
-        , "rest")
-        .action(({ first, rest, range }) => {
-            return new ____Pointer({
-                children: [first, ...rest],
-                range: range(),
-            });
-        })
+        )
     )
     ;
 
@@ -100,18 +154,14 @@ export const $firstOnlyPointerFragment = factory
             .action(r => r
                 .sequence(c => c
                     .and(r => r.seqEqual("前"))
-                    .and(r => r.zeroOrOne(r => r.seqEqual("各")), "all")
-                    .and(r => r.zeroOrOne(() => $kanjiDigits), "kanjiDigits")
                     .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
                 )
-            , (({ text, all, kanjiDigits, type_char, range }) => {
-                const digits = kanjiDigits ? parseKanjiNum(kanjiDigits) : null;
+            , (({ text, type_char, range }) => {
                 return new ____PF({
                     relPos: RelPos.PREV,
                     targetType: (type_char === "表")
                         ? "TableStruct"
                         : articleGroupType[type_char],
-                    count: all ? "all" : digits ? `${digits}` : null,
                     name: text(),
                     range: range(),
                 });
