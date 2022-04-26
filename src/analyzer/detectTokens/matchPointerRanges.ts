@@ -37,7 +37,13 @@ export const matchPointerRanges = (textEL: __Text): (
             newItems.push(pointerRanges);
 
             if (result.nextOffset < text.length) {
-                newItems.push(new __Text(text.substring(result.nextOffset)));
+                newItems.push(new __Text(
+                    text.substring(result.nextOffset),
+                    textEL.range && [
+                        textEL.range[0] + result.nextOffset,
+                        textEL.range[1],
+                    ],
+                ));
             }
 
             return {

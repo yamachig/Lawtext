@@ -39,7 +39,13 @@ export const matchLawNum = (textEL: __Text): (
     newItems.push(lawNum);
 
     if (match.index + match[0].length < text.length) {
-        newItems.push(new __Text(text.substring(match.index + match[0].length)));
+        newItems.push(new __Text(
+            text.substring(match.index + match[0].length),
+            textEL.range && [
+                textEL.range[0] + match.index + match[0].length,
+                textEL.range[1],
+            ],
+        ));
     }
 
     return {

@@ -13,11 +13,11 @@ import getScope from "../getScope";
 import { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
 
-export const getLawNameLength = (lawNum: string): number => {
+export const getLawNameLength = (lawNum: string): number | null => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const digest = sha512().update(lawNum).digest("hex") as string;
     const key = parseInt(digest.slice(0, KEY_LENGTH), 16);
-    return LAWNUM_TABLE[key];
+    return LAWNUM_TABLE[key] ?? null;
 };
 
 export const processLawRef = (
@@ -43,7 +43,6 @@ export const processLawRef = (
             errors.push(...result.value.errors);
 
             const lawNumText = lawNum.text();
-            const lawNameLength = getLawNameLength(lawNumText);
 
             if (aliasInfo) {
                 const { nameSquareParentheses, following, pointerRanges } = aliasInfo;
@@ -120,66 +119,71 @@ export const processLawRef = (
                 );
 
             } else {
-                const name = lawNameCandidate.text().slice(-lawNameLength);
+                const lawNameLength = getLawNameLength(lawNumText);
 
-                const scope = [
-                    {
+                if (lawNameLength !== null) {
+
+                    const name = lawNameCandidate.text().slice(-lawNameLength);
+
+                    const scope = [
+                        {
+                            start: {
+                                sentenceIndex: sentenceEnv.index,
+                                textOffset: sentenceEnv.textRageOfEL(lawNum)?.[1] ?? 0,
+                            },
+                            end: {
+                                sentenceIndex: (sentenceEnv.container.thisOrClosest(p => p.type === ContainerType.TOPLEVEL || p.type === ContainerType.ROOT)?.sentenceRange[1] ?? Number.NaN) + 1,
+                                textOffset: 0,
+                            },
+                        },
+                    ];
+
+                    const lawNameCandidateTextRange = sentenceEnv.textRageOfEL(lawNameCandidate);
+                    if (!lawNameCandidateTextRange) {
+                        throw new Error("lawNameCandidateTextRange is null");
+                    }
+
+                    const nameSentenceTextRange: SentenceTextRange = {
                         start: {
                             sentenceIndex: sentenceEnv.index,
-                            textOffset: sentenceEnv.textRageOfEL(lawNum)?.[1] ?? 0,
+                            textOffset: lawNameCandidateTextRange[1] - lawNameLength,
                         },
                         end: {
-                            sentenceIndex: (sentenceEnv.container.thisOrClosest(p => p.type === ContainerType.TOPLEVEL || p.type === ContainerType.ROOT)?.sentenceRange[1] ?? Number.NaN) + 1,
-                            textOffset: 0,
+                            sentenceIndex: sentenceEnv.index,
+                            textOffset: lawNameCandidateTextRange[1],
                         },
-                    },
-                ];
+                    };
 
-                const lawNameCandidateTextRange = sentenceEnv.textRageOfEL(lawNameCandidate);
-                if (!lawNameCandidateTextRange) {
-                    throw new Error("lawNameCandidateTextRange is null");
-                }
+                    const declarationID = `decl-sentence_${sentenceEnv.index}-text_${lawNameCandidateTextRange[1] - lawNameLength}_${lawNameCandidateTextRange[1]}`;
 
-                const nameSentenceTextRange: SentenceTextRange = {
-                    start: {
-                        sentenceIndex: sentenceEnv.index,
-                        textOffset: lawNameCandidateTextRange[1] - lawNameLength,
-                    },
-                    end: {
-                        sentenceIndex: sentenceEnv.index,
-                        textOffset: lawNameCandidateTextRange[1],
-                    },
-                };
-
-                const declarationID = `decl-sentence_${sentenceEnv.index}-text_${lawNameCandidateTextRange[1] - lawNameLength}_${lawNameCandidateTextRange[1]}`;
-
-                const declaration = new ____Declaration({
-                    declarationID,
-                    type: "LawName",
-                    name,
-                    value: lawNumText,
-                    scope: scope,
-                    nameSentenceTextRange,
-                    range: lawNameCandidate.range && [
-                        lawNameCandidate.range[1] - lawNameLength,
-                        lawNameCandidate.range[1],
-                    ],
-                });
-                declarations.push(declaration);
-
-                elToBeModified.children.splice(
-                    i,
-                    1,
-                    new __Text(
-                        lawNameCandidate.text().slice(0, lawNameCandidate.text().length - lawNameLength),
-                        lawNameCandidate.range && [
-                            lawNameCandidate.range[0],
-                            lawNameCandidate.range[0] + lawNameLength,
+                    const declaration = new ____Declaration({
+                        declarationID,
+                        type: "LawName",
+                        name,
+                        value: lawNumText,
+                        scope: scope,
+                        nameSentenceTextRange,
+                        range: lawNameCandidate.range && [
+                            lawNameCandidate.range[1] - lawNameLength,
+                            lawNameCandidate.range[1],
                         ],
-                    ),
-                    declaration,
-                );
-                i++;
+                    });
+                    declarations.push(declaration);
+
+                    elToBeModified.children.splice(
+                        i,
+                        1,
+                        new __Text(
+                            lawNameCandidate.text().slice(0, lawNameCandidate.text().length - lawNameLength),
+                            lawNameCandidate.range && [
+                                lawNameCandidate.range[0],
+                                lawNameCandidate.range[1] - lawNameLength,
+                            ],
+                        ),
+                        declaration,
+                    );
+                    i++;
+                }
 
             }
         }

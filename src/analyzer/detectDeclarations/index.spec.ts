@@ -7,6 +7,7 @@ import detectTokens from "../detectTokens";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from ".";
 import { parse } from "../../parser/lawtext";
+import { assertELVaridity } from "../../parser/std/testHelper";
 
 describe("Test detectDeclarations", () => {
 
@@ -1185,6 +1186,8 @@ describe("Test detectDeclarations", () => {
         );
 
         assert.deepStrictEqual(declarationsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
     it("Success case", () => {
@@ -1729,6 +1732,8 @@ describe("Test detectDeclarations", () => {
         );
 
         assert.deepStrictEqual(declarationsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
     it("Success case", () => {
@@ -2120,6 +2125,8 @@ describe("Test detectDeclarations", () => {
         );
 
         assert.deepStrictEqual(declarationsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
     it("Success case", () => {
@@ -2499,5 +2506,7 @@ describe("Test detectDeclarations", () => {
         );
 
         assert.deepStrictEqual(declarationsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
     });
 });

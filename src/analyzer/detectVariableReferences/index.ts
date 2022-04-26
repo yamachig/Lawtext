@@ -65,7 +65,13 @@ export const matchVariableReference = (textEL: __Text, sentenceEnv: SentenceEnv,
         newItems.push(varRef);
 
         if (nameOffset + name.length < text.length) {
-            newItems.push(new __Text(text.substring(nameOffset + name.length)));
+            newItems.push(new __Text(
+                text.substring(nameOffset + name.length),
+                textEL.range && [
+                    textEL.range[0] + nameOffset + name.length,
+                    textEL.range[1],
+                ],
+            ));
         }
 
         return {

@@ -6,6 +6,7 @@ import detectDeclarations from "../detectDeclarations";
 import { parse } from "../../parser/lawtext";
 import detectVariableReferences from ".";
 import { Declarations } from "../common/declarations";
+import { assertELVaridity } from "../../parser/std/testHelper";
 
 describe("Test detectVariableReferences", () => {
 
@@ -85,6 +86,8 @@ describe("Test detectVariableReferences", () => {
         );
 
         assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
     it("Success case", () => {
@@ -174,6 +177,8 @@ describe("Test detectVariableReferences", () => {
         );
 
         assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
     it("Success case", () => {
@@ -243,6 +248,8 @@ describe("Test detectVariableReferences", () => {
         );
 
         assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
     it("Success case", () => {
@@ -296,30 +303,6 @@ describe("Test detectVariableReferences", () => {
         }
 
         const expectedDeclarations: JsonEL[] = [
-            {
-                tag: "____Declaration",
-                attr: {
-                    declarationID: "decl-sentence_5-text_NaN_22",
-                    type: "LawName",
-                    name: "施行の際、現に無線通信士資格検定規則",
-                    scope: "[{\"start\":{\"sentenceIndex\":5,\"textOffset\":34},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
-                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":5,\"textOffset\":null},\"end\":{\"sentenceIndex\":5,\"textOffset\":22}}",
-                    value: "昭和六年逓信省令第八号",
-                },
-                children: ["施行の際、現に無線通信士資格検定規則"],
-            },
-            {
-                tag: "____Declaration",
-                attr: {
-                    declarationID: "decl-sentence_6-text_NaN_14",
-                    type: "LawName",
-                    name: "旧電気通信技術者資格検定規則",
-                    scope: "[{\"start\":{\"sentenceIndex\":6,\"textOffset\":28},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
-                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":6,\"textOffset\":null},\"end\":{\"sentenceIndex\":6,\"textOffset\":14}}",
-                    value: "昭和十五年逓信省令第十三号",
-                },
-                children: ["旧電気通信技術者資格検定規則"],
-            },
             {
                 tag: "____Declaration",
                 attr: {
@@ -402,5 +385,7 @@ describe("Test detectVariableReferences", () => {
         );
 
         assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
     });
 });
