@@ -301,9 +301,36 @@ describe("Test detectDeclarations", () => {
                             attr: {},
                             children: [
                                 {
+                                    tag: "____PointerRanges",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "____PointerRange",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "____Pointer",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____PF",
+                                                            attr: {
+                                                                relPos: "HERE",
+                                                                targetType: "Law",
+                                                                name: "この法律",
+                                                            },
+                                                            children: ["この法律"],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
                                     tag: "__Text",
                                     attr: {},
-                                    children: ["この法律は、独立行政法人通則法の一部を改正する法律"],
+                                    children: ["は、独立行政法人通則法の一部を改正する法律"],
                                 },
                                 {
                                     tag: "__Parentheses",
@@ -404,7 +431,7 @@ describe("Test detectDeclarations", () => {
                     ],
                 },
             ],
-        };
+        } ;
 
         const result = detectDeclarations(sentenceEnvsStruct);
 

@@ -17,7 +17,7 @@ describe("Test $lawRef", () => {
         const origEL = loadEL({
             tag: "Sentence",
             attr: {},
-            children: ["この法律は、独立行政法人通則法の一部を改正する法律（平成二十六年法律第六十六号。以下「通則法改正法」という。）の施行の日から施行する。"],
+            children: ["独立行政法人通則法の一部を改正する法律（平成二十六年法律第六十六号。以下「通則法改正法」という。）の施行の日から施行する。"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
         const sentenceEnvsStruct = getSentenceEnvs(origEL);
@@ -28,7 +28,7 @@ describe("Test $lawRef", () => {
         const expectedLawNameCandidate = {
             tag: "__Text",
             attr: {},
-            children: ["この法律は、独立行政法人通則法の一部を改正する法律"]
+            children: ["独立行政法人通則法の一部を改正する法律"]
         } ;
         const expectedLawNum = {
             tag: "____LawNum",

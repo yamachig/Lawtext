@@ -20,6 +20,7 @@ export const isRelPos = (object: unknown): object is RelPos => {
 };
 
 export type PointerTargetType = (
+    | "Law"
     | (typeof std.articleGroupTags)[number]
     | "Article"
     | "Paragraph"
@@ -37,7 +38,8 @@ export interface PFOptions {
     relPos: RelPos;
     targetType: PointerTargetType;
     name: string;
-    num: string | null;
+    num?: string | null;
+    count?: "all" | `${number}` | null;
     range: [start: number, end: number] | null,
     // locatedContainerID?: string | null,
 }
@@ -52,6 +54,7 @@ export class ____PF extends EL {
         targetType: PointerTargetType,
         name: string,
         num?: string,
+        count?: string,
         // locatedContainerID?: string,
     };
     public override children: [string];
@@ -59,7 +62,7 @@ export class ____PF extends EL {
     constructor(options: PFOptions) {
         super("____PF", {}, [], options.range);
 
-        const { relPos, targetType, name, num } = {
+        const { relPos, targetType, name, num = null, count = null } = {
             // locatedContainerID: null,
             ...options,
         };
@@ -69,7 +72,8 @@ export class ____PF extends EL {
             targetType: targetType,
             name,
         };
-        if (num) this.attr.num = num;
+        if (num !== null) this.attr.num = num;
+        if (count !== null) this.attr.count = count;
         // if (locatedContainerID) this.attr.locatedContainerID = locatedContainerID;
 
         this.children = [name];
