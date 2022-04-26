@@ -2,7 +2,7 @@ import { throwError } from "../util";
 import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
 import { initialEnv } from "../parser/cst/env";
-import { getContainerType, ignoreAnalysisTags } from "./common";
+import { getContainerType } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import { $pointerRanges } from "./stringParser/rules/$pointerRanges";
 import { SentenceTextPos, SentenceTextRange } from "../node/container/sentenceEnv";
@@ -31,10 +31,7 @@ const locatePointer = (
     let locatedFragments: ____PF[];
     let headContainer: Container | null = null;
 
-    if ((ignoreAnalysisTags as readonly string[]).indexOf(head.attr.targetType) >= 0) {
-        locatedFragments = origFragments;
-
-    } else if (head.attr.relPos === RelPos.SAME) {
+    if (head.attr.relPos === RelPos.SAME) {
         locatedFragments = origFragments;
         // if (origPointer.fragments().length !== 1) {
         //     console.warn("RelPos.SAME with multiple fragments", currentSpan, origPointer);
@@ -170,7 +167,7 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
                 if (fragmentEL.attr.relPos === RelPos.HERE && fragmentEL.attr.targetType === "Law") {
                     // "この法律" does not contain SupplProvision of other amendments.
                     processed = true;
-                    for (const container of currentContainer.children) {
+                    for (const container of currentContainer.thisOrClosest(p => p.type === ContainerType.ROOT)?.children ?? []) {
                         if (std.isSupplProvision(container.el) && container.el.attr.AmendLawNum) {
                             continue;
                         }

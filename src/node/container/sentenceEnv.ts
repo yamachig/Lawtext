@@ -1,5 +1,5 @@
 import { Container } from ".";
-import { ignoreAnalysisTags } from "../../analyzer/common";
+import { isIgnoreAnalysis } from "../../analyzer/common";
 import * as std from "../../law/std";
 import { EL } from "../el";
 import { __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, __Text, ____Declaration, ____LawNum, ____PointerRanges, ____VarRef } from "../el/controls";
@@ -65,7 +65,7 @@ export function *enumerateSentenceTexts(el: EL): Iterable<SentenceText> {
     } else {
         for (const child of el.children) {
             if (typeof child === "string") continue;
-            if ((ignoreAnalysisTags as readonly string[]).includes(child.tag)) continue;
+            if (isIgnoreAnalysis(child)) continue;
             yield *enumerateSentenceTexts(child);
         }
     }

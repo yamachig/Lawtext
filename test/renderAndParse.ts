@@ -106,7 +106,20 @@ if (typeof require !== "undefined" && require.main === module) {
         // console.error(newErr);
         process.exit(1);
     });
-    renderAndParse("昭和二十五年法律第百三十一号");
+
+    const lawNums = [
+        "平成五年法律第八十八号",
+        "昭和二十五年法律第百三十一号",
+        "昭和五十九年法律第八十六号",
+        "昭和二十二年法律第六十七号",
+    ];
+    // lawNums.splice(0, lawNums.length);
+
+    (async () => {
+        for (const lawNum of lawNums) {
+            await renderAndParse(lawNum);
+        }
+    })();
 
 }
 

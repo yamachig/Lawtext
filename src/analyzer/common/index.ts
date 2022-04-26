@@ -32,24 +32,28 @@ export const getContainerType = (tag: string): ContainerType => {
     else return ContainerType.SENTENCES;
 };
 
-export const ignoreAnalysisTags = [
-    "QuoteStruct",
-    "NewProvision",
-    "SupplProvision",
-    // "LawNum",
-    // "LawTitle",
-    // "TOC",
-    // "ArticleTitle",
-    // ...std.paragraphItemTitleTags,
-    // "SupplProvision",
-] as const;
+// export const ignoreAnalysisTags = [
+//     "QuoteStruct",
+//     "NewProvision",
+//     // "LawNum",
+//     // "LawTitle",
+//     // "TOC",
+//     // "ArticleTitle",
+//     // ...std.paragraphItemTitleTags,
+//     // "SupplProvision",
+// ] as const;
 
-export type IgnoreAnalysis = (
-    | std.QuoteStruct
-    | std.NewProvision
-    | std.SupplProvision
-);
+// export type IgnoreAnalysis = (
+//     | std.QuoteStruct
+//     | std.NewProvision
+//     | std.SupplProvision
+// );
 
-export const isIgnoreAnalysis = (el: EL | string): el is IgnoreAnalysis =>
-    (typeof el !== "string") && (ignoreAnalysisTags as readonly string[]).includes(el.tag);
+export const isIgnoreAnalysis = (el: EL | string) => {
+    if (typeof el === "string") return false;
+    else if (el.tag === "QuoteStruct") return true;
+    else if (el.tag === "NewProvision") return true;
+    else if (el.tag === "SupplProvision" && el.attr.AmendLawNum) return true;
+    else return false;
+};
 

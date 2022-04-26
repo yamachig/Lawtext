@@ -2,7 +2,7 @@ import * as std from "../../law/std";
 import { __Text, ____LawNum, ____PointerRanges } from "../../node/el/controls";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
-import { ignoreAnalysisTags } from "../common";
+import { isIgnoreAnalysis } from "../common";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import matchLawNum from "./matchLawNum";
 import { matchPointerRanges } from "./matchPointerRanges";
@@ -23,7 +23,10 @@ export const detectTokensByEL = (elToBeModified: std.StdEL | std.__EL): WithErro
 
         const child = elToBeModified.children[childIndex];
 
-        if (typeof child === "string") {
+        if (isIgnoreAnalysis(child)) {
+            continue;
+
+        } else if (typeof child === "string") {
             continue;
 
         } else if (child instanceof __Text) {
@@ -62,9 +65,6 @@ export const detectTokensByEL = (elToBeModified: std.StdEL | std.__EL): WithErro
                     continue;
                 }
             }
-
-        } else if ((ignoreAnalysisTags as readonly string[]).includes(child.tag)) {
-            continue;
 
         } else {
             const newResult = detectTokensByEL(child as std.StdEL | std.__EL);
