@@ -32,12 +32,12 @@ export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
         maxOffsetMatchContext: null as null | MatchContext,
     };
 
-    const onMatchFail = (matchFail: MatchFail, matchContext: MatchContext) => {
-        if (state.maxOffsetMatchFail === null || matchFail.offset > state.maxOffsetMatchFail.offset) {
-            state.maxOffsetMatchFail = matchFail;
-            state.maxOffsetMatchContext = matchContext;
-        }
-    };
+    // const onMatchFail = (matchFail: MatchFail, matchContext: MatchContext) => {
+    //     if (state.maxOffsetMatchFail === null || matchFail.offset > state.maxOffsetMatchFail.offset) {
+    //         state.maxOffsetMatchFail = matchFail;
+    //         state.maxOffsetMatchContext = matchContext;
+    //     }
+    // };
 
     const newErrorMessage = (message: string, range: [start:number, end:number]) =>
         new ErrorMessage(
@@ -51,14 +51,14 @@ export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
     return {
         currentIndentDepth: 0,
         offsetToPos,
-        toStringOptions: {
-            fullToString: true,
-            maxToStringDepth: 5,
-        },
+        // toStringOptions: {
+        //     fullToString: true,
+        //     maxToStringDepth: 5,
+        // },
         registerCurrentRangeTarget,
         options,
         state,
-        onMatchFail,
+        // onMatchFail,
         newErrorMessage,
         baseOffset,
     };

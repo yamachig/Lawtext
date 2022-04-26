@@ -3,6 +3,7 @@ import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $otherLine from "./$otherLine";
 import { SentencesArray, Controls } from "../../../node/cst/inline";
+import { matchResultToJson } from "generic-parser/lib/core";
 
 const env = initialEnv({});
 
@@ -77,7 +78,7 @@ describe("Test $otherLine", () => {
             },
         ];
         const result = $otherLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -133,7 +134,7 @@ describe("Test $otherLine", () => {
             },
         ];
         const result = $otherLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -196,7 +197,7 @@ describe("Test $otherLine", () => {
             },
         ];
         const result = $otherLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -246,7 +247,7 @@ describe("Test $otherLine", () => {
         } as const;
         const expectedColumns: SentencesArray = [];
         const result = $otherLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -270,6 +271,6 @@ describe("Test $otherLine", () => {
             expected: "otherLine",
         } as const;
         const result = $otherLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 });

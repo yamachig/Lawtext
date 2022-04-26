@@ -23,12 +23,12 @@ export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
     const offsetToPos = (_: SentenceChildEL[], offset: number) => ({ offset });
     const stringOffsetToPos = getMemorizedStringOffsetToPos();
 
-    const onMatchFail = (matchFail: MatchFail, matchContext: MatchContext) => {
-        if (state.maxOffsetMatchFail === null || matchFail.offset > state.maxOffsetMatchFail.offset) {
-            state.maxOffsetMatchFail = matchFail;
-            state.maxOffsetMatchContext = matchContext;
-        }
-    };
+    // const onMatchFail = (matchFail: MatchFail, matchContext: MatchContext) => {
+    //     if (state.maxOffsetMatchFail === null || matchFail.offset > state.maxOffsetMatchFail.offset) {
+    //         state.maxOffsetMatchFail = matchFail;
+    //         state.maxOffsetMatchContext = matchContext;
+    //     }
+    // };
 
     const newErrorMessage = (message: string, range: [start:number, end:number]) =>
         new ErrorMessage(
@@ -46,13 +46,13 @@ export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
 
     return {
         options,
-        toStringOptions: {
-            fullToString: true,
-            maxToStringDepth: 5,
-        },
+        // toStringOptions: {
+        //     fullToString: true,
+        //     maxToStringDepth: 5,
+        // },
         registerCurrentRangeTarget,
         offsetToPos,
-        onMatchFail,
+        // onMatchFail,
         state,
         newErrorMessage,
         stringOffsetToPos,

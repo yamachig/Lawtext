@@ -4,6 +4,7 @@ import * as std from "../../../law/std";
 import $sentencesArray, { sentencesArrayToString } from "./$sentencesArray";
 import { ErrorMessage } from "../error";
 import loadEL from "../../../node/el/loadEL";
+import { matchResultToJson } from "generic-parser/lib/core";
 
 const env = initialEnv({});
 
@@ -102,6 +103,6 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
             expected: "sentencesArray",
         } as const;
         const result = $sentencesArray.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 });

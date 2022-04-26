@@ -4,6 +4,7 @@ import $sentenceChildren, { sentenceChildrenToString } from "./$sentenceChildren
 import { ErrorMessage } from "../error";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import loadEL from "../../../node/el/loadEL";
+import { matchResultToJson } from "generic-parser/lib/core";
 
 const env = initialEnv({});
 
@@ -568,6 +569,6 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
             expected: "sentenceChildren",
         } as const;
         const result = $sentenceChildren.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 });

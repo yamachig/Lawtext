@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { matchResultToJson } from "generic-parser/lib/core";
 import { initialEnv } from "../env";
 import { ErrorMessage } from "../error";
 import $paragraphItemTitle from "./$paragraphItemTitle";
@@ -17,7 +18,7 @@ describe("Test $paragraphItemTitle", () => {
             value: { value: "２３", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 
     it("Success case", () => {
@@ -30,7 +31,7 @@ describe("Test $paragraphItemTitle", () => {
             value: { value: "十一", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 
     it("Success case", () => {
@@ -43,7 +44,7 @@ describe("Test $paragraphItemTitle", () => {
             value: { value: "ニ", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 
     it("Success case", () => {
@@ -56,7 +57,7 @@ describe("Test $paragraphItemTitle", () => {
             value: { value: "（１）", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 
     it("Success case", () => {
@@ -69,7 +70,7 @@ describe("Test $paragraphItemTitle", () => {
             value: { value: "（ｖｉ）", errors: [] as ErrorMessage[] },
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 
     it("Fail case", () => {
@@ -82,6 +83,6 @@ describe("Test $paragraphItemTitle", () => {
             expected: "paragraphItemTitle",
         } as const;
         const result = $paragraphItemTitle.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 });

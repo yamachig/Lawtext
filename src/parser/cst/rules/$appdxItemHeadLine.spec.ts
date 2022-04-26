@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { matchResultToJson } from "generic-parser/lib/core";
 import { Controls } from "../../../node/cst/inline";
 import { LineType } from "../../../node/cst/line";
 import { JsonEL } from "../../../node/el/jsonEL";
@@ -79,7 +80,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -158,7 +159,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -237,7 +238,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -317,7 +318,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -397,7 +398,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -476,7 +477,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -524,7 +525,7 @@ describe("Test $appdxItemHeadLine", () => {
         ];
         const expectedRelatedArticleNum = [] as JsonEL[];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -603,7 +604,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -682,7 +683,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -761,7 +762,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -840,7 +841,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -919,7 +920,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -998,7 +999,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -1077,7 +1078,7 @@ describe("Test $appdxItemHeadLine", () => {
             },
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -1101,6 +1102,6 @@ describe("Test $appdxItemHeadLine", () => {
             expected: "appdxItemHeadLine",
         } as const;
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 });

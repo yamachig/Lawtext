@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { matchResultToJson } from "generic-parser/lib/core";
 import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $tocHeadLine from "./$tocHeadLine";
@@ -28,7 +29,7 @@ describe("Test $tocHeadLine", () => {
 `,
         } as const;
         const result = $tocHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -56,7 +57,7 @@ describe("Test $tocHeadLine", () => {
 `,
         } as const;
         const result = $tocHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -76,6 +77,6 @@ describe("Test $tocHeadLine", () => {
             expected: "tocHeadLine",
         } as const;
         const result = $tocHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 });

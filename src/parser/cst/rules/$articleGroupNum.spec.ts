@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { matchResultToJson } from "generic-parser/lib/core";
 import { initialEnv } from "../env";
 import { ErrorMessage } from "../error";
 import $articleGroupNum from "./$articleGroupNum";
@@ -23,7 +24,7 @@ describe("Test $articleGroupNum", () => {
             },
         } as const;
         const result = $articleGroupNum.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 
     it("Success case", () => {
@@ -42,7 +43,7 @@ describe("Test $articleGroupNum", () => {
             },
         } as const;
         const result = $articleGroupNum.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 
     it("Fail case", () => {
@@ -55,6 +56,6 @@ describe("Test $articleGroupNum", () => {
             expected: "articleGroupNum",
         } as const;
         const result = $articleGroupNum.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 });

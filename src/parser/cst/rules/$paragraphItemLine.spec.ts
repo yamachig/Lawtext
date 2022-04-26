@@ -3,6 +3,7 @@ import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $paragraphItemLine from "./$paragraphItemLine";
 import { Controls, SentencesArray } from "../../../node/cst/inline";
+import { matchResultToJson } from "generic-parser/lib/core";
 
 const env = initialEnv({});
 
@@ -33,7 +34,7 @@ describe("Test $paragraphItemLine", () => {
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -72,7 +73,7 @@ describe("Test $paragraphItemLine", () => {
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -111,7 +112,7 @@ describe("Test $paragraphItemLine", () => {
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -143,7 +144,7 @@ describe("Test $paragraphItemLine", () => {
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -182,7 +183,7 @@ describe("Test $paragraphItemLine", () => {
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -221,7 +222,7 @@ describe("Test $paragraphItemLine", () => {
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -254,7 +255,7 @@ describe("Test $paragraphItemLine", () => {
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -286,7 +287,7 @@ describe("Test $paragraphItemLine", () => {
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -317,7 +318,7 @@ describe("Test $paragraphItemLine", () => {
 `,
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -336,6 +337,6 @@ describe("Test $paragraphItemLine", () => {
             expected: "paragraphItemLine",
         } as const;
         const result = $paragraphItemLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 });

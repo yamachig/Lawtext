@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { matchResultToJson } from "generic-parser/lib/core";
 import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $articleGroupHeadLine from "./$articleGroupHeadLine";
@@ -38,7 +39,7 @@ describe("Test $articleGroupHeadLine", () => {
             },
         ];
         const result = $articleGroupHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -104,7 +105,7 @@ describe("Test $articleGroupHeadLine", () => {
             },
         ];
         const result = $articleGroupHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
@@ -125,6 +126,6 @@ describe("Test $articleGroupHeadLine", () => {
             expected: "articleGroupHeadLine",
         } as const;
         const result = $articleGroupHeadLine.abstract().match(offset, target, env);
-        assert.deepInclude(result, expectedResult);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 });

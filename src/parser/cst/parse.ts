@@ -7,8 +7,8 @@ import $lines from "./rules/$lines";
 import { WithErrorRule } from "./util";
 
 const makeMatchContextString = (context: MatchContext, target: string): string => {
-    const { offset, ruleToString, prevContext } = context;
-    const expected = ruleToString();
+    const { offset, prevRule, prevContext } = context;
+    const expected = prevRule.toString();
     const newLineOffsetBefore = target.lastIndexOf("\n", offset);
     const newLineOffsetAfter = target.slice(offset).search(/\r?\n/);
     // eslint-disable-next-line no-irregular-whitespace
