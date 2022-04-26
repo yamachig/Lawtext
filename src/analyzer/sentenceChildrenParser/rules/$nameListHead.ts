@@ -12,10 +12,10 @@ const reDefRef = /(?:それぞれ)?(?:次|左|当該各号)(?:の各号)?(?:に|
 
 const reCombinedWithoutInferiorIncludingImport = new RegExp(`^${reAfterScope.source}${reAfterInferior.source}(?:(.*?)${reAfterImport.source})?(?:${reNameRef.source})?(?:${reOther.source})?${reDefRef.source}$`);
 
-const reCombinedBeforeInferior = new RegExp(`^${reAfterScope.source}(?:及び|又は)$`);
-const reCombinedAfterInferiorIncludingImport = new RegExp(`^$に基づく命令${reAfterInferior.source}(.*?)${reAfterImport.source}(?:${reNameRef.source})?(?:${reOther.source})?${reDefRef.source}$`);
+const reCombinedBeforeInferior = new RegExp(`^${reAfterScope.source}(?:又は)$`);
+const reCombinedAfterInferiorIncludingImport = new RegExp(`^(?:の規定)?${reAfterInferior.source}(?:(.*?)${reAfterImport.source})?(?:${reNameRef.source})?(?:${reOther.source})?${reDefRef.source}$`);
 
-const reCombinedAfterInferiorBeforeImport = new RegExp(`^$に基づく命令${reAfterInferior.source}(.*)$`);
+const reCombinedAfterInferiorBeforeImport = new RegExp(`^(?:の規定)?${reAfterInferior.source}(.*)$`);
 
 const reCombinedBeforeImportWithoutInferior = new RegExp(`^${reAfterScope.source}${reAfterInferior.source}(.*)$`);
 const reCombinedAfterImport = new RegExp(`^(.*)?${reAfterImport.source}(?:${reNameRef.source})?(?:${reOther.source})?${reDefRef.source}$`);

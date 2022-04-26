@@ -2,7 +2,7 @@ import { Container } from ".";
 import { ignoreAnalysisTags } from "../../analyzer/common";
 import * as std from "../../law/std";
 import { EL } from "../el";
-import { __PEnd, __PStart, __Text, ____Declaration, ____LawNum, ____PointerRanges, ____VarRef } from "../el/controls";
+import { __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, __Text, ____Declaration, ____LawNum, ____PointerRanges, ____VarRef } from "../el/controls";
 
 export interface SentenceTextPos {
     sentenceIndex: number,
@@ -19,6 +19,8 @@ export const sentenceTextTags = [
     "__Text",
     "__PStart",
     "__PEnd",
+    "__MismatchStartParenthesis",
+    "__MismatchEndParenthesis",
     "____PointerRanges",
     "____LawNum",
     "____Declaration",
@@ -30,6 +32,8 @@ export type SentenceText = (
     | __Text
     | __PStart
     | __PEnd
+    | __MismatchStartParenthesis
+    | __MismatchEndParenthesis
     | ____PointerRanges
     | ____LawNum
     | ____Declaration

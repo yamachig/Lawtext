@@ -32,6 +32,7 @@ export type PointerTargetType = (
     | "LATTERPART"
     | "PROVISO"
     | "SUBITEM"
+    | "INFERIOR"
 );
 
 export interface PFOptions {

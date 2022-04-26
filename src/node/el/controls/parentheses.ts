@@ -118,3 +118,43 @@ export class __PEnd extends EL {
         this.children = [text];
     }
 }
+
+
+export class __MismatchStartParenthesis extends EL {
+    public override tag = "__MismatchStartParenthesis" as const;
+    public override get isControl(): true { return true; }
+    // public override attr: {
+    //     type: ParenthesesType,
+    // };
+    public override children: [string];
+
+    constructor(
+        // type: ParenthesesType,
+        text: string,
+        range: [start: number, end: number] | null = null,
+    ) {
+        super("__MismatchStartParenthesis", {}, [], range);
+        // this.attr = { type };
+        this.children = [text];
+    }
+}
+
+
+export class __MismatchEndParenthesis extends EL {
+    public override tag = "__MismatchEndParenthesis" as const;
+    public override get isControl(): true { return true; }
+    // public override attr: {
+    //     type: ParenthesesType,
+    // };
+    public override children: [string];
+
+    constructor(
+        // type: ParenthesesType,
+        text: string,
+        range: [start: number, end: number] | null = null,
+    ) {
+        super("__MismatchEndParenthesis", {}, [], range);
+        // this.attr = { type };
+        this.children = [text];
+    }
+}

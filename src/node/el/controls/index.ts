@@ -1,6 +1,6 @@
 import { EL } from "..";
 import { __Text } from "./text";
-import { __Parentheses, __PContent, __PEnd, __PStart } from "./parentheses";
+import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __PContent, __PEnd, __PStart } from "./parentheses";
 import { ____Declaration } from "./declaration";
 import { ____VarRef } from "./varRef";
 import { ____PointerRanges, ____PointerRange, ____Pointer, ____PF } from "./pointer";
@@ -25,6 +25,10 @@ export const controlFromEL = (el: EL): EL => {
         return Object.setPrototypeOf(el.copy(false, true), __PContent.prototype);
     } else if (el.tag === "__PEnd") {
         return Object.setPrototypeOf(el.copy(false, true), __PEnd.prototype);
+    } else if (el.tag === "__MismatchStartParenthesis") {
+        return Object.setPrototypeOf(el.copy(false, true), __MismatchStartParenthesis.prototype);
+    } else if (el.tag === "__MismatchEndParenthesis") {
+        return Object.setPrototypeOf(el.copy(false, true), __MismatchEndParenthesis.prototype);
     } else if (el.tag === "____Declaration") {
         return Object.setPrototypeOf(el.copy(false, true), ____Declaration.prototype);
     } else if (el.tag === "____VarRef") {

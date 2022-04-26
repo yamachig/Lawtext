@@ -46,7 +46,7 @@ export const matchLawNum = (textEL: __Text): (
         value: {
             newItems,
             lawNum,
-            proceedOffset: match.index > 0 ? 1 : 2,
+            proceedOffset: match.index > 0 ? 2 : 1,
         },
         errors,
     };

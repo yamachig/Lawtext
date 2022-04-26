@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { isSub, __EL } from "../../../law/std";
-import { ParenthesesType, __Parentheses, __Text } from "../../../node/el/controls";
+import { ParenthesesType, __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text } from "../../../node/el/controls";
 import { EL } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
 import { factory } from "../factory";
@@ -263,7 +263,7 @@ export const $MISMATCH_START_PARENTHESIS: WithErrorRule<__EL> = factory
                 range(),
             );
             return {
-                value: new EL("__MismatchStartParenthesis", {}, [mismatch], range()) as __EL,
+                value: new __MismatchStartParenthesis(mismatch, range()),
                 errors: [error],
             };
         })
@@ -282,7 +282,7 @@ export const $MISMATCH_END_PARENTHESIS: WithErrorRule<__EL> = factory
                 range(),
             );
             return {
-                value: new EL("__MismatchEndParenthesis", {}, [mismatch], range()) as __EL,
+                value: new __MismatchEndParenthesis(mismatch, range()),
                 errors: [error],
             };
         })

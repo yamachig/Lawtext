@@ -304,6 +304,19 @@ export const $secondaryOnlyPointerFragment = factory
         )
         .or(r => r
             .action(r => r
+                .seqEqual("に基づく命令")
+            , (({ text, range }) => {
+                return new ____PF({
+                    relPos: RelPos.NAMED,
+                    targetType: "INFERIOR",
+                    name: text(),
+                    range: range(),
+                });
+            })
+            )
+        )
+        .or(r => r
+            .action(r => r
                 .choice(c => c
                     .orSequence(s => s
                         .and(() => $irohaChar)

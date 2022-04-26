@@ -664,7 +664,39 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "__Text",
                                                     attr: {},
-                                                    children: ["の規定によりこの法律の規定を適用しないこととされる処分に係る命令等を含む。"],
+                                                    children: ["の規定により"],
+                                                },
+                                                {
+                                                    tag: "____PointerRanges",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____PointerRange",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "____Pointer",
+                                                                    attr: {},
+                                                                    children: [
+                                                                        {
+                                                                            tag: "____PF",
+                                                                            attr: {
+                                                                                relPos: "HERE",
+                                                                                targetType: "Law",
+                                                                                name: "この法律",
+                                                                            },
+                                                                            children: ["この法律"],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["の規定を適用しないこととされる処分に係る命令等を含む。"],
                                                 },
                                             ],
                                         },
@@ -682,7 +714,7 @@ describe("Test detectDeclarations", () => {
                     ],
                 },
             ],
-        } ;
+        };
 
         const result = detectDeclarations(sentenceEnvsStruct);
 
@@ -1662,6 +1694,397 @@ describe("Test detectDeclarations", () => {
                                                                             tag: "__Text",
                                                                             attr: {},
                                                                             children: ["に基づき複数の実施医療機関において実施される臨床研究をいう。"],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const expectedErrorMessages: string[] = [];
+
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct);
+
+        // console.log(JSON.stringify(declarationsResult.value.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsResult.value.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
+        assert.deepStrictEqual(
+            inputElToBeModified.json(true),
+            expectedModifiedInput,
+        );
+
+        assert.deepStrictEqual(declarationsResult.errors.map(e => e.message), expectedErrorMessages);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （定義）
+第二条　この法律及びこの法律に基づく命令の規定の解釈に関しては、次の定義に従うものとする。
+  一　「電波」とは、三百万メガヘルツ以下の周波数の電磁波をいう。
+  五　「無線局」とは、無線設備及び無線設備の操作を行う者の総体をいう。但し、受信のみを目的とするものを含まない。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        void detectTokensResult;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_1-text_1_3",
+                    type: "Keyword",
+                    name: "電波",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
+                    value: "三百万メガヘルツ以下の周波数の電磁波",
+                },
+                children: ["電波"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_2-text_1_4",
+                    type: "Keyword",
+                    name: "無線局",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":1},\"end\":{\"sentenceIndex\":2,\"textOffset\":4}}",
+                    value: "無線設備及び無線設備の操作を行う者の総体",
+                },
+                children: ["無線局"],
+            },
+        ] ;
+
+        const expectedModifiedInput = {
+            tag: "Law",
+            attr: {
+                Lang: "ja",
+            },
+            children: [
+                {
+                    tag: "LawBody",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "MainProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Article",
+                                    attr: {
+                                        Delete: "false",
+                                        Hide: "false",
+                                    },
+                                    children: [
+                                        {
+                                            tag: "ArticleCaption",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "__Parentheses",
+                                                    attr: {
+                                                        type: "round",
+                                                        depth: "1",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "__PStart",
+                                                            attr: {
+                                                                type: "round",
+                                                            },
+                                                            children: ["（"],
+                                                        },
+                                                        {
+                                                            tag: "__PContent",
+                                                            attr: {
+                                                                type: "round",
+                                                            },
+                                                            children: [
+                                                                {
+                                                                    tag: "__Text",
+                                                                    attr: {},
+                                                                    children: ["定義"],
+                                                                },
+                                                            ],
+                                                        },
+                                                        {
+                                                            tag: "__PEnd",
+                                                            attr: {
+                                                                type: "round",
+                                                            },
+                                                            children: ["）"],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            tag: "ArticleTitle",
+                                            attr: {},
+                                            children: ["第二条"],
+                                        },
+                                        {
+                                            tag: "Paragraph",
+                                            attr: {
+                                                OldStyle: "false",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ParagraphNum",
+                                                    attr: {},
+                                                    children: [],
+                                                },
+                                                {
+                                                    tag: "ParagraphSentence",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "Sentence",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "____PointerRanges",
+                                                                    attr: {},
+                                                                    children: [
+                                                                        {
+                                                                            tag: "____PointerRange",
+                                                                            attr: {},
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "____Pointer",
+                                                                                    attr: {},
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "____PF",
+                                                                                            attr: {
+                                                                                                relPos: "HERE",
+                                                                                                targetType: "Law",
+                                                                                                name: "この法律",
+                                                                                            },
+                                                                                            children: ["この法律"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                        {
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["及び"],
+                                                                        },
+                                                                        {
+                                                                            tag: "____PointerRange",
+                                                                            attr: {},
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "____Pointer",
+                                                                                    attr: {},
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "____PF",
+                                                                                            attr: {
+                                                                                                relPos: "HERE",
+                                                                                                targetType: "Law",
+                                                                                                name: "この法律",
+                                                                                            },
+                                                                                            children: ["この法律"],
+                                                                                        },
+                                                                                        {
+                                                                                            tag: "____PF",
+                                                                                            attr: {
+                                                                                                relPos: "NAMED",
+                                                                                                targetType: "INFERIOR",
+                                                                                                name: "に基づく命令",
+                                                                                            },
+                                                                                            children: ["に基づく命令"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                                {
+                                                                    tag: "__Text",
+                                                                    attr: {},
+                                                                    children: ["の規定の解釈に関しては、次の定義に従うものとする。"],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "Item",
+                                                    attr: {
+                                                        Delete: "false",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "ItemTitle",
+                                                            attr: {},
+                                                            children: ["一"],
+                                                        },
+                                                        {
+                                                            tag: "ItemSentence",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {},
+                                                                    children: [
+                                                                        {
+                                                                            tag: "__Parentheses",
+                                                                            attr: {
+                                                                                type: "square",
+                                                                                depth: "1",
+                                                                            },
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "__PStart",
+                                                                                    attr: {
+                                                                                        type: "square",
+                                                                                    },
+                                                                                    children: ["「"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PContent",
+                                                                                    attr: {
+                                                                                        type: "square",
+                                                                                    },
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "____Declaration",
+                                                                                            attr: {
+                                                                                                declarationID: "decl-sentence_1-text_1_3",
+                                                                                                type: "Keyword",
+                                                                                                name: "電波",
+                                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                                                                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
+                                                                                                value: "三百万メガヘルツ以下の周波数の電磁波",
+                                                                                            },
+                                                                                            children: ["電波"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PEnd",
+                                                                                    attr: {
+                                                                                        type: "square",
+                                                                                    },
+                                                                                    children: ["」"],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                        {
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["とは、三百万メガヘルツ以下の周波数の電磁波をいう。"],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "Item",
+                                                    attr: {
+                                                        Delete: "false",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "ItemTitle",
+                                                            attr: {},
+                                                            children: ["五"],
+                                                        },
+                                                        {
+                                                            tag: "ItemSentence",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {
+                                                                        Num: "1",
+                                                                        Function: "main",
+                                                                    },
+                                                                    children: [
+                                                                        {
+                                                                            tag: "__Parentheses",
+                                                                            attr: {
+                                                                                type: "square",
+                                                                                depth: "1",
+                                                                            },
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "__PStart",
+                                                                                    attr: {
+                                                                                        type: "square",
+                                                                                    },
+                                                                                    children: ["「"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PContent",
+                                                                                    attr: {
+                                                                                        type: "square",
+                                                                                    },
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "____Declaration",
+                                                                                            attr: {
+                                                                                                declarationID: "decl-sentence_2-text_1_4",
+                                                                                                type: "Keyword",
+                                                                                                name: "無線局",
+                                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                                                                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":1},\"end\":{\"sentenceIndex\":2,\"textOffset\":4}}",
+                                                                                                value: "無線設備及び無線設備の操作を行う者の総体",
+                                                                                            },
+                                                                                            children: ["無線局"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PEnd",
+                                                                                    attr: {
+                                                                                        type: "square",
+                                                                                    },
+                                                                                    children: ["」"],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                        {
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["とは、無線設備及び無線設備の操作を行う者の総体をいう。"],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {
+                                                                        Num: "2",
+                                                                        Function: "proviso",
+                                                                    },
+                                                                    children: [
+                                                                        {
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["但し、受信のみを目的とするものを含まない。"],
                                                                         },
                                                                     ],
                                                                 },

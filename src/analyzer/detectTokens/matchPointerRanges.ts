@@ -44,7 +44,7 @@ export const matchPointerRanges = (textEL: __Text): (
                 value: {
                     newItems,
                     pointerRanges,
-                    proceedOffset: textIndex > 0 ? 1 : 2,
+                    proceedOffset: textIndex > 0 ? 2 : 1,
                 },
                 errors,
             };
