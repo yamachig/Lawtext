@@ -7,6 +7,7 @@ import { ____Declaration } from "../../node/el/controls";
 import { SentenceEnv } from "../../node/container/sentenceEnv";
 import { processLawRef } from "./processLawRef";
 import { isIgnoreAnalysis } from "../common";
+import { processNameList } from "./processNameList";
 
 
 export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnv: SentenceEnv): WithErrorValue<____Declaration[]> => {
@@ -61,10 +62,18 @@ export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sen
 };
 
 
-export const detectDeclarationsBySentence = (sentenceEnv: SentenceEnv): WithErrorValue<____Declaration[]> => {
+export const detectDeclarationsBySentence = (sentenceEnv: SentenceEnv, sentenceEnvsStruct: SentenceEnvsStruct): WithErrorValue<____Declaration[]> => {
 
     const declarations: ____Declaration[] = [];
     const errors: ErrorMessage[] = [];
+
+    {
+        const result = processNameList(sentenceEnv, sentenceEnvsStruct);
+        if (result){
+            declarations.push(...result.value);
+            errors.push(...result.errors);
+        }
+    }
 
     {
         const result = detectDeclarationsByEL(sentenceEnv.el, sentenceEnv);
@@ -85,7 +94,7 @@ export const detectDeclarations = (sentenceEnvsStruct: SentenceEnvsStruct): With
     const errors: ErrorMessage[] = [];
 
     for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
-        const result = detectDeclarationsBySentence(sentenceEnv);
+        const result = detectDeclarationsBySentence(sentenceEnv, sentenceEnvsStruct);
         if (result){
             declarations.push(...result.value);
             errors.push(...result.errors);
