@@ -36,8 +36,8 @@ export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
         const options = htmlOptions.options as LawViewOptions;
         const analysis = options.lawData.analysis;
         const sentenceChildren = el.children as (string | SentenceChildEL)[];
-        if (!analysis || !el.attr.locatedContainerID) return (<HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />);
-        const containerID = el.attr.locatedContainerID;
+        if (!analysis || el.targetContainerIDs.length === 0) return (<HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />);
+        const containerID = el.targetContainerIDs.slice(-1)[0];
         return <ContainerRef containerID={containerID} sentenceChildren={sentenceChildren} {...{ htmlOptions }} />;
 
     } else if (el instanceof ____LawNum) {
@@ -275,7 +275,7 @@ const PeekContainerView = (props: HTMLComponentProps & PeekContainerViewProps) =
     const ignoreTags = ["ArticleCaption", "ParagraphCaption", ...titleTags];
 
     for (const c of containerStack) {
-        if (std.isLaw(container.el) && std.isLaw(c.el)) {
+        if ((std.isLaw(container.el) || std.isMainProvision(container.el)) && std.isLaw(c.el)) {
             const lawTitle = c.el.children.find(std.isLawBody)?.children.find(std.isLawTitle);
             const lawNum = c.el.children.find(std.isLawNum);
             if (lawTitle && lawNum) {
@@ -327,21 +327,21 @@ const PeekContainerView = (props: HTMLComponentProps & PeekContainerViewProps) =
         }
     }
 
-    const containerElTitleTag = titleTags
-        .find(s => Boolean(s) && s.startsWith(container.el.tag));
+    const containerElTitleTag = std.isMainProvision(container.el) ? "LawTitle" : titleTags
+        .find(s => s.startsWith(container.el.tag));
 
     if (containerElTitleTag) {
         const containerEl = new EL(
-            container.el.tag,
+            std.isMainProvision(container.el) ? "Law" : container.el.tag,
             {},
             [
                 ...(
-                    (std.isLaw(container.el))
+                    (std.isLaw(container.el) || std.isMainProvision(container.el))
                         ? [new EL("LawBody", {}, [new EL("LawTitle", {}, [names.join("／")])])]
                         : [new EL(containerElTitleTag, {}, [names.join("／")])]
                 ),
                 ...(
-                    (std.isLaw(container.el) || std.isArticleGroup(container.el) || std.isSupplProvision(container.el))
+                    (std.isLaw(container.el) || std.isMainProvision(container.el) || std.isArticleGroup(container.el) || std.isSupplProvision(container.el))
                         ? []
                         : (container.el.children as EL[])
                             .filter(child => ignoreTags.indexOf(child.tag) < 0)
