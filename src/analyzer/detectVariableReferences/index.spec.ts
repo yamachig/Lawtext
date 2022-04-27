@@ -41,7 +41,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_0-text_58_62",
                     type: "Keyword",
                     name: "当事者等",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":63},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":63},\"end\":{\"sentenceIndex\":7,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":63},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":6,\"textOffset\":0},\"end\":{\"sentenceIndex\":7,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":58},\"end\":{\"sentenceIndex\":0,\"textOffset\":62}}",
                 },
                 children: ["当事者等"],

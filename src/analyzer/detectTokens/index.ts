@@ -1,8 +1,10 @@
 import * as std from "../../law/std";
+import { SentenceEnv } from "../../node/container/sentenceEnv";
 import { __Parentheses, __Text, ____LawNum, ____PointerRanges } from "../../node/el/controls";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
 import { isIgnoreAnalysis } from "../common";
+import getScope from "../getScope";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import matchLawNum from "./matchLawNum";
 import { matchPointerRanges } from "./matchPointerRanges";
@@ -13,7 +15,7 @@ export interface TokensStruct {
 }
 
 
-export const detectTokensByEL = (elToBeModified: std.StdEL | std.__EL): WithErrorValue<TokensStruct> => {
+export const detectTokensByEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnv: SentenceEnv): WithErrorValue<TokensStruct> => {
 
     const pointerRangesList: ____PointerRanges[] = [];
     const lawNums: ____LawNum[] = [];
@@ -55,7 +57,10 @@ export const detectTokensByEL = (elToBeModified: std.StdEL | std.__EL): WithErro
             {
                 const match = matchPointerRanges(child);
                 if (match) {
-                    pointerRangesList.push(match.value.pointerRanges);
+                    const pointerRanges = match.value.pointerRanges;
+                    getScope(sentenceEnv.container, pointerRanges);
+
+                    pointerRangesList.push(pointerRanges);
                     errors.push(...match.errors);
 
                     elToBeModified.children.splice(
@@ -70,7 +75,7 @@ export const detectTokensByEL = (elToBeModified: std.StdEL | std.__EL): WithErro
             }
 
         } else {
-            const newResult = detectTokensByEL(child as std.StdEL | std.__EL);
+            const newResult = detectTokensByEL(child as std.StdEL | std.__EL, sentenceEnv);
             pointerRangesList.push(...newResult.value.pointerRangesList);
             lawNums.push(...newResult.value.lawNums);
             errors.push(...newResult.errors);
@@ -94,7 +99,7 @@ export const detectTokens = (sentenceEnvsStruct: SentenceEnvsStruct): WithErrorV
     const errors: ErrorMessage[] = [];
 
     for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
-        const newResult = detectTokensByEL(sentenceEnv.el);
+        const newResult = detectTokensByEL(sentenceEnv.el, sentenceEnv);
         pointerRangesList.push(...newResult.value.pointerRangesList);
         lawNums.push(...newResult.value.lawNums);
         errors.push(...newResult.errors);

@@ -1,20 +1,10 @@
 import { throwError } from "../util";
 import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
-import { initialEnv } from "../parser/cst/env";
 import { getContainerType } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
-import { $pointerRanges } from "./stringParser/rules/$pointerRanges";
 import { SentenceTextPos, SentenceTextRange } from "../node/container/sentenceEnv";
 import * as std from "../law/std";
-
-
-const parseRanges = (text: string): ____PointerRanges | null => { // closed
-    if (text === "") return null;
-    const result = $pointerRanges.match(0, text, initialEnv({}));
-    if (result.ok) return result.value.value;
-    else return null;
-};
 
 type LocatedPointerInfo = [fragment: ____PF, container: Container][];
 
@@ -215,21 +205,28 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
 
 export const getScope = (
     currentContainer: Container,
-    origRangesOrText: string | ____PointerRanges,
+    pointerRangesToBeModified: ____PointerRanges,
     followingStartPos?: SentenceTextPos,
 ): SentenceTextRange[] => {
-    const ret: SentenceTextRange[] = [];
-    const origRanges = origRangesOrText instanceof ____PointerRanges ? origRangesOrText : parseRanges(origRangesOrText);
-    if (!origRanges) return ret;
-    const ranges = locateRanges(origRanges, currentContainer);
+    const scope: SentenceTextRange[] = [];
+    const ranges = locateRanges(pointerRangesToBeModified, currentContainer);
     for (const [from, to] of ranges) {
         if (from.length === 0 || to.length === 0) {
             continue;
         }
+
+        for (const [fragment, container] of from) {
+            fragment.attr.locatedContainerID = container.containerID;
+        }
+
+        for (const [fragment, container] of to) {
+            fragment.attr.locatedContainerID = container.containerID;
+        }
+
         const [, fromc] = from[from.length - 1];
         const [, toc] = to[to.length - 1];
         if (followingStartPos) {
-            ret.push({
+            scope.push({
                 start: followingStartPos,
                 end: {
                     sentenceIndex: toc.sentenceRange[1],
@@ -237,7 +234,7 @@ export const getScope = (
                 },
             });
         } else {
-            ret.push({
+            scope.push({
                 start: {
                     sentenceIndex: fromc.sentenceRange[0],
                     textOffset: 0,
@@ -249,8 +246,11 @@ export const getScope = (
             });
         }
     }
+    if (scope.length > 0) {
+        pointerRangesToBeModified.attr.locatedScope = JSON.stringify(scope);
+    }
     // console.log(scope_text, ranges, ret);
-    return ret;
+    return scope;
 };
 
 export default getScope;

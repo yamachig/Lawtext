@@ -875,7 +875,9 @@ describe("Test detectDeclarations", () => {
                                                             children: [
                                                                 {
                                                                     tag: "____PointerRanges",
-                                                                    attr: {},
+                                                                    attr: {
+                                                                        locatedScope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
+                                                                    },
                                                                     children: [
                                                                         {
                                                                             tag: "____PointerRange",
@@ -891,6 +893,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
+                                                                                                locatedContainerID: "container-8-tag_MainProvision-type_TOPLEVEL",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1342,7 +1345,9 @@ describe("Test detectDeclarations", () => {
                                                             children: [
                                                                 {
                                                                     tag: "____PointerRanges",
-                                                                    attr: {},
+                                                                    attr: {
+                                                                        locatedScope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                                                                    },
                                                                     children: [
                                                                         {
                                                                             tag: "____PointerRange",
@@ -1358,6 +1363,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この省令",
+                                                                                                locatedContainerID: "container-15-tag_MainProvision-type_TOPLEVEL",
                                                                                             },
                                                                                             children: ["この省令"],
                                                                                         },
@@ -1865,7 +1871,9 @@ describe("Test detectDeclarations", () => {
                                                             children: [
                                                                 {
                                                                     tag: "____PointerRanges",
-                                                                    attr: {},
+                                                                    attr: {
+                                                                        locatedScope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                                                                    },
                                                                     children: [
                                                                         {
                                                                             tag: "____PointerRange",
@@ -1881,6 +1889,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
+                                                                                                locatedContainerID: "container-21-tag_Law-type_ROOT",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1907,6 +1916,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
+                                                                                                locatedContainerID: "container-21-tag_Law-type_ROOT",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },

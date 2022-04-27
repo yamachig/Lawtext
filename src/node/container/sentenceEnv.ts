@@ -14,6 +14,30 @@ export interface SentenceTextRange {
     end: SentenceTextPos, // half open
 }
 
+export const applyFollowing = (origRanges: SentenceTextRange[], following: SentenceTextPos) => {
+    const ranges: SentenceTextRange[] = [];
+    for (const origRange of origRanges) {
+        if (origRange.end.sentenceIndex === following.sentenceIndex) {
+            if (origRange.end.textOffset < following.textOffset) {
+                continue;
+            }
+        } else if (origRange.end.sentenceIndex < following.sentenceIndex) {
+            continue;
+        }
+
+        const range = { start: { ...origRange.start }, end: { ...origRange.end } };
+        if (range.start.sentenceIndex === following.sentenceIndex) {
+            if (range.start.textOffset < following.textOffset) {
+                Object.assign(range.start, following);
+            }
+        } else if (range.start.sentenceIndex < following.sentenceIndex) {
+            Object.assign(range.start, following);
+        }
+        ranges.push(range);
+    }
+    return ranges;
+};
+
 export const sentenceTextTags = [
     "Ruby",
     "QuoteStruct",

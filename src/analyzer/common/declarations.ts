@@ -10,7 +10,7 @@ export class Declarations {
         const declarations = new Declarations();
         for (const declaration of this.db.values()) {
             if (
-                declaration.scope().some(range => (
+                declaration.scope.some(range => (
                     (
                         (range.start.sentenceIndex < sentenceTextRange.start.sentenceIndex)
                         || (

@@ -19,7 +19,7 @@ export class ____VarRef extends EL {
     };
 
     private refSentenceTextRangeCache: [str: string, value: SentenceTextRange] | null = null;
-    public refSentenceTextRange(): SentenceTextRange {
+    public get refSentenceTextRange(): SentenceTextRange {
         if (this.refSentenceTextRangeCache !== null && this.refSentenceTextRangeCache[0] === this.attr.refSentenceTextRange) {
             return this.refSentenceTextRangeCache[1];
         } else {

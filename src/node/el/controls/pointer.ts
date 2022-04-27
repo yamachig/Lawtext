@@ -1,5 +1,6 @@
 import { EL } from "..";
 import * as std from "../../../law/std";
+import { SentenceTextRange } from "../../container/sentenceEnv";
 import { SentenceChildEL } from "../../cst/inline";
 
 export enum RelPos {
@@ -42,7 +43,7 @@ export interface PFOptions {
     num?: string | null;
     count?: "all" | `${number}` | null;
     range: [start: number, end: number] | null,
-    // locatedContainerID?: string | null,
+    locatedContainerID?: string | null,
 }
 
 export class ____PF extends EL {
@@ -56,15 +57,21 @@ export class ____PF extends EL {
         name: string,
         num?: string,
         count?: string,
-        // locatedContainerID?: string,
+        locatedContainerID?: string,
     };
     public override children: [string];
 
     constructor(options: PFOptions) {
         super("____PF", {}, [], options.range);
 
-        const { relPos, targetType, name, num = null, count = null } = {
-            // locatedContainerID: null,
+        const {
+            relPos,
+            targetType,
+            name,
+            num = null,
+            count = null,
+            locatedContainerID = null,
+        } = {
             ...options,
         };
 
@@ -75,7 +82,7 @@ export class ____PF extends EL {
         };
         if (num !== null) this.attr.num = num;
         if (count !== null) this.attr.count = count;
-        // if (locatedContainerID) this.attr.locatedContainerID = locatedContainerID;
+        if (locatedContainerID) this.attr.locatedContainerID = locatedContainerID;
 
         this.children = [name];
     }
@@ -135,16 +142,34 @@ export class ____PointerRange extends EL {
 export interface PointerRangesOptions {
     children: (____PointerRange | SentenceChildEL)[],
     range: [start: number, end: number] | null,
+    locatedScope?: SentenceTextRange[],
 }
 
 export class ____PointerRanges extends EL {
     public override tag = "____PointerRanges" as const;
     public override get isControl(): true { return true; }
+    public override attr: {
+        locatedScope?: string,
+    };
     public override children: (____PointerRange | SentenceChildEL)[];
+
+    private locatedScopeCache: [str: string, value: SentenceTextRange[]] | null = null;
+    public get locatedScope(): SentenceTextRange[] | null {
+        if (this.locatedScopeCache !== null && this.locatedScopeCache[0] === this.attr.locatedScope) {
+            return this.locatedScopeCache[1];
+        } else {
+            if (!this.attr.locatedScope) return null;
+            const scope = JSON.parse(this.attr.locatedScope) as SentenceTextRange[];
+            this.locatedScopeCache = [this.attr.locatedScope, scope];
+            return scope;
+        }
+    }
 
     constructor(options: PointerRangesOptions) {
         super("____PointerRanges", {}, [], options.range);
         this.children = options.children;
+        this.attr = {};
+        if (options.locatedScope !== undefined) this.attr.locatedScope = JSON.stringify(options.locatedScope);
     }
     public ranges(): ____PointerRange[] {
         return this.children.filter(c => c instanceof ____PointerRange) as ____PointerRange[];

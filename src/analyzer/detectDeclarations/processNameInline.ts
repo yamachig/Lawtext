@@ -5,8 +5,7 @@ import { ContainerType } from "../../node/container";
 import $nameInline from "../sentenceChildrenParser/rules/$nameInline";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
-import getScope from "../getScope";
-import { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import { applyFollowing, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
 
 export const processNameInline = (
@@ -34,15 +33,19 @@ export const processNameInline = (
 
             const name = nameSquareParentheses.content.text();
 
+            const followingStartPos = following ? {
+                sentenceIndex: sentenceEnv.index,
+                textOffset: sentenceEnv.textRageOfEL(nameSquareParentheses)?.[1] ?? 0,
+            } : null;
+
             const scope = (
                 pointerRanges
-                    ? getScope(
-                        sentenceEnv.container,
-                        pointerRanges,
-                        following ? {
-                            sentenceIndex: sentenceEnv.index,
-                            textOffset: sentenceEnv.textRageOfEL(nameSquareParentheses)?.[1] ?? 0,
-                        } : undefined,
+                    ? (
+                        pointerRanges.locatedScope
+                            ? (followingStartPos
+                                ? applyFollowing(pointerRanges.locatedScope, followingStartPos)
+                                : pointerRanges.locatedScope)
+                            : []
                     )
                     : [
                         {

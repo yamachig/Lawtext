@@ -9,8 +9,7 @@ import { ContainerType } from "../../node/container";
 import $lawRef from "../sentenceChildrenParser/rules/$lawRef";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
-import getScope from "../getScope";
-import { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import { applyFollowing, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
 
 export const getLawNameLength = (lawNum: string): number | null => {
@@ -49,15 +48,19 @@ export const processLawRef = (
 
                 const name = nameSquareParentheses.content.text();
 
+                const followingStartPos = following ? {
+                    sentenceIndex: sentenceEnv.index,
+                    textOffset: sentenceEnv.textRageOfEL(nameSquareParentheses)?.[1] ?? 0,
+                } : null;
+
                 const scope = (
                     pointerRanges
-                        ? getScope(
-                            sentenceEnv.container,
-                            pointerRanges,
-                            following ? {
-                                sentenceIndex: sentenceEnv.index,
-                                textOffset: sentenceEnv.textRageOfEL(nameSquareParentheses)?.[1] ?? 0,
-                            } : undefined,
+                        ? (
+                            pointerRanges.locatedScope
+                                ? (followingStartPos
+                                    ? applyFollowing(pointerRanges.locatedScope, followingStartPos)
+                                    : pointerRanges.locatedScope)
+                                : []
                         )
                         : [
                             {

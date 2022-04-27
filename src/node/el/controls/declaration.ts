@@ -26,7 +26,7 @@ export class ____Declaration extends EL {
     public override children: [string];
 
     private scopeCache: [str: string, value: SentenceTextRange[]] | null = null;
-    public scope(): SentenceTextRange[] {
+    public get scope(): SentenceTextRange[] {
         if (this.scopeCache !== null && this.scopeCache[0] === this.attr.scope) {
             return this.scopeCache[1];
         } else {

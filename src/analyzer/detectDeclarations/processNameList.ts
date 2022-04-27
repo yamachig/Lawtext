@@ -4,7 +4,6 @@ import { __Parentheses, __Text, ____Declaration } from "../../node/el/controls";
 import $nameListHead from "../sentenceChildrenParser/rules/$nameListHead";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
-import getScope from "../getScope";
 import { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
@@ -36,10 +35,7 @@ export const processNameList = (
             };
         }
 
-        const scope = getScope(
-            headSentenceEnv.container,
-            pointerRanges,
-        );
+        const scope = pointerRanges.locatedScope ?? [];
 
         if (scope.length === 0) {
             errors.push(new ErrorMessage(
