@@ -216,11 +216,11 @@ export const getScope = (
         }
 
         for (const [fragment, container] of from) {
-            fragment.attr.locatedContainerID = container.containerID;
+            if (!fragment.attr.locatedContainerID) fragment.attr.locatedContainerID = container.containerID;
         }
 
         for (const [fragment, container] of to) {
-            fragment.attr.locatedContainerID = container.containerID;
+            if (!fragment.attr.locatedContainerID) fragment.attr.locatedContainerID = container.containerID;
         }
 
         const [, fromc] = from[from.length - 1];
