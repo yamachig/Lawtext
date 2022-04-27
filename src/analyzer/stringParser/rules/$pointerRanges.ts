@@ -350,7 +350,7 @@ export const $anyWherePointerFragment = factory
                     .and(r => r
                         .zeroOrMore(r => r
                             .sequence(c => c
-                                .and(r => r.seqEqual("の"))
+                                .and(r => r.oneOf(["の", "ノ"]))
                                 .and(() => $kanjiDigits)
                             )
                         )

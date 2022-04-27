@@ -3,7 +3,6 @@ import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
 import { getContainerType } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
-import * as std from "../law/std";
 
 type LocatedPointerInfo = [fragment: ____PF, container: Container][];
 
@@ -153,18 +152,7 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
             if (fragments.length === 1) {
                 const fragmentEL = fragments[0];
 
-                if (fragmentEL.attr.relPos === RelPos.HERE && fragmentEL.attr.targetType === "Law") {
-                    // "この法律" does not contain SupplProvision of other amendments.
-                    processed = true;
-                    for (const container of currentContainer.thisOrClosest(p => p.type === ContainerType.ROOT)?.children ?? []) {
-                        if (std.isSupplProvision(container.el) && container.el.attr.AmendLawNum) {
-                            continue;
-                        }
-                        // make MainProvision as the last one.
-                        ranges.unshift([[[fragmentEL, container]]]);
-                    }
-
-                } else if (fragmentEL.attr.relPos === RelPos.PREV && fragmentEL.attr.count !== null) {
+                if (fragmentEL.attr.relPos === RelPos.PREV && fragmentEL.attr.count !== null) {
                     processed = true;
                     let count = fragmentEL.attr.count === "all" ? Number.MAX_SAFE_INTEGER : Number(fragmentEL.attr.count);
 

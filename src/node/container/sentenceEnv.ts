@@ -1,4 +1,4 @@
-import { Container } from ".";
+import { Container, ContainerType } from ".";
 import { isIgnoreAnalysis } from "../../analyzer/common";
 import { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
 import * as std from "../../law/std";
@@ -15,6 +15,19 @@ export interface SentenceTextRange {
     end: SentenceTextPos, // half open
 }
 
+const pushRange = (ranges: SentenceTextRange[], range: SentenceTextRange) => {
+    if (ranges.length === 0) {
+        ranges.push(range);
+    } else {
+        const lastRange = ranges[ranges.length - 1];
+        if (lastRange.end.sentenceIndex === range.start.sentenceIndex && lastRange.end.textOffset === range.start.textOffset) {
+            lastRange.end = range.end;
+        } else {
+            ranges.push(range);
+        }
+    }
+};
+
 export const toSentenceTextRanges = (
     origContainerIDRanges: readonly (string | [from:string, toIncluded:string])[],
     sentenceEnvsStruct: SentenceEnvsStruct,
@@ -27,7 +40,7 @@ export const toSentenceTextRanges = (
             const fromContainer = sentenceEnvsStruct.containers.get(from);
             const toContainer = sentenceEnvsStruct.containers.get(toIncluded);
             if (fromContainer && toContainer) {
-                origRanges.push({
+                pushRange(origRanges, {
                     start: {
                         sentenceIndex: fromContainer.sentenceRange[0],
                         textOffset: 0,
@@ -41,16 +54,36 @@ export const toSentenceTextRanges = (
         } else {
             const container = sentenceEnvsStruct.containers.get(from);
             if (container) {
-                origRanges.push({
-                    start: {
-                        sentenceIndex: container.sentenceRange[0],
-                        textOffset: 0,
-                    },
-                    end: {
-                        sentenceIndex: container.sentenceRange[1],
-                        textOffset: 0,
-                    },
-                });
+                if (container.type === ContainerType.ROOT) {
+                    // "この法律" does not contain SupplProvision of other amendments.
+                    for (const rootChild of container.children) {
+                        if (std.isSupplProvision(rootChild.el) && rootChild.el.attr.AmendLawNum) {
+                            continue;
+                        }
+                        pushRange(origRanges, {
+                            start: {
+                                sentenceIndex: rootChild.sentenceRange[0],
+                                textOffset: 0,
+                            },
+                            end: {
+                                sentenceIndex: rootChild.sentenceRange[1],
+                                textOffset: 0,
+                            },
+                        });
+                    }
+
+                } else {
+                    pushRange(origRanges, {
+                        start: {
+                            sentenceIndex: container.sentenceRange[0],
+                            textOffset: 0,
+                        },
+                        end: {
+                            sentenceIndex: container.sentenceRange[1],
+                            textOffset: 0,
+                        },
+                    });
+                }
             }
         }
     }

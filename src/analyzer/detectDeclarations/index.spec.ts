@@ -876,7 +876,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        targetContainerIDRanges: "[\"container-8-tag_MainProvision-type_TOPLEVEL\"]",
+                                                                        targetContainerIDRanges: "[\"container-7-tag_Law-type_ROOT\"]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -893,7 +893,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-8-tag_MainProvision-type_TOPLEVEL\"]",
+                                                                                                targetContainerIDs: "[\"container-7-tag_Law-type_ROOT\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1346,7 +1346,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        targetContainerIDRanges: "[\"container-15-tag_MainProvision-type_TOPLEVEL\"]",
+                                                                        targetContainerIDRanges: "[\"container-14-tag_Law-type_ROOT\"]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -1363,7 +1363,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この省令",
-                                                                                                targetContainerIDs: "[\"container-15-tag_MainProvision-type_TOPLEVEL\"]",
+                                                                                                targetContainerIDs: "[\"container-14-tag_Law-type_ROOT\"]",
                                                                                             },
                                                                                             children: ["この省令"],
                                                                                         },
