@@ -14,21 +14,29 @@ import { NotImplementedError } from "lawtext/dist/src/util";
 import AnimateHeight from "react-animate-height";
 import { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
 import { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration";
-import { ____VarRef } from "lawtext/dist/src/node/el/controls/varRef";
+import { ____LawNum, ____VarRef } from "lawtext/dist/src/node/el/controls";
 
 
 export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
     const { childProps, ChildComponent } = props;
     const { el, htmlOptions } = childProps as HTMLComponentProps & HTMLControlRunProps;
 
-    if (el.tag === "____Declaration") {
+    if (el instanceof ____Declaration) {
         return <Declaration el={el as ____Declaration} {...{ htmlOptions }} />;
 
-    } else if (el.tag === "____VarRef") {
-        return <VarRef el={el as ____VarRef} {...{ htmlOptions }} />;
+    } else if (el instanceof ____VarRef) {
+        const options = htmlOptions.options as LawViewOptions;
+        const analysis = options.lawData.analysis;
+        const sentenceChildren = el.children as (string | SentenceChildEL)[];
+        if (!analysis) return (<HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />);
+        if (!el.attr.declarationID) return (<HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />);
+        const declaration = analysis.declarations.get(el.attr.declarationID);
+        const declContainer = analysis.sentenceEnvs[declaration.nameSentenceTextRange.start.sentenceIndex].container;
+        const containerID = declContainer.containerID;
+        return <ContainerRef containerID={containerID} sentenceChildren={sentenceChildren} {...{ htmlOptions }} />;
 
-    } else if (el.tag === "____LawNum") {
-        return <____LawNum el={el} {...{ htmlOptions }} />;
+    } else if (el instanceof ____LawNum) {
+        return <LawNum el={el} {...{ htmlOptions }} />;
 
     } else {
         return <ChildComponent {...childProps} />;
@@ -68,17 +76,17 @@ const Declaration = (props: HTMLComponentProps & ____DeclarationProps) => {
 };
 
 
-const VarRefSpan = styled.span`
+const ContainerRefSpan = styled.span`
 `;
 
-const VarRefTextSpan = styled.span`
+const ContainerRefTextSpan = styled.span`
     border-bottom: 1px solid rgba(127, 127, 127, 0.3);
     cursor: pointer;
     transition: background-color 0.3s, border-bottom-color 0.3s;
 `;
 
 // eslint-disable-next-line no-unused-vars
-enum VarRefFloatState {
+enum ContainerRefFloatState {
     // eslint-disable-next-line no-unused-vars
     HIDDEN,
     // eslint-disable-next-line no-unused-vars
@@ -87,14 +95,14 @@ enum VarRefFloatState {
     OPEN,
 }
 
-const VarRefFloatBlockInnerSpan = styled.div`
+const ContainerRefFloatBlockInnerSpan = styled.div`
     position: relative;
     width: 100%;
     font-size: 1rem;
     padding: 0.5em;
 `;
 
-const VarRefArrowSpan = styled.div`
+const ContainerRefArrowSpan = styled.div`
     position: absolute;
     border-style: solid;
     border-width: 0 0.5em 0.5em 0.5em;
@@ -102,7 +110,7 @@ const VarRefArrowSpan = styled.div`
     margin: -0.5em 0 0 0;
 `;
 
-const VarRefWindowSpan = styled.span`
+const ContainerRefWindowSpan = styled.span`
     float: right;
     width: 100%;
     padding: 0.5em;
@@ -111,19 +119,18 @@ const VarRefWindowSpan = styled.span`
     background-color: rgba(240, 240, 240);
 `;
 
-interface ____VarRefProps { el: ____VarRef }
+interface ContainerRefProps { containerID: string, sentenceChildren: (string | SentenceChildEL)[] }
 
-interface ____VarRefState { mode: VarRefFloatState, arrowLeft: string }
+interface ContainerRefState { mode: ContainerRefFloatState, arrowLeft: string }
 
-const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
-    const { el, htmlOptions } = props;
-    const options = htmlOptions.options as LawViewOptions;
+const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
+    const { containerID, sentenceChildren, htmlOptions } = props;
 
 
     const refText = React.useRef<HTMLSpanElement>(null);
     const refWindow = React.useRef<HTMLSpanElement>(null);
 
-    const [state, setState] = React.useState<____VarRefState>({ mode: VarRefFloatState.HIDDEN, arrowLeft: "" });
+    const [state, setState] = React.useState<ContainerRefState>({ mode: ContainerRefFloatState.HIDDEN, arrowLeft: "" });
 
     React.useEffect(() => {
         return () => {
@@ -131,15 +138,12 @@ const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
         };
     }, []);
 
-    const analysis = options.lawData.analysis;
-    if (!analysis) return (<>{el.text()}</>);
-
     const varRefTextSpanOnClick = (/* e: React.MouseEvent<HTMLSpanElement> */) => {
-        if (state.mode === VarRefFloatState.OPEN) {
-            setState(prevState => ({ ...prevState, mode: VarRefFloatState.CLOSED }));
+        if (state.mode === ContainerRefFloatState.OPEN) {
+            setState(prevState => ({ ...prevState, mode: ContainerRefFloatState.CLOSED }));
             window.removeEventListener("resize", updateSize);
         } else {
-            setState(prevState => ({ ...prevState, mode: VarRefFloatState.OPEN }));
+            setState(prevState => ({ ...prevState, mode: ContainerRefFloatState.OPEN }));
             setTimeout(() => {
                 updateSize();
                 window.addEventListener("resize", updateSize);
@@ -148,8 +152,8 @@ const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
     };
 
     const onAnimationEnd = () => {
-        if (state.mode === VarRefFloatState.CLOSED) {
-            setState(prevState => ({ ...prevState, mode: VarRefFloatState.HIDDEN }));
+        if (state.mode === ContainerRefFloatState.CLOSED) {
+            setState(prevState => ({ ...prevState, mode: ContainerRefFloatState.HIDDEN }));
         }
     };
 
@@ -170,16 +174,12 @@ const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
         onAnimationEnd();
     };
 
-    const declaration = analysis.declarations.get(el.attr.declarationID);
-    const declContainer = analysis.sentenceEnvs[declaration.nameSentenceTextRange.start.sentenceIndex].container;
-    const containerID = declContainer.containerID;
-
     return (
-        <VarRefSpan>
+        <ContainerRefSpan>
 
-            <VarRefTextSpan onClick={varRefTextSpanOnClick} ref={refText}>
-                <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
-            </VarRefTextSpan>
+            <ContainerRefTextSpan onClick={varRefTextSpanOnClick} ref={refText}>
+                <HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />
+            </ContainerRefTextSpan>
 
             <div
                 style={{
@@ -196,7 +196,7 @@ const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
             >
 
                 <AnimateHeight
-                    height={state.mode === VarRefFloatState.OPEN ? "auto" : 0}
+                    height={state.mode === ContainerRefFloatState.OPEN ? "auto" : 0}
                     style={{
                         width: "100%",
                         padding: 0,
@@ -211,18 +211,18 @@ const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
                     onAnimationEnd={animateHeightOnAnimationEnd}
                     duration={100}
                 >
-                    {(state.mode !== VarRefFloatState.HIDDEN) && (
-                        <VarRefFloatBlockInnerSpan>
-                            <VarRefArrowSpan style={state.arrowLeft ? { marginLeft: state.arrowLeft } : { visibility: "hidden" }} />
-                            <VarRefWindowSpan ref={refWindow}>
+                    {(state.mode !== ContainerRefFloatState.HIDDEN) && (
+                        <ContainerRefFloatBlockInnerSpan>
+                            <ContainerRefArrowSpan style={state.arrowLeft ? { marginLeft: state.arrowLeft } : { visibility: "hidden" }} />
+                            <ContainerRefWindowSpan ref={refWindow}>
                                 <PeekContainerView containerID={containerID} {...{ htmlOptions }} />
-                            </VarRefWindowSpan>
-                        </VarRefFloatBlockInnerSpan>
+                            </ContainerRefWindowSpan>
+                        </ContainerRefFloatBlockInnerSpan>
                     )}
                 </AnimateHeight>
             </div>
 
-        </VarRefSpan>
+        </ContainerRefSpan>
     );
 };
 
@@ -342,9 +342,9 @@ const PeekContainerView = (props: HTMLComponentProps & PeekContainerViewProps) =
 const LawNumA = styled.a`
 `;
 
-interface ____LawNumProps { el: std.__EL }
+interface LawNumProps { el: std.__EL }
 
-const ____LawNum = (props: HTMLComponentProps & ____LawNumProps) => {
+const LawNum = (props: HTMLComponentProps & LawNumProps) => {
     const { el, htmlOptions } = props;
     return (
         <LawNumA href={`#/${el.text()}`} target="_blank">
