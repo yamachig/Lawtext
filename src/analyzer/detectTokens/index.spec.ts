@@ -999,7 +999,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    locatedScope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":4,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
+                    targetContainerIDRanges: "[\"container-50-tag_AppdxTable-type_TOPLEVEL\",\"container-49-tag_Paragraph-type_SENTENCES\",\"container-42-tag_MainProvision-type_TOPLEVEL\"]",
                 },
                 children: [
                     {
@@ -1016,7 +1016,7 @@ describe("Test detectTokens", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            locatedContainerID: "container-42-tag_MainProvision-type_TOPLEVEL",
+                                            targetContainerIDs: "[\"container-50-tag_AppdxTable-type_TOPLEVEL\",\"container-49-tag_Paragraph-type_SENTENCES\",\"container-42-tag_MainProvision-type_TOPLEVEL\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -1029,7 +1029,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    locatedScope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
+                    targetContainerIDRanges: "[\"container-41-tag_Law-type_ROOT\"]",
                 },
                 children: [
                     {
@@ -1046,7 +1046,7 @@ describe("Test detectTokens", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            locatedContainerID: "container-41-tag_Law-type_ROOT",
+                                            targetContainerIDs: "[\"container-41-tag_Law-type_ROOT\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -1073,7 +1073,7 @@ describe("Test detectTokens", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            locatedContainerID: "container-41-tag_Law-type_ROOT",
+                                            targetContainerIDs: "[\"container-41-tag_Law-type_ROOT\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -1095,7 +1095,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    locatedScope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":4,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
+                    targetContainerIDRanges: "[\"container-50-tag_AppdxTable-type_TOPLEVEL\",\"container-49-tag_Paragraph-type_SENTENCES\",\"container-42-tag_MainProvision-type_TOPLEVEL\"]",
                 },
                 children: [
                     {
@@ -1112,7 +1112,7 @@ describe("Test detectTokens", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            locatedContainerID: "container-42-tag_MainProvision-type_TOPLEVEL",
+                                            targetContainerIDs: "[\"container-50-tag_AppdxTable-type_TOPLEVEL\",\"container-49-tag_Paragraph-type_SENTENCES\",\"container-42-tag_MainProvision-type_TOPLEVEL\"]",
                                         },
                                         children: ["この法律"],
                                     },

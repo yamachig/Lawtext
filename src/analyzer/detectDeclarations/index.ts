@@ -10,7 +10,7 @@ import { isIgnoreAnalysis } from "../common";
 import { processNameList } from "./processNameList";
 
 
-export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnv: SentenceEnv): WithErrorValue<____Declaration[]> => {
+export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnv: SentenceEnv, sentenceEnvsStruct: SentenceEnvsStruct): WithErrorValue<____Declaration[]> => {
 
     const declarations: ____Declaration[] = [];
     const errors: ErrorMessage[] = [];
@@ -19,6 +19,7 @@ export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sen
         const result = processLawRef(
             elToBeModified,
             sentenceEnv,
+            sentenceEnvsStruct,
         );
         if (result){
             declarations.push(...result.value.declarations);
@@ -30,6 +31,7 @@ export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sen
         const result = processNameInline(
             elToBeModified,
             sentenceEnv,
+            sentenceEnvsStruct,
         );
         if (result){
             declarations.push(...result.value.declarations);
@@ -49,6 +51,7 @@ export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sen
             const detectLawnameResult = detectDeclarationsByEL(
                 child as std.StdEL | std.__EL,
                 sentenceEnv,
+                sentenceEnvsStruct,
             );
             declarations.push(...detectLawnameResult.value);
             errors.push(...detectLawnameResult.errors);
@@ -76,7 +79,7 @@ export const detectDeclarationsBySentence = (sentenceEnv: SentenceEnv, sentenceE
     }
 
     {
-        const result = detectDeclarationsByEL(sentenceEnv.el, sentenceEnv);
+        const result = detectDeclarationsByEL(sentenceEnv.el, sentenceEnv, sentenceEnvsStruct);
         if (result){
             declarations.push(...result.value);
             errors.push(...result.errors);

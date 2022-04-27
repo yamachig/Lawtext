@@ -9,8 +9,9 @@ import { ContainerType } from "../../node/container";
 import $lawRef from "../sentenceChildrenParser/rules/$lawRef";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
-import { applyFollowing, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import { toSentenceTextRanges, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
+import { SentenceEnvsStruct } from "../getSentenceEnvs";
 
 export const getLawNameLength = (lawNum: string): number | null => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -22,6 +23,7 @@ export const getLawNameLength = (lawNum: string): number | null => {
 export const processLawRef = (
     elToBeModified: std.StdEL | std.__EL,
     sentenceEnv: SentenceEnv,
+    sentenceEnvsStruct: SentenceEnvsStruct,
 ): (
     WithErrorValue<{
         declarations: ____Declaration[],
@@ -55,12 +57,10 @@ export const processLawRef = (
 
                 const scope = (
                     pointerRanges
-                        ? (
-                            pointerRanges.locatedScope
-                                ? (followingStartPos
-                                    ? applyFollowing(pointerRanges.locatedScope, followingStartPos)
-                                    : pointerRanges.locatedScope)
-                                : []
+                        ? toSentenceTextRanges(
+                            pointerRanges.targetContainerIDRanges,
+                            sentenceEnvsStruct,
+                            followingStartPos,
                         )
                         : [
                             {

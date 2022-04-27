@@ -5,12 +5,14 @@ import { ContainerType } from "../../node/container";
 import $nameInline from "../sentenceChildrenParser/rules/$nameInline";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
-import { applyFollowing, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import { toSentenceTextRanges, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
+import { SentenceEnvsStruct } from "../getSentenceEnvs";
 
 export const processNameInline = (
     elToBeModified: std.StdEL | std.__EL,
     sentenceEnv: SentenceEnv,
+    sentenceEnvsStruct: SentenceEnvsStruct,
 ): (
     WithErrorValue<{
         declarations: ____Declaration[],
@@ -40,12 +42,10 @@ export const processNameInline = (
 
             const scope = (
                 pointerRanges
-                    ? (
-                        pointerRanges.locatedScope
-                            ? (followingStartPos
-                                ? applyFollowing(pointerRanges.locatedScope, followingStartPos)
-                                : pointerRanges.locatedScope)
-                            : []
+                    ? toSentenceTextRanges(
+                        pointerRanges.targetContainerIDRanges,
+                        sentenceEnvsStruct,
+                        followingStartPos,
                     )
                     : [
                         {

@@ -1,5 +1,6 @@
 import { Container } from ".";
 import { isIgnoreAnalysis } from "../../analyzer/common";
+import { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
 import * as std from "../../law/std";
 import { EL } from "../el";
 import { __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, __Text, ____Declaration, ____LawNum, ____PointerRanges, ____VarRef } from "../el/controls";
@@ -14,28 +15,72 @@ export interface SentenceTextRange {
     end: SentenceTextPos, // half open
 }
 
-export const applyFollowing = (origRanges: SentenceTextRange[], following: SentenceTextPos) => {
-    const ranges: SentenceTextRange[] = [];
-    for (const origRange of origRanges) {
-        if (origRange.end.sentenceIndex === following.sentenceIndex) {
-            if (origRange.end.textOffset < following.textOffset) {
+export const toSentenceTextRanges = (
+    origContainerIDRanges: readonly (string | [from:string, toIncluded:string])[],
+    sentenceEnvsStruct: SentenceEnvsStruct,
+    following?: SentenceTextPos | null,
+) => {
+    const origRanges: SentenceTextRange[] = [];
+    for (const containerIDRange of origContainerIDRanges) {
+        const [from, toIncluded] = Array.isArray(containerIDRange) ? containerIDRange : [containerIDRange, undefined];
+        if (toIncluded) {
+            const fromContainer = sentenceEnvsStruct.containers.get(from);
+            const toContainer = sentenceEnvsStruct.containers.get(toIncluded);
+            if (fromContainer && toContainer) {
+                origRanges.push({
+                    start: {
+                        sentenceIndex: fromContainer.sentenceRange[0],
+                        textOffset: 0,
+                    },
+                    end: {
+                        sentenceIndex: toContainer.sentenceRange[1],
+                        textOffset: 0,
+                    },
+                });
+            }
+        } else {
+            const container = sentenceEnvsStruct.containers.get(from);
+            if (container) {
+                origRanges.push({
+                    start: {
+                        sentenceIndex: container.sentenceRange[0],
+                        textOffset: 0,
+                    },
+                    end: {
+                        sentenceIndex: container.sentenceRange[1],
+                        textOffset: 0,
+                    },
+                });
+            }
+        }
+    }
+
+    if (following) {
+
+        const ranges: SentenceTextRange[] = [];
+        for (const origRange of origRanges) {
+            if (origRange.end.sentenceIndex === following.sentenceIndex) {
+                if (origRange.end.textOffset < following.textOffset) {
+                    continue;
+                }
+            } else if (origRange.end.sentenceIndex < following.sentenceIndex) {
                 continue;
             }
-        } else if (origRange.end.sentenceIndex < following.sentenceIndex) {
-            continue;
-        }
 
-        const range = { start: { ...origRange.start }, end: { ...origRange.end } };
-        if (range.start.sentenceIndex === following.sentenceIndex) {
-            if (range.start.textOffset < following.textOffset) {
+            const range = { start: { ...origRange.start }, end: { ...origRange.end } };
+            if (range.start.sentenceIndex === following.sentenceIndex) {
+                if (range.start.textOffset < following.textOffset) {
+                    Object.assign(range.start, following);
+                }
+            } else if (range.start.sentenceIndex < following.sentenceIndex) {
                 Object.assign(range.start, following);
             }
-        } else if (range.start.sentenceIndex < following.sentenceIndex) {
-            Object.assign(range.start, following);
+            ranges.push(range);
         }
-        ranges.push(range);
+        return ranges;
+    } else {
+        return origRanges;
     }
-    return ranges;
 };
 
 export const sentenceTextTags = [

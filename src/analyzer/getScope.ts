@@ -3,7 +3,6 @@ import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
 import { getContainerType } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
-import { SentenceTextPos, SentenceTextRange } from "../node/container/sentenceEnv";
 import * as std from "../law/std";
 
 type LocatedPointerInfo = [fragment: ____PF, container: Container][];
@@ -143,7 +142,7 @@ const locatePointer = (
 };
 
 const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container) => {
-    const ranges: [LocatedPointerInfo, LocatedPointerInfo][] = [];
+    const ranges: ([fromOnly: LocatedPointerInfo]|[from:LocatedPointerInfo, toIncluded:LocatedPointerInfo])[] = [];
     const rangeELs = origRanges.ranges();
 
     let processed = false;
@@ -161,7 +160,8 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
                         if (std.isSupplProvision(container.el) && container.el.attr.AmendLawNum) {
                             continue;
                         }
-                        ranges.push([[[fragmentEL, container]], [[fragmentEL, container]]]);
+                        // make MainProvision as the last one.
+                        ranges.unshift([[[fragmentEL, container]]]);
                     }
 
                 } else if (fragmentEL.attr.relPos === RelPos.PREV && fragmentEL.attr.count !== null) {
@@ -173,7 +173,7 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
 
                     if (scopeContainer && count > 0) {
                         for (const prevContainer of scopeContainer.prevAll(c => c.el.tag === fragmentEL.attr.targetType)) {
-                            ranges.unshift([[[fragmentEL, prevContainer]], [[fragmentEL, prevContainer]]]);
+                            ranges.unshift([[[fragmentEL, prevContainer]]]);
                             count--;
                             if (count <= 0) break;
                         }
@@ -189,7 +189,7 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
             const from = locatePointer(origFrom, prevLocatedPointerInfo, currentContainer);
             prevLocatedPointerInfo = from;
             if (!origTo) {
-                ranges.push([from, from]);
+                ranges.push([from]);
             } else {
                 const to = locatePointer(origTo, prevLocatedPointerInfo, currentContainer);
                 ranges.push([from, to]);
@@ -206,51 +206,39 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
 export const getScope = (
     currentContainer: Container,
     pointerRangesToBeModified: ____PointerRanges,
-    followingStartPos?: SentenceTextPos,
-): SentenceTextRange[] => {
-    const scope: SentenceTextRange[] = [];
+): (string | [from:string, toIncluded:string])[] => {
+    const targetContainerIDRanges = new Set<string | [from:string, toIncluded:string]>();
     const ranges = locateRanges(pointerRangesToBeModified, currentContainer);
-    for (const [from, to] of ranges) {
-        if (from.length === 0 || to.length === 0) {
+    for (const fromTo of ranges) {
+        const [from, to] = fromTo;
+        if (from.length === 0 || (to && to.length === 0)) {
             continue;
         }
 
+        let fromContainerID: string | null = null;
         for (const [fragment, container] of from) {
-            if (!fragment.attr.locatedContainerID) fragment.attr.locatedContainerID = container.containerID;
+            fragment.targetContainerIDs = [...new Set([...fragment.targetContainerIDs, container.containerID])];
+            fromContainerID = container.containerID;
+        }
+        let toContainerID: string | null = null;
+        if (to) {
+            for (const [fragment, container] of to) {
+                fragment.targetContainerIDs = [...new Set([...fragment.targetContainerIDs, container.containerID])];
+                toContainerID = container.containerID;
+            }
         }
 
-        for (const [fragment, container] of to) {
-            if (!fragment.attr.locatedContainerID) fragment.attr.locatedContainerID = container.containerID;
-        }
-
-        const [, fromc] = from[from.length - 1];
-        const [, toc] = to[to.length - 1];
-        if (followingStartPos) {
-            scope.push({
-                start: followingStartPos,
-                end: {
-                    sentenceIndex: toc.sentenceRange[1],
-                    textOffset: 0,
-                },
-            });
-        } else {
-            scope.push({
-                start: {
-                    sentenceIndex: fromc.sentenceRange[0],
-                    textOffset: 0,
-                },
-                end: {
-                    sentenceIndex: toc.sentenceRange[1],
-                    textOffset: 0,
-                },
-            });
+        if (fromContainerID && toContainerID) {
+            targetContainerIDRanges.add([fromContainerID, toContainerID]);
+        } else if (fromContainerID) {
+            targetContainerIDRanges.add(fromContainerID);
         }
     }
-    if (scope.length > 0) {
-        pointerRangesToBeModified.attr.locatedScope = JSON.stringify(scope);
+    if (targetContainerIDRanges.size > 0) {
+        pointerRangesToBeModified.targetContainerIDRanges = [...targetContainerIDRanges];
     }
     // console.log(scope_text, ranges, ret);
-    return scope;
+    return [...targetContainerIDRanges];
 };
 
 export default getScope;

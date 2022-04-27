@@ -876,7 +876,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        locatedScope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
+                                                                        targetContainerIDRanges: "[\"container-8-tag_MainProvision-type_TOPLEVEL\"]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -893,7 +893,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                locatedContainerID: "container-8-tag_MainProvision-type_TOPLEVEL",
+                                                                                                targetContainerIDs: "[\"container-8-tag_MainProvision-type_TOPLEVEL\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1346,7 +1346,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        locatedScope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                                                                        targetContainerIDRanges: "[\"container-15-tag_MainProvision-type_TOPLEVEL\"]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -1363,7 +1363,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この省令",
-                                                                                                locatedContainerID: "container-15-tag_MainProvision-type_TOPLEVEL",
+                                                                                                targetContainerIDs: "[\"container-15-tag_MainProvision-type_TOPLEVEL\"]",
                                                                                             },
                                                                                             children: ["この省令"],
                                                                                         },
@@ -1762,7 +1762,7 @@ describe("Test detectDeclarations", () => {
                     declarationID: "decl-sentence_1-text_1_3",
                     type: "Keyword",
                     name: "電波",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
                     value: "三百万メガヘルツ以下の周波数の電磁波",
                 },
@@ -1774,7 +1774,7 @@ describe("Test detectDeclarations", () => {
                     declarationID: "decl-sentence_2-text_1_4",
                     type: "Keyword",
                     name: "無線局",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":1},\"end\":{\"sentenceIndex\":2,\"textOffset\":4}}",
                     value: "無線設備及び無線設備の操作を行う者の総体",
                 },
@@ -1872,7 +1872,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        locatedScope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                                                                        targetContainerIDRanges: "[\"container-21-tag_Law-type_ROOT\"]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -1889,7 +1889,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                locatedContainerID: "container-21-tag_Law-type_ROOT",
+                                                                                                targetContainerIDs: "[\"container-21-tag_Law-type_ROOT\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1916,7 +1916,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                locatedContainerID: "container-21-tag_Law-type_ROOT",
+                                                                                                targetContainerIDs: "[\"container-21-tag_Law-type_ROOT\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1989,7 +1989,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 declarationID: "decl-sentence_1-text_1_3",
                                                                                                 type: "Keyword",
                                                                                                 name: "電波",
-                                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
                                                                                                 value: "三百万メガヘルツ以下の周波数の電磁波",
                                                                                             },
@@ -2065,7 +2065,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 declarationID: "decl-sentence_2-text_1_4",
                                                                                                 type: "Keyword",
                                                                                                 name: "無線局",
-                                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":1},\"end\":{\"sentenceIndex\":2,\"textOffset\":4}}",
                                                                                                 value: "無線設備及び無線設備の操作を行う者の総体",
                                                                                             },

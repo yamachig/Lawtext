@@ -1,6 +1,5 @@
 import { EL } from "..";
 import * as std from "../../../law/std";
-import { SentenceTextRange } from "../../container/sentenceEnv";
 import { SentenceChildEL } from "../../cst/inline";
 
 export enum RelPos {
@@ -43,7 +42,7 @@ export interface PFOptions {
     num?: string | null;
     count?: "all" | `${number}` | null;
     range: [start: number, end: number] | null,
-    locatedContainerID?: string | null,
+    targetContainerIDs?: [],
 }
 
 export class ____PF extends EL {
@@ -57,9 +56,25 @@ export class ____PF extends EL {
         name: string,
         num?: string,
         count?: string,
-        locatedContainerID?: string,
+        targetContainerIDs?: string,
     };
     public override children: [string];
+
+    private targetContainerIDsCache: [str: string, value: readonly string[]] | null = null;
+    public get targetContainerIDs(): readonly string[] {
+        if (this.targetContainerIDsCache !== null && this.targetContainerIDsCache[0] === this.attr.targetContainerIDs) {
+            return this.targetContainerIDsCache[1];
+        } else {
+            if (!this.attr.targetContainerIDs) return [];
+            const value = JSON.parse(this.attr.targetContainerIDs) as string[];
+            this.targetContainerIDsCache = [this.attr.targetContainerIDs, value];
+            return value;
+        }
+    }
+    public set targetContainerIDs(value: readonly string[]) {
+        this.attr.targetContainerIDs = JSON.stringify(value);
+        this.targetContainerIDsCache = [this.attr.targetContainerIDs, value];
+    }
 
     constructor(options: PFOptions) {
         super("____PF", {}, [], options.range);
@@ -70,7 +85,7 @@ export class ____PF extends EL {
             name,
             num = null,
             count = null,
-            locatedContainerID = null,
+            targetContainerIDs,
         } = {
             ...options,
         };
@@ -82,7 +97,7 @@ export class ____PF extends EL {
         };
         if (num !== null) this.attr.num = num;
         if (count !== null) this.attr.count = count;
-        if (locatedContainerID) this.attr.locatedContainerID = locatedContainerID;
+        if (targetContainerIDs !== undefined) this.attr.targetContainerIDs = JSON.stringify(targetContainerIDs);
 
         this.children = [name];
     }
@@ -142,34 +157,41 @@ export class ____PointerRange extends EL {
 export interface PointerRangesOptions {
     children: (____PointerRange | SentenceChildEL)[],
     range: [start: number, end: number] | null,
-    locatedScope?: SentenceTextRange[],
+    targetContainerIDs?: string[],
 }
 
 export class ____PointerRanges extends EL {
     public override tag = "____PointerRanges" as const;
     public override get isControl(): true { return true; }
     public override attr: {
-        locatedScope?: string,
+        targetContainerIDRanges?: string,
     };
     public override children: (____PointerRange | SentenceChildEL)[];
 
-    private locatedScopeCache: [str: string, value: SentenceTextRange[]] | null = null;
-    public get locatedScope(): SentenceTextRange[] | null {
-        if (this.locatedScopeCache !== null && this.locatedScopeCache[0] === this.attr.locatedScope) {
-            return this.locatedScopeCache[1];
+    private targetContainerIDRangesCache: [
+        str: string,
+        value: readonly (string | [from:string, toIncluded:string])[], // closed
+    ] | null = null;
+    public get targetContainerIDRanges(): readonly (string | [from:string, toIncluded:string])[] {
+        if (this.targetContainerIDRangesCache !== null && this.targetContainerIDRangesCache[0] === this.attr.targetContainerIDRanges) {
+            return this.targetContainerIDRangesCache[1];
         } else {
-            if (!this.attr.locatedScope) return null;
-            const scope = JSON.parse(this.attr.locatedScope) as SentenceTextRange[];
-            this.locatedScopeCache = [this.attr.locatedScope, scope];
-            return scope;
+            if (!this.attr.targetContainerIDRanges) return [];
+            const value = JSON.parse(this.attr.targetContainerIDRanges) as (string | [from:string, toIncluded:string])[];
+            this.targetContainerIDRangesCache = [this.attr.targetContainerIDRanges, value];
+            return value;
         }
+    }
+    public set targetContainerIDRanges(value: readonly (string | [from:string, toIncluded:string])[]) {
+        this.attr.targetContainerIDRanges = JSON.stringify(value);
+        this.targetContainerIDRangesCache = [this.attr.targetContainerIDRanges, value];
     }
 
     constructor(options: PointerRangesOptions) {
         super("____PointerRanges", {}, [], options.range);
         this.children = options.children;
         this.attr = {};
-        if (options.locatedScope !== undefined) this.attr.locatedScope = JSON.stringify(options.locatedScope);
+        if (options.targetContainerIDs !== undefined) this.attr.targetContainerIDRanges = JSON.stringify(options.targetContainerIDs);
     }
     public ranges(): ____PointerRange[] {
         return this.children.filter(c => c instanceof ____PointerRange) as ____PointerRange[];
