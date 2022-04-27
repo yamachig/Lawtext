@@ -2,6 +2,7 @@
 *.pyc
 *.cache
 *.DS_Store
+*.log
 venv*
 *.pyc
 *.egg-info*
