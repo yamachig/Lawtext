@@ -1,4 +1,4 @@
-import { throwError } from "../util";
+import { assertNever } from "../util";
 import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
 import { getContainerType } from "./common";
@@ -6,79 +6,89 @@ import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/contr
 
 type LocatedPointerInfo = [fragment: ____PF, container: Container][];
 
-const locatePointer = (
-    origPointer: ____Pointer,
+const locateContainerOfHeadFragment = (
+    head: ____PF,
     prevLocatedPointerInfo: LocatedPointerInfo | null,
     currentContainer: Container,
-): LocatedPointerInfo => {
+) => {
 
-    const origFragments = origPointer.fragments();
-    const head = origFragments[0];
-    const headType = getContainerType(head.attr.targetType);
+    if ((head.attr.relPos === RelPos.SAME)) {
+        // e.g.: "同条"
 
-    let locatedFragments: ____PF[];
-    let headContainer: Container | null = null;
+        return null; // Not implemented.
 
-    if (head.attr.relPos === RelPos.SAME) {
-        locatedFragments = origFragments;
-        // if (origPointer.fragments().length !== 1) {
-        //     console.warn("RelPos.SAME with multiple fragments", currentSpan, origPointer);
-        // }
-        // headContainer = currentContainer
-        //     .thisOrClosest(c => c.type === ContainerType.TOPLEVEL);
-        // locatedFragments = [head];
+    } else if (head.attr.relPos === RelPos.HERE) {
+        // e.g.: "この条"
 
-    } else if (
-        (head.attr.relPos === RelPos.HERE)
-        || (head.attr.relPos === RelPos.PREV)
-        || (head.attr.relPos === RelPos.NEXT)
-    ) {
         const scopeContainer = currentContainer
             .thisOrClosest(c => c.el.tag === head.attr.targetType);
 
         if (scopeContainer) {
-            headContainer =
-                (head.attr.relPos === RelPos.HERE)
-                    ? scopeContainer
-                    : (headType === ContainerType.ARTICLES)
-                        ? (head.attr.relPos === RelPos.PREV)
-                            ? scopeContainer.prev(c => c.el.tag === head.attr.targetType)
-                            : (head.attr.relPos === RelPos.NEXT)
-                                ? scopeContainer.next(c => c.el.tag === head.attr.targetType)
-                                : throwError()
-                        : (head.attr.relPos === RelPos.PREV)
-                            ? scopeContainer.prevSub(c => c.el.tag === head.attr.targetType)
-                            : (head.attr.relPos === RelPos.NEXT)
-                                ? scopeContainer.nextSub(c => c.el.tag === head.attr.targetType)
-                                : throwError();
+            return scopeContainer;
+        } else {
+            return null;
         }
 
-        locatedFragments = origFragments;
+    } else if (head.attr.relPos === RelPos.PREV) {
+        // e.g.: "前条"
 
-    } else {
+        const scopeContainer = currentContainer
+            .thisOrClosest(c => c.el.tag === head.attr.targetType);
+
+        if (scopeContainer) {
+            return (
+                (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
+                    ? scopeContainer.prev(c => c.el.tag === head.attr.targetType)
+                    : scopeContainer.prevSub(c => c.el.tag === head.attr.targetType)
+            );
+        } else {
+            return null;
+        }
+
+    } else if (head.attr.relPos === RelPos.NEXT) {
+        // e.g.: "次条"
+
+        const scopeContainer = currentContainer
+            .thisOrClosest(c => c.el.tag === head.attr.targetType);
+
+        if (scopeContainer) {
+            return (
+                (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
+                    ? scopeContainer.next(c => c.el.tag === head.attr.targetType)
+                    : scopeContainer.nextSub(c => c.el.tag === head.attr.targetType)
+            );
+        } else {
+            return null;
+        }
+
+    } else if (head.attr.relPos === RelPos.NAMED) {
+        // e.g.: "第二条", "第二項"
+
         const foundIndex = prevLocatedPointerInfo
             ? prevLocatedPointerInfo.findIndex(([fragment]) => fragment.attr.targetType === head.attr.targetType)
             : -1;
+
         if (
             prevLocatedPointerInfo
             && (1 <= foundIndex)
         ) {
-            locatedFragments = [
-                ...prevLocatedPointerInfo.slice(0, foundIndex).map(([fragment]) => fragment),
-                ...origFragments,
-            ];
+            // e.g.: "第二条第二項" -> "第三項"
 
-        } else if (headType === ContainerType.TOPLEVEL) {
-            headContainer = currentContainer.findAncestorChildrenSub(c => {
+            return prevLocatedPointerInfo[foundIndex][1];
+
+        } else if (getContainerType(head.attr.targetType) === ContainerType.TOPLEVEL) {
+            // e.g.: "附則", "別表第二"
+
+            return currentContainer.findAncestorChildrenSub(c => {
                 if (c.el.tag !== head.attr.targetType) return false;
                 const titleEl = c.el.children.find(el =>
                     el instanceof EL && el.tag === `${c.el.tag}Title`) as EL;
                 return (new RegExp(`^${head.attr.name}(?:[(（]|\\s|$)`)).exec(titleEl.text()) !== null;
             });
 
-            locatedFragments = origFragments;
-
         } else {
+            // e.g.: "第二項"
+
             const func = (c: Container) => (
                 (
                     (c.el.tag === head.attr.targetType)
@@ -89,25 +99,32 @@ const locatePointer = (
                 )
                 && ((c.num || null) === head.attr.num)
             );
-            headContainer =
-                headType === ContainerType.ARTICLES
+            return (
+                (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
                     ? currentContainer.findAncestorChildren(func)
-                    : currentContainer.findAncestorChildrenSub(func);
-
-            locatedFragments = origFragments;
+                    : currentContainer.findAncestorChildrenSub(func)
+            );
         }
     }
+    else { throw assertNever(head.attr.relPos); }
+};
+
+const locatePointer = (
+    origPointer: ____Pointer,
+    prevLocatedPointerInfo: LocatedPointerInfo | null,
+    currentContainer: Container,
+): LocatedPointerInfo => {
+
+    const origFragments = origPointer.fragments();
+    const headContainer = locateContainerOfHeadFragment(origFragments[0], prevLocatedPointerInfo, currentContainer);
 
     const retOne: LocatedPointerInfo = [];
 
     if (headContainer) {
-        retOne.push([locatedFragments[0], headContainer]);
+        retOne.push([origFragments[0], headContainer]);
 
         let parentContainer = headContainer;
-        for (const fragment of locatedFragments.slice(1)) {
-            // if (!parentContainer) break;
-            // let fragment_rank = container_tags.indexOf(fragment.tag);
-            // if (fragment_rank < 0) fragment_rank = Number.POSITIVE_INFINITY;
+        for (const fragment of origFragments.slice(1)) {
             const container =
                 parentContainer.find(
                     c =>
@@ -126,7 +143,6 @@ const locatePointer = (
                             && (c.el.tag === "Sentence")
                             && (c.el.attr.Function === "proviso")
                         ),
-                    // c => fragment_rank < container_tags.indexOf(c.el.tag),
                 );
             if (container) {
                 retOne.push([fragment, container]);
@@ -183,9 +199,6 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
                 ranges.push([from, to]);
             }
         }
-        // if (!from || !to || from.length === 0 || to.length === 0) {
-        //     console.warn("locateRanges: invalid range", origRanges, currentSpan, from, to);
-        // }
     }
 
     return ranges;
@@ -225,7 +238,6 @@ export const getScope = (
     if (targetContainerIDRanges.size > 0) {
         pointerRangesToBeModified.targetContainerIDRanges = [...targetContainerIDRanges];
     }
-    // console.log(scope_text, ranges, ret);
     return [...targetContainerIDRanges];
 };
 
