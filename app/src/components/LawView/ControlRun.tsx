@@ -3,10 +3,8 @@ import React from "react";
 import * as std from "lawtext/dist/src/law/std";
 import { HTMLComponentProps, HTMLMarginSpan, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
 import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
-import { HTMLArticle } from "lawtext/dist/src/renderer/rules/article";
-import { HTMLParagraphItem } from "lawtext/dist/src/renderer/rules/paragraphItem";
 import { HTMLControlRunProps } from "lawtext/dist/src/renderer/rules/controlRun";
-import { HTMLTable } from "lawtext/dist/src/renderer/rules/table";
+import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any";
 import styled, { createGlobalStyle } from "styled-components";
 import { em, LawViewOptions } from "./common";
 import { EL } from "lawtext/dist/src/node/el";
@@ -14,7 +12,7 @@ import { NotImplementedError } from "lawtext/dist/src/util";
 import AnimateHeight from "react-animate-height";
 import { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
 import { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration";
-import { ____LawNum, ____VarRef } from "lawtext/dist/src/node/el/controls";
+import { ____LawNum, ____PF, ____VarRef } from "lawtext/dist/src/node/el/controls";
 
 
 export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
@@ -28,11 +26,18 @@ export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
         const options = htmlOptions.options as LawViewOptions;
         const analysis = options.lawData.analysis;
         const sentenceChildren = el.children as (string | SentenceChildEL)[];
-        if (!analysis) return (<HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />);
-        if (!el.attr.declarationID) return (<HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />);
+        if (!analysis || !el.attr.declarationID) return (<HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />);
         const declaration = analysis.declarations.get(el.attr.declarationID);
         const declContainer = analysis.sentenceEnvs[declaration.nameSentenceTextRange.start.sentenceIndex].container;
         const containerID = declContainer.containerID;
+        return <ContainerRef containerID={containerID} sentenceChildren={sentenceChildren} {...{ htmlOptions }} />;
+
+    } else if (el instanceof ____PF) {
+        const options = htmlOptions.options as LawViewOptions;
+        const analysis = options.lawData.analysis;
+        const sentenceChildren = el.children as (string | SentenceChildEL)[];
+        if (!analysis || !el.attr.locatedContainerID) return (<HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />);
+        const containerID = el.attr.locatedContainerID;
         return <ContainerRef containerID={containerID} sentenceChildren={sentenceChildren} {...{ htmlOptions }} />;
 
     } else if (el instanceof ____LawNum) {
@@ -44,16 +49,16 @@ export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
 };
 
 export const ControlGlobalStyle = createGlobalStyle`
-.control-parentheses-content[data-lawtext_parentheses_type="square"] {
+.control-parentheses-content[data-parentheses_type="square"] {
     color: rgb(158, 79, 0);
 }
 
-.lawtext-varref-open .lawtext-varref-text {
+.lawtext-container-ref-open > .lawtext-container-ref-text {
     background-color: rgba(127, 127, 127, 0.15);
     border-bottom: 1px solid rgb(40, 167, 69);
 }
 
-.lawtext-varref-text:hover {
+.lawtext-container-ref-text:hover {
     background-color: rgb(255, 249, 160);
     border-bottom: 1px solid rgb(40, 167, 69);
 }
@@ -175,9 +180,9 @@ const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
     };
 
     return (
-        <ContainerRefSpan>
+        <ContainerRefSpan className={state.mode === ContainerRefFloatState.OPEN ? "lawtext-container-ref-open" : undefined}>
 
-            <ContainerRefTextSpan onClick={varRefTextSpanOnClick} ref={refText}>
+            <ContainerRefTextSpan onClick={varRefTextSpanOnClick} ref={refText} className="lawtext-container-ref-text">
                 <HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />
             </ContainerRefTextSpan>
 
@@ -258,33 +263,59 @@ const PeekContainerView = (props: HTMLComponentProps & PeekContainerViewProps) =
     const names: string[] = [];
 
     const titleTags = [
+        "LawTitle",
         "ArticleTitle",
         ...std.paragraphItemTitleTags,
+        ...std.articleGroupTitleTags,
+        ...std.appdxItemTitleTags,
+        ...std.supplProvisionAppdxItemTitleTags,
+        "SupplProvisionLabel",
         "TableStructTitle",
     ];
     const ignoreTags = ["ArticleCaption", "ParagraphCaption", ...titleTags];
 
-    for (const container of containerStack) {
-        if (std.isEnactStatement(container.el)) {
+    for (const c of containerStack) {
+        if (std.isLaw(container.el) && std.isLaw(c.el)) {
+            const lawTitle = c.el.children.find(std.isLawBody)?.children.find(std.isLawTitle);
+            const lawNum = c.el.children.find(std.isLawNum);
+            if (lawTitle && lawNum) {
+                names.push(`${lawTitle.text()}（${lawNum.text()}）`);
+            } else if (lawTitle) {
+                names.push(lawTitle.text());
+            } else if (lawNum) {
+                names.push(lawNum.text());
+            }
+
+        } else if (std.isEnactStatement(c.el)) {
             names.push("（制定文）");
 
-        } else if (std.isArticle(container.el)) {
-            const articleTitle = container.el.children
+        } else if (std.isArticleGroup(container.el) && std.isArticleGroup(c.el)) {
+            const articleGroupTitle = (c.el.children as (typeof c.el.children)[number][])
+                .find(std.isArticleGroupTitle);
+            if (articleGroupTitle) names.push(articleGroupTitle.text());
+
+        } else if (std.isSupplProvision(c.el)) {
+            const supplProvisionLabel = c.el.children
+                .find(std.isSupplProvisionLabel);
+            if (supplProvisionLabel) names.push(supplProvisionLabel.text());
+
+        } else if (std.isArticle(c.el)) {
+            const articleTitle = c.el.children
                 .find(std.isArticleTitle);
             if (articleTitle) names.push(articleTitle.text());
 
-        } else if (std.isParagraph(container.el)) {
-            const paragraphNum = container.el.children
+        } else if (std.isParagraph(c.el)) {
+            const paragraphNum = c.el.children
                 .find(std.isParagraphNum);
             if (paragraphNum) names.push(paragraphNum.text() || "１");
 
-        } else if (std.isParagraphItem(container.el)) {
-            const itemTitle = (container.el.children as EL[])
+        } else if (std.isParagraphItem(c.el)) {
+            const itemTitle = (c.el.children as EL[])
                 .find(std.isParagraphItemTitle);
             if (itemTitle) names.push(itemTitle.text());
 
-        } else if (std.isTableStruct(container.el)) {
-            const tableStructTitleEl = container.el.children
+        } else if (std.isTableStruct(c.el)) {
+            const tableStructTitleEl = c.el.children
                 .find(std.isTableStructTitle);
             const tableStructTitle = tableStructTitleEl
                 ? tableStructTitleEl.text()
@@ -296,33 +327,29 @@ const PeekContainerView = (props: HTMLComponentProps & PeekContainerViewProps) =
         }
     }
 
-    const declElTitleTag = titleTags
+    const containerElTitleTag = titleTags
         .find(s => Boolean(s) && s.startsWith(container.el.tag));
 
-    if (declElTitleTag) {
-        const declEl = new EL(
+    if (containerElTitleTag) {
+        const containerEl = new EL(
             container.el.tag,
             {},
             [
-                new EL(declElTitleTag, {}, [names.join("／")]),
-                ...(container.el.children as EL[])
-                    .filter(child => ignoreTags.indexOf(child.tag) < 0),
+                ...(
+                    (std.isLaw(container.el))
+                        ? [new EL("LawBody", {}, [new EL("LawTitle", {}, [names.join("／")])])]
+                        : [new EL(containerElTitleTag, {}, [names.join("／")])]
+                ),
+                ...(
+                    (std.isLaw(container.el) || std.isArticleGroup(container.el) || std.isSupplProvision(container.el))
+                        ? []
+                        : (container.el.children as EL[])
+                            .filter(child => ignoreTags.indexOf(child.tag) < 0)
+                ),
             ],
         );
+        return <HTMLAnyELs els={[containerEl as std.StdEL]} indent={0} {...{ htmlOptions }} />;
 
-        if (std.isArticle(declEl)) {
-            return <HTMLArticle el={declEl} indent={0} {...{ htmlOptions }} />;
-
-        } else if (std.isParagraphItem(declEl)) {
-            return <HTMLParagraphItem el={declEl} indent={0} {...{ htmlOptions }} />;
-
-        } else if (std.isTable(declEl)) {
-            return <HTMLTable el={declEl} indent={0} {...{ htmlOptions }} />;
-
-        } else {
-            throw new NotImplementedError(declEl.tag);
-
-        }
     } else if (std.isEnactStatement(container.el)) {
         return (
             <div style={{ paddingLeft: "1em", textIndent: "-1em" }}>
