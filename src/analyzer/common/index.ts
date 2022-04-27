@@ -51,9 +51,9 @@ export const getContainerType = (tag: string): ContainerType => {
 
 export const isIgnoreAnalysis = (el: EL | string) => {
     if (typeof el === "string") return false;
-    else if (el.tag === "QuoteStruct") return true;
-    else if (el.tag === "NewProvision") return true;
-    else if (el.tag === "SupplProvision" && el.attr.AmendLawNum) return true;
+    else if (std.isQuoteStruct(el)) return true;
+    else if (std.isNewProvision(el)) return true;
+    else if (std.isSupplProvision(el) && el.attr.AmendLawNum) return true;
     else return false;
 };
 

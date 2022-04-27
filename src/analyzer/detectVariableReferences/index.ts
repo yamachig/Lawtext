@@ -3,7 +3,7 @@ import * as std from "../../law/std";
 import { Declarations } from "../common/declarations";
 import { ____VarRef } from "../../node/el/controls/varRef";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
-import { __Text } from "../../node/el/controls";
+import { __Parentheses, __Text } from "../../node/el/controls";
 import { WithErrorValue } from "../../parser/std/util";
 import { SentenceChildEL } from "../../node/cst/inline";
 import { ErrorMessage } from "../../parser/cst/error";
@@ -103,6 +103,9 @@ export const detectVariableReferencesOfEL = (elToBeModified: std.StdEL | std.__E
             continue;
 
         } else if (typeof child === "string") {
+            continue;
+
+        } else if (child instanceof __Parentheses && child.attr.type === "square") {
             continue;
 
         } else if (child instanceof __Text) {

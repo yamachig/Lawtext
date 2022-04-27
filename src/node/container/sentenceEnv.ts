@@ -16,6 +16,7 @@ export interface SentenceTextRange {
 
 export const sentenceTextTags = [
     "Ruby",
+    "QuoteStruct",
     "__Text",
     "__PStart",
     "__PEnd",
@@ -29,6 +30,7 @@ export const sentenceTextTags = [
 
 export type SentenceText = (
     | std.Ruby
+    | std.QuoteStruct
     | __Text
     | __PStart
     | __PEnd
@@ -62,10 +64,9 @@ export const textOfSentenceText = (el: SentenceText): string => {
 export function *enumerateSentenceTexts(el: EL): Iterable<SentenceText> {
     if (isSentenceText(el)) {
         yield el;
-    } else {
+    } else if (!isIgnoreAnalysis(el)) {
         for (const child of el.children) {
             if (typeof child === "string") continue;
-            if (isIgnoreAnalysis(child)) continue;
             yield *enumerateSentenceTexts(child);
         }
     }

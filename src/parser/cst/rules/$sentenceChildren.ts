@@ -19,6 +19,8 @@ export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): st
             runs.push(/* $$$$$$ */el.replace(/\r|\n/g, "")/* $$$$$$ */);
         } else if (el.tag === "__CapturedXML" || el.tag === "__UnexpectedXML") {
             runs.push(/* $$$$$$ */el.children.map(c => typeof c === "string" ? c : c.outerXML()).join("")/* $$$$$$ */);
+        } else if (el instanceof __Parentheses) {
+            runs.push(/* $$$$$$ */[el.start.text(), ...sentenceChildrenToString(el.content.children), el.end.text()].join("")/* $$$$$$ */);
         } else if (el.isControl) {
             runs.push(/* $$$$$$ */el.text().replace(/\r|\n/g, "")/* $$$$$$ */);
 

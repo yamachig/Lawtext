@@ -1,5 +1,5 @@
 import * as std from "../../law/std";
-import { __Text, ____LawNum, ____PointerRanges } from "../../node/el/controls";
+import { __Parentheses, __Text, ____LawNum, ____PointerRanges } from "../../node/el/controls";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
 import { isIgnoreAnalysis } from "../common";
@@ -27,6 +27,9 @@ export const detectTokensByEL = (elToBeModified: std.StdEL | std.__EL): WithErro
             continue;
 
         } else if (typeof child === "string") {
+            continue;
+
+        } else if (child instanceof __Parentheses && child.attr.type === "square") {
             continue;
 
         } else if (child instanceof __Text) {
