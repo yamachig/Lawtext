@@ -117,6 +117,8 @@ interface ____VarRefState { mode: VarRefFloatState, arrowLeft: string }
 
 const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
     const { el, htmlOptions } = props;
+    const options = htmlOptions.options as LawViewOptions;
+
 
     const refText = React.useRef<HTMLSpanElement>(null);
     const refWindow = React.useRef<HTMLSpanElement>(null);
@@ -128,6 +130,9 @@ const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
             window.removeEventListener("resize", updateSize);
         };
     }, []);
+
+    const analysis = options.lawData.analysis;
+    if (!analysis) return (<>{el.text()}</>);
 
     const varRefTextSpanOnClick = (/* e: React.MouseEvent<HTMLSpanElement> */) => {
         if (state.mode === VarRefFloatState.OPEN) {
@@ -164,6 +169,10 @@ const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
     const animateHeightOnAnimationEnd = () => {
         onAnimationEnd();
     };
+
+    const declaration = analysis.declarations.get(el.attr.declarationID);
+    const declContainer = analysis.sentenceEnvs[declaration.nameSentenceTextRange.start.sentenceIndex].container;
+    const containerID = declContainer.containerID;
 
     return (
         <VarRefSpan>
@@ -206,7 +215,7 @@ const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
                         <VarRefFloatBlockInnerSpan>
                             <VarRefArrowSpan style={state.arrowLeft ? { marginLeft: state.arrowLeft } : { visibility: "hidden" }} />
                             <VarRefWindowSpan ref={refWindow}>
-                                <VarRefView el={props.el} {...{ htmlOptions }} />
+                                <PeekContainerView containerID={containerID} {...{ htmlOptions }} />
                             </VarRefWindowSpan>
                         </VarRefFloatBlockInnerSpan>
                     )}
@@ -218,18 +227,18 @@ const VarRef = (props: HTMLComponentProps & ____VarRefProps) => {
 };
 
 
-interface VarRefViewProps { el: ____VarRef }
+interface PeekContainerViewProps { containerID: string }
 
-const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
-    const { el, htmlOptions } = props;
+const PeekContainerView = (props: HTMLComponentProps & PeekContainerViewProps) => {
+    const { containerID, htmlOptions } = props;
     const options = htmlOptions.options as LawViewOptions;
 
     const analysis = options.lawData.analysis;
     if (!analysis) return null;
 
-    const declaration = analysis.declarations.get(el.attr.declarationID);
-    const declContainer = analysis.sentenceEnvs[declaration.nameSentenceTextRange.start.sentenceIndex].container;
-    const containerStack = declContainer.linealAscendant(c => {
+    const container = analysis.containers.get(containerID);
+    if (!container) return null;
+    const containerStack = container.linealAscendant(c => {
         if (std.isParagraph(c.el)) {
             const paragraphNum = c.el.children.find(std.isParagraphNum);
             if (!c.parent) return true;
@@ -247,7 +256,6 @@ const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
         }
     });
     const names: string[] = [];
-    let lastContainerEl = declContainer.el;
 
     const titleTags = [
         "ArticleTitle",
@@ -286,19 +294,18 @@ const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
         } else {
             continue;
         }
-        lastContainerEl = container.el;
     }
 
     const declElTitleTag = titleTags
-        .find(s => Boolean(s) && s.startsWith(lastContainerEl.tag));
+        .find(s => Boolean(s) && s.startsWith(container.el.tag));
 
     if (declElTitleTag) {
         const declEl = new EL(
-            lastContainerEl.tag,
+            container.el.tag,
             {},
             [
                 new EL(declElTitleTag, {}, [names.join("／")]),
-                ...(lastContainerEl.children as EL[])
+                ...(container.el.children as EL[])
                     .filter(child => ignoreTags.indexOf(child.tag) < 0),
             ],
         );
@@ -316,17 +323,17 @@ const VarRefView = (props: HTMLComponentProps & VarRefViewProps) => {
             throw new NotImplementedError(declEl.tag);
 
         }
-    } else if (std.isEnactStatement(lastContainerEl)) {
+    } else if (std.isEnactStatement(container.el)) {
         return (
             <div style={{ paddingLeft: "1em", textIndent: "-1em" }}>
                 <span>{names.join("／")}</span>
                 <HTMLMarginSpan/>
-                <HTMLSentenceChildrenRun els={lastContainerEl.children} {...{ htmlOptions }} />
+                <HTMLSentenceChildrenRun els={container.el.children} {...{ htmlOptions }} />
             </div>
         );
 
     } else {
-        throw new NotImplementedError(lastContainerEl.tag);
+        throw new NotImplementedError(container.el.tag);
 
     }
 };
