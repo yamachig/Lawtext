@@ -187,8 +187,44 @@ describe("Test $nameListHead", () => {
                         }
                     ]
                 },
+                {
+                    tag: "__Text",
+                    attr: {},
+                    children: ["又は"]
+                },
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "HERE",
+                                        targetType: "Law",
+                                        name: "この法律"
+                                    },
+                                    children: ["この法律"]
+                                },
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "INFERIOR",
+                                        name: "に基づく命令"
+                                    },
+                                    children: ["に基づく命令"]
+                                }
+                            ]
+                        }
+                    ]
+                }
             ]
-        };
+        }
+          ;
 
         const result = $nameListHead.abstract().match(0, input, env);
         assert.isTrue(result.ok);

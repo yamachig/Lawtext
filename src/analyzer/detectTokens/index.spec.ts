@@ -1177,99 +1177,68 @@ describe("Test detectTokens", () => {
 
         const expectedPointerRangesList: JsonEL[] = [
             {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-61-tag_Paragraph-type_SENTENCES\",\"container-62-tag_Paragraph-type_SENTENCES\"]",
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-61-tag_Paragraph-type_SENTENCES\",\"container-62-tag_Paragraph-type_SENTENCES\"]",
                 },
-                "children": [
+                children: [
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Article",
-                                            "name": "第七十六条",
-                                            "num": "76",
-                                            "targetContainerIDs": "[\"container-59-tag_Article-type_SENTENCES\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第七十六条",
+                                            num: "76",
+                                            targetContainerIDs: "[\"container-59-tag_Article-type_SENTENCES\"]",
                                         },
-                                        "children": ["第七十六条"],
+                                        children: ["第七十六条"],
                                     },
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Paragraph",
-                                            "name": "第二項",
-                                            "num": "2",
-                                            "targetContainerIDs": "[\"container-61-tag_Paragraph-type_SENTENCES\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第二項",
+                                            num: "2",
+                                            targetContainerIDs: "[\"container-61-tag_Paragraph-type_SENTENCES\"]",
                                         },
-                                        "children": ["第二項"],
+                                        children: ["第二項"],
                                     },
                                 ],
                             },
                         ],
                     },
                     {
-                        "tag": "__Text",
-                        "attr": {},
-                        "children": ["及び"],
+                        tag: "__Text",
+                        attr: {},
+                        children: ["及び"],
                     },
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Paragraph",
-                                            "name": "第四項",
-                                            "num": "4",
-                                            "targetContainerIDs": "[\"container-62-tag_Paragraph-type_SENTENCES\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第四項",
+                                            num: "4",
+                                            targetContainerIDs: "[\"container-62-tag_Paragraph-type_SENTENCES\"]",
                                         },
-                                        "children": ["第四項"],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-63-tag_Item-type_SENTENCES\"]",
-                },
-                "children": [
-                    {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
-                            {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
-                                    {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Item",
-                                            "name": "第一号",
-                                            "num": "1",
-                                            "targetContainerIDs": "[\"container-63-tag_Item-type_SENTENCES\"]",
-                                        },
-                                        "children": ["第一号"],
+                                        children: ["第四項"],
                                     },
                                 ],
                             },
@@ -1278,29 +1247,29 @@ describe("Test detectTokens", () => {
                 ],
             },
             {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-57-tag_Paragraph-type_SENTENCES\"]",
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-63-tag_Item-type_SENTENCES\"]",
                 },
-                "children": [
+                children: [
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Paragraph",
-                                            "name": "第四項",
-                                            "num": "4",
-                                            "targetContainerIDs": "[\"container-57-tag_Paragraph-type_SENTENCES\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Item",
+                                            name: "第一号",
+                                            num: "1",
+                                            targetContainerIDs: "[\"container-63-tag_Item-type_SENTENCES\"]",
                                         },
-                                        "children": ["第四項"],
+                                        children: ["第一号"],
                                     },
                                 ],
                             },
@@ -1309,29 +1278,60 @@ describe("Test detectTokens", () => {
                 ],
             },
             {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-63-tag_Item-type_SENTENCES\"]",
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-57-tag_Paragraph-type_SENTENCES\"]",
                 },
-                "children": [
+                children: [
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Item",
-                                            "name": "第一号",
-                                            "num": "1",
-                                            "targetContainerIDs": "[\"container-63-tag_Item-type_SENTENCES\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第四項",
+                                            num: "4",
+                                            targetContainerIDs: "[\"container-57-tag_Paragraph-type_SENTENCES\"]",
                                         },
-                                        "children": ["第一号"],
+                                        children: ["第四項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-63-tag_Item-type_SENTENCES\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Item",
+                                            name: "第一号",
+                                            num: "1",
+                                            targetContainerIDs: "[\"container-63-tag_Item-type_SENTENCES\"]",
+                                        },
+                                        children: ["第一号"],
                                     },
                                 ],
                             },

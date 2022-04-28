@@ -48,7 +48,7 @@ export const detectTokensByEL = (
             continue;
 
         } else if (child instanceof __Text) {
-            containerForNamedForNextChildren = prevLocatedContainerForNamed;
+            // containerForNamedForNextChildren = prevLocatedContainerForNamed;
 
             {
                 // match before pointerRanges

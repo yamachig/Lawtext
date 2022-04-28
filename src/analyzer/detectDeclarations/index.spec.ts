@@ -2353,17 +2353,11 @@ describe("Test detectDeclarations", () => {
                                                                                 },
                                                                             ],
                                                                         },
-                                                                    ],
-                                                                },
-                                                                {
-                                                                    tag: "__Text",
-                                                                    attr: {},
-                                                                    children: ["若しくは"],
-                                                                },
-                                                                {
-                                                                    tag: "____PointerRanges",
-                                                                    attr: {},
-                                                                    children: [
+                                                                        {
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["若しくは"],
+                                                                        },
                                                                         {
                                                                             tag: "____PointerRange",
                                                                             attr: {},
