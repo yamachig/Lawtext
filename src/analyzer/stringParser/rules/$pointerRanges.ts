@@ -42,6 +42,9 @@ const makeRanges: RangesMaker<____PointerRange, ____PointerRanges> = (first, mid
 };
 
 
+export const reSuppressPointerRanges = /[ァ-ヿ]{2,}/yg;
+
+
 export const { $ranges: $pointerRanges, $range: $pointerRange } = makeRangesRule(
     (() => $pointer),
     makeRange,
@@ -315,26 +318,6 @@ export const $secondaryOnlyPointerFragment = factory
             })
             )
         )
-        .or(r => r
-            .action(r => r
-                .choice(c => c
-                    .orSequence(s => s
-                        .and(() => $irohaChar)
-                        .andOmit(r => r.nextIsNot(() => $irohaChar))
-                    )
-                    .or(() => $romanDigits),
-                )
-            , (({ text, range }) => {
-                return new ____PF({
-                    relPos: RelPos.NAMED,
-                    targetType: "SUBITEM",
-                    name: text(),
-                    num: parseNamedNum(text()),
-                    range: range(),
-                });
-            })
-            )
-        )
     )
     ;
 
@@ -360,6 +343,26 @@ export const $anyWherePointerFragment = factory
                 return new ____PF({
                     relPos: RelPos.NAMED,
                     targetType: articleGroupType[type_char],
+                    name: text(),
+                    num: parseNamedNum(text()),
+                    range: range(),
+                });
+            })
+            )
+        )
+        .or(r => r
+            .action(r => r
+                .choice(c => c
+                    .orSequence(s => s
+                        .and(() => $irohaChar)
+                        .andOmit(r => r.nextIsNot(() => $irohaChar))
+                    )
+                    .or(() => $romanDigits),
+                )
+            , (({ text, range }) => {
+                return new ____PF({
+                    relPos: RelPos.NAMED,
+                    targetType: "SUBITEM",
                     name: text(),
                     num: parseNamedNum(text()),
                     range: range(),

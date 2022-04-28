@@ -1369,4 +1369,270 @@ describe("Test detectTokens", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （免許の申請）
+第六条　無線局の免許を受けようとする者は、申請書に、次に掲げる事項を記載した書類を添えて、総務大臣に提出しなければならない。
+  四　無線設備の設置場所（移動する無線局のうち、次のイ又はロに掲げるものについては、それぞれイ又はロに定める事項。第十八条第一項を除き、以下同じ。）
+    イ　人工衛星の無線局（以下「人工衛星局」という。）　その人工衛星の軌道又は位置
+    ロ　人工衛星局、船舶の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第三項において同じ。）、船舶地球局（船舶に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）、航空機の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第五項において同じ。）及び航空機地球局（航空機に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）以外の無線局　移動範囲
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedSentencesContainers = {
+            "container-68-tag_Article-type_SENTENCES": "無線局の免許を受けようとする者は、申請書に、次に掲げる事項を記載した書類を添えて、総務大臣に提出しなければならない。　無線設備の設置場所（移動する無線局のうち、次のイ又はロに掲げるものについては、それぞれイ又はロに定める事項。第十八条第一項を除き、以下同じ。）　人工衛星の無線局（以下「人工衛星局」という。）　その人工衛星の軌道又は位置　人工衛星局、船舶の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第三項において同じ。）、船舶地球局（船舶に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）、航空機の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第五項において同じ。）及び航空機地球局（航空機に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）以外の無線局　移動範囲",
+            "container-69-tag_Paragraph-type_SENTENCES": "無線局の免許を受けようとする者は、申請書に、次に掲げる事項を記載した書類を添えて、総務大臣に提出しなければならない。　無線設備の設置場所（移動する無線局のうち、次のイ又はロに掲げるものについては、それぞれイ又はロに定める事項。第十八条第一項を除き、以下同じ。）　人工衛星の無線局（以下「人工衛星局」という。）　その人工衛星の軌道又は位置　人工衛星局、船舶の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第三項において同じ。）、船舶地球局（船舶に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）、航空機の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第五項において同じ。）及び航空機地球局（航空機に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）以外の無線局　移動範囲",
+            "container-70-tag_Item-type_SENTENCES": "無線設備の設置場所（移動する無線局のうち、次のイ又はロに掲げるものについては、それぞれイ又はロに定める事項。第十八条第一項を除き、以下同じ。）　人工衛星の無線局（以下「人工衛星局」という。）　その人工衛星の軌道又は位置　人工衛星局、船舶の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第三項において同じ。）、船舶地球局（船舶に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）、航空機の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第五項において同じ。）及び航空機地球局（航空機に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）以外の無線局　移動範囲",
+            "container-71-tag_Subitem1-type_SENTENCES": "人工衛星の無線局（以下「人工衛星局」という。）　その人工衛星の軌道又は位置",
+            "container-72-tag_Subitem1-type_SENTENCES": "人工衛星局、船舶の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第三項において同じ。）、船舶地球局（船舶に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）、航空機の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第五項において同じ。）及び航空機地球局（航空機に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）以外の無線局　移動範囲",
+        }
+          ;
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-71-tag_Subitem1-type_SENTENCES\",\"container-72-tag_Subitem1-type_SENTENCES\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "SUBITEM",
+                                            name: "イ",
+                                            num: "1",
+                                            targetContainerIDs: "[\"container-71-tag_Subitem1-type_SENTENCES\"]",
+                                        },
+                                        children: ["イ"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["又は"],
+                    },
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "SUBITEM",
+                                            name: "ロ",
+                                            num: "2",
+                                            targetContainerIDs: "[\"container-72-tag_Subitem1-type_SENTENCES\"]",
+                                        },
+                                        children: ["ロ"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-71-tag_Subitem1-type_SENTENCES\",\"container-72-tag_Subitem1-type_SENTENCES\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "SUBITEM",
+                                            name: "イ",
+                                            num: "1",
+                                            targetContainerIDs: "[\"container-71-tag_Subitem1-type_SENTENCES\"]",
+                                        },
+                                        children: ["イ"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["又は"],
+                    },
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "SUBITEM",
+                                            name: "ロ",
+                                            num: "2",
+                                            targetContainerIDs: "[\"container-72-tag_Subitem1-type_SENTENCES\"]",
+                                        },
+                                        children: ["ロ"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {},
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第十八条",
+                                            num: "18",
+                                        },
+                                        children: ["第十八条"],
+                                    },
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第一項",
+                                            num: "1",
+                                        },
+                                        children: ["第一項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {},
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第三項",
+                                            num: "3",
+                                        },
+                                        children: ["第三項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {},
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第五項",
+                                            num: "5",
+                                        },
+                                        children: ["第五項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]
+          ;
+        const expectedErrorMessages: string[] = [];
+
+        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+
+        const sentenceContainers = Object.fromEntries((
+            [...sentenceEnvsStruct.containers.values()]
+                .filter(c => c.type === "SENTENCES")
+                .map(c => [
+                    c.containerID,
+                    (
+                        sentenceEnvsStruct.sentenceEnvs
+                            .slice(...c.sentenceRange)
+                            .map(s => s.text).join("　")
+                    ),
+                ])
+        ));
+        // console.log(JSON.stringify(sentenceContainers, null, 2));
+        assert.deepStrictEqual(sentenceContainers, expectedSentencesContainers);
+
+        // console.log(JSON.stringify(detectTokensResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            detectTokensResult.value.pointerRangesList.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

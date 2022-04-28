@@ -1,6 +1,6 @@
 import { ____PointerRanges } from "../../node/el/controls/pointer";
 import { initialEnv } from "../../parser/cst/env";
-import $pointerRanges from "../stringParser/rules/$pointerRanges";
+import $pointerRanges, { reSuppressPointerRanges } from "../stringParser/rules/$pointerRanges";
 import { __Text } from "../../node/el/controls";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
@@ -17,6 +17,14 @@ export const matchPointerRanges = (textEL: __Text): (
     const errors: ErrorMessage[] = [];
     const text = textEL.text();
     for (let textIndex = 0; textIndex < text.length; textIndex++) {
+        reSuppressPointerRanges.lastIndex = textIndex;
+        const suppressMatch = reSuppressPointerRanges.exec(text);
+        if (suppressMatch) {
+            textIndex += suppressMatch[0].length - 1;
+            reSuppressPointerRanges.lastIndex = 0;
+            continue;
+        }
+
         const result = $pointerRanges.match(
             textIndex,
             text,

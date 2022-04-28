@@ -91,30 +91,7 @@ const locateContainerOfHeadFragment = (
     } else if (head.attr.relPos === RelPos.NAMED) {
         // e.g.: "第二条", "第二項"
 
-        let parentTag: string | null = null;
-        {
-            const paragraphItemTagIndex = (std.paragraphItemTags as readonly string[]).indexOf(head.attr.targetType);
-            if (paragraphItemTagIndex >= 0) {
-                parentTag = ["Article", ...std.paragraphItemTags][paragraphItemTagIndex];
-            } else {
-                const articleGroupTagIndex = (std.articleGroupTags as readonly string[]).indexOf(head.attr.targetType);
-                if (articleGroupTagIndex > 0) {
-                    parentTag = std.articleGroupTags[articleGroupTagIndex - 1];
-                }
-            }
-        }
-
-        const parentContainer = (parentTag !== null) ? (
-            prevLocatedContainerForNamed
-                ?.thisOrClosest(c => c.el.tag === parentTag)
-        ) : null;
-
-        if (parentContainer) {
-            // e.g.: "第二条第二項" -> "第三項"
-
-            return locateContainerFromParent(parentContainer, head);
-
-        } else if (getContainerType(head.attr.targetType) === ContainerType.TOPLEVEL) {
+        if (getContainerType(head.attr.targetType) === ContainerType.TOPLEVEL) {
             // e.g.: "附則", "別表第二"
 
             return currentContainer.findAncestorChildrenSub(c => {
@@ -124,24 +101,79 @@ const locateContainerOfHeadFragment = (
                 return (new RegExp(`^${head.attr.name}(?:[(（]|\\s|$)`)).exec(titleEl.text()) !== null;
             });
 
-        } else {
-            // e.g.: "第二項"
+        } else if (head.attr.targetType === "SUBITEM") {
+            // e.g. "イ"
 
-            const func = (c: Container) => (
+            const container = (
                 (
-                    (c.el.tag === head.attr.targetType)
-                    || (
-                        (head.attr.targetType === "SUBITEM")
-                        && (/^Subitem\d+$/.exec(c.el.tag) !== null)
-                    )
+                    prevLocatedContainerForNamed
+                        ?.children.find(c => c.name === head.attr.name)
+
                 )
-                && ((c.num || null) === head.attr.num)
+                ?? (
+                    prevLocatedContainerForNamed
+                        ?.ancestorChildrenSub(c => c.name === head.attr.name)
+                        .next().value
+                )
+                ?? null
             );
-            return (
-                (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
-                    ? currentContainer.findAncestorChildren(func)
-                    : currentContainer.findAncestorChildrenSub(func)
-            );
+
+            if (container) {
+                // e.g.: "第二条第二項第二号" -> "イ"
+
+                return container;
+
+            } else {
+                // e.g.: "イ"
+
+                const func = (c: Container) => c.name === head.attr.name;
+                return currentContainer.children.find(func) ?? currentContainer.findAncestorChildrenSub(func);
+            }
+
+        } else {
+
+            let parentTag: string | null = null;
+            {
+                const paragraphItemTagIndex = (std.paragraphItemTags as readonly string[]).indexOf(head.attr.targetType);
+                if (paragraphItemTagIndex >= 0) {
+                    parentTag = ["Article", ...std.paragraphItemTags][paragraphItemTagIndex];
+                } else {
+                    const articleGroupTagIndex = (std.articleGroupTags as readonly string[]).indexOf(head.attr.targetType);
+                    if (articleGroupTagIndex > 0) {
+                        parentTag = std.articleGroupTags[articleGroupTagIndex - 1];
+                    }
+                }
+            }
+
+            const parentContainer = (parentTag !== null) ? (
+                prevLocatedContainerForNamed
+                    ?.thisOrClosest(c => c.el.tag === parentTag)
+            ) : null;
+
+            if (parentContainer) {
+                // e.g.: "第二条第二項" -> "第三項"
+
+                return locateContainerFromParent(parentContainer, head);
+
+            } else {
+                // e.g.: "第二項"
+
+                const func = (c: Container) => (
+                    (
+                        (c.el.tag === head.attr.targetType)
+                       || (
+                           (head.attr.targetType === "SUBITEM")
+                           && (/^Subitem\d+$/.exec(c.el.tag) !== null)
+                       )
+                    )
+                   && ((c.num || null) === head.attr.num)
+                );
+                return (
+                    (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
+                        ? currentContainer.findAncestorChildren(func)
+                        : currentContainer.findAncestorChildrenSub(func)
+                );
+            }
         }
     }
     else { throw assertNever(head.attr.relPos); }
