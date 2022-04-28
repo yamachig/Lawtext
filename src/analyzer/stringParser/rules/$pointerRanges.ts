@@ -98,8 +98,8 @@ export const $singleOnlyPointerFragment = factory
                     .and(r => r.seqEqual("前"))
                     .and(r => r
                         .choice(c => c
-                            .or(r => r.zeroOrOne(r => r.seqEqual("各" as const)))
-                            .or(r => r.zeroOrOne(() => $kanjiDigits))
+                            .or(r => r.seqEqual("各" as const))
+                            .or(() => $kanjiDigits)
                         )
                     , "count")
                     .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),

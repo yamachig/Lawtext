@@ -5,7 +5,7 @@ import { getContainerType } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import * as std from "../law/std";
 
-type LocatedPointerInfo = [fragment: ____PF, container: Container][];
+type LocatedPointerInfo = [fragment: ____PF, container: Container | Container[]][];
 
 const locateContainerFromParent = (parentContainer: Container, fragment: ____PF) => {
     return parentContainer.find(
@@ -33,7 +33,7 @@ const locateContainerOfHeadFragment = (
     prevLocatedContainerForSame: Container | null,
     prevLocatedContainerForNamed: Container | null,
     currentContainer: Container,
-) => {
+): Container | Container[] | null => {
 
     if ((head.attr.relPos === RelPos.SAME)) {
         // e.g.: "同条"
@@ -63,11 +63,22 @@ const locateContainerOfHeadFragment = (
             .thisOrClosest(c => c.el.tag === head.attr.targetType);
 
         if (scopeContainer) {
-            return (
-                (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
-                    ? scopeContainer.prev(c => c.el.tag === head.attr.targetType)
-                    : scopeContainer.prevSub(c => c.el.tag === head.attr.targetType)
-            );
+            let count = head.attr.count === "all" ? Number.MAX_SAFE_INTEGER : Number(head.attr.count);
+            if (count > 0) {
+                const ret: Container[] = [];
+                for (const prevContainer of scopeContainer.prevAll(c => c.el.tag === head.attr.targetType)) {
+                    ret.unshift(prevContainer);
+                    count--;
+                    if (count <= 0) break;
+                }
+                return ret.length > 0 ? ret : null;
+            } else {
+                return (
+                    (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
+                        ? scopeContainer.prev(c => c.el.tag === head.attr.targetType)
+                        : scopeContainer.prevSub(c => c.el.tag === head.attr.targetType)
+                );
+            }
         } else {
             return null;
         }
@@ -79,11 +90,22 @@ const locateContainerOfHeadFragment = (
             .thisOrClosest(c => c.el.tag === head.attr.targetType);
 
         if (scopeContainer) {
-            return (
-                (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
-                    ? scopeContainer.next(c => c.el.tag === head.attr.targetType)
-                    : scopeContainer.nextSub(c => c.el.tag === head.attr.targetType)
-            );
+            let count = head.attr.count === "all" ? Number.MAX_SAFE_INTEGER : Number(head.attr.count);
+            if (count > 0) {
+                const ret: Container[] = [];
+                for (const nextContainer of scopeContainer.nextAll(c => c.el.tag === head.attr.targetType)) {
+                    ret.push(nextContainer);
+                    count--;
+                    if (count <= 0) break;
+                }
+                return ret.length > 0 ? ret : null;
+            } else {
+                return (
+                    (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
+                        ? scopeContainer.next(c => c.el.tag === head.attr.targetType)
+                        : scopeContainer.nextSub(c => c.el.tag === head.attr.targetType)
+                );
+            }
         } else {
             return null;
         }
@@ -161,12 +183,8 @@ const locateContainerOfHeadFragment = (
                 const func = (c: Container) => (
                     (
                         (c.el.tag === head.attr.targetType)
-                       || (
-                           (head.attr.targetType === "SUBITEM")
-                           && (/^Subitem\d+$/.exec(c.el.tag) !== null)
-                       )
                     )
-                   && ((c.num || null) === head.attr.num)
+                    && ((c.num || null) === head.attr.num)
                 );
                 return (
                     (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
@@ -190,29 +208,35 @@ const locatePointer = (
 } => {
 
     const origFragments = origPointer.fragments();
-    const headContainer = locateContainerOfHeadFragment(
+    const _headContainer = locateContainerOfHeadFragment(
         origFragments[0],
         prevLocatedContainerForSame,
         prevLocatedContainerForNamed,
         currentContainer,
     );
+    const headContainers = Array.isArray(_headContainer) ? _headContainer : (_headContainer && [_headContainer]);
 
     const pointerInfo: LocatedPointerInfo = [];
-    let lastLocatedContainer = headContainer;
+    let lastLocatedContainer = headContainers && headContainers[headContainers.length - 1];
 
-    if (headContainer) {
-        pointerInfo.push([origFragments[0], headContainer]);
+    if (headContainers) {
+        if (origFragments.length === 1) {
+            pointerInfo.push([origFragments[0], headContainers]);
 
-        let parentContainer = headContainer;
-        for (const fragment of origFragments.slice(1)) {
-            const container = locateContainerFromParent(parentContainer, fragment);
+        } else {
+            pointerInfo.push([origFragments[0], headContainers[headContainers.length - 1]]);
 
-            if (container) {
-                pointerInfo.push([fragment, container]);
-                parentContainer = container;
-                lastLocatedContainer = container;
-            } else {
-                break;
+            let parentContainer = headContainers[headContainers.length - 1];
+            for (const fragment of origFragments.slice(1)) {
+                const container = locateContainerFromParent(parentContainer, fragment);
+
+                if (container) {
+                    pointerInfo.push([fragment, container]);
+                    parentContainer = container;
+                    lastLocatedContainer = container;
+                } else {
+                    break;
+                }
             }
         }
     }
@@ -229,56 +253,27 @@ const locateRanges = (
     const ranges: ([fromOnly: LocatedPointerInfo]|[from:LocatedPointerInfo, toIncluded:LocatedPointerInfo])[] = [];
     const rangeELs = origRanges.ranges();
 
-    let processed = false;
-    if (rangeELs.length === 1) {
-        const pointerELs = rangeELs[0].pointers();
-        if (pointerELs.length === 1) {
-            const fragments = pointerELs[0].fragments();
-            if (fragments.length === 1) {
-                const fragmentEL = fragments[0];
-
-                if (fragmentEL.attr.relPos === RelPos.PREV && fragmentEL.attr.count !== null) {
-                    processed = true;
-                    let count = fragmentEL.attr.count === "all" ? Number.MAX_SAFE_INTEGER : Number(fragmentEL.attr.count);
-
-                    const scopeContainer = currentContainer
-                        .thisOrClosest(c => c.el.tag === fragmentEL.attr.targetType);
-
-                    if (scopeContainer && count > 0) {
-                        for (const prevContainer of scopeContainer.prevAll(c => c.el.tag === fragmentEL.attr.targetType)) {
-                            ranges.unshift([[[fragmentEL, prevContainer]]]);
-                            count--;
-                            if (count <= 0) break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if (!processed) {
-        for (const [origFrom, origTo] of rangeELs.map(r => r.pointers())) {
-            const from = locatePointer(
-                origFrom,
+    for (const [origFrom, origTo] of rangeELs.map(r => r.pointers())) {
+        const from = locatePointer(
+            origFrom,
+            prevLocatedContainerForSame,
+            prevLocatedContainerForNamed,
+            currentContainer,
+        );
+        prevLocatedContainerForSame = from.lastLocatedContainer;
+        prevLocatedContainerForNamed = from.lastLocatedContainer;
+        if (!origTo) {
+            ranges.push([from.pointerInfo]);
+        } else {
+            const to = locatePointer(
+                origTo,
                 prevLocatedContainerForSame,
                 prevLocatedContainerForNamed,
                 currentContainer,
             );
             prevLocatedContainerForSame = from.lastLocatedContainer;
             prevLocatedContainerForNamed = from.lastLocatedContainer;
-            if (!origTo) {
-                ranges.push([from.pointerInfo]);
-            } else {
-                const to = locatePointer(
-                    origTo,
-                    prevLocatedContainerForSame,
-                    prevLocatedContainerForNamed,
-                    currentContainer,
-                );
-                prevLocatedContainerForSame = from.lastLocatedContainer;
-                prevLocatedContainerForNamed = from.lastLocatedContainer;
-                ranges.push([from.pointerInfo, to.pointerInfo]);
-            }
+            ranges.push([from.pointerInfo, to.pointerInfo]);
         }
     }
 
@@ -307,23 +302,27 @@ export const getScope = (
             continue;
         }
 
-        let fromContainerID: string | null = null;
+        let fromContainerIDs: string[] | null = null;
         for (const [fragment, container] of from) {
-            fragment.targetContainerIDs = [...new Set([...fragment.targetContainerIDs, container.containerID])];
-            fromContainerID = container.containerID;
+            const containerIDs = Array.isArray(container) ? container.map(c => c.containerID) : [container.containerID];
+            fragment.targetContainerIDs = [...new Set([...fragment.targetContainerIDs, ...containerIDs])];
+            fromContainerIDs = containerIDs;
         }
-        let toContainerID: string | null = null;
+        let toContainerIDs: string[] | null = null;
         if (to) {
             for (const [fragment, container] of to) {
-                fragment.targetContainerIDs = [...new Set([...fragment.targetContainerIDs, container.containerID])];
-                toContainerID = container.containerID;
+                const containerIDs = Array.isArray(container) ? container.map(c => c.containerID) : [container.containerID];
+                fragment.targetContainerIDs = [...new Set([...fragment.targetContainerIDs, ...containerIDs])];
+                toContainerIDs = containerIDs;
             }
         }
 
-        if (fromContainerID && toContainerID) {
-            targetContainerIDRanges.add([fromContainerID, toContainerID]);
-        } else if (fromContainerID) {
-            targetContainerIDRanges.add(fromContainerID);
+        if (fromContainerIDs && toContainerIDs) {
+            for (let i = 0; i < fromContainerIDs.length - 1; i++) targetContainerIDRanges.add(fromContainerIDs[i]);
+            targetContainerIDRanges.add([fromContainerIDs[fromContainerIDs.length - 1], toContainerIDs[0]]);
+            for (let i = 1; i < toContainerIDs.length; i++) targetContainerIDRanges.add(toContainerIDs[i]);
+        } else if (fromContainerIDs) {
+            for (const containerID of fromContainerIDs) targetContainerIDRanges.add(containerID);
         }
     }
     if (targetContainerIDRanges.size > 0) {

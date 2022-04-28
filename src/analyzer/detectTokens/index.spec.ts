@@ -1635,4 +1635,444 @@ describe("Test detectTokens", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （免許の承継等）
+第二十条　免許人について相続があつたときは、その相続人は、免許人の地位を承継する。
+２　免許人（第七項及び第八項に規定する無線局の免許人を除く。以下この項及び次項において同じ。）たる法人が合併又は分割（無線局をその用に供する事業の全部を承継させるものに限る。）をしたときは、合併後存続する法人若しくは合併により設立された法人又は分割により当該事業の全部を承継した法人は、総務大臣の許可を受けて免許人の地位を承継することができる。
+３　免許人が無線局をその用に供する事業の全部の譲渡しをしたときは、譲受人は、総務大臣の許可を受けて免許人の地位を承継することができる。
+４　特定地上基幹放送局の免許人たる法人が分割をした場合において、分割により当該基幹放送局を承継し、これを分割により地上基幹放送の業務を承継した他の法人の業務の用に供する業務を行おうとする法人が総務大臣の許可を受けたときは、当該法人が当該特定地上基幹放送局の免許人から当該業務に係る基幹放送局の免許人の地位を承継したものとみなす。特定地上基幹放送局の免許人が当該基幹放送局を譲渡し、譲受人が当該基幹放送局を譲渡人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲受人が総務大臣の許可を受けたとき、又は特定地上基幹放送局の免許人が地上基幹放送の業務を譲渡し、その譲渡人が当該基幹放送局を譲受人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲渡人が総務大臣の許可を受けたときも、同様とする。
+５　他の地上基幹放送の業務の用に供する基幹放送局の免許人が当該地上基幹放送の業務を行う認定基幹放送事業者と合併をし、又は当該地上基幹放送の業務を行う事業を譲り受けた場合において、合併後存続する法人若しくは合併により設立された法人又は譲受人が総務大臣の許可を受けたときは、当該法人又は譲受人が当該基幹放送局の免許人から特定地上基幹放送局の免許人の地位を承継したものとみなす。地上基幹放送の業務を行う認定基幹放送事業者が当該地上基幹放送の業務の用に供する基幹放送局を譲り受けた場合において、総務大臣の許可を受けたときも、同様とする。
+６　第五条及び第七条の規定は、第二項から前項までの許可について準用する。
+７　船舶局若しくは船舶地球局（電気通信業務を行うことを目的とするものを除く。）のある船舶又は無線設備が遭難自動通報設備若しくはレーダーのみの無線局のある船舶について、船舶の所有権の移転その他の理由により船舶を運行する者に変更があつたときは、変更後船舶を運行する者は、免許人の地位を承継する。
+８　前項の規定は、航空機局若しくは航空機地球局（電気通信業務を行うことを目的とするものを除く。）のある航空機又は無線設備がレーダーのみの無線局のある航空機について準用する。
+９　第一項及び前二項の規定により免許人の地位を承継した者は、遅滞なく、その事実を証する書面を添えてその旨を総務大臣に届け出なければならない。
+１０　前各項の規定は、第八条の予備免許を受けた者について準用する。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedSentencesContainers = {
+            "container-76-tag_Article-type_SENTENCES": "免許人について相続があつたときは、その相続人は、免許人の地位を承継する。　免許人（第七項及び第八項に規定する無線局の免許人を除く。以下この項及び次項において同じ。）たる法人が合併又は分割（無線局をその用に供する事業の全部を承継させるものに限る。）をしたときは、合併後存続する法人若しくは合併により設立された法人又は分割により当該事業の全部を承継した法人は、総務大臣の許可を受けて免許人の地位を承継することができる。　免許人が無線局をその用に供する事業の全部の譲渡しをしたときは、譲受人は、総務大臣の許可を受けて免許人の地位を承継することができる。　特定地上基幹放送局の免許人たる法人が分割をした場合において、分割により当該基幹放送局を承継し、これを分割により地上基幹放送の業務を承継した他の法人の業務の用に供する業務を行おうとする法人が総務大臣の許可を受けたときは、当該法人が当該特定地上基幹放送局の免許人から当該業務に係る基幹放送局の免許人の地位を承継したものとみなす。　特定地上基幹放送局の免許人が当該基幹放送局を譲渡し、譲受人が当該基幹放送局を譲渡人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲受人が総務大臣の許可を受けたとき、又は特定地上基幹放送局の免許人が地上基幹放送の業務を譲渡し、その譲渡人が当該基幹放送局を譲受人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲渡人が総務大臣の許可を受けたときも、同様とする。　他の地上基幹放送の業務の用に供する基幹放送局の免許人が当該地上基幹放送の業務を行う認定基幹放送事業者と合併をし、又は当該地上基幹放送の業務を行う事業を譲り受けた場合において、合併後存続する法人若しくは合併により設立された法人又は譲受人が総務大臣の許可を受けたときは、当該法人又は譲受人が当該基幹放送局の免許人から特定地上基幹放送局の免許人の地位を承継したものとみなす。　地上基幹放送の業務を行う認定基幹放送事業者が当該地上基幹放送の業務の用に供する基幹放送局を譲り受けた場合において、総務大臣の許可を受けたときも、同様とする。　第五条及び第七条の規定は、第二項から前項までの許可について準用する。　船舶局若しくは船舶地球局（電気通信業務を行うことを目的とするものを除く。）のある船舶又は無線設備が遭難自動通報設備若しくはレーダーのみの無線局のある船舶について、船舶の所有権の移転その他の理由により船舶を運行する者に変更があつたときは、変更後船舶を運行する者は、免許人の地位を承継する。　前項の規定は、航空機局若しくは航空機地球局（電気通信業務を行うことを目的とするものを除く。）のある航空機又は無線設備がレーダーのみの無線局のある航空機について準用する。　第一項及び前二項の規定により免許人の地位を承継した者は、遅滞なく、その事実を証する書面を添えてその旨を総務大臣に届け出なければならない。　前各項の規定は、第八条の予備免許を受けた者について準用する。",
+            "container-77-tag_Paragraph-type_SENTENCES": "免許人について相続があつたときは、その相続人は、免許人の地位を承継する。",
+            "container-78-tag_Paragraph-type_SENTENCES": "免許人（第七項及び第八項に規定する無線局の免許人を除く。以下この項及び次項において同じ。）たる法人が合併又は分割（無線局をその用に供する事業の全部を承継させるものに限る。）をしたときは、合併後存続する法人若しくは合併により設立された法人又は分割により当該事業の全部を承継した法人は、総務大臣の許可を受けて免許人の地位を承継することができる。",
+            "container-79-tag_Paragraph-type_SENTENCES": "免許人が無線局をその用に供する事業の全部の譲渡しをしたときは、譲受人は、総務大臣の許可を受けて免許人の地位を承継することができる。",
+            "container-80-tag_Paragraph-type_SENTENCES": "特定地上基幹放送局の免許人たる法人が分割をした場合において、分割により当該基幹放送局を承継し、これを分割により地上基幹放送の業務を承継した他の法人の業務の用に供する業務を行おうとする法人が総務大臣の許可を受けたときは、当該法人が当該特定地上基幹放送局の免許人から当該業務に係る基幹放送局の免許人の地位を承継したものとみなす。　特定地上基幹放送局の免許人が当該基幹放送局を譲渡し、譲受人が当該基幹放送局を譲渡人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲受人が総務大臣の許可を受けたとき、又は特定地上基幹放送局の免許人が地上基幹放送の業務を譲渡し、その譲渡人が当該基幹放送局を譲受人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲渡人が総務大臣の許可を受けたときも、同様とする。",
+            "container-81-tag_Paragraph-type_SENTENCES": "他の地上基幹放送の業務の用に供する基幹放送局の免許人が当該地上基幹放送の業務を行う認定基幹放送事業者と合併をし、又は当該地上基幹放送の業務を行う事業を譲り受けた場合において、合併後存続する法人若しくは合併により設立された法人又は譲受人が総務大臣の許可を受けたときは、当該法人又は譲受人が当該基幹放送局の免許人から特定地上基幹放送局の免許人の地位を承継したものとみなす。　地上基幹放送の業務を行う認定基幹放送事業者が当該地上基幹放送の業務の用に供する基幹放送局を譲り受けた場合において、総務大臣の許可を受けたときも、同様とする。",
+            "container-82-tag_Paragraph-type_SENTENCES": "第五条及び第七条の規定は、第二項から前項までの許可について準用する。",
+            "container-83-tag_Paragraph-type_SENTENCES": "船舶局若しくは船舶地球局（電気通信業務を行うことを目的とするものを除く。）のある船舶又は無線設備が遭難自動通報設備若しくはレーダーのみの無線局のある船舶について、船舶の所有権の移転その他の理由により船舶を運行する者に変更があつたときは、変更後船舶を運行する者は、免許人の地位を承継する。",
+            "container-84-tag_Paragraph-type_SENTENCES": "前項の規定は、航空機局若しくは航空機地球局（電気通信業務を行うことを目的とするものを除く。）のある航空機又は無線設備がレーダーのみの無線局のある航空機について準用する。",
+            "container-85-tag_Paragraph-type_SENTENCES": "第一項及び前二項の規定により免許人の地位を承継した者は、遅滞なく、その事実を証する書面を添えてその旨を総務大臣に届け出なければならない。",
+            "container-86-tag_Paragraph-type_SENTENCES": "前各項の規定は、第八条の予備免許を受けた者について準用する。",
+        } ;
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-83-tag_Paragraph-type_SENTENCES\",\"container-84-tag_Paragraph-type_SENTENCES\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第七項",
+                                            num: "7",
+                                            targetContainerIDs: "[\"container-83-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["第七項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["及び"],
+                    },
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第八項",
+                                            num: "8",
+                                            targetContainerIDs: "[\"container-84-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["第八項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-78-tag_Paragraph-type_SENTENCES\",\"container-79-tag_Paragraph-type_SENTENCES\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "HERE",
+                                            targetType: "Paragraph",
+                                            name: "この項",
+                                            targetContainerIDs: "[\"container-78-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["この項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["及び"],
+                    },
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NEXT",
+                                            targetType: "Paragraph",
+                                            name: "次項",
+                                            targetContainerIDs: "[\"container-79-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["次項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {},
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第五条",
+                                            num: "5",
+                                        },
+                                        children: ["第五条"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["及び"],
+                    },
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第七条",
+                                            num: "7",
+                                        },
+                                        children: ["第七条"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[[\"container-78-tag_Paragraph-type_SENTENCES\",\"container-81-tag_Paragraph-type_SENTENCES\"]]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第二項",
+                                            num: "2",
+                                            targetContainerIDs: "[\"container-78-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["第二項"],
+                                    },
+                                ],
+                            },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["から"],
+                            },
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "PREV",
+                                            targetType: "Paragraph",
+                                            name: "前項",
+                                            targetContainerIDs: "[\"container-81-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["前項"],
+                                    },
+                                ],
+                            },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["まで"],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-83-tag_Paragraph-type_SENTENCES\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "PREV",
+                                            targetType: "Paragraph",
+                                            name: "前項",
+                                            targetContainerIDs: "[\"container-83-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["前項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-77-tag_Paragraph-type_SENTENCES\",\"container-83-tag_Paragraph-type_SENTENCES\",\"container-84-tag_Paragraph-type_SENTENCES\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第一項",
+                                            num: "1",
+                                            targetContainerIDs: "[\"container-77-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["第一項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["及び"],
+                    },
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "PREV",
+                                            targetType: "Paragraph",
+                                            name: "前二項",
+                                            count: "2",
+                                            targetContainerIDs: "[\"container-83-tag_Paragraph-type_SENTENCES\",\"container-84-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["前二項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-77-tag_Paragraph-type_SENTENCES\",\"container-78-tag_Paragraph-type_SENTENCES\",\"container-79-tag_Paragraph-type_SENTENCES\",\"container-80-tag_Paragraph-type_SENTENCES\",\"container-81-tag_Paragraph-type_SENTENCES\",\"container-82-tag_Paragraph-type_SENTENCES\",\"container-83-tag_Paragraph-type_SENTENCES\",\"container-84-tag_Paragraph-type_SENTENCES\",\"container-85-tag_Paragraph-type_SENTENCES\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "PREV",
+                                            targetType: "Paragraph",
+                                            name: "前各項",
+                                            count: "all",
+                                            targetContainerIDs: "[\"container-77-tag_Paragraph-type_SENTENCES\",\"container-78-tag_Paragraph-type_SENTENCES\",\"container-79-tag_Paragraph-type_SENTENCES\",\"container-80-tag_Paragraph-type_SENTENCES\",\"container-81-tag_Paragraph-type_SENTENCES\",\"container-82-tag_Paragraph-type_SENTENCES\",\"container-83-tag_Paragraph-type_SENTENCES\",\"container-84-tag_Paragraph-type_SENTENCES\",\"container-85-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        children: ["前各項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {},
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第八条",
+                                            num: "8",
+                                        },
+                                        children: ["第八条"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const expectedErrorMessages: string[] = [];
+
+        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+
+        const sentenceContainers = Object.fromEntries((
+            [...sentenceEnvsStruct.containers.values()]
+                .filter(c => c.type === "SENTENCES")
+                .map(c => [
+                    c.containerID,
+                    (
+                        sentenceEnvsStruct.sentenceEnvs
+                            .slice(...c.sentenceRange)
+                            .map(s => s.text).join("　")
+                    ),
+                ])
+        ));
+        // console.log(JSON.stringify(sentenceContainers, null, 2));
+        assert.deepStrictEqual(sentenceContainers, expectedSentencesContainers);
+
+        // console.log(JSON.stringify(detectTokensResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            detectTokensResult.value.pointerRangesList.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });
