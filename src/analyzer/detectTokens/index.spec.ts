@@ -1144,4 +1144,229 @@ describe("Test detectTokens", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第五条　第七十六条第二項及び第四項（第一号を除く。）の規定により第四項の無線局の免許の取消しを受け、その取消しの日から二年を経過しない者。
+４　電気通信業務を行うことを目的として開設する無線局
+  一　法人又は団体
+
+第七十六条　総務大臣は、三月以内の期間を定めて無線局の運用の停止を命じ、又は期間を定めて運用許容時間、周波数若しくは空中線電力を制限することができる。
+２　規定による期限の延長があつたときは、その期限。
+４　総務大臣は、免許人（包括免許人を除く。）が次の各号のいずれかに該当するときは、その免許を取り消すことができる。
+  一　正当な理由がないのに、無線局の運用を引き続き六月以上休止したとき。
+  二　第一号の規定による命令又は制限に従わないとき。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedSentencesContainers = {
+            "container-55-tag_Article-type_SENTENCES": "第七十六条第二項及び第四項（第一号を除く。）の規定により第四項の無線局の免許の取消しを受け、その取消しの日から二年を経過しない者。　電気通信業務を行うことを目的として開設する無線局　法人又は団体",
+            "container-56-tag_Paragraph-type_SENTENCES": "第七十六条第二項及び第四項（第一号を除く。）の規定により第四項の無線局の免許の取消しを受け、その取消しの日から二年を経過しない者。",
+            "container-57-tag_Paragraph-type_SENTENCES": "電気通信業務を行うことを目的として開設する無線局　法人又は団体",
+            "container-58-tag_Item-type_SENTENCES": "法人又は団体",
+            "container-59-tag_Article-type_SENTENCES": "総務大臣は、三月以内の期間を定めて無線局の運用の停止を命じ、又は期間を定めて運用許容時間、周波数若しくは空中線電力を制限することができる。　規定による期限の延長があつたときは、その期限。　総務大臣は、免許人（包括免許人を除く。）が次の各号のいずれかに該当するときは、その免許を取り消すことができる。　正当な理由がないのに、無線局の運用を引き続き六月以上休止したとき。　第一号の規定による命令又は制限に従わないとき。",
+            "container-60-tag_Paragraph-type_SENTENCES": "総務大臣は、三月以内の期間を定めて無線局の運用の停止を命じ、又は期間を定めて運用許容時間、周波数若しくは空中線電力を制限することができる。",
+            "container-61-tag_Paragraph-type_SENTENCES": "規定による期限の延長があつたときは、その期限。",
+            "container-62-tag_Paragraph-type_SENTENCES": "総務大臣は、免許人（包括免許人を除く。）が次の各号のいずれかに該当するときは、その免許を取り消すことができる。　正当な理由がないのに、無線局の運用を引き続き六月以上休止したとき。　第一号の規定による命令又は制限に従わないとき。",
+            "container-63-tag_Item-type_SENTENCES": "正当な理由がないのに、無線局の運用を引き続き六月以上休止したとき。",
+            "container-64-tag_Item-type_SENTENCES": "第一号の規定による命令又は制限に従わないとき。",
+        }
+          ;
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-61-tag_Paragraph-type_SENTENCES\",\"container-62-tag_Paragraph-type_SENTENCES\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Article",
+                                            "name": "第七十六条",
+                                            "num": "76",
+                                            "targetContainerIDs": "[\"container-59-tag_Article-type_SENTENCES\"]",
+                                        },
+                                        "children": ["第七十六条"],
+                                    },
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Paragraph",
+                                            "name": "第二項",
+                                            "num": "2",
+                                            "targetContainerIDs": "[\"container-61-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        "children": ["第二項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        "tag": "__Text",
+                        "attr": {},
+                        "children": ["及び"],
+                    },
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Paragraph",
+                                            "name": "第四項",
+                                            "num": "4",
+                                            "targetContainerIDs": "[\"container-62-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        "children": ["第四項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-63-tag_Item-type_SENTENCES\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Item",
+                                            "name": "第一号",
+                                            "num": "1",
+                                            "targetContainerIDs": "[\"container-63-tag_Item-type_SENTENCES\"]",
+                                        },
+                                        "children": ["第一号"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-57-tag_Paragraph-type_SENTENCES\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Paragraph",
+                                            "name": "第四項",
+                                            "num": "4",
+                                            "targetContainerIDs": "[\"container-57-tag_Paragraph-type_SENTENCES\"]",
+                                        },
+                                        "children": ["第四項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-63-tag_Item-type_SENTENCES\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Item",
+                                            "name": "第一号",
+                                            "num": "1",
+                                            "targetContainerIDs": "[\"container-63-tag_Item-type_SENTENCES\"]",
+                                        },
+                                        "children": ["第一号"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const expectedErrorMessages: string[] = [];
+
+        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+
+        const sentenceContainers = Object.fromEntries((
+            [...sentenceEnvsStruct.containers.values()]
+                .filter(c => c.type === "SENTENCES")
+                .map(c => [
+                    c.containerID,
+                    (
+                        sentenceEnvsStruct.sentenceEnvs
+                            .slice(...c.sentenceRange)
+                            .map(s => s.text).join("　")
+                    ),
+                ])
+        ));
+        // console.log(JSON.stringify(sentenceContainers, null, 2));
+        assert.deepStrictEqual(sentenceContainers, expectedSentencesContainers);
+
+        // console.log(JSON.stringify(detectTokensResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            detectTokensResult.value.pointerRangesList.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

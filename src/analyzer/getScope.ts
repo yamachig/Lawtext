@@ -3,19 +3,46 @@ import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
 import { getContainerType } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
+import * as std from "../law/std";
 
 type LocatedPointerInfo = [fragment: ____PF, container: Container][];
 
+const locateContainerFromParent = (parentContainer: Container, fragment: ____PF) => {
+    return parentContainer.find(
+        c =>
+            (
+                (
+                    (c.el.tag === fragment.attr.targetType)
+                    || (
+                        (fragment.attr.targetType === "SUBITEM")
+                        && (/^Subitem\d+$/.exec(c.el.tag) !== null)
+                    )
+                )
+                && ((c.num ?? null) === fragment.attr.num)
+            )
+            || (
+                (fragment.attr.targetType === "PROVISO")
+                && (c.el.tag === "Sentence")
+                && (c.el.attr.Function === "proviso")
+            ),
+    );
+};
+
 const locateContainerOfHeadFragment = (
     head: ____PF,
-    prevLocatedPointerInfo: LocatedPointerInfo | null,
+    prevLocatedContainerForSame: Container | null,
+    prevLocatedContainerForNamed: Container | null,
     currentContainer: Container,
 ) => {
 
     if ((head.attr.relPos === RelPos.SAME)) {
         // e.g.: "同条"
 
-        return null; // Not implemented.
+        return (
+            prevLocatedContainerForSame
+                ?.thisOrClosest(c => c.el.tag === head.attr.targetType)
+                ?? null
+        );
 
     } else if (head.attr.relPos === RelPos.HERE) {
         // e.g.: "この条"
@@ -64,17 +91,28 @@ const locateContainerOfHeadFragment = (
     } else if (head.attr.relPos === RelPos.NAMED) {
         // e.g.: "第二条", "第二項"
 
-        const foundIndex = prevLocatedPointerInfo
-            ? prevLocatedPointerInfo.findIndex(([fragment]) => fragment.attr.targetType === head.attr.targetType)
-            : -1;
+        let parentTag: string | null = null;
+        {
+            const paragraphItemTagIndex = (std.paragraphItemTags as readonly string[]).indexOf(head.attr.targetType);
+            if (paragraphItemTagIndex >= 0) {
+                parentTag = ["Article", ...std.paragraphItemTags][paragraphItemTagIndex];
+            } else {
+                const articleGroupTagIndex = (std.articleGroupTags as readonly string[]).indexOf(head.attr.targetType);
+                if (articleGroupTagIndex > 0) {
+                    parentTag = std.articleGroupTags[articleGroupTagIndex - 1];
+                }
+            }
+        }
 
-        if (
-            prevLocatedPointerInfo
-            && (1 <= foundIndex)
-        ) {
+        const parentContainer = (parentTag !== null) ? (
+            prevLocatedContainerForNamed
+                ?.thisOrClosest(c => c.el.tag === parentTag)
+        ) : null;
+
+        if (parentContainer) {
             // e.g.: "第二条第二項" -> "第三項"
 
-            return prevLocatedPointerInfo[foundIndex][1];
+            return locateContainerFromParent(parentContainer, head);
 
         } else if (getContainerType(head.attr.targetType) === ContainerType.TOPLEVEL) {
             // e.g.: "附則", "別表第二"
@@ -111,52 +149,51 @@ const locateContainerOfHeadFragment = (
 
 const locatePointer = (
     origPointer: ____Pointer,
-    prevLocatedPointerInfo: LocatedPointerInfo | null,
+    prevLocatedContainerForSame: Container | null,
+    prevLocatedContainerForNamed: Container | null,
     currentContainer: Container,
-): LocatedPointerInfo => {
+): {
+    pointerInfo: LocatedPointerInfo,
+    lastLocatedContainer: Container | null,
+} => {
 
     const origFragments = origPointer.fragments();
-    const headContainer = locateContainerOfHeadFragment(origFragments[0], prevLocatedPointerInfo, currentContainer);
+    const headContainer = locateContainerOfHeadFragment(
+        origFragments[0],
+        prevLocatedContainerForSame,
+        prevLocatedContainerForNamed,
+        currentContainer,
+    );
 
-    const retOne: LocatedPointerInfo = [];
+    const pointerInfo: LocatedPointerInfo = [];
+    let lastLocatedContainer = headContainer;
 
     if (headContainer) {
-        retOne.push([origFragments[0], headContainer]);
+        pointerInfo.push([origFragments[0], headContainer]);
 
         let parentContainer = headContainer;
         for (const fragment of origFragments.slice(1)) {
-            const container =
-                parentContainer.find(
-                    c =>
-                        (
-                            (
-                                (c.el.tag === fragment.attr.targetType)
-                                || (
-                                    (fragment.attr.targetType === "SUBITEM")
-                                    && (/^Subitem\d+$/.exec(c.el.tag) !== null)
-                                )
-                            )
-                            && ((c.num ?? null) === fragment.attr.num)
-                        )
-                        || (
-                            (fragment.attr.targetType === "PROVISO")
-                            && (c.el.tag === "Sentence")
-                            && (c.el.attr.Function === "proviso")
-                        ),
-                );
+            const container = locateContainerFromParent(parentContainer, fragment);
+
             if (container) {
-                retOne.push([fragment, container]);
+                pointerInfo.push([fragment, container]);
                 parentContainer = container;
+                lastLocatedContainer = container;
             } else {
                 break;
             }
         }
     }
-    return retOne;
+    return { pointerInfo, lastLocatedContainer };
 
 };
 
-const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container) => {
+const locateRanges = (
+    origRanges: ____PointerRanges,
+    prevLocatedContainerForSame: Container | null,
+    prevLocatedContainerForNamed: Container | null,
+    currentContainer: Container,
+) => {
     const ranges: ([fromOnly: LocatedPointerInfo]|[from:LocatedPointerInfo, toIncluded:LocatedPointerInfo])[] = [];
     const rangeELs = origRanges.ranges();
 
@@ -188,28 +225,50 @@ const locateRanges = (origRanges: ____PointerRanges, currentContainer: Container
     }
 
     if (!processed) {
-        let prevLocatedPointerInfo: LocatedPointerInfo | null = null;
         for (const [origFrom, origTo] of rangeELs.map(r => r.pointers())) {
-            const from = locatePointer(origFrom, prevLocatedPointerInfo, currentContainer);
-            prevLocatedPointerInfo = from;
+            const from = locatePointer(
+                origFrom,
+                prevLocatedContainerForSame,
+                prevLocatedContainerForNamed,
+                currentContainer,
+            );
+            prevLocatedContainerForSame = from.lastLocatedContainer;
+            prevLocatedContainerForNamed = from.lastLocatedContainer;
             if (!origTo) {
-                ranges.push([from]);
+                ranges.push([from.pointerInfo]);
             } else {
-                const to = locatePointer(origTo, prevLocatedPointerInfo, currentContainer);
-                ranges.push([from, to]);
+                const to = locatePointer(
+                    origTo,
+                    prevLocatedContainerForSame,
+                    prevLocatedContainerForNamed,
+                    currentContainer,
+                );
+                prevLocatedContainerForSame = from.lastLocatedContainer;
+                prevLocatedContainerForNamed = from.lastLocatedContainer;
+                ranges.push([from.pointerInfo, to.pointerInfo]);
             }
         }
     }
 
-    return ranges;
+    return { ranges, lastLocatedContainer: prevLocatedContainerForSame };
 };
 
 export const getScope = (
     currentContainer: Container,
+    prevLocatedContainerForSame: Container | null,
+    prevLocatedContainerForNamed: Container | null,
     pointerRangesToBeModified: ____PointerRanges,
-): (string | [from:string, toIncluded:string])[] => {
+): {
+    ranges: (string | [from:string, toIncluded:string])[],
+    lastLocatedContainer: Container | null,
+} => {
     const targetContainerIDRanges = new Set<string | [from:string, toIncluded:string]>();
-    const ranges = locateRanges(pointerRangesToBeModified, currentContainer);
+    const { ranges, lastLocatedContainer } = locateRanges(
+        pointerRangesToBeModified,
+        prevLocatedContainerForSame,
+        prevLocatedContainerForNamed,
+        currentContainer,
+    );
     for (const fromTo of ranges) {
         const [from, to] = fromTo;
         if (from.length === 0 || (to && to.length === 0)) {
@@ -238,7 +297,10 @@ export const getScope = (
     if (targetContainerIDRanges.size > 0) {
         pointerRangesToBeModified.targetContainerIDRanges = [...targetContainerIDRanges];
     }
-    return [...targetContainerIDRanges];
+    return {
+        ranges: [...targetContainerIDRanges],
+        lastLocatedContainer,
+    };
 };
 
 export default getScope;
