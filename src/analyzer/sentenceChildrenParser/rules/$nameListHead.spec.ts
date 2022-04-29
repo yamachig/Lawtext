@@ -58,7 +58,6 @@ describe("Test $nameListHead", () => {
         if (result.ok) {
             // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.pointerRanges?.json(true), expectedPointerRanges);
-            assert.isNull(result.value.value.pointerRangesModifier);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });
@@ -144,7 +143,6 @@ describe("Test $nameListHead", () => {
         if (result.ok) {
             // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.pointerRanges?.json(true), expectedPointerRanges);
-            assert.isNull(result.value.value.pointerRangesModifier);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });
@@ -231,7 +229,6 @@ describe("Test $nameListHead", () => {
         if (result.ok) {
             // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.pointerRanges?.json(true), expectedPointerRanges);
-            assert.isNull(result.value.value.pointerRangesModifier);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });
@@ -251,39 +248,161 @@ describe("Test $nameListHead", () => {
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
         const expectedPointerRanges = {
-            tag: "____PointerRanges",
-            attr: {},
-            children: [
+            "tag": "____PointerRanges",
+            "attr": {},
+            "children": [
                 {
-                    tag: "____PointerRange",
-                    attr: {},
-                    children: [
+                    "tag": "____PointerRange",
+                    "attr": {},
+                    "children": [
                         {
-                            tag: "____Pointer",
-                            attr: {},
-                            children: [
+                            "tag": "____Pointer",
+                            "attr": {},
+                            "children": [
                                 {
-                                    tag: "____PF",
-                                    attr: {
-                                        relPos: "HERE",
-                                        targetType: "Article",
-                                        name: "この条"
+                                    "tag": "____PF",
+                                    "attr": {
+                                        "relPos": "HERE",
+                                        "targetType": "Article",
+                                        "name": "この条"
                                     },
-                                    children: ["この条"]
+                                    "children": ["この条"]
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "__Parentheses",
+                            "attr": {
+                                "type": "round",
+                                "depth": "1"
+                            },
+                            "children": [
+                                {
+                                    "tag": "__PStart",
+                                    "attr": {
+                                        "type": "round"
+                                    },
+                                    "children": ["（"]
+                                },
+                                {
+                                    "tag": "__PContent",
+                                    "attr": {
+                                        "type": "round"
+                                    },
+                                    "children": [
+                                        {
+                                            "tag": "____PointerRanges",
+                                            "attr": {},
+                                            "children": [
+                                                {
+                                                    "tag": "____PointerRange",
+                                                    "attr": {},
+                                                    "children": [
+                                                        {
+                                                            "tag": "____Pointer",
+                                                            "attr": {},
+                                                            "children": [
+                                                                {
+                                                                    "tag": "____PF",
+                                                                    "attr": {
+                                                                        "relPos": "NAMED",
+                                                                        "targetType": "Paragraph",
+                                                                        "name": "第一項",
+                                                                        "num": "1"
+                                                                    },
+                                                                    "children": ["第一項"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "tag": "__Text",
+                                                    "attr": {},
+                                                    "children": ["及び"]
+                                                },
+                                                {
+                                                    "tag": "____PointerRange",
+                                                    "attr": {},
+                                                    "children": [
+                                                        {
+                                                            "tag": "____Pointer",
+                                                            "attr": {},
+                                                            "children": [
+                                                                {
+                                                                    "tag": "____PF",
+                                                                    "attr": {
+                                                                        "relPos": "NEXT",
+                                                                        "targetType": "Paragraph",
+                                                                        "name": "次項"
+                                                                    },
+                                                                    "children": ["次項"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "__Text",
+                                            "attr": {},
+                                            "children": ["から"]
+                                        },
+                                        {
+                                            "tag": "____PointerRanges",
+                                            "attr": {},
+                                            "children": [
+                                                {
+                                                    "tag": "____PointerRange",
+                                                    "attr": {},
+                                                    "children": [
+                                                        {
+                                                            "tag": "____Pointer",
+                                                            "attr": {},
+                                                            "children": [
+                                                                {
+                                                                    "tag": "____PF",
+                                                                    "attr": {
+                                                                        "relPos": "NAMED",
+                                                                        "targetType": "Paragraph",
+                                                                        "name": "第七項",
+                                                                        "num": "7"
+                                                                    },
+                                                                    "children": ["第七項"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "__Text",
+                                            "attr": {},
+                                            "children": ["までを除く。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "__PEnd",
+                                    "attr": {
+                                        "type": "round"
+                                    },
+                                    "children": ["）"]
                                 }
                             ]
                         }
                     ]
                 }
             ]
-        } ;
+        };
 
         const result = $nameListHead.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
             // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.pointerRanges?.json(true), expectedPointerRanges);
-            assert.isNotNull(result.value.value.pointerRangesModifier);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });
@@ -334,7 +453,6 @@ describe("Test $nameListHead", () => {
         if (result.ok) {
             // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.pointerRanges?.json(true), expectedPointerRanges);
-            assert.isNull(result.value.value.pointerRangesModifier);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });
@@ -353,39 +471,102 @@ describe("Test $nameListHead", () => {
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
         const expectedPointerRanges = {
-            tag: "____PointerRanges",
-            attr: {},
-            children: [
+            "tag": "____PointerRanges",
+            "attr": {},
+            "children": [
                 {
-                    tag: "____PointerRange",
-                    attr: {},
-                    children: [
+                    "tag": "____PointerRange",
+                    "attr": {},
+                    "children": [
                         {
-                            tag: "____Pointer",
-                            attr: {},
-                            children: [
+                            "tag": "____Pointer",
+                            "attr": {},
+                            "children": [
                                 {
-                                    tag: "____PF",
-                                    attr: {
-                                        relPos: "HERE",
-                                        targetType: "Law",
-                                        name: "この規則"
+                                    "tag": "____PF",
+                                    "attr": {
+                                        "relPos": "HERE",
+                                        "targetType": "Law",
+                                        "name": "この規則"
                                     },
-                                    children: ["この規則"]
+                                    "children": ["この規則"]
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "__Parentheses",
+                            "attr": {
+                                "type": "round",
+                                "depth": "1"
+                            },
+                            "children": [
+                                {
+                                    "tag": "__PStart",
+                                    "attr": {
+                                        "type": "round"
+                                    },
+                                    "children": ["（"]
+                                },
+                                {
+                                    "tag": "__PContent",
+                                    "attr": {
+                                        "type": "round"
+                                    },
+                                    "children": [
+                                        {
+                                            "tag": "____PointerRanges",
+                                            "attr": {},
+                                            "children": [
+                                                {
+                                                    "tag": "____PointerRange",
+                                                    "attr": {},
+                                                    "children": [
+                                                        {
+                                                            "tag": "____Pointer",
+                                                            "attr": {},
+                                                            "children": [
+                                                                {
+                                                                    "tag": "____PF",
+                                                                    "attr": {
+                                                                        "relPos": "NAMED",
+                                                                        "targetType": "Article",
+                                                                        "name": "第二条の三十五",
+                                                                        "num": "2_35"
+                                                                    },
+                                                                    "children": ["第二条の三十五"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "__Text",
+                                            "attr": {},
+                                            "children": ["を除く。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "__PEnd",
+                                    "attr": {
+                                        "type": "round"
+                                    },
+                                    "children": ["）"]
                                 }
                             ]
                         }
                     ]
                 }
             ]
-        } ;
+        };
 
         const result = $nameListHead.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
             // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.pointerRanges?.json(true), expectedPointerRanges);
-            assert.isNotNull(result.value.value.pointerRangesModifier);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });
@@ -404,39 +585,102 @@ describe("Test $nameListHead", () => {
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
         const expectedPointerRanges = {
-            tag: "____PointerRanges",
-            attr: {},
-            children: [
+            "tag": "____PointerRanges",
+            "attr": {},
+            "children": [
                 {
-                    tag: "____PointerRange",
-                    attr: {},
-                    children: [
+                    "tag": "____PointerRange",
+                    "attr": {},
+                    "children": [
                         {
-                            tag: "____Pointer",
-                            attr: {},
-                            children: [
+                            "tag": "____Pointer",
+                            "attr": {},
+                            "children": [
                                 {
-                                    tag: "____PF",
-                                    attr: {
-                                        relPos: "HERE",
-                                        targetType: "Law",
-                                        name: "この規則"
+                                    "tag": "____PF",
+                                    "attr": {
+                                        "relPos": "HERE",
+                                        "targetType": "Law",
+                                        "name": "この規則"
                                     },
-                                    children: ["この規則"]
+                                    "children": ["この規則"]
+                                }
+                            ]
+                        },
+                        {
+                            "tag": "__Parentheses",
+                            "attr": {
+                                "type": "round",
+                                "depth": "1"
+                            },
+                            "children": [
+                                {
+                                    "tag": "__PStart",
+                                    "attr": {
+                                        "type": "round"
+                                    },
+                                    "children": ["（"]
+                                },
+                                {
+                                    "tag": "__PContent",
+                                    "attr": {
+                                        "type": "round"
+                                    },
+                                    "children": [
+                                        {
+                                            "tag": "____PointerRanges",
+                                            "attr": {},
+                                            "children": [
+                                                {
+                                                    "tag": "____PointerRange",
+                                                    "attr": {},
+                                                    "children": [
+                                                        {
+                                                            "tag": "____Pointer",
+                                                            "attr": {},
+                                                            "children": [
+                                                                {
+                                                                    "tag": "____PF",
+                                                                    "attr": {
+                                                                        "relPos": "NAMED",
+                                                                        "targetType": "Article",
+                                                                        "name": "第二条の三十五",
+                                                                        "num": "2_35"
+                                                                    },
+                                                                    "children": ["第二条の三十五"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tag": "__Text",
+                                            "attr": {},
+                                            "children": ["を除く。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tag": "__PEnd",
+                                    "attr": {
+                                        "type": "round"
+                                    },
+                                    "children": ["）"]
                                 }
                             ]
                         }
                     ]
                 }
             ]
-        } ;
+        };
 
         const result = $nameListHead.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
             // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.pointerRanges?.json(true), expectedPointerRanges);
-            assert.isNotNull(result.value.value.pointerRangesModifier);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });

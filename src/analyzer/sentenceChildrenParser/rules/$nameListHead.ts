@@ -1,5 +1,5 @@
 // import * as std from "../../../law/std";
-import { __Parentheses, __Text, ____PointerRanges } from "../../../node/el/controls";
+import { __Text, ____PointerRanges } from "../../../node/el/controls";
 import factory from "../factory";
 import { WithErrorRule } from "../util";
 
@@ -22,7 +22,7 @@ const reCombinedAfterImport = new RegExp(`^(.*)?${reAfterImport.source}(?:${reNa
 
 export const $nameListHead: WithErrorRule<{
     pointerRanges: ____PointerRanges,
-    pointerRangesModifier: __Parentheses | null,
+    // pointerRangesModifier: __Parentheses | null,
 }> = factory
     .withName("nameListHead")
     .sequence(s => s
@@ -33,15 +33,15 @@ export const $nameListHead: WithErrorRule<{
                 ) { return item; } else { return null; }
             })
         , "pointerRanges")
-        .and(r => r
-            .zeroOrOne(r => r
-                .oneMatch(({ item }) => {
-                    if (
-                        (item instanceof __Parentheses)
-                    ) { return item; } else { return null; }
-                })
-            )
-        , "pointerRangesModifier")
+        // .and(r => r
+        //     .zeroOrOne(r => r
+        //         .oneMatch(({ item }) => {
+        //             if (
+        //                 (item instanceof __Parentheses)
+        //             ) { return item; } else { return null; }
+        //         })
+        //     )
+        // , "pointerRangesModifier")
         .and(r => r
             .choice(c => c
                 .orSequence(r => r
@@ -162,10 +162,10 @@ export const $nameListHead: WithErrorRule<{
                 )
             )
         , "importSentenceChildren")
-        .action(({ pointerRanges, pointerRangesModifier, importSentenceChildren }) => {
+        .action(({ pointerRanges, importSentenceChildren }) => {
             const value = {
                 pointerRanges,
-                pointerRangesModifier,
+                // pointerRangesModifier,
                 importSentenceChildren: importSentenceChildren ? importSentenceChildren.flat() : null,
             };
             return { value, errors: [] };

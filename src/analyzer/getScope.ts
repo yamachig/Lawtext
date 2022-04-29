@@ -4,6 +4,7 @@ import { EL } from "../node/el";
 import { getContainerType } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import * as std from "../law/std";
+import { __Parentheses } from "../node/el/controls";
 
 type LocatedPointerInfo = [fragment: ____PF, container: Container | Container[]][];
 
@@ -244,29 +245,42 @@ const locatePointer = (
 
 };
 
-const locateRanges = (
+export type OnBeforeModifierParentheses = (
+    modifierParentheses: __Parentheses,
     origRanges: ____PointerRanges,
     prevLocatedContainerForSame: Container | null,
     prevLocatedContainerForNamed: Container | null,
     currentContainer: Container,
 ) => {
-    const ranges: ([fromOnly: LocatedPointerInfo]|[from:LocatedPointerInfo, toIncluded:LocatedPointerInfo])[] = [];
-    const rangeELs = origRanges.ranges();
+    lastLocatedContainer: Container | null,
+}
 
-    for (const [origFrom, origTo] of rangeELs.map(r => r.pointers())) {
+const locateRanges = (
+    origRanges: ____PointerRanges,
+    prevLocatedContainerForSame: Container | null,
+    prevLocatedContainerForNamed: Container | null,
+    currentContainer: Container,
+    onBeforeModifierParentheses?: OnBeforeModifierParentheses,
+) => {
+
+    const ranges: ([fromOnly: LocatedPointerInfo]|[from:LocatedPointerInfo, toIncluded:LocatedPointerInfo])[] = [];
+    const pointerRangeList = origRanges.ranges();
+
+    for (const pointerRange of pointerRangeList) {
+        const [fromPointer, toPointer] = pointerRange.pointers();
         const from = locatePointer(
-            origFrom,
+            fromPointer,
             prevLocatedContainerForSame,
             prevLocatedContainerForNamed,
             currentContainer,
         );
         prevLocatedContainerForSame = from.lastLocatedContainer;
         prevLocatedContainerForNamed = from.lastLocatedContainer;
-        if (!origTo) {
+        if (!toPointer) {
             ranges.push([from.pointerInfo]);
         } else {
             const to = locatePointer(
-                origTo,
+                toPointer,
                 prevLocatedContainerForSame,
                 prevLocatedContainerForNamed,
                 currentContainer,
@@ -275,7 +289,23 @@ const locateRanges = (
             prevLocatedContainerForNamed = from.lastLocatedContainer;
             ranges.push([from.pointerInfo, to.pointerInfo]);
         }
+
+        const modifierParentheses = pointerRange.modifierParentheses();
+        if (modifierParentheses) {
+            if (onBeforeModifierParentheses) {
+                const { lastLocatedContainer } = onBeforeModifierParentheses(
+                    modifierParentheses,
+                    origRanges,
+                    prevLocatedContainerForSame,
+                    prevLocatedContainerForNamed,
+                    currentContainer,
+                );
+                prevLocatedContainerForSame = lastLocatedContainer;
+                prevLocatedContainerForNamed = lastLocatedContainer;
+            }
+        }
     }
+
 
     return { ranges, lastLocatedContainer: prevLocatedContainerForSame };
 };
@@ -285,6 +315,7 @@ export const getScope = (
     prevLocatedContainerForSame: Container | null,
     prevLocatedContainerForNamed: Container | null,
     pointerRangesToBeModified: ____PointerRanges,
+    onBeforeModifierParentheses?: OnBeforeModifierParentheses,
 ): {
     ranges: (string | [from:string, toIncluded:string])[],
     lastLocatedContainer: Container | null,
@@ -295,6 +326,7 @@ export const getScope = (
         prevLocatedContainerForSame,
         prevLocatedContainerForNamed,
         currentContainer,
+        onBeforeModifierParentheses,
     );
     for (const fromTo of ranges) {
         const [from, to] = fromTo;

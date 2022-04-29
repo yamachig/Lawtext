@@ -25,15 +25,7 @@ export const processNameList = (
     );
 
     if (result.ok) {
-        const { pointerRanges, pointerRangesModifier } = result.value.value;
-
-        if (pointerRangesModifier) {
-            console.warn("pointerRangesModifier not implemented.");
-            return {
-                value: declarations,
-                errors,
-            };
-        }
+        const { pointerRanges } = result.value.value;
 
         const scope = toSentenceTextRanges(
             pointerRanges.targetContainerIDRanges,

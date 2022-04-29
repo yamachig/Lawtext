@@ -4,13 +4,14 @@ import { initialEnv } from "../env";
 import * as std from "../../../law/std";
 import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
 import { SentenceChildEL } from "../../../node/cst/inline";
-import detectTokens from "../../detectTokens";
+import { detectTokensByEL } from "../../detectTokens";
 import getSentenceEnvs from "../../getSentenceEnvs";
 import $pointerRanges from "./$pointerRanges";
+import { SentenceEnv } from "../../../node/container/sentenceEnv";
 
 const env = initialEnv({ target: "" });
 
-describe("Test $pointer", () => {
+describe("Test $pointerRanges", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
@@ -21,7 +22,8 @@ describe("Test $pointer", () => {
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
         const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
+        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
+        detectTokensByEL(origEL, sentenceEnv);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -73,7 +75,8 @@ describe("Test $pointer", () => {
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
         const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
+        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
+        detectTokensByEL(origEL, sentenceEnv);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -216,7 +219,8 @@ describe("Test $pointer", () => {
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
         const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
+        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
+        detectTokensByEL(origEL, sentenceEnv);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -717,7 +721,8 @@ describe("Test $pointer", () => {
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
         const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
+        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
+        detectTokensByEL(origEL, sentenceEnv);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -852,7 +857,8 @@ describe("Test $pointer", () => {
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
         const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
+        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
+        detectTokensByEL(origEL, sentenceEnv);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -934,9 +940,10 @@ describe("Test $pointer", () => {
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
         const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
+        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
+        detectTokensByEL(origEL, sentenceEnv);
         const input = origEL.children as SentenceChildEL[];
-        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
+        console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
 
         const expectedPointerRanges = {

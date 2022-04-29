@@ -1,51 +1,57 @@
 /* eslint-disable no-irregular-whitespace */
 import { articleGroupType, parseKanjiNum, parseNamedNum } from "../../../law/num";
-import { RelPos, ____PF, ____Pointer } from "../../../node/el/controls/pointer";
+import { SentenceChildEL } from "../../../node/cst/inline";
+import { RelPos, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
+import { ErrorMessage } from "../../../parser/cst/error";
 import { factory } from "../../../parser/cst/factory";
 import { $irohaChar, $kanjiDigits, $romanDigits } from "../../../parser/cst/rules/lexical";
+import makeRangesRule, { RangeMaker, RangesMaker } from "../../../parser/cst/rules/makeRangesRule";
 
-// const makeRange: RangeMaker<____Pointer, ____PointerRange> = (from, midText, to, trailingText, range) => {
-//     return new ____PointerRange({
-//         from,
-//         midChildren: midText ? [new __Text(midText.text, midText.range)] : [],
-//         to,
-//         trailingChildren: trailingText ? [new __Text(trailingText.text, trailingText.range)] : [],
-//         range,
-//     });
-// };
+const makeRange: RangeMaker<____Pointer, ____PointerRange> = (from, midText, to, trailingText, modifierParentheses, range) => {
+    return new ____PointerRange({
+        from,
+        midChildren: midText ? [new __Text(midText.text, midText.range)] : [],
+        to,
+        trailingChildren: [
+            ...(trailingText ? [new __Text(trailingText.text, trailingText.range)] : []),
+            ...(modifierParentheses ? [modifierParentheses] : []),
+        ],
+        range,
+    });
+};
 
-// const makeRanges: RangesMaker<____PointerRange, ____PointerRanges> = (first, midText, rest, range) => {
-//     const children: (____PointerRange | SentenceChildEL)[] = [];
-//     const errors: ErrorMessage[] = [];
+const makeRanges: RangesMaker<____PointerRange, ____PointerRanges> = (first, midText, rest, range) => {
+    const children: (____PointerRange | SentenceChildEL)[] = [];
+    const errors: ErrorMessage[] = [];
 
-//     children.push(first.value);
-//     errors.push(...first.errors);
+    children.push(first.value);
+    errors.push(...first.errors);
 
-//     if (midText) children.push(new __Text(midText.text, midText.range));
+    if (midText) children.push(new __Text(midText.text, midText.range));
 
-//     if (rest) {
-//         children.push(...rest.value.children);
-//         errors.push(...rest.errors);
-//     }
+    if (rest) {
+        children.push(...rest.value.children);
+        errors.push(...rest.errors);
+    }
 
-//     return {
-//         value: new ____PointerRanges({
-//             children,
-//             range,
-//         }),
-//         errors,
-//     };
-// };
+    return {
+        value: new ____PointerRanges({
+            children,
+            range,
+        }),
+        errors,
+    };
+};
 
 
 export const reSuppressPointerRanges = /[ァ-ヿ]{2,}/yg;
 
 
-// export const { $ranges: $pointerRanges, $range: $pointerRange } = makeRangesRule(
-//     (() => $pointer),
-//     makeRange,
-//     makeRanges,
-// );
+export const { $ranges: $pointerRanges, $range: $pointerRange } = makeRangesRule(
+    (() => $pointer),
+    makeRange,
+    makeRanges,
+);
 
 
 export const $pointer = factory

@@ -1,12 +1,15 @@
+import { __Parentheses } from "../../../node/el/controls";
 import { WithErrorValue } from "../../std/util";
 import factory from "../factory";
 import { ValueRule, WithErrorRule } from "../util";
+import { $ROUND_PARENTHESES_INLINE } from "./$sentenceChildren";
 
 export type RangeMaker<TPointer, TRange> = (
     from: TPointer,
     midText: {text: string, range: [number, number]} | null,
     to: TPointer | null,
     trailingText: {text: string, range: [number, number]} | null,
+    modifierParentheses: __Parentheses | null,
     range: [number, number],
 ) => TRange;
 
@@ -95,8 +98,14 @@ export const makeRangesRule = <TPointer, TRange = [TPointer, TPointer], TRanges 
                             .action(({ text, range }) => ({ text: text(), range: range() }))
                         )
                     , "trailingText")
-                    .action(({ from, midText, to, trailingText, range }) => {
-                        return { value: rangeMaker(from, midText, to, trailingText, range()), errors: [] };
+                    .and(r => r
+                        .zeroOrOne(() => $ROUND_PARENTHESES_INLINE)
+                    , "modifierParentheses")
+                    .action(({ from, midText, to, trailingText, modifierParentheses, range }) => {
+                        return {
+                            value: rangeMaker(from, midText, to, trailingText, modifierParentheses?.value ?? null, range()),
+                            errors: [...(modifierParentheses?.errors ?? [])],
+                        };
                     })
                 )
             )
@@ -110,16 +119,28 @@ export const makeRangesRule = <TPointer, TRange = [TPointer, TPointer], TRanges 
                         )
                     , "midText")
                     .and(lazyPointerRule, "to")
-                    .action(({ from, midText, to, range }) => {
-                        return { value: rangeMaker(from, midText, to, null, range()), errors: [] };
+                    .and(r => r
+                        .zeroOrOne(() => $ROUND_PARENTHESES_INLINE)
+                    , "modifierParentheses")
+                    .action(({ from, midText, to, modifierParentheses, range }) => {
+                        return {
+                            value: rangeMaker(from, midText, to, null, modifierParentheses?.value ?? null, range()),
+                            errors: [...(modifierParentheses?.errors ?? [])],
+                        };
                     })
                 )
             )
             .or(r => r
                 .sequence(c => c
                     .and(lazyPointerRule, "pointer")
-                    .action(({ pointer, range }) => {
-                        return { value: rangeMaker(pointer, null, null, null, range()), errors: [] };
+                    .and(r => r
+                        .zeroOrOne(() => $ROUND_PARENTHESES_INLINE)
+                    , "modifierParentheses")
+                    .action(({ pointer, modifierParentheses, range }) => {
+                        return {
+                            value: rangeMaker(pointer, null, null, null, modifierParentheses?.value ?? null, range()),
+                            errors: [...(modifierParentheses?.errors ?? [])],
+                        };
                     })
                 )
             )

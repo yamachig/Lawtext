@@ -8,8 +8,9 @@ import { SentenceEnv } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import $pointerRanges from "../sentenceChildrenParser/rules/$pointerRanges";
-import getScope from "../getScope";
+import getScope, { OnBeforeModifierParentheses } from "../getScope";
 import { isIgnoreAnalysis } from "../common";
+
 
 export const detectPointerRangesForEL = (
     elToBeModified: std.StdEL | std.__EL,
@@ -31,6 +32,23 @@ export const detectPointerRangesForEL = (
 
     const errors: ErrorMessage[] = [];
 
+
+    const onBeforeModifierParentheses: OnBeforeModifierParentheses = (
+        modifierParentheses,
+        _,
+        prevLocatedContainerForSame,
+        prevLocatedContainerForNamed,
+    ) => {
+        const result = detectPointerRangesForEL(
+            modifierParentheses,
+            prevLocatedContainerForSame,
+            prevLocatedContainerForNamed,
+            sentenceEnv,
+            sentenceEnvsStruct,
+        );
+        return { lastLocatedContainer: result.value.lastLocatedContainer };
+    };
+
     for (let i = 0; i < elToBeModified.children.length; i++) {
         const result = $pointerRanges.match(
             i,
@@ -48,6 +66,7 @@ export const detectPointerRangesForEL = (
                 prevLocatedContainerForSame,
                 prevLocatedContainerForNamed,
                 pointerRanges,
+                onBeforeModifierParentheses,
             );
             prevLocatedContainerForSame = getScopeResult.lastLocatedContainer;
             containerForNamedForNextChildren = getScopeResult.lastLocatedContainer;
@@ -57,31 +76,30 @@ export const detectPointerRangesForEL = (
                 result.nextOffset - i,
                 pointerRanges,
             );
-        }
-    }
-
-
-    for (const child of elToBeModified.children) {
-        if (typeof child === "string") {
-            continue;
-
-        } else if (isIgnoreAnalysis(child)) {
-            continue;
 
         } else {
-            const detectPointerRangesForELResult = detectPointerRangesForEL(
+            const child = elToBeModified.children[i];
+            if (typeof child === "string") {
+                continue;
+
+            } else if (isIgnoreAnalysis(child)) {
+                continue;
+
+            } else {
+                const detectPointerRangesForELResult = detectPointerRangesForEL(
                 child as std.StdEL | std.__EL,
                 prevLocatedContainerForSame,
                 containerForNamedForNextChildren,
                 sentenceEnv,
                 sentenceEnvsStruct,
-            );
-            prevLocatedContainerForSame = detectPointerRangesForELResult.value.lastLocatedContainer;
-            pointerRangesList.push(...detectPointerRangesForELResult.value.pointerRangesList);
-            errors.push(...detectPointerRangesForELResult.errors);
+                );
+                prevLocatedContainerForSame = detectPointerRangesForELResult.value.lastLocatedContainer;
+                pointerRangesList.push(...detectPointerRangesForELResult.value.pointerRangesList);
+                errors.push(...detectPointerRangesForELResult.errors);
+
+            }
 
         }
-
     }
 
     return {
