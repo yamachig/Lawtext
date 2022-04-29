@@ -5,10 +5,10 @@ import { __Parentheses, __Text, ____LawNum, ____PointerRanges } from "../../node
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
 import { isIgnoreAnalysis } from "../common";
-import getScope from "../getScope";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import matchLawNum from "./matchLawNum";
-import { matchPointerRanges } from "./matchPointerRanges";
+import detectPointerRangesForEL from "./detectPointerRangesForEL";
+import matchPointer from "./matchPointer";
 
 export interface TokensStruct {
     pointerRangesList: ____PointerRanges[],
@@ -18,21 +18,12 @@ export interface TokensStruct {
 
 export const detectTokensByEL = (
     elToBeModified: std.StdEL | std.__EL,
-    prevLocatedContainerForSame: Container | null,
-    __prevLocatedContainerForNamed: Container | null,
     sentenceEnv: SentenceEnv,
-): {
-    result: WithErrorValue<TokensStruct>,
-    lastLocatedContainer: Container | null,
-} => {
-
-    const prevLocatedContainerForNamed = __prevLocatedContainerForNamed;
-
-    const pointerRangesList: ____PointerRanges[] = [];
+): WithErrorValue<{
+    lawNums: ____LawNum[],
+}> => {
     const lawNums: ____LawNum[] = [];
     const errors: ErrorMessage[] = [];
-
-    let containerForNamedForNextChildren: Container | null = prevLocatedContainerForNamed;
 
     for (let childIndex = 0; childIndex < elToBeModified.children.length; childIndex++) {
 
@@ -51,7 +42,7 @@ export const detectTokensByEL = (
             // containerForNamedForNextChildren = prevLocatedContainerForNamed;
 
             {
-                // match before pointerRanges
+                // match before pointer
                 const match = matchLawNum(child);
                 if (match) {
                     lawNums.push(match.value.lawNum);
@@ -69,19 +60,8 @@ export const detectTokensByEL = (
             }
 
             {
-                const match = matchPointerRanges(child);
+                const match = matchPointer(child);
                 if (match) {
-                    const pointerRanges = match.value.pointerRanges;
-                    const getScopeResult = getScope(
-                        sentenceEnv.container,
-                        prevLocatedContainerForSame,
-                        prevLocatedContainerForNamed,
-                        pointerRanges,
-                    );
-                    prevLocatedContainerForSame = getScopeResult.lastLocatedContainer;
-                    containerForNamedForNextChildren = getScopeResult.lastLocatedContainer;
-
-                    pointerRangesList.push(pointerRanges);
                     errors.push(...match.errors);
 
                     elToBeModified.children.splice(
@@ -98,26 +78,18 @@ export const detectTokensByEL = (
         } else {
             const newResult = detectTokensByEL(
                 child as std.StdEL | std.__EL,
-                prevLocatedContainerForSame,
-                containerForNamedForNextChildren,
                 sentenceEnv,
             );
-            prevLocatedContainerForSame = newResult.lastLocatedContainer;
-            pointerRangesList.push(...newResult.result.value.pointerRangesList);
-            lawNums.push(...newResult.result.value.lawNums);
-            errors.push(...newResult.result.errors);
+            lawNums.push(...newResult.value.lawNums);
+            errors.push(...newResult.errors);
         }
     }
 
     return {
-        result: {
-            value: {
-                pointerRangesList,
-                lawNums,
-            },
-            errors,
+        value: {
+            lawNums,
         },
-        lastLocatedContainer: prevLocatedContainerForSame,
+        errors,
     };
 };
 
@@ -135,18 +107,32 @@ export const detectTokens = (sentenceEnvsStruct: SentenceEnvsStruct): WithErrorV
         const containerID = sentenceEnv.container.containerID;
         if (containerID !== prevContainerID) prevLocatedContainer = null;
 
-        const newResult = detectTokensByEL(
-            sentenceEnv.el,
-            prevLocatedContainer, // use previous naming for RelPos.SAME
-            null, // reset naming for RelPos.NAMED
-            sentenceEnv,
-        );
-        prevLocatedContainer = newResult.lastLocatedContainer;
-        prevContainerID = containerID;
+        {
+            const result = detectTokensByEL(
+                sentenceEnv.el,
+                sentenceEnv,
+            );
+            lawNums.push(...result.value.lawNums);
+            errors.push(...result.errors);
+        }
 
-        pointerRangesList.push(...newResult.result.value.pointerRangesList);
-        lawNums.push(...newResult.result.value.lawNums);
-        errors.push(...newResult.result.errors);
+        {
+            const result = detectPointerRangesForEL(
+                sentenceEnv.el,
+                prevLocatedContainer, // use previous naming for RelPos.SAME
+                null, // reset naming for RelPos.NAMED
+                sentenceEnv,
+                sentenceEnvsStruct,
+            );
+            if (result){
+                pointerRangesList.push(...result.value.pointerRangesList);
+
+                prevLocatedContainer = result.value.lastLocatedContainer;
+                prevContainerID = containerID;
+                errors.push(...result.errors);
+            }
+        }
+
     }
 
     return {

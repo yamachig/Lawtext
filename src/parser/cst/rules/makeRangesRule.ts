@@ -38,6 +38,10 @@ const simpleRangesMaker = <TPointer>(
     };
 };
 
+export const ptnRangesConnectors = ["、", "及び", "及(?!至)", "並びに", "ならびに", "又は", "または", "若しくは", "もしくは"];
+
+const reRangesConnector = new RegExp(`^(${ptnRangesConnectors.join("|")})`); // no $
+
 export const makeRangesRule = <TPointer, TRange = [TPointer, TPointer], TRanges = [TPointer, TPointer][]>(
     lazyPointerRule: () => ValueRule<TPointer>,
     rangeMaker: RangeMaker<TPointer, TRange> = simpleRangeMaker as unknown as RangeMaker<TPointer, TRange>,
@@ -51,20 +55,7 @@ export const makeRangesRule = <TPointer, TRange = [TPointer, TPointer], TRanges 
                     .and(() => $range, "first")
                     .and(r => r
                         .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(r => r.seqEqual("、"))
-                                    .or(r => r.seqEqual("及び"))
-                                    .or(r => r.seqEqual("および"))
-                                    .or(r => r.regExp(/^及(?!至)/))
-                                    .or(r => r.seqEqual("並びに"))
-                                    .or(r => r.seqEqual("ならびに"))
-                                    .or(r => r.seqEqual("又は"))
-                                    .or(r => r.seqEqual("または"))
-                                    .or(r => r.seqEqual("若しくは"))
-                                    .or(r => r.seqEqual("もしくは"))
-                                )
-                            )
+                            .and(r => r.regExp(reRangesConnector))
                             .action(({ text, range }) => ({ text: text(), range: range() }))
                         )
                     , "midText")

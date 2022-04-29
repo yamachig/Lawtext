@@ -1,6 +1,7 @@
 import { EL } from "..";
 import * as std from "../../../law/std";
 import { SentenceChildEL } from "../../cst/inline";
+import { __Parentheses } from "./parentheses";
 
 export enum RelPos {
     PREV = "PREV",
@@ -28,11 +29,11 @@ export type PointerTargetType = (
     | "SupplProvision"
     | "TableStruct"
     | (typeof std.appdxItemTags)[number]
-    | "FIRSTPART"
-    | "LATTERPART"
-    | "PROVISO"
-    | "SUBITEM"
-    | "INFERIOR"
+    | "FIRSTPART" // e.g. "前段"
+    | "LATTERPART" // e.g. "後段"
+    | "PROVISO" // e.g. "ただし書"
+    | "SUBITEM" // Subitem1, Subitem2, Subitem3, ...
+    | "INFERIOR" // e.g. "の規定に基づく命令"
 );
 
 export interface PFOptions {
@@ -151,6 +152,14 @@ export class ____PointerRange extends EL {
     }
     public pointers(): [____Pointer] | [____Pointer, ____Pointer] {
         return this.children.filter(c => c instanceof ____Pointer) as [____Pointer] | [____Pointer, ____Pointer];
+    }
+    public modifierParentheses(): __Parentheses | null {
+        const lastChild = this.children[this.children.length - 1];
+        if (lastChild instanceof __Parentheses) {
+            return lastChild;
+        } else {
+            return null;
+        }
     }
 }
 

@@ -1,21 +1,32 @@
 import { assert } from "chai";
-import { initialEnv } from "../../../parser/cst/env";
+import loadEL from "../../../node/el/loadEL";
+import { initialEnv } from "../env";
+import * as std from "../../../law/std";
+import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
+import { SentenceChildEL } from "../../../node/cst/inline";
+import detectTokens from "../../detectTokens";
+import getSentenceEnvs from "../../getSentenceEnvs";
 import $pointerRanges from "./$pointerRanges";
 
-const env = initialEnv({});
+const env = initialEnv({ target: "" });
 
-describe("Test $pointerRanges", () => {
+describe("Test $pointer", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const target = `\
-第四十六条において同じ。
-`;
+        const origEL = loadEL({
+            tag: "Sentence",
+            attr: {},
+            children: ["第四十六条において同じ。"],
+        }) as std.Sentence;
+        addSentenceChildrenControls(origEL);
+        const sentenceEnvsStruct = getSentenceEnvs(origEL);
+        detectTokens(sentenceEnvsStruct);
+        const input = origEL.children as SentenceChildEL[];
+        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
-        const expectedRendered = `\
-第四十六条
-`.replace(/\r?\n$/g, "");
-        const expectedValue = {
+
+        const expectedPointerRanges = {
             tag: "____PointerRanges",
             attr: {},
             children: [
@@ -44,28 +55,30 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, target, env);
+        const result = $pointerRanges.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.json(true), expectedValue);
+            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
-
-            const text = result.value.value.text();
-            assert.strictEqual(text, expectedRendered);
         }
     });
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const target = `\
-第三十八条の二十九、第三十八条の三十一第四項及び第六項並びに第三十八条の三十八において準用する場合を含む。
-`;
+        const origEL = loadEL({
+            tag: "Sentence",
+            attr: {},
+            children: ["第三十八条の二十九、第三十八条の三十一第四項及び第六項並びに第三十八条の三十八において準用する場合を含む。"],
+        }) as std.Sentence;
+        addSentenceChildrenControls(origEL);
+        const sentenceEnvsStruct = getSentenceEnvs(origEL);
+        detectTokens(sentenceEnvsStruct);
+        const input = origEL.children as SentenceChildEL[];
+        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
-        const expectedRendered = `\
-第三十八条の二十九、第三十八条の三十一第四項及び第六項並びに第三十八条の三十八
-`.replace(/\r?\n$/g, "");
-        const expectedValue = {
+
+        const expectedPointerRanges = {
             tag: "____PointerRanges",
             attr: {},
             children: [
@@ -185,28 +198,30 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, target, env);
+        const result = $pointerRanges.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.json(true), expectedValue);
+            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
-
-            const text = result.value.value.text();
-            assert.strictEqual(text, expectedRendered);
         }
     });
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const target = `\
-次項第三号、第十条第一項、第十二条、第十七条、第十八条、第二十四条の二第四項、第二十七条の十三第二項第九号、第三十八条の二第一項、第七十条の五の二第一項、第七十一条の五、第七十三条第一項ただし書、第三項及び第六項並びに第百二条の十八第一項において同じ。
-`;
+        const origEL = loadEL({
+            tag: "Sentence",
+            attr: {},
+            children: ["次項第三号、第十条第一項、第十二条、第十七条、第十八条、第二十四条の二第四項、第二十七条の十三第二項第九号、第三十八条の二第一項、第七十条の五の二第一項、第七十一条の五、第七十三条第一項ただし書、第三項及び第六項並びに第百二条の十八第一項において同じ。"],
+        }) as std.Sentence;
+        addSentenceChildrenControls(origEL);
+        const sentenceEnvsStruct = getSentenceEnvs(origEL);
+        detectTokens(sentenceEnvsStruct);
+        const input = origEL.children as SentenceChildEL[];
+        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
-        const expectedRendered = `\
-次項第三号、第十条第一項、第十二条、第十七条、第十八条、第二十四条の二第四項、第二十七条の十三第二項第九号、第三十八条の二第一項、第七十条の五の二第一項、第七十一条の五、第七十三条第一項ただし書、第三項及び第六項並びに第百二条の十八第一項
-`.replace(/\r?\n$/g, "");
-        const expectedValue = {
+
+        const expectedPointerRanges = {
             tag: "____PointerRanges",
             attr: {},
             children: [
@@ -684,28 +699,30 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, target, env);
+        const result = $pointerRanges.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.json(true), expectedValue);
+            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
-
-            const text = result.value.value.text();
-            assert.strictEqual(text, expectedRendered);
         }
     });
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const target = `\
-この号、第三十八条の三第一項第二号及び第三十八条の八第二項において
-`;
+        const origEL = loadEL({
+            tag: "Sentence",
+            attr: {},
+            children: ["この号、第三十八条の三第一項第二号及び第三十八条の八第二項において"],
+        }) as std.Sentence;
+        addSentenceChildrenControls(origEL);
+        const sentenceEnvsStruct = getSentenceEnvs(origEL);
+        detectTokens(sentenceEnvsStruct);
+        const input = origEL.children as SentenceChildEL[];
+        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
-        const expectedRendered = `\
-この号、第三十八条の三第一項第二号及び第三十八条の八第二項
-`.replace(/\r?\n$/g, "");
-        const expectedValue = {
+
+        const expectedPointerRanges = {
             tag: "____PointerRanges",
             attr: {},
             children: [
@@ -817,28 +834,30 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, target, env);
+        const result = $pointerRanges.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.json(true), expectedValue);
+            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
-
-            const text = result.value.value.text();
-            assert.strictEqual(text, expectedRendered);
         }
     });
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const target = `\
-第七十一条の三の二第四項第四号イにおいて同じ。
-`;
+        const origEL = loadEL({
+            tag: "Sentence",
+            attr: {},
+            children: ["第七十一条の三の二第四項第四号イにおいて同じ。"],
+        }) as std.Sentence;
+        addSentenceChildrenControls(origEL);
+        const sentenceEnvsStruct = getSentenceEnvs(origEL);
+        detectTokens(sentenceEnvsStruct);
+        const input = origEL.children as SentenceChildEL[];
+        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
-        const expectedRendered = `\
-第七十一条の三の二第四項第四号イ
-`.replace(/\r?\n$/g, "");
-        const expectedValue = {
+
+        const expectedPointerRanges = {
             tag: "____PointerRanges",
             attr: {},
             children: [
@@ -897,28 +916,30 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, target, env);
+        const result = $pointerRanges.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.json(true), expectedValue);
+            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
-
-            const text = result.value.value.text();
-            assert.strictEqual(text, expectedRendered);
         }
     });
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const target = `\
-前項、第三十八条の二の二第一項から第三項まで及び第三十八条の三第一項
-`;
+        const origEL = loadEL({
+            tag: "Sentence",
+            attr: {},
+            children: ["前項、第三十八条の二の二第一項から第三項まで及び第三十八条の三第一項"],
+        }) as std.Sentence;
+        addSentenceChildrenControls(origEL);
+        const sentenceEnvsStruct = getSentenceEnvs(origEL);
+        detectTokens(sentenceEnvsStruct);
+        const input = origEL.children as SentenceChildEL[];
+        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
-        const expectedRendered = `\
-前項、第三十八条の二の二第一項から第三項まで及び第三十八条の三第一項
-`.replace(/\r?\n$/g, "");
-        const expectedValue = {
+
+        const expectedPointerRanges = {
             tag: "____PointerRanges",
             attr: {},
             children: [
@@ -1046,15 +1067,12 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, target, env);
+        const result = $pointerRanges.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.json(true), expectedValue);
+            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
-
-            const text = result.value.value.text();
-            assert.strictEqual(text, expectedRendered);
         }
     });
 });

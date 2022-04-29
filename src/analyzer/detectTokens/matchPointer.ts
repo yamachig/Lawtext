@@ -1,15 +1,15 @@
-import { ____PointerRanges } from "../../node/el/controls/pointer";
+import { ____Pointer } from "../../node/el/controls";
 import { initialEnv } from "../../parser/cst/env";
-import $pointerRanges, { reSuppressPointerRanges } from "../stringParser/rules/$pointerRanges";
+import { $pointer, reSuppressPointerRanges } from "../stringParser/rules/$pointer";
 import { __Text } from "../../node/el/controls";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
 import { SentenceChildEL } from "../../node/cst/inline";
 
-export const matchPointerRanges = (textEL: __Text): (
+export const matchPointer = (textEL: __Text): (
     | WithErrorValue<{
         newItems: SentenceChildEL[],
-        pointerRanges: ____PointerRanges,
+        pointer: ____Pointer,
         proceedOffset: number,
     }>
     | null
@@ -25,14 +25,13 @@ export const matchPointerRanges = (textEL: __Text): (
             continue;
         }
 
-        const result = $pointerRanges.match(
+        const result = $pointer.match(
             textIndex,
             text,
             initialEnv({ baseOffset: textEL.range ? textEL.range[0] : 0 }),
         );
         if (result.ok) {
-            const pointerRanges = result.value.value;
-            errors.push(...result.value.errors);
+            const pointer = result.value;
             const newItems: SentenceChildEL[] = [];
 
             if (textIndex > 0) {
@@ -42,7 +41,7 @@ export const matchPointerRanges = (textEL: __Text): (
                 ));
             }
 
-            newItems.push(pointerRanges);
+            newItems.push(pointer);
 
             if (result.nextOffset < text.length) {
                 newItems.push(new __Text(
@@ -57,7 +56,7 @@ export const matchPointerRanges = (textEL: __Text): (
             return {
                 value: {
                     newItems,
-                    pointerRanges,
+                    pointer,
                     proceedOffset: textIndex > 0 ? 2 : 1,
                 },
                 errors,
@@ -67,4 +66,4 @@ export const matchPointerRanges = (textEL: __Text): (
     return null;
 };
 
-export default matchPointerRanges;
+export default matchPointer;
