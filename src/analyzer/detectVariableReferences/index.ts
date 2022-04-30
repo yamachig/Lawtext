@@ -3,89 +3,103 @@ import * as std from "../../law/std";
 import { Declarations } from "../common/declarations";
 import { ____VarRef } from "../../node/el/controls/varRef";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
-import { __Parentheses, __Text } from "../../node/el/controls";
+import { __Parentheses, __Text, ____Declaration } from "../../node/el/controls";
 import { WithErrorValue } from "../../parser/std/util";
 import { SentenceChildEL } from "../../node/cst/inline";
 import { ErrorMessage } from "../../parser/cst/error";
 import { isSentenceText, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import { isIgnoreAnalysis } from "../common";
 
-export const matchVariableReference = (textEL: __Text, sentenceEnv: SentenceEnv, declarations: Declarations): (
+export const matchVariableReferences = (textEL: __Text, sentenceEnv: SentenceEnv, declarations: Declarations): (
     | WithErrorValue<{
         newItems: SentenceChildEL[],
-        varRef: ____VarRef,
-        proceedOffset: number,
+        varRefs: ____VarRef[],
     }>
     | null
 ) => {
     const errors: ErrorMessage[] = [];
+
+    const found: [[offsetStart: number, offsetEnd: number], ____Declaration][] = [];
+
+    {
+        let ramainingText = textEL.text();
+        for (const declaration of declarations.values()) {
+            for (;;) {
+                const nameOffset = ramainingText.indexOf(declaration.attr.name);
+                if (nameOffset < 0) break;
+                found.push([[nameOffset, nameOffset + declaration.attr.name.length], declaration]);
+                ramainingText = ramainingText.slice(0, nameOffset) + "　".repeat(declaration.attr.name.length) + ramainingText.slice(nameOffset + declaration.attr.name.length);
+            }
+        }
+    }
+
+    if (found.length === 0) return null;
+
+    found.sort(([a], [b]) => ((a[0] - b[0]) || (a[1] - b[1]) ));
+
     const text = textEL.text();
+    const textRange = sentenceEnv.textRageOfEL(textEL);
 
-    for (const declaration of declarations.values()) {
+    const newItems: SentenceChildEL[] = [];
+    const varRefs: ____VarRef[] = [];
+    let lastOffset = 0;
+
+    for (const [offsetRange, declaration] of found) {
         const name = declaration.attr.name;
-        const nameOffset = text.indexOf(name);
 
-        if (nameOffset < 0) continue;
-
-        const newItems: SentenceChildEL[] = [];
-
-        if (nameOffset > 0) {
+        if (lastOffset < offsetRange[0]) {
             newItems.push(new __Text(
-                text.substring(0, nameOffset),
-                textEL.range && [textEL.range[0], textEL.range[0] + nameOffset],
+                text.substring(lastOffset, offsetRange[0]),
+                textEL.range && [textEL.range[0] + lastOffset, textEL.range[0] + offsetRange[0]],
             ));
         }
-
-        const textRange = sentenceEnv.textRageOfEL(textEL);
 
         const refSentenceTextRange: SentenceTextRange = {
             start: {
                 sentenceIndex: sentenceEnv.index,
-                textOffset: (textRange?.[0] ?? Number.NaN) + nameOffset,
+                textOffset: (textRange?.[0] ?? Number.NaN) + offsetRange[0],
             },
             end: {
                 sentenceIndex: sentenceEnv.index,
-                textOffset: (textRange?.[0] ?? Number.NaN) + nameOffset + name.length,
+                textOffset: (textRange?.[0] ?? Number.NaN) + offsetRange[1],
             },
         };
 
         const range = (textEL.range) ? [
-            textEL.range[0] + nameOffset,
-            textEL.range[0] + nameOffset + name.length,
+            textEL.range[0] + offsetRange[0],
+            textEL.range[0] + offsetRange[1],
         ] as [number, number] : null;
 
         const varRef = new ____VarRef({
             refName: name,
             declarationID: declaration.attr.declarationID,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             refSentenceTextRange,
             range,
         });
         newItems.push(varRef);
+        varRefs.push(varRef);
 
-        if (nameOffset + name.length < text.length) {
-            newItems.push(new __Text(
-                text.substring(nameOffset + name.length),
-                textEL.range && [
-                    textEL.range[0] + nameOffset + name.length,
-                    textEL.range[1],
-                ],
-            ));
-        }
-
-        return {
-            value: {
-                newItems,
-                varRef,
-                proceedOffset: nameOffset > 0 ? 1 : 2,
-            },
-            errors,
-        };
+        lastOffset = offsetRange[1];
 
     }
 
-    return null;
+    if (lastOffset < text.length) {
+        newItems.push(new __Text(
+            text.substring(lastOffset),
+            textEL.range && [
+                textEL.range[0] + lastOffset,
+                textEL.range[1],
+            ],
+        ));
+    }
+
+    return {
+        value: {
+            newItems,
+            varRefs,
+        },
+        errors,
+    };
 
 };
 
@@ -123,10 +137,9 @@ export const detectVariableReferencesOfEL = (elToBeModified: std.StdEL | std.__E
             });
 
             {
-                // match before pointerRanges
-                const match = matchVariableReference(child, sentenceEnv, filteredDeclarations);
+                const match = matchVariableReferences(child, sentenceEnv, filteredDeclarations);
                 if (match) {
-                    varRefs.push(match.value.varRef);
+                    varRefs.push(...match.value.varRefs);
                     errors.push(...match.errors);
 
                     elToBeModified.children.splice(
@@ -135,7 +148,7 @@ export const detectVariableReferencesOfEL = (elToBeModified: std.StdEL | std.__E
                         ...match.value.newItems,
                     );
 
-                    childIndex += match.value.proceedOffset - 1;
+                    childIndex += match.value.newItems.length - 1;
                     continue;
                 }
             }

@@ -73,15 +73,17 @@ describe("Test detectVariableReferences", () => {
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations);
 
-        // console.log(JSON.stringify(declarations.values().map(r => r.json(true)), null, 2));
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarations.values().map(r => r.json(true)),
+            declarationsList.map(r => r.json(true)),
             expectedDeclarations,
         );
 
-        // console.log(JSON.stringify(result.value.varRefs.map(r => r.json(true)), null, 2));
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.varRefs.map(r => r.json(true)),
+            varRefs.map(r => r.json(true)),
             expected,
         );
 
@@ -164,15 +166,17 @@ describe("Test detectVariableReferences", () => {
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations);
 
-        // console.log(JSON.stringify(declarations.values().map(r => r.json(true)), null, 2));
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarations.values().map(r => r.json(true)),
+            declarationsList.map(r => r.json(true)),
             expectedDeclarations,
         );
 
-        // console.log(JSON.stringify(result.value.varRefs.map(r => r.json(true)), null, 2));
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.varRefs.map(r => r.json(true)),
+            varRefs.map(r => r.json(true)),
             expected,
         );
 
@@ -235,15 +239,17 @@ describe("Test detectVariableReferences", () => {
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations);
 
-        // console.log(JSON.stringify(declarations.values().map(r => r.json(true)), null, 2));
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarations.values().map(r => r.json(true)),
+            declarationsList.map(r => r.json(true)),
             expectedDeclarations,
         );
 
-        // console.log(JSON.stringify(result.value.varRefs.map(r => r.json(true)), null, 2));
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.varRefs.map(r => r.json(true)),
+            varRefs.map(r => r.json(true)),
             expected,
         );
 
@@ -372,15 +378,623 @@ describe("Test detectVariableReferences", () => {
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations);
 
-        // console.log(JSON.stringify(declarations.values().map(r => r.json(true)), null, 2));
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarations.values().map(r => r.json(true)),
+            declarationsList.map(r => r.json(true)),
             expectedDeclarations,
         );
 
-        // console.log(JSON.stringify(result.value.varRefs.map(r => r.json(true)), null, 2));
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.varRefs.map(r => r.json(true)),
+            varRefs.map(r => r.json(true)),
+            expected,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （目的等）
+第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
+２　処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。
+
+  （定義）
+第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+  一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
+  二　処分　行政庁の処分その他公権力の行使に当たる行為をいう。
+  三　申請　法令に基づき、行政庁の許可、認可、免許その他の自己に対し何らかの利益を付与する処分（以下「許認可等」という。）を求める行為であって、当該行為に対して行政庁が諾否の応答をすべきこととされているものをいう。
+  四　不利益処分　行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。
+    イ　事実上の行為及び事実上の行為をするに当たりその範囲、時期等を明らかにするために法令上必要とされている手続としての処分
+    ロ　申請により求められた許認可等を拒否する処分その他申請に基づき当該申請をした者を名あて人としてされる処分
+    ハ　名あて人となるべき者の同意の下にすることとされている処分
+    ニ　許認可等の効力を失わせる処分であって、当該許認可等の基礎となった事実が消滅した旨の届出があったことを理由としてされるもの
+  五　行政機関　次に掲げる機関をいう。
+    イ　法律の規定に基づき内閣に置かれる機関若しくは内閣の所轄の下に置かれる機関、宮内庁、内閣府設置法（平成十一年法律第八十九号）第四十九条第一項若しくは第二項に規定する機関、国家行政組織法（昭和二十三年法律第百二十号）第三条第二項に規定する機関、会計検査院若しくはこれらに置かれる機関又はこれらの機関の職員であって法律上独立に権限を行使することを認められた職員
+    ロ　地方公共団体の機関（議会を除く。）
+  六　行政指導　行政機関がその任務又は所掌事務の範囲内において一定の行政目的を実現するため特定の者に一定の作為又は不作為を求める指導、勧告、助言その他の行為であって処分に該当しないものをいう。
+  七　届出　行政庁に対し一定の事項の通知をする行為（申請に該当するものを除く。）であって、法令により直接に当該通知が義務付けられているもの（自己の期待する一定の法律上の効果を発生させるためには当該通知をすべきこととされているものを含む。）をいう。
+  八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+    イ　法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則
+    ロ　審査基準（申請により求められた許認可等をするかどうかをその法令の定めに従って判断するために必要とされる基準をいう。以下同じ。）
+    ハ　処分基準（不利益処分をするかどうか又はどのような不利益処分とするかについてその法令の定めに従って判断するために必要とされる基準をいう。以下同じ。）
+    ニ　行政指導指針（同一の行政目的を実現するため一定の条件に該当する複数の者に対し行政指導をしようとするときにこれらの行政指導に共通してその内容となるべき事項をいう。以下同じ。）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        void detectTokensResult;
+        const declarations = new Declarations();
+        for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
+            // console.log(JSON.stringify(declaration.json(true), null, 2));
+            declarations.add(declaration);
+        }
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_3-text_0_2",
+                    type: "Keyword",
+                    name: "法令",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":2}}",
+                    value: "法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。",
+                },
+                children: ["法令"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_4-text_48_50",
+                    type: "Keyword",
+                    name: "規則",
+                    scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":48},\"end\":{\"sentenceIndex\":4,\"textOffset\":50}}",
+                },
+                children: ["規則"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_5-text_0_2",
+                    type: "Keyword",
+                    name: "処分",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":5,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":2}}",
+                    value: "行政庁の処分その他公権力の行使に当たる行為をいう。",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_7-text_0_2",
+                    type: "Keyword",
+                    name: "申請",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":7,\"textOffset\":0},\"end\":{\"sentenceIndex\":7,\"textOffset\":2}}",
+                    value: "法令に基づき、行政庁の許可、認可、免許その他の自己に対し何らかの利益を付与する処分（以下「許認可等」という。）を求める行為であって、当該行為に対して行政庁が諾否の応答をすべきこととされているものをいう。",
+                },
+                children: ["申請"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_8-text_45_49",
+                    type: "Keyword",
+                    name: "許認可等",
+                    scope: "[{\"start\":{\"sentenceIndex\":8,\"textOffset\":50},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":8,\"textOffset\":45},\"end\":{\"sentenceIndex\":8,\"textOffset\":49}}",
+                },
+                children: ["許認可等"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_9-text_0_5",
+                    type: "Keyword",
+                    name: "不利益処分",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":9,\"textOffset\":0},\"end\":{\"sentenceIndex\":9,\"textOffset\":5}}",
+                    value: "行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。",
+                },
+                children: ["不利益処分"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_16-text_0_4",
+                    type: "Keyword",
+                    name: "行政機関",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":16,\"textOffset\":0},\"end\":{\"sentenceIndex\":16,\"textOffset\":4}}",
+                    value: "次に掲げる機関をいう。",
+                },
+                children: ["行政機関"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_18-text_41_47",
+                    type: "LawName",
+                    name: "内閣府設置法",
+                    scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":60},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":41},\"end\":{\"sentenceIndex\":18,\"textOffset\":47}}",
+                    value: "平成十一年法律第八十九号",
+                },
+                children: ["内閣府設置法"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_18-text_84_91",
+                    type: "LawName",
+                    name: "国家行政組織法",
+                    scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":105},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":84},\"end\":{\"sentenceIndex\":18,\"textOffset\":91}}",
+                    value: "昭和二十三年法律第百二十号",
+                },
+                children: ["国家行政組織法"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_20-text_0_4",
+                    type: "Keyword",
+                    name: "行政指導",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":20,\"textOffset\":0},\"end\":{\"sentenceIndex\":20,\"textOffset\":4}}",
+                    value: "行政機関がその任務又は所掌事務の範囲内において一定の行政目的を実現するため特定の者に一定の作為又は不作為を求める指導、勧告、助言その他の行為であって処分に該当しないものをいう。",
+                },
+                children: ["行政指導"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_22-text_0_2",
+                    type: "Keyword",
+                    name: "届出",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":22,\"textOffset\":0},\"end\":{\"sentenceIndex\":22,\"textOffset\":2}}",
+                    value: "行政庁に対し一定の事項の通知をする行為（申請に該当するものを除く。）であって、法令により直接に当該通知が義務付けられているもの（自己の期待する一定の法律上の効果を発生させるためには当該通知をすべきこととされているものを含む。）をいう。",
+                },
+                children: ["届出"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_24-text_0_3",
+                    type: "Keyword",
+                    name: "命令等",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":24,\"textOffset\":0},\"end\":{\"sentenceIndex\":24,\"textOffset\":3}}",
+                    value: "内閣又は行政機関が定める次に掲げるものをいう。",
+                },
+                children: ["命令等"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_26-text_36_38",
+                    type: "Keyword",
+                    name: "命令",
+                    scope: "[]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":26,\"textOffset\":36},\"end\":{\"sentenceIndex\":26,\"textOffset\":38}}",
+                },
+                children: ["命令"],
+            },
+        ];
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":6},\"end\":{\"sentenceIndex\":0,\"textOffset\":8}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "行政指導",
+                    declarationID: "decl-sentence_20-text_0_4",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":9},\"end\":{\"sentenceIndex\":0,\"textOffset\":13}}",
+                },
+                children: ["行政指導"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "届出",
+                    declarationID: "decl-sentence_22-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":15},\"end\":{\"sentenceIndex\":0,\"textOffset\":17}}",
+                },
+                children: ["届出"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "命令等",
+                    declarationID: "decl-sentence_24-text_0_3",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":26},\"end\":{\"sentenceIndex\":0,\"textOffset\":29}}",
+                },
+                children: ["命令等"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":2}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "行政指導",
+                    declarationID: "decl-sentence_20-text_0_4",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":3},\"end\":{\"sentenceIndex\":1,\"textOffset\":7}}",
+                },
+                children: ["行政指導"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "届出",
+                    declarationID: "decl-sentence_22-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":9},\"end\":{\"sentenceIndex\":1,\"textOffset\":11}}",
+                },
+                children: ["届出"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "命令等",
+                    declarationID: "decl-sentence_24-text_0_3",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":20},\"end\":{\"sentenceIndex\":1,\"textOffset\":23}}",
+                },
+                children: ["命令等"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":6,\"textOffset\":4},\"end\":{\"sentenceIndex\":6,\"textOffset\":6}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "法令",
+                    declarationID: "decl-sentence_3-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":8,\"textOffset\":0},\"end\":{\"sentenceIndex\":8,\"textOffset\":2}}",
+                },
+                children: ["法令"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":8,\"textOffset\":39},\"end\":{\"sentenceIndex\":8,\"textOffset\":41}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "法令",
+                    declarationID: "decl-sentence_3-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":10,\"textOffset\":5},\"end\":{\"sentenceIndex\":10,\"textOffset\":7}}",
+                },
+                children: ["法令"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":10,\"textOffset\":49},\"end\":{\"sentenceIndex\":10,\"textOffset\":51}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "法令",
+                    declarationID: "decl-sentence_3-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":12,\"textOffset\":39},\"end\":{\"sentenceIndex\":12,\"textOffset\":41}}",
+                },
+                children: ["法令"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":12,\"textOffset\":56},\"end\":{\"sentenceIndex\":12,\"textOffset\":58}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "申請",
+                    declarationID: "decl-sentence_7-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":13,\"textOffset\":0},\"end\":{\"sentenceIndex\":13,\"textOffset\":2}}",
+                },
+                children: ["申請"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "許認可等",
+                    declarationID: "decl-sentence_8-text_45_49",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":13,\"textOffset\":10},\"end\":{\"sentenceIndex\":13,\"textOffset\":14}}",
+                },
+                children: ["許認可等"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":13,\"textOffset\":19},\"end\":{\"sentenceIndex\":13,\"textOffset\":21}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "申請",
+                    declarationID: "decl-sentence_7-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":13,\"textOffset\":24},\"end\":{\"sentenceIndex\":13,\"textOffset\":26}}",
+                },
+                children: ["申請"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "申請",
+                    declarationID: "decl-sentence_7-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":13,\"textOffset\":32},\"end\":{\"sentenceIndex\":13,\"textOffset\":34}}",
+                },
+                children: ["申請"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":13,\"textOffset\":49},\"end\":{\"sentenceIndex\":13,\"textOffset\":51}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":14,\"textOffset\":26},\"end\":{\"sentenceIndex\":14,\"textOffset\":28}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "許認可等",
+                    declarationID: "decl-sentence_8-text_45_49",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":15,\"textOffset\":0},\"end\":{\"sentenceIndex\":15,\"textOffset\":4}}",
+                },
+                children: ["許認可等"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":15,\"textOffset\":12},\"end\":{\"sentenceIndex\":15,\"textOffset\":14}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "許認可等",
+                    declarationID: "decl-sentence_8-text_45_49",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":15,\"textOffset\":21},\"end\":{\"sentenceIndex\":15,\"textOffset\":25}}",
+                },
+                children: ["許認可等"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "届出",
+                    declarationID: "decl-sentence_22-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":15,\"textOffset\":41},\"end\":{\"sentenceIndex\":15,\"textOffset\":43}}",
+                },
+                children: ["届出"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "行政機関",
+                    declarationID: "decl-sentence_16-text_0_4",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":21,\"textOffset\":0},\"end\":{\"sentenceIndex\":21,\"textOffset\":4}}",
+                },
+                children: ["行政機関"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":21,\"textOffset\":74},\"end\":{\"sentenceIndex\":21,\"textOffset\":76}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "申請",
+                    declarationID: "decl-sentence_7-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":23,\"textOffset\":20},\"end\":{\"sentenceIndex\":23,\"textOffset\":22}}",
+                },
+                children: ["申請"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "法令",
+                    declarationID: "decl-sentence_3-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":23,\"textOffset\":39},\"end\":{\"sentenceIndex\":23,\"textOffset\":41}}",
+                },
+                children: ["法令"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "行政機関",
+                    declarationID: "decl-sentence_16-text_0_4",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":25,\"textOffset\":4},\"end\":{\"sentenceIndex\":25,\"textOffset\":8}}",
+                },
+                children: ["行政機関"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":26,\"textOffset\":9},\"end\":{\"sentenceIndex\":26,\"textOffset\":11}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "規則",
+                    declarationID: "decl-sentence_4-text_48_50",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":26,\"textOffset\":46},\"end\":{\"sentenceIndex\":26,\"textOffset\":48}}",
+                },
+                children: ["規則"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "申請",
+                    declarationID: "decl-sentence_7-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":27,\"textOffset\":5},\"end\":{\"sentenceIndex\":27,\"textOffset\":7}}",
+                },
+                children: ["申請"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "許認可等",
+                    declarationID: "decl-sentence_8-text_45_49",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":27,\"textOffset\":15},\"end\":{\"sentenceIndex\":27,\"textOffset\":19}}",
+                },
+                children: ["許認可等"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "法令",
+                    declarationID: "decl-sentence_3-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":27,\"textOffset\":29},\"end\":{\"sentenceIndex\":27,\"textOffset\":31}}",
+                },
+                children: ["法令"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "処分",
+                    declarationID: "decl-sentence_5-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":0},\"end\":{\"sentenceIndex\":28,\"textOffset\":2}}",
+                },
+                children: ["処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "不利益処分",
+                    declarationID: "decl-sentence_9-text_0_5",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":5},\"end\":{\"sentenceIndex\":28,\"textOffset\":10}}",
+                },
+                children: ["不利益処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "不利益処分",
+                    declarationID: "decl-sentence_9-text_0_5",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":24},\"end\":{\"sentenceIndex\":28,\"textOffset\":29}}",
+                },
+                children: ["不利益処分"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "法令",
+                    declarationID: "decl-sentence_3-text_0_2",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":39},\"end\":{\"sentenceIndex\":28,\"textOffset\":41}}",
+                },
+                children: ["法令"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "行政指導",
+                    declarationID: "decl-sentence_20-text_0_4",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":29,\"textOffset\":0},\"end\":{\"sentenceIndex\":29,\"textOffset\":4}}",
+                },
+                children: ["行政指導"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "行政指導",
+                    declarationID: "decl-sentence_20-text_0_4",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":29,\"textOffset\":38},\"end\":{\"sentenceIndex\":29,\"textOffset\":42}}",
+                },
+                children: ["行政指導"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "行政指導",
+                    declarationID: "decl-sentence_20-text_0_4",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":29,\"textOffset\":56},\"end\":{\"sentenceIndex\":29,\"textOffset\":60}}",
+                },
+                children: ["行政指導"],
+            },
+        ];
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            varRefs.map(r => r.json(true)),
             expected,
         );
 
