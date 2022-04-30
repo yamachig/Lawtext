@@ -65,8 +65,8 @@ export const processNameInline = (
                 errors.push(new ErrorMessage(
                     "No scope found",
                     [
-                        { offset: pointerRanges?.range?.[0] ?? 0, line: 0, column: 0 },
-                        { offset: pointerRanges?.range?.[1] ?? 0, line: 0, column: 0 },
+                        pointerRanges?.range?.[0] ?? 0,
+                        pointerRanges?.range?.[1] ?? 0,
                     ],
                 ));
             }

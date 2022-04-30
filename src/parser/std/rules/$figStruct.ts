@@ -89,7 +89,7 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
 
 export const $fig: WithErrorRule<std.Fig> = factory
     .withName("fig")
-    .oneMatch(({ item, newErrorMessage }) => {
+    .oneMatch(({ item }) => {
         if (
             item.type === LineType.OTH
             && item.line.type === LineType.OTH
@@ -105,7 +105,7 @@ export const $fig: WithErrorRule<std.Fig> = factory
             const errors: ErrorMessage[] = [];
             const fig = item.line.sentencesArray[0].sentences[0].children[0].children[0].copy(false) as std.Fig;
             if (!("src" in fig.attr)) {
-                errors.push(newErrorMessage(
+                errors.push(new ErrorMessage(
                     "$figStruct: Figタグ に src 属性が設定されていません。",
                     item.virtualRange,
                 ));

@@ -1,6 +1,6 @@
 import { wrapSingle } from "../../util/term";
 
-const sliceLinesWithNumbers = (
+export const sliceLinesWithNumbers = (
     allLines: string[],
     start: {offset: number, line: number, column: number},
     end: {offset: number, line: number, column: number},
@@ -33,19 +33,15 @@ const sliceLinesWithNumbers = (
 export class ErrorMessage {
     public constructor(
         public message: string,
-        // public range: [start: number, end: number],
-        public location: [
-            start:{offset: number, line: number, column: number},
-            end:{offset: number, line: number, column: number},
-        ],
+        public range: [start: number, end: number],
     ) {}
 
-    public toString(
-        allLines: string[],
-        maxWidth = 70,
-    ): string {
-        return `\
-Error: ${this.message}
-${sliceLinesWithNumbers(allLines, ...this.location, maxWidth)}`;
-    }
+//     public toString(
+//         allLines: string[],
+//         maxWidth = 70,
+//     ): string {
+//         return `\
+// Error: ${this.message}
+// ${sliceLinesWithNumbers(allLines, ...this.range, maxWidth)}`;
+//     }
 }

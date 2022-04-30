@@ -100,7 +100,7 @@ export const makeIndentBlockWithCaptureRule = <TValue>(
                 )
             , "childrenAndErrors")
             .andOmit(() => $optBNK_DEDENT)
-            .action(({ childrenAndErrors, newErrorMessage }) => {
+            .action(({ childrenAndErrors }) => {
                 // const err = childrenAndErrors.filter(c => !c.success);
                 // if (err.length > 5) {
                 //     console.log(JSON.stringify(err.slice(0, 5), null, 2));
@@ -119,7 +119,7 @@ export const makeIndentBlockWithCaptureRule = <TValue>(
                         children.push(success);
                     }
                     if (errorLines.length > 0) {
-                        errors.push(newErrorMessage(
+                        errors.push(new ErrorMessage(
                             `${ruleName}: この部分をパースできませんでした。`,
                             [
                                 errorLines[0].virtualRange[0],
@@ -195,7 +195,7 @@ export const makeDoubleIndentBlockWithCaptureRule = <TValue>(
                 )
             , "errors2")
             .andOmit(() => $optBNK_DEDENT)
-            .action(({ childrenAndErrors1, errors2, newErrorMessage }) => {
+            .action(({ childrenAndErrors1, errors2 }) => {
                 const childrenAndErrors = [...childrenAndErrors1, ...errors2];
                 for ( let i = 0; i < childrenAndErrors.length; i += 1 ) {
                     while (!childrenAndErrors[i].success && i + 1 < childrenAndErrors.length && !childrenAndErrors[i + 1].success) {
@@ -210,7 +210,7 @@ export const makeDoubleIndentBlockWithCaptureRule = <TValue>(
                         children.push(success);
                     }
                     if (errorLines.length > 0) {
-                        errors.push(newErrorMessage(
+                        errors.push(new ErrorMessage(
                             `${ruleName}: この部分をパースできませんでした。`,
                             [
                                 errorLines[0].virtualRange[0],

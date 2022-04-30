@@ -40,7 +40,7 @@ const renderAndParse = async (lawNum: string) => {
 
     const origEL = xmlToEL(origXML);
 
-    let lawtext;
+    let lawtext: string;
     try {
         lawtext = renderLawtext(origEL);
     } catch (e) {
@@ -69,11 +69,10 @@ const renderAndParse = async (lawNum: string) => {
             "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
         ];
         errors = result.errors.filter(e => !ignoreErrorMessages.includes(e.message));
-        const allLines = lawtext.split("\n");
         chai.assert(
             errors.length === 0,
             `\
-${errors.slice(0, 7).map(e => e.toString(allLines)).join("\n\n")}
+${errors.slice(0, 7).map(e => lawtext.slice(...e.range)).join("\n\n")}
 ${errors.length > 7 ? "\n... more errors ..." : ""}
 `);
         if (parsedEL === undefined) return;

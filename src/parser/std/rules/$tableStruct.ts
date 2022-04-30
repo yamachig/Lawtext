@@ -229,7 +229,7 @@ const $table: WithErrorRule<std.Table> = factory
                 )
             )
         , "tableColumnLines")
-        .action(({ tableColumnLines, newErrorMessage }) => {
+        .action(({ tableColumnLines }) => {
             const tableRows: (std.TableRow | std.TableHeaderRow)[] = [];
             const errors: ErrorMessage[] = [];
             for (const [tableColumnLine, tableColumnChildrenBlock] of tableColumnLines) {
@@ -305,13 +305,13 @@ const $table: WithErrorRule<std.Table> = factory
                     );
 
                     if (tableRowOrNull === null) {
-                        errors.push(newErrorMessage(
+                        errors.push(new ErrorMessage(
                             "table: No first column indicator",
                             tableColumnLine.line.firstColumnIndicatorRange ?? tableColumnLine.virtualRange,
                         ));
                         tableRows.push(tableRow);
                     } else if (isTableHeaderRow(tableRowOrNull) !== (tableColumnLine.line.columnIndicator === "*")) {
-                        errors.push(newErrorMessage(
+                        errors.push(new ErrorMessage(
                             "table: Column indicator mismatch",
                             tableColumnLine.line.columnIndicatorRange ?? tableColumnLine.virtualRange,
                         ));

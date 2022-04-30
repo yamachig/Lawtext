@@ -551,13 +551,13 @@ export const $requireControlParagraphItem: WithErrorRule<std.ParagraphItem> = fa
     .withName("$paragraphItem")
     .sequence(s => s
         .and(() => $autoParagraphItem, "autoParagraphItem")
-        .action(({ autoParagraphItem, newErrorMessage }) => {
+        .action(({ autoParagraphItem }) => {
             let defautTag: (typeof std.paragraphItemTags)[number];
             const errors: ErrorMessage[] = [];
             errors.push(...autoParagraphItem.errors);
             if (autoParagraphItem.value.tag === "__AutoParagraphItem") {
                 defautTag = "Paragraph";
-                errors.push(newErrorMessage(
+                errors.push(new ErrorMessage(
                     "$requireControlParagraphItem: 制御記号（\":paragraph:\" や \"#\" など）が必要です。",
                     autoParagraphItem.value.range ?? [0, 0],
                 ));

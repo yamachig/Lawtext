@@ -780,33 +780,11 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
         const expectedErrors: ErrorMessage[] = [
             {
                 message: "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
-                location: [
-                    {
-                        offset: 4,
-                        line: 1,
-                        column: 5,
-                    },
-                    {
-                        offset: 5,
-                        line: 1,
-                        column: 6,
-                    },
-                ],
+                range: [4, 5],
             },
             {
                 message: "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
-                location: [
-                    {
-                        offset: 5,
-                        line: 1,
-                        column: 6,
-                    },
-                    {
-                        offset: 6,
-                        line: 1,
-                        column: 7,
-                    },
-                ],
+                range: [5, 6],
             },
         ];
 

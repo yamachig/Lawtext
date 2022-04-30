@@ -1,5 +1,4 @@
-import { MatchFail, MatchContext, BasePos, BaseEnv, getMemorizedStringOffsetToPos, StringPos } from "generic-parser/lib/core";
-import { ErrorMessage } from "../cst/error";
+import { MatchFail, MatchContext, BasePos, BaseEnv } from "generic-parser/lib/core";
 import { VirtualLine } from "./virtualLine";
 
 export interface Env extends BaseEnv<VirtualLine[], BasePos> {
@@ -7,8 +6,6 @@ export interface Env extends BaseEnv<VirtualLine[], BasePos> {
         maxOffsetMatchFail: MatchFail | null;
         maxOffsetMatchContext: MatchContext | null;
     };
-    newErrorMessage: (message: string, range: [start: number, end: number]) => ErrorMessage;
-    stringOffsetToPos: (target: string, offset: number) => StringPos;
 }
 
 export interface InitialEnvOptions {
@@ -18,26 +15,9 @@ export interface InitialEnvOptions {
 }
 
 export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
-    const { target, options = {}, baseOffset = 0 } = initialEnvOptions;
+    const { options = {}, baseOffset = 0 } = initialEnvOptions;
     const registerCurrentRangeTarget = () => { /**/ };
     const offsetToPos = (_: VirtualLine[], offset: number) => ({ offset });
-    const stringOffsetToPos = getMemorizedStringOffsetToPos();
-
-    // const onMatchFail = (matchFail: MatchFail, matchContext: MatchContext) => {
-    //     if (state.maxOffsetMatchFail === null || matchFail.offset > state.maxOffsetMatchFail.offset) {
-    //         state.maxOffsetMatchFail = matchFail;
-    //         state.maxOffsetMatchContext = matchContext;
-    //     }
-    // };
-
-    const newErrorMessage = (message: string, range: [start:number, end:number]) =>
-        new ErrorMessage(
-            message,
-            [
-                stringOffsetToPos(target, range[0]),
-                stringOffsetToPos(target, range[1]),
-            ]
-        );
 
     const state = {
         maxOffsetMatchFail: null as null | MatchFail,
@@ -54,8 +34,6 @@ export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
         offsetToPos,
         // onMatchFail,
         state,
-        newErrorMessage,
-        stringOffsetToPos,
         baseOffset,
     };
 };

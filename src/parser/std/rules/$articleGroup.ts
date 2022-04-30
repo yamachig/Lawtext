@@ -141,14 +141,14 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
                 )
             )
         , "childrenAndErrors")
-        .action(({ headLine, childrenAndErrors, newErrorMessage }) => {
+        .action(({ headLine, childrenAndErrors }) => {
 
             const children: (Diff<std.ArticleGroup, std.Part> | std.Article)[] = [];
             const errors: ErrorMessage[] = [];
 
             for (const child of childrenAndErrors) {
                 if (Array.isArray(child)) {
-                    errors.push(newErrorMessage(
+                    errors.push(new ErrorMessage(
                         "$articleGroup: この部分をパースできませんでした。",
                         [
                             child[0].virtualRange[0],

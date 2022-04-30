@@ -51,10 +51,7 @@ export const testLawtextToStd = <
         const range = markerPositions.slice(i * 2, i * 2 + 2);
         return {
             message,
-            location: [
-                env.stringOffsetToPos(lawtext, range[0]),
-                env.stringOffsetToPos(lawtext, range[1]),
-            ],
+            range,
         };
     });
 
