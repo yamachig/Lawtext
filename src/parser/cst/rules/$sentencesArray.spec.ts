@@ -118,22 +118,12 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["スピリッツ"]
+                                children: ["スピリッツとされていたもののうち、新酒税法の規定により果実酒又は"]
                             },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["とされていたもののうち、新酒税法の規定により果実酒又は"]
-                            },
-                            {
-                                tag: "__Text",
-                                attr: {},
-                                children: ["ブランデー"]
-                            },
-                            {
-                                tag: "__Text",
-                                attr: {},
-                                children: ["として分類される酒類につき旧酒税法の規定により製造免許等を受けていた者は、平成三十年四月一日に、新酒税法の規定により果実酒"]
+                                children: ["ブランデーとして分類される酒類につき旧酒税法の規定により製造免許等を受けていた者は、平成三十年四月一日に、新酒税法の規定により果実酒"]
                             },
                             {
                                 tag: "__Parentheses",
@@ -177,8 +167,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                                                         attr: {
                                                                             relPos: "NAMED",
                                                                             targetType: "Article",
-                                                                            name: "第三条",
-                                                                            num: "3"
+                                                                            name: "第三条"
                                                                         },
                                                                         children: ["第三条"]
                                                                     },
@@ -187,8 +176,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                                                         attr: {
                                                                             relPos: "NAMED",
                                                                             targetType: "Item",
-                                                                            name: "第十三号",
-                                                                            num: "13"
+                                                                            name: "第十三号"
                                                                         },
                                                                         children: ["第十三号"]
                                                                     },
@@ -197,8 +185,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                                                         attr: {
                                                                             relPos: "NAMED",
                                                                             targetType: "SUBITEM",
-                                                                            name: "ホ",
-                                                                            num: "5"
+                                                                            name: "ホ"
                                                                         },
                                                                         children: ["ホ"]
                                                                     }
@@ -280,8 +267,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                                                         attr: {
                                                                             relPos: "NAMED",
                                                                             targetType: "Item",
-                                                                            name: "第十六号",
-                                                                            num: "16"
+                                                                            name: "第十六号"
                                                                         },
                                                                         children: ["第十六号"]
                                                                     }
@@ -299,12 +285,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["ブランデー"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["のうち、旧酒税法"]
+                                                children: ["ブランデーのうち、旧酒税法"]
                                             },
                                             {
                                                 tag: "____PointerRanges",
@@ -323,8 +304,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                                                         attr: {
                                                                             relPos: "NAMED",
                                                                             targetType: "Article",
-                                                                            name: "第三条",
-                                                                            num: "3"
+                                                                            name: "第三条"
                                                                         },
                                                                         children: ["第三条"]
                                                                     },
@@ -333,8 +313,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                                                         attr: {
                                                                             relPos: "NAMED",
                                                                             targetType: "Item",
-                                                                            name: "第二十号",
-                                                                            num: "20"
+                                                                            name: "第二十号"
                                                                         },
                                                                         children: ["第二十号"]
                                                                     }
@@ -352,12 +331,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["スピリッツ"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["に該当するものに限る。"]
+                                                children: ["スピリッツに該当するものに限る。"]
                                             }
                                         ]
                                     },

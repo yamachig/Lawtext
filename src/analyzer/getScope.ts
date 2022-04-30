@@ -5,6 +5,7 @@ import { getContainerType } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import * as std from "../law/std";
 import { __Parentheses } from "../node/el/controls";
+import { parseNamedNum } from "../law/num";
 
 type LocatedPointerInfo = [fragment: ____PF, container: Container | Container[]][];
 
@@ -209,6 +210,10 @@ const locatePointer = (
 } => {
 
     const origFragments = origPointer.fragments();
+    for (const fragment of origFragments) {
+        const num = parseNamedNum(fragment.attr.name);
+        if (num) fragment.attr.num = num;
+    }
     const _headContainer = locateContainerOfHeadFragment(
         origFragments[0],
         prevLocatedContainerForSame,

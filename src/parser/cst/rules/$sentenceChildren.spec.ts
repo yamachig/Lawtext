@@ -137,8 +137,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                                                         attr: {
                                                                             relPos: "NAMED",
                                                                             targetType: "Article",
-                                                                            name: "第三条",
-                                                                            num: "3"
+                                                                            name: "第三条"
                                                                         },
                                                                         children: ["第三条"]
                                                                     },
@@ -147,8 +146,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                                                         attr: {
                                                                             relPos: "NAMED",
                                                                             targetType: "Item",
-                                                                            name: "第十二号",
-                                                                            num: "12"
+                                                                            name: "第十二号"
                                                                         },
                                                                         children: ["第十二号"]
                                                                     }
@@ -166,22 +164,12 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["・シングルキャリア"]
+                                                children: ["・シングルキャリア周波数分割多元接続方式広帯域移動無線"]
                                             },
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["周波数分割多元接続方式広帯域移動無線"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["アクセスシステム"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["のうち、"]
+                                                children: ["アクセスシステムのうち、"]
                                             },
                                             {
                                                 tag: "____PointerRanges",
@@ -218,12 +206,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["シングルキャリア"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["周波数分割多元接続方式と他の接続方式を組み合わせた接続方式を用いることが可能なものを使用するものに限る。"]
+                                                children: ["シングルキャリア周波数分割多元接続方式と他の接続方式を組み合わせた接続方式を用いることが可能なものを使用するものに限る。"]
                                             }
                                         ]
                                     },
@@ -576,8 +559,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                         attr: {
                                             relPos: "NAMED",
                                             targetType: "Article",
-                                            name: "第四十六条",
-                                            num: "46"
+                                            name: "第四十六条"
                                         },
                                         children: ["第四十六条"]
                                     }
@@ -755,12 +737,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
             {
                 tag: "__Text",
                 attr: {},
-                children: ["タイヤ"],
-            },
-            {
-                tag: "__Text",
-                attr: {},
-                children: ["をいう。"],
+                children: ["タイヤをいう。"],
             },
         ];
         const expectedErrors: ErrorMessage[] = [];

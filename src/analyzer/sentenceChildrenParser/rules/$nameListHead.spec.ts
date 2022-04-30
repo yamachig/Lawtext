@@ -297,8 +297,7 @@ describe("Test $nameListHead", () => {
                                                                     attr: {
                                                                         relPos: "NAMED",
                                                                         targetType: "Paragraph",
-                                                                        name: "第一項",
-                                                                        num: "1"
+                                                                        name: "第一項"
                                                                     },
                                                                     children: ["第一項"]
                                                                 }
@@ -344,8 +343,7 @@ describe("Test $nameListHead", () => {
                                                                     attr: {
                                                                         relPos: "NAMED",
                                                                         targetType: "Paragraph",
-                                                                        name: "第七項",
-                                                                        num: "7"
+                                                                        name: "第七項"
                                                                     },
                                                                     children: ["第七項"]
                                                                 }
@@ -509,8 +507,7 @@ describe("Test $nameListHead", () => {
                                                                     attr: {
                                                                         relPos: "NAMED",
                                                                         targetType: "Article",
-                                                                        name: "第二条の三十五",
-                                                                        num: "2_35"
+                                                                        name: "第二条の三十五"
                                                                     },
                                                                     children: ["第二条の三十五"]
                                                                 }
@@ -621,8 +618,7 @@ describe("Test $nameListHead", () => {
                                                                     attr: {
                                                                         relPos: "NAMED",
                                                                         targetType: "Article",
-                                                                        name: "第二条の三十五",
-                                                                        num: "2_35"
+                                                                        name: "第二条の三十五"
                                                                     },
                                                                     children: ["第二条の三十五"]
                                                                 }

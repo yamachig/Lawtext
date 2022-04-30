@@ -84,8 +84,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第二十六条",
-                                                            num: "26"
+                                                            name: "第二十六条"
                                                         },
                                                         children: ["第二十六条"]
                                                     }
@@ -111,8 +110,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第四十五条",
-                                                            num: "45"
+                                                            name: "第四十五条"
                                                         },
                                                         children: ["第四十五条"]
                                                     }
@@ -138,8 +136,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第四十六条の五",
-                                                            num: "46_5"
+                                                            name: "第四十六条の五"
                                                         },
                                                         children: ["第四十六条の五"]
                                                     }
@@ -253,8 +250,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第二十六条",
-                                                            num: "26"
+                                                            name: "第二十六条"
                                                         },
                                                         children: ["第二十六条"]
                                                     }
@@ -280,8 +276,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第四十五条",
-                                                            num: "45"
+                                                            name: "第四十五条"
                                                         },
                                                         children: ["第四十五条"]
                                                     }
@@ -307,8 +302,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第四十六条の五",
-                                                            num: "46_5"
+                                                            name: "第四十六条の五"
                                                         },
                                                         children: ["第四十六条の五"]
                                                     }
@@ -423,8 +417,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第十九条",
-                                                            num: "19"
+                                                            name: "第十九条"
                                                         },
                                                         children: ["第十九条"]
                                                     }
@@ -450,8 +443,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第二十一条",
-                                                            num: "21"
+                                                            name: "第二十一条"
                                                         },
                                                         children: ["第二十一条"]
                                                     }
@@ -566,8 +558,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第十九条",
-                                                            num: "19"
+                                                            name: "第十九条"
                                                         },
                                                         children: ["第十九条"]
                                                     }
@@ -593,8 +584,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第二十一条",
-                                                            num: "21"
+                                                            name: "第二十一条"
                                                         },
                                                         children: ["第二十一条"]
                                                     }
@@ -708,8 +698,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第十四条",
-                                                            num: "14"
+                                                            name: "第十四条"
                                                         },
                                                         children: ["第十四条"]
                                                     }
@@ -822,8 +811,7 @@ describe("Test $supplProvisionAppdxItemHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第十四条",
-                                                            num: "14"
+                                                            name: "第十四条"
                                                         },
                                                         children: ["第十四条"]
                                                     }

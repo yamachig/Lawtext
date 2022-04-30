@@ -30,7 +30,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第四十六条",
-                                        num: "46",
                                     },
                                     children: ["第四十六条"],
                                 },
@@ -74,7 +73,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第三十八条の二十九",
-                                        num: "38_29",
                                     },
                                     children: ["第三十八条の二十九"],
                                 },
@@ -101,7 +99,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第三十八条の三十一",
-                                        num: "38_31",
                                     },
                                     children: ["第三十八条の三十一"],
                                 },
@@ -111,7 +108,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第四項",
-                                        num: "4",
                                     },
                                     children: ["第四項"],
                                 },
@@ -138,7 +134,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第六項",
-                                        num: "6",
                                     },
                                     children: ["第六項"],
                                 },
@@ -165,7 +160,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第三十八条の三十八",
-                                        num: "38_38",
                                     },
                                     children: ["第三十八条の三十八"],
                                 },
@@ -218,7 +212,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Item",
                                         name: "第三号",
-                                        num: "3",
                                     },
                                     children: ["第三号"],
                                 },
@@ -245,7 +238,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第十条",
-                                        num: "10",
                                     },
                                     children: ["第十条"],
                                 },
@@ -255,7 +247,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第一項",
-                                        num: "1",
                                     },
                                     children: ["第一項"],
                                 },
@@ -282,7 +273,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第十二条",
-                                        num: "12",
                                     },
                                     children: ["第十二条"],
                                 },
@@ -309,7 +299,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第十七条",
-                                        num: "17",
                                     },
                                     children: ["第十七条"],
                                 },
@@ -336,7 +325,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第十八条",
-                                        num: "18",
                                     },
                                     children: ["第十八条"],
                                 },
@@ -363,7 +351,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第二十四条の二",
-                                        num: "24_2",
                                     },
                                     children: ["第二十四条の二"],
                                 },
@@ -373,7 +360,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第四項",
-                                        num: "4",
                                     },
                                     children: ["第四項"],
                                 },
@@ -400,7 +386,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第二十七条の十三",
-                                        num: "27_13",
                                     },
                                     children: ["第二十七条の十三"],
                                 },
@@ -410,7 +395,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第二項",
-                                        num: "2",
                                     },
                                     children: ["第二項"],
                                 },
@@ -420,7 +404,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Item",
                                         name: "第九号",
-                                        num: "9",
                                     },
                                     children: ["第九号"],
                                 },
@@ -447,7 +430,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第三十八条の二",
-                                        num: "38_2",
                                     },
                                     children: ["第三十八条の二"],
                                 },
@@ -457,7 +439,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第一項",
-                                        num: "1",
                                     },
                                     children: ["第一項"],
                                 },
@@ -484,7 +465,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第七十条の五の二",
-                                        num: "70_5_2",
                                     },
                                     children: ["第七十条の五の二"],
                                 },
@@ -494,7 +474,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第一項",
-                                        num: "1",
                                     },
                                     children: ["第一項"],
                                 },
@@ -521,7 +500,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第七十一条の五",
-                                        num: "71_5",
                                     },
                                     children: ["第七十一条の五"],
                                 },
@@ -548,7 +526,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第七十三条",
-                                        num: "73",
                                     },
                                     children: ["第七十三条"],
                                 },
@@ -558,7 +535,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第一項",
-                                        num: "1",
                                     },
                                     children: ["第一項"],
                                 },
@@ -594,7 +570,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第三項",
-                                        num: "3",
                                     },
                                     children: ["第三項"],
                                 },
@@ -621,7 +596,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第六項",
-                                        num: "6",
                                     },
                                     children: ["第六項"],
                                 },
@@ -648,7 +622,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第百二条の十八",
-                                        num: "102_18",
                                     },
                                     children: ["第百二条の十八"],
                                 },
@@ -658,7 +631,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第一項",
-                                        num: "1",
                                     },
                                     children: ["第一項"],
                                 },
@@ -728,7 +700,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第三十八条の三",
-                                        num: "38_3",
                                     },
                                     children: ["第三十八条の三"],
                                 },
@@ -738,7 +709,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第一項",
-                                        num: "1",
                                     },
                                     children: ["第一項"],
                                 },
@@ -748,7 +718,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Item",
                                         name: "第二号",
-                                        num: "2",
                                     },
                                     children: ["第二号"],
                                 },
@@ -775,7 +744,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第三十八条の八",
-                                        num: "38_8",
                                     },
                                     children: ["第三十八条の八"],
                                 },
@@ -785,7 +753,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第二項",
-                                        num: "2",
                                     },
                                     children: ["第二項"],
                                 },
@@ -829,7 +796,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第七十一条の三の二",
-                                        num: "71_3_2",
                                     },
                                     children: ["第七十一条の三の二"],
                                 },
@@ -839,7 +805,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第四項",
-                                        num: "4",
                                     },
                                     children: ["第四項"],
                                 },
@@ -849,7 +814,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Item",
                                         name: "第四号",
-                                        num: "4",
                                     },
                                     children: ["第四号"],
                                 },
@@ -859,7 +823,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "SUBITEM",
                                         name: "イ",
-                                        num: "1",
                                     },
                                     children: ["イ"],
                                 },
@@ -929,7 +892,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第三十八条の二の二",
-                                        num: "38_2_2",
                                     },
                                     children: ["第三十八条の二の二"],
                                 },
@@ -939,7 +901,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第一項",
-                                        num: "1",
                                     },
                                     children: ["第一項"],
                                 },
@@ -960,7 +921,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第三項",
-                                        num: "3",
                                     },
                                     children: ["第三項"],
                                 },
@@ -992,7 +952,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Article",
                                         name: "第三十八条の三",
-                                        num: "38_3",
                                     },
                                     children: ["第三十八条の三"],
                                 },
@@ -1002,7 +961,6 @@ describe("Test $pointerRanges", () => {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
                                         name: "第一項",
-                                        num: "1",
                                     },
                                     children: ["第一項"],
                                 },
@@ -1045,8 +1003,7 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Article",
-                                        name: "第七十五条",
-                                        num: "75"
+                                        name: "第七十五条"
                                     },
                                     children: ["第七十五条"]
                                 },
@@ -1055,8 +1012,7 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
-                                        name: "第一項",
-                                        num: "1"
+                                        name: "第一項"
                                     },
                                     children: ["第一項"]
                                 }
@@ -1082,8 +1038,7 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Article",
-                                        name: "第七十六条",
-                                        num: "76"
+                                        name: "第七十六条"
                                     },
                                     children: ["第七十六条"]
                                 },
@@ -1092,8 +1047,7 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
-                                        name: "第四項",
-                                        num: "4"
+                                        name: "第四項"
                                     },
                                     children: ["第四項"]
                                 }
@@ -1136,8 +1090,7 @@ describe("Test $pointerRanges", () => {
                                                                     attr: {
                                                                         relPos: "NAMED",
                                                                         targetType: "Item",
-                                                                        name: "第四号",
-                                                                        num: "4"
+                                                                        name: "第四号"
                                                                     },
                                                                     children: ["第四号"]
                                                                 }
@@ -1183,8 +1136,7 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
-                                        name: "第五項",
-                                        num: "5"
+                                        name: "第五項"
                                     },
                                     children: ["第五項"]
                                 }
@@ -1227,8 +1179,7 @@ describe("Test $pointerRanges", () => {
                                                                     attr: {
                                                                         relPos: "NAMED",
                                                                         targetType: "Item",
-                                                                        name: "第五号",
-                                                                        num: "5"
+                                                                        name: "第五号"
                                                                     },
                                                                     children: ["第五号"]
                                                                 }

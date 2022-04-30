@@ -88,8 +88,7 @@ describe("Test $tableColumnLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Paragraph",
-                                                            name: "第一項",
-                                                            num: "1"
+                                                            name: "第一項"
                                                         },
                                                         children: ["第一項"]
                                                     }

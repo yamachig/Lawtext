@@ -47,8 +47,7 @@ describe("Test $nameInline", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
-                                        name: "第二項",
-                                        num: "2"
+                                        name: "第二項"
                                     },
                                     children: ["第二項"],
                                 }

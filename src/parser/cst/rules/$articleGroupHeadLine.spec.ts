@@ -110,8 +110,7 @@ describe("Test $articleGroupHeadLine", () => {
                                                         attr: {
                                                             relPos: "NAMED",
                                                             targetType: "Article",
-                                                            name: "第三十六条の三",
-                                                            num: "36_3"
+                                                            name: "第三十六条の三"
                                                         },
                                                         children: ["第三十六条の三"]
                                                     }

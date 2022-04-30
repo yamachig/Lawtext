@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { articleGroupType, parseKanjiNum, parseNamedNum } from "../../../law/num";
+import { articleGroupType, parseKanjiNum } from "../../../law/num";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import { RelPos, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
 import { ErrorMessage } from "../error";
@@ -346,7 +346,7 @@ export const $anyWherePointerFragment = factory
                     relPos: RelPos.NAMED,
                     targetType: articleGroupType[type_char],
                     name: text(),
-                    num: parseNamedNum(text()),
+                    // num: parseNamedNum(text()),
                     range: range(),
                 });
             })
@@ -366,7 +366,7 @@ export const $anyWherePointerFragment = factory
                     relPos: RelPos.NAMED,
                     targetType: "SUBITEM",
                     name: text(),
-                    num: parseNamedNum(text()),
+                    // num: parseNamedNum(text()),
                     range: range(),
                 });
             })
