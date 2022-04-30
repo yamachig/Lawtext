@@ -88,12 +88,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["当該伝送路設備を用いる携帯電話又はＢＷＡ"]
-                            },
-                            {
-                                tag: "__Text",
-                                attr: {},
-                                children: ["アクセスサービス"]
+                                children: ["当該伝送路設備を用いる携帯電話又はＢＷＡアクセスサービス"]
                             },
                             {
                                 tag: "__Parentheses",
@@ -159,17 +154,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["に規定する時分割・直交周波数分割多元接続方式又は時分割"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["・シングルキャリア周波数分割多元接続方式広帯域移動無線"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["アクセスシステムのうち、"]
+                                                children: ["に規定する時分割・直交周波数分割多元接続方式又は時分割・シングルキャリア周波数分割多元接続方式広帯域移動無線アクセスシステムのうち、"]
                                             },
                                             {
                                                 tag: "____PointerRanges",
@@ -201,12 +186,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["に規定する"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["シングルキャリア周波数分割多元接続方式と他の接続方式を組み合わせた接続方式を用いることが可能なものを使用するものに限る。"]
+                                                children: ["に規定するシングルキャリア周波数分割多元接続方式と他の接続方式を組み合わせた接続方式を用いることが可能なものを使用するものに限る。"]
                                             }
                                         ]
                                     },
@@ -247,12 +227,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["通信"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["モジュール"]
+                                                children: ["通信モジュール"]
                                             },
                                             {
                                                 tag: "__Parentheses",
@@ -732,12 +707,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
             {
                 tag: "__Text",
                 attr: {},
-                children: ["その他これに類する物をその接地部に固定した"],
-            },
-            {
-                tag: "__Text",
-                attr: {},
-                children: ["タイヤをいう。"],
+                children: ["その他これに類する物をその接地部に固定したタイヤをいう。"],
             },
         ];
         const expectedErrors: ErrorMessage[] = [];

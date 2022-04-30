@@ -122,18 +122,11 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
             .sequence(c => c
                 .and(r => r
                     .oneOrMore(r => r
-                        .sequence(c => c
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $inlineToken)
-                                    .or(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/))
-                                    .or(() => ANY_PARENTHESES_INLINE)
-                                    .or(() => $MISMATCH_END_PARENTHESIS),
-                                )
-                            , "target")
-                            .action(({ target }) => {
-                                return target;
-                            })
+                        .choice(c => c
+                            .or(() => $inlineToken)
+                            .or(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/))
+                            .or(() => ANY_PARENTHESES_INLINE)
+                            .or(() => $MISMATCH_END_PARENTHESIS),
                         )
                     )
                 , "texts")
@@ -159,9 +152,10 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                                 value.push(new __Text(t, [lastOffset, lastOffset += t.length]));
                                 lastOffset += t.length;
                             }
-                        } else if (lastEL instanceof __Text && t instanceof __Text) {
-                            lastEL.children.splice(0, 1, lastEL.children[0] + t.children[0]);
-                            if (lastEL.range) lastEL.range[1] += t.children[0].length;
+                        } else if (lastEL instanceof __Text && t.value instanceof __Text) {
+                            lastEL.children.splice(0, 1, lastEL.children[0] + t.value.children[0]);
+                            if (lastEL.range) lastEL.range[1] += t.value.children[0].length;
+                            errors.push(...t.errors);
                         } else {
                             lastOffset = t.value.range?.[1] ?? lastOffset;
                             value.push(t.value);
@@ -240,9 +234,10 @@ export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<
                         value.push(new __Text(t, [lastOffset, lastOffset += t.length]));
                         lastOffset += t.length;
                     }
-                } else if (lastEL instanceof __Text && t instanceof __Text) {
-                    lastEL.children.splice(0, 1, lastEL.children[0] + t.children[0]);
-                    if (lastEL.range) lastEL.range[1] += t.children[0].length;
+                } else if (lastEL instanceof __Text && t.value instanceof __Text) {
+                    lastEL.children.splice(0, 1, lastEL.children[0] + t.value.children[0]);
+                    if (lastEL.range) lastEL.range[1] += t.value.children[0].length;
+                    errors.push(...t.errors);
                 } else {
                     lastOffset = t.value.range?.[1] ?? lastOffset;
                     value.push(t.value);
@@ -387,9 +382,10 @@ export const makeParenthesesInline = (
                                         value.push(new __Text(t, [lastOffset, lastOffset += t.length]));
                                         lastOffset += t.length;
                                     }
-                                } else if (lastEL instanceof __Text && t instanceof __Text) {
-                                    lastEL.children.splice(0, 1, lastEL.children[0] + t.children[0]);
-                                    if (lastEL.range) lastEL.range[1] += t.children[0].length;
+                                } else if (lastEL instanceof __Text && t.value instanceof __Text) {
+                                    lastEL.children.splice(0, 1, lastEL.children[0] + t.value.children[0]);
+                                    if (lastEL.range) lastEL.range[1] += t.value.children[0].length;
+                                    errors.push(...t.errors);
                                 } else {
                                     lastOffset = t.value.range?.[1] ?? lastOffset;
                                     value.push(t.value);

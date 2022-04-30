@@ -2009,12 +2009,7 @@ describe("Test detectDeclarations", () => {
                                                                         {
                                                                             tag: "__Text",
                                                                             attr: {},
-                                                                            children: ["とは、三百万"],
-                                                                        },
-                                                                        {
-                                                                            tag: "__Text",
-                                                                            attr: {},
-                                                                            children: ["メガヘルツ以下の周波数の電磁波をいう。"],
+                                                                            children: ["とは、三百万メガヘルツ以下の周波数の電磁波をいう。"],
                                                                         },
                                                                     ],
                                                                 },

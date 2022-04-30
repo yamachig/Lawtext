@@ -113,17 +113,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["旧酒税法の規定により甘味果実酒又は"]
-                            },
-                            {
-                                tag: "__Text",
-                                attr: {},
-                                children: ["スピリッツとされていたもののうち、新酒税法の規定により果実酒又は"]
-                            },
-                            {
-                                tag: "__Text",
-                                attr: {},
-                                children: ["ブランデーとして分類される酒類につき旧酒税法の規定により製造免許等を受けていた者は、平成三十年四月一日に、新酒税法の規定により果実酒"]
+                                children: ["旧酒税法の規定により甘味果実酒又はスピリッツとされていたもののうち、新酒税法の規定により果実酒又はブランデーとして分類される酒類につき旧酒税法の規定により製造免許等を受けていた者は、平成三十年四月一日に、新酒税法の規定により果実酒"]
                             },
                             {
                                 tag: "__Parentheses",
@@ -214,12 +204,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["又は"]
-                            },
-                            {
-                                tag: "__Text",
-                                attr: {},
-                                children: ["ブランデー"]
+                                children: ["又はブランデー"]
                             },
                             {
                                 tag: "__Parentheses",
@@ -280,12 +265,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["に規定する"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["ブランデーのうち、旧酒税法"]
+                                                children: ["に規定するブランデーのうち、旧酒税法"]
                                             },
                                             {
                                                 tag: "____PointerRanges",
@@ -326,12 +306,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["に規定する"]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["スピリッツに該当するものに限る。"]
+                                                children: ["に規定するスピリッツに該当するものに限る。"]
                                             }
                                         ]
                                     },
