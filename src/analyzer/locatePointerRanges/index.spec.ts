@@ -1783,29 +1783,29 @@ describe("Test locatePointerRanges", () => {
 
         const expectedPointerRangesList: JsonEL[] = [
             {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=27_5]-Paragraph[1][num=1]-Item[3][num=3]\"]",
                 },
-                "children": [
+                children: [
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Item",
-                                            "name": "第三号",
-                                            "num": "3",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=27_5]-Paragraph[1][num=1]\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Item",
+                                            name: "第三号",
+                                            num: "3",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=27_5]-Paragraph[1][num=1]-Item[3][num=3]\"]",
                                         },
-                                        "children": ["第三号"],
+                                        children: ["第三号"],
                                     },
                                 ],
                             },
@@ -1847,28 +1847,28 @@ describe("Test locatePointerRanges", () => {
 
         const expectedPointerRangesList: JsonEL[] = [
             {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
                 },
-                "children": [
+                children: [
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "HERE",
-                                            "targetType": "Paragraph",
-                                            "name": "この項",
-                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "HERE",
+                                            targetType: "Paragraph",
+                                            name: "この項",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
                                         },
-                                        "children": ["この項"],
+                                        children: ["この項"],
                                     },
                                 ],
                             },
@@ -1877,57 +1877,57 @@ describe("Test locatePointerRanges", () => {
                 ],
             },
             {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[3][num=3]\"]",
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[3][num=3]\"]",
                 },
-                "children": [
+                children: [
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Item",
-                                            "name": "第二号",
-                                            "num": "2",
-                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Item",
+                                            name: "第二号",
+                                            num: "2",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
                                         },
-                                        "children": ["第二号"],
+                                        children: ["第二号"],
                                     },
                                 ],
                             },
                         ],
                     },
                     {
-                        "tag": "__Text",
-                        "attr": {},
-                        "children": ["及び"],
+                        tag: "__Text",
+                        attr: {},
+                        children: ["及び"],
                     },
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Item",
-                                            "name": "第三号",
-                                            "num": "3",
-                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[3][num=3]\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Item",
+                                            name: "第三号",
+                                            num: "3",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[3][num=3]\"]",
                                         },
-                                        "children": ["第三号"],
+                                        children: ["第三号"],
                                     },
                                 ],
                             },
@@ -1971,28 +1971,28 @@ describe("Test locatePointerRanges", () => {
 
         const expectedPointerRangesList: JsonEL[] = [
             {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[1][num=1]\"]",
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[1][num=1]\"]",
                 },
-                "children": [
+                children: [
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "PREV",
-                                            "targetType": "Paragraph",
-                                            "name": "前項",
-                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[1][num=1]\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "PREV",
+                                            targetType: "Paragraph",
+                                            name: "前項",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[1][num=1]\"]",
                                         },
-                                        "children": ["前項"],
+                                        children: ["前項"],
                                     },
                                 ],
                             },
@@ -2001,40 +2001,40 @@ describe("Test locatePointerRanges", () => {
                 ],
             },
             {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"]",
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"]",
                 },
-                "children": [
+                children: [
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Article",
-                                            "name": "第二十四条の二",
-                                            "num": "24_2",
-                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第二十四条の二",
+                                            num: "24_2",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]\"]",
                                         },
-                                        "children": ["第二十四条の二"],
+                                        children: ["第二十四条の二"],
                                     },
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Paragraph",
-                                            "name": "第二項",
-                                            "num": "2",
-                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第二項",
+                                            num: "2",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"]",
                                         },
-                                        "children": ["第二項"],
+                                        children: ["第二項"],
                                     },
                                 ],
                             },
@@ -2043,29 +2043,29 @@ describe("Test locatePointerRanges", () => {
                 ],
             },
             {
-                "tag": "____PointerRanges",
-                "attr": {
-                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
                 },
-                "children": [
+                children: [
                     {
-                        "tag": "____PointerRange",
-                        "attr": {},
-                        "children": [
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
                             {
-                                "tag": "____Pointer",
-                                "attr": {},
-                                "children": [
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
                                     {
-                                        "tag": "____PF",
-                                        "attr": {
-                                            "relPos": "NAMED",
-                                            "targetType": "Item",
-                                            "name": "第二号",
-                                            "num": "2",
-                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Item",
+                                            name: "第二号",
+                                            num: "2",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
                                         },
-                                        "children": ["第二号"],
+                                        children: ["第二号"],
                                     },
                                 ],
                             },

@@ -190,8 +190,8 @@ const locateContainerOfHeadFragment = (
                 );
                 return (
                     (getContainerType(head.attr.targetType) === ContainerType.ARTICLES)
-                        ? currentContainer.findAncestorChildren(func)
-                        : currentContainer.findAncestorChildrenSub(func)
+                        ? (currentContainer.children.find(func) ?? currentContainer.findAncestorChildren(func))
+                        : (currentContainer.subChildren.find(func) ?? currentContainer.findAncestorChildrenSub(func))
                 );
             }
         }
