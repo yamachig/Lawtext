@@ -201,10 +201,10 @@ export const getParsedLaw = async (lawtext: string): Promise<{
         const parsedXML = parsedEL.outerXML(false);
         requiredms.set("parsedELToXML", lap.lapms());
 
-        const allLines = lawtext.split("\n");
+        // const allLines = lawtext.split("\n");
         const filteredParsedErrors = parsedErrors.filter(e => !ignoreErrorMessages.includes(e.message));
         let errorText = filteredParsedErrors.length > 0
-            ? filteredParsedErrors.slice(0, 7).map(e => e.toString(allLines)).join("\n\n")
+            ? filteredParsedErrors.slice(0, 7).map(e => lawtext.slice(...e.range)).join("\n\n")
             : null;
         if (filteredParsedErrors.length > 7) {
             errorText = (errorText ?? "") + `\n\n... ${filteredParsedErrors.length - 7} more errors ...`;
