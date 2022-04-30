@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { articleGroupType, parseKanjiNum } from "../../../law/num";
+import { articleGroupType, irohaChars, parseKanjiNum } from "../../../law/num";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import { RelPos, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
 import { ErrorMessage } from "../error";
@@ -45,6 +45,7 @@ const makeRanges: RangesMaker<____PointerRange, ____PointerRanges> = (first, mid
 
 
 export const reSuppressPointerRanges = /^[ァ-ヿ]{2,}/;
+export const pointerRangesCandidateChars = `${irohaChars}明大昭平令第前次こ本同付附iIｉＩvVｖＶxXｘＸ`;
 
 
 export const { $ranges: $pointerRanges, $range: $pointerRange } = makeRangesRule(
