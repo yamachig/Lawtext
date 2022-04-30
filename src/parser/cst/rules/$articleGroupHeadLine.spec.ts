@@ -71,44 +71,75 @@ describe("Test $articleGroupHeadLine", () => {
             {
                 tag: "__Text",
                 attr: {},
-                children: ["第四章の二　処分等の求め"],
+                children: ["第四章の二　処分等の求め"]
             },
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
                             {
-                                tag: "__Text",
+                                tag: "____PointerRanges",
                                 attr: {},
-                                children: ["第三十六条の三"],
-                            },
-                        ],
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第三十六条の三",
+                                                            num: "36_3"
+                                                        },
+                                                        children: ["第三十六条の三"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
-        ];
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
+        ]
+          ;
         const result = $articleGroupHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
+            // console.log(JSON.stringify(result.value.value.title.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedInline);
         }
     });

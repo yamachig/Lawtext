@@ -1,31 +1,15 @@
 import { assert } from "chai";
-import loadEL from "../../../node/el/loadEL";
 import { initialEnv } from "../env";
-import * as std from "../../../law/std";
-import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
-import { SentenceChildEL } from "../../../node/cst/inline";
-import { detectTokensByEL } from "../../detectTokens";
-import getSentenceEnvs from "../../getSentenceEnvs";
 import $pointerRanges from "./$pointerRanges";
-import { SentenceEnv } from "../../../node/container/sentenceEnv";
 
-const env = initialEnv({ target: "" });
+const env = initialEnv({});
 
 describe("Test $pointerRanges", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const origEL = loadEL({
-            tag: "Sentence",
-            attr: {},
-            children: ["第四十六条において同じ。"],
-        }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
-        detectTokensByEL(origEL, sentenceEnv);
-        const input = origEL.children as SentenceChildEL[];
-        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
+        const offset = 0;
+        const target = "第四十六条において同じ。";
         const expectedErrorMessages: string[] = [];
 
         const expectedPointerRanges = {
@@ -57,10 +41,10 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, input, env);
+        const result = $pointerRanges.abstract().match(offset, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
             assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
@@ -68,17 +52,8 @@ describe("Test $pointerRanges", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const origEL = loadEL({
-            tag: "Sentence",
-            attr: {},
-            children: ["第三十八条の二十九、第三十八条の三十一第四項及び第六項並びに第三十八条の三十八において準用する場合を含む。"],
-        }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
-        detectTokensByEL(origEL, sentenceEnv);
-        const input = origEL.children as SentenceChildEL[];
-        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
+        const offset = 0;
+        const target = "第三十八条の二十九、第三十八条の三十一第四項及び第六項並びに第三十八条の三十八において準用する場合を含む。";
         const expectedErrorMessages: string[] = [];
 
         const expectedPointerRanges = {
@@ -201,10 +176,10 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, input, env);
+        const result = $pointerRanges.abstract().match(offset, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
             assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
@@ -212,17 +187,8 @@ describe("Test $pointerRanges", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const origEL = loadEL({
-            tag: "Sentence",
-            attr: {},
-            children: ["次項第三号、第十条第一項、第十二条、第十七条、第十八条、第二十四条の二第四項、第二十七条の十三第二項第九号、第三十八条の二第一項、第七十条の五の二第一項、第七十一条の五、第七十三条第一項ただし書、第三項及び第六項並びに第百二条の十八第一項において同じ。"],
-        }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
-        detectTokensByEL(origEL, sentenceEnv);
-        const input = origEL.children as SentenceChildEL[];
-        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
+        const offset = 0;
+        const target = "次項第三号、第十条第一項、第十二条、第十七条、第十八条、第二十四条の二第四項、第二十七条の十三第二項第九号、第三十八条の二第一項、第七十条の五の二第一項、第七十一条の五、第七十三条第一項ただし書、第三項及び第六項並びに第百二条の十八第一項において同じ。";
         const expectedErrorMessages: string[] = [];
 
         const expectedPointerRanges = {
@@ -703,10 +669,10 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, input, env);
+        const result = $pointerRanges.abstract().match(offset, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
             assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
@@ -714,17 +680,8 @@ describe("Test $pointerRanges", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const origEL = loadEL({
-            tag: "Sentence",
-            attr: {},
-            children: ["この号、第三十八条の三第一項第二号及び第三十八条の八第二項において"],
-        }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
-        detectTokensByEL(origEL, sentenceEnv);
-        const input = origEL.children as SentenceChildEL[];
-        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
+        const offset = 0;
+        const target = "この号、第三十八条の三第一項第二号及び第三十八条の八第二項において";
         const expectedErrorMessages: string[] = [];
 
         const expectedPointerRanges = {
@@ -839,10 +796,10 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, input, env);
+        const result = $pointerRanges.abstract().match(offset, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
             assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
@@ -850,17 +807,8 @@ describe("Test $pointerRanges", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const origEL = loadEL({
-            tag: "Sentence",
-            attr: {},
-            children: ["第七十一条の三の二第四項第四号イにおいて同じ。"],
-        }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
-        detectTokensByEL(origEL, sentenceEnv);
-        const input = origEL.children as SentenceChildEL[];
-        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
+        const offset = 0;
+        const target = "第七十一条の三の二第四項第四号イにおいて同じ。";
         const expectedErrorMessages: string[] = [];
 
         const expectedPointerRanges = {
@@ -922,10 +870,10 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, input, env);
+        const result = $pointerRanges.abstract().match(offset, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
             assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
@@ -933,17 +881,8 @@ describe("Test $pointerRanges", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
-        const origEL = loadEL({
-            tag: "Sentence",
-            attr: {},
-            children: ["前項、第三十八条の二の二第一項から第三項まで及び第三十八条の三第一項"],
-        }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        const sentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(origEL) as SentenceEnv;
-        detectTokensByEL(origEL, sentenceEnv);
-        const input = origEL.children as SentenceChildEL[];
-        console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
+        const offset = 0;
+        const target = "前項、第三十八条の二の二第一項から第三項まで及び第三十八条の三第一項";
         const expectedErrorMessages: string[] = [];
 
         const expectedPointerRanges = {
@@ -1074,10 +1013,335 @@ describe("Test $pointerRanges", () => {
             ],
         };
 
-        const result = $pointerRanges.abstract().match(0, input, env);
+        const result = $pointerRanges.abstract().match(offset, target, env);
         assert.isTrue(result.ok);
         if (result.ok) {
-            // console.log(JSON.stringify(result.value.value.pointerRanges?.json(true), undefined, 2));
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
+            assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = "第七十五条第一項又は第七十六条第四項（第四号を除く。）若しくは第五項（第五号を除く。）の規定により無線局の免許の取消しを受け、その取消しの日から二年を経過しない者";
+        const expectedErrorMessages: string[] = [];
+
+        const expectedPointerRanges = {
+            tag: "____PointerRanges",
+            attr: {},
+            children: [
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "Article",
+                                        name: "第七十五条",
+                                        num: "75"
+                                    },
+                                    children: ["第七十五条"]
+                                },
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "Paragraph",
+                                        name: "第一項",
+                                        num: "1"
+                                    },
+                                    children: ["第一項"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "__Text",
+                    attr: {},
+                    children: ["又は"]
+                },
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "Article",
+                                        name: "第七十六条",
+                                        num: "76"
+                                    },
+                                    children: ["第七十六条"]
+                                },
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "Paragraph",
+                                        name: "第四項",
+                                        num: "4"
+                                    },
+                                    children: ["第四項"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "__Parentheses",
+                            attr: {
+                                type: "round",
+                                depth: "1"
+                            },
+                            children: [
+                                {
+                                    tag: "__PStart",
+                                    attr: {
+                                        type: "round"
+                                    },
+                                    children: ["（"]
+                                },
+                                {
+                                    tag: "__PContent",
+                                    attr: {
+                                        type: "round"
+                                    },
+                                    children: [
+                                        {
+                                            tag: "____PointerRanges",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "____PointerRange",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____Pointer",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "____PF",
+                                                                    attr: {
+                                                                        relPos: "NAMED",
+                                                                        targetType: "Item",
+                                                                        name: "第四号",
+                                                                        num: "4"
+                                                                    },
+                                                                    children: ["第四号"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["を除く。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "__PEnd",
+                                    attr: {
+                                        type: "round"
+                                    },
+                                    children: ["）"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "__Text",
+                    attr: {},
+                    children: ["若しくは"]
+                },
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "Paragraph",
+                                        name: "第五項",
+                                        num: "5"
+                                    },
+                                    children: ["第五項"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "__Parentheses",
+                            attr: {
+                                type: "round",
+                                depth: "1"
+                            },
+                            children: [
+                                {
+                                    tag: "__PStart",
+                                    attr: {
+                                        type: "round"
+                                    },
+                                    children: ["（"]
+                                },
+                                {
+                                    tag: "__PContent",
+                                    attr: {
+                                        type: "round"
+                                    },
+                                    children: [
+                                        {
+                                            tag: "____PointerRanges",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "____PointerRange",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____Pointer",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "____PF",
+                                                                    attr: {
+                                                                        relPos: "NAMED",
+                                                                        targetType: "Item",
+                                                                        name: "第五号",
+                                                                        num: "5"
+                                                                    },
+                                                                    children: ["第五号"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["を除く。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "__PEnd",
+                                    attr: {
+                                        type: "round"
+                                    },
+                                    children: ["）"]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+
+        const result = $pointerRanges.abstract().match(offset, target, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
+            assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = "この法律又はこの法律に基づく命令の規定による書類等の提出";
+        const expectedErrorMessages: string[] = [];
+
+        const expectedPointerRanges = {
+            tag: "____PointerRanges",
+            attr: {},
+            children: [
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "HERE",
+                                        targetType: "Law",
+                                        name: "この法律"
+                                    },
+                                    children: ["この法律"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "__Text",
+                    attr: {},
+                    children: ["又は"]
+                },
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "HERE",
+                                        targetType: "Law",
+                                        name: "この法律"
+                                    },
+                                    children: ["この法律"]
+                                },
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "INFERIOR",
+                                        name: "に基づく命令"
+                                    },
+                                    children: ["に基づく命令"]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const result = $pointerRanges.abstract().match(offset, target, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
             assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }

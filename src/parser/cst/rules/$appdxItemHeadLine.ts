@@ -1,5 +1,5 @@
 import factory from "../factory";
-import $sentenceChildren from "./$sentenceChildren";
+import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren";
 import $indents from "./$indents";
 import { AppdxItemHeadLine } from "../../../node/cst/line";
 import { $_EOL } from "./lexical";
@@ -76,7 +76,7 @@ export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
             )
         , "tagControl")
         .and(r => r
-            .zeroOrOne(() => $sentenceChildren)
+            .zeroOrOne(() => $sentenceChildrenWithoutToplevelInlineToken)
         , "tail")
         .and(() => $_EOL, "lineEndText")
         .action(({ range, indentsStruct, tagControl: { tag, control }, tail, lineEndText }) => {

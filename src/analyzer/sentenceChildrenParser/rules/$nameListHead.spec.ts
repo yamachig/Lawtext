@@ -5,8 +5,6 @@ import $nameListHead from "./$nameListHead";
 import * as std from "../../../law/std";
 import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
 import { SentenceChildEL } from "../../../node/cst/inline";
-import detectTokens from "../../detectTokens";
-import getSentenceEnvs from "../../getSentenceEnvs";
 
 const env = initialEnv({ target: "" });
 
@@ -20,8 +18,6 @@ describe("Test $nameListHead", () => {
             children: ["この法律において、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -70,8 +66,6 @@ describe("Test $nameListHead", () => {
             children: ["この法律及びこの法律に基づく命令の規定の解釈に関しては、次の定義に従うものとする。"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -155,8 +149,6 @@ describe("Test $nameListHead", () => {
             children: ["この法律又はこの法律に基づく命令において、次の各号に掲げる用語は、当該各号に掲げる定義に従うものとする。"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -242,154 +234,145 @@ describe("Test $nameListHead", () => {
             children: ["この条（第一項及び次項から第七項までを除く。）において、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
         const expectedPointerRanges = {
-            "tag": "____PointerRanges",
-            "attr": {},
-            "children": [
+            tag: "____PointerRanges",
+            attr: {},
+            children: [
                 {
-                    "tag": "____PointerRange",
-                    "attr": {},
-                    "children": [
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
                         {
-                            "tag": "____Pointer",
-                            "attr": {},
-                            "children": [
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
                                 {
-                                    "tag": "____PF",
-                                    "attr": {
-                                        "relPos": "HERE",
-                                        "targetType": "Article",
-                                        "name": "この条"
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "HERE",
+                                        targetType: "Article",
+                                        name: "この条"
                                     },
-                                    "children": ["この条"]
+                                    children: ["この条"]
                                 }
                             ]
                         },
                         {
-                            "tag": "__Parentheses",
-                            "attr": {
-                                "type": "round",
-                                "depth": "1"
+                            tag: "__Parentheses",
+                            attr: {
+                                type: "round",
+                                depth: "1"
                             },
-                            "children": [
+                            children: [
                                 {
-                                    "tag": "__PStart",
-                                    "attr": {
-                                        "type": "round"
+                                    tag: "__PStart",
+                                    attr: {
+                                        type: "round"
                                     },
-                                    "children": ["（"]
+                                    children: ["（"]
                                 },
                                 {
-                                    "tag": "__PContent",
-                                    "attr": {
-                                        "type": "round"
+                                    tag: "__PContent",
+                                    attr: {
+                                        type: "round"
                                     },
-                                    "children": [
+                                    children: [
                                         {
-                                            "tag": "____PointerRanges",
-                                            "attr": {},
-                                            "children": [
+                                            tag: "____PointerRanges",
+                                            attr: {},
+                                            children: [
                                                 {
-                                                    "tag": "____PointerRange",
-                                                    "attr": {},
-                                                    "children": [
+                                                    tag: "____PointerRange",
+                                                    attr: {},
+                                                    children: [
                                                         {
-                                                            "tag": "____Pointer",
-                                                            "attr": {},
-                                                            "children": [
+                                                            tag: "____Pointer",
+                                                            attr: {},
+                                                            children: [
                                                                 {
-                                                                    "tag": "____PF",
-                                                                    "attr": {
-                                                                        "relPos": "NAMED",
-                                                                        "targetType": "Paragraph",
-                                                                        "name": "第一項",
-                                                                        "num": "1"
+                                                                    tag: "____PF",
+                                                                    attr: {
+                                                                        relPos: "NAMED",
+                                                                        targetType: "Paragraph",
+                                                                        name: "第一項",
+                                                                        num: "1"
                                                                     },
-                                                                    "children": ["第一項"]
+                                                                    children: ["第一項"]
                                                                 }
                                                             ]
                                                         }
                                                     ]
                                                 },
                                                 {
-                                                    "tag": "__Text",
-                                                    "attr": {},
-                                                    "children": ["及び"]
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["及び"]
                                                 },
                                                 {
-                                                    "tag": "____PointerRange",
-                                                    "attr": {},
-                                                    "children": [
+                                                    tag: "____PointerRange",
+                                                    attr: {},
+                                                    children: [
                                                         {
-                                                            "tag": "____Pointer",
-                                                            "attr": {},
-                                                            "children": [
+                                                            tag: "____Pointer",
+                                                            attr: {},
+                                                            children: [
                                                                 {
-                                                                    "tag": "____PF",
-                                                                    "attr": {
-                                                                        "relPos": "NEXT",
-                                                                        "targetType": "Paragraph",
-                                                                        "name": "次項"
+                                                                    tag: "____PF",
+                                                                    attr: {
+                                                                        relPos: "NEXT",
+                                                                        targetType: "Paragraph",
+                                                                        name: "次項"
                                                                     },
-                                                                    "children": ["次項"]
+                                                                    children: ["次項"]
                                                                 }
                                                             ]
+                                                        },
+                                                        {
+                                                            tag: "__Text",
+                                                            attr: {},
+                                                            children: ["から"]
+                                                        },
+                                                        {
+                                                            tag: "____Pointer",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "____PF",
+                                                                    attr: {
+                                                                        relPos: "NAMED",
+                                                                        targetType: "Paragraph",
+                                                                        name: "第七項",
+                                                                        num: "7"
+                                                                    },
+                                                                    children: ["第七項"]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            tag: "__Text",
+                                                            attr: {},
+                                                            children: ["まで"]
                                                         }
                                                     ]
                                                 }
                                             ]
                                         },
                                         {
-                                            "tag": "__Text",
-                                            "attr": {},
-                                            "children": ["から"]
-                                        },
-                                        {
-                                            "tag": "____PointerRanges",
-                                            "attr": {},
-                                            "children": [
-                                                {
-                                                    "tag": "____PointerRange",
-                                                    "attr": {},
-                                                    "children": [
-                                                        {
-                                                            "tag": "____Pointer",
-                                                            "attr": {},
-                                                            "children": [
-                                                                {
-                                                                    "tag": "____PF",
-                                                                    "attr": {
-                                                                        "relPos": "NAMED",
-                                                                        "targetType": "Paragraph",
-                                                                        "name": "第七項",
-                                                                        "num": "7"
-                                                                    },
-                                                                    "children": ["第七項"]
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "tag": "__Text",
-                                            "attr": {},
-                                            "children": ["までを除く。"]
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["を除く。"]
                                         }
                                     ]
                                 },
                                 {
-                                    "tag": "__PEnd",
-                                    "attr": {
-                                        "type": "round"
+                                    tag: "__PEnd",
+                                    attr: {
+                                        type: "round"
                                     },
-                                    "children": ["）"]
+                                    children: ["）"]
                                 }
                             ]
                         }
@@ -415,8 +398,6 @@ describe("Test $nameListHead", () => {
             children: ["この省令において使用する用語は、鉱山保安法（以下「法」という。）及び鉱山保安法施行規則（平成十六年経済産業省令第九十六号）において使用する用語の例によるほか、次の各号に定めるところによる。"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -465,75 +446,73 @@ describe("Test $nameListHead", () => {
             children: ["この規則（第二条の三十五を除く。）において使用する用語は、鉱山保安法（以下「法」という。）及び鉱山保安法施行規則（平成十六年経済産業省令第九十六号）において使用する用語の例によるほか、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
         const expectedPointerRanges = {
-            "tag": "____PointerRanges",
-            "attr": {},
-            "children": [
+            tag: "____PointerRanges",
+            attr: {},
+            children: [
                 {
-                    "tag": "____PointerRange",
-                    "attr": {},
-                    "children": [
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
                         {
-                            "tag": "____Pointer",
-                            "attr": {},
-                            "children": [
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
                                 {
-                                    "tag": "____PF",
-                                    "attr": {
-                                        "relPos": "HERE",
-                                        "targetType": "Law",
-                                        "name": "この規則"
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "HERE",
+                                        targetType: "Law",
+                                        name: "この規則"
                                     },
-                                    "children": ["この規則"]
+                                    children: ["この規則"]
                                 }
                             ]
                         },
                         {
-                            "tag": "__Parentheses",
-                            "attr": {
-                                "type": "round",
-                                "depth": "1"
+                            tag: "__Parentheses",
+                            attr: {
+                                type: "round",
+                                depth: "1"
                             },
-                            "children": [
+                            children: [
                                 {
-                                    "tag": "__PStart",
-                                    "attr": {
-                                        "type": "round"
+                                    tag: "__PStart",
+                                    attr: {
+                                        type: "round"
                                     },
-                                    "children": ["（"]
+                                    children: ["（"]
                                 },
                                 {
-                                    "tag": "__PContent",
-                                    "attr": {
-                                        "type": "round"
+                                    tag: "__PContent",
+                                    attr: {
+                                        type: "round"
                                     },
-                                    "children": [
+                                    children: [
                                         {
-                                            "tag": "____PointerRanges",
-                                            "attr": {},
-                                            "children": [
+                                            tag: "____PointerRanges",
+                                            attr: {},
+                                            children: [
                                                 {
-                                                    "tag": "____PointerRange",
-                                                    "attr": {},
-                                                    "children": [
+                                                    tag: "____PointerRange",
+                                                    attr: {},
+                                                    children: [
                                                         {
-                                                            "tag": "____Pointer",
-                                                            "attr": {},
-                                                            "children": [
+                                                            tag: "____Pointer",
+                                                            attr: {},
+                                                            children: [
                                                                 {
-                                                                    "tag": "____PF",
-                                                                    "attr": {
-                                                                        "relPos": "NAMED",
-                                                                        "targetType": "Article",
-                                                                        "name": "第二条の三十五",
-                                                                        "num": "2_35"
+                                                                    tag: "____PF",
+                                                                    attr: {
+                                                                        relPos: "NAMED",
+                                                                        targetType: "Article",
+                                                                        name: "第二条の三十五",
+                                                                        num: "2_35"
                                                                     },
-                                                                    "children": ["第二条の三十五"]
+                                                                    children: ["第二条の三十五"]
                                                                 }
                                                             ]
                                                         }
@@ -542,18 +521,18 @@ describe("Test $nameListHead", () => {
                                             ]
                                         },
                                         {
-                                            "tag": "__Text",
-                                            "attr": {},
-                                            "children": ["を除く。"]
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["を除く。"]
                                         }
                                     ]
                                 },
                                 {
-                                    "tag": "__PEnd",
-                                    "attr": {
-                                        "type": "round"
+                                    tag: "__PEnd",
+                                    attr: {
+                                        type: "round"
                                     },
-                                    "children": ["）"]
+                                    children: ["）"]
                                 }
                             ]
                         }
@@ -579,75 +558,73 @@ describe("Test $nameListHead", () => {
             children: ["この規則（第二条の三十五を除く。）において使用する用語は、法において使用する用語の例によるほか、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
         const expectedPointerRanges = {
-            "tag": "____PointerRanges",
-            "attr": {},
-            "children": [
+            tag: "____PointerRanges",
+            attr: {},
+            children: [
                 {
-                    "tag": "____PointerRange",
-                    "attr": {},
-                    "children": [
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
                         {
-                            "tag": "____Pointer",
-                            "attr": {},
-                            "children": [
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
                                 {
-                                    "tag": "____PF",
-                                    "attr": {
-                                        "relPos": "HERE",
-                                        "targetType": "Law",
-                                        "name": "この規則"
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "HERE",
+                                        targetType: "Law",
+                                        name: "この規則"
                                     },
-                                    "children": ["この規則"]
+                                    children: ["この規則"]
                                 }
                             ]
                         },
                         {
-                            "tag": "__Parentheses",
-                            "attr": {
-                                "type": "round",
-                                "depth": "1"
+                            tag: "__Parentheses",
+                            attr: {
+                                type: "round",
+                                depth: "1"
                             },
-                            "children": [
+                            children: [
                                 {
-                                    "tag": "__PStart",
-                                    "attr": {
-                                        "type": "round"
+                                    tag: "__PStart",
+                                    attr: {
+                                        type: "round"
                                     },
-                                    "children": ["（"]
+                                    children: ["（"]
                                 },
                                 {
-                                    "tag": "__PContent",
-                                    "attr": {
-                                        "type": "round"
+                                    tag: "__PContent",
+                                    attr: {
+                                        type: "round"
                                     },
-                                    "children": [
+                                    children: [
                                         {
-                                            "tag": "____PointerRanges",
-                                            "attr": {},
-                                            "children": [
+                                            tag: "____PointerRanges",
+                                            attr: {},
+                                            children: [
                                                 {
-                                                    "tag": "____PointerRange",
-                                                    "attr": {},
-                                                    "children": [
+                                                    tag: "____PointerRange",
+                                                    attr: {},
+                                                    children: [
                                                         {
-                                                            "tag": "____Pointer",
-                                                            "attr": {},
-                                                            "children": [
+                                                            tag: "____Pointer",
+                                                            attr: {},
+                                                            children: [
                                                                 {
-                                                                    "tag": "____PF",
-                                                                    "attr": {
-                                                                        "relPos": "NAMED",
-                                                                        "targetType": "Article",
-                                                                        "name": "第二条の三十五",
-                                                                        "num": "2_35"
+                                                                    tag: "____PF",
+                                                                    attr: {
+                                                                        relPos: "NAMED",
+                                                                        targetType: "Article",
+                                                                        name: "第二条の三十五",
+                                                                        num: "2_35"
                                                                     },
-                                                                    "children": ["第二条の三十五"]
+                                                                    children: ["第二条の三十五"]
                                                                 }
                                                             ]
                                                         }
@@ -656,18 +633,18 @@ describe("Test $nameListHead", () => {
                                             ]
                                         },
                                         {
-                                            "tag": "__Text",
-                                            "attr": {},
-                                            "children": ["を除く。"]
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["を除く。"]
                                         }
                                     ]
                                 },
                                 {
-                                    "tag": "__PEnd",
-                                    "attr": {
-                                        "type": "round"
+                                    tag: "__PEnd",
+                                    attr: {
+                                        type: "round"
                                     },
-                                    "children": ["）"]
+                                    children: ["）"]
                                 }
                             ]
                         }

@@ -1,6 +1,4 @@
 import { getContainerType } from "../../analyzer/common";
-import { parseNamedNum } from "../../law/num";
-import * as std from "../../law/std";
 import { EL } from "../el";
 
 export enum ContainerType {
@@ -19,8 +17,8 @@ export interface ContainerOptions {
     containerID?: string,
     el: EL,
     type?: ContainerType,
-    name?: string | null,
-    num?: string | null,
+    name: string | null,
+    num: string | null,
     sentenceRange?: [number, number], // half open
     // parent?: Container | null,
     // children?: Container[],
@@ -48,19 +46,8 @@ export class Container {
         const {
             el,
             type = getContainerType(el.tag),
-            name = (
-                (el.children.find(c => (
-                    std.isArticleTitle(c)
-                    || std.isParagraphItemTitle(c)
-                    || std.isArticleGroupTitle(c)
-                    || std.isAppdxItemTitle(c)
-                )) as EL | undefined)?.text()
-                ?? null
-            ),
-            num = (
-                (name && parseNamedNum(name))
-                || ((std.isParagraph(el) && "1") || null)
-            ),
+            name,
+            num,
             containerID = `container-${currentID}-tag_${el.tag}-type_${type}`,
             sentenceRange = [NaN, NaN],
             // parent = null,

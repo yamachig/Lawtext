@@ -52,7 +52,10 @@ describe("Test $tableColumnLine", () => {
         const expectedColumns = [
             {
                 leadingSpace: "",
-                leadingSpaceRange: [33, 33] as [number, number],
+                leadingSpaceRange: [
+                    33,
+                    33
+                ] as [number, number],
                 attrEntries: [],
                 sentences: [
                     {
@@ -60,15 +63,48 @@ describe("Test $tableColumnLine", () => {
                         attr: {},
                         children: [
                             {
-                                tag: "__Text",
+                                tag: "____PointerRanges",
                                 attr: {},
-                                children: ["前条第一項"],
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "PREV",
+                                                            targetType: "Article",
+                                                            name: "前条"
+                                                        },
+                                                        children: ["前条"]
+                                                    },
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Paragraph",
+                                                            name: "第一項",
+                                                            num: "1"
+                                                        },
+                                                        children: ["第一項"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     }
                 ]
             }
-        ];
+        ]
+          ;
         const result = $tableColumnLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
         if (result.ok) {

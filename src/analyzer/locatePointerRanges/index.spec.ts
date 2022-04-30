@@ -3,14 +3,13 @@ import * as std from "../../law/std";
 import { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
 import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
-import detectTokens from ".";
+import locatePointerRanges from ".";
 import getSentenceEnvs from "../getSentenceEnvs";
 import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";
 
-describe("Test detectTokens", () => {
-
-    it("Success case: pointerRanges", () => {
+describe("Test locatePointerRanges", () => {
+    it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -235,11 +234,11 @@ describe("Test detectTokens", () => {
         };
 
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const result = detectTokens(sentenceEnvsStruct);
+        const result = locatePointerRanges(sentenceEnvsStruct);
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.pointerRangesList.map(r => r.json(true)),
+            result.value.map(r => r.json(true)),
             expected,
         );
 
@@ -252,7 +251,7 @@ describe("Test detectTokens", () => {
         );
     });
 
-    it("Success case: pointerRanges", () => {
+    it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -442,11 +441,11 @@ describe("Test detectTokens", () => {
           ;
 
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const result = detectTokens(sentenceEnvsStruct);
+        const result = locatePointerRanges(sentenceEnvsStruct);
 
-        // console.log(JSON.stringify(result.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.pointerRangesList.map(r => r.json(true)),
+            result.value.map(r => r.json(true)),
             expected,
         );
 
@@ -459,7 +458,7 @@ describe("Test detectTokens", () => {
         );
     });
 
-    it("Success case: pointerRanges", () => {
+    it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -649,301 +648,11 @@ describe("Test detectTokens", () => {
         ;
 
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const result = detectTokens(sentenceEnvsStruct);
+        const result = locatePointerRanges(sentenceEnvsStruct);
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.pointerRangesList.map(r => r.json(true)),
-            expected,
-        );
-
-        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
-
-        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
-        assert.deepStrictEqual(
-            inputElToBeModified.json(true),
-            expectedModifiedInput,
-        );
-    });
-
-    it("Success case: lawNum", () => {
-        /* eslint-disable no-irregular-whitespace */
-        const inputElToBeModified = loadEL({
-            tag: "Item",
-            attr: {},
-            children: [
-                {
-                    tag: "ItemTitle",
-                    attr: {},
-                    children: ["九"],
-                },
-                {
-                    tag: "ItemSentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "Sentence",
-                            attr: {},
-                            children: ["公務員（国家公務員法（昭和二十二年法律第百二十号）第二条第一項に規定する国家公務員及び地方公務員法（昭和二十五年法律第二百六十一号）第三条第一項に規定する地方公務員をいう。以下同じ。）又は公務員であった者に対してその職務又は身分に関してされる処分及び行政指導"],
-                        },
-                    ],
-                },
-            ],
-        }) as std.Item;
-        addSentenceChildrenControls(inputElToBeModified);
-        const expected: JsonEL[] = [
-            {
-                tag: "____LawNum",
-                attr: {},
-                children: ["昭和二十二年法律第百二十号"],
-            },
-            {
-                tag: "____LawNum",
-                attr: {},
-                children: ["昭和二十五年法律第二百六十一号"],
-            },
-        ];
-        const expectedErrorMessages: string[] = [];
-        const expectedModifiedInput = {
-            tag: "Item",
-            attr: {},
-            children: [
-                {
-                    tag: "ItemTitle",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["九"],
-                        },
-                    ],
-                },
-                {
-                    tag: "ItemSentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "Sentence",
-                            attr: {},
-                            children: [
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["公務員"],
-                                },
-                                {
-                                    tag: "__Parentheses",
-                                    attr: {
-                                        type: "round",
-                                        depth: "1",
-                                    },
-                                    children: [
-                                        {
-                                            tag: "__PStart",
-                                            attr: {
-                                                type: "round",
-                                            },
-                                            children: ["（"],
-                                        },
-                                        {
-                                            tag: "__PContent",
-                                            attr: {
-                                                type: "round",
-                                            },
-                                            children: [
-                                                {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["国家公務員法"],
-                                                },
-                                                {
-                                                    tag: "__Parentheses",
-                                                    attr: {
-                                                        type: "round",
-                                                        depth: "2",
-                                                    },
-                                                    children: [
-                                                        {
-                                                            tag: "__PStart",
-                                                            attr: {
-                                                                type: "round",
-                                                            },
-                                                            children: ["（"],
-                                                        },
-                                                        {
-                                                            tag: "__PContent",
-                                                            attr: {
-                                                                type: "round",
-                                                            },
-                                                            children: [
-                                                                {
-                                                                    tag: "____LawNum",
-                                                                    attr: {},
-                                                                    children: ["昭和二十二年法律第百二十号"],
-                                                                },
-                                                            ],
-                                                        },
-                                                        {
-                                                            tag: "__PEnd",
-                                                            attr: {
-                                                                type: "round",
-                                                            },
-                                                            children: ["）"],
-                                                        },
-                                                    ],
-                                                },
-                                                {
-                                                    tag: "____PointerRanges",
-                                                    attr: {},
-                                                    children: [
-                                                        {
-                                                            tag: "____PointerRange",
-                                                            attr: {},
-                                                            children: [
-                                                                {
-                                                                    tag: "____Pointer",
-                                                                    attr: {},
-                                                                    children: [
-                                                                        {
-                                                                            tag: "____PF",
-                                                                            attr: {
-                                                                                relPos: "NAMED",
-                                                                                targetType: "Article",
-                                                                                name: "第二条",
-                                                                                num: "2",
-                                                                            },
-                                                                            children: ["第二条"],
-                                                                        },
-                                                                        {
-                                                                            tag: "____PF",
-                                                                            attr: {
-                                                                                relPos: "NAMED",
-                                                                                targetType: "Paragraph",
-                                                                                name: "第一項",
-                                                                                num: "1",
-                                                                            },
-                                                                            children: ["第一項"],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                            ],
-                                                        },
-                                                    ],
-                                                },
-                                                {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["に規定する国家公務員及び地方公務員法"],
-                                                },
-                                                {
-                                                    tag: "__Parentheses",
-                                                    attr: {
-                                                        type: "round",
-                                                        depth: "2",
-                                                    },
-                                                    children: [
-                                                        {
-                                                            tag: "__PStart",
-                                                            attr: {
-                                                                type: "round",
-                                                            },
-                                                            children: ["（"],
-                                                        },
-                                                        {
-                                                            tag: "__PContent",
-                                                            attr: {
-                                                                type: "round",
-                                                            },
-                                                            children: [
-                                                                {
-                                                                    tag: "____LawNum",
-                                                                    attr: {},
-                                                                    children: ["昭和二十五年法律第二百六十一号"],
-                                                                },
-                                                            ],
-                                                        },
-                                                        {
-                                                            tag: "__PEnd",
-                                                            attr: {
-                                                                type: "round",
-                                                            },
-                                                            children: ["）"],
-                                                        },
-                                                    ],
-                                                },
-                                                {
-                                                    tag: "____PointerRanges",
-                                                    attr: {},
-                                                    children: [
-                                                        {
-                                                            tag: "____PointerRange",
-                                                            attr: {},
-                                                            children: [
-                                                                {
-                                                                    tag: "____Pointer",
-                                                                    attr: {},
-                                                                    children: [
-                                                                        {
-                                                                            tag: "____PF",
-                                                                            attr: {
-                                                                                relPos: "NAMED",
-                                                                                targetType: "Article",
-                                                                                name: "第三条",
-                                                                                num: "3",
-                                                                            },
-                                                                            children: ["第三条"],
-                                                                        },
-                                                                        {
-                                                                            tag: "____PF",
-                                                                            attr: {
-                                                                                relPos: "NAMED",
-                                                                                targetType: "Paragraph",
-                                                                                name: "第一項",
-                                                                                num: "1",
-                                                                            },
-                                                                            children: ["第一項"],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                            ],
-                                                        },
-                                                    ],
-                                                },
-                                                {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["に規定する地方公務員をいう。以下同じ。"],
-                                                },
-                                            ],
-                                        },
-                                        {
-                                            tag: "__PEnd",
-                                            attr: {
-                                                type: "round",
-                                            },
-                                            children: ["）"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["又は公務員であった者に対してその職務又は身分に関してされる処分及び行政指導"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
-
-        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const result = detectTokens(sentenceEnvsStruct);
-
-        // console.log(JSON.stringify(result.value.lawNums.map(r => r.json(true)), null, 2));
-        assert.deepStrictEqual(
-            result.value.lawNums.map(r => r.json(true)),
+            result.value.map(r => r.json(true)),
             expected,
         );
 
@@ -999,7 +708,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-9-tag_Law-type_ROOT\"]",
+                    targetContainerIDRanges: "[\"container-Law\"]",
                 },
                 children: [
                     {
@@ -1016,7 +725,7 @@ describe("Test detectTokens", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            targetContainerIDs: "[\"container-9-tag_Law-type_ROOT\"]",
+                                            targetContainerIDs: "[\"container-Law\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -1029,7 +738,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-9-tag_Law-type_ROOT\"]",
+                    targetContainerIDRanges: "[\"container-Law\"]",
                 },
                 children: [
                     {
@@ -1046,7 +755,7 @@ describe("Test detectTokens", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            targetContainerIDs: "[\"container-9-tag_Law-type_ROOT\"]",
+                                            targetContainerIDs: "[\"container-Law\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -1073,7 +782,7 @@ describe("Test detectTokens", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            targetContainerIDs: "[\"container-9-tag_Law-type_ROOT\"]",
+                                            targetContainerIDs: "[\"container-Law\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -1095,7 +804,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-9-tag_Law-type_ROOT\"]",
+                    targetContainerIDRanges: "[\"container-Law\"]",
                 },
                 children: [
                     {
@@ -1112,7 +821,7 @@ describe("Test detectTokens", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            targetContainerIDs: "[\"container-9-tag_Law-type_ROOT\"]",
+                                            targetContainerIDs: "[\"container-Law\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -1126,7 +835,7 @@ describe("Test detectTokens", () => {
           ;
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
 
         // console.log(JSON.stringify(sentenceEnvsStruct.sentenceEnvs.map(s => s.text), null, 2));
         assert.deepStrictEqual(
@@ -1134,9 +843,9 @@ describe("Test detectTokens", () => {
             expectedSentenceTexts,
         );
 
-        // console.log(JSON.stringify(detectTokensResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(detectTokensresult.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.pointerRangesList.map(r => r.json(true)),
+            detectTokensResult.value.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
@@ -1161,24 +870,11 @@ describe("Test detectTokens", () => {
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
 
-        const expectedSentencesContainers = {
-            "container-23-tag_Article-type_SENTENCES": "第七十六条第二項及び第四項（第一号を除く。）の規定により第四項の無線局の免許の取消しを受け、その取消しの日から二年を経過しない者。　電気通信業務を行うことを目的として開設する無線局　法人又は団体",
-            "container-24-tag_Paragraph-type_SENTENCES": "第七十六条第二項及び第四項（第一号を除く。）の規定により第四項の無線局の免許の取消しを受け、その取消しの日から二年を経過しない者。",
-            "container-25-tag_Paragraph-type_SENTENCES": "電気通信業務を行うことを目的として開設する無線局　法人又は団体",
-            "container-26-tag_Item-type_SENTENCES": "法人又は団体",
-            "container-27-tag_Article-type_SENTENCES": "総務大臣は、三月以内の期間を定めて無線局の運用の停止を命じ、又は期間を定めて運用許容時間、周波数若しくは空中線電力を制限することができる。　規定による期限の延長があつたときは、その期限。　総務大臣は、免許人（包括免許人を除く。）が次の各号のいずれかに該当するときは、その免許を取り消すことができる。　正当な理由がないのに、無線局の運用を引き続き六月以上休止したとき。　第一号の規定による命令又は制限に従わないとき。",
-            "container-28-tag_Paragraph-type_SENTENCES": "総務大臣は、三月以内の期間を定めて無線局の運用の停止を命じ、又は期間を定めて運用許容時間、周波数若しくは空中線電力を制限することができる。",
-            "container-29-tag_Paragraph-type_SENTENCES": "規定による期限の延長があつたときは、その期限。",
-            "container-30-tag_Paragraph-type_SENTENCES": "総務大臣は、免許人（包括免許人を除く。）が次の各号のいずれかに該当するときは、その免許を取り消すことができる。　正当な理由がないのに、無線局の運用を引き続き六月以上休止したとき。　第一号の規定による命令又は制限に従わないとき。",
-            "container-31-tag_Item-type_SENTENCES": "正当な理由がないのに、無線局の運用を引き続き六月以上休止したとき。",
-            "container-32-tag_Item-type_SENTENCES": "第一号の規定による命令又は制限に従わないとき。",
-        };
-
         const expectedPointerRangesList: JsonEL[] = [
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-29-tag_Paragraph-type_SENTENCES\",\"container-30-tag_Paragraph-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]\"]",
                 },
                 children: [
                     {
@@ -1196,7 +892,7 @@ describe("Test detectTokens", () => {
                                             targetType: "Article",
                                             name: "第七十六条",
                                             num: "76",
-                                            targetContainerIDs: "[\"container-27-tag_Article-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]\"]",
                                         },
                                         children: ["第七十六条"],
                                     },
@@ -1207,7 +903,7 @@ describe("Test detectTokens", () => {
                                             targetType: "Paragraph",
                                             name: "第二項",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-29-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[2][num=2]\"]",
                                         },
                                         children: ["第二項"],
                                     },
@@ -1235,7 +931,7 @@ describe("Test detectTokens", () => {
                                             targetType: "Paragraph",
                                             name: "第四項",
                                             num: "4",
-                                            targetContainerIDs: "[\"container-30-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]\"]",
                                         },
                                         children: ["第四項"],
                                     },
@@ -1264,7 +960,7 @@ describe("Test detectTokens", () => {
                                             {
                                                 tag: "____PointerRanges",
                                                 attr: {
-                                                    targetContainerIDRanges: "[\"container-31-tag_Item-type_SENTENCES\"]",
+                                                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
                                                 },
                                                 children: [
                                                     {
@@ -1282,7 +978,7 @@ describe("Test detectTokens", () => {
                                                                             targetType: "Item",
                                                                             name: "第一号",
                                                                             num: "1",
-                                                                            targetContainerIDs: "[\"container-31-tag_Item-type_SENTENCES\"]",
+                                                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
                                                                         },
                                                                         children: ["第一号"],
                                                                     },
@@ -1315,38 +1011,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-25-tag_Paragraph-type_SENTENCES\"]",
-                },
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NAMED",
-                                            targetType: "Paragraph",
-                                            name: "第四項",
-                                            num: "4",
-                                            targetContainerIDs: "[\"container-25-tag_Paragraph-type_SENTENCES\"]",
-                                        },
-                                        children: ["第四項"],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                tag: "____PointerRanges",
-                attr: {
-                    targetContainerIDRanges: "[\"container-31-tag_Item-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
                 },
                 children: [
                     {
@@ -1364,7 +1029,7 @@ describe("Test detectTokens", () => {
                                             targetType: "Item",
                                             name: "第一号",
                                             num: "1",
-                                            targetContainerIDs: "[\"container-31-tag_Item-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
                                         },
                                         children: ["第一号"],
                                     },
@@ -1374,30 +1039,76 @@ describe("Test detectTokens", () => {
                     },
                 ],
             },
-        ]
-          ;
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=5]-Paragraph[2][num=4]\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第四項",
+                                            num: "4",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=5]-Paragraph[2][num=4]\"]",
+                                        },
+                                        children: ["第四項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Item",
+                                            name: "第一号",
+                                            num: "1",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
+                                        },
+                                        children: ["第一号"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
 
-        const sentenceContainers = Object.fromEntries((
-            [...sentenceEnvsStruct.containers.values()]
-                .filter(c => c.type === "SENTENCES")
-                .map(c => [
-                    c.containerID,
-                    (
-                        sentenceEnvsStruct.sentenceEnvs
-                            .slice(...c.sentenceRange)
-                            .map(s => s.text).join("　")
-                    ),
-                ])
-        ));
-        // console.log(JSON.stringify(sentenceContainers, null, 2));
-        assert.deepStrictEqual(sentenceContainers, expectedSentencesContainers);
-
-        // console.log(JSON.stringify(detectTokensResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.pointerRangesList.map(r => r.json(true)),
+            detectTokensResult.value.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
@@ -1418,19 +1129,11 @@ describe("Test detectTokens", () => {
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
 
-        const expectedSentencesContainers = {
-            "container-36-tag_Article-type_SENTENCES": "無線局の免許を受けようとする者は、申請書に、次に掲げる事項を記載した書類を添えて、総務大臣に提出しなければならない。　無線設備の設置場所（移動する無線局のうち、次のイ又はロに掲げるものについては、それぞれイ又はロに定める事項。第十八条第一項を除き、以下同じ。）　人工衛星の無線局（以下「人工衛星局」という。）　その人工衛星の軌道又は位置　人工衛星局、船舶の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第三項において同じ。）、船舶地球局（船舶に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）、航空機の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第五項において同じ。）及び航空機地球局（航空機に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）以外の無線局　移動範囲",
-            "container-37-tag_Paragraph-type_SENTENCES": "無線局の免許を受けようとする者は、申請書に、次に掲げる事項を記載した書類を添えて、総務大臣に提出しなければならない。　無線設備の設置場所（移動する無線局のうち、次のイ又はロに掲げるものについては、それぞれイ又はロに定める事項。第十八条第一項を除き、以下同じ。）　人工衛星の無線局（以下「人工衛星局」という。）　その人工衛星の軌道又は位置　人工衛星局、船舶の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第三項において同じ。）、船舶地球局（船舶に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）、航空機の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第五項において同じ。）及び航空機地球局（航空機に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）以外の無線局　移動範囲",
-            "container-38-tag_Item-type_SENTENCES": "無線設備の設置場所（移動する無線局のうち、次のイ又はロに掲げるものについては、それぞれイ又はロに定める事項。第十八条第一項を除き、以下同じ。）　人工衛星の無線局（以下「人工衛星局」という。）　その人工衛星の軌道又は位置　人工衛星局、船舶の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第三項において同じ。）、船舶地球局（船舶に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）、航空機の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第五項において同じ。）及び航空機地球局（航空機に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）以外の無線局　移動範囲",
-            "container-39-tag_Subitem1-type_SENTENCES": "人工衛星の無線局（以下「人工衛星局」という。）　その人工衛星の軌道又は位置",
-            "container-40-tag_Subitem1-type_SENTENCES": "人工衛星局、船舶の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第三項において同じ。）、船舶地球局（船舶に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）、航空機の無線局（人工衛星局の中継によつてのみ無線通信を行うものを除く。第五項において同じ。）及び航空機地球局（航空機に開設する無線局であつて、人工衛星局の中継によつてのみ無線通信を行うもの（実験等無線局及びアマチュア無線局を除く。）をいう。以下同じ。）以外の無線局　移動範囲",
-        };
-
         const expectedPointerRangesList: JsonEL[] = [
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-39-tag_Subitem1-type_SENTENCES\",\"container-40-tag_Subitem1-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"]",
                 },
                 children: [
                     {
@@ -1448,7 +1151,7 @@ describe("Test detectTokens", () => {
                                             targetType: "SUBITEM",
                                             name: "イ",
                                             num: "1",
-                                            targetContainerIDs: "[\"container-39-tag_Subitem1-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\"]",
                                         },
                                         children: ["イ"],
                                     },
@@ -1476,7 +1179,7 @@ describe("Test detectTokens", () => {
                                             targetType: "SUBITEM",
                                             name: "ロ",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-40-tag_Subitem1-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"]",
                                         },
                                         children: ["ロ"],
                                     },
@@ -1489,7 +1192,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-39-tag_Subitem1-type_SENTENCES\",\"container-40-tag_Subitem1-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"]",
                 },
                 children: [
                     {
@@ -1507,7 +1210,7 @@ describe("Test detectTokens", () => {
                                             targetType: "SUBITEM",
                                             name: "イ",
                                             num: "1",
-                                            targetContainerIDs: "[\"container-39-tag_Subitem1-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\"]",
                                         },
                                         children: ["イ"],
                                     },
@@ -1535,7 +1238,7 @@ describe("Test detectTokens", () => {
                                             targetType: "SUBITEM",
                                             name: "ロ",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-40-tag_Subitem1-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"]",
                                         },
                                         children: ["ロ"],
                                     },
@@ -1642,26 +1345,11 @@ describe("Test detectTokens", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
 
-        const sentenceContainers = Object.fromEntries((
-            [...sentenceEnvsStruct.containers.values()]
-                .filter(c => c.type === "SENTENCES")
-                .map(c => [
-                    c.containerID,
-                    (
-                        sentenceEnvsStruct.sentenceEnvs
-                            .slice(...c.sentenceRange)
-                            .map(s => s.text).join("　")
-                    ),
-                ])
-        ));
-        // console.log(JSON.stringify(sentenceContainers, null, 2));
-        assert.deepStrictEqual(sentenceContainers, expectedSentencesContainers);
-
-        // console.log(JSON.stringify(detectTokensResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.pointerRangesList.map(r => r.json(true)),
+            detectTokensResult.value.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
@@ -1688,25 +1376,11 @@ describe("Test detectTokens", () => {
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
 
-        const expectedSentencesContainers = {
-            "container-44-tag_Article-type_SENTENCES": "免許人について相続があつたときは、その相続人は、免許人の地位を承継する。　免許人（第七項及び第八項に規定する無線局の免許人を除く。以下この項及び次項において同じ。）たる法人が合併又は分割（無線局をその用に供する事業の全部を承継させるものに限る。）をしたときは、合併後存続する法人若しくは合併により設立された法人又は分割により当該事業の全部を承継した法人は、総務大臣の許可を受けて免許人の地位を承継することができる。　免許人が無線局をその用に供する事業の全部の譲渡しをしたときは、譲受人は、総務大臣の許可を受けて免許人の地位を承継することができる。　特定地上基幹放送局の免許人たる法人が分割をした場合において、分割により当該基幹放送局を承継し、これを分割により地上基幹放送の業務を承継した他の法人の業務の用に供する業務を行おうとする法人が総務大臣の許可を受けたときは、当該法人が当該特定地上基幹放送局の免許人から当該業務に係る基幹放送局の免許人の地位を承継したものとみなす。　特定地上基幹放送局の免許人が当該基幹放送局を譲渡し、譲受人が当該基幹放送局を譲渡人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲受人が総務大臣の許可を受けたとき、又は特定地上基幹放送局の免許人が地上基幹放送の業務を譲渡し、その譲渡人が当該基幹放送局を譲受人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲渡人が総務大臣の許可を受けたときも、同様とする。　他の地上基幹放送の業務の用に供する基幹放送局の免許人が当該地上基幹放送の業務を行う認定基幹放送事業者と合併をし、又は当該地上基幹放送の業務を行う事業を譲り受けた場合において、合併後存続する法人若しくは合併により設立された法人又は譲受人が総務大臣の許可を受けたときは、当該法人又は譲受人が当該基幹放送局の免許人から特定地上基幹放送局の免許人の地位を承継したものとみなす。　地上基幹放送の業務を行う認定基幹放送事業者が当該地上基幹放送の業務の用に供する基幹放送局を譲り受けた場合において、総務大臣の許可を受けたときも、同様とする。　第五条及び第七条の規定は、第二項から前項までの許可について準用する。　船舶局若しくは船舶地球局（電気通信業務を行うことを目的とするものを除く。）のある船舶又は無線設備が遭難自動通報設備若しくはレーダーのみの無線局のある船舶について、船舶の所有権の移転その他の理由により船舶を運行する者に変更があつたときは、変更後船舶を運行する者は、免許人の地位を承継する。　前項の規定は、航空機局若しくは航空機地球局（電気通信業務を行うことを目的とするものを除く。）のある航空機又は無線設備がレーダーのみの無線局のある航空機について準用する。　第一項及び前二項の規定により免許人の地位を承継した者は、遅滞なく、その事実を証する書面を添えてその旨を総務大臣に届け出なければならない。　前各項の規定は、第八条の予備免許を受けた者について準用する。",
-            "container-45-tag_Paragraph-type_SENTENCES": "免許人について相続があつたときは、その相続人は、免許人の地位を承継する。",
-            "container-46-tag_Paragraph-type_SENTENCES": "免許人（第七項及び第八項に規定する無線局の免許人を除く。以下この項及び次項において同じ。）たる法人が合併又は分割（無線局をその用に供する事業の全部を承継させるものに限る。）をしたときは、合併後存続する法人若しくは合併により設立された法人又は分割により当該事業の全部を承継した法人は、総務大臣の許可を受けて免許人の地位を承継することができる。",
-            "container-47-tag_Paragraph-type_SENTENCES": "免許人が無線局をその用に供する事業の全部の譲渡しをしたときは、譲受人は、総務大臣の許可を受けて免許人の地位を承継することができる。",
-            "container-48-tag_Paragraph-type_SENTENCES": "特定地上基幹放送局の免許人たる法人が分割をした場合において、分割により当該基幹放送局を承継し、これを分割により地上基幹放送の業務を承継した他の法人の業務の用に供する業務を行おうとする法人が総務大臣の許可を受けたときは、当該法人が当該特定地上基幹放送局の免許人から当該業務に係る基幹放送局の免許人の地位を承継したものとみなす。　特定地上基幹放送局の免許人が当該基幹放送局を譲渡し、譲受人が当該基幹放送局を譲渡人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲受人が総務大臣の許可を受けたとき、又は特定地上基幹放送局の免許人が地上基幹放送の業務を譲渡し、その譲渡人が当該基幹放送局を譲受人の地上基幹放送の業務の用に供する業務を行おうとする場合において、当該譲渡人が総務大臣の許可を受けたときも、同様とする。",
-            "container-49-tag_Paragraph-type_SENTENCES": "他の地上基幹放送の業務の用に供する基幹放送局の免許人が当該地上基幹放送の業務を行う認定基幹放送事業者と合併をし、又は当該地上基幹放送の業務を行う事業を譲り受けた場合において、合併後存続する法人若しくは合併により設立された法人又は譲受人が総務大臣の許可を受けたときは、当該法人又は譲受人が当該基幹放送局の免許人から特定地上基幹放送局の免許人の地位を承継したものとみなす。　地上基幹放送の業務を行う認定基幹放送事業者が当該地上基幹放送の業務の用に供する基幹放送局を譲り受けた場合において、総務大臣の許可を受けたときも、同様とする。",
-            "container-50-tag_Paragraph-type_SENTENCES": "第五条及び第七条の規定は、第二項から前項までの許可について準用する。",
-            "container-51-tag_Paragraph-type_SENTENCES": "船舶局若しくは船舶地球局（電気通信業務を行うことを目的とするものを除く。）のある船舶又は無線設備が遭難自動通報設備若しくはレーダーのみの無線局のある船舶について、船舶の所有権の移転その他の理由により船舶を運行する者に変更があつたときは、変更後船舶を運行する者は、免許人の地位を承継する。",
-            "container-52-tag_Paragraph-type_SENTENCES": "前項の規定は、航空機局若しくは航空機地球局（電気通信業務を行うことを目的とするものを除く。）のある航空機又は無線設備がレーダーのみの無線局のある航空機について準用する。",
-            "container-53-tag_Paragraph-type_SENTENCES": "第一項及び前二項の規定により免許人の地位を承継した者は、遅滞なく、その事実を証する書面を添えてその旨を総務大臣に届け出なければならない。",
-            "container-54-tag_Paragraph-type_SENTENCES": "前各項の規定は、第八条の予備免許を受けた者について準用する。",
-        };
-
         const expectedPointerRangesList: JsonEL[] = [
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-51-tag_Paragraph-type_SENTENCES\",\"container-52-tag_Paragraph-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"]",
                 },
                 children: [
                     {
@@ -1724,7 +1398,7 @@ describe("Test detectTokens", () => {
                                             targetType: "Paragraph",
                                             name: "第七項",
                                             num: "7",
-                                            targetContainerIDs: "[\"container-51-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"]",
                                         },
                                         children: ["第七項"],
                                     },
@@ -1752,7 +1426,7 @@ describe("Test detectTokens", () => {
                                             targetType: "Paragraph",
                                             name: "第八項",
                                             num: "8",
-                                            targetContainerIDs: "[\"container-52-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"]",
                                         },
                                         children: ["第八項"],
                                     },
@@ -1765,7 +1439,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-46-tag_Paragraph-type_SENTENCES\",\"container-47-tag_Paragraph-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\"]",
                 },
                 children: [
                     {
@@ -1782,7 +1456,7 @@ describe("Test detectTokens", () => {
                                             relPos: "HERE",
                                             targetType: "Paragraph",
                                             name: "この項",
-                                            targetContainerIDs: "[\"container-46-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\"]",
                                         },
                                         children: ["この項"],
                                     },
@@ -1809,7 +1483,7 @@ describe("Test detectTokens", () => {
                                             relPos: "NEXT",
                                             targetType: "Paragraph",
                                             name: "次項",
-                                            targetContainerIDs: "[\"container-47-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\"]",
                                         },
                                         children: ["次項"],
                                     },
@@ -1877,7 +1551,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-46-tag_Paragraph-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\"]]",
                 },
                 children: [
                     {
@@ -1895,12 +1569,38 @@ describe("Test detectTokens", () => {
                                             targetType: "Paragraph",
                                             name: "第二項",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-46-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\"]",
                                         },
                                         children: ["第二項"],
                                     },
                                 ],
                             },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["から"],
+                            },
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "PREV",
+                                            targetType: "Paragraph",
+                                            name: "前項",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\"]",
+                                        },
+                                        children: ["前項"],
+                                    },
+                                ],
+                            },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["まで"],
+                            },
                         ],
                     },
                 ],
@@ -1908,7 +1608,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-49-tag_Paragraph-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"]",
                 },
                 children: [
                     {
@@ -1925,7 +1625,7 @@ describe("Test detectTokens", () => {
                                             relPos: "PREV",
                                             targetType: "Paragraph",
                                             name: "前項",
-                                            targetContainerIDs: "[\"container-49-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"]",
                                         },
                                         children: ["前項"],
                                     },
@@ -1938,37 +1638,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-51-tag_Paragraph-type_SENTENCES\"]",
-                },
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "PREV",
-                                            targetType: "Paragraph",
-                                            name: "前項",
-                                            targetContainerIDs: "[\"container-51-tag_Paragraph-type_SENTENCES\"]",
-                                        },
-                                        children: ["前項"],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                tag: "____PointerRanges",
-                attr: {
-                    targetContainerIDRanges: "[\"container-45-tag_Paragraph-type_SENTENCES\",\"container-51-tag_Paragraph-type_SENTENCES\",\"container-52-tag_Paragraph-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"]",
                 },
                 children: [
                     {
@@ -1986,7 +1656,7 @@ describe("Test detectTokens", () => {
                                             targetType: "Paragraph",
                                             name: "第一項",
                                             num: "1",
-                                            targetContainerIDs: "[\"container-45-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\"]",
                                         },
                                         children: ["第一項"],
                                     },
@@ -2014,7 +1684,7 @@ describe("Test detectTokens", () => {
                                             targetType: "Paragraph",
                                             name: "前二項",
                                             count: "2",
-                                            targetContainerIDs: "[\"container-51-tag_Paragraph-type_SENTENCES\",\"container-52-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"]",
                                         },
                                         children: ["前二項"],
                                     },
@@ -2027,7 +1697,7 @@ describe("Test detectTokens", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-45-tag_Paragraph-type_SENTENCES\",\"container-46-tag_Paragraph-type_SENTENCES\",\"container-47-tag_Paragraph-type_SENTENCES\",\"container-48-tag_Paragraph-type_SENTENCES\",\"container-49-tag_Paragraph-type_SENTENCES\",\"container-50-tag_Paragraph-type_SENTENCES\",\"container-51-tag_Paragraph-type_SENTENCES\",\"container-52-tag_Paragraph-type_SENTENCES\",\"container-53-tag_Paragraph-type_SENTENCES\"]",
+                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[4][num=4]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[6][num=6]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[9][num=9]\"]",
                 },
                 children: [
                     {
@@ -2045,7 +1715,7 @@ describe("Test detectTokens", () => {
                                             targetType: "Paragraph",
                                             name: "前各項",
                                             count: "all",
-                                            targetContainerIDs: "[\"container-45-tag_Paragraph-type_SENTENCES\",\"container-46-tag_Paragraph-type_SENTENCES\",\"container-47-tag_Paragraph-type_SENTENCES\",\"container-48-tag_Paragraph-type_SENTENCES\",\"container-49-tag_Paragraph-type_SENTENCES\",\"container-50-tag_Paragraph-type_SENTENCES\",\"container-51-tag_Paragraph-type_SENTENCES\",\"container-52-tag_Paragraph-type_SENTENCES\",\"container-53-tag_Paragraph-type_SENTENCES\"]",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[4][num=4]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[6][num=6]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[9][num=9]\"]",
                                         },
                                         children: ["前各項"],
                                     },
@@ -2086,26 +1756,11 @@ describe("Test detectTokens", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
 
-        const sentenceContainers = Object.fromEntries((
-            [...sentenceEnvsStruct.containers.values()]
-                .filter(c => c.type === "SENTENCES")
-                .map(c => [
-                    c.containerID,
-                    (
-                        sentenceEnvsStruct.sentenceEnvs
-                            .slice(...c.sentenceRange)
-                            .map(s => s.text).join("　")
-                    ),
-                ])
-        ));
-        // console.log(JSON.stringify(sentenceContainers, null, 2));
-        assert.deepStrictEqual(sentenceContainers, expectedSentencesContainers);
-
-        // console.log(JSON.stringify(detectTokensResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.pointerRangesList.map(r => r.json(true)),
+            detectTokensResult.value.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 

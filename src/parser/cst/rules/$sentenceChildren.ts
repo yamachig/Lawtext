@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { isSub, __EL } from "../../../law/std";
-import { ParenthesesType, __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text } from "../../../node/el/controls";
+import { ParenthesesType, __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____LawNum } from "../../../node/el/controls";
 import { EL } from "../../../node/el";
 import { assertNever, NotImplementedError } from "../../../util";
 import { factory } from "../factory";
@@ -9,6 +9,8 @@ import { $_EOL, $__ } from "./lexical";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $xml from "./$xml";
+import $pointerRanges, { reSuppressPointerRanges } from "./$pointerRanges";
+import { ptnLawNum } from "../../../law/num";
 
 
 export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): string => {
@@ -41,6 +43,8 @@ export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): st
     return /* $$$$$$ */`${runs.join("")}`/* $$$$$$ */;
 };
 
+const reLawNum = new RegExp(`^${ptnLawNum}`);
+
 export const $sentenceChildren: WithErrorRule<SentenceChildEL[]> = factory
     .withName("sentenceChildren")
     .action(r => r
@@ -49,7 +53,7 @@ export const $sentenceChildren: WithErrorRule<SentenceChildEL[]> = factory
                 .oneOrMore(r => r
                     .choice(c => c
                         .or(() => $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES)
-                        .or(() => $PARENTHESES_INLINE)
+                        .or(() => ANY_PARENTHESES_INLINE)
                         .or(() => $MISMATCH_END_PARENTHESIS),
                     ),
                 )
@@ -57,7 +61,30 @@ export const $sentenceChildren: WithErrorRule<SentenceChildEL[]> = factory
         )
     , (({ texts }) => {
         return {
-            value: texts.map(t => t.value),
+            value: texts.map(t => t.value).flat(),
+            errors: texts.map(t => t.errors).flat(),
+        };
+    }),
+    )
+;
+
+export const $sentenceChildrenWithoutToplevelInlineToken: WithErrorRule<SentenceChildEL[]> = factory
+    .withName("sentenceChildrenWithoutToplevelInlineToken")
+    .action(r => r
+        .sequence(c => c
+            .and(r => r
+                .oneOrMore(r => r
+                    .choice(c => c
+                        .or(() => $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES_WITHOUT_TOPLEVEL_INLINE_TOKEN)
+                        .or(() => ANY_PARENTHESES_INLINE)
+                        .or(() => $MISMATCH_END_PARENTHESIS),
+                    ),
+                )
+            , "texts"),
+        )
+    , (({ texts }) => {
+        return {
+            value: texts.map(t => t.value).flat(),
             errors: texts.map(t => t.errors).flat(),
         };
     }),
@@ -71,41 +98,62 @@ export const $NOT_PARENTHESIS_CHAR = factory
     .regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」]/)
 ;
 
-export const $INLINE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
-    .withName("INLINE_FRAGMENT")
-    .sequence(c => c
-        .and(r => r
-            .oneOrMore(r => r
-                .choice(c => c
-                    // .or(() => $pointerRanges)
-                    .or(r => r
-                        .sequence(c => c
-                            .and(r => r
-                                .asSlice(r => r
-                                    .oneOrMore(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t]/)),
-                                )
-                            , "plain")
-                            .action(({ plain, range }) => {
-                                return {
-                                    value: new __Text(plain, range()),
-                                    errors: [],
-                                };
-                            })
-                        )
-                    )
-                    .or(() => $PARENTHESES_INLINE)
-                    .or(() => $MISMATCH_END_PARENTHESIS),
-                ),
-            )
-        , "texts")
-        .action(({ texts }) => {
-            return {
-                value: texts.map(t => t.value),
-                errors: texts.map(t => t.errors).flat(),
-            };
-        })
+// export const $INLINE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
+//     .withName("INLINE_FRAGMENT")
+//     .sequence(c => c
+//         .and(r => r
+//             .oneOrMore(r => r
+//                 .choice(c => c
+//                     // .or(() => $pointerRanges)
+//                     .or(r => r
+//                         .sequence(c => c
+//                             .and(r => r
+//                                 .asSlice(r => r
+//                                     .oneOrMore(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t]/)),
+//                                 )
+//                             , "plain")
+//                             .action(({ plain, range }) => {
+//                                 return {
+//                                     value: new __Text(plain, range()),
+//                                     errors: [],
+//                                 };
+//                             })
+//                         )
+//                     )
+//                     .or(() => $PARENTHESES_INLINE)
+//                     .or(() => $MISMATCH_END_PARENTHESIS),
+//                 ),
+//             )
+//         , "texts")
+//         .action(({ texts }) => {
+//             return {
+//                 value: texts.map(t => t.value),
+//                 errors: texts.map(t => t.errors).flat(),
+//             };
+//         })
+//     )
+// ;
+
+export const $inlineToken = factory
+    .withName("inlineToken")
+    .choice(c => c
+        .orSequence(s => s
+            .and(r => r.regExp(reSuppressPointerRanges), "text")
+            .action(({ text, range }) => ({
+                value: new __Text(text, range()),
+                errors: [],
+            }))
+        )
+        .orSequence(s => s
+            .and(r => r.regExp(reLawNum), "text")
+            .action(({ text, range }) => ({
+                value: new ____LawNum(text, range()),
+                errors: [],
+            }))
+        )
+        .or(() => $pointerRanges)
     )
-;
+    ;
 
 export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
     .withName("PERIOD_SENTENCE_FRAGMENT")
@@ -117,12 +165,17 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                         .sequence(c => c
                             .and(r => r
                                 .choice(c => c
-                                    // .or(() => $pointerRanges)
+                                    .or(() => $inlineToken)
                                     .or(r => r
                                         .sequence(c => c
                                             .and(r => r
                                                 .asSlice(r => r
-                                                    .oneOrMore(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/)),
+                                                    .oneOrMore(r => r
+                                                        .sequence(s => s
+                                                            .and(r => r.nextIsNot(() => $inlineToken))
+                                                            .and(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/))
+                                                        )
+                                                    ),
                                                 )
                                             , "plain")
                                             .action(({ plain, range }) => {
@@ -133,7 +186,7 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                                             })
                                         )
                                     )
-                                    .or(() => $PARENTHESES_INLINE)
+                                    .or(() => ANY_PARENTHESES_INLINE)
                                     .or(() => $MISMATCH_END_PARENTHESIS),
                                 )
                             , "target")
@@ -183,75 +236,138 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
     )
 ;
 
-export const $OUTSIDE_PARENTHESES_INLINE: WithErrorRule<__Text> = factory
-    .withName("OUTSIDE_PARENTHESES_INLINE")
-    .choice(c => c
-        // .or(() => $pointerRanges)
-        .orSequence(s => s
-            .and(r => r
-                .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
-            , "plain")
-            .action(({ plain, range }) => {
-                return {
-                    value: new __Text(plain, range()),
-                    errors: [],
-                };
-            })
-        )
-    )
-;
+// export const $OUTSIDE_PARENTHESES_INLINE: WithErrorRule<__Text> = factory
+//     .withName("OUTSIDE_PARENTHESES_INLINE")
+//     .choice(c => c
+//         // .or(() => $pointerRanges)
+//         .orSequence(s => s
+//             .and(r => r.regExp(reSuppressPointerRanges), "text")
+//             .action(({ text, range }) => ({
+//                 value: new __Text(text, range()),
+//                 errors: [],
+//             }))
+//         )
+//         .orSequence(s => s
+//             .and(r => r.regExp(reLawNum), "text")
+//             .action(({ text, range }) => ({
+//                 value: new ____LawNum(text, range()),
+//                 errors: [],
+//             }))
+//         )
+//         .or(() => $pointerRanges)
+//         .orSequence(s => s
+//             .and(r => r
+//                 .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
+//             , "plain")
+//             .action(({ plain, range }) => {
+//                 return {
+//                     value: new __Text(plain, range()),
+//                     errors: [],
+//                 };
+//             })
+//         )
+//     )
+// ;
 
-export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<__Text> = factory
-    .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES")
-    .choice(c => c
-        // .or(() => $pointerRanges)
-        .orSequence(s => s
-            .and(r => r
-                .regExp(/^((?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」])+/)
-            , "plain")
-            .action(({ plain, range }) => {
-                return {
-                    value: new __Text(plain, range()),
-                    errors: [],
-                };
-            })
-        )
-    )
-;
-
-export const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
-    .withName("OUTSIDE_ROUND_PARENTHESES_INLINE")
-    .action(r => r
-        .sequence(c => c
-            .and(r => r
-                .oneOrMore(r => r
-                    .action(r => r
-                        .sequence(c => c
-                            .and(r => r.nextIsNot(() => $ROUND_PARENTHESES_INLINE))
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $OUTSIDE_PARENTHESES_INLINE)
-                                    .or(() => $PARENTHESES_INLINE)
-                                    .or(() => $MISMATCH_END_PARENTHESIS),
-                                )
-                            , "_target"),
-                        )
-                    , (({ _target }) => {
-                        return _target;
-                    }),
-                    ),
+export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES_WITHOUT_TOPLEVEL_INLINE_TOKEN: WithErrorRule<SentenceChildEL[]> = factory
+    .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES_WITHOUT_TOPLEVEL_INLINE_TOKEN")
+    .sequence(s => s
+        .and(r => r
+            .oneOrMore(r => r
+                .choice(c => c
+                    .orSequence(s => s
+                        .and(r => r
+                            .regExp(/^(?:(?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」])+/)
+                        , "plain")
+                        .action(({ plain, range }) => {
+                            return {
+                                value: new __Text(plain, range()),
+                                errors: [],
+                            };
+                        })
+                    )
                 )
-            , "target"),
-        )
-    , (({ text, target }) => {
-        const content = {
-            value: target.map(t => t.value),
-            errors: target.map(t => t.errors).flat(),
-        };
-        return { text: text(), content };
-    }),
+            )
+        , "target")
+        .action(({ target }) => {
+            return {
+                value: target.map(t => t.value),
+                errors: target.map(t => t.errors).flat(),
+            };
+        })
     )
 ;
+
+export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<SentenceChildEL[]> = factory
+    .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES")
+    .sequence(s => s
+        .and(r => r
+            .oneOrMore(r => r
+                .choice(c => c
+                    .or(() => $inlineToken)
+                    .orSequence(s => s
+                        .and(r => r
+                            .asSlice(r => r
+                                .oneOrMore(r => r
+                                    .sequence(s => s
+                                        .and(r => r.nextIsNot(() => $inlineToken))
+                                        .and(r => r.regExp(/^(?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」]/))
+                                    )
+                                ),
+                            )
+                        , "plain")
+                        .action(({ plain, range }) => {
+                            return {
+                                value: new __Text(plain, range()),
+                                errors: [],
+                            };
+                        })
+                    )
+                )
+            )
+        , "target")
+        .action(({ target }) => {
+            return {
+                value: target.map(t => t.value),
+                errors: target.map(t => t.errors).flat(),
+            };
+        })
+    )
+;
+
+// export const $OUTSIDE_ROUND_PARENTHESES_INLINE = factory
+//     .withName("OUTSIDE_ROUND_PARENTHESES_INLINE")
+//     .action(r => r
+//         .sequence(c => c
+//             .and(r => r
+//                 .oneOrMore(r => r
+//                     .action(r => r
+//                         .sequence(c => c
+//                             .and(r => r.nextIsNot(() => $ROUND_PARENTHESES_INLINE))
+//                             .and(r => r
+//                                 .choice(c => c
+//                                     .or(() => $OUTSIDE_PARENTHESES_INLINE)
+//                                     .or(() => $PARENTHESES_INLINE)
+//                                     .or(() => $MISMATCH_END_PARENTHESIS),
+//                                 )
+//                             , "_target"),
+//                         )
+//                     , (({ _target }) => {
+//                         return _target;
+//                     }),
+//                     ),
+//                 )
+//             , "target"),
+//         )
+//     , (({ text, target }) => {
+//         const content = {
+//             value: target.map(t => t.value),
+//             errors: target.map(t => t.errors).flat(),
+//         };
+//         return { text: text(), content };
+//     }),
+//     )
+// ;
 
 export const $MISMATCH_START_PARENTHESIS: WithErrorRule<__EL> = factory
     .withName("MISMATCH_START_PARENTHESIS")
@@ -291,65 +407,65 @@ export const $MISMATCH_END_PARENTHESIS: WithErrorRule<__EL> = factory
     )
 ;
 
-export const $PARENTHESES_INLINE: WithErrorRule<SentenceChildEL> = factory
-    .withName("PARENTHESES_INLINE")
-    .choice(c => c
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r
-                        .nextIs(r => r
-                            .sequence(c => c
-                                .and(r => r.seqEqual(""))
-                                .and(r => r
-                                    .assert(({ state }) => {
-                                        state.parenthesesDepth++; return true;
-                                    }),
-                                ),
-                            ),
-                        ),
-                    )
-                    .and(() => $PARENTHESES_INLINE_INNER, "target")
-                    .and(r => r
-                        .nextIs(r => r
-                            .sequence(c => c
-                                .and(r => r.seqEqual(""))
-                                .and(r => r
-                                    .assert(({ state }) => {
-                                        state.parenthesesDepth--; return true;
-                                    }),
-                                ),
-                            ),
-                        ),
-                    ),
-                )
-            , (({ target }) => {
-                return target;
-            }),
-            ),
-        )
-        .or(r => r
-            .sequence(c => c
-                .and(r => r
-                    .nextIs(r => r
-                        .sequence(c => c
-                            .and(r => r.seqEqual(""))
-                            .and(r => r
-                                .assert(({ state }) => {
-                                    state.parenthesesDepth--; return false;
-                                }),
-                            ),
-                        ),
-                    ),
-                )
-                .and(r => r.seqEqual("DUMMY")),
-            ) as unknown as ValueRule<never>,
-        ),
-    )
-;
+// export const $PARENTHESES_INLINE: WithErrorRule<SentenceChildEL> = factory
+//     .withName("PARENTHESES_INLINE")
+//     .choice(c => c
+//         .or(r => r
+//             .action(r => r
+//                 .sequence(c => c
+//                     .and(r => r
+//                         .nextIs(r => r
+//                             .sequence(c => c
+//                                 .and(r => r.seqEqual(""))
+//                                 .and(r => r
+//                                     .assert(({ state }) => {
+//                                         state.parenthesesDepth++; return true;
+//                                     }),
+//                                 ),
+//                             ),
+//                         ),
+//                     )
+//                     .and(() => $PARENTHESES_INLINE_INNER, "target")
+//                     .and(r => r
+//                         .nextIs(r => r
+//                             .sequence(c => c
+//                                 .and(r => r.seqEqual(""))
+//                                 .and(r => r
+//                                     .assert(({ state }) => {
+//                                         state.parenthesesDepth--; return true;
+//                                     }),
+//                                 ),
+//                             ),
+//                         ),
+//                     ),
+//                 )
+//             , (({ target }) => {
+//                 return target;
+//             }),
+//             ),
+//         )
+//         .or(r => r
+//             .sequence(c => c
+//                 .and(r => r
+//                     .nextIs(r => r
+//                         .sequence(c => c
+//                             .and(r => r.seqEqual(""))
+//                             .and(r => r
+//                                 .assert(({ state }) => {
+//                                     state.parenthesesDepth--; return false;
+//                                 }),
+//                             ),
+//                         ),
+//                     ),
+//                 )
+//                 .and(r => r.seqEqual("DUMMY")),
+//             ) as unknown as ValueRule<never>,
+//         ),
+//     )
+// ;
 
-export const $PARENTHESES_INLINE_INNER: WithErrorRule<SentenceChildEL> = factory
-    .withName("PARENTHESES_INLINE_INNER")
+export const ANY_PARENTHESES_INLINE: WithErrorRule<SentenceChildEL> = factory
+    .withName("ANY_PARENTHESES_INLINE")
     .choice(c => c
         .or(() => $ROUND_PARENTHESES_INLINE)
         .or(() => $SQUARE_BRACKETS_INLINE)
@@ -394,72 +510,101 @@ export const makeParenthesesInline = (
     endPtn: RegExp,
 ): WithErrorRule<__Parentheses> => {
     return factory
-        .sequence(c => c
-            .and(r => r
-                .sequence(s => s
-                    .and(r => r.regExp(startPtn))
-                    .action(({ text, range }) => ({ text: text(), range: range() }))
+        .choice(c => c
+            .orSequence(r => r
+                .andOmit(r => r
+                    .assert(({ state }) => {
+                        state.parenthesesDepth++; return true;
+                    }),
                 )
-            , "start")
-            .and(r => r
-                .sequence(s => s
-                    .and(r => r
-                        .zeroOrMore(r => r
-                            .choice(c => c
-                                .or(r => r
-                                    .sequence(c => c
-                                        .and(r => r
-                                            .asSlice(r => r.oneOrMore(() => $NOT_PARENTHESIS_CHAR))
-                                        , "plain")
-                                        .action(({ plain, range }) => {
-                                            return {
-                                                value: new __Text(plain, range()),
-                                                errors: [],
-                                            };
-                                        })
-                                    )
-                                )
-                                .or(() => $PARENTHESES_INLINE)
-                                .or(r => r
-                                    .sequence(c => c
-                                        .and(r => r
-                                            .nextIsNot(r => r.regExp(endPtn)),
+                .and(r => r
+                    .sequence(s => s
+                        .and(r => r.regExp(startPtn))
+                        .action(({ text, range }) => ({ text: text(), range: range() }))
+                    )
+                , "start")
+                .and(r => r
+                    .sequence(s => s
+                        .and(r => r
+                            .zeroOrMore(r => r
+                                .choice(c => c
+                                    .or(() => $inlineToken)
+                                    .or(r => r
+                                        .sequence(c => c
+                                            .and(r => r
+                                                .asSlice(r => r
+                                                    .oneOrMore(r => r
+                                                        .sequence(s => s
+                                                            .and(r => r.nextIsNot(() => $inlineToken))
+                                                            .and(() => $NOT_PARENTHESIS_CHAR)
+                                                        )
+                                                    )
+                                                )
+                                            , "plain")
+                                            .action(({ plain, range }) => {
+                                                return {
+                                                    value: new __Text(plain, range()),
+                                                    errors: [],
+                                                };
+                                            })
                                         )
-                                        .and(() => $MISMATCH_END_PARENTHESIS, "target")
-                                        .action(({ target }) => {
-                                            return target;
-                                        })
+                                    )
+                                    .or(() => ANY_PARENTHESES_INLINE)
+                                    .or(r => r
+                                        .sequence(c => c
+                                            .and(r => r
+                                                .nextIsNot(r => r.regExp(endPtn)),
+                                            )
+                                            .and(() => $MISMATCH_END_PARENTHESIS, "target")
+                                            .action(({ target }) => {
+                                                return target;
+                                            })
+                                        )
                                     )
                                 )
                             )
-                        )
-                    , "value")
-                    .action(({ value, range }) => ({ value, range: range() }))
-                )
-            , "content")
-            .and(r => r
-                .sequence(s => s
-                    .and(r => r.regExp(endPtn))
-                    .action(({ text, range }) => ({ text: text(), range: range() }))
-                )
-            , "end")
-            .action(({ start, content, end, state }) => {
-                return {
-                    value: new __Parentheses({
-                        type: parenthesisType,
-                        depth: state.parenthesesDepth,
-                        start: start.text,
-                        end: end.text,
-                        content: content.value.map(c => c.value),
-                        range: {
-                            start: start.range,
-                            end: end.range,
-                            content: content.range,
-                        },
+                        , "value")
+                        .action(({ value, range }) => ({ value, range: range() }))
+                    )
+                , "content")
+                .and(r => r
+                    .sequence(s => s
+                        .and(r => r.regExp(endPtn))
+                        .action(({ text, range }) => ({ text: text(), range: range() }))
+                    )
+                , "end")
+                .andOmit(r => r
+                    .assert(({ state }) => {
+                        state.parenthesesDepth--; return true;
                     }),
-                    errors: content.value.map(c => c.errors).flat(),
-                };
-            })
+                )
+                .action(({ start, content, end, state }) => {
+                    return {
+                        value: new __Parentheses({
+                            type: parenthesisType,
+                            depth: state.parenthesesDepth + 1,
+                            start: start.text,
+                            end: end.text,
+                            content: content.value.map(c => c.value),
+                            range: {
+                                start: start.range,
+                                end: end.range,
+                                content: content.range,
+                            },
+                        }),
+                        errors: content.value.map(c => c.errors).flat(),
+                    };
+                })
+            )
+            .or(r => r
+                .sequence(c => c
+                    .and(r => r
+                        .assert(({ state }) => {
+                            state.parenthesesDepth--; return false;
+                        })
+                    )
+                ) as unknown as ValueRule<never>
+            )
         );
 };
 
@@ -487,85 +632,89 @@ $CURLY_BRACKETS_INLINE.name = "CURLY_BRACKETS_INLINE";
 
 export const $SQUARE_PARENTHESES_INLINE: WithErrorRule<__Parentheses> = factory
     .withName("SQUARE_PARENTHESES_INLINE")
-    .sequence(c => c
-        .and(r => r
-            .sequence(s => s
-                .and(r => r.regExp(/^[「]/))
-                .action(({ text, range }) => ({ text: text(), range: range() }))
-            )
-        , "start")
-        .and(r => r
-            .sequence(s => s
-                .and(r => r
-                    .zeroOrMore(r => r
-                        .choice(c => c
-                            .or(() => $xml)
-                            .or(r => r
-                                .sequence(c => c
-                                    .and(r => r
-                                        .asSlice(r => r
-                                            .choice(c => c
-                                                .or(r => r
-                                                    .oneOrMore(r => r.regExp(/^[^\r\n<>「」]/)),
-                                                )
-                                                .or(() => $SQUARE_PARENTHESES_INLINE),
-                                            ),
-                                        )
-                                    , "text")
-                                    .action(({ text, range }) => {
-                                        return {
-                                            value: new __Text(text, range()),
-                                            errors: [],
-                                        };
-                                    })
-                                )
-                            ),
-                        ),
-                    )
-                , "value")
-                .action(({ value, range }) => ({ value, range: range() }))
-            )
-        , "content")
-        .and(r => r
-            .sequence(s => s
-                .and(r => r.regExp(/^[」]/))
-                .action(({ text, range }) => ({ text: text(), range: range() }))
-            )
-        , "end")
-        .action(({ start, content, end, state }) => {
-            return {
-                value: new __Parentheses({
-                    type: "square",
-                    depth: state.parenthesesDepth,
-                    start: start.text,
-                    end: end.text,
-                    content: content.value.map(c => c.value as SentenceChildEL),
-                    range: {
-                        start: start.range,
-                        end: end.range,
-                        content: content.range,
-                    },
+    .choice(c => c
+        .orSequence(c => c
+            .andOmit(r => r
+                .assert(({ state }) => {
+                    state.parenthesesDepth++; return true;
                 }),
-                errors: content.value.map(c => c.errors).flat(),
-            };
-        })
+            )
+            .and(r => r
+                .sequence(s => s
+                    .and(r => r.regExp(/^[「]/))
+                    .action(({ text, range }) => ({ text: text(), range: range() }))
+                )
+            , "start")
+            .and(r => r
+                .sequence(s => s
+                    .and(r => r
+                        .zeroOrMore(r => r
+                            .choice(c => c
+                                .or(() => $xml)
+                                .or(r => r
+                                    .sequence(c => c
+                                        .and(r => r
+                                            .asSlice(r => r
+                                                .choice(c => c
+                                                    .or(r => r
+                                                        .oneOrMore(r => r.regExp(/^[^\r\n<>「」]/)),
+                                                    )
+                                                    .or(() => $SQUARE_PARENTHESES_INLINE),
+                                                ),
+                                            )
+                                        , "text")
+                                        .action(({ text, range }) => {
+                                            return {
+                                                value: new __Text(text, range()),
+                                                errors: [],
+                                            };
+                                        })
+                                    )
+                                ),
+                            ),
+                        )
+                    , "value")
+                    .action(({ value, range }) => ({ value, range: range() }))
+                )
+            , "content")
+            .and(r => r
+                .sequence(s => s
+                    .and(r => r.regExp(/^[」]/))
+                    .action(({ text, range }) => ({ text: text(), range: range() }))
+                )
+            , "end")
+            .andOmit(r => r
+                .assert(({ state }) => {
+                    state.parenthesesDepth--; return true;
+                }),
+            )
+            .action(({ start, content, end, state }) => {
+                return {
+                    value: new __Parentheses({
+                        type: "square",
+                        depth: state.parenthesesDepth + 1,
+                        start: start.text,
+                        end: end.text,
+                        content: content.value.map(c => c.value as SentenceChildEL),
+                        range: {
+                            start: start.range,
+                            end: end.range,
+                            content: content.range,
+                        },
+                    }),
+                    errors: content.value.map(c => c.errors).flat(),
+                };
+            })
+        )
+        .or(r => r
+            .sequence(c => c
+                .and(r => r
+                    .assert(({ state }) => {
+                        state.parenthesesDepth--; return false;
+                    })
+                )
+            ) as unknown as ValueRule<never>
+        )
     )
 ;
-
-export const rules = {
-    INLINE: $sentenceChildren,
-    NOT_PARENTHESIS_CHAR: $NOT_PARENTHESIS_CHAR,
-    INLINE_FRAGMENT: $INLINE_FRAGMENT,
-    PERIOD_SENTENCE_FRAGMENT: $PERIOD_SENTENCE_FRAGMENT,
-    OUTSIDE_PARENTHESES_INLINE: $OUTSIDE_PARENTHESES_INLINE,
-    OUTSIDE_ROUND_PARENTHESES_INLINE: $OUTSIDE_ROUND_PARENTHESES_INLINE,
-    MISMATCH_START_PARENTHESIS: $MISMATCH_START_PARENTHESIS,
-    MISMATCH_END_PARENTHESIS: $MISMATCH_END_PARENTHESIS,
-    PARENTHESES_INLINE: $PARENTHESES_INLINE,
-    PARENTHESES_INLINE_INNER: $PARENTHESES_INLINE_INNER,
-    ROUND_PARENTHESES_INLINE: $ROUND_PARENTHESES_INLINE,
-    SQUARE_BRACKETS_INLINE: $SQUARE_BRACKETS_INLINE,
-    CURLY_BRACKETS_INLINE: $CURLY_BRACKETS_INLINE,
-    SQUARE_PARENTHESES_INLINE: $SQUARE_PARENTHESES_INLINE,
-};
 

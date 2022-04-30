@@ -5,8 +5,6 @@ import $lawRef from "./$lawRef";
 import * as std from "../../../law/std";
 import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
 import { SentenceChildEL } from "../../../node/cst/inline";
-import detectTokens from "../../detectTokens";
-import getSentenceEnvs from "../../getSentenceEnvs";
 
 const env = initialEnv({ target: "" });
 
@@ -20,8 +18,6 @@ describe("Test $lawRef", () => {
             children: ["独立行政法人通則法の一部を改正する法律（平成二十六年法律第六十六号。以下「通則法改正法」という。）の施行の日から施行する。"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -103,8 +99,6 @@ describe("Test $lawRef", () => {
             children: ["国の機関相互間の関係について定める命令等並びに地方自治法（昭和二十二年法律第六十七号）第二編第十一章に規定する国と普通地方公共団体との関係及び普通地方公共団体相互間の関係その他の国と地方公共団体との関係及び地方公共団体相互間の関係について定める命令等（第一項の規定によりこの法律の規定を適用しないこととされる処分に係る命令等を含む。）"],
         }) as std.Sentence;
         addSentenceChildrenControls(origEL);
-        const sentenceEnvsStruct = getSentenceEnvs(origEL);
-        detectTokens(sentenceEnvsStruct);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];

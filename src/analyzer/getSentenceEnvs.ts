@@ -2,6 +2,8 @@ import { Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
 import { containerTags, isIgnoreAnalysis } from "./common";
 import { isSentenceLike, SentenceEnv } from "../node/container/sentenceEnv";
+import * as std from "../law/std";
+import { parseNamedNum } from "../law/num";
 
 export interface SentenceEnvsStruct {
     sentenceEnvs: SentenceEnv[];
@@ -25,6 +27,8 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
         containerID: "container-dummy-root",
         type: ContainerType.ROOT,
         el,
+        name: null,
+        num: null,
     });
 
     const extract = (el: EL, prevContainer: Container | null, prevParentELs: EL[]) => {
@@ -50,7 +54,21 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
             let container = prevContainer;
 
             if ((containerTags as readonly string[]).includes(el.tag)) {
-                container = new Container({ el });
+                const name = (
+                    (el.children.find(c => (
+                        std.isArticleTitle(c)
+                        || std.isParagraphItemTitle(c)
+                        || std.isArticleGroupTitle(c)
+                        || std.isAppdxItemTitle(c)
+                    )) as EL | undefined)?.text()
+                    ?? null
+                );
+                const num = (
+                    (name && parseNamedNum(name))
+                    || ((std.isParagraph(el) && "1") || null)
+                );
+                const containerID = prevContainer ? `${prevContainer.containerID}-${el.tag}[${prevContainer.children.filter(c => c.el.tag === el.tag).length + 1}]${num ? "[num=" + num + "]" : ""}` : `container-${el.tag}`;
+                container = new Container({ el, name, num, containerID });
                 if (prevContainer) prevContainer.addChild(container);
                 containers.set(container.containerID, container);
                 containersByEL.set(el, container);

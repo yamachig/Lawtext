@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { JsonEL } from "../../node/el/jsonEL";
-import detectTokens from "../detectTokens";
+import locatePointerRanges from "../locatePointerRanges";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from "../detectDeclarations";
 import { parse } from "../../parser/lawtext";
@@ -9,8 +9,6 @@ import { Declarations } from "../common/declarations";
 import { assertELVaridity } from "../../parser/std/testHelper";
 
 describe("Test detectVariableReferences", () => {
-
-    return;
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
@@ -28,7 +26,7 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
         const declarations = new Declarations();
         for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
@@ -107,7 +105,7 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
         const declarations = new Declarations();
         for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
@@ -199,7 +197,7 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
         const declarations = new Declarations();
         for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
@@ -296,7 +294,7 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
         const declarations = new Declarations();
         for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {

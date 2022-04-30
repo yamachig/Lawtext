@@ -2,10 +2,10 @@
 import { articleGroupType, parseKanjiNum, parseNamedNum } from "../../../law/num";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import { RelPos, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
-import { ErrorMessage } from "../../../parser/cst/error";
-import { factory } from "../../../parser/cst/factory";
-import { $irohaChar, $kanjiDigits, $romanDigits } from "../../../parser/cst/rules/lexical";
-import makeRangesRule, { RangeMaker, RangesMaker } from "../../../parser/cst/rules/makeRangesRule";
+import { ErrorMessage } from "../error";
+import { factory } from "../factory";
+import { $irohaChar, $kanjiDigits, $romanDigits } from "./lexical";
+import makeRangesRule, { RangeMaker, RangesMaker } from "./makeRangesRule";
 
 const makeRange: RangeMaker<____Pointer, ____PointerRange> = (from, midText, to, trailingText, modifierParentheses, range) => {
     return new ____PointerRange({
@@ -44,7 +44,7 @@ const makeRanges: RangesMaker<____PointerRange, ____PointerRanges> = (first, mid
 };
 
 
-export const reSuppressPointerRanges = /[ァ-ヿ]{2,}/yg;
+export const reSuppressPointerRanges = /^[ァ-ヿ]{2,}/;
 
 
 export const { $ranges: $pointerRanges, $range: $pointerRange } = makeRangesRule(
@@ -399,4 +399,4 @@ export const $anyWherePointerFragment = factory
     )
     ;
 
-export default $pointer;
+export default $pointerRanges;

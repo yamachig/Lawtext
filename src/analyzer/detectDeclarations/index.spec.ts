@@ -3,15 +3,13 @@ import * as std from "../../law/std";
 import { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
 import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
-import detectTokens from "../detectTokens";
+import locatePointerRanges from "../locatePointerRanges";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from ".";
 import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";
 
 describe("Test detectDeclarations", () => {
-
-    return;
 
     it("Success case: nameInline", () => {
         /* eslint-disable no-irregular-whitespace */
@@ -39,7 +37,7 @@ describe("Test detectDeclarations", () => {
         }) as std.Subitem1;
         addSentenceChildrenControls(inputElToBeModified);
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        detectTokens(sentenceEnvsStruct);
+        locatePointerRanges(sentenceEnvsStruct);
 
         const expected: JsonEL[] = [
             {
@@ -264,7 +262,7 @@ describe("Test detectDeclarations", () => {
         }) as std.Subitem1;
         addSentenceChildrenControls(inputElToBeModified);
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        detectTokens(sentenceEnvsStruct);
+        locatePointerRanges(sentenceEnvsStruct);
 
         const expected: JsonEL[] = [
             {
@@ -480,7 +478,7 @@ describe("Test detectDeclarations", () => {
         }) as std.Subitem1;
         addSentenceChildrenControls(inputElToBeModified);
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        detectTokens(sentenceEnvsStruct);
+        locatePointerRanges(sentenceEnvsStruct);
 
         const expected: JsonEL[] = [
             {
@@ -746,7 +744,7 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
 
         const expectedDeclarations: JsonEL[] = [
@@ -878,7 +876,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        targetContainerIDRanges: "[\"container-7-tag_Law-type_ROOT\"]",
+                                                                        targetContainerIDRanges: "[\"container-Law\"]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -895,7 +893,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-7-tag_Law-type_ROOT\"]",
+                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1205,7 +1203,7 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
 
         const expectedDeclarations: JsonEL[] = [
@@ -1348,7 +1346,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        targetContainerIDRanges: "[\"container-14-tag_Law-type_ROOT\"]",
+                                                                        targetContainerIDRanges: "[\"container-Law\"]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -1365,7 +1363,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この省令",
-                                                                                                targetContainerIDs: "[\"container-14-tag_Law-type_ROOT\"]",
+                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この省令"],
                                                                                         },
@@ -1754,7 +1752,7 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
 
         const expectedDeclarations: JsonEL[] = [
@@ -1874,7 +1872,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        targetContainerIDRanges: "[\"container-21-tag_Law-type_ROOT\"]",
+                                                                        targetContainerIDRanges: "[\"container-Law\"]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -1891,7 +1889,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-21-tag_Law-type_ROOT\"]",
+                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1918,7 +1916,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-21-tag_Law-type_ROOT\"]",
+                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -2011,7 +2009,17 @@ describe("Test detectDeclarations", () => {
                                                                         {
                                                                             tag: "__Text",
                                                                             attr: {},
-                                                                            children: ["とは、三百万メガヘルツ以下の周波数の電磁波をいう。"],
+                                                                            children: ["とは、三百万"],
+                                                                        },
+                                                                        {
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["メガヘルツ"],
+                                                                        },
+                                                                        {
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["以下の周波数の電磁波をいう。"],
                                                                         },
                                                                     ],
                                                                 },
@@ -2149,7 +2157,7 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = detectTokens(sentenceEnvsStruct);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
 
         const expectedDeclarations: JsonEL[] = [

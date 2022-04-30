@@ -51,33 +51,121 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第二十六条",
+                                                            num: "26"
+                                                        },
+                                                        children: ["第二十六条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第四十五条",
+                                                            num: "45"
+                                                        },
+                                                        children: ["第四十五条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第四十六条の五",
+                                                            num: "46_5"
+                                                        },
+                                                        children: ["第四十六条の五"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第二十六条、第四十五条、第四十六条の五関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -85,6 +173,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -130,33 +219,121 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第二十六条",
+                                                            num: "26"
+                                                        },
+                                                        children: ["第二十六条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第四十五条",
+                                                            num: "45"
+                                                        },
+                                                        children: ["第四十五条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第四十六条の五",
+                                                            num: "46_5"
+                                                        },
+                                                        children: ["第四十六条の五"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第二十六条、第四十五条、第四十六条の五関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -164,6 +341,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -209,33 +387,121 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第二十六条",
+                                                            num: "26"
+                                                        },
+                                                        children: ["第二十六条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第四十五条",
+                                                            num: "45"
+                                                        },
+                                                        children: ["第四十五条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第四十六条の五",
+                                                            num: "46_5"
+                                                        },
+                                                        children: ["第四十六条の五"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第二十六条、第四十五条、第四十六条の五関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -243,6 +509,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -289,33 +556,94 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第十九条",
+                                                            num: "19"
+                                                        },
+                                                        children: ["第十九条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第二十一条",
+                                                            num: "21"
+                                                        },
+                                                        children: ["第二十一条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第十九条、第二十一条関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -323,6 +651,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -369,33 +698,94 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第十九条",
+                                                            num: "19"
+                                                        },
+                                                        children: ["第十九条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第二十一条",
+                                                            num: "21"
+                                                        },
+                                                        children: ["第二十一条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第十九条、第二十一条関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -403,6 +793,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -448,33 +839,67 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第十四条",
+                                                            num: "14"
+                                                        },
+                                                        children: ["第十四条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第十四条関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -482,6 +907,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -530,6 +956,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -575,33 +1002,67 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第十四条",
+                                                            num: "14"
+                                                        },
+                                                        children: ["第十四条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第十四条関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -609,6 +1070,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -654,33 +1116,67 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第三条",
+                                                            num: "3"
+                                                        },
+                                                        children: ["第三条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第三条関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -688,6 +1184,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -733,33 +1230,67 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第三条",
+                                                            num: "3"
+                                                        },
+                                                        children: ["第三条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第三条関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -767,6 +1298,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -812,33 +1344,39 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第１９条第１項の表の６の項関係"],
-                            },
-                        ],
+                                children: ["第１９条第１項の表の６の項関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -846,6 +1384,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -891,33 +1430,39 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第１９条第１項の表の６の項関係"],
-                            },
-                        ],
+                                children: ["第１９条第１項の表の６の項関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -925,6 +1470,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -970,33 +1516,104 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第一条",
+                                                            num: "1"
+                                                        },
+                                                        children: ["第一条"]
+                                                    },
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Paragraph",
+                                                            name: "第一項",
+                                                            num: "1"
+                                                        },
+                                                        children: ["第一項"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第九条",
+                                                            num: "9"
+                                                        },
+                                                        children: ["第九条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第一条第一項、第九条関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -1004,6 +1621,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });
@@ -1049,33 +1667,104 @@ describe("Test $appdxItemHeadLine", () => {
             {
                 tag: "__Parentheses",
                 attr: {
-                    depth: "1",
                     type: "round",
+                    depth: "1"
                 },
                 children: [
                     {
                         tag: "__PStart",
-                        attr: { type: "round" },
-                        children: ["（"],
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
                     },
                     {
                         tag: "__PContent",
-                        attr: { type: "round" },
+                        attr: {
+                            type: "round"
+                        },
                         children: [
+                            {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第一条",
+                                                            num: "1"
+                                                        },
+                                                        children: ["第一条"]
+                                                    },
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Paragraph",
+                                                            name: "第一項",
+                                                            num: "1"
+                                                        },
+                                                        children: ["第一項"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["、"]
+                                    },
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第九条",
+                                                            num: "9"
+                                                        },
+                                                        children: ["第九条"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第一条第一項、第九条関係"],
-                            },
-                        ],
+                                children: ["関係"]
+                            }
+                        ]
                     },
                     {
                         tag: "__PEnd",
-                        attr: { "type": "round" },
-                        children: ["）"],
-                    },
-                ],
-            },
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            }
         ];
         const result = $appdxItemHeadLine.abstract().match(offset, target, env);
         assert.deepInclude(matchResultToJson(result), expectedResult);
@@ -1083,6 +1772,7 @@ describe("Test $appdxItemHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedTitle);
+            // console.log(JSON.stringify(result.value.value.relatedArticleNum.map(el => el.json(true)), null, 2));
             assert.deepStrictEqual(result.value.value.relatedArticleNum.map(el => el.json(true)), expectedRelatedArticleNum);
         }
     });

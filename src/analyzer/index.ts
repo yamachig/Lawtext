@@ -4,7 +4,7 @@ import { Declarations } from "./common/declarations";
 import { ____VarRef } from "../node/el/controls/varRef";
 import * as std from "../law/std";
 import { ErrorMessage } from "../parser/cst/error";
-import detectTokens, { TokensStruct } from "./detectTokens";
+import detectTokens, { TokensStruct } from "./locatePointerRanges";
 import detectDeclarations from "./detectDeclarations";
 
 
@@ -32,7 +32,7 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
     errors.push(...detectVariableReferencesResult.errors);
 
     return {
-        ...detectTokensResult.value,
+        pointerRangesList: detectTokensResult.value,
         declarations,
         variableReferences,
         ...sentenceEnvsStruct,
