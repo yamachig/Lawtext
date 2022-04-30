@@ -33,19 +33,19 @@ const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 export const parseKanjiNum = (text: string): number | null => {
     const m = reKanjiNum.exec(text);
     if (m) {
-        const d1000 = m[1] ? kanjiDigits[m[2] as keyof typeof kanjiDigits] || 1 : 0;
-        const d100 = m[3] ? kanjiDigits[m[4] as keyof typeof kanjiDigits] || 1 : 0;
-        const d10 = m[5] ? kanjiDigits[m[6] as keyof typeof kanjiDigits] || 1 : 0;
-        const d1 = kanjiDigits[m[7] as keyof typeof kanjiDigits] || 0;
+        const d1000 = m[1] ? kanjiDigitToNumDict[m[2] as keyof typeof kanjiDigitToNumDict] || 1 : 0;
+        const d100 = m[3] ? kanjiDigitToNumDict[m[4] as keyof typeof kanjiDigitToNumDict] || 1 : 0;
+        const d10 = m[5] ? kanjiDigitToNumDict[m[6] as keyof typeof kanjiDigitToNumDict] || 1 : 0;
+        const d1 = kanjiDigitToNumDict[m[7] as keyof typeof kanjiDigitToNumDict] || 0;
         return d1000 * 1000 + d100 * 100 + d10 * 10 + d1;
     }
     return null;
 };
 
-export const kanjiDigits = {
+const kanjiDigitToNumDict = {
     "〇": 0, "一": 1, "二": 2, "三": 3, "四": 4,
     "五": 5, "六": 6, "七": 7, "八": 8, "九": 9,
-};
+} as const;
 
 export const irohaChars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
 export const aiuChars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";

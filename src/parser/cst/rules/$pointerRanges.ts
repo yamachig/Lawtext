@@ -4,7 +4,7 @@ import { SentenceChildEL } from "../../../node/cst/inline";
 import { RelPos, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
 import { ErrorMessage } from "../error";
 import { factory } from "../factory";
-import { $irohaChar, $kanjiDigits, $romanDigits } from "./lexical";
+import { $kanjiDigits, kanjiDigits, romanDigits } from "./lexical";
 import makeRangesRule, { RangeMaker, RangesMaker } from "./makeRangesRule";
 
 const makeRange: RangeMaker<____Pointer, ____PointerRange> = (from, midText, to, trailingText, modifierParentheses, range) => {
@@ -105,12 +105,12 @@ export const $singleOnlyPointerFragment = factory
                             .or(() => $kanjiDigits)
                         )
                     , "count")
-                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
+                    .and(r => r.regExp(/^[編章節款目章条項号表]/), "type_char")
                 )
             , (({ text, count, type_char, range }) => {
                 const targetType = (type_char === "表")
                     ? "TableStruct"
-                    : articleGroupType[type_char];
+                    : (articleGroupType)[type_char as keyof typeof articleGroupType];
                 if (count === "各") {
                     return new ____PF({
                         relPos: RelPos.PREV,
@@ -142,14 +142,14 @@ export const $firstOnlyPointerFragment = factory
             .action(r => r
                 .sequence(c => c
                     .and(r => r.seqEqual("次"))
-                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char")
+                    .and(r => r.regExp(/^[編章節款目章条項号表]/), "type_char")
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
                     relPos: RelPos.NEXT,
                     targetType: (type_char === "表")
                         ? "TableStruct"
-                        : articleGroupType[type_char],
+                        : articleGroupType[type_char as keyof typeof articleGroupType],
                     name: text(),
                     range: range(),
                 });
@@ -160,14 +160,14 @@ export const $firstOnlyPointerFragment = factory
             .action(r => r
                 .sequence(c => c
                     .and(r => r.seqEqual("前"))
-                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char"),
+                    .and(r => r.regExp(/^[編章節款目章条項号表]/), "type_char")
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
                     relPos: RelPos.PREV,
                     targetType: (type_char === "表")
                         ? "TableStruct"
-                        : articleGroupType[type_char],
+                        : articleGroupType[type_char as keyof typeof articleGroupType],
                     name: text(),
                     range: range(),
                 });
@@ -183,14 +183,14 @@ export const $firstOnlyPointerFragment = factory
                             .or(r => r.seqEqual("本"))
                         )
                     )
-                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char")
+                    .and(r => r.regExp(/^[編章節款目章条項号表]/), "type_char")
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
                     relPos: RelPos.HERE,
                     targetType: (type_char === "表")
                         ? "TableStruct"
-                        : articleGroupType[type_char],
+                        : articleGroupType[type_char as keyof typeof articleGroupType],
                     name: text(),
                     range: range(),
                 });
@@ -205,13 +205,7 @@ export const $firstOnlyPointerFragment = factory
                             .or(r => r.seqEqual("この"))
                         )
                     )
-                    .and(r => r
-                        .choice(c => c
-                            .or(r => r.regExp(/^法律|勅令|政令|規則|省令|府令|内閣官房令|命令/))
-                            .or(r => r.seqEqual("附則"))
-                            .or(r => r.seqEqual("別表"))
-                        )
-                    , "type")
+                    .and(r => r.regExp(/^(?:法律|勅令|政令|規則|省令|府令|内閣官房令|命令|附則|別表)/), "type")
                 )
             , (({ text, type, range }) => {
                 return new ____PF({
@@ -233,14 +227,14 @@ export const $firstOnlyPointerFragment = factory
             .action(r => r
                 .sequence(c => c
                     .and(r => r.seqEqual("同"))
-                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号", "表"] as const), "type_char")
+                    .and(r => r.regExp(/^[編章節款目章条項号表]/), "type_char")
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
                     relPos: RelPos.SAME,
                     targetType: (type_char === "表")
                         ? "TableStruct"
-                        : articleGroupType[type_char],
+                        : articleGroupType[type_char as keyof typeof articleGroupType],
                     name: text(),
                     range: range(),
                 });
@@ -327,76 +321,31 @@ export const $secondaryOnlyPointerFragment = factory
 export const $anyWherePointerFragment = factory
     .withName("anyWherePointerFragment")
     .choice(c => c
-        .or(r => r
-            .action(r => r
-                .sequence(c => c
-                    .and(r => r.seqEqual("第"))
-                    .and(() => $kanjiDigits)
-                    .and(r => r.oneOf(["編", "章", "節", "款", "目", "章", "条", "項", "号"] as const), "type_char")
-                    .and(r => r
-                        .zeroOrMore(r => r
-                            .sequence(c => c
-                                .and(r => r.oneOf(["の", "ノ"]))
-                                .and(() => $kanjiDigits)
-                            )
-                        )
-                    )
-                )
-            , (({ text, type_char, range }) => {
+        .orSequence(c => c
+            .and(r => r
+                .regExpObj(new RegExp(`^第[${kanjiDigits}]+([編章節款目章条項号表])(?:[のノ][${kanjiDigits}]+)*`)) // e.g. "第十二条", "第一章の二", "第一号の二の三"
+            , "match")
+            .action(({ text, match, range }) => {
+                const type_char = match[1];
                 return new ____PF({
                     relPos: RelPos.NAMED,
-                    targetType: articleGroupType[type_char],
+                    targetType: articleGroupType[type_char as keyof typeof articleGroupType],
                     name: text(),
-                    // num: parseNamedNum(text()),
                     range: range(),
                 });
             })
-            )
         )
-        .or(r => r
-            .action(r => r
-                .choice(c => c
-                    .orSequence(s => s
-                        .and(() => $irohaChar)
-                        .andOmit(r => r.nextIsNot(() => $irohaChar))
-                    )
-                    .or(() => $romanDigits),
-                )
-            , (({ text, range }) => {
+        .orSequence(s => s
+            .and(r => r.regExp(new RegExp(`^(?:[${irohaChars}](?![${irohaChars}])|[${romanDigits}]+)`))) // e.g. "イ", "Ｖ", "IV"
+            .action(({ text, range }) => {
                 return new ____PF({
                     relPos: RelPos.NAMED,
                     targetType: "SUBITEM",
                     name: text(),
-                    // num: parseNamedNum(text()),
                     range: range(),
                 });
             })
-            )
         )
-        // .or(r => r
-        //     .action(r => r
-        //         .sequence(c => c
-        //             .and(r => r.seqEqual("別表"))
-        //             .and(r => r
-        //                 .zeroOrOne(r => r
-        //                     .sequence(c => c
-        //                         .and(r => r.seqEqual("第"))
-        //                         .and(() => $kanjiDigits),
-        //                     )
-        //                 )
-        //             )
-        //         )
-        //     , (({ text, range }) => {
-        //         return new ____PF({
-        //             relPos: RelPos.NAMED,
-        //             targetType: "AppdxTable",
-        //             name: text(),
-        //             num: parseNamedNum(text()),
-        //             range: range(),
-        //         });
-        //     })
-        //     )
-        // )
     )
     ;
 

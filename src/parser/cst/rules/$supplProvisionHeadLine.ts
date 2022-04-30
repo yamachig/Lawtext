@@ -64,12 +64,12 @@ export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = fa
                         .asSlice(r => r
                             .sequence(s => s
                                 .and(() => $_)
-                                .and(r => r.oneOf("(（"))
+                                .and(r => r.regExp(/^[(（]/))
                             )
                         )
                     , "openParen")
                     .and(r => r.regExp(/^[^)）\r\n]+/), "amendLawNum")
-                    .and(r => r.oneOf(")）"), "closeParen")
+                    .and(r => r.regExp(/^[)）]/), "closeParen")
                     .action(({ openParen, amendLawNum, closeParen }) => ({ openParen, amendLawNum, closeParen }))
                 )
             )

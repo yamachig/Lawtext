@@ -17,12 +17,12 @@ export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
                 .sequence(s => s
                     .and(r => r.seqEqual("*" as const), "firstColumnIndicator")
                     .and(() => $_, "midIndicatorsSpace")
-                    .and(r => r.nextIs(r => r.oneOf(["-", "*"] as const)))
+                    .and(r => r.nextIs(r => r.regExp(/^[-*]/)))
                     .action(({ firstColumnIndicator, midIndicatorsSpace }) => ({ firstColumnIndicator, midIndicatorsSpace }))
                 )
             )
         , "firstColumnIndicatorStruct")
-        .and(r => r.oneOf(["-", "*"] as const), "columnIndicator")
+        .and(r => r.regExp(/^[-*]/), "columnIndicator")
         .and(() => $_, "midSpace")
         .and(r => r
             .zeroOrMore(r => r
@@ -44,7 +44,7 @@ export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
         .and(r => r
             .choice(c => c
                 .orSequence(r => r
-                    .and(r => r.oneOf(["|"] as const))
+                    .and(r => r.seqEqual("|"))
                     .andOmit(r => r.nextIs(() => $_EOL))
                 )
                 .or(r => r
@@ -72,10 +72,10 @@ export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
                     indentTexts: indentsStruct.value.indentTexts,
                     firstColumnIndicator: firstColumnIndicatorStruct?.firstColumnIndicator ?? "",
                     midIndicatorsSpace: firstColumnIndicatorStruct?.midIndicatorsSpace ?? "",
-                    columnIndicator,
+                    columnIndicator: columnIndicator as "*" | "-",
                     midSpace,
                     attrEntries: attrEntries.map(e => e.value),
-                    multilineIndicator: multilineIndicator ?? "",
+                    multilineIndicator: (multilineIndicator as "|" | null) ?? "",
                     sentencesArray: columns?.value ?? [],
                     lineEndText,
                 }),

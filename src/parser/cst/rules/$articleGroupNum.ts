@@ -13,11 +13,11 @@ export const $articleGroupNum: WithErrorRule<{
             .sequence(c => c
                 .and(r => r.seqEqual("第"))
                 .and(() => $kanjiDigits)
-                .and(r => r.oneOf(["編", "章", "節", "款", "目", "章"] as const), "typeChar")
+                .and(r => r.regExp(/^[編章節款目]/), "typeChar")
                 .and(r => r
                     .zeroOrMore(r => r
                         .sequence(c => c
-                            .and(r => r.oneOf("のノ"))
+                            .and(r => r.regExp(/^[のノ]/))
                             .and(() => $kanjiDigits)
                         )
                     )
@@ -25,7 +25,7 @@ export const $articleGroupNum: WithErrorRule<{
                 .action(({ text, typeChar }) => {
                     return {
                         value: {
-                            typeChar,
+                            typeChar: typeChar as ("編" | "章" | "節" | "款" | "目"),
                             text: text(),
                         },
                         errors: [],

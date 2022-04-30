@@ -96,7 +96,7 @@ export const $autoTagControl = factory
     .sequence(s => s
         .and(r => r
             .sequence(s => s
-                .and(r => r.oneOf(autoTagControls), "value")
+                .and(r => r.regExp(new RegExp(`^(?:${autoTagControls.join("|")})`)), "value")
                 .action(({ value, range }) => ({ value, range: range() }))
             )
         , "control")
