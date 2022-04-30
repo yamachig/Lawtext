@@ -1768,4 +1768,325 @@ describe("Test locatePointerRanges", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第二十七条の五　次に掲げる事項（第三号に掲げる事項を除く。）及び無線設備の設置場所とすることができる区域。
+  一　電波の型式及び周波数
+  二　空中線電力
+  三　指定無線局数（同時に開設されている特定無線局の数の上限をいう。以下同じ。）
+  四　運用開始の期限（一以上の特定無線局の運用を最初に開始する期限をいう。）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Item",
+                                            "name": "第三号",
+                                            "num": "3",
+                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=27_5]-Paragraph[1][num=1]\"]",
+                                        },
+                                        "children": ["第三号"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]
+          ;
+        const expectedErrorMessages: string[] = [];
+
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+
+        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            detectTokensResult.value.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第四条の二　この場合において、当該無線設備については、適用しない。
+２　この項の規定による届出（第二号及び第三号に掲げる事項を同じくするものに限る。）をしたことがある者については、この限りでない。
+  一　氏名又は名称及び住所並びに法人にあつては、その代表者の氏名
+  二　実験、試験又は調査の目的
+  三　無線設備の規格
+  四　無線設備の設置場所（移動する無線局にあつては、移動範囲）
+  五　運用開始の予定期日
+  六　その他総務省令で定める事項
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "HERE",
+                                            "targetType": "Paragraph",
+                                            "name": "この項",
+                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
+                                        },
+                                        "children": ["この項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[3][num=3]\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Item",
+                                            "name": "第二号",
+                                            "num": "2",
+                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
+                                        },
+                                        "children": ["第二号"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        "tag": "__Text",
+                        "attr": {},
+                        "children": ["及び"],
+                    },
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Item",
+                                            "name": "第三号",
+                                            "num": "3",
+                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[3][num=3]\"]",
+                                        },
+                                        "children": ["第三号"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]
+;
+        const expectedErrorMessages: string[] = [];
+
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+
+        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            detectTokensResult.value.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第二十四条の二　無線設備等の検査又は点検の事業を行う者は、総務大臣の登録を受けることができる。
+２　前項の登録を受けようとする者は、総務省令で定めるところにより、次に掲げる事項を記載した申請書を総務大臣に提出しなければならない。
+  一　氏名又は名称及び住所並びに法人にあつては、その代表者の氏名
+  二　事務所の名称及び所在地
+  三　点検に用いる測定器その他の設備の概要
+  四　無線設備等の点検の事業のみを行う者にあつては、その旨
+
+第二十四条の十　総務大臣は、登録検査等事業者が次の各号のいずれかに該当するときは、その登録を取り消し、又は期間を定めてその登録に係る検査又は点検の業務の全部若しくは一部の停止を命ずることができる。
+  一　第二十四条の二第二項各号（第二号を除く。）のいずれかに該当するに至つたとき。
+  二　規定に違反したとき。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[1][num=1]\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "PREV",
+                                            "targetType": "Paragraph",
+                                            "name": "前項",
+                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[1][num=1]\"]",
+                                        },
+                                        "children": ["前項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Article",
+                                            "name": "第二十四条の二",
+                                            "num": "24_2",
+                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]\"]",
+                                        },
+                                        "children": ["第二十四条の二"],
+                                    },
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Paragraph",
+                                            "name": "第二項",
+                                            "num": "2",
+                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"]",
+                                        },
+                                        "children": ["第二項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                "tag": "____PointerRanges",
+                "attr": {
+                    "targetContainerIDRanges": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
+                },
+                "children": [
+                    {
+                        "tag": "____PointerRange",
+                        "attr": {},
+                        "children": [
+                            {
+                                "tag": "____Pointer",
+                                "attr": {},
+                                "children": [
+                                    {
+                                        "tag": "____PF",
+                                        "attr": {
+                                            "relPos": "NAMED",
+                                            "targetType": "Item",
+                                            "name": "第二号",
+                                            "num": "2",
+                                            "targetContainerIDs": "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
+                                        },
+                                        "children": ["第二号"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]
+          ;
+        const expectedErrorMessages: string[] = [];
+
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+
+        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            detectTokensResult.value.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

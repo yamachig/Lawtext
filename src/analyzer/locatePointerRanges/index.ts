@@ -32,54 +32,55 @@ export const locatePointerRangesForEL = (
         return null;
     }
 
+    const pointerRangesList: ____PointerRanges[] = [];
+    const errors: ErrorMessage[] = [];
     const prevLocatedContainerForNamed = __prevLocatedContainerForNamed;
     let prevLocatedContainerForSame = __prevLocatedContainerForSame;
     let containerForNamedForNextChildren: Container | null = prevLocatedContainerForNamed;
 
-    const pointerRangesList: ____PointerRanges[] = [];
+    for (const child of elToBeModified.children) {
+        if (typeof child === "string") {
+            continue;
 
-    const errors: ErrorMessage[] = [];
+        } else if (isIgnoreAnalysis(child)) {
+            continue;
+        }
 
-    if (elToBeModified instanceof ____PointerRanges) {
-        const onBeforeModifierParentheses: OnBeforeModifierParentheses = (
-            modifierParentheses,
-            _,
-            prevLocatedContainerForSame,
-            prevLocatedContainerForNamed,
-        ) => {
-            const result = locatePointerRangesForEL(
+        if (child instanceof ____PointerRanges) {
+            const onBeforeModifierParentheses: OnBeforeModifierParentheses = (
                 modifierParentheses,
+                _,
                 prevLocatedContainerForSame,
                 prevLocatedContainerForNamed,
-                sentenceEnv,
-                sentenceEnvsStruct,
+            ) => {
+                const result = locatePointerRangesForEL(
+                    modifierParentheses,
+                    prevLocatedContainerForSame,
+                    prevLocatedContainerForNamed,
+                    sentenceEnv,
+                    sentenceEnvsStruct,
+                );
+                if (!result) return { lastLocatedContainer: null };
+                pointerRangesList.push(...result.value.pointerRangesList);
+                errors.push(...result.errors);
+                return { lastLocatedContainer: result.value.lastLocatedContainer };
+            };
+
+            const pointerRanges = child;
+            pointerRangesList.push(pointerRanges);
+
+            const getScopeResult = getScope(
+                sentenceEnv.container,
+                prevLocatedContainerForSame,
+                prevLocatedContainerForNamed,
+                pointerRanges,
+                onBeforeModifierParentheses,
             );
-            if (!result) return { lastLocatedContainer: null };
-            pointerRangesList.push(...result.value.pointerRangesList);
-            errors.push(...result.errors);
-            return { lastLocatedContainer: result.value.lastLocatedContainer };
-        };
+            prevLocatedContainerForSame = getScopeResult.lastLocatedContainer;
+            containerForNamedForNextChildren = getScopeResult.lastLocatedContainer;
 
-        const pointerRanges = elToBeModified;
-        pointerRangesList.push(pointerRanges);
+        } else {
 
-        const getScopeResult = getScope(
-            sentenceEnv.container,
-            prevLocatedContainerForSame,
-            prevLocatedContainerForNamed,
-            pointerRanges,
-            onBeforeModifierParentheses,
-        );
-        prevLocatedContainerForSame = getScopeResult.lastLocatedContainer;
-        containerForNamedForNextChildren = getScopeResult.lastLocatedContainer;
-
-    } else {
-        for (const child of elToBeModified.children) {
-            if (typeof child === "string") {
-                continue;
-            } else if (isIgnoreAnalysis(child)) {
-                continue;
-            }
             const result = locatePointerRangesForEL(
                 child as std.StdEL | std.__EL,
                 prevLocatedContainerForSame,
