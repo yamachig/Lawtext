@@ -7,8 +7,6 @@ import * as std from "../law/std";
 import { __Parentheses } from "../node/el/controls";
 import { parseNamedNum } from "../law/num";
 
-type LocatedPointerInfo = [fragment: ____PF, container: Container | Container[]][];
-
 const locateContainerFromParent = (parentContainer: Container, fragment: ____PF) => {
     return parentContainer.find(
         c =>
@@ -205,7 +203,7 @@ const locatePointer = (
     prevLocatedContainerForNamed: Container | null,
     currentContainer: Container,
 ): {
-    pointerInfo: LocatedPointerInfo,
+    locatedContainersForFragments: Container[][],
     lastLocatedContainer: Container | null,
 } => {
 
@@ -222,22 +220,25 @@ const locatePointer = (
     );
     const headContainers = Array.isArray(_headContainer) ? _headContainer : (_headContainer && [_headContainer]);
 
-    const pointerInfo: LocatedPointerInfo = [];
+    const locatedContainersForFragments: Container[][] = [];
     let lastLocatedContainer = headContainers && headContainers[headContainers.length - 1];
 
     if (headContainers) {
         if (origFragments.length === 1) {
-            pointerInfo.push([origFragments[0], headContainers]);
+            locatedContainersForFragments.push(headContainers);
+            origFragments[0].targetContainerIDs = [...new Set([...origFragments[0].targetContainerIDs, ...headContainers.map(c => c.containerID)])];
 
         } else {
-            pointerInfo.push([origFragments[0], headContainers[headContainers.length - 1]]);
-
             let parentContainer = headContainers[headContainers.length - 1];
+            locatedContainersForFragments.push([parentContainer]);
+            origFragments[0].targetContainerIDs = [...new Set([...origFragments[0].targetContainerIDs, parentContainer.containerID])];
+
             for (const fragment of origFragments.slice(1)) {
                 const container = locateContainerFromParent(parentContainer, fragment);
 
                 if (container) {
-                    pointerInfo.push([fragment, container]);
+                    locatedContainersForFragments.push([container]);
+                    fragment.targetContainerIDs = [...new Set([...fragment.targetContainerIDs, container.containerID])];
                     parentContainer = container;
                     lastLocatedContainer = container;
                 } else {
@@ -246,7 +247,7 @@ const locatePointer = (
             }
         }
     }
-    return { pointerInfo, lastLocatedContainer };
+    return { locatedContainersForFragments, lastLocatedContainer };
 
 };
 
@@ -266,9 +267,12 @@ const locateRanges = (
     prevLocatedContainerForNamed: Container | null,
     currentContainer: Container,
     onBeforeModifierParentheses?: OnBeforeModifierParentheses,
-) => {
+): {
+    ranges: ([fromOnly: Container[]] | [from:Container[], toIncluded:Container[]])[],
+    lastLocatedContainer: Container | null,
+} => {
 
-    const ranges: ([fromOnly: LocatedPointerInfo]|[from:LocatedPointerInfo, toIncluded:LocatedPointerInfo])[] = [];
+    const ranges: ([fromOnly: Container[]]|[from:Container[], toIncluded:Container[]])[] = [];
     const pointerRangeList = origRanges.ranges();
 
     for (const pointerRange of pointerRangeList) {
@@ -281,8 +285,12 @@ const locateRanges = (
         );
         prevLocatedContainerForSame = from.lastLocatedContainer;
         prevLocatedContainerForNamed = from.lastLocatedContainer;
+
+        let range: ([fromOnly: Container[]]|[from:Container[], toIncluded:Container[]]);
+
         if (!toPointer) {
-            ranges.push([from.pointerInfo]);
+            if (from.locatedContainersForFragments.length === 0) continue;
+            range = [from.locatedContainersForFragments[from.locatedContainersForFragments.length - 1]];
         } else {
             const to = locatePointer(
                 toPointer,
@@ -292,7 +300,13 @@ const locateRanges = (
             );
             prevLocatedContainerForSame = from.lastLocatedContainer;
             prevLocatedContainerForNamed = from.lastLocatedContainer;
-            ranges.push([from.pointerInfo, to.pointerInfo]);
+
+            if (from.locatedContainersForFragments.length === 0) continue;
+            if (to.locatedContainersForFragments.length === 0) continue;
+            range = [
+                from.locatedContainersForFragments[from.locatedContainersForFragments.length - 1],
+                to.locatedContainersForFragments[to.locatedContainersForFragments.length - 1],
+            ];
         }
 
         const modifierParentheses = pointerRange.modifierParentheses();
@@ -309,6 +323,8 @@ const locateRanges = (
                 prevLocatedContainerForNamed = lastLocatedContainer;
             }
         }
+
+        ranges.push(range);
     }
 
 
@@ -339,20 +355,8 @@ export const getScope = (
             continue;
         }
 
-        let fromContainerIDs: string[] | null = null;
-        for (const [fragment, container] of from) {
-            const containerIDs = Array.isArray(container) ? container.map(c => c.containerID) : [container.containerID];
-            fragment.targetContainerIDs = [...new Set([...fragment.targetContainerIDs, ...containerIDs])];
-            fromContainerIDs = containerIDs;
-        }
-        let toContainerIDs: string[] | null = null;
-        if (to) {
-            for (const [fragment, container] of to) {
-                const containerIDs = Array.isArray(container) ? container.map(c => c.containerID) : [container.containerID];
-                fragment.targetContainerIDs = [...new Set([...fragment.targetContainerIDs, ...containerIDs])];
-                toContainerIDs = containerIDs;
-            }
-        }
+        const fromContainerIDs = from.map(c => c.containerID);
+        const toContainerIDs = to ? to.map(c => c.containerID) : null;
 
         if (fromContainerIDs && toContainerIDs) {
             for (let i = 0; i < fromContainerIDs.length - 1; i++) targetContainerIDRanges.add(fromContainerIDs[i]);
