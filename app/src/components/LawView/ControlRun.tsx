@@ -9,7 +9,6 @@ import styled, { createGlobalStyle } from "styled-components";
 import { em, LawViewOptions } from "./common";
 import { EL } from "lawtext/dist/src/node/el";
 import { NotImplementedError } from "lawtext/dist/src/util";
-import AnimateHeight from "react-animate-height";
 import { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
 import { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration";
 import { ____LawNum, ____PF, ____VarRef } from "lawtext/dist/src/node/el/controls";
@@ -93,8 +92,6 @@ const ContainerRefTextSpan = styled.span`
 // eslint-disable-next-line no-unused-vars
 enum ContainerRefFloatState {
     // eslint-disable-next-line no-unused-vars
-    HIDDEN,
-    // eslint-disable-next-line no-unused-vars
     CLOSED,
     // eslint-disable-next-line no-unused-vars
     OPEN,
@@ -135,7 +132,7 @@ const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
     const refText = React.useRef<HTMLSpanElement>(null);
     const refWindow = React.useRef<HTMLSpanElement>(null);
 
-    const [state, setState] = React.useState<ContainerRefState>({ mode: ContainerRefFloatState.HIDDEN, arrowLeft: "" });
+    const [state, setState] = React.useState<ContainerRefState>({ mode: ContainerRefFloatState.CLOSED, arrowLeft: "" });
 
     React.useEffect(() => {
         return () => {
@@ -156,12 +153,6 @@ const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
         }
     };
 
-    const onAnimationEnd = () => {
-        if (state.mode === ContainerRefFloatState.CLOSED) {
-            setState(prevState => ({ ...prevState, mode: ContainerRefFloatState.HIDDEN }));
-        }
-    };
-
     const updateSize = () => {
         if (!refText.current || !refWindow.current) return;
 
@@ -175,10 +166,6 @@ const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
         setState(prevState => ({ ...prevState, arrowLeft: `${left}px` }));
     };
 
-    const animateHeightOnAnimationEnd = () => {
-        onAnimationEnd();
-    };
-
     return (
         <ContainerRefSpan className={state.mode === ContainerRefFloatState.OPEN ? "lawtext-container-ref-open" : undefined}>
 
@@ -186,46 +173,42 @@ const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
                 <HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />
             </ContainerRefTextSpan>
 
-            <div
-                style={{
-                    float: "right",
-                    width: "100%",
-                    padding: 0,
-                    margin: 0,
-                    textIndent: 0,
-                    fontSize: 0,
-                    fontWeight: "normal",
-                    position: "relative",
-                    color: "initial",
-                }}
-            >
-
-                <AnimateHeight
-                    height={state.mode === ContainerRefFloatState.OPEN ? "auto" : 0}
+            {(state.mode !== ContainerRefFloatState.CLOSED) && (
+                <div
                     style={{
+                        float: "right",
                         width: "100%",
                         padding: 0,
                         margin: 0,
                         textIndent: 0,
                         fontSize: 0,
                         fontWeight: "normal",
-                        // overflow: "hidden",
-                        position: "absolute",
+                        position: "relative",
                         color: "initial",
                     }}
-                    onAnimationEnd={animateHeightOnAnimationEnd}
-                    duration={100}
                 >
-                    {(state.mode !== ContainerRefFloatState.HIDDEN) && (
+
+                    <div
+                        style={{
+                            width: "100%",
+                            padding: 0,
+                            margin: 0,
+                            textIndent: 0,
+                            fontSize: 0,
+                            fontWeight: "normal",
+                            position: "absolute",
+                            color: "initial",
+                        }}
+                    >
                         <ContainerRefFloatBlockInnerSpan>
                             <ContainerRefArrowSpan style={state.arrowLeft ? { marginLeft: state.arrowLeft } : { visibility: "hidden" }} />
                             <ContainerRefWindowSpan ref={refWindow}>
                                 <PeekContainerView containerIDs={containerIDs} {...{ htmlOptions }} />
                             </ContainerRefWindowSpan>
                         </ContainerRefFloatBlockInnerSpan>
-                    )}
-                </AnimateHeight>
-            </div>
+                    </div>
+                </div>
+            )}
 
         </ContainerRefSpan>
     );
