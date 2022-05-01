@@ -4,7 +4,7 @@ import { EL } from "../node/el";
 import { getContainerType } from "./common";
 import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
 import * as std from "../law/std";
-import { __Parentheses } from "../node/el/controls";
+import { __Parentheses, __Text, RangeInfo } from "../node/el/controls";
 import { parseNamedNum } from "../law/num";
 
 const locateContainerFromParent = (parentContainer: Container, fragment: ____PF) => {
@@ -261,6 +261,12 @@ export type OnBeforeModifierParentheses = (
     lastLocatedContainer: Container | null,
 }
 
+interface ObjRangeInfo {
+    from: Container[],
+    to?: Container[],
+    exclude?: RangeInfo[],
+}
+
 const locateRanges = (
     origRanges: ____PointerRanges,
     prevLocatedContainerForSame: Container | null,
@@ -268,11 +274,11 @@ const locateRanges = (
     currentContainer: Container,
     onBeforeModifierParentheses?: OnBeforeModifierParentheses,
 ): {
-    ranges: ([fromOnly: Container[]] | [from:Container[], toIncluded:Container[]])[],
+    ranges: ObjRangeInfo[],
     lastLocatedContainer: Container | null,
 } => {
 
-    const ranges: ([fromOnly: Container[]]|[from:Container[], toIncluded:Container[]])[] = [];
+    const ranges: ObjRangeInfo[] = [];
     const pointerRangeList = origRanges.ranges();
 
     for (const pointerRange of pointerRangeList) {
@@ -286,11 +292,13 @@ const locateRanges = (
         prevLocatedContainerForSame = from.lastLocatedContainer;
         prevLocatedContainerForNamed = from.lastLocatedContainer;
 
-        let range: ([fromOnly: Container[]]|[from:Container[], toIncluded:Container[]]);
+        let range: ObjRangeInfo;
 
         if (!toPointer) {
             if (from.locatedContainersForFragments.length === 0) continue;
-            range = [from.locatedContainersForFragments[from.locatedContainersForFragments.length - 1]];
+            range = {
+                from: from.locatedContainersForFragments[from.locatedContainersForFragments.length - 1],
+            };
         } else {
             const to = locatePointer(
                 toPointer,
@@ -303,10 +311,10 @@ const locateRanges = (
 
             if (from.locatedContainersForFragments.length === 0) continue;
             if (to.locatedContainersForFragments.length === 0) continue;
-            range = [
-                from.locatedContainersForFragments[from.locatedContainersForFragments.length - 1],
-                to.locatedContainersForFragments[to.locatedContainersForFragments.length - 1],
-            ];
+            range = {
+                from: from.locatedContainersForFragments[from.locatedContainersForFragments.length - 1],
+                to: to.locatedContainersForFragments[to.locatedContainersForFragments.length - 1],
+            };
         }
 
         const modifierParentheses = pointerRange.modifierParentheses();
@@ -321,6 +329,14 @@ const locateRanges = (
                 );
                 prevLocatedContainerForSame = lastLocatedContainer;
                 prevLocatedContainerForNamed = lastLocatedContainer;
+            }
+
+            const pContent = modifierParentheses.content;
+            if (pContent.children.length === 2) {
+                const [exRanges, exText] = pContent.children;
+                if (exRanges instanceof ____PointerRanges && exText instanceof __Text && exText.text() === "を除く。") {
+                    range.exclude = [...exRanges.targetContainerIDRanges];
+                }
             }
         }
 
@@ -338,10 +354,10 @@ export const getScope = (
     pointerRangesToBeModified: ____PointerRanges,
     onBeforeModifierParentheses?: OnBeforeModifierParentheses,
 ): {
-    ranges: (string | [from:string, toIncluded:string])[],
+    ranges: RangeInfo[],
     lastLocatedContainer: Container | null,
 } => {
-    const targetContainerIDRanges = new Set<string | [from:string, toIncluded:string]>();
+    const rangeInfos: RangeInfo[] = [];
     const { ranges, lastLocatedContainer } = locateRanges(
         pointerRangesToBeModified,
         prevLocatedContainerForSame,
@@ -349,8 +365,15 @@ export const getScope = (
         currentContainer,
         onBeforeModifierParentheses,
     );
-    for (const fromTo of ranges) {
-        const [from, to] = fromTo;
+    const fromToSet = new Set<string>();
+    const pushRangeInfo = (options: {from: string, to?: string, exclude?: RangeInfo[]}) => {
+        const fromTo = `FROM${options.from}====TO${options.to ? `-${options.to}` : ""}`;
+        if (fromToSet.has(fromTo)) return;
+        fromToSet.add(fromTo);
+        rangeInfos.push(options);
+    };
+    for (const range of ranges) {
+        const { from, to, exclude } = range;
         if (from.length === 0 || (to && to.length === 0)) {
             continue;
         }
@@ -359,18 +382,18 @@ export const getScope = (
         const toContainerIDs = to ? to.map(c => c.containerID) : null;
 
         if (fromContainerIDs && toContainerIDs) {
-            for (let i = 0; i < fromContainerIDs.length - 1; i++) targetContainerIDRanges.add(fromContainerIDs[i]);
-            targetContainerIDRanges.add([fromContainerIDs[fromContainerIDs.length - 1], toContainerIDs[0]]);
-            for (let i = 1; i < toContainerIDs.length; i++) targetContainerIDRanges.add(toContainerIDs[i]);
+            for (let i = 0; i < fromContainerIDs.length - 1; i++) pushRangeInfo({ from: fromContainerIDs[i], exclude });
+            pushRangeInfo({ from: fromContainerIDs[fromContainerIDs.length - 1], to: toContainerIDs[0], exclude });
+            for (let i = 0; i < toContainerIDs.length - 1; i++) pushRangeInfo({ from: toContainerIDs[i], exclude });
         } else if (fromContainerIDs) {
-            for (const containerID of fromContainerIDs) targetContainerIDRanges.add(containerID);
+            for (const containerID of fromContainerIDs) pushRangeInfo({ from: containerID, exclude });
         }
     }
-    if (targetContainerIDRanges.size > 0) {
-        pointerRangesToBeModified.targetContainerIDRanges = [...targetContainerIDRanges];
+    if (rangeInfos.length > 0) {
+        pointerRangesToBeModified.targetContainerIDRanges = [...rangeInfos];
     }
     return {
-        ranges: [...targetContainerIDRanges],
+        ranges: [...rangeInfos],
         lastLocatedContainer,
     };
 };

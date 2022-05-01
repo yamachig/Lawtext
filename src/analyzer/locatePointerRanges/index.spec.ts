@@ -708,7 +708,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
                 },
                 children: [
                     {
@@ -738,7 +738,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
                 },
                 children: [
                     {
@@ -804,7 +804,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
                 },
                 children: [
                     {
@@ -874,7 +874,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[2][num=2]\"},{\"from\":\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]\",\"exclude\":[{\"from\":\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"}]}]",
                 },
                 children: [
                     {
@@ -960,7 +960,7 @@ describe("Test locatePointerRanges", () => {
                                             {
                                                 tag: "____PointerRanges",
                                                 attr: {
-                                                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
+                                                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"}]",
                                                 },
                                                 children: [
                                                     {
@@ -1011,7 +1011,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"}]",
                 },
                 children: [
                     {
@@ -1042,7 +1042,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=5]-Paragraph[2][num=4]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=5]-Paragraph[2][num=4]\"}]",
                 },
                 children: [
                     {
@@ -1073,7 +1073,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"}]",
                 },
                 children: [
                     {
@@ -1133,7 +1133,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"}]",
                 },
                 children: [
                     {
@@ -1192,7 +1192,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"}]",
                 },
                 children: [
                     {
@@ -1380,7 +1380,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"}]",
                 },
                 children: [
                     {
@@ -1439,7 +1439,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\"}]",
                 },
                 children: [
                     {
@@ -1551,7 +1551,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\"]]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\",\"to\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\"}]",
                 },
                 children: [
                     {
@@ -1608,7 +1608,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"}]",
                 },
                 children: [
                     {
@@ -1638,7 +1638,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"}]",
                 },
                 children: [
                     {
@@ -1697,7 +1697,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[4][num=4]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[6][num=6]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[9][num=9]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[4][num=4]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[6][num=6]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[9][num=9]\"}]",
                 },
                 children: [
                     {
@@ -1785,7 +1785,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=27_5]-Paragraph[1][num=1]-Item[3][num=3]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=27_5]-Paragraph[1][num=1]-Item[3][num=3]\"}]",
                 },
                 children: [
                     {
@@ -1849,7 +1849,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"}]",
                 },
                 children: [
                     {
@@ -1879,7 +1879,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[3][num=3]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[2][num=2]\"},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[3][num=3]\"}]",
                 },
                 children: [
                     {
@@ -1973,7 +1973,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[1][num=1]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[1][num=1]\"}]",
                 },
                 children: [
                     {
@@ -2003,7 +2003,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"}]",
                 },
                 children: [
                     {
@@ -2045,7 +2045,7 @@ describe("Test locatePointerRanges", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"}]",
                 },
                 children: [
                     {

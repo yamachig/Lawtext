@@ -3,7 +3,7 @@ import { isIgnoreAnalysis } from "../../analyzer/common";
 import { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
 import * as std from "../../law/std";
 import { EL } from "../el";
-import { __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, __Text, ____Declaration, ____LawNum, ____Pointer, ____VarRef } from "../el/controls";
+import { RangeInfo, __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, __Text, ____Declaration, ____LawNum, ____Pointer, ____VarRef } from "../el/controls";
 
 export interface SentenceTextPos {
     sentenceIndex: number,
@@ -29,16 +29,16 @@ const pushRange = (ranges: SentenceTextRange[], range: SentenceTextRange) => {
 };
 
 export const toSentenceTextRanges = (
-    origContainerIDRanges: readonly (string | [from:string, toIncluded:string])[],
+    origRangeInfos: readonly RangeInfo[],
     sentenceEnvsStruct: SentenceEnvsStruct,
     following?: SentenceTextPos | null,
 ) => {
     const origRanges: SentenceTextRange[] = [];
-    for (const containerIDRange of origContainerIDRanges) {
-        const [from, toIncluded] = Array.isArray(containerIDRange) ? containerIDRange : [containerIDRange, undefined];
-        if (toIncluded) {
+    for (const rangeInfo of origRangeInfos) {
+        const { from, to } = rangeInfo;
+        if (to) {
             const fromContainer = sentenceEnvsStruct.containers.get(from);
-            const toContainer = sentenceEnvsStruct.containers.get(toIncluded);
+            const toContainer = sentenceEnvsStruct.containers.get(to);
             if (fromContainer && toContainer) {
                 pushRange(origRanges, {
                     start: {

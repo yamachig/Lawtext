@@ -876,7 +876,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        targetContainerIDRanges: "[\"container-Law\"]",
+                                                                        targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -1346,7 +1346,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        targetContainerIDRanges: "[\"container-Law\"]",
+                                                                        targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
                                                                     },
                                                                     children: [
                                                                         {
@@ -1872,7 +1872,7 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "____PointerRanges",
                                                                     attr: {
-                                                                        targetContainerIDRanges: "[\"container-Law\"]",
+                                                                        targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
                                                                     },
                                                                     children: [
                                                                         {

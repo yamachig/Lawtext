@@ -163,10 +163,15 @@ export class ____PointerRange extends EL {
     }
 }
 
+export interface RangeInfo {
+    from: string,
+    to?: string,
+    exclude?: RangeInfo[],
+}
+
 export interface PointerRangesOptions {
     children: (____PointerRange | SentenceChildEL)[],
     range: [start: number, end: number] | null,
-    targetContainerIDs?: string[],
 }
 
 export class ____PointerRanges extends EL {
@@ -179,19 +184,19 @@ export class ____PointerRanges extends EL {
 
     private targetContainerIDRangesCache: [
         str: string,
-        value: readonly (string | [from:string, toIncluded:string])[], // closed
+        value: readonly RangeInfo[], // closed
     ] | null = null;
-    public get targetContainerIDRanges(): readonly (string | [from:string, toIncluded:string])[] {
+    public get targetContainerIDRanges(): readonly RangeInfo[] {
         if (this.targetContainerIDRangesCache !== null && this.targetContainerIDRangesCache[0] === this.attr.targetContainerIDRanges) {
             return this.targetContainerIDRangesCache[1];
         } else {
             if (!this.attr.targetContainerIDRanges) return [];
-            const value = JSON.parse(this.attr.targetContainerIDRanges) as (string | [from:string, toIncluded:string])[];
+            const value = JSON.parse(this.attr.targetContainerIDRanges) as RangeInfo[];
             this.targetContainerIDRangesCache = [this.attr.targetContainerIDRanges, value];
             return value;
         }
     }
-    public set targetContainerIDRanges(value: readonly (string | [from:string, toIncluded:string])[]) {
+    public set targetContainerIDRanges(value: readonly RangeInfo[]) {
         this.attr.targetContainerIDRanges = JSON.stringify(value);
         this.targetContainerIDRangesCache = [this.attr.targetContainerIDRanges, value];
     }
@@ -200,7 +205,6 @@ export class ____PointerRanges extends EL {
         super("____PointerRanges", {}, [], options.range);
         this.children = options.children;
         this.attr = {};
-        if (options.targetContainerIDs !== undefined) this.attr.targetContainerIDRanges = JSON.stringify(options.targetContainerIDs);
     }
     public ranges(): ____PointerRange[] {
         return this.children.filter(c => c instanceof ____PointerRange) as ____PointerRange[];
