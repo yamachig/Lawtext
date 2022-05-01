@@ -1002,4 +1002,85 @@ describe("Test detectVariableReferences", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第二条　この法律（第四条を除く。）において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+  八　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+
+第三条　次に掲げる命令等を定める行為については、適用しない。
+
+第四条　次に掲げる命令等を定める行為については、適用しない。
+
+第五条　次に掲げる命令等を定める行為については、適用しない。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        void detectTokensResult;
+        const declarations = new Declarations();
+        for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
+            // console.log(JSON.stringify(declaration.json(true), null, 2));
+            declarations.add(declaration);
+        }
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_1-text_0_3",
+                    type: "Keyword",
+                    name: "命令等",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":5,\"textOffset\":0},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
+                    value: "内閣又は行政機関が定める次に掲げるものをいう。",
+                },
+                children: ["命令等"],
+            },
+        ];
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "命令等",
+                    declarationID: "decl-sentence_1-text_0_3",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":5},\"end\":{\"sentenceIndex\":3,\"textOffset\":8}}",
+                },
+                children: ["命令等"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "命令等",
+                    declarationID: "decl-sentence_1-text_0_3",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":5,\"textOffset\":5},\"end\":{\"sentenceIndex\":5,\"textOffset\":8}}",
+                },
+                children: ["命令等"],
+            },
+        ]
+          ;
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            varRefs.map(r => r.json(true)),
+            expected,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

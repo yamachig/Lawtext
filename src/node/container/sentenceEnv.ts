@@ -28,70 +28,156 @@ const pushRange = (ranges: SentenceTextRange[], range: SentenceTextRange) => {
     }
 };
 
+const fromToContainersToTextRanges = (from: string, to: string | null, sentenceEnvsStruct: SentenceEnvsStruct): SentenceTextRange[] => {
+    const ranges: SentenceTextRange[] = [];
+    if (to) {
+        const fromContainer = sentenceEnvsStruct.containers.get(from);
+        const toContainer = sentenceEnvsStruct.containers.get(to);
+        if (fromContainer && toContainer) {
+            pushRange(ranges, {
+                start: {
+                    sentenceIndex: fromContainer.sentenceRange[0],
+                    textOffset: 0,
+                },
+                end: {
+                    sentenceIndex: toContainer.sentenceRange[1],
+                    textOffset: 0,
+                },
+            });
+        }
+    } else {
+        const container = sentenceEnvsStruct.containers.get(from);
+        if (container) {
+            if (container.type === ContainerType.ROOT) {
+                // "この法律" does not contain SupplProvision of other amendments.
+                for (const rootChild of container.children) {
+                    if (std.isSupplProvision(rootChild.el) && rootChild.el.attr.AmendLawNum) {
+                        continue;
+                    }
+                    pushRange(ranges, {
+                        start: {
+                            sentenceIndex: rootChild.sentenceRange[0],
+                            textOffset: 0,
+                        },
+                        end: {
+                            sentenceIndex: rootChild.sentenceRange[1],
+                            textOffset: 0,
+                        },
+                    });
+                }
+
+            } else {
+                pushRange(ranges, {
+                    start: {
+                        sentenceIndex: container.sentenceRange[0],
+                        textOffset: 0,
+                    },
+                    end: {
+                        sentenceIndex: container.sentenceRange[1],
+                        textOffset: 0,
+                    },
+                });
+            }
+        }
+    }
+    return ranges;
+};
+
+const excludeTextRanges = (origRanges: SentenceTextRange[], excludeRanges: SentenceTextRange[]) => {
+    if (origRanges.length === 0 || excludeRanges.length === 0) return origRanges;
+
+    const ranges: SentenceTextRange[] = [...origRanges.map(r => ({ ...{ start: { ...r.start }, end: { ...r.end } } }))];
+
+    for (const excludeRange of excludeRanges) {
+        for (let i = 0; i < ranges.length; i++) {
+            const range = ranges[i];
+
+            if (
+                (range.end.sentenceIndex < excludeRange.start.sentenceIndex)
+                    || (
+                        (range.end.sentenceIndex === excludeRange.start.sentenceIndex)
+                        && (range.end.textOffset < excludeRange.start.textOffset)
+                    )
+                    || (excludeRange.end.sentenceIndex < range.start.sentenceIndex)
+                    || (
+                        (excludeRange.end.sentenceIndex === range.start.sentenceIndex)
+                        && (excludeRange.end.textOffset < range.start.textOffset)
+                    )
+            ) {
+                // No overlapping
+                continue;
+
+            } else if (
+                (range.start.sentenceIndex < excludeRange.end.sentenceIndex)
+                    || (
+                        (range.start.sentenceIndex === excludeRange.end.sentenceIndex)
+                        && (range.start.textOffset <= excludeRange.end.textOffset)
+                    )
+            ) {
+                if (
+                    (range.end.sentenceIndex < excludeRange.end.sentenceIndex)
+                        || (
+                            (range.end.sentenceIndex === excludeRange.end.sentenceIndex)
+                            && (range.end.textOffset <= excludeRange.end.textOffset)
+                        )
+                ) {
+                    // End of range will be excluded
+                    range.end = { ...excludeRange.start };
+
+                } else {
+                    // Middle of range will be excluded
+                    ranges.splice(i + 1, 0, {
+                        start: { ...excludeRange.end },
+                        end: { ...range.end },
+                    });
+                    range.end = { ...excludeRange.start };
+                    i++;
+                }
+            } else {
+                if (
+                    (range.end.sentenceIndex < excludeRange.end.sentenceIndex)
+                        || (
+                            (range.end.sentenceIndex === excludeRange.end.sentenceIndex)
+                            && (range.end.textOffset <= excludeRange.end.textOffset)
+                        )
+                ) {
+                    // Whole range will be excluded
+                    ranges.splice(i, 1);
+                    i--;
+
+                } else {
+                    // Start of range will be excluded
+                    range.start = { ...excludeRange.end };
+
+                }
+
+            }
+        }
+    }
+    return ranges;
+};
+
 export const toSentenceTextRanges = (
     origRangeInfos: readonly RangeInfo[],
     sentenceEnvsStruct: SentenceEnvsStruct,
     following?: SentenceTextPos | null,
 ) => {
-    const origRanges: SentenceTextRange[] = [];
+    const rangesBeforeFollowing: SentenceTextRange[] = [];
     for (const rangeInfo of origRangeInfos) {
         const { from, to } = rangeInfo;
-        if (to) {
-            const fromContainer = sentenceEnvsStruct.containers.get(from);
-            const toContainer = sentenceEnvsStruct.containers.get(to);
-            if (fromContainer && toContainer) {
-                pushRange(origRanges, {
-                    start: {
-                        sentenceIndex: fromContainer.sentenceRange[0],
-                        textOffset: 0,
-                    },
-                    end: {
-                        sentenceIndex: toContainer.sentenceRange[1],
-                        textOffset: 0,
-                    },
-                });
-            }
+        const origRanges = fromToContainersToTextRanges(from, to ?? null, sentenceEnvsStruct);
+        const excludeRanges = rangeInfo.exclude && toSentenceTextRanges(rangeInfo.exclude, sentenceEnvsStruct);
+        if (excludeRanges) {
+            rangesBeforeFollowing.push(...excludeTextRanges(origRanges, excludeRanges));
         } else {
-            const container = sentenceEnvsStruct.containers.get(from);
-            if (container) {
-                if (container.type === ContainerType.ROOT) {
-                    // "この法律" does not contain SupplProvision of other amendments.
-                    for (const rootChild of container.children) {
-                        if (std.isSupplProvision(rootChild.el) && rootChild.el.attr.AmendLawNum) {
-                            continue;
-                        }
-                        pushRange(origRanges, {
-                            start: {
-                                sentenceIndex: rootChild.sentenceRange[0],
-                                textOffset: 0,
-                            },
-                            end: {
-                                sentenceIndex: rootChild.sentenceRange[1],
-                                textOffset: 0,
-                            },
-                        });
-                    }
-
-                } else {
-                    pushRange(origRanges, {
-                        start: {
-                            sentenceIndex: container.sentenceRange[0],
-                            textOffset: 0,
-                        },
-                        end: {
-                            sentenceIndex: container.sentenceRange[1],
-                            textOffset: 0,
-                        },
-                    });
-                }
-            }
+            rangesBeforeFollowing.push(...origRanges);
         }
     }
 
     if (following) {
 
         const ranges: SentenceTextRange[] = [];
-        for (const origRange of origRanges) {
+        for (const origRange of rangesBeforeFollowing) {
             if (origRange.end.sentenceIndex === following.sentenceIndex) {
                 if (origRange.end.textOffset < following.textOffset) {
                     continue;
@@ -112,7 +198,7 @@ export const toSentenceTextRanges = (
         }
         return ranges;
     } else {
-        return origRanges;
+        return rangesBeforeFollowing;
     }
 };
 
