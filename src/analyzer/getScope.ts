@@ -119,8 +119,8 @@ const locateContainerOfHeadFragment = (
             return currentContainer.findAncestorChildrenSub(c => {
                 if (c.el.tag !== head.attr.targetType) return false;
                 const titleEl = c.el.children.find(el =>
-                    el instanceof EL && el.tag === `${c.el.tag}Title`) as EL;
-                return (new RegExp(`^${head.attr.name}(?:[(（]|\\s|$)`)).exec(titleEl.text()) !== null;
+                    el instanceof EL && (el.tag === `${c.el.tag}Title` || el.tag === `${c.el.tag}Label`)) as EL | undefined;
+                return (new RegExp(`^${head.attr.name}(?:[(（]|\\s|$)`)).exec(titleEl?.text() ?? "") !== null;
             });
 
         } else if (head.attr.targetType === "SUBITEM") {

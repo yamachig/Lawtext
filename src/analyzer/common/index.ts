@@ -4,7 +4,7 @@ import { EL } from "../../node/el";
 
 export const rootContainerTags = ["Law"] as const;
 
-export const toplevelContainerTags = ["EnactStatement", "MainProvision", ...std.appdxItemTags] as const;
+export const toplevelContainerTags = ["EnactStatement", "MainProvision", "SupplProvision", ...std.appdxItemTags] as const;
 
 export const articleContainerTags = std.articleGroupTags;
 

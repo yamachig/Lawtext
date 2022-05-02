@@ -1085,4 +1085,112 @@ describe("Test detectVariableReferences", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第二条　この法律及びこの法律に基づく命令の規定の解釈に関しては、次の定義に従うものとする。
+  五　「無線局」とは、無線設備及び無線設備の操作を行う者の総体をいう。但し、受信のみを目的とするものを含まない。
+
+第四条の二　（略）
+２　次章に定める技術基準に相当する技術基準として総務大臣が指定する技術基準に適合している無線設備を使用して実験等無線局（科学若しくは技術の発達のための実験、電波の利用の効率性に関する試験又は電波の利用の需要に関する調査に専用する無線局をいう。以下同じ。）（前条第三号の総務省令で定める無線局のうち、用途、周波数その他の条件を勘案して総務省令で定めるものであるものに限る。）を開設しようとする者は、総務省令で定めるところにより、次に掲げる事項を総務大臣に届け出ることができる。ただし、この項の規定による届出（第二号及び第三号に掲げる事項を同じくするものに限る。）をしたことがある者については、この限りでない。
+  一～六　（略）
+３　前項の規定による届出があつたときは、当該届出に係る同項の実験等無線局に使用される同項の無線設備は、適合表示無線設備でない場合であつても、前条第三号の規定の適用については、当該届出の日から同日以後百八十日を超えない範囲内で総務省令で定める期間を経過する日又は当該実験等無線局を廃止した日のいずれか早い日までの間に限り、適合表示無線設備とみなす。（略）
+４～７　（略）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        void detectTokensResult;
+        const declarations = detectDeclarations(sentenceEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_1-text_1_4",
+                    type: "Keyword",
+                    name: "無線局",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":10,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":4}}",
+                    value: "無線設備及び無線設備の操作を行う者の総体",
+                },
+                children: ["無線局"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_4-text_51_57",
+                    type: "Keyword",
+                    name: "実験等無線局",
+                    scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":125},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":4,\"textOffset\":57}}",
+                },
+                children: ["実験等無線局"],
+            },
+        ]
+          ;
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "無線局",
+                    declarationID: "decl-sentence_1-text_1_4",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":112},\"end\":{\"sentenceIndex\":4,\"textOffset\":115}}",
+                },
+                children: ["無線局"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "無線局",
+                    declarationID: "decl-sentence_1-text_1_4",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":140},\"end\":{\"sentenceIndex\":4,\"textOffset\":143}}",
+                },
+                children: ["無線局"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "実験等無線局",
+                    declarationID: "decl-sentence_4-text_51_57",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":7,\"textOffset\":28},\"end\":{\"sentenceIndex\":7,\"textOffset\":34}}",
+                },
+                children: ["実験等無線局"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "実験等無線局",
+                    declarationID: "decl-sentence_4-text_51_57",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":7,\"textOffset\":130},\"end\":{\"sentenceIndex\":7,\"textOffset\":136}}",
+                },
+                children: ["実験等無線局"],
+            },
+        ];
+
+
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            varRefs.map(r => r.json(true)),
+            expected,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

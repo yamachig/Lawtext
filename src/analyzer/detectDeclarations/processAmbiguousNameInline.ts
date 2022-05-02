@@ -172,6 +172,8 @@ export const findFilteredAmbiguousNameInline = (
         // "Consistency": Skip candidates occured outside of the scope.
 
         for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
+            // TODO: exclude QuoteStruct and NewProvision
+
             if (info.nameCandidates.size === 0) break;
             for (const name of [...info.nameCandidates]) {
                 let nextOffset = 0;
