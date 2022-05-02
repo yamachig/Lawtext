@@ -206,49 +206,60 @@ export const toSentenceTextRanges = (
 
     } else {
         if (!following) return [];
-        const sentenceEnv = sentenceEnvsStruct.sentenceEnvs[following.sentenceIndex];
+        // const sentenceEnv = sentenceEnvsStruct.sentenceEnvs[following.sentenceIndex];
 
         const start = { ...following };
 
-        const topLevelContainer = sentenceEnv.container.thisOrClosest(p => p.type === ContainerType.TOPLEVEL) ?? sentenceEnvsStruct.rootContainer;
+        // const topLevelContainer = sentenceEnv.container.thisOrClosest(p => p.type === ContainerType.TOPLEVEL) ?? sentenceEnvsStruct.rootContainer;
 
         const ranges: SentenceTextRange[] = [];
 
-        if (std.isMainProvision(topLevelContainer.el)) {
-            const originalSupplProvisions = topLevelContainer.parent?.children.filter(c => (std.isSupplProvision(c.el) && (!c.el.attr.AmendLawNum))) ?? [];
-            pushRange(
-                ranges,
-                {
-                    start,
-                    end: {
-                        sentenceIndex: topLevelContainer.sentenceRange[1],
-                        textOffset: 0,
-                    },
+        pushRange(
+            ranges,
+            {
+                start,
+                end: {
+                    sentenceIndex: sentenceEnvsStruct.rootContainer.sentenceRange[1],
+                    textOffset: 0,
                 },
-                ...originalSupplProvisions.map(c => ({
-                    start: {
-                        sentenceIndex: c.sentenceRange[0],
-                        textOffset: 0,
-                    },
-                    end: {
-                        sentenceIndex: c.sentenceRange[1],
-                        textOffset: 0,
-                    },
-                })),
-            );
+            },
+        );
 
-        } else {
-            pushRange(
-                ranges,
-                {
-                    start,
-                    end: {
-                        sentenceIndex: topLevelContainer.sentenceRange[1],
-                        textOffset: 0,
-                    },
-                },
-            );
-        }
+        // if (std.isMainProvision(topLevelContainer.el)) {
+        //     const originalSupplProvisions = topLevelContainer.parent?.children.filter(c => (std.isSupplProvision(c.el) && (!c.el.attr.AmendLawNum))) ?? [];
+        //     pushRange(
+        //         ranges,
+        //         {
+        //             start,
+        //             end: {
+        //                 sentenceIndex: topLevelContainer.sentenceRange[1],
+        //                 textOffset: 0,
+        //             },
+        //         },
+        //         ...originalSupplProvisions.map(c => ({
+        //             start: {
+        //                 sentenceIndex: c.sentenceRange[0],
+        //                 textOffset: 0,
+        //             },
+        //             end: {
+        //                 sentenceIndex: c.sentenceRange[1],
+        //                 textOffset: 0,
+        //             },
+        //         })),
+        //     );
+
+        // } else {
+        //     pushRange(
+        //         ranges,
+        //         {
+        //             start,
+        //             end: {
+        //                 sentenceIndex: topLevelContainer.sentenceRange[1],
+        //                 textOffset: 0,
+        //             },
+        //         },
+        //     );
+        // }
 
         return ranges;
     }
