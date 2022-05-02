@@ -312,7 +312,7 @@ export const findFilteredAmbiguousNameInline = (
         // "Greedy": Pick the longest candidate
         filteredNameInfos.push({
             ...info,
-            name: [...info.nameCandidates].sort((a, b) => a.length - b.length)[0],
+            name: [...info.nameCandidates].sort((a, b) => b.length - a.length)[0],
         });
     }
 
@@ -334,6 +334,68 @@ export const processAmbiguousNameInline = (
     const addedDeclarations: ____Declaration[] = [];
 
     const filteredNameInfos = findFilteredAmbiguousNameInline(sentenceEnvsStruct, allDeclarations);
+    errors.push(...filteredNameInfos.errors);
+
+    for (const { scope, pointerRanges, sentenceEnv, name, nameCandidateELIndex, nameCandidateEL, elToBeModified } of filteredNameInfos.value) {
+
+        if (scope.length === 0) {
+            errors.push(new ErrorMessage(
+                "No scope found",
+                [
+                    pointerRanges?.range?.[0] ?? 0,
+                    pointerRanges?.range?.[1] ?? 0,
+                ],
+            ));
+        }
+
+        const nameCandidateELTextRange = sentenceEnv.textRageOfEL(nameCandidateEL);
+        if (!nameCandidateELTextRange) {
+            throw new Error("nameCandidateELRange is null");
+        }
+
+        const nameSentenceTextRange: SentenceTextRange = {
+            start: {
+                sentenceIndex: sentenceEnv.index,
+                textOffset: nameCandidateELTextRange[1] - name.length,
+            },
+            end: {
+                sentenceIndex: sentenceEnv.index,
+                textOffset: nameCandidateELTextRange[1],
+            },
+        };
+
+        const newItems: SentenceChildEL[] = [];
+        const nameCandidateELText = nameCandidateEL.text();
+
+        if (name.length < nameCandidateELText.length) {
+            newItems.push(new __Text(
+                nameCandidateELText.slice(0, -name.length),
+                nameCandidateEL.range && [nameCandidateEL.range[0], nameCandidateEL.range[1] - name.length],
+            ));
+        }
+
+        const declarationID = `decl-sentence_${sentenceEnv.index}-text_${nameCandidateELTextRange[1] - name.length}_${nameCandidateELTextRange[1]}`;
+
+        const declaration = new ____Declaration({
+            declarationID,
+            type: "Keyword",
+            name,
+            value: null,
+            scope: scope,
+            nameSentenceTextRange,
+            range: nameCandidateEL.range ? [
+                nameCandidateEL.range[1] - name.length,
+                nameCandidateEL.range[1],
+            ] : null,
+        });
+        addedDeclarations.push(declaration);
+
+        elToBeModified.children.splice(
+            nameCandidateELIndex,
+            1,
+            ...newItems,
+        );
+    }
 
     return {
         value: { addedDeclarations },
