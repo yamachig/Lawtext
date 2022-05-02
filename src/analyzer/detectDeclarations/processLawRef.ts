@@ -55,25 +55,10 @@ export const processLawRef = (
                     textOffset: sentenceEnv.textRageOfEL(nameSquareParentheses)?.[1] ?? 0,
                 } : null;
 
-                const scope = (
-                    pointerRanges
-                        ? toSentenceTextRanges(
-                            pointerRanges.targetContainerIDRanges,
-                            sentenceEnvsStruct,
-                            followingStartPos,
-                        )
-                        : [
-                            {
-                                start: {
-                                    sentenceIndex: sentenceEnv.index,
-                                    textOffset: sentenceEnv.textRageOfEL(lawNum)?.[1] ?? 0,
-                                },
-                                end: {
-                                    sentenceIndex: (sentenceEnv.container.thisOrClosest(p => p.type === ContainerType.TOPLEVEL || p.type === ContainerType.ROOT)?.sentenceRange[1] ?? Number.NaN) + 1,
-                                    textOffset: 0,
-                                },
-                            },
-                        ]
+                const scope = toSentenceTextRanges(
+                    pointerRanges?.targetContainerIDRanges ?? null,
+                    sentenceEnvsStruct,
+                    followingStartPos,
                 );
 
                 if (scope.length === 0) {

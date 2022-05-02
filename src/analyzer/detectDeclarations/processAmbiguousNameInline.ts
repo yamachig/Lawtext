@@ -1,7 +1,6 @@
 import { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { __Parentheses, __Text, ____Declaration, ____PointerRanges } from "../../node/el/controls";
-import { ContainerType } from "../../node/container";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import { SentenceChildEL } from "../../node/cst/inline";
 import { toSentenceTextRanges, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
@@ -107,25 +106,10 @@ export const findFilteredAmbiguousNameInline = (
                 textOffset: sentenceEnv.textRageOfEL(info.afterNameParentheses)?.[1] ?? 0,
             } : null;
 
-            const scope = (
-                info.pointerRanges
-                    ? toSentenceTextRanges(
-                        info.pointerRanges.targetContainerIDRanges,
-                        sentenceEnvsStruct,
-                        followingStartPos,
-                    )
-                    : [
-                        {
-                            start: {
-                                sentenceIndex: sentenceEnv.index,
-                                textOffset: sentenceEnv.textRageOfEL(info.afterNameParentheses)?.[1] ?? 0,
-                            },
-                            end: {
-                                sentenceIndex: (sentenceEnv.container.thisOrClosest(p => p.type === ContainerType.TOPLEVEL || p.type === ContainerType.ROOT)?.sentenceRange[1] ?? Number.NaN) + 1,
-                                textOffset: 0,
-                            },
-                        },
-                    ]
+            const scope = toSentenceTextRanges(
+                info.pointerRanges?.targetContainerIDRanges ?? null,
+                sentenceEnvsStruct,
+                followingStartPos,
             );
 
             nameInfos.push({
@@ -191,23 +175,26 @@ export const findFilteredAmbiguousNameInline = (
                         continue;
                     }
 
+                    // check if the occurance is in scope
+                    let inScope = false;
                     for (const s of info.scope) {
                         if (
-                            !(
-                                (
-                                    (s.start.sentenceIndex < sentenceEnv.index)
-                                || ((s.start.sentenceIndex === sentenceEnv.index) && (s.start.textOffset <= inSentenceOffset))
-                                )
-                                && (
-                                    (sentenceEnv.index < s.end.sentenceIndex)
-                                    || ((sentenceEnv.index === s.end.sentenceIndex) && (inSentenceOffset <= s.end.textOffset))
-                                )
+                            (
+                                (s.start.sentenceIndex < sentenceEnv.index)
+                            || ((s.start.sentenceIndex === sentenceEnv.index) && (s.start.textOffset <= inSentenceOffset))
+                            )
+                            && (
+                                (sentenceEnv.index < s.end.sentenceIndex)
+                                || ((sentenceEnv.index === s.end.sentenceIndex) && (inSentenceOffset <= s.end.textOffset))
                             )
                         ) {
-                            // not in scope
-                            info.nameCandidates.delete(name);
+                            inScope = true;
                             break;
                         }
+                    }
+                    if (!inScope) {
+                        info.nameCandidates.delete(name);
+                        break;
                     }
                 }
             }

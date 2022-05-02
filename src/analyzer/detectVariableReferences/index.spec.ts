@@ -203,7 +203,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_1-text_21_23",
                     type: "LawName",
                     name: "旧法",
-                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":17},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":24},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":21},\"end\":{\"sentenceIndex\":1,\"textOffset\":23}}",
                     value: "大正四年法律第二十六号",
                 },
@@ -310,7 +310,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_3-text_21_23",
                     type: "LawName",
                     name: "旧法",
-                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":17},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":24},\"end\":{\"sentenceIndex\":10,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":21},\"end\":{\"sentenceIndex\":3,\"textOffset\":23}}",
                     value: "大正四年法律第二十六号",
                 },
@@ -444,7 +444,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_4-text_48_50",
                     type: "Keyword",
                     name: "規則",
-                    scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":48},\"end\":{\"sentenceIndex\":4,\"textOffset\":50}}",
                 },
                 children: ["規則"],
@@ -479,7 +479,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_8-text_45_49",
                     type: "Keyword",
                     name: "許認可等",
-                    scope: "[{\"start\":{\"sentenceIndex\":8,\"textOffset\":50},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":8,\"textOffset\":50},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":8,\"textOffset\":45},\"end\":{\"sentenceIndex\":8,\"textOffset\":49}}",
                 },
                 children: ["許認可等"],
@@ -585,7 +585,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_27-text_0_4",
                     type: "Keyword",
                     name: "審査基準",
-                    scope: "[{\"start\":{\"sentenceIndex\":27,\"textOffset\":63},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":27,\"textOffset\":63},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":27,\"textOffset\":0},\"end\":{\"sentenceIndex\":27,\"textOffset\":4}}",
                 },
                 children: ["審査基準"],
@@ -596,7 +596,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_28-text_0_4",
                     type: "Keyword",
                     name: "処分基準",
-                    scope: "[{\"start\":{\"sentenceIndex\":28,\"textOffset\":73},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":28,\"textOffset\":73},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":0},\"end\":{\"sentenceIndex\":28,\"textOffset\":4}}",
                 },
                 children: ["処分基準"],
@@ -607,7 +607,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_29-text_0_6",
                     type: "Keyword",
                     name: "行政指導指針",
-                    scope: "[{\"start\":{\"sentenceIndex\":29,\"textOffset\":86},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":29,\"textOffset\":86},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":29,\"textOffset\":0},\"end\":{\"sentenceIndex\":29,\"textOffset\":6}}",
                 },
                 children: ["行政指導指針"],
@@ -1089,6 +1089,11 @@ describe("Test detectVariableReferences", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
+電波法
+（昭和二十五年法律第百三十一号）
+
+      第一章　総則
+
 第二条　この法律及びこの法律に基づく命令の規定の解釈に関しては、次の定義に従うものとする。
   五　「無線局」とは、無線設備及び無線設備の操作を行う者の総体をいう。但し、受信のみを目的とするものを含まない。
 
@@ -1097,6 +1102,10 @@ describe("Test detectVariableReferences", () => {
   一～六　（略）
 ３　前項の規定による届出があつたときは、当該届出に係る同項の実験等無線局に使用される同項の無線設備は、適合表示無線設備でない場合であつても、前条第三号の規定の適用については、当該届出の日から同日以後百八十日を超えない範囲内で総務省令で定める期間を経過する日又は当該実験等無線局を廃止した日のいずれか早い日までの間に限り、適合表示無線設備とみなす。（略）
 ４～７　（略）
+
+      附　則　抄
+
+１６　令和四年三月三十一日までの間における前項の規定により読み替えて適用する第百三条の二第四項の規定の適用については、同項中「十二の四　大規模な自然災害が発生した場合においても、地上基幹放送又は移動受信用地上基幹放送の業務に用いられる電気通信設備の損壊又は故障により当該業務に著しい支障を及ぼさないようにするために行われる当該電気通信設備（当該電気通信設備と一体として設置される総務省令で定める附属設備並びに当該電気通信設備及び当該附属設備を設置するために必要な工作物を含む。）の整備（放送法第百十一条第一項の総務省令で定める技術基準又は同法第百二十一条第一項の総務省令で定める技術基準に適合させるために行われるものを除く。）のための補助金の交付」とあるのは、「<QuoteStruct><Item Num="12_4"><ItemTitle>十二の四</ItemTitle><ItemSentence><Sentence>大規模な自然災害が発生した場合においても、地上基幹放送又は移動受信用地上基幹放送の業務に用いられる電気通信設備の損壊又は故障により当該業務に著しい支障を及ぼさないようにするために行われる当該電気通信設備（当該電気通信設備と一体として設置される総務省令で定める附属設備並びに当該電気通信設備及び当該附属設備を設置するために必要な工作物を含む。）の整備（放送法第百十一条第一項の総務省令で定める技術基準又は同法第百二十一条第一項の総務省令で定める技術基準に適合させるために行われるものを除く。）のための補助金の交付</Sentence></ItemSentence></Item><Item Num="12_5"><ItemTitle>十二の五</ItemTitle><ItemSentence><Sentence>電波法及び電気通信事業法の一部を改正する法律（平成二十九年法律第二十七号）附則第一条第一号に掲げる規定の施行の日の前日（以下この号において「基準日」という。）において設置されているイに掲げる衛星基幹放送（放送法第二条第十三号の衛星基幹放送をいう。以下この号において同じ。）の受信を目的とする受信設備（基準日において第三章に定める技術基準に適合していないものを除き、増幅器及び配線並びに分配器、接続子その他の配線のために必要な器具に限る。）であつて、ロに掲げる衛星基幹放送の電波を受けるための空中線を接続した場合に当該技術基準に適合しないこととなるものについて、当該技術基準に適合させるために行われる改修のための補助金の交付その他の必要な援助</Sentence></ItemSentence><Subitem1 Num="1"><Subitem1Title>イ</Subitem1Title><Subitem1Sentence><Sentence>基準日において行われている衛星基幹放送であつて、基準日の翌日以後引き続き行われるもの（実験等無線局を用いて行われるものを除く。）</Sentence></Subitem1Sentence></Subitem1><Subitem1 Num="2"><Subitem1Title>ロ</Subitem1Title><Subitem1Sentence><Sentence>基準日の翌日以後にイに掲げる衛星基幹放送と同時に行われる衛星基幹放送であつて、イに掲げる衛星基幹放送に使用される電波と周波数が同一で、かつ、電界の回転の方向が反対である電波を使用して行われるもの</Sentence></Subitem1Sentence></Subitem1></Item></QuoteStruct>」とする。
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
@@ -1111,7 +1120,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_1-text_1_4",
                     type: "Keyword",
                     name: "無線局",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":10,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":4}}",
                     value: "無線設備及び無線設備の操作を行う者の総体",
                 },

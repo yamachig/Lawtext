@@ -271,7 +271,7 @@ describe("Test detectDeclarations", () => {
                     declarationID: "decl-sentence_0-text_43_49",
                     type: "LawName",
                     name: "通則法改正法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":39},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
                     value: "平成二十六年法律第六十六号",
                 },
@@ -390,7 +390,7 @@ describe("Test detectDeclarations", () => {
                                                                         declarationID: "decl-sentence_0-text_43_49",
                                                                         type: "LawName",
                                                                         name: "通則法改正法",
-                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":39},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
                                                                         value: "平成二十六年法律第六十六号",
                                                                     },
@@ -778,7 +778,7 @@ describe("Test detectDeclarations", () => {
                     declarationID: "decl-sentence_2-text_48_50",
                     type: "Keyword",
                     name: "規則",
-                    scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":51},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":51},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":48},\"end\":{\"sentenceIndex\":2,\"textOffset\":50}}",
                 },
                 children: ["規則"],
@@ -1056,7 +1056,7 @@ describe("Test detectDeclarations", () => {
                                                                                                                         declarationID: "decl-sentence_2-text_48_50",
                                                                                                                         type: "Keyword",
                                                                                                                         name: "規則",
-                                                                                                                        scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":51},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
+                                                                                                                        scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":51},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                                                                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":48},\"end\":{\"sentenceIndex\":2,\"textOffset\":50}}",
                                                                                                                     },
                                                                                                                     children: ["規則"],
@@ -1237,7 +1237,7 @@ describe("Test detectDeclarations", () => {
                     declarationID: "decl-sentence_2-text_26_31",
                     type: "Keyword",
                     name: "研究計画書",
-                    scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":32},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":32},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":26},\"end\":{\"sentenceIndex\":2,\"textOffset\":31}}",
                 },
                 children: ["研究計画書"],
@@ -1248,7 +1248,7 @@ describe("Test detectDeclarations", () => {
                     declarationID: "decl-sentence_0-text_38_39",
                     type: "LawName",
                     name: "法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":34},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":40},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
                     value: "平成二十九年法律第十六号",
                 },
@@ -1434,7 +1434,7 @@ describe("Test detectDeclarations", () => {
                                                                                                         declarationID: "decl-sentence_0-text_38_39",
                                                                                                         type: "LawName",
                                                                                                         name: "法",
-                                                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":34},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                                                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":40},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                                                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
                                                                                                         value: "平成二十九年法律第十六号",
                                                                                                     },
@@ -1667,7 +1667,7 @@ describe("Test detectDeclarations", () => {
                                                                                                                 declarationID: "decl-sentence_2-text_26_31",
                                                                                                                 type: "Keyword",
                                                                                                                 name: "研究計画書",
-                                                                                                                scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":32},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                                                                                                                scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":32},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":26},\"end\":{\"sentenceIndex\":2,\"textOffset\":31}}",
                                                                                                             },
                                                                                                             children: ["研究計画書"],
@@ -3098,6 +3098,11 @@ describe("Test detectDeclarations", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
+電波法
+（昭和二十五年法律第百三十一号）
+
+      第一章　総則
+
 第二条　この法律及びこの法律に基づく命令の規定の解釈に関しては、次の定義に従うものとする。
   五　「無線局」とは、無線設備及び無線設備の操作を行う者の総体をいう。但し、受信のみを目的とするものを含まない。
 
@@ -3105,6 +3110,10 @@ describe("Test detectDeclarations", () => {
 ２　次章に定める技術基準に相当する技術基準として総務大臣が指定する技術基準に適合している無線設備を使用して実験等無線局（科学若しくは技術の発達のための実験、電波の利用の効率性に関する試験又は電波の利用の需要に関する調査に専用する無線局をいう。以下同じ。）（前条第三号の総務省令で定める無線局のうち、用途、周波数その他の条件を勘案して総務省令で定めるものであるものに限る。）を開設しようとする者は、総務省令で定めるところにより、次に掲げる事項を総務大臣に届け出ることができる。ただし、この項の規定による届出（第二号及び第三号に掲げる事項を同じくするものに限る。）をしたことがある者については、この限りでない。
   一～六　（略）
 ３～７　（略）
+
+      附　則　抄
+
+１　第四条の二第二項の規定による届出をした者は、当該届出に係る実験等無線局を廃止したときは、遅滞なく、その旨を総務大臣に届け出なければならない。
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
@@ -3129,7 +3138,7 @@ describe("Test detectDeclarations", () => {
                     declarationID: "decl-sentence_1-text_1_4",
                     type: "Keyword",
                     name: "無線局",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":8,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":4}}",
                     value: "無線設備及び無線設備の操作を行う者の総体",
                 },
@@ -3142,70 +3151,147 @@ describe("Test detectDeclarations", () => {
             tag: "Law",
             attr: {
                 Lang: "ja",
+                Era: "Showa",
+                Year: "25",
+                LawType: "Act",
+                Num: "131",
             },
             children: [
+                {
+                    tag: "LawNum",
+                    attr: {},
+                    children: ["昭和二十五年法律第百三十一号"],
+                },
                 {
                     tag: "LawBody",
                     attr: {},
                     children: [
                         {
+                            tag: "LawTitle",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["電波法"],
+                                },
+                            ],
+                        },
+                        {
                             tag: "MainProvision",
                             attr: {},
                             children: [
                                 {
-                                    tag: "Article",
+                                    tag: "Chapter",
                                     attr: {
                                         Delete: "false",
                                         Hide: "false",
+                                        Num: "1",
                                     },
                                     children: [
                                         {
-                                            tag: "ArticleTitle",
+                                            tag: "ChapterTitle",
                                             attr: {},
-                                            children: ["第二条"],
+                                            children: [
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["第一章　総則"],
+                                                },
+                                            ],
                                         },
                                         {
-                                            tag: "Paragraph",
+                                            tag: "Article",
                                             attr: {
-                                                OldStyle: "false",
+                                                Delete: "false",
+                                                Hide: "false",
                                             },
                                             children: [
                                                 {
-                                                    tag: "ParagraphNum",
+                                                    tag: "ArticleTitle",
                                                     attr: {},
-                                                    children: [],
+                                                    children: ["第二条"],
                                                 },
                                                 {
-                                                    tag: "ParagraphSentence",
-                                                    attr: {},
+                                                    tag: "Paragraph",
+                                                    attr: {
+                                                        OldStyle: "false",
+                                                    },
                                                     children: [
                                                         {
-                                                            tag: "Sentence",
+                                                            tag: "ParagraphNum",
+                                                            attr: {},
+                                                            children: [],
+                                                        },
+                                                        {
+                                                            tag: "ParagraphSentence",
                                                             attr: {},
                                                             children: [
                                                                 {
-                                                                    tag: "____PointerRanges",
-                                                                    attr: {
-                                                                        targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
-                                                                    },
+                                                                    tag: "Sentence",
+                                                                    attr: {},
                                                                     children: [
                                                                         {
-                                                                            tag: "____PointerRange",
-                                                                            attr: {},
+                                                                            tag: "____PointerRanges",
+                                                                            attr: {
+                                                                                targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
+                                                                            },
                                                                             children: [
                                                                                 {
-                                                                                    tag: "____Pointer",
+                                                                                    tag: "____PointerRange",
                                                                                     attr: {},
                                                                                     children: [
                                                                                         {
-                                                                                            tag: "____PF",
-                                                                                            attr: {
-                                                                                                relPos: "HERE",
-                                                                                                targetType: "Law",
-                                                                                                name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-Law\"]",
-                                                                                            },
-                                                                                            children: ["この法律"],
+                                                                                            tag: "____Pointer",
+                                                                                            attr: {},
+                                                                                            children: [
+                                                                                                {
+                                                                                                    tag: "____PF",
+                                                                                                    attr: {
+                                                                                                        relPos: "HERE",
+                                                                                                        targetType: "Law",
+                                                                                                        name: "この法律",
+                                                                                                        targetContainerIDs: "[\"container-Law\"]",
+                                                                                                    },
+                                                                                                    children: ["この法律"],
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__Text",
+                                                                                    attr: {},
+                                                                                    children: ["及び"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "____PointerRange",
+                                                                                    attr: {},
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "____Pointer",
+                                                                                            attr: {},
+                                                                                            children: [
+                                                                                                {
+                                                                                                    tag: "____PF",
+                                                                                                    attr: {
+                                                                                                        relPos: "HERE",
+                                                                                                        targetType: "Law",
+                                                                                                        name: "この法律",
+                                                                                                        targetContainerIDs: "[\"container-Law\"]",
+                                                                                                    },
+                                                                                                    children: ["この法律"],
+                                                                                                },
+                                                                                                {
+                                                                                                    tag: "____PF",
+                                                                                                    attr: {
+                                                                                                        relPos: "NAMED",
+                                                                                                        targetType: "INFERIOR",
+                                                                                                        name: "に基づく命令",
+                                                                                                    },
+                                                                                                    children: ["に基づく命令"],
+                                                                                                },
+                                                                                            ],
                                                                                         },
                                                                                     ],
                                                                                 },
@@ -3214,63 +3300,192 @@ describe("Test detectDeclarations", () => {
                                                                         {
                                                                             tag: "__Text",
                                                                             attr: {},
-                                                                            children: ["及び"],
+                                                                            children: ["の規定の解釈に関しては、次の定義に従うものとする。"],
                                                                         },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                        {
+                                                            tag: "Item",
+                                                            attr: {
+                                                                Delete: "false",
+                                                            },
+                                                            children: [
+                                                                {
+                                                                    tag: "ItemTitle",
+                                                                    attr: {},
+                                                                    children: ["五"],
+                                                                },
+                                                                {
+                                                                    tag: "ItemSentence",
+                                                                    attr: {},
+                                                                    children: [
                                                                         {
-                                                                            tag: "____PointerRange",
-                                                                            attr: {},
+                                                                            tag: "Sentence",
+                                                                            attr: {
+                                                                                Num: "1",
+                                                                                Function: "main",
+                                                                            },
                                                                             children: [
                                                                                 {
-                                                                                    tag: "____Pointer",
-                                                                                    attr: {},
+                                                                                    tag: "__Parentheses",
+                                                                                    attr: {
+                                                                                        type: "square",
+                                                                                        depth: "1",
+                                                                                    },
                                                                                     children: [
                                                                                         {
-                                                                                            tag: "____PF",
+                                                                                            tag: "__PStart",
                                                                                             attr: {
-                                                                                                relPos: "HERE",
-                                                                                                targetType: "Law",
-                                                                                                name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-Law\"]",
+                                                                                                type: "square",
                                                                                             },
-                                                                                            children: ["この法律"],
+                                                                                            children: ["「"],
                                                                                         },
                                                                                         {
-                                                                                            tag: "____PF",
+                                                                                            tag: "__PContent",
                                                                                             attr: {
-                                                                                                relPos: "NAMED",
-                                                                                                targetType: "INFERIOR",
-                                                                                                name: "に基づく命令",
+                                                                                                type: "square",
                                                                                             },
-                                                                                            children: ["に基づく命令"],
+                                                                                            children: [
+                                                                                                {
+                                                                                                    tag: "____Declaration",
+                                                                                                    attr: {
+                                                                                                        declarationID: "decl-sentence_1-text_1_4",
+                                                                                                        type: "Keyword",
+                                                                                                        name: "無線局",
+                                                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
+                                                                                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":4}}",
+                                                                                                        value: "無線設備及び無線設備の操作を行う者の総体",
+                                                                                                    },
+                                                                                                    children: ["無線局"],
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                        {
+                                                                                            tag: "__PEnd",
+                                                                                            attr: {
+                                                                                                type: "square",
+                                                                                            },
+                                                                                            children: ["」"],
                                                                                         },
                                                                                     ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__Text",
+                                                                                    attr: {},
+                                                                                    children: ["とは、無線設備及び無線設備の操作を行う者の総体をいう。"],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                        {
+                                                                            tag: "Sentence",
+                                                                            attr: {
+                                                                                Num: "2",
+                                                                                Function: "proviso",
+                                                                            },
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "__Text",
+                                                                                    attr: {},
+                                                                                    children: ["但し、受信のみを目的とするものを含まない。"],
                                                                                 },
                                                                             ],
                                                                         },
                                                                     ],
                                                                 },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            tag: "Article",
+                                            attr: {
+                                                Delete: "false",
+                                                Hide: "false",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ArticleTitle",
+                                                    attr: {},
+                                                    children: ["第四条の二"],
+                                                },
+                                                {
+                                                    tag: "Paragraph",
+                                                    attr: {
+                                                        OldStyle: "false",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "ParagraphNum",
+                                                            attr: {},
+                                                            children: [],
+                                                        },
+                                                        {
+                                                            tag: "ParagraphSentence",
+                                                            attr: {},
+                                                            children: [
                                                                 {
-                                                                    tag: "__Text",
+                                                                    tag: "Sentence",
                                                                     attr: {},
-                                                                    children: ["の規定の解釈に関しては、次の定義に従うものとする。"],
+                                                                    children: [
+                                                                        {
+                                                                            tag: "__Parentheses",
+                                                                            attr: {
+                                                                                type: "round",
+                                                                                depth: "1",
+                                                                            },
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "__PStart",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["（"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PContent",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["略"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PEnd",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["）"],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                    ],
                                                                 },
                                                             ],
                                                         },
                                                     ],
                                                 },
                                                 {
-                                                    tag: "Item",
+                                                    tag: "Paragraph",
                                                     attr: {
-                                                        Delete: "false",
+                                                        OldStyle: "false",
                                                     },
                                                     children: [
                                                         {
-                                                            tag: "ItemTitle",
+                                                            tag: "ParagraphNum",
                                                             attr: {},
-                                                            children: ["五"],
+                                                            children: ["２"],
                                                         },
                                                         {
-                                                            tag: "ItemSentence",
+                                                            tag: "ParagraphSentence",
                                                             attr: {},
                                                             children: [
                                                                 {
@@ -3281,52 +3496,164 @@ describe("Test detectDeclarations", () => {
                                                                     },
                                                                     children: [
                                                                         {
-                                                                            tag: "__Parentheses",
-                                                                            attr: {
-                                                                                type: "square",
-                                                                                depth: "1",
-                                                                            },
+                                                                            tag: "____PointerRanges",
+                                                                            attr: {},
                                                                             children: [
                                                                                 {
-                                                                                    tag: "__PStart",
-                                                                                    attr: {
-                                                                                        type: "square",
-                                                                                    },
-                                                                                    children: ["「"],
-                                                                                },
-                                                                                {
-                                                                                    tag: "__PContent",
-                                                                                    attr: {
-                                                                                        type: "square",
-                                                                                    },
+                                                                                    tag: "____PointerRange",
+                                                                                    attr: {},
                                                                                     children: [
                                                                                         {
-                                                                                            tag: "____Declaration",
-                                                                                            attr: {
-                                                                                                declarationID: "decl-sentence_1-text_1_4",
-                                                                                                type: "Keyword",
-                                                                                                name: "無線局",
-                                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":8,\"textOffset\":0}}]",
-                                                                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":4}}",
-                                                                                                value: "無線設備及び無線設備の操作を行う者の総体",
-                                                                                            },
-                                                                                            children: ["無線局"],
+                                                                                            tag: "____Pointer",
+                                                                                            attr: {},
+                                                                                            children: [
+                                                                                                {
+                                                                                                    tag: "____PF",
+                                                                                                    attr: {
+                                                                                                        relPos: "NEXT",
+                                                                                                        targetType: "Chapter",
+                                                                                                        name: "次章",
+                                                                                                    },
+                                                                                                    children: ["次章"],
+                                                                                                },
+                                                                                            ],
                                                                                         },
                                                                                     ],
-                                                                                },
-                                                                                {
-                                                                                    tag: "__PEnd",
-                                                                                    attr: {
-                                                                                        type: "square",
-                                                                                    },
-                                                                                    children: ["」"],
                                                                                 },
                                                                             ],
                                                                         },
                                                                         {
                                                                             tag: "__Text",
                                                                             attr: {},
-                                                                            children: ["とは、無線設備及び無線設備の操作を行う者の総体をいう。"],
+                                                                            children: ["に定める技術基準に相当する技術基準として総務大臣が指定する技術基準に適合している無線設備を使用して"],
+                                                                        },
+                                                                        {
+                                                                            tag: "____Declaration",
+                                                                            attr: {
+                                                                                declarationID: "decl-sentence_4-text_51_57",
+                                                                                type: "Keyword",
+                                                                                name: "実験等無線局",
+                                                                                scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":125},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
+                                                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":4,\"textOffset\":57}}",
+                                                                            },
+                                                                            children: ["実験等無線局"],
+                                                                        },
+                                                                        {
+                                                                            tag: "__Parentheses",
+                                                                            attr: {
+                                                                                type: "round",
+                                                                                depth: "1",
+                                                                            },
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "__PStart",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["（"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PContent",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["科学若しくは技術の発達のための実験、電波の利用の効率性に関する試験又は電波の利用の需要に関する調査に専用する無線局をいう。以下同じ。"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PEnd",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["）"],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                        {
+                                                                            tag: "__Parentheses",
+                                                                            attr: {
+                                                                                type: "round",
+                                                                                depth: "1",
+                                                                            },
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "__PStart",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["（"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PContent",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "____PointerRanges",
+                                                                                            attr: {
+                                                                                                targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Chapter[1][num=1]-Article[1][num=2]\"}]",
+                                                                                            },
+                                                                                            children: [
+                                                                                                {
+                                                                                                    tag: "____PointerRange",
+                                                                                                    attr: {},
+                                                                                                    children: [
+                                                                                                        {
+                                                                                                            tag: "____Pointer",
+                                                                                                            attr: {},
+                                                                                                            children: [
+                                                                                                                {
+                                                                                                                    tag: "____PF",
+                                                                                                                    attr: {
+                                                                                                                        relPos: "PREV",
+                                                                                                                        targetType: "Article",
+                                                                                                                        name: "前条",
+                                                                                                                        targetContainerIDs: "[\"container-Law-MainProvision[1]-Chapter[1][num=1]-Article[1][num=2]\"]",
+                                                                                                                    },
+                                                                                                                    children: ["前条"],
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    tag: "____PF",
+                                                                                                                    attr: {
+                                                                                                                        relPos: "NAMED",
+                                                                                                                        targetType: "Item",
+                                                                                                                        name: "第三号",
+                                                                                                                        num: "3",
+                                                                                                                    },
+                                                                                                                    children: ["第三号"],
+                                                                                                                },
+                                                                                                            ],
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                        {
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["の総務省令で定める無線局のうち、用途、周波数その他の条件を勘案して総務省令で定めるものであるものに限る。"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PEnd",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["）"],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                        {
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["を開設しようとする者は、総務省令で定めるところにより、次に掲げる事項を総務大臣に届け出ることができる。"],
                                                                         },
                                                                     ],
                                                                 },
@@ -3340,363 +3667,113 @@ describe("Test detectDeclarations", () => {
                                                                         {
                                                                             tag: "__Text",
                                                                             attr: {},
-                                                                            children: ["但し、受信のみを目的とするものを含まない。"],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                            ],
-                                                        },
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                    },
-                                    children: [
-                                        {
-                                            tag: "ArticleTitle",
-                                            attr: {},
-                                            children: ["第四条の二"],
-                                        },
-                                        {
-                                            tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false",
-                                            },
-                                            children: [
-                                                {
-                                                    tag: "ParagraphNum",
-                                                    attr: {},
-                                                    children: [],
-                                                },
-                                                {
-                                                    tag: "ParagraphSentence",
-                                                    attr: {},
-                                                    children: [
-                                                        {
-                                                            tag: "Sentence",
-                                                            attr: {},
-                                                            children: [
-                                                                {
-                                                                    tag: "__Parentheses",
-                                                                    attr: {
-                                                                        type: "round",
-                                                                        depth: "1",
-                                                                    },
-                                                                    children: [
-                                                                        {
-                                                                            tag: "__PStart",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["（"],
+                                                                            children: ["ただし、"],
                                                                         },
                                                                         {
-                                                                            tag: "__PContent",
+                                                                            tag: "____PointerRanges",
                                                                             attr: {
-                                                                                type: "round",
+                                                                                targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Chapter[1][num=1]-Article[2][num=4_2]-Paragraph[2][num=2]\"}]",
                                                                             },
                                                                             children: [
                                                                                 {
-                                                                                    tag: "__Text",
-                                                                                    attr: {},
-                                                                                    children: ["略"],
-                                                                                },
-                                                                            ],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PEnd",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["）"],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                            ],
-                                                        },
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                        {
-                                            tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false",
-                                            },
-                                            children: [
-                                                {
-                                                    tag: "ParagraphNum",
-                                                    attr: {},
-                                                    children: ["２"],
-                                                },
-                                                {
-                                                    tag: "ParagraphSentence",
-                                                    attr: {},
-                                                    children: [
-                                                        {
-                                                            tag: "Sentence",
-                                                            attr: {
-                                                                Num: "1",
-                                                                Function: "main",
-                                                            },
-                                                            children: [
-                                                                {
-                                                                    tag: "____PointerRanges",
-                                                                    attr: {},
-                                                                    children: [
-                                                                        {
-                                                                            tag: "____PointerRange",
-                                                                            attr: {},
-                                                                            children: [
-                                                                                {
-                                                                                    tag: "____Pointer",
+                                                                                    tag: "____PointerRange",
                                                                                     attr: {},
                                                                                     children: [
                                                                                         {
-                                                                                            tag: "____PF",
-                                                                                            attr: {
-                                                                                                relPos: "NEXT",
-                                                                                                targetType: "Chapter",
-                                                                                                name: "次章",
-                                                                                            },
-                                                                                            children: ["次章"],
-                                                                                        },
-                                                                                    ],
-                                                                                },
-                                                                            ],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                                {
-                                                                    tag: "__Text",
-                                                                    attr: {},
-                                                                    children: ["に定める技術基準に相当する技術基準として総務大臣が指定する技術基準に適合している無線設備を使用して"],
-                                                                },
-                                                                {
-                                                                    tag: "____Declaration",
-                                                                    attr: {
-                                                                        declarationID: "decl-sentence_4-text_51_57",
-                                                                        type: "Keyword",
-                                                                        name: "実験等無線局",
-                                                                        scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":125},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
-                                                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":4,\"textOffset\":57}}",
-                                                                    },
-                                                                    children: ["実験等無線局"],
-                                                                },
-                                                                {
-                                                                    tag: "__Parentheses",
-                                                                    attr: {
-                                                                        type: "round",
-                                                                        depth: "1",
-                                                                    },
-                                                                    children: [
-                                                                        {
-                                                                            tag: "__PStart",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["（"],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PContent",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: [
-                                                                                {
-                                                                                    tag: "__Text",
-                                                                                    attr: {},
-                                                                                    children: ["科学若しくは技術の発達のための実験、電波の利用の効率性に関する試験又は電波の利用の需要に関する調査に専用する無線局をいう。以下同じ。"],
-                                                                                },
-                                                                            ],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PEnd",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["）"],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                                {
-                                                                    tag: "__Parentheses",
-                                                                    attr: {
-                                                                        type: "round",
-                                                                        depth: "1",
-                                                                    },
-                                                                    children: [
-                                                                        {
-                                                                            tag: "__PStart",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["（"],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PContent",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: [
-                                                                                {
-                                                                                    tag: "____PointerRanges",
-                                                                                    attr: {
-                                                                                        targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=2]\"}]",
-                                                                                    },
-                                                                                    children: [
-                                                                                        {
-                                                                                            tag: "____PointerRange",
+                                                                                            tag: "____Pointer",
                                                                                             attr: {},
                                                                                             children: [
                                                                                                 {
-                                                                                                    tag: "____Pointer",
-                                                                                                    attr: {},
-                                                                                                    children: [
-                                                                                                        {
-                                                                                                            tag: "____PF",
-                                                                                                            attr: {
-                                                                                                                relPos: "PREV",
-                                                                                                                targetType: "Article",
-                                                                                                                name: "前条",
-                                                                                                                targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=2]\"]",
-                                                                                                            },
-                                                                                                            children: ["前条"],
-                                                                                                        },
-                                                                                                        {
-                                                                                                            tag: "____PF",
-                                                                                                            attr: {
-                                                                                                                relPos: "NAMED",
-                                                                                                                targetType: "Item",
-                                                                                                                name: "第三号",
-                                                                                                                num: "3",
-                                                                                                            },
-                                                                                                            children: ["第三号"],
-                                                                                                        },
-                                                                                                    ],
+                                                                                                    tag: "____PF",
+                                                                                                    attr: {
+                                                                                                        relPos: "HERE",
+                                                                                                        targetType: "Paragraph",
+                                                                                                        name: "この項",
+                                                                                                        targetContainerIDs: "[\"container-Law-MainProvision[1]-Chapter[1][num=1]-Article[2][num=4_2]-Paragraph[2][num=2]\"]",
+                                                                                                    },
+                                                                                                    children: ["この項"],
                                                                                                 },
                                                                                             ],
                                                                                         },
                                                                                     ],
                                                                                 },
-                                                                                {
-                                                                                    tag: "__Text",
-                                                                                    attr: {},
-                                                                                    children: ["の総務省令で定める無線局のうち、用途、周波数その他の条件を勘案して総務省令で定めるものであるものに限る。"],
-                                                                                },
                                                                             ],
                                                                         },
                                                                         {
-                                                                            tag: "__PEnd",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["）"],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                                {
-                                                                    tag: "__Text",
-                                                                    attr: {},
-                                                                    children: ["を開設しようとする者は、総務省令で定めるところにより、次に掲げる事項を総務大臣に届け出ることができる。"],
-                                                                },
-                                                            ],
-                                                        },
-                                                        {
-                                                            tag: "Sentence",
-                                                            attr: {
-                                                                Num: "2",
-                                                                Function: "proviso",
-                                                            },
-                                                            children: [
-                                                                {
-                                                                    tag: "__Text",
-                                                                    attr: {},
-                                                                    children: ["ただし、"],
-                                                                },
-                                                                {
-                                                                    tag: "____PointerRanges",
-                                                                    attr: {
-                                                                        targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[2][num=4_2]-Paragraph[2][num=2]\"}]",
-                                                                    },
-                                                                    children: [
-                                                                        {
-                                                                            tag: "____PointerRange",
+                                                                            tag: "__Text",
                                                                             attr: {},
+                                                                            children: ["の規定による届出"],
+                                                                        },
+                                                                        {
+                                                                            tag: "__Parentheses",
+                                                                            attr: {
+                                                                                type: "round",
+                                                                                depth: "1",
+                                                                            },
                                                                             children: [
                                                                                 {
-                                                                                    tag: "____Pointer",
-                                                                                    attr: {},
-                                                                                    children: [
-                                                                                        {
-                                                                                            tag: "____PF",
-                                                                                            attr: {
-                                                                                                relPos: "HERE",
-                                                                                                targetType: "Paragraph",
-                                                                                                name: "この項",
-                                                                                                targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=4_2]-Paragraph[2][num=2]\"]",
-                                                                                            },
-                                                                                            children: ["この項"],
-                                                                                        },
-                                                                                    ],
+                                                                                    tag: "__PStart",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["（"],
                                                                                 },
-                                                                            ],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                                {
-                                                                    tag: "__Text",
-                                                                    attr: {},
-                                                                    children: ["の規定による届出"],
-                                                                },
-                                                                {
-                                                                    tag: "__Parentheses",
-                                                                    attr: {
-                                                                        type: "round",
-                                                                        depth: "1",
-                                                                    },
-                                                                    children: [
-                                                                        {
-                                                                            tag: "__PStart",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["（"],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PContent",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: [
                                                                                 {
-                                                                                    tag: "____PointerRanges",
-                                                                                    attr: {},
+                                                                                    tag: "__PContent",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
                                                                                     children: [
                                                                                         {
-                                                                                            tag: "____PointerRange",
+                                                                                            tag: "____PointerRanges",
                                                                                             attr: {},
                                                                                             children: [
                                                                                                 {
-                                                                                                    tag: "____Pointer",
+                                                                                                    tag: "____PointerRange",
                                                                                                     attr: {},
                                                                                                     children: [
                                                                                                         {
-                                                                                                            tag: "____PF",
-                                                                                                            attr: {
-                                                                                                                relPos: "NAMED",
-                                                                                                                targetType: "Item",
-                                                                                                                name: "第二号",
-                                                                                                                num: "2",
-                                                                                                            },
-                                                                                                            children: ["第二号"],
+                                                                                                            tag: "____Pointer",
+                                                                                                            attr: {},
+                                                                                                            children: [
+                                                                                                                {
+                                                                                                                    tag: "____PF",
+                                                                                                                    attr: {
+                                                                                                                        relPos: "NAMED",
+                                                                                                                        targetType: "Item",
+                                                                                                                        name: "第二号",
+                                                                                                                        num: "2",
+                                                                                                                    },
+                                                                                                                    children: ["第二号"],
+                                                                                                                },
+                                                                                                            ],
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                                {
+                                                                                                    tag: "__Text",
+                                                                                                    attr: {},
+                                                                                                    children: ["及び"],
+                                                                                                },
+                                                                                                {
+                                                                                                    tag: "____PointerRange",
+                                                                                                    attr: {},
+                                                                                                    children: [
+                                                                                                        {
+                                                                                                            tag: "____Pointer",
+                                                                                                            attr: {},
+                                                                                                            children: [
+                                                                                                                {
+                                                                                                                    tag: "____PF",
+                                                                                                                    attr: {
+                                                                                                                        relPos: "NAMED",
+                                                                                                                        targetType: "Item",
+                                                                                                                        name: "第三号",
+                                                                                                                        num: "3",
+                                                                                                                    },
+                                                                                                                    children: ["第三号"],
+                                                                                                                },
+                                                                                                            ],
                                                                                                         },
                                                                                                     ],
                                                                                                 },
@@ -3705,70 +3782,104 @@ describe("Test detectDeclarations", () => {
                                                                                         {
                                                                                             tag: "__Text",
                                                                                             attr: {},
-                                                                                            children: ["及び"],
-                                                                                        },
-                                                                                        {
-                                                                                            tag: "____PointerRange",
-                                                                                            attr: {},
-                                                                                            children: [
-                                                                                                {
-                                                                                                    tag: "____Pointer",
-                                                                                                    attr: {},
-                                                                                                    children: [
-                                                                                                        {
-                                                                                                            tag: "____PF",
-                                                                                                            attr: {
-                                                                                                                relPos: "NAMED",
-                                                                                                                targetType: "Item",
-                                                                                                                name: "第三号",
-                                                                                                                num: "3",
-                                                                                                            },
-                                                                                                            children: ["第三号"],
-                                                                                                        },
-                                                                                                    ],
-                                                                                                },
-                                                                                            ],
+                                                                                            children: ["に掲げる事項を同じくするものに限る。"],
                                                                                         },
                                                                                     ],
                                                                                 },
                                                                                 {
-                                                                                    tag: "__Text",
-                                                                                    attr: {},
-                                                                                    children: ["に掲げる事項を同じくするものに限る。"],
+                                                                                    tag: "__PEnd",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["）"],
                                                                                 },
                                                                             ],
                                                                         },
                                                                         {
-                                                                            tag: "__PEnd",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["）"],
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["をしたことがある者については、この限りでない。"],
                                                                         },
                                                                     ],
                                                                 },
+                                                            ],
+                                                        },
+                                                        {
+                                                            tag: "Item",
+                                                            attr: {
+                                                                Delete: "false",
+                                                            },
+                                                            children: [
                                                                 {
-                                                                    tag: "__Text",
+                                                                    tag: "ItemTitle",
                                                                     attr: {},
-                                                                    children: ["をしたことがある者については、この限りでない。"],
+                                                                    children: ["一～六"],
+                                                                },
+                                                                {
+                                                                    tag: "ItemSentence",
+                                                                    attr: {},
+                                                                    children: [
+                                                                        {
+                                                                            tag: "Sentence",
+                                                                            attr: {},
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "__Parentheses",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                        depth: "1",
+                                                                                    },
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "__PStart",
+                                                                                            attr: {
+                                                                                                type: "round",
+                                                                                            },
+                                                                                            children: ["（"],
+                                                                                        },
+                                                                                        {
+                                                                                            tag: "__PContent",
+                                                                                            attr: {
+                                                                                                type: "round",
+                                                                                            },
+                                                                                            children: [
+                                                                                                {
+                                                                                                    tag: "__Text",
+                                                                                                    attr: {},
+                                                                                                    children: ["略"],
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                        {
+                                                                                            tag: "__PEnd",
+                                                                                            attr: {
+                                                                                                type: "round",
+                                                                                            },
+                                                                                            children: ["）"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                    ],
                                                                 },
                                                             ],
                                                         },
                                                     ],
                                                 },
                                                 {
-                                                    tag: "Item",
+                                                    tag: "Paragraph",
                                                     attr: {
-                                                        Delete: "false",
+                                                        OldStyle: "false",
                                                     },
                                                     children: [
                                                         {
-                                                            tag: "ItemTitle",
+                                                            tag: "ParagraphNum",
                                                             attr: {},
-                                                            children: ["一～六"],
+                                                            children: ["３～７"],
                                                         },
                                                         {
-                                                            tag: "ItemSentence",
+                                                            tag: "ParagraphSentence",
                                                             attr: {},
                                                             children: [
                                                                 {
@@ -3819,62 +3930,82 @@ describe("Test detectDeclarations", () => {
                                                 },
                                             ],
                                         },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            tag: "SupplProvision",
+                            attr: {
+                                Extract: "true",
+                            },
+                            children: [
+                                {
+                                    tag: "SupplProvisionLabel",
+                                    attr: {},
+                                    children: ["附　則"],
+                                },
+                                {
+                                    tag: "Paragraph",
+                                    attr: {
+                                        OldStyle: "false",
+                                    },
+                                    children: [
                                         {
-                                            tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false",
-                                            },
+                                            tag: "ParagraphNum",
+                                            attr: {},
+                                            children: ["１"],
+                                        },
+                                        {
+                                            tag: "ParagraphSentence",
+                                            attr: {},
                                             children: [
                                                 {
-                                                    tag: "ParagraphNum",
-                                                    attr: {},
-                                                    children: ["３～７"],
-                                                },
-                                                {
-                                                    tag: "ParagraphSentence",
+                                                    tag: "Sentence",
                                                     attr: {},
                                                     children: [
                                                         {
-                                                            tag: "Sentence",
+                                                            tag: "____PointerRanges",
                                                             attr: {},
                                                             children: [
                                                                 {
-                                                                    tag: "__Parentheses",
-                                                                    attr: {
-                                                                        type: "round",
-                                                                        depth: "1",
-                                                                    },
+                                                                    tag: "____PointerRange",
+                                                                    attr: {},
                                                                     children: [
                                                                         {
-                                                                            tag: "__PStart",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["（"],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PContent",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
+                                                                            tag: "____Pointer",
+                                                                            attr: {},
                                                                             children: [
                                                                                 {
-                                                                                    tag: "__Text",
-                                                                                    attr: {},
-                                                                                    children: ["略"],
+                                                                                    tag: "____PF",
+                                                                                    attr: {
+                                                                                        relPos: "NAMED",
+                                                                                        targetType: "Article",
+                                                                                        name: "第四条の二",
+                                                                                        num: "4_2",
+                                                                                    },
+                                                                                    children: ["第四条の二"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "____PF",
+                                                                                    attr: {
+                                                                                        relPos: "NAMED",
+                                                                                        targetType: "Paragraph",
+                                                                                        name: "第二項",
+                                                                                        num: "2",
+                                                                                    },
+                                                                                    children: ["第二項"],
                                                                                 },
                                                                             ],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PEnd",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["）"],
                                                                         },
                                                                     ],
                                                                 },
                                                             ],
+                                                        },
+                                                        {
+                                                            tag: "__Text",
+                                                            attr: {},
+                                                            children: ["の規定による届出をした者は、当該届出に係る実験等無線局を廃止したときは、遅滞なく、その旨を総務大臣に届け出なければならない。"],
                                                         },
                                                     ],
                                                 },

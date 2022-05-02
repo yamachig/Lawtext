@@ -15,15 +15,17 @@ export interface SentenceTextRange {
     end: SentenceTextPos, // half open
 }
 
-const pushRange = (ranges: SentenceTextRange[], range: SentenceTextRange) => {
-    if (ranges.length === 0) {
-        ranges.push(range);
-    } else {
-        const lastRange = ranges[ranges.length - 1];
-        if (lastRange.end.sentenceIndex === range.start.sentenceIndex && lastRange.end.textOffset === range.start.textOffset) {
-            lastRange.end = range.end;
-        } else {
+const pushRange = (ranges: SentenceTextRange[], ...rangesToAdd: SentenceTextRange[]) => {
+    for (const range of rangesToAdd) {
+        if (ranges.length === 0) {
             ranges.push(range);
+        } else {
+            const lastRange = ranges[ranges.length - 1];
+            if (lastRange.end.sentenceIndex === range.start.sentenceIndex && lastRange.end.textOffset === range.start.textOffset) {
+                lastRange.end = range.end;
+            } else {
+                ranges.push(range);
+            }
         }
     }
 };
@@ -158,47 +160,97 @@ const excludeTextRanges = (origRanges: SentenceTextRange[], excludeRanges: Sente
 };
 
 export const toSentenceTextRanges = (
-    origRangeInfos: readonly RangeInfo[],
+    origRangeInfos: readonly RangeInfo[] | null,
     sentenceEnvsStruct: SentenceEnvsStruct,
     following?: SentenceTextPos | null,
 ) => {
-    const rangesBeforeFollowing: SentenceTextRange[] = [];
-    for (const rangeInfo of origRangeInfos) {
-        const { from, to } = rangeInfo;
-        const origRanges = fromToContainersToTextRanges(from, to ?? null, sentenceEnvsStruct);
-        const excludeRanges = rangeInfo.exclude && toSentenceTextRanges(rangeInfo.exclude, sentenceEnvsStruct);
-        if (excludeRanges) {
-            rangesBeforeFollowing.push(...excludeTextRanges(origRanges, excludeRanges));
-        } else {
-            rangesBeforeFollowing.push(...origRanges);
+    if (origRangeInfos) {
+        const rangesBeforeFollowing: SentenceTextRange[] = [];
+        for (const rangeInfo of origRangeInfos) {
+            const { from, to } = rangeInfo;
+            const origRanges = fromToContainersToTextRanges(from, to ?? null, sentenceEnvsStruct);
+            const excludeRanges = rangeInfo.exclude && toSentenceTextRanges(rangeInfo.exclude, sentenceEnvsStruct);
+            if (excludeRanges) {
+                pushRange(rangesBeforeFollowing, ...excludeTextRanges(origRanges, excludeRanges));
+            } else {
+                pushRange(rangesBeforeFollowing, ...origRanges);
+            }
         }
-    }
 
-    if (following) {
+        if (following) {
 
-        const ranges: SentenceTextRange[] = [];
-        for (const origRange of rangesBeforeFollowing) {
-            if (origRange.end.sentenceIndex === following.sentenceIndex) {
-                if (origRange.end.textOffset < following.textOffset) {
+            const ranges: SentenceTextRange[] = [];
+            for (const origRange of rangesBeforeFollowing) {
+                if (origRange.end.sentenceIndex === following.sentenceIndex) {
+                    if (origRange.end.textOffset < following.textOffset) {
+                        continue;
+                    }
+                } else if (origRange.end.sentenceIndex < following.sentenceIndex) {
                     continue;
                 }
-            } else if (origRange.end.sentenceIndex < following.sentenceIndex) {
-                continue;
-            }
 
-            const range = { start: { ...origRange.start }, end: { ...origRange.end } };
-            if (range.start.sentenceIndex === following.sentenceIndex) {
-                if (range.start.textOffset < following.textOffset) {
+                const range = { start: { ...origRange.start }, end: { ...origRange.end } };
+                if (range.start.sentenceIndex === following.sentenceIndex) {
+                    if (range.start.textOffset < following.textOffset) {
+                        Object.assign(range.start, following);
+                    }
+                } else if (range.start.sentenceIndex < following.sentenceIndex) {
                     Object.assign(range.start, following);
                 }
-            } else if (range.start.sentenceIndex < following.sentenceIndex) {
-                Object.assign(range.start, following);
+                pushRange(ranges, range);
             }
-            ranges.push(range);
+            return ranges;
+        } else {
+            return rangesBeforeFollowing;
         }
-        return ranges;
+
     } else {
-        return rangesBeforeFollowing;
+        if (!following) return [];
+        const sentenceEnv = sentenceEnvsStruct.sentenceEnvs[following.sentenceIndex];
+
+        const start = { ...following };
+
+        const topLevelContainer = sentenceEnv.container.thisOrClosest(p => p.type === ContainerType.TOPLEVEL) ?? sentenceEnvsStruct.rootContainer;
+
+        const ranges: SentenceTextRange[] = [];
+
+        if (std.isMainProvision(topLevelContainer.el)) {
+            const originalSupplProvisions = topLevelContainer.parent?.children.filter(c => (std.isSupplProvision(c.el) && (!c.el.attr.AmendLawNum))) ?? [];
+            pushRange(
+                ranges,
+                {
+                    start,
+                    end: {
+                        sentenceIndex: topLevelContainer.sentenceRange[1],
+                        textOffset: 0,
+                    },
+                },
+                ...originalSupplProvisions.map(c => ({
+                    start: {
+                        sentenceIndex: c.sentenceRange[0],
+                        textOffset: 0,
+                    },
+                    end: {
+                        sentenceIndex: c.sentenceRange[1],
+                        textOffset: 0,
+                    },
+                })),
+            );
+
+        } else {
+            pushRange(
+                ranges,
+                {
+                    start,
+                    end: {
+                        sentenceIndex: topLevelContainer.sentenceRange[1],
+                        textOffset: 0,
+                    },
+                },
+            );
+        }
+
+        return ranges;
     }
 };
 
