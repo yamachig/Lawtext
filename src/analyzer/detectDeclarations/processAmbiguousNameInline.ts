@@ -9,7 +9,7 @@ import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import { Declarations } from "../common/declarations";
 import $ambiguousNameParenthesesContent from "../sentenceChildrenParser/rules/$ambiguousNameParenthesesContent";
 
-const ptnNameChar = "(?!\\s)[^ぁ-ゟ](?<!当該)";
+const ptnNameChar = "(?!(?:\\s|[。、]))[^ぁ-ゟ](?<!当該)";
 const reName = new RegExp(`(?:(?:${ptnNameChar})+の)?((?:${ptnNameChar})+)$`);
 
 interface AmbiguousNameCandidateInfo {
