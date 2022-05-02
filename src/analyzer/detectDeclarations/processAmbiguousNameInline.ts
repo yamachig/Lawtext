@@ -103,7 +103,7 @@ export const findFilteredAmbiguousNameInline = (
         for (const info of result.value) {
             const followingStartPos = info.following ? {
                 sentenceIndex: sentenceEnv.index,
-                textOffset: sentenceEnv.textRageOfEL(info.afterNameParentheses)?.[1] ?? 0,
+                textOffset: sentenceEnv.textRageOfEL(info.nameCandidateEL)?.[1] ?? 0,
             } : null;
 
             const scope = toSentenceTextRanges(
@@ -152,11 +152,12 @@ export const findFilteredAmbiguousNameInline = (
         info.maxCandidateLength = match[0].length;
 
         const nameCandidateLastOffset = info.sentenceEnv.textRageOfEL(info.nameCandidateEL)?.[1] ?? null;
+        const parentheseeLastOffset = info.sentenceEnv.textRageOfEL(info.afterNameParentheses)?.[1] ?? null;
 
         // "Consistency": Skip candidates occured outside of the scope.
 
         for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
-            // TODO: exclude QuoteStruct and NewProvision
+            // TODO: exclude square parentheses, QuoteStruct and NewProvision
 
             if (info.nameCandidates.size === 0) break;
             for (const name of [...info.nameCandidates]) {
@@ -168,11 +169,42 @@ export const findFilteredAmbiguousNameInline = (
                     if (!info.nameCandidates.has(name)) break;
 
                     if (
-                        (sentenceEnv.index === info.sentenceEnv.index)
+                        (nameCandidateLastOffset !== null)
+                        && (sentenceEnv.index === info.sentenceEnv.index)
                         && (inSentenceOffset === (nameCandidateLastOffset ?? name.length) - name.length)
                     ) {
                         // at the declaration position
                         continue;
+                    }
+
+                    if (
+                        ((nameCandidateLastOffset !== null) && (parentheseeLastOffset !== null))
+                        && (sentenceEnv.index === info.sentenceEnv.index)
+                        && ((nameCandidateLastOffset <= inSentenceOffset) && (inSentenceOffset <= parentheseeLastOffset))
+                    ) {
+                        // inside the after name position
+                        // e.g. "電気通信業務（電気通信事業法（昭和五十九年法律第八十六号）第二条第六号の電気通信業務をいう。以下同じ。）"
+                        continue;
+                    }
+
+                    {
+                        // Check if the match is a part of another word.
+                        // TODO: exclude other declared words.
+                        {
+                            const newWord = sentenceEnv.text.substring(0, inSentenceOffset + name.length);
+                            const match = reName.exec(newWord);
+                            if (match && match[0] !== newWord) continue;
+                        }
+                        if (inSentenceOffset + name.length < sentenceEnv.text.length) {
+                            const newWord = sentenceEnv.text.substring(inSentenceOffset, inSentenceOffset + name.length + 1);
+                            const match = reName.exec(newWord);
+                            if (match && match[0] === newWord) continue;
+                        }
+                        if (inSentenceOffset + name.length + 1 < sentenceEnv.text.length) {
+                            const newWord = sentenceEnv.text.substring(inSentenceOffset, inSentenceOffset + name.length + 2);
+                            const match = reName.exec(newWord);
+                            if (match && match[0] === newWord) continue;
+                        }
                     }
 
                     // check if the occurance is in scope
