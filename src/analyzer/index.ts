@@ -23,8 +23,7 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
     errors.push(...detectTokensResult.errors);
 
     const detectDeclarationsResult = detectDeclarations(sentenceEnvsStruct);
-    const declarations = new Declarations();
-    for (const declaration of detectDeclarationsResult.value) declarations.add(declaration);
+    const declarations = detectDeclarationsResult.value;
     errors.push(...detectDeclarationsResult.errors);
 
     const detectVariableReferencesResult = detectVariableReferences(sentenceEnvsStruct, declarations);

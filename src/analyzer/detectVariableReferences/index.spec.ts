@@ -5,7 +5,6 @@ import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from "../detectDeclarations";
 import { parse } from "../../parser/lawtext";
 import detectVariableReferences from ".";
-import { Declarations } from "../common/declarations";
 import { assertELVaridity } from "../../parser/std/testHelper";
 
 describe("Test detectVariableReferences", () => {
@@ -28,11 +27,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
-        const declarations = new Declarations();
-        for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
-            // console.log(JSON.stringify(declaration.json(true), null, 2));
-            declarations.add(declaration);
-        }
+        const declarations = detectDeclarations(sentenceEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -109,11 +104,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
-        const declarations = new Declarations();
-        for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
-            // console.log(JSON.stringify(declaration.json(true), null, 2));
-            declarations.add(declaration);
-        }
+        const declarations = detectDeclarations(sentenceEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -203,11 +194,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
-        const declarations = new Declarations();
-        for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
-            // console.log(JSON.stringify(declaration.json(true), null, 2));
-            declarations.add(declaration);
-        }
+        const declarations = detectDeclarations(sentenceEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -302,11 +289,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
-        const declarations = new Declarations();
-        for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
-            // console.log(JSON.stringify(declaration.json(true), null, 2));
-            declarations.add(declaration);
-        }
+        const declarations = detectDeclarations(sentenceEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -429,11 +412,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
-        const declarations = new Declarations();
-        for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
-            // console.log(JSON.stringify(declaration.json(true), null, 2));
-            declarations.add(declaration);
-        }
+        const declarations = detectDeclarations(sentenceEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1019,11 +998,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
         void detectTokensResult;
-        const declarations = new Declarations();
-        for (const declaration of detectDeclarations(sentenceEnvsStruct).value) {
-            // console.log(JSON.stringify(declaration.json(true), null, 2));
-            declarations.add(declaration);
-        }
+        const declarations = detectDeclarations(sentenceEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {

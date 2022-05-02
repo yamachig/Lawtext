@@ -223,7 +223,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.map(r => r.json(true)),
+            result.value.values().map(r => r.json(true)),
             expected,
         );
 
@@ -439,7 +439,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.map(r => r.json(true)),
+            result.value.values().map(r => r.json(true)),
             expected,
         );
 
@@ -721,7 +721,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.map(r => r.json(true)),
+            result.value.values().map(r => r.json(true)),
             expected,
         );
 
@@ -1178,7 +1178,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(declarationsResult.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.map(r => r.json(true)),
+            declarationsResult.value.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 
@@ -1210,18 +1210,6 @@ describe("Test detectDeclarations", () => {
             {
                 tag: "____Declaration",
                 attr: {
-                    declarationID: "decl-sentence_1-text_1_7",
-                    type: "Keyword",
-                    name: "実施医療機関",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
-                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":7}}",
-                    value: "臨床研究が実施される医療機関",
-                },
-                children: ["実施医療機関"],
-            },
-            {
-                tag: "____Declaration",
-                attr: {
                     declarationID: "decl-sentence_2-text_1_8",
                     type: "Keyword",
                     name: "多施設共同研究",
@@ -1234,14 +1222,14 @@ describe("Test detectDeclarations", () => {
             {
                 tag: "____Declaration",
                 attr: {
-                    declarationID: "decl-sentence_0-text_38_39",
-                    type: "LawName",
-                    name: "法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":34},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
-                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
-                    value: "平成二十九年法律第十六号",
+                    declarationID: "decl-sentence_1-text_1_7",
+                    type: "Keyword",
+                    name: "実施医療機関",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":7}}",
+                    value: "臨床研究が実施される医療機関",
                 },
-                children: ["法"],
+                children: ["実施医療機関"],
             },
             {
                 tag: "____Declaration",
@@ -1253,6 +1241,18 @@ describe("Test detectDeclarations", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":26},\"end\":{\"sentenceIndex\":2,\"textOffset\":31}}",
                 },
                 children: ["研究計画書"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_38_39",
+                    type: "LawName",
+                    name: "法",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":34},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
+                    value: "平成二十九年法律第十六号",
+                },
+                children: ["法"],
             },
         ];
 
@@ -1727,7 +1727,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(declarationsResult.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.map(r => r.json(true)),
+            declarationsResult.value.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 
@@ -1759,18 +1759,6 @@ describe("Test detectDeclarations", () => {
             {
                 tag: "____Declaration",
                 attr: {
-                    declarationID: "decl-sentence_1-text_1_3",
-                    type: "Keyword",
-                    name: "電波",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
-                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
-                    value: "三百万メガヘルツ以下の周波数の電磁波",
-                },
-                children: ["電波"],
-            },
-            {
-                tag: "____Declaration",
-                attr: {
                     declarationID: "decl-sentence_2-text_1_4",
                     type: "Keyword",
                     name: "無線局",
@@ -1779,6 +1767,18 @@ describe("Test detectDeclarations", () => {
                     value: "無線設備及び無線設備の操作を行う者の総体",
                 },
                 children: ["無線局"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_1-text_1_3",
+                    type: "Keyword",
+                    name: "電波",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
+                    value: "三百万メガヘルツ以下の周波数の電磁波",
+                },
+                children: ["電波"],
             },
         ] ;
 
@@ -2124,7 +2124,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(declarationsResult.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.map(r => r.json(true)),
+            declarationsResult.value.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 
@@ -2154,18 +2154,6 @@ describe("Test detectDeclarations", () => {
             {
                 tag: "____Declaration",
                 attr: {
-                    declarationID: "decl-sentence_0-text_41_47",
-                    type: "LawName",
-                    name: "内閣府設置法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
-                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
-                    value: "平成十一年法律第八十九号",
-                },
-                children: ["内閣府設置法"],
-            },
-            {
-                tag: "____Declaration",
-                attr: {
                     declarationID: "decl-sentence_0-text_84_91",
                     type: "LawName",
                     name: "国家行政組織法",
@@ -2174,6 +2162,18 @@ describe("Test detectDeclarations", () => {
                     value: "昭和二十三年法律第百二十号",
                 },
                 children: ["国家行政組織法"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_41_47",
+                    type: "LawName",
+                    name: "内閣府設置法",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
+                    value: "平成十一年法律第八十九号",
+                },
+                children: ["内閣府設置法"],
             },
         ];
 
@@ -2499,7 +2499,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(declarationsResult.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.map(r => r.json(true)),
+            declarationsResult.value.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 
