@@ -418,6 +418,17 @@ describe("Test detectVariableReferences", () => {
             {
                 tag: "____Declaration",
                 attr: {
+                    declarationID: "decl-sentence_0-text_70_73",
+                    type: "Keyword",
+                    name: "透明性",
+                    scope: "[]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":70},\"end\":{\"sentenceIndex\":0,\"textOffset\":73}}",
+                },
+                children: ["透明性"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
                     declarationID: "decl-sentence_3-text_0_2",
                     type: "Keyword",
                     name: "法令",
@@ -568,7 +579,41 @@ describe("Test detectVariableReferences", () => {
                 },
                 children: ["命令"],
             },
-        ];
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_27-text_0_4",
+                    type: "Keyword",
+                    name: "審査基準",
+                    scope: "[{\"start\":{\"sentenceIndex\":27,\"textOffset\":63},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":27,\"textOffset\":0},\"end\":{\"sentenceIndex\":27,\"textOffset\":4}}",
+                },
+                children: ["審査基準"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_28-text_0_4",
+                    type: "Keyword",
+                    name: "処分基準",
+                    scope: "[{\"start\":{\"sentenceIndex\":28,\"textOffset\":73},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":0},\"end\":{\"sentenceIndex\":28,\"textOffset\":4}}",
+                },
+                children: ["処分基準"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_29-text_0_6",
+                    type: "Keyword",
+                    name: "行政指導指針",
+                    scope: "[{\"start\":{\"sentenceIndex\":29,\"textOffset\":86},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":29,\"textOffset\":0},\"end\":{\"sentenceIndex\":29,\"textOffset\":6}}",
+                },
+                children: ["行政指導指針"],
+            },
+        ]
+;
 
         const expected: JsonEL[] = [
             {
@@ -898,15 +943,6 @@ describe("Test detectVariableReferences", () => {
             {
                 tag: "____VarRef",
                 attr: {
-                    refName: "処分",
-                    declarationID: "decl-sentence_5-text_0_2",
-                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":0},\"end\":{\"sentenceIndex\":28,\"textOffset\":2}}",
-                },
-                children: ["処分"],
-            },
-            {
-                tag: "____VarRef",
-                attr: {
                     refName: "不利益処分",
                     declarationID: "decl-sentence_9-text_0_5",
                     refSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":5},\"end\":{\"sentenceIndex\":28,\"textOffset\":10}}",
@@ -930,15 +966,6 @@ describe("Test detectVariableReferences", () => {
                     refSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":39},\"end\":{\"sentenceIndex\":28,\"textOffset\":41}}",
                 },
                 children: ["法令"],
-            },
-            {
-                tag: "____VarRef",
-                attr: {
-                    refName: "行政指導",
-                    declarationID: "decl-sentence_20-text_0_4",
-                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":29,\"textOffset\":0},\"end\":{\"sentenceIndex\":29,\"textOffset\":4}}",
-                },
-                children: ["行政指導"],
             },
             {
                 tag: "____VarRef",

@@ -9,6 +9,7 @@ import { processLawRef } from "./processLawRef";
 import { isIgnoreAnalysis } from "../common";
 import { processNameList } from "./processNameList";
 import { Declarations } from "../common/declarations";
+import { processAmbiguousNameInline } from "./processAmbiguousNameInline";
 
 
 export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnv: SentenceEnv, sentenceEnvsStruct: SentenceEnvsStruct): WithErrorValue<____Declaration[]> => {
@@ -105,7 +106,11 @@ export const detectDeclarations = (sentenceEnvsStruct: SentenceEnvsStruct): With
         }
     }
 
-
+    {
+        const result = processAmbiguousNameInline(sentenceEnvsStruct, declarations);
+        errors.push(...result.errors);
+        for (const declaration of result.value.toAddDeclarations) declarations.add(declaration);
+    }
     return { value: declarations, errors };
 };
 

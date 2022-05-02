@@ -16,7 +16,6 @@ const reName = new RegExp(`(?:(?:${ptnNameChar})+の)?((?:${ptnNameChar})+)$`);
 interface AmbiguousNameCandidateInfo {
     elToBeModified: std.StdEL | std.__EL,
     nameCandidateEL: __Text,
-    nameCandidateELIndex: number,
     afterNameParentheses: __Parentheses,
     following: boolean,
     pointerRanges: ____PointerRanges | null,
@@ -54,7 +53,6 @@ export const findAmbiguousNameCandidateInfos = (
         ambiguousNameCandidateInfos.push({
             elToBeModified,
             nameCandidateEL,
-            nameCandidateELIndex: i - 1,
             following,
             pointerRanges,
             afterNameParentheses: parentheses,
@@ -77,7 +75,6 @@ export const findAmbiguousNameCandidateInfos = (
 };
 
 interface NameInfo extends AmbiguousNameCandidateInfo {
-    index: number,
     nameCandidates: Set<string>,
     scope: SentenceTextRange[],
     errorEmitted: boolean,
@@ -101,9 +98,10 @@ export const findFilteredAmbiguousNameInline = (
     for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
         const result = findAmbiguousNameCandidateInfos(sentenceEnv.el, sentenceEnv);
         errors.push(...result.errors);
-        for (const info of result.value) {
-            const index = nameInfos.length;
 
+        if (result.value.length === 0) continue;
+
+        for (const info of result.value) {
             const followingStartPos = info.following ? {
                 sentenceIndex: sentenceEnv.index,
                 textOffset: sentenceEnv.textRageOfEL(info.afterNameParentheses)?.[1] ?? 0,
@@ -130,16 +128,17 @@ export const findFilteredAmbiguousNameInline = (
                     ]
             );
 
-            nameInfos[nameInfos.length] = {
+            nameInfos.push({
                 ...info,
-                index,
                 scope,
                 nameCandidates: new Set(),
                 errorEmitted: false,
                 maxCandidateLength: 0,
-            };
+            });
         }
     }
+
+    if (nameInfos.length === 0) return { value: [], errors };
 
     const nameRegistry = new Map<string, Set<NameInfo>>();
 
@@ -168,26 +167,45 @@ export const findFilteredAmbiguousNameInline = (
         info.nameCandidates.add(match[1]); // without "の"
         info.maxCandidateLength = match[0].length;
 
+        const nameCandidateLastOffset = info.sentenceEnv.textRageOfEL(info.nameCandidateEL)?.[1] ?? null;
+
         // "Consistency": Skip candidates occured outside of the scope.
 
         for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
             if (info.nameCandidates.size === 0) break;
             for (const name of [...info.nameCandidates]) {
-                let inSentenceOffset = 0;
-                while ((inSentenceOffset = sentenceEnv.text.indexOf(name, inSentenceOffset)) >= 0){
-                    if (info.scope.some(s => !(
-                        (
-                            (s.start.sentenceIndex < sentenceEnv.index)
-                            || ((s.start.sentenceIndex === sentenceEnv.index) && (s.start.textOffset <= inSentenceOffset))
-                        )
-                        && (
-                            (sentenceEnv.index < s.end.sentenceIndex)
-                            || ((sentenceEnv.index === s.end.sentenceIndex) && (inSentenceOffset <= s.end.textOffset))
-                        )
-                    ))) {
-                        // Any occurance outside of scope
-                        info.nameCandidates.delete(name);
-                        break;
+                let nextOffset = 0;
+                let inSentenceOffset = -1;
+                while ((inSentenceOffset = sentenceEnv.text.indexOf(name, nextOffset)) >= 0){
+                    nextOffset = inSentenceOffset + name.length;
+
+                    if (!info.nameCandidates.has(name)) break;
+
+                    if (
+                        (sentenceEnv.index === info.sentenceEnv.index)
+                        && (inSentenceOffset === (nameCandidateLastOffset ?? name.length) - name.length)
+                    ) {
+                        // at the declaration position
+                        continue;
+                    }
+
+                    for (const s of info.scope) {
+                        if (
+                            !(
+                                (
+                                    (s.start.sentenceIndex < sentenceEnv.index)
+                                || ((s.start.sentenceIndex === sentenceEnv.index) && (s.start.textOffset <= inSentenceOffset))
+                                )
+                                && (
+                                    (sentenceEnv.index < s.end.sentenceIndex)
+                                    || ((sentenceEnv.index === s.end.sentenceIndex) && (inSentenceOffset <= s.end.textOffset))
+                                )
+                            )
+                        ) {
+                            // not in scope
+                            info.nameCandidates.delete(name);
+                            break;
+                        }
                     }
                 }
             }
@@ -213,11 +231,11 @@ export const findFilteredAmbiguousNameInline = (
         const currentDeclarations = allDeclarations.filterByRange({
             start: {
                 sentenceIndex: info.sentenceEnv.index,
-                textOffset: (info.sentenceEnv.textRageOfEL(info.nameCandidateEL)?.[1] ?? info.maxCandidateLength) - info.maxCandidateLength,
+                textOffset: (nameCandidateLastOffset ?? info.maxCandidateLength) - info.maxCandidateLength,
             },
             end: {
                 sentenceIndex: info.sentenceEnv.index,
-                textOffset: info.sentenceEnv.textRageOfEL(info.nameCandidateEL)?.[1] ?? 0,
+                textOffset: nameCandidateLastOffset ?? 0,
             },
         });
 
@@ -327,16 +345,23 @@ export const processAmbiguousNameInline = (
     allDeclarations: Declarations,
 ): (
     WithErrorValue<{
-        addedDeclarations: ____Declaration[],
+        toAddDeclarations: ____Declaration[],
     }>
 ) => {
     const errors: ErrorMessage[] = [];
-    const addedDeclarations: ____Declaration[] = [];
+    const toAddDeclarations: ____Declaration[] = [];
 
     const filteredNameInfos = findFilteredAmbiguousNameInline(sentenceEnvsStruct, allDeclarations);
     errors.push(...filteredNameInfos.errors);
 
-    for (const { scope, pointerRanges, sentenceEnv, name, nameCandidateELIndex, nameCandidateEL, elToBeModified } of filteredNameInfos.value) {
+    if (filteredNameInfos.value.length === 0) {
+        return {
+            value: { toAddDeclarations },
+            errors,
+        };
+    }
+
+    for (const { scope, pointerRanges, sentenceEnv, name, nameCandidateEL, elToBeModified } of filteredNameInfos.value) {
 
         if (scope.length === 0) {
             errors.push(new ErrorMessage(
@@ -388,17 +413,18 @@ export const processAmbiguousNameInline = (
                 nameCandidateEL.range[1],
             ] : null,
         });
-        addedDeclarations.push(declaration);
+        toAddDeclarations.push(declaration);
+        newItems.push(declaration);
 
         elToBeModified.children.splice(
-            nameCandidateELIndex,
+            (elToBeModified.children as (typeof elToBeModified.children)[number][]).indexOf(nameCandidateEL),
             1,
             ...newItems,
         );
     }
 
     return {
-        value: { addedDeclarations },
+        value: { toAddDeclarations },
         errors,
     };
 };
