@@ -5,6 +5,7 @@ import { ____Declaration } from "./declaration";
 import { ____VarRef } from "./varRef";
 import { ____PointerRanges, ____PointerRange, ____Pointer, ____PF } from "./pointer";
 import { ____LawNum } from "./lawNum";
+import { ____LawRef } from "./lawRef";
 
 
 export * from "./text";
@@ -13,6 +14,7 @@ export * from "./varRef";
 export * from "./declaration";
 export * from "./pointer";
 export * from "./lawNum";
+export * from "./lawRef";
 
 export const controlFromEL = (el: EL): EL => {
     if (el.tag === "__Text") {
@@ -43,6 +45,8 @@ export const controlFromEL = (el: EL): EL => {
         return Object.setPrototypeOf(el.copy(false, true), ____PF.prototype);
     } else if (el.tag === "____LawNum") {
         return Object.setPrototypeOf(el.copy(false, true), ____LawNum.prototype);
+    } else if (el.tag === "____LawRef") {
+        return Object.setPrototypeOf(el.copy(false, true), ____LawRef.prototype);
     } else {
         return el;
     }

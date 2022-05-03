@@ -335,91 +335,99 @@ describe("Test detectDeclarations", () => {
                                     children: ["は、独立行政法人通則法の一部を改正する法律"],
                                 },
                                 {
-                                    tag: "__Parentheses",
+                                    tag: "____LawRef",
                                     attr: {
-                                        type: "round",
-                                        depth: "1",
+                                        includingDeclarationID: "decl-sentence_0-text_43_49",
                                     },
                                     children: [
                                         {
-                                            tag: "__PStart",
+                                            tag: "__Parentheses",
                                             attr: {
                                                 type: "round",
-                                            },
-                                            children: ["（"],
-                                        },
-                                        {
-                                            tag: "__PContent",
-                                            attr: {
-                                                type: "round",
+                                                depth: "1",
                                             },
                                             children: [
                                                 {
-                                                    tag: "____LawNum",
-                                                    attr: {},
-                                                    children: ["平成二十六年法律第六十六号"],
-                                                },
-                                                {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["。以下"],
-                                                },
-                                                {
-                                                    tag: "__Parentheses",
+                                                    tag: "__PStart",
                                                     attr: {
-                                                        type: "square",
-                                                        depth: "2",
+                                                        type: "round",
+                                                    },
+                                                    children: ["（"],
+                                                },
+                                                {
+                                                    tag: "__PContent",
+                                                    attr: {
+                                                        type: "round",
                                                     },
                                                     children: [
                                                         {
-                                                            tag: "__PStart",
-                                                            attr: {
-                                                                type: "square",
-                                                            },
-                                                            children: ["「"],
+                                                            tag: "____LawNum",
+                                                            attr: {},
+                                                            children: ["平成二十六年法律第六十六号"],
                                                         },
                                                         {
-                                                            tag: "__PContent",
+                                                            tag: "__Text",
+                                                            attr: {},
+                                                            children: ["。以下"],
+                                                        },
+                                                        {
+                                                            tag: "__Parentheses",
                                                             attr: {
                                                                 type: "square",
+                                                                depth: "2",
                                                             },
                                                             children: [
                                                                 {
-                                                                    tag: "____Declaration",
+                                                                    tag: "__PStart",
                                                                     attr: {
-                                                                        declarationID: "decl-sentence_0-text_43_49",
-                                                                        type: "LawName",
-                                                                        name: "通則法改正法",
-                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
-                                                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
-                                                                        value: "平成二十六年法律第六十六号",
+                                                                        type: "square",
                                                                     },
-                                                                    children: ["通則法改正法"],
+                                                                    children: ["「"],
+                                                                },
+                                                                {
+                                                                    tag: "__PContent",
+                                                                    attr: {
+                                                                        type: "square",
+                                                                    },
+                                                                    children: [
+                                                                        {
+                                                                            tag: "____Declaration",
+                                                                            attr: {
+                                                                                declarationID: "decl-sentence_0-text_43_49",
+                                                                                type: "LawName",
+                                                                                name: "通則法改正法",
+                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
+                                                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
+                                                                                value: "平成二十六年法律第六十六号",
+                                                                            },
+                                                                            children: ["通則法改正法"],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                                {
+                                                                    tag: "__PEnd",
+                                                                    attr: {
+                                                                        type: "square",
+                                                                    },
+                                                                    children: ["」"],
                                                                 },
                                                             ],
                                                         },
                                                         {
-                                                            tag: "__PEnd",
-                                                            attr: {
-                                                                type: "square",
-                                                            },
-                                                            children: ["」"],
+                                                            tag: "__Text",
+                                                            attr: {},
+                                                            children: ["という。"],
                                                         },
                                                     ],
                                                 },
                                                 {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["という。"],
+                                                    tag: "__PEnd",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["）"],
                                                 },
                                             ],
-                                        },
-                                        {
-                                            tag: "__PEnd",
-                                            attr: {
-                                                type: "round",
-                                            },
-                                            children: ["）"],
                                         },
                                     ],
                                 },
@@ -433,7 +441,7 @@ describe("Test detectDeclarations", () => {
                     ],
                 },
             ],
-        } ;
+        };
 
         const result = detectDeclarations(sentenceEnvsStruct);
 
@@ -524,50 +532,58 @@ describe("Test detectDeclarations", () => {
                                     children: ["国の機関相互間の関係について定める命令等並びに"],
                                 },
                                 {
-                                    tag: "____Declaration",
+                                    tag: "____LawRef",
                                     attr: {
-                                        declarationID: "decl-sentence_0-text_23_28",
-                                        type: "LawName",
-                                        name: "地方自治法",
-                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":42},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
-                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
-                                        value: "昭和二十二年法律第六十七号",
-                                    },
-                                    children: ["地方自治法"],
-                                },
-                                {
-                                    tag: "__Parentheses",
-                                    attr: {
-                                        type: "round",
-                                        depth: "1",
+                                        includingDeclarationID: "decl-sentence_0-text_23_28",
                                     },
                                     children: [
                                         {
-                                            tag: "__PStart",
+                                            tag: "____Declaration",
                                             attr: {
-                                                type: "round",
+                                                declarationID: "decl-sentence_0-text_23_28",
+                                                type: "LawName",
+                                                name: "地方自治法",
+                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":42},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
+                                                value: "昭和二十二年法律第六十七号",
                                             },
-                                            children: ["（"],
+                                            children: ["地方自治法"],
                                         },
                                         {
-                                            tag: "__PContent",
+                                            tag: "__Parentheses",
                                             attr: {
                                                 type: "round",
+                                                depth: "1",
                                             },
                                             children: [
                                                 {
-                                                    tag: "____LawNum",
-                                                    attr: {},
-                                                    children: ["昭和二十二年法律第六十七号"],
+                                                    tag: "__PStart",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["（"],
+                                                },
+                                                {
+                                                    tag: "__PContent",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "____LawNum",
+                                                            attr: {},
+                                                            children: ["昭和二十二年法律第六十七号"],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "__PEnd",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["）"],
                                                 },
                                             ],
-                                        },
-                                        {
-                                            tag: "__PEnd",
-                                            attr: {
-                                                type: "round",
-                                            },
-                                            children: ["）"],
                                         },
                                     ],
                                 },
@@ -716,6 +732,7 @@ describe("Test detectDeclarations", () => {
                 },
             ],
         };
+
 
         const result = detectDeclarations(sentenceEnvsStruct);
 
@@ -1379,91 +1396,99 @@ describe("Test detectDeclarations", () => {
                                                                     children: ["において使用する用語は、臨床研究法"],
                                                                 },
                                                                 {
-                                                                    tag: "__Parentheses",
+                                                                    tag: "____LawRef",
                                                                     attr: {
-                                                                        type: "round",
-                                                                        depth: "1",
+                                                                        includingDeclarationID: "decl-sentence_0-text_38_39",
                                                                     },
                                                                     children: [
                                                                         {
-                                                                            tag: "__PStart",
+                                                                            tag: "__Parentheses",
                                                                             attr: {
                                                                                 type: "round",
-                                                                            },
-                                                                            children: ["（"],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PContent",
-                                                                            attr: {
-                                                                                type: "round",
+                                                                                depth: "1",
                                                                             },
                                                                             children: [
                                                                                 {
-                                                                                    tag: "____LawNum",
-                                                                                    attr: {},
-                                                                                    children: ["平成二十九年法律第十六号"],
-                                                                                },
-                                                                                {
-                                                                                    tag: "__Text",
-                                                                                    attr: {},
-                                                                                    children: ["。以下"],
-                                                                                },
-                                                                                {
-                                                                                    tag: "__Parentheses",
+                                                                                    tag: "__PStart",
                                                                                     attr: {
-                                                                                        type: "square",
-                                                                                        depth: "2",
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["（"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PContent",
+                                                                                    attr: {
+                                                                                        type: "round",
                                                                                     },
                                                                                     children: [
                                                                                         {
-                                                                                            tag: "__PStart",
-                                                                                            attr: {
-                                                                                                type: "square",
-                                                                                            },
-                                                                                            children: ["「"],
+                                                                                            tag: "____LawNum",
+                                                                                            attr: {},
+                                                                                            children: ["平成二十九年法律第十六号"],
                                                                                         },
                                                                                         {
-                                                                                            tag: "__PContent",
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["。以下"],
+                                                                                        },
+                                                                                        {
+                                                                                            tag: "__Parentheses",
                                                                                             attr: {
                                                                                                 type: "square",
+                                                                                                depth: "2",
                                                                                             },
                                                                                             children: [
                                                                                                 {
-                                                                                                    tag: "____Declaration",
+                                                                                                    tag: "__PStart",
                                                                                                     attr: {
-                                                                                                        declarationID: "decl-sentence_0-text_38_39",
-                                                                                                        type: "LawName",
-                                                                                                        name: "法",
-                                                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":40},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
-                                                                                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
-                                                                                                        value: "平成二十九年法律第十六号",
+                                                                                                        type: "square",
                                                                                                     },
-                                                                                                    children: ["法"],
+                                                                                                    children: ["「"],
+                                                                                                },
+                                                                                                {
+                                                                                                    tag: "__PContent",
+                                                                                                    attr: {
+                                                                                                        type: "square",
+                                                                                                    },
+                                                                                                    children: [
+                                                                                                        {
+                                                                                                            tag: "____Declaration",
+                                                                                                            attr: {
+                                                                                                                declarationID: "decl-sentence_0-text_38_39",
+                                                                                                                type: "LawName",
+                                                                                                                name: "法",
+                                                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":40},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                                                                                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
+                                                                                                                value: "平成二十九年法律第十六号",
+                                                                                                            },
+                                                                                                            children: ["法"],
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                                {
+                                                                                                    tag: "__PEnd",
+                                                                                                    attr: {
+                                                                                                        type: "square",
+                                                                                                    },
+                                                                                                    children: ["」"],
                                                                                                 },
                                                                                             ],
                                                                                         },
                                                                                         {
-                                                                                            tag: "__PEnd",
-                                                                                            attr: {
-                                                                                                type: "square",
-                                                                                            },
-                                                                                            children: ["」"],
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["という。"],
                                                                                         },
                                                                                     ],
                                                                                 },
                                                                                 {
-                                                                                    tag: "__Text",
-                                                                                    attr: {},
-                                                                                    children: ["という。"],
+                                                                                    tag: "__PEnd",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["）"],
                                                                                 },
                                                                             ],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PEnd",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["）"],
                                                                         },
                                                                     ],
                                                                 },
@@ -2270,50 +2295,58 @@ describe("Test detectDeclarations", () => {
                                                                     children: ["法律の規定に基づき内閣に置かれる機関若しくは内閣の所轄の下に置かれる機関、宮内庁、"],
                                                                 },
                                                                 {
-                                                                    tag: "____Declaration",
+                                                                    tag: "____LawRef",
                                                                     attr: {
-                                                                        declarationID: "decl-sentence_0-text_41_47",
-                                                                        type: "LawName",
-                                                                        name: "内閣府設置法",
-                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
-                                                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
-                                                                        value: "平成十一年法律第八十九号",
-                                                                    },
-                                                                    children: ["内閣府設置法"],
-                                                                },
-                                                                {
-                                                                    tag: "__Parentheses",
-                                                                    attr: {
-                                                                        type: "round",
-                                                                        depth: "1",
+                                                                        includingDeclarationID: "decl-sentence_0-text_41_47",
                                                                     },
                                                                     children: [
                                                                         {
-                                                                            tag: "__PStart",
+                                                                            tag: "____Declaration",
                                                                             attr: {
-                                                                                type: "round",
+                                                                                declarationID: "decl-sentence_0-text_41_47",
+                                                                                type: "LawName",
+                                                                                name: "内閣府設置法",
+                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                                                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
+                                                                                value: "平成十一年法律第八十九号",
                                                                             },
-                                                                            children: ["（"],
+                                                                            children: ["内閣府設置法"],
                                                                         },
                                                                         {
-                                                                            tag: "__PContent",
+                                                                            tag: "__Parentheses",
                                                                             attr: {
                                                                                 type: "round",
+                                                                                depth: "1",
                                                                             },
                                                                             children: [
                                                                                 {
-                                                                                    tag: "____LawNum",
-                                                                                    attr: {},
-                                                                                    children: ["平成十一年法律第八十九号"],
+                                                                                    tag: "__PStart",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["（"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PContent",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "____LawNum",
+                                                                                            attr: {},
+                                                                                            children: ["平成十一年法律第八十九号"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PEnd",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["）"],
                                                                                 },
                                                                             ],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PEnd",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["）"],
                                                                         },
                                                                     ],
                                                                 },
@@ -2388,50 +2421,58 @@ describe("Test detectDeclarations", () => {
                                                                     children: ["に規定する機関、"],
                                                                 },
                                                                 {
-                                                                    tag: "____Declaration",
+                                                                    tag: "____LawRef",
                                                                     attr: {
-                                                                        declarationID: "decl-sentence_0-text_84_91",
-                                                                        type: "LawName",
-                                                                        name: "国家行政組織法",
-                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
-                                                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
-                                                                        value: "昭和二十三年法律第百二十号",
-                                                                    },
-                                                                    children: ["国家行政組織法"],
-                                                                },
-                                                                {
-                                                                    tag: "__Parentheses",
-                                                                    attr: {
-                                                                        type: "round",
-                                                                        depth: "1",
+                                                                        includingDeclarationID: "decl-sentence_0-text_84_91",
                                                                     },
                                                                     children: [
                                                                         {
-                                                                            tag: "__PStart",
+                                                                            tag: "____Declaration",
                                                                             attr: {
-                                                                                type: "round",
+                                                                                declarationID: "decl-sentence_0-text_84_91",
+                                                                                type: "LawName",
+                                                                                name: "国家行政組織法",
+                                                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                                                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
+                                                                                value: "昭和二十三年法律第百二十号",
                                                                             },
-                                                                            children: ["（"],
+                                                                            children: ["国家行政組織法"],
                                                                         },
                                                                         {
-                                                                            tag: "__PContent",
+                                                                            tag: "__Parentheses",
                                                                             attr: {
                                                                                 type: "round",
+                                                                                depth: "1",
                                                                             },
                                                                             children: [
                                                                                 {
-                                                                                    tag: "____LawNum",
-                                                                                    attr: {},
-                                                                                    children: ["昭和二十三年法律第百二十号"],
+                                                                                    tag: "__PStart",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["（"],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PContent",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "____LawNum",
+                                                                                            attr: {},
+                                                                                            children: ["昭和二十三年法律第百二十号"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__PEnd",
+                                                                                    attr: {
+                                                                                        type: "round",
+                                                                                    },
+                                                                                    children: ["）"],
                                                                                 },
                                                                             ],
-                                                                        },
-                                                                        {
-                                                                            tag: "__PEnd",
-                                                                            attr: {
-                                                                                type: "round",
-                                                                            },
-                                                                            children: ["）"],
                                                                         },
                                                                     ],
                                                                 },
@@ -3127,7 +3168,7 @@ describe("Test detectDeclarations", () => {
                     declarationID: "decl-sentence_4-text_51_57",
                     type: "Keyword",
                     name: "実験等無線局",
-                    scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":125},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":57},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":4,\"textOffset\":57}}",
                 },
                 children: ["実験等無線局"],
@@ -3533,7 +3574,7 @@ describe("Test detectDeclarations", () => {
                                                                                 declarationID: "decl-sentence_4-text_51_57",
                                                                                 type: "Keyword",
                                                                                 name: "実験等無線局",
-                                                                                scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":125},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
+                                                                                scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":57},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":4,\"textOffset\":57}}",
                                                                             },
                                                                             children: ["実験等無線局"],

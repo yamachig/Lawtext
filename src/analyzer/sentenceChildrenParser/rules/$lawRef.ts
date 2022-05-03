@@ -101,7 +101,7 @@ export const $lawNum: WithErrorRule<LawRefInfo> = factory
 
 export const $lawRef: WithErrorRule<{
     lawNameCandidate: __Text,
-    lawRefInfo: LawRefInfo,
+    lawRefInfo: LawRefInfo & {lawRefParentheses: __Parentheses},
 }> = factory
     .withName("lawRef")
     .sequence(s => s
@@ -127,6 +127,7 @@ export const $lawRef: WithErrorRule<{
                     return {
                         value: {
                             ...match.value.value,
+                            lawRefParentheses: item,
                         },
                         errors: match.value.errors,
                     };

@@ -4,7 +4,7 @@ import sha512 from "hash.js/lib/hash/sha/512";
 import { LAWNUM_TABLE, KEY_LENGTH } from "../../law/lawNumTable";
 import { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
-import { __Text, ____Declaration } from "../../node/el/controls";
+import { __Text, ____Declaration, ____LawRef } from "../../node/el/controls";
 import { ContainerType } from "../../node/container";
 import $lawRef from "../sentenceChildrenParser/rules/$lawRef";
 import { initialEnv } from "../sentenceChildrenParser/env";
@@ -27,10 +27,12 @@ export const processLawRef = (
 ): (
     WithErrorValue<{
         declarations: ____Declaration[],
+        lawRefs: ____LawRef[],
     }>
 ) => {
     const errors: ErrorMessage[] = [];
     const declarations: ____Declaration[] = [];
+    const lawRefs: ____LawRef[] = [];
 
     for (let i = 0; i < elToBeModified.children.length; i++) {
         const result = $lawRef.match(
@@ -106,6 +108,14 @@ export const processLawRef = (
                     declaration,
                 );
 
+                const lawRef = new ____LawRef({
+                    includingDeclarationID: declarationID,
+                    range: result.value.value.lawRefInfo.lawRefParentheses.range,
+                });
+                lawRefs.push(lawRef);
+                lawRef.children.push(result.value.value.lawRefInfo.lawRefParentheses);
+                elToBeModified.children.splice((elToBeModified.children as (typeof elToBeModified.children)[number][]).indexOf(result.value.value.lawRefInfo.lawRefParentheses), 1, lawRef);
+
             } else {
                 const lawNameLength = getLawNameLength(lawNumText);
 
@@ -158,9 +168,20 @@ export const processLawRef = (
                     });
                     declarations.push(declaration);
 
+                    const lawRef = new ____LawRef({
+                        includingDeclarationID: declarationID,
+                        range: declaration.range && result.value.value.lawRefInfo.lawRefParentheses.range ? [
+                            declaration.range[0],
+                            result.value.value.lawRefInfo.lawRefParentheses.range[1],
+                        ] : null,
+                    });
+                    lawRefs.push(lawRef);
+                    lawRef.children.push(declaration);
+                    lawRef.children.push(result.value.value.lawRefInfo.lawRefParentheses);
+
                     elToBeModified.children.splice(
                         i,
-                        1,
+                        2,
                         new __Text(
                             lawNameCandidate.text().slice(0, lawNameCandidate.text().length - lawNameLength),
                             lawNameCandidate.range && [
@@ -168,7 +189,7 @@ export const processLawRef = (
                                 lawNameCandidate.range[1] - lawNameLength,
                             ],
                         ),
-                        declaration,
+                        lawRef,
                     );
                     i++;
                 }
@@ -178,7 +199,7 @@ export const processLawRef = (
     }
 
     return {
-        value: { declarations },
+        value: { declarations, lawRefs },
         errors,
     };
 };
