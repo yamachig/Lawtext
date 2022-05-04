@@ -15,6 +15,7 @@ const xmlSerializer = new XMLSerializer();
 
 export const lawlistsURL = "https://elaws.e-gov.go.jp/api/1/lawlists/1";
 export const lawdataURL = "https://elaws.e-gov.go.jp/api/1/lawdata/";
+export const articlesURL = "https://elaws.e-gov.go.jp/api/1/articles/";
 export const allXMLZipURL = "https://elaws.e-gov.go.jp/download?file_section=1&only_xml_flag=true";
 
 export const fetchElaws = async (url: string, retry = 5): Promise<Element> => {
@@ -141,12 +142,12 @@ export class ElawsLawData extends LawXMLStruct {
 export const fetchLawData = async (lawIDOrLawNum: string): Promise<ElawsLawData> => {
     const elApplData = await fetchElaws(lawdataURL + lawIDOrLawNum);
     if (!elApplData) {
-        throw Error("getLawData(): fetchElaws failed");
+        throw Error("fetchLawData(): fetchElaws failed");
     }
 
     const law = elApplData.getElementsByTagName("LawFullText").item(0)?.getElementsByTagName("Law").item(0);
     if (!law) {
-        throw Error("getLawData(): Law element not exist");
+        throw Error("fetchLawData(): Law element not exist");
     }
 
     const elImageData = elApplData.getElementsByTagName("ImageData").item(0);
@@ -165,4 +166,21 @@ export const fetchAllXMLZip = async (): Promise<ArrayBuffer> => {
     });
     if (!response.ok) throw Error(response.statusText);
     return await response.arrayBuffer();
+};
+
+export const fetchPartialLaw = async (options: {lawNum: string, article?: string, paragraph?: string, appdxTable?: string}): Promise<string> => {
+    const { lawNum, article, paragraph, appdxTable } = options;
+    const elApplData = await fetchElaws(`${articlesURL};lawNum=${lawNum};article=${article ?? ""};paragraph=${paragraph ?? ""};apdxTable=${appdxTable ?? ""}`);
+    if (!elApplData) {
+        throw Error("fetchPartialLaw(): fetchElaws failed");
+    }
+    const lawContents = elApplData.getElementsByTagName("LawContents").item(0);
+    const element = Array.from(lawContents?.childNodes ?? []).find(el => el.nodeType === 1);
+    if (!element) {
+        throw Error("fetchPartialLaw(): Target element not exist");
+    }
+
+    const xml = xmlSerializer.serializeToString(element);
+
+    return xml;
 };
