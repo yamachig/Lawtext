@@ -7,7 +7,7 @@ import { LawViewOptions } from "../common";
 import { ____PF, ____Pointer } from "lawtext/dist/src/node/el/controls";
 import PeekView from "./PeekView";
 import ContainersView from "./ContainersView";
-import ElawsPartialLawView from "./ElawsPartialLawView";
+import ElawsPartialLawView, { ElawsPartialLawViewProps } from "./ElawsPartialLawView";
 
 
 export interface ____PointerProps { el: ____Pointer, wrapperProps: WrapperComponentProps }
@@ -43,8 +43,14 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
                     if (!article && !paragraph && !appdxTable) {
                         runs.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);
                     } else {
+                        const elawsPartialLawViewProps: ElawsPartialLawViewProps = {
+                            lawNum,
+                            article,
+                            paragraph,
+                            appdxTable,
+                        };
                         const ChildComponent: React.FC<HTMLComponentProps> = props => {
-                            return <ElawsPartialLawView {...{ lawNum, article, paragraph, appdxTable }} {...{ htmlOptions: props.htmlOptions }} />;
+                            return <ElawsPartialLawView {...elawsPartialLawViewProps} {...{ htmlOptions: props.htmlOptions }} />;
                         };
                         runs.push(<PeekView ChildComponent={ChildComponent} sentenceChildren={child.children} {...{ htmlOptions }} />);
                     }
