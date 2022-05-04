@@ -30,7 +30,10 @@ export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
         const declaration = analysis.declarations.get(el.attr.declarationID);
         const declContainer = analysis.sentenceEnvs[declaration.nameSentenceTextRange.start.sentenceIndex].container;
         const containerID = declContainer.containerID;
-        return <ContainerRef containerIDs={[containerID]} sentenceChildren={sentenceChildren} {...{ htmlOptions }} />;
+        const ChildComponent: React.FC<HTMLComponentProps> = props => {
+            return <ContainersView containerIDs={[containerID]} {...{ htmlOptions: props.htmlOptions }} />;
+        };
+        return <PeekView ChildComponent={ChildComponent} sentenceChildren={sentenceChildren} {...{ htmlOptions }} />;
 
     } else if (el instanceof ____Pointer) {
         return <Pointer el={el} {...{ htmlOptions }} wrapperProps={props} />;
@@ -86,12 +89,21 @@ const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
     if (pointerEnv && pointerEnv.located) {
         const runs: JSX.Element[] = [];
         if (pointerEnv.located.type === "external") {
+            // const lawNum = options.lawData.el.children.find(el => el instanceof ____LawNum)?.text();
+            // if (!lawNum) throw new Error("LawNum not found");
+            // const article = (el.children.find(c => (c instanceof ____PF) && c.attr.targetType === "Article") as ____PF | undefined)?.attr.name;
+            // const paragraph = (el.children.find(c => (c instanceof ____PF) && c.attr.targetType === "Paragraph") as ____PF | undefined)?.attr.name;
+            // const appdxTable = (el.children.find(c => (c instanceof ____PF) && c.attr.targetType === "AppdxTable") as ____PF | undefined)?.attr.name;
+            // const xml = await fetchPartialLaw({ lawNum, article, paragraph, appdxTable });
             return <ChildComponent {...childProps} />;
         } else {
             for (const child of el.children) {
                 const containerIDs = (child instanceof ____PF) && pointerEnv.located.fragments.find(({ fragment }) => fragment === child)?.containers?.map((c) => c.containerID) || null;
                 if ((child instanceof ____PF) && containerIDs) {
-                    runs.push(<ContainerRef containerIDs={containerIDs} sentenceChildren={child.children} {...{ htmlOptions }} />);
+                    const ChildComponent: React.FC<HTMLComponentProps> = props => {
+                        return <ContainersView containerIDs={containerIDs} {...{ htmlOptions: props.htmlOptions }} />;
+                    };
+                    runs.push(<PeekView ChildComponent={ChildComponent} sentenceChildren={child.children} {...{ htmlOptions }} />);
                 } else {
                     runs.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);
                 }
@@ -107,31 +119,31 @@ const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
 };
 
 
-const ContainerRefSpan = styled.span`
+const PeekViewSpan = styled.span`
 `;
 
-const ContainerRefTextSpan = styled.span`
+const PeekViewTextSpan = styled.span`
     border-bottom: 1px solid rgba(127, 127, 127, 0.3);
     cursor: pointer;
     transition: background-color 0.3s, border-bottom-color 0.3s;
 `;
 
 // eslint-disable-next-line no-unused-vars
-enum ContainerRefFloatState {
+enum PeekViewFloatState {
     // eslint-disable-next-line no-unused-vars
     CLOSED,
     // eslint-disable-next-line no-unused-vars
     OPEN,
 }
 
-const ContainerRefFloatBlockInnerSpan = styled.div`
+const PeekViewFloatBlockInnerSpan = styled.div`
     position: relative;
     width: 100%;
     font-size: 1rem;
     padding: 0.5em;
 `;
 
-const ContainerRefArrowSpan = styled.div`
+const PeekViewArrowSpan = styled.div`
     position: absolute;
     border-style: solid;
     border-width: 0 0.5em 0.5em 0.5em;
@@ -139,7 +151,7 @@ const ContainerRefArrowSpan = styled.div`
     margin: -0.5em 0 0 0;
 `;
 
-const ContainerRefWindowSpan = styled.span`
+const PeekViewWindowSpan = styled.span`
     float: right;
     width: 100%;
     padding: 0.5em;
@@ -148,18 +160,21 @@ const ContainerRefWindowSpan = styled.span`
     background-color: rgba(240, 240, 240);
 `;
 
-interface ContainerRefProps { containerIDs: string[], sentenceChildren: (string | SentenceChildEL)[] }
+interface PeekViewProps {
+    ChildComponent: React.ComponentType<HTMLComponentProps>,
+    sentenceChildren: (string | SentenceChildEL)[],
+ }
 
-interface ContainerRefState { mode: ContainerRefFloatState, arrowLeft: string }
+interface PeekViewState { mode: PeekViewFloatState, arrowLeft: string }
 
-const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
-    const { containerIDs, sentenceChildren, htmlOptions } = props;
+const PeekView = (props: HTMLComponentProps & PeekViewProps) => {
+    const { ChildComponent, sentenceChildren, htmlOptions } = props;
 
 
     const refText = React.useRef<HTMLSpanElement>(null);
     const refWindow = React.useRef<HTMLSpanElement>(null);
 
-    const [state, setState] = React.useState<ContainerRefState>({ mode: ContainerRefFloatState.CLOSED, arrowLeft: "" });
+    const [state, setState] = React.useState<PeekViewState>({ mode: PeekViewFloatState.CLOSED, arrowLeft: "" });
 
     React.useEffect(() => {
         return () => {
@@ -168,11 +183,11 @@ const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
     }, []);
 
     const varRefTextSpanOnClick = (/* e: React.MouseEvent<HTMLSpanElement> */) => {
-        if (state.mode === ContainerRefFloatState.OPEN) {
-            setState(prevState => ({ ...prevState, mode: ContainerRefFloatState.CLOSED }));
+        if (state.mode === PeekViewFloatState.OPEN) {
+            setState(prevState => ({ ...prevState, mode: PeekViewFloatState.CLOSED }));
             window.removeEventListener("resize", updateSize);
         } else {
-            setState(prevState => ({ ...prevState, mode: ContainerRefFloatState.OPEN }));
+            setState(prevState => ({ ...prevState, mode: PeekViewFloatState.OPEN }));
             setTimeout(() => {
                 updateSize();
                 window.addEventListener("resize", updateSize);
@@ -194,13 +209,13 @@ const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
     };
 
     return (
-        <ContainerRefSpan className={state.mode === ContainerRefFloatState.OPEN ? "lawtext-container-ref-open" : undefined}>
+        <PeekViewSpan className={state.mode === PeekViewFloatState.OPEN ? "lawtext-container-ref-open" : undefined}>
 
-            <ContainerRefTextSpan onClick={varRefTextSpanOnClick} ref={refText} className="lawtext-container-ref-text">
+            <PeekViewTextSpan onClick={varRefTextSpanOnClick} ref={refText} className="lawtext-container-ref-text">
                 <HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />
-            </ContainerRefTextSpan>
+            </PeekViewTextSpan>
 
-            {(state.mode !== ContainerRefFloatState.CLOSED) && (
+            {(state.mode !== PeekViewFloatState.CLOSED) && (
                 <div
                     style={{
                         float: "right",
@@ -227,24 +242,24 @@ const ContainerRef = (props: HTMLComponentProps & ContainerRefProps) => {
                             color: "initial",
                         }}
                     >
-                        <ContainerRefFloatBlockInnerSpan>
-                            <ContainerRefArrowSpan style={state.arrowLeft ? { marginLeft: state.arrowLeft } : { visibility: "hidden" }} />
-                            <ContainerRefWindowSpan ref={refWindow}>
-                                <PeekContainerView containerIDs={containerIDs} {...{ htmlOptions }} />
-                            </ContainerRefWindowSpan>
-                        </ContainerRefFloatBlockInnerSpan>
+                        <PeekViewFloatBlockInnerSpan>
+                            <PeekViewArrowSpan style={state.arrowLeft ? { marginLeft: state.arrowLeft } : { visibility: "hidden" }} />
+                            <PeekViewWindowSpan ref={refWindow}>
+                                <ChildComponent {...{ htmlOptions }} />
+                            </PeekViewWindowSpan>
+                        </PeekViewFloatBlockInnerSpan>
                     </div>
                 </div>
             )}
 
-        </ContainerRefSpan>
+        </PeekViewSpan>
     );
 };
 
 
-interface PeekContainerViewProps { containerIDs: string[] }
+interface ContainersViewProps { containerIDs: string[] }
 
-const PeekContainerView = (props: HTMLComponentProps & PeekContainerViewProps) => {
+const ContainersView = (props: HTMLComponentProps & ContainersViewProps) => {
     const { containerIDs, htmlOptions } = props;
     const options = htmlOptions.options as LawViewOptions;
 
