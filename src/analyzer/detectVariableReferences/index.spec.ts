@@ -1310,7 +1310,7 @@ describe("Test detectVariableReferences and PointerRanges with lawRef", () => {
                 located: {
                     type: "external",
                     lawRef: "内閣府設置法（平成十一年法律第八十九号）",
-                    fqPrefixFragments: [],
+                    fqPrefixFragments: ["第四十九条"],
                 },
                 directLawRef: null,
                 namingParent: "第四十九条第一項",

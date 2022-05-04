@@ -60,7 +60,7 @@ export class PointerEnv {
                         ? {
                             ...this.located,
                             lawRef: this.located.lawRef.text(),
-                            fqPrefixFragments: this.located.fqPrefixFragments.map(f => f.json(true)),
+                            fqPrefixFragments: this.located.fqPrefixFragments.map(f => f.text()),
                         }
                         : null
             ),
@@ -358,9 +358,9 @@ export class PointerEnv {
                     if (prev?.type === "external") {
                         // e.g. "行政手続法第二条" -> "第三条"
 
-                        const prevFQPrefixFragments = prev.fqPrefixFragments;
-                        const fqDupIndex = prevFQPrefixFragments.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
-                        const fqPrefixFragments = (fqDupIndex < 0) ? prevFQPrefixFragments : prevFQPrefixFragments.slice(0, fqDupIndex);
+                        const prevFQFragments = [...prev.fqPrefixFragments, ...(this.namingParent?.pointer.fragments() ?? [])];
+                        const fqDupIndex = prevFQFragments.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
+                        const fqPrefixFragments = (fqDupIndex < 0) ? prevFQFragments : prevFQFragments.slice(0, fqDupIndex);
                         this.located = {
                             type: "external",
                             lawRef: prev.lawRef,
