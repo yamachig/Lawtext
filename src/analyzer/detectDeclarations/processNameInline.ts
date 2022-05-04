@@ -7,11 +7,14 @@ import { SentenceChildEL } from "../../node/cst/inline";
 import { toSentenceTextRanges, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
+import getScope from "../pointerEnvs/getScope";
+import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
 export const processNameInline = (
     elToBeModified: std.StdEL | std.__EL,
     sentenceEnv: SentenceEnv,
     sentenceEnvsStruct: SentenceEnvsStruct,
+    pointerEnvsStruct: PointerEnvsStruct,
 ): (
     WithErrorValue<{
         declarations: ____Declaration[],
@@ -29,6 +32,8 @@ export const processNameInline = (
 
         if (result.ok) {
             const { nameSquareParentheses, following, pointerRanges } = result.value.value;
+
+            if (pointerRanges) getScope(pointerRanges, pointerEnvsStruct);
 
             errors.push(...result.value.errors);
 

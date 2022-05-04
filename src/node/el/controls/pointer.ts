@@ -43,7 +43,6 @@ export interface PFOptions {
     num?: string | null;
     count?: "all" | `${number}` | null;
     range: [start: number, end: number] | null,
-    targetContainerIDs?: [],
 }
 
 export class ____PF extends EL {
@@ -57,25 +56,8 @@ export class ____PF extends EL {
         name: string,
         num?: string,
         count?: string,
-        targetContainerIDs?: string,
     };
     public override children: [string];
-
-    private targetContainerIDsCache: [str: string, value: readonly string[]] | null = null;
-    public get targetContainerIDs(): readonly string[] {
-        if (this.targetContainerIDsCache !== null && this.targetContainerIDsCache[0] === this.attr.targetContainerIDs) {
-            return this.targetContainerIDsCache[1];
-        } else {
-            if (!this.attr.targetContainerIDs) return [];
-            const value = JSON.parse(this.attr.targetContainerIDs) as string[];
-            this.targetContainerIDsCache = [this.attr.targetContainerIDs, value];
-            return value;
-        }
-    }
-    public set targetContainerIDs(value: readonly string[]) {
-        this.attr.targetContainerIDs = JSON.stringify(value);
-        this.targetContainerIDsCache = [this.attr.targetContainerIDs, value];
-    }
 
     constructor(options: PFOptions) {
         super("____PF", {}, [], options.range);
@@ -86,7 +68,6 @@ export class ____PF extends EL {
             name,
             num = null,
             count = null,
-            targetContainerIDs,
         } = {
             ...options,
         };
@@ -98,7 +79,6 @@ export class ____PF extends EL {
         };
         if (num !== null) this.attr.num = num;
         if (count !== null) this.attr.count = count;
-        if (targetContainerIDs !== undefined) this.attr.targetContainerIDs = JSON.stringify(targetContainerIDs);
 
         this.children = [name];
     }

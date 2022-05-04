@@ -1,669 +1,12 @@
 import { assert } from "chai";
-import * as std from "../../law/std";
 import { JsonEL } from "../../node/el/jsonEL";
-import loadEL from "../../node/el/loadEL";
-import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
-import locatePointerRanges from ".";
 import getSentenceEnvs from "../getSentenceEnvs";
 import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";
+import getPointerEnvs from "./getPointerEnvs";
+import getScope from "./getScope";
 
-describe("Test locatePointerRanges", () => {
-    it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
-        const inputElToBeModified = loadEL({
-            tag: "Subitem1",
-            attr: {},
-            children: [
-                {
-                    tag: "Subitem1Title",
-                    attr: {},
-                    children: ["イ"],
-                },
-                {
-                    tag: "Subitem1Sentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "Sentence",
-                            attr: {},
-                            children: ["法律に基づく命令（処分の要件を定める告示を含む。次条第二項において単に「命令」という。）又は規則"],
-                        },
-                    ],
-                },
-            ],
-        }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
-        const expected: JsonEL[] = [
-            {
-                tag: "____PointerRanges",
-                attr: {},
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NEXT",
-                                            targetType: "Article",
-                                            name: "次条",
-                                        },
-                                        children: ["次条"],
-                                    },
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NAMED",
-                                            targetType: "Paragraph",
-                                            name: "第二項",
-                                            num: "2",
-                                        },
-                                        children: ["第二項"],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ];
-        const expectedErrorMessages: string[] = [];
-        const expectedModifiedInput = {
-            tag: "Subitem1",
-            attr: {},
-            children: [
-                {
-                    tag: "Subitem1Title",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
-                },
-                {
-                    tag: "Subitem1Sentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "Sentence",
-                            attr: {},
-                            children: [
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["法律に基づく命令"],
-                                },
-                                {
-                                    tag: "__Parentheses",
-                                    attr: {
-                                        type: "round",
-                                        depth: "1",
-                                    },
-                                    children: [
-                                        {
-                                            tag: "__PStart",
-                                            attr: {
-                                                type: "round",
-                                            },
-                                            children: ["（"],
-                                        },
-                                        {
-                                            tag: "__PContent",
-                                            attr: {
-                                                type: "round",
-                                            },
-                                            children: [
-                                                {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["処分の要件を定める告示を含む。"],
-                                                },
-                                                {
-                                                    tag: "____PointerRanges",
-                                                    attr: {},
-                                                    children: [
-                                                        {
-                                                            tag: "____PointerRange",
-                                                            attr: {},
-                                                            children: [
-                                                                {
-                                                                    tag: "____Pointer",
-                                                                    attr: {},
-                                                                    children: [
-                                                                        {
-                                                                            tag: "____PF",
-                                                                            attr: {
-                                                                                relPos: "NEXT",
-                                                                                targetType: "Article",
-                                                                                name: "次条",
-                                                                            },
-                                                                            children: ["次条"],
-                                                                        },
-                                                                        {
-                                                                            tag: "____PF",
-                                                                            attr: {
-                                                                                relPos: "NAMED",
-                                                                                targetType: "Paragraph",
-                                                                                name: "第二項",
-                                                                                num: "2",
-                                                                            },
-                                                                            children: ["第二項"],
-                                                                        },
-                                                                    ],
-                                                                },
-                                                            ],
-                                                        },
-                                                    ],
-                                                },
-                                                {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["において単に"],
-                                                },
-                                                {
-                                                    tag: "__Parentheses",
-                                                    attr: {
-                                                        type: "square",
-                                                        depth: "2",
-                                                    },
-                                                    children: [
-                                                        {
-                                                            tag: "__PStart",
-                                                            attr: {
-                                                                type: "square",
-                                                            },
-                                                            children: ["「"],
-                                                        },
-                                                        {
-                                                            tag: "__PContent",
-                                                            attr: {
-                                                                type: "square",
-                                                            },
-                                                            children: [
-                                                                {
-                                                                    tag: "__Text",
-                                                                    attr: {},
-                                                                    children: ["命令"],
-                                                                },
-                                                            ],
-                                                        },
-                                                        {
-                                                            tag: "__PEnd",
-                                                            attr: {
-                                                                type: "square",
-                                                            },
-                                                            children: ["」"],
-                                                        },
-                                                    ],
-                                                },
-                                                {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["という。"],
-                                                },
-                                            ],
-                                        },
-                                        {
-                                            tag: "__PEnd",
-                                            attr: {
-                                                type: "round",
-                                            },
-                                            children: ["）"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["又は規則"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        };
-
-        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const result = locatePointerRanges(sentenceEnvsStruct);
-
-        // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
-        assert.deepStrictEqual(
-            result.value.map(r => r.json(true)),
-            expected,
-        );
-
-        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
-
-        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
-        assert.deepStrictEqual(
-            inputElToBeModified.json(true),
-            expectedModifiedInput,
-        );
-    });
-
-    it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
-        const inputElToBeModified = loadEL({
-            tag: "Subitem1",
-            attr: {},
-            children: [
-                {
-                    tag: "Subitem1Title",
-                    attr: {},
-                    children: ["イ"],
-                },
-                {
-                    tag: "Subitem1Sentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "Sentence",
-                            attr: {},
-                            children: ["次条第二項において単に「命令」という。）又は規則"],
-                        },
-                    ],
-                },
-            ],
-        }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
-        const expected: JsonEL[] = [
-            {
-                tag: "____PointerRanges",
-                attr: {},
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NEXT",
-                                            targetType: "Article",
-                                            name: "次条",
-                                        },
-                                        children: ["次条"],
-                                    },
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NAMED",
-                                            targetType: "Paragraph",
-                                            name: "第二項",
-                                            num: "2",
-                                        },
-                                        children: ["第二項"],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ];
-        const expectedErrorMessages: string[] = [];
-        const expectedModifiedInput = {
-            tag: "Subitem1",
-            attr: {},
-            children: [
-                {
-                    tag: "Subitem1Title",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
-                },
-                {
-                    tag: "Subitem1Sentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "Sentence",
-                            attr: {},
-                            children: [
-                                {
-                                    tag: "____PointerRanges",
-                                    attr: {},
-                                    children: [
-                                        {
-                                            tag: "____PointerRange",
-                                            attr: {},
-                                            children: [
-                                                {
-                                                    tag: "____Pointer",
-                                                    attr: {},
-                                                    children: [
-                                                        {
-                                                            tag: "____PF",
-                                                            attr: {
-                                                                relPos: "NEXT",
-                                                                targetType: "Article",
-                                                                name: "次条",
-                                                            },
-                                                            children: ["次条"],
-                                                        },
-                                                        {
-                                                            tag: "____PF",
-                                                            attr: {
-                                                                relPos: "NAMED",
-                                                                targetType: "Paragraph",
-                                                                name: "第二項",
-                                                                num: "2",
-                                                            },
-                                                            children: ["第二項"],
-                                                        },
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["において単に"],
-                                },
-                                {
-                                    tag: "__Parentheses",
-                                    attr: {
-                                        type: "square",
-                                        depth: "1",
-                                    },
-                                    children: [
-                                        {
-                                            tag: "__PStart",
-                                            attr: {
-                                                type: "square",
-                                            },
-                                            children: ["「"],
-                                        },
-                                        {
-                                            tag: "__PContent",
-                                            attr: {
-                                                type: "square",
-                                            },
-                                            children: [
-                                                {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["命令"],
-                                                },
-                                            ],
-                                        },
-                                        {
-                                            tag: "__PEnd",
-                                            attr: {
-                                                type: "square",
-                                            },
-                                            children: ["」"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["という。"],
-                                },
-                                {
-                                    tag: "__MismatchEndParenthesis",
-                                    attr: {},
-                                    children: ["）"],
-                                },
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["又は規則"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        }
-          ;
-
-        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const result = locatePointerRanges(sentenceEnvsStruct);
-
-        // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
-        assert.deepStrictEqual(
-            result.value.map(r => r.json(true)),
-            expected,
-        );
-
-        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
-
-        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
-        assert.deepStrictEqual(
-            inputElToBeModified.json(true),
-            expectedModifiedInput,
-        );
-    });
-
-    it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
-        const inputElToBeModified = loadEL({
-            tag: "Subitem1",
-            attr: {},
-            children: [
-                {
-                    tag: "Subitem1Title",
-                    attr: {},
-                    children: ["イ"],
-                },
-                {
-                    tag: "Subitem1Sentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "Sentence",
-                            attr: {},
-                            children: ["次条第二項において単に「命令」という。）又は規則"],
-                        },
-                    ],
-                },
-            ],
-        }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
-        const expected: JsonEL[] = [
-            {
-                tag: "____PointerRanges",
-                attr: {},
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NEXT",
-                                            targetType: "Article",
-                                            name: "次条",
-                                        },
-                                        children: ["次条"],
-                                    },
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NAMED",
-                                            targetType: "Paragraph",
-                                            name: "第二項",
-                                            num: "2",
-                                        },
-                                        children: ["第二項"],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ];
-        const expectedErrorMessages: string[] = [];
-        const expectedModifiedInput = {
-            tag: "Subitem1",
-            attr: {},
-            children: [
-                {
-                    tag: "Subitem1Title",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
-                },
-                {
-                    tag: "Subitem1Sentence",
-                    attr: {},
-                    children: [
-                        {
-                            tag: "Sentence",
-                            attr: {},
-                            children: [
-                                {
-                                    tag: "____PointerRanges",
-                                    attr: {},
-                                    children: [
-                                        {
-                                            tag: "____PointerRange",
-                                            attr: {},
-                                            children: [
-                                                {
-                                                    tag: "____Pointer",
-                                                    attr: {},
-                                                    children: [
-                                                        {
-                                                            tag: "____PF",
-                                                            attr: {
-                                                                relPos: "NEXT",
-                                                                targetType: "Article",
-                                                                name: "次条",
-                                                            },
-                                                            children: ["次条"],
-                                                        },
-                                                        {
-                                                            tag: "____PF",
-                                                            attr: {
-                                                                relPos: "NAMED",
-                                                                targetType: "Paragraph",
-                                                                name: "第二項",
-                                                                num: "2",
-                                                            },
-                                                            children: ["第二項"],
-                                                        },
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["において単に"],
-                                },
-                                {
-                                    tag: "__Parentheses",
-                                    attr: {
-                                        type: "square",
-                                        depth: "1",
-                                    },
-                                    children: [
-                                        {
-                                            tag: "__PStart",
-                                            attr: {
-                                                type: "square",
-                                            },
-                                            children: ["「"],
-                                        },
-                                        {
-                                            tag: "__PContent",
-                                            attr: {
-                                                type: "square",
-                                            },
-                                            children: [
-                                                {
-                                                    tag: "__Text",
-                                                    attr: {},
-                                                    children: ["命令"],
-                                                },
-                                            ],
-                                        },
-                                        {
-                                            tag: "__PEnd",
-                                            attr: {
-                                                type: "square",
-                                            },
-                                            children: ["」"],
-                                        },
-                                    ],
-                                },
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["という。"],
-                                },
-                                {
-                                    tag: "__MismatchEndParenthesis",
-                                    attr: {},
-                                    children: ["）"],
-                                },
-                                {
-                                    tag: "__Text",
-                                    attr: {},
-                                    children: ["又は規則"],
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        }
-        ;
-
-        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const result = locatePointerRanges(sentenceEnvsStruct);
-
-        // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
-        assert.deepStrictEqual(
-            result.value.map(r => r.json(true)),
-            expected,
-        );
-
-        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
-
-        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
-        assert.deepStrictEqual(
-            inputElToBeModified.json(true),
-            expectedModifiedInput,
-        );
-    });
+describe("Test getScope", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
@@ -695,6 +38,7 @@ describe("Test locatePointerRanges", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
 
         const expectedSentenceTexts = [
             "この法律は、電波の公平且つ能率的な利用を確保することによつて、公共の福祉を増進することを目的とする。",
@@ -725,7 +69,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            targetContainerIDs: "[\"container-Law\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -755,7 +98,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            targetContainerIDs: "[\"container-Law\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -782,7 +124,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            targetContainerIDs: "[\"container-Law\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -821,7 +162,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "HERE",
                                             targetType: "Law",
                                             name: "この法律",
-                                            targetContainerIDs: "[\"container-Law\"]",
                                         },
                                         children: ["この法律"],
                                     },
@@ -835,7 +175,7 @@ describe("Test locatePointerRanges", () => {
           ;
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         // console.log(JSON.stringify(sentenceEnvsStruct.sentenceEnvs.map(s => s.text), null, 2));
         assert.deepStrictEqual(
@@ -843,13 +183,13 @@ describe("Test locatePointerRanges", () => {
             expectedSentenceTexts,
         );
 
-        // console.log(JSON.stringify(detectTokensresult.value.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.map(r => r.json(true)),
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -869,6 +209,7 @@ describe("Test locatePointerRanges", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -892,7 +233,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Article",
                                             name: "第七十六条",
                                             num: "76",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]\"]",
                                         },
                                         children: ["第七十六条"],
                                     },
@@ -903,7 +243,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "第二項",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[2][num=2]\"]",
                                         },
                                         children: ["第二項"],
                                     },
@@ -931,7 +270,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "第四項",
                                             num: "4",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]\"]",
                                         },
                                         children: ["第四項"],
                                     },
@@ -978,7 +316,6 @@ describe("Test locatePointerRanges", () => {
                                                                             targetType: "Item",
                                                                             name: "第一号",
                                                                             num: "1",
-                                                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
                                                                         },
                                                                         children: ["第一号"],
                                                                     },
@@ -1029,7 +366,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Item",
                                             name: "第一号",
                                             num: "1",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
                                         },
                                         children: ["第一号"],
                                     },
@@ -1060,7 +396,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "第四項",
                                             num: "4",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=5]-Paragraph[2][num=4]\"]",
                                         },
                                         children: ["第四項"],
                                     },
@@ -1091,7 +426,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Item",
                                             name: "第一号",
                                             num: "1",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=76]-Paragraph[3][num=4]-Item[1][num=1]\"]",
                                         },
                                         children: ["第一号"],
                                     },
@@ -1104,15 +438,15 @@ describe("Test locatePointerRanges", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
-        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.map(r => r.json(true)),
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1128,6 +462,7 @@ describe("Test locatePointerRanges", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1151,7 +486,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "SUBITEM",
                                             name: "イ",
                                             num: "1",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\"]",
                                         },
                                         children: ["イ"],
                                     },
@@ -1179,7 +513,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "SUBITEM",
                                             name: "ロ",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"]",
                                         },
                                         children: ["ロ"],
                                     },
@@ -1210,7 +543,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "SUBITEM",
                                             name: "イ",
                                             num: "1",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[1][num=1]\"]",
                                         },
                                         children: ["イ"],
                                     },
@@ -1238,7 +570,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "SUBITEM",
                                             name: "ロ",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=6]-Paragraph[1][num=1]-Item[1][num=4]-Subitem1[2][num=2]\"]",
                                         },
                                         children: ["ロ"],
                                     },
@@ -1345,15 +676,15 @@ describe("Test locatePointerRanges", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
-        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.map(r => r.json(true)),
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1375,6 +706,7 @@ describe("Test locatePointerRanges", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1398,7 +730,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "第七項",
                                             num: "7",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"]",
                                         },
                                         children: ["第七項"],
                                     },
@@ -1426,7 +757,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "第八項",
                                             num: "8",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"]",
                                         },
                                         children: ["第八項"],
                                     },
@@ -1456,7 +786,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "HERE",
                                             targetType: "Paragraph",
                                             name: "この項",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\"]",
                                         },
                                         children: ["この項"],
                                     },
@@ -1483,7 +812,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "NEXT",
                                             targetType: "Paragraph",
                                             name: "次項",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\"]",
                                         },
                                         children: ["次項"],
                                     },
@@ -1569,7 +897,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "第二項",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\"]",
                                         },
                                         children: ["第二項"],
                                     },
@@ -1590,7 +917,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "PREV",
                                             targetType: "Paragraph",
                                             name: "前項",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\"]",
                                         },
                                         children: ["前項"],
                                     },
@@ -1625,7 +951,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "PREV",
                                             targetType: "Paragraph",
                                             name: "前項",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\"]",
                                         },
                                         children: ["前項"],
                                     },
@@ -1656,7 +981,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "第一項",
                                             num: "1",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\"]",
                                         },
                                         children: ["第一項"],
                                     },
@@ -1684,7 +1008,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "前二項",
                                             count: "2",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\"]",
                                         },
                                         children: ["前二項"],
                                     },
@@ -1715,7 +1038,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "前各項",
                                             count: "all",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[1][num=1]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[2][num=2]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[3][num=3]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[4][num=4]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[5][num=5]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[6][num=6]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[7][num=7]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[8][num=8]\",\"container-Law-MainProvision[1]-Article[1][num=20]-Paragraph[9][num=9]\"]",
                                         },
                                         children: ["前各項"],
                                     },
@@ -1756,15 +1078,15 @@ describe("Test locatePointerRanges", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
-        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.map(r => r.json(true)),
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1780,6 +1102,7 @@ describe("Test locatePointerRanges", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1803,7 +1126,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Item",
                                             name: "第三号",
                                             num: "3",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=27_5]-Paragraph[1][num=1]-Item[3][num=3]\"]",
                                         },
                                         children: ["第三号"],
                                     },
@@ -1817,15 +1139,15 @@ describe("Test locatePointerRanges", () => {
           ;
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
-        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.map(r => r.json(true)),
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1844,6 +1166,7 @@ describe("Test locatePointerRanges", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1866,7 +1189,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "HERE",
                                             targetType: "Paragraph",
                                             name: "この項",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]\"]",
                                         },
                                         children: ["この項"],
                                     },
@@ -1897,7 +1219,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Item",
                                             name: "第二号",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
                                         },
                                         children: ["第二号"],
                                     },
@@ -1925,7 +1246,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Item",
                                             name: "第三号",
                                             num: "3",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=4_2]-Paragraph[2][num=2]-Item[3][num=3]\"]",
                                         },
                                         children: ["第三号"],
                                     },
@@ -1939,15 +1259,15 @@ describe("Test locatePointerRanges", () => {
 ;
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
-        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.map(r => r.json(true)),
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1968,6 +1288,7 @@ describe("Test locatePointerRanges", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1990,7 +1311,6 @@ describe("Test locatePointerRanges", () => {
                                             relPos: "PREV",
                                             targetType: "Paragraph",
                                             name: "前項",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[1][num=1]\"]",
                                         },
                                         children: ["前項"],
                                     },
@@ -2021,7 +1341,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Article",
                                             name: "第二十四条の二",
                                             num: "24_2",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]\"]",
                                         },
                                         children: ["第二十四条の二"],
                                     },
@@ -2032,7 +1351,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Paragraph",
                                             name: "第二項",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"]",
                                         },
                                         children: ["第二項"],
                                     },
@@ -2063,7 +1381,6 @@ describe("Test locatePointerRanges", () => {
                                             targetType: "Item",
                                             name: "第二号",
                                             num: "2",
-                                            targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"]",
                                         },
                                         children: ["第二号"],
                                     },
@@ -2077,15 +1394,15 @@ describe("Test locatePointerRanges", () => {
           ;
         const expectedErrorMessages: string[] = [];
 
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
-        // console.log(JSON.stringify(detectTokensResult.value.map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            detectTokensResult.value.map(r => r.json(true)),
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(detectTokensResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });

@@ -1,3 +1,4 @@
+import { parseNamedNum } from "../../law/num";
 import * as std from "../../law/std";
 import { SentenceEnv } from "../../node/container/sentenceEnv";
 import { __Parentheses, ____Pointer, ____PointerRanges } from "../../node/el/controls";
@@ -8,7 +9,7 @@ import { isIgnoreAnalysis } from "../common";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 
 
-export const getPointerEnvsForEL = (
+const getPointerEnvsForEL = (
     el: std.StdEL | std.__EL,
     sentenceEnv: SentenceEnv,
     __prevPointerEnv: PointerEnv | null,
@@ -16,6 +17,7 @@ export const getPointerEnvsForEL = (
 ): (
     WithErrorValue<{
         pointerEnvByEL: Map<____Pointer, PointerEnv>;
+        pointerRangesList: ____PointerRanges[];
         firstPointerEnv: PointerEnv;
         lastPointerEnv: PointerEnv;
     }> | null
@@ -26,15 +28,24 @@ export const getPointerEnvsForEL = (
     const pointerEnvByEL: Map<____Pointer, PointerEnv> = new Map();
     let firstPointerEnv: PointerEnv | null = null;
     let lastPointerEnv: PointerEnv | null = null;
+    const pointerRangesList: ____PointerRanges[] = [];
     const errors: ErrorMessage[] = [];
 
     if (el instanceof ____PointerRanges) {
 
         const pointerRanges = el;
+        pointerRangesList.push(pointerRanges);
 
         for (const pointerRange of pointerRanges.ranges()) {
 
             for (const pointer of pointerRange.pointers()) {
+
+                const fragments = pointer.fragments();
+                for (const fragment of fragments) {
+                    const num = parseNamedNum(fragment.attr.name);
+                    if (num) fragment.attr.num = num;
+                }
+
                 const pointerEnv = new PointerEnv({
                     pointer,
                     sentenceEnv,
@@ -88,6 +99,7 @@ export const getPointerEnvsForEL = (
                         for (const [k, v] of result.value.pointerEnvByEL) {
                             pointerEnvByEL.set(k, v);
                         }
+                        pointerRangesList.push(...result.value.pointerRangesList);
                         errors.push(...result.errors);
 
                     }
@@ -125,6 +137,7 @@ export const getPointerEnvsForEL = (
                 for (const [k, v] of result.value.pointerEnvByEL) {
                     pointerEnvByEL.set(k, v);
                 }
+                pointerRangesList.push(...result.value.pointerRangesList);
                 errors.push(...result.errors);
             }
         }
@@ -135,6 +148,7 @@ export const getPointerEnvsForEL = (
     return {
         value: {
             pointerEnvByEL,
+            pointerRangesList,
             firstPointerEnv,
             lastPointerEnv,
         },
@@ -144,6 +158,7 @@ export const getPointerEnvsForEL = (
 
 export interface PointerEnvsStruct {
     pointerEnvByEL: Map<____Pointer, PointerEnv>;
+    pointerRangesList: ____PointerRanges[];
     rootPointerEnvs: PointerEnv[];
 }
 
@@ -151,6 +166,7 @@ export const getPointerEnvs = (sentenceEnvsStruct: SentenceEnvsStruct): WithErro
 
     const pointerEnvByEL: Map<____Pointer, PointerEnv> = new Map();
     const rootPointerEnvs: PointerEnv[] = [];
+    const pointerRangesList: ____PointerRanges[] = [];
     const errors: ErrorMessage[] = [];
 
     // The previous PointerEnv in the same Container is inherited as a lastPointerEnv.
@@ -175,13 +191,14 @@ export const getPointerEnvs = (sentenceEnvsStruct: SentenceEnvsStruct): WithErro
                 pointerEnvByEL.set(k, v);
             }
             rootPointerEnvs.push(result.value.firstPointerEnv);
+            pointerRangesList.push(...result.value.pointerRangesList);
             errors.push(...result.errors);
             prevPointerEnv = result.value.lastPointerEnv;
         }
     }
 
     return {
-        value: { pointerEnvByEL, rootPointerEnvs },
+        value: { pointerEnvByEL, rootPointerEnvs, pointerRangesList },
         errors,
     };
 };

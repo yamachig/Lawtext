@@ -10,9 +10,15 @@ import { isIgnoreAnalysis } from "../common";
 import { processNameList } from "./processNameList";
 import { Declarations } from "../common/declarations";
 import { processAmbiguousNameInline } from "./processAmbiguousNameInline";
+import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
 
-export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnv: SentenceEnv, sentenceEnvsStruct: SentenceEnvsStruct): WithErrorValue<____Declaration[]> => {
+export const detectDeclarationsByEL = (
+    elToBeModified: std.StdEL | std.__EL,
+    sentenceEnv: SentenceEnv,
+    sentenceEnvsStruct: SentenceEnvsStruct,
+    pointerEnvsStruct: PointerEnvsStruct,
+): WithErrorValue<____Declaration[]> => {
 
     const declarations: ____Declaration[] = [];
     const errors: ErrorMessage[] = [];
@@ -22,6 +28,7 @@ export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sen
             elToBeModified,
             sentenceEnv,
             sentenceEnvsStruct,
+            pointerEnvsStruct,
         );
         if (result){
             declarations.push(...result.value.declarations);
@@ -34,6 +41,7 @@ export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sen
             elToBeModified,
             sentenceEnv,
             sentenceEnvsStruct,
+            pointerEnvsStruct,
         );
         if (result){
             declarations.push(...result.value.declarations);
@@ -54,6 +62,7 @@ export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sen
                 child as std.StdEL | std.__EL,
                 sentenceEnv,
                 sentenceEnvsStruct,
+                pointerEnvsStruct,
             );
             declarations.push(...detectLawnameResult.value);
             errors.push(...detectLawnameResult.errors);
@@ -67,13 +76,21 @@ export const detectDeclarationsByEL = (elToBeModified: std.StdEL | std.__EL, sen
 };
 
 
-export const detectDeclarationsBySentence = (sentenceEnv: SentenceEnv, sentenceEnvsStruct: SentenceEnvsStruct): WithErrorValue<____Declaration[]> => {
+export const detectDeclarationsBySentence = (
+    sentenceEnv: SentenceEnv,
+    sentenceEnvsStruct: SentenceEnvsStruct,
+    pointerEnvsStruct: PointerEnvsStruct,
+): WithErrorValue<____Declaration[]> => {
 
     const declarations: ____Declaration[] = [];
     const errors: ErrorMessage[] = [];
 
     {
-        const result = processNameList(sentenceEnv, sentenceEnvsStruct);
+        const result = processNameList(
+            sentenceEnv,
+            sentenceEnvsStruct,
+            pointerEnvsStruct,
+        );
         if (result){
             declarations.push(...result.value);
             errors.push(...result.errors);
@@ -81,7 +98,12 @@ export const detectDeclarationsBySentence = (sentenceEnv: SentenceEnv, sentenceE
     }
 
     {
-        const result = detectDeclarationsByEL(sentenceEnv.el, sentenceEnv, sentenceEnvsStruct);
+        const result = detectDeclarationsByEL(
+            sentenceEnv.el,
+            sentenceEnv,
+            sentenceEnvsStruct,
+            pointerEnvsStruct,
+        );
         if (result){
             declarations.push(...result.value);
             errors.push(...result.errors);
@@ -93,13 +115,16 @@ export const detectDeclarationsBySentence = (sentenceEnv: SentenceEnv, sentenceE
 };
 
 
-export const detectDeclarations = (sentenceEnvsStruct: SentenceEnvsStruct): WithErrorValue<Declarations> => {
+export const detectDeclarations = (
+    sentenceEnvsStruct: SentenceEnvsStruct,
+    pointerEnvsStruct: PointerEnvsStruct,
+): WithErrorValue<Declarations> => {
 
     const declarations = new Declarations();
     const errors: ErrorMessage[] = [];
 
     for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
-        const result = detectDeclarationsBySentence(sentenceEnv, sentenceEnvsStruct);
+        const result = detectDeclarationsBySentence(sentenceEnv, sentenceEnvsStruct, pointerEnvsStruct);
         if (result){
             for (const declaration of result.value) declarations.add(declaration);
             errors.push(...result.errors);
@@ -107,7 +132,7 @@ export const detectDeclarations = (sentenceEnvsStruct: SentenceEnvsStruct): With
     }
 
     {
-        const result = processAmbiguousNameInline(sentenceEnvsStruct, declarations);
+        const result = processAmbiguousNameInline(sentenceEnvsStruct, declarations, pointerEnvsStruct);
         errors.push(...result.errors);
         for (const declaration of result.value.toAddDeclarations) declarations.add(declaration);
     }

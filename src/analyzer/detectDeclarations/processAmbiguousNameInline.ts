@@ -8,6 +8,8 @@ import * as std from "../../law/std";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import { Declarations } from "../common/declarations";
 import $ambiguousNameParenthesesContent from "../sentenceChildrenParser/rules/$ambiguousNameParenthesesContent";
+import getScope from "../pointerEnvs/getScope";
+import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
 const ptnNameChar = "(?!(?:\\s|[。、]))[^ぁ-ゟ](?<!当該)";
 const reName = new RegExp(`(?:(?:${ptnNameChar})+の)?((?:${ptnNameChar})+)$`);
@@ -24,6 +26,7 @@ interface AmbiguousNameCandidateInfo {
 export const findAmbiguousNameCandidateInfos = (
     elToBeModified: std.StdEL | std.__EL,
     sentenceEnv: SentenceEnv,
+    pointerEnvsStruct: PointerEnvsStruct,
 ): (
     WithErrorValue<AmbiguousNameCandidateInfo[]>
 ) => {
@@ -49,6 +52,8 @@ export const findAmbiguousNameCandidateInfos = (
 
         const { following, pointerRanges } = result.value.value;
 
+        if (pointerRanges) getScope(pointerRanges, pointerEnvsStruct);
+
         ambiguousNameCandidateInfos.push({
             elToBeModified,
             nameCandidateEL,
@@ -62,7 +67,7 @@ export const findAmbiguousNameCandidateInfos = (
 
     for (const child of elToBeModified.children) {
         if (typeof child === "string") continue;
-        const result = findAmbiguousNameCandidateInfos(child as std.StdEL | std.__EL, sentenceEnv);
+        const result = findAmbiguousNameCandidateInfos(child as std.StdEL | std.__EL, sentenceEnv, pointerEnvsStruct);
         ambiguousNameCandidateInfos.push(...result.value);
         errors.push(...result.errors);
     }
@@ -88,6 +93,7 @@ interface FilteredNameInfo extends AmbiguousNameCandidateInfo {
 export const findFilteredAmbiguousNameInline = (
     sentenceEnvsStruct: SentenceEnvsStruct,
     allDeclarations: Declarations,
+    pointerEnvsStruct: PointerEnvsStruct,
 ): (
     WithErrorValue<FilteredNameInfo[]>
 ) => {
@@ -95,7 +101,7 @@ export const findFilteredAmbiguousNameInline = (
     const nameInfos: NameInfo[] = [];
 
     for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
-        const result = findAmbiguousNameCandidateInfos(sentenceEnv.el, sentenceEnv);
+        const result = findAmbiguousNameCandidateInfos(sentenceEnv.el, sentenceEnv, pointerEnvsStruct);
         errors.push(...result.errors);
 
         if (result.value.length === 0) continue;
@@ -364,6 +370,7 @@ export const findFilteredAmbiguousNameInline = (
 export const processAmbiguousNameInline = (
     sentenceEnvsStruct: SentenceEnvsStruct,
     allDeclarations: Declarations,
+    pointerEnvsStruct: PointerEnvsStruct,
 ): (
     WithErrorValue<{
         toAddDeclarations: ____Declaration[],
@@ -372,7 +379,7 @@ export const processAmbiguousNameInline = (
     const errors: ErrorMessage[] = [];
     const toAddDeclarations: ____Declaration[] = [];
 
-    const filteredNameInfos = findFilteredAmbiguousNameInline(sentenceEnvsStruct, allDeclarations);
+    const filteredNameInfos = findFilteredAmbiguousNameInline(sentenceEnvsStruct, allDeclarations, pointerEnvsStruct);
     errors.push(...filteredNameInfos.errors);
 
     if (filteredNameInfos.value.length === 0) {

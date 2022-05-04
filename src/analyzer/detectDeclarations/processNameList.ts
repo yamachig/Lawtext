@@ -7,10 +7,13 @@ import { SentenceChildEL } from "../../node/cst/inline";
 import { SentenceEnv, SentenceTextRange, toSentenceTextRanges } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
+import getScope from "../pointerEnvs/getScope";
+import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
 export const processNameList = (
     headSentenceEnv: SentenceEnv,
     sentenceEnvsStruct: SentenceEnvsStruct,
+    pointerEnvsStruct: PointerEnvsStruct,
 ): (
     WithErrorValue<____Declaration[]>
 ) => {
@@ -26,6 +29,8 @@ export const processNameList = (
 
     if (result.ok) {
         const { pointerRanges } = result.value.value;
+
+        if (pointerRanges) getScope(pointerRanges, pointerEnvsStruct);
 
         const scope = toSentenceTextRanges(
             pointerRanges.targetContainerIDRanges,

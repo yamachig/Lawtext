@@ -3,11 +3,11 @@ import * as std from "../../law/std";
 import { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
 import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
-import locatePointerRanges from "../pointerEnvs";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from ".";
 import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";
+import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
 
 describe("Test detectDeclarations", () => {
 
@@ -37,7 +37,7 @@ describe("Test detectDeclarations", () => {
         }) as std.Subitem1;
         addSentenceChildrenControls(inputElToBeModified);
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        locatePointerRanges(sentenceEnvsStruct);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
 
         const expected: JsonEL[] = [
             {
@@ -219,7 +219,7 @@ describe("Test detectDeclarations", () => {
         }
         ;
 
-        const result = detectDeclarations(sentenceEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -262,7 +262,8 @@ describe("Test detectDeclarations", () => {
         }) as std.Subitem1;
         addSentenceChildrenControls(inputElToBeModified);
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        locatePointerRanges(sentenceEnvsStruct);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expected: JsonEL[] = [
             {
@@ -443,7 +444,7 @@ describe("Test detectDeclarations", () => {
             ],
         };
 
-        const result = detectDeclarations(sentenceEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -486,7 +487,8 @@ describe("Test detectDeclarations", () => {
         }) as std.Subitem1;
         addSentenceChildrenControls(inputElToBeModified);
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        locatePointerRanges(sentenceEnvsStruct);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expected: JsonEL[] = [
             {
@@ -734,7 +736,7 @@ describe("Test detectDeclarations", () => {
         };
 
 
-        const result = detectDeclarations(sentenceEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -761,8 +763,8 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -910,7 +912,6 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1191,7 +1192,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
         // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1220,8 +1221,8 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1380,7 +1381,6 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この省令",
-                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この省令"],
                                                                                         },
@@ -1748,7 +1748,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
         // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1777,8 +1777,8 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1914,7 +1914,6 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -1941,7 +1940,6 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -2145,7 +2143,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
         // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -2172,8 +2170,8 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -2536,7 +2534,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
         // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -2570,8 +2568,8 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -2696,9 +2694,7 @@ describe("Test detectDeclarations", () => {
                                                             children: [
                                                                 {
                                                                     tag: "____PointerRanges",
-                                                                    attr: {
-                                                                        targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
-                                                                    },
+                                                                    attr: {},
                                                                     children: [
                                                                         {
                                                                             tag: "____PointerRange",
@@ -2714,7 +2710,6 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -2786,7 +2781,6 @@ describe("Test detectDeclarations", () => {
                                                                                                                 targetType: "Article",
                                                                                                                 name: "第四十六条",
                                                                                                                 num: "46",
-                                                                                                                targetContainerIDs: "[\"container-Law-MainProvision[1]-Article[2][num=46]\"]",
                                                                                                             },
                                                                                                             children: ["第四十六条"],
                                                                                                         },
@@ -3067,9 +3061,7 @@ describe("Test detectDeclarations", () => {
                                                                 },
                                                                 {
                                                                     tag: "____PointerRanges",
-                                                                    attr: {
-                                                                        targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
-                                                                    },
+                                                                    attr: {},
                                                                     children: [
                                                                         {
                                                                             tag: "____PointerRange",
@@ -3085,7 +3077,6 @@ describe("Test detectDeclarations", () => {
                                                                                                 relPos: "HERE",
                                                                                                 targetType: "Law",
                                                                                                 name: "この法律",
-                                                                                                targetContainerIDs: "[\"container-Law\"]",
                                                                                             },
                                                                                             children: ["この法律"],
                                                                                         },
@@ -3117,7 +3108,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
         // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -3158,8 +3149,8 @@ describe("Test detectDeclarations", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -3292,7 +3283,6 @@ describe("Test detectDeclarations", () => {
                                                                                                         relPos: "HERE",
                                                                                                         targetType: "Law",
                                                                                                         name: "この法律",
-                                                                                                        targetContainerIDs: "[\"container-Law\"]",
                                                                                                     },
                                                                                                     children: ["この法律"],
                                                                                                 },
@@ -3319,7 +3309,6 @@ describe("Test detectDeclarations", () => {
                                                                                                         relPos: "HERE",
                                                                                                         targetType: "Law",
                                                                                                         name: "この法律",
-                                                                                                        targetContainerIDs: "[\"container-Law\"]",
                                                                                                     },
                                                                                                     children: ["この法律"],
                                                                                                 },
@@ -3637,9 +3626,7 @@ describe("Test detectDeclarations", () => {
                                                                                     children: [
                                                                                         {
                                                                                             tag: "____PointerRanges",
-                                                                                            attr: {
-                                                                                                targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Chapter[1][num=1]-Article[1][num=2]\"}]",
-                                                                                            },
+                                                                                            attr: {},
                                                                                             children: [
                                                                                                 {
                                                                                                     tag: "____PointerRange",
@@ -3655,7 +3642,6 @@ describe("Test detectDeclarations", () => {
                                                                                                                         relPos: "PREV",
                                                                                                                         targetType: "Article",
                                                                                                                         name: "前条",
-                                                                                                                        targetContainerIDs: "[\"container-Law-MainProvision[1]-Chapter[1][num=1]-Article[1][num=2]\"]",
                                                                                                                     },
                                                                                                                     children: ["前条"],
                                                                                                                 },
@@ -3712,9 +3698,7 @@ describe("Test detectDeclarations", () => {
                                                                         },
                                                                         {
                                                                             tag: "____PointerRanges",
-                                                                            attr: {
-                                                                                targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Chapter[1][num=1]-Article[2][num=4_2]-Paragraph[2][num=2]\"}]",
-                                                                            },
+                                                                            attr: {},
                                                                             children: [
                                                                                 {
                                                                                     tag: "____PointerRange",
@@ -3730,7 +3714,6 @@ describe("Test detectDeclarations", () => {
                                                                                                         relPos: "HERE",
                                                                                                         targetType: "Paragraph",
                                                                                                         name: "この項",
-                                                                                                        targetContainerIDs: "[\"container-Law-MainProvision[1]-Chapter[1][num=1]-Article[2][num=4_2]-Paragraph[2][num=2]\"]",
                                                                                                     },
                                                                                                     children: ["この項"],
                                                                                                 },
@@ -4063,7 +4046,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
         // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(

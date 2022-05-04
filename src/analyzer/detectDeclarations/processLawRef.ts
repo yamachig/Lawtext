@@ -12,6 +12,8 @@ import { SentenceChildEL } from "../../node/cst/inline";
 import { toSentenceTextRanges, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
+import getScope from "../pointerEnvs/getScope";
+import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
 export const getLawNameLength = (lawNum: string): number | null => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -24,6 +26,7 @@ export const processLawRef = (
     elToBeModified: std.StdEL | std.__EL,
     sentenceEnv: SentenceEnv,
     sentenceEnvsStruct: SentenceEnvsStruct,
+    pointerEnvsStruct: PointerEnvsStruct,
 ): (
     WithErrorValue<{
         declarations: ____Declaration[],
@@ -49,6 +52,8 @@ export const processLawRef = (
 
             if (aliasInfo) {
                 const { nameSquareParentheses, following, pointerRanges } = aliasInfo;
+
+                if (pointerRanges) getScope(pointerRanges, pointerEnvsStruct);
 
                 const name = nameSquareParentheses.content.text();
 

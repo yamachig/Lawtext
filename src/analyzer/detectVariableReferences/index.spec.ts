@@ -1,11 +1,11 @@
 import { assert } from "chai";
 import { JsonEL } from "../../node/el/jsonEL";
-import locatePointerRanges from "../pointerEnvs";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from "../detectDeclarations";
 import { parse } from "../../parser/lawtext";
 import detectVariableReferences from ".";
 import { assertELVaridity } from "../../parser/std/testHelper";
+import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
 
 describe("Test detectVariableReferences", () => {
 
@@ -25,9 +25,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
-        const declarations = detectDeclarations(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -102,9 +102,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
-        const declarations = detectDeclarations(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -192,9 +192,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
-        const declarations = detectDeclarations(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -287,9 +287,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
-        const declarations = detectDeclarations(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -410,9 +410,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
-        const declarations = detectDeclarations(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1023,9 +1023,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
-        const declarations = detectDeclarations(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1109,9 +1109,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const detectTokensResult = locatePointerRanges(sentenceEnvsStruct);
-        void detectTokensResult;
-        const declarations = detectDeclarations(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {

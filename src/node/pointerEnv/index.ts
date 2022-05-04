@@ -1,5 +1,4 @@
 import { getContainerType } from "../../analyzer/common";
-import { parseNamedNum } from "../../law/num";
 import { assertNever } from "../../util";
 import { Container, ContainerType } from "../container";
 import { SentenceEnv } from "../container/sentenceEnv";
@@ -77,23 +76,19 @@ export class PointerEnv {
         if (this.located && !force) return;
 
         const fragments = this.pointer.fragments();
-        for (const fragment of fragments) {
-            const num = parseNamedNum(fragment.attr.name);
-            if (num) fragment.attr.num = num;
-        }
 
         if ((fragments[0].attr.relPos === RelPos.SAME)) {
             // e.g.: "同条"
 
             if (!this.seriesPrev) {
-                console.warn(`No seriesPrev for ${this.pointer.text()}`);
+                // console.warn(`No seriesPrev for ${this.pointer.text()}`);
                 return;
             }
 
             this.seriesPrev.locate(force);
             const prev = this.seriesPrev.located;
             if (!prev) {
-                console.warn(`Not located ${this.seriesPrev.pointer.text()}`);
+                // console.warn(`Not located ${this.seriesPrev.pointer.text()}`);
                 return;
             } else if (prev.type === "external") {
                 const fqDupIndex = prev.fqPrefixFragments.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
@@ -111,7 +106,7 @@ export class PointerEnv {
                         ?.thisOrClosest(c => c.el.tag === fragments[0].attr.targetType)
                 ) ?? null;
                 if (!container) {
-                    console.warn(`Not located ${this.pointer.text()}`);
+                    // console.warn(`Not located ${this.pointer.text()}`);
                     return;
                 }
                 this.located = {
@@ -128,7 +123,7 @@ export class PointerEnv {
                 .thisOrClosest(c => c.el.tag === fragments[0].attr.targetType);
 
             if (!scopeContainer) {
-                console.warn(`Not located ${this.pointer.text()}`);
+                // console.warn(`Not located ${this.pointer.text()}`);
                 return;
             }
 
@@ -144,7 +139,7 @@ export class PointerEnv {
                 .thisOrClosest(c => c.el.tag === fragments[0].attr.targetType);
 
             if (!scopeContainer) {
-                console.warn(`Not located ${this.pointer.text()}`);
+                // console.warn(`Not located ${this.pointer.text()}`);
                 return;
             }
 
@@ -160,7 +155,7 @@ export class PointerEnv {
                 }
 
                 if (containers.length <= 0) {
-                    console.warn(`Not located ${this.pointer.text()}`);
+                    // console.warn(`Not located ${this.pointer.text()}`);
                     return;
                 }
 
@@ -179,7 +174,7 @@ export class PointerEnv {
                 );
 
                 if (!container) {
-                    console.warn(`Not located ${this.pointer.text()}`);
+                    // console.warn(`Not located ${this.pointer.text()}`);
                     return;
                 }
 
@@ -195,7 +190,7 @@ export class PointerEnv {
             const scopeContainer = this.sentenceEnv.container
                 .thisOrClosest(c => c.el.tag === fragments[0].attr.targetType);
             if (!scopeContainer) {
-                console.warn(`Not located ${this.pointer.text()}`);
+                // console.warn(`Not located ${this.pointer.text()}`);
                 return;
             }
 
@@ -209,7 +204,7 @@ export class PointerEnv {
                 }
 
                 if (containers.length <= 0) {
-                    console.warn(`Not located ${this.pointer.text()}`);
+                    // console.warn(`Not located ${this.pointer.text()}`);
                     return;
                 }
 
@@ -226,7 +221,7 @@ export class PointerEnv {
                 );
 
                 if (!container) {
-                    console.warn(`Not located ${this.pointer.text()}`);
+                    // console.warn(`Not located ${this.pointer.text()}`);
                     return;
                 }
 
@@ -261,7 +256,7 @@ export class PointerEnv {
                     });
 
                     if (!container) {
-                        console.warn(`Not located ${this.pointer.text()}`);
+                        // console.warn(`Not located ${this.pointer.text()}`);
                         return;
                     }
 
@@ -309,7 +304,7 @@ export class PointerEnv {
                         );
 
                         if (!container) {
-                            console.warn(`Not located ${this.pointer.text()}`);
+                            // console.warn(`Not located ${this.pointer.text()}`);
                             return;
                         }
                         this.located = {
@@ -328,7 +323,7 @@ export class PointerEnv {
                     );
 
                     if (!container) {
-                        console.warn(`Not located ${this.pointer.text()}`);
+                        // console.warn(`Not located ${this.pointer.text()}`);
                         return;
                     }
                     this.located = {
@@ -339,7 +334,7 @@ export class PointerEnv {
                 }
 
                 if (!located) {
-                    console.warn(`Not located ${this.pointer.text()}`);
+                    // console.warn(`Not located ${this.pointer.text()}`);
                     return;
                 }
 
@@ -419,7 +414,7 @@ export class PointerEnv {
                             );
 
                             if (!container) {
-                                console.warn(`Not located ${this.pointer.text()}`);
+                                // console.warn(`Not located ${this.pointer.text()}`);
                                 return;
                             }
                             this.located = {
@@ -432,7 +427,7 @@ export class PointerEnv {
                     }
 
                     if (!located) {
-                        console.warn(`Not located ${this.pointer.text()}`);
+                        // console.warn(`Not located ${this.pointer.text()}`);
                         return;
                     }
                 }

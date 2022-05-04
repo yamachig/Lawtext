@@ -4,7 +4,7 @@ import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";
 import getPointerEnvs from "./getPointerEnvs";
 
-describe("Test locatePointerRanges", () => {
+describe("Test getPointerEnvs", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
