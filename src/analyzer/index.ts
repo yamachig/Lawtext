@@ -4,11 +4,13 @@ import { Declarations } from "./common/declarations";
 import { ____VarRef } from "../node/el/controls/varRef";
 import * as std from "../law/std";
 import { ErrorMessage } from "../parser/cst/error";
-import detectTokens, { TokensStruct } from "./locatePointerRanges";
+import locatePointerRanges from "./locatePointerRanges";
 import detectDeclarations from "./detectDeclarations";
+import { ____PointerRanges } from "../node/el/controls";
 
 
-export interface Analysis extends TokensStruct, SentenceEnvsStruct {
+export interface Analysis extends SentenceEnvsStruct {
+    pointerRangesList: ____PointerRanges[];
     declarations: Declarations,
     variableReferences: ____VarRef[],
     errors: ErrorMessage[],
@@ -19,8 +21,8 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
 
     const sentenceEnvsStruct = getSentenceEnvs(elToBeModified);
 
-    const detectTokensResult = detectTokens(sentenceEnvsStruct);
-    errors.push(...detectTokensResult.errors);
+    const locatePointerRangesResult = locatePointerRanges(sentenceEnvsStruct);
+    errors.push(...locatePointerRangesResult.errors);
 
     const detectDeclarationsResult = detectDeclarations(sentenceEnvsStruct);
     const declarations = detectDeclarationsResult.value;
@@ -31,7 +33,7 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
     errors.push(...detectVariableReferencesResult.errors);
 
     return {
-        pointerRangesList: detectTokensResult.value,
+        pointerRangesList: locatePointerRangesResult.value,
         declarations,
         variableReferences,
         ...sentenceEnvsStruct,

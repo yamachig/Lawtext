@@ -8,10 +8,6 @@ import { isIgnoreAnalysis } from "../common";
 import getScope, { OnBeforeModifierParentheses } from "../getScope";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 
-export interface TokensStruct {
-    pointerRangesList: ____PointerRanges[],
-}
-
 
 export const locatePointerRangesForEL = (
     elToBeModified: std.StdEL | std.__EL,
