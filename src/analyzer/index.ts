@@ -4,7 +4,7 @@ import { Declarations } from "./common/declarations";
 import { ____VarRef } from "../node/el/controls/varRef";
 import * as std from "../law/std";
 import { ErrorMessage } from "../parser/cst/error";
-import locatePointerRanges from "./locatePointerRanges";
+import locatePointerRanges from "./pointerEnvs";
 import detectDeclarations from "./detectDeclarations";
 import { ____PointerRanges } from "../node/el/controls";
 

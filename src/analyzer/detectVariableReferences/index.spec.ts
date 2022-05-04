@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { JsonEL } from "../../node/el/jsonEL";
-import locatePointerRanges from "../locatePointerRanges";
+import locatePointerRanges from "../pointerEnvs";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from "../detectDeclarations";
 import { parse } from "../../parser/lawtext";

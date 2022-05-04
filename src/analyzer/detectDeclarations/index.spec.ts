@@ -3,7 +3,7 @@ import * as std from "../../law/std";
 import { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
 import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
-import locatePointerRanges from "../locatePointerRanges";
+import locatePointerRanges from "../pointerEnvs";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from ".";
 import { parse } from "../../parser/lawtext";
