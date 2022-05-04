@@ -2,6 +2,7 @@
 import React, { Fragment } from "react";
 import * as std from "lawtext/dist/src/law/std";
 import { HTMLComponentProps, HTMLMarginSpan, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
+import { withKey } from "lawtext/dist/src/renderer/common";
 import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
 import { HTMLControlRunProps } from "lawtext/dist/src/renderer/rules/controlRun";
 import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any";
@@ -11,7 +12,7 @@ import { EL } from "lawtext/dist/src/node/el";
 import { NotImplementedError } from "lawtext/dist/src/util";
 import { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
 import { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration";
-import { ____LawNum, ____PF, ____VarRef } from "lawtext/dist/src/node/el/controls";
+import { ____LawNum, ____PF, ____Pointer, ____VarRef } from "lawtext/dist/src/node/el/controls";
 
 
 export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
@@ -19,7 +20,7 @@ export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
     const { el, htmlOptions } = childProps as HTMLComponentProps & HTMLControlRunProps;
 
     if (el instanceof ____Declaration) {
-        return <Declaration el={el as ____Declaration} {...{ htmlOptions }} />;
+        return <Declaration el={el} {...{ htmlOptions }} />;
 
     } else if (el instanceof ____VarRef) {
         const options = htmlOptions.options as LawViewOptions;
@@ -31,13 +32,8 @@ export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {
         const containerID = declContainer.containerID;
         return <ContainerRef containerIDs={[containerID]} sentenceChildren={sentenceChildren} {...{ htmlOptions }} />;
 
-    } else if (el instanceof ____PF) {
-        const options = htmlOptions.options as LawViewOptions;
-        const analysis = options.lawData.analysis;
-        const sentenceChildren = el.children as (string | SentenceChildEL)[];
-        if (!analysis || el.targetContainerIDs.length === 0) return (<HTMLSentenceChildrenRun els={sentenceChildren} {...{ htmlOptions }} />);
-        const containerIDs = el.targetContainerIDs;
-        return <ContainerRef containerIDs={containerIDs as string[]} sentenceChildren={sentenceChildren} {...{ htmlOptions }} />;
+    } else if (el instanceof ____Pointer) {
+        return <Pointer el={el} {...{ htmlOptions }} wrapperProps={props} />;
 
     } else if (el instanceof ____LawNum) {
         return <LawNum el={el} {...{ htmlOptions }} />;
@@ -77,6 +73,37 @@ const Declaration = (props: HTMLComponentProps & ____DeclarationProps) => {
             <HTMLSentenceChildrenRun els={el.children as (string | SentenceChildEL)[]} {...{ htmlOptions }} />
         </DeclarationSpan>
     );
+};
+
+interface ____PointerProps { el: ____Pointer, wrapperProps: WrapperComponentProps }
+
+const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
+    const { el, htmlOptions, wrapperProps } = props;
+    const { childProps, ChildComponent } = wrapperProps;
+    const options = htmlOptions.options as LawViewOptions;
+    const analysis = options.lawData.analysis;
+    const pointerEnv = analysis.pointerEnvByEL.get(el);
+    if (pointerEnv && pointerEnv.located) {
+        const runs: JSX.Element[] = [];
+        if (pointerEnv.located.type === "external") {
+            return <ChildComponent {...childProps} />;
+        } else {
+            for (const child of el.children) {
+                const containerIDs = (child instanceof ____PF) && pointerEnv.located.fragments.find(({ fragment }) => fragment === child)?.containers?.map((c) => c.containerID) || null;
+                if ((child instanceof ____PF) && containerIDs) {
+                    runs.push(<ContainerRef containerIDs={containerIDs} sentenceChildren={child.children} {...{ htmlOptions }} />);
+                } else {
+                    runs.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);
+                }
+            }
+        }
+        return <>
+            {withKey(runs)}
+        </>;
+
+    } else {
+        return <ChildComponent {...childProps} />;
+    }
 };
 
 
