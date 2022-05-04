@@ -248,7 +248,7 @@ export class PointerEnv {
                 } else {
                     // e.g. "別表第一"
 
-                    const container = this.sentenceEnv.container.findAncestorChildrenSub(c => {
+                    const container = this.sentenceEnv.container.findAncestorChildren(c => {
                         if (c.el.tag !== fragments[0].attr.targetType) return false;
                         const titleEl = c.el.children.find(el =>
                             el instanceof EL && (el.tag === `${c.el.tag}Title` || el.tag === `${c.el.tag}Label`)) as EL | undefined;
@@ -299,7 +299,7 @@ export class PointerEnv {
 
                         const container = scopeContainer && (
                             scopeContainer.children.find(c => c.name === fragments[0].attr.name)
-                            ?? scopeContainer.findAncestorChildrenSub(c => c.name === fragments[0].attr.name)
+                            ?? scopeContainer.findAncestorChildren(c => c.name === fragments[0].attr.name)
                             ?? null
                         );
 
@@ -318,7 +318,7 @@ export class PointerEnv {
 
                     const container = (
                         scopeContainer.children.find(c => c.name === fragments[0].attr.name)
-                        ?? scopeContainer.findAncestorChildrenSub(c => c.name === fragments[0].attr.name)
+                        ?? scopeContainer.findAncestorChildren(c => c.name === fragments[0].attr.name)
                         ?? null
                     );
 
@@ -385,7 +385,7 @@ export class PointerEnv {
                             );
                             const container = scopeContainer && (
                                 scopeContainer.children.find(func)
-                                ?? scopeContainer.findAncestorChildrenSub(func)
+                                ?? scopeContainer.findAncestorChildren(func)
                                 ?? null
                             );
 
@@ -409,7 +409,7 @@ export class PointerEnv {
                             );
                             const container = (
                                 scopeContainer.children.find(func)
-                                ?? scopeContainer.findAncestorChildrenSub(func)
+                                ?? scopeContainer.findAncestorChildren(func)
                                 ?? null
                             );
 

@@ -1405,4 +1405,460 @@ describe("Test getScope", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第三十九条　（略）
+２～４　（略）
+
+第四十三条　（略）
+  一～四　（略）
+２　（略）
+３　（略）
+４　（略）
+５　（略）
+
+第四十四条　（略）
+
+第四十五条　第三十九条第一項並びに第四十三条第一項（前条において読み替えて準用する場合を含む。）、第四項（前条において準用する場合を含む。）及び第五項の規定による公示は、電子情報処理組織を使用する方法その他の情報通信の技術を利用する方法により行うものとする。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=39]-Paragraph[1][num=1]\"},{\"from\":\"container-Law-MainProvision[1]-Article[2][num=43]-Paragraph[1][num=1]\"},{\"from\":\"container-Law-MainProvision[1]-Article[2][num=43]-Paragraph[4][num=4]\"},{\"from\":\"container-Law-MainProvision[1]-Article[2][num=43]-Paragraph[5][num=5]\"}]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第三十九条",
+                                            num: "39",
+                                        },
+                                        children: ["第三十九条"],
+                                    },
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第一項",
+                                            num: "1",
+                                        },
+                                        children: ["第一項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["並びに"],
+                    },
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第四十三条",
+                                            num: "43",
+                                        },
+                                        children: ["第四十三条"],
+                                    },
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第一項",
+                                            num: "1",
+                                        },
+                                        children: ["第一項"],
+                                    },
+                                ],
+                            },
+                            {
+                                tag: "__Parentheses",
+                                attr: {
+                                    type: "round",
+                                    depth: "1",
+                                },
+                                children: [
+                                    {
+                                        tag: "__PStart",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: ["（"],
+                                    },
+                                    {
+                                        tag: "__PContent",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: [
+                                            {
+                                                tag: "____PointerRanges",
+                                                attr: {
+                                                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[3][num=44]\"}]",
+                                                },
+                                                children: [
+                                                    {
+                                                        tag: "____PointerRange",
+                                                        attr: {},
+                                                        children: [
+                                                            {
+                                                                tag: "____Pointer",
+                                                                attr: {},
+                                                                children: [
+                                                                    {
+                                                                        tag: "____PF",
+                                                                        attr: {
+                                                                            relPos: "PREV",
+                                                                            targetType: "Article",
+                                                                            name: "前条",
+                                                                        },
+                                                                        children: ["前条"],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                            {
+                                                tag: "__Text",
+                                                attr: {},
+                                                children: ["において読み替えて準用する場合を含む。"],
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        tag: "__PEnd",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: ["）"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["、"],
+                    },
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第四項",
+                                            num: "4",
+                                        },
+                                        children: ["第四項"],
+                                    },
+                                ],
+                            },
+                            {
+                                tag: "__Parentheses",
+                                attr: {
+                                    type: "round",
+                                    depth: "1",
+                                },
+                                children: [
+                                    {
+                                        tag: "__PStart",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: ["（"],
+                                    },
+                                    {
+                                        tag: "__PContent",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: [
+                                            {
+                                                tag: "____PointerRanges",
+                                                attr: {
+                                                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[3][num=44]\"}]",
+                                                },
+                                                children: [
+                                                    {
+                                                        tag: "____PointerRange",
+                                                        attr: {},
+                                                        children: [
+                                                            {
+                                                                tag: "____Pointer",
+                                                                attr: {},
+                                                                children: [
+                                                                    {
+                                                                        tag: "____PF",
+                                                                        attr: {
+                                                                            relPos: "PREV",
+                                                                            targetType: "Article",
+                                                                            name: "前条",
+                                                                        },
+                                                                        children: ["前条"],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                            {
+                                                tag: "__Text",
+                                                attr: {},
+                                                children: ["において準用する場合を含む。"],
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        tag: "__PEnd",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: ["）"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["及び"],
+                    },
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第五項",
+                                            num: "5",
+                                        },
+                                        children: ["第五項"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[3][num=44]\"}]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "PREV",
+                                            targetType: "Article",
+                                            name: "前条",
+                                        },
+                                        children: ["前条"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[3][num=44]\"}]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "PREV",
+                                            targetType: "Article",
+                                            name: "前条",
+                                        },
+                                        children: ["前条"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+
+        const expectedErrorMessages: string[] = [];
+
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+      第一章　総則
+
+第三条　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
+
+      第三章　不利益処分
+
+第十二条　行政庁は、処分基準を定め、かつ、これを公にしておくよう努めなければならない。
+
+      第四章　行政指導
+
+      第四章の二　処分等の求め
+
+第三十六条の三　何人も、法令に違反する事実がある場合において、その是正のためにされるべき処分又は行政指導（その根拠となる規定が法律に置かれているものに限る。）がされていないと思料するときは、当該処分をする権限を有する行政庁又は当該行政指導をする権限を有する行政機関に対し、その旨を申し出て、当該処分又は行政指導をすることを求めることができる。
+
+      第五章　届出
+
+第三十七条　届出が届出書の記載事項に不備がないこと、届出書に必要な書類が添付されていることその他の法令に定められた届出の形式上の要件に適合している場合は、当該届出が法令により当該届出の提出先とされている機関の事務所に到達したときに、当該届出をすべき手続上の義務が履行されたものとする。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Chapter[2][num=3]\",\"to\":\"container-Law-MainProvision[1]-Chapter[4][num=4_2]\"}]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NEXT",
+                                            targetType: "Chapter",
+                                            name: "次章",
+                                        },
+                                        children: ["次章"],
+                                    },
+                                ],
+                            },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["から"],
+                            },
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Chapter",
+                                            name: "第四章の二",
+                                            num: "4_2",
+                                        },
+                                        children: ["第四章の二"],
+                                    },
+                                ],
+                            },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["まで"],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+
+        const expectedErrorMessages: string[] = [];
+
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

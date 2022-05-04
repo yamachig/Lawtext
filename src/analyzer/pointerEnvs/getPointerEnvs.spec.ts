@@ -276,7 +276,7 @@ describe("Test getPointerEnvs", () => {
                 },
                 directLawRef: null,
                 namingParent: "第七十五条第一項",
-                namingChildren: ["第四号"],
+                namingChildren: ["第四号", "第五項"],
                 seriesPrev: "第七十五条第一項",
                 seriesNext: null,
             },
@@ -308,7 +308,7 @@ describe("Test getPointerEnvs", () => {
                 },
                 directLawRef: null,
                 namingParent: "第七十六条第四項",
-                namingChildren: ["第五項"],
+                namingChildren: [],
                 seriesPrev: null,
                 seriesNext: "第五項",
             },
@@ -339,7 +339,7 @@ describe("Test getPointerEnvs", () => {
                     ],
                 },
                 directLawRef: null,
-                namingParent: "第四号",
+                namingParent: "第七十六条第四項",
                 namingChildren: ["第五号"],
                 seriesPrev: "第四号",
                 seriesNext: null,
@@ -488,6 +488,270 @@ describe("Test getPointerEnvs", () => {
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: "第三十八条の二十一第一項",
+                seriesNext: null,
+            },
+        ];
+
+
+        const expectedErrorMessages: string[] = [];
+
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+
+        // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第三十九条　（略）
+２～４　（略）
+
+第四十三条　（略）
+  一～四　（略）
+２　（略）
+３　（略）
+４　（略）
+５　（略）
+
+第四十四条　（略）
+
+第四十五条　第三十九条第一項並びに第四十三条第一項（前条において読み替えて準用する場合を含む。）、第四項（前条において準用する場合を含む。）及び第五項の規定による公示は、電子情報処理組織を使用する方法その他の情報通信の技術を利用する方法により行うものとする。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第三十九条",
+                                num: "39",
+                            },
+                            children: ["第三十九条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第三十九条",
+                            containers: ["container-Law-MainProvision[1]-Article[1][num=39]"],
+                        },
+                        {
+                            text: "第一項",
+                            containers: ["container-Law-MainProvision[1]-Article[1][num=39]-Paragraph[1][num=1]"],
+                        },
+                    ],
+                },
+                directLawRef: null,
+                namingParent: null,
+                namingChildren: ["第四十三条第一項"],
+                seriesPrev: null,
+                seriesNext: "第四十三条第一項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第四十三条",
+                                num: "43",
+                            },
+                            children: ["第四十三条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第四十三条",
+                            containers: ["container-Law-MainProvision[1]-Article[2][num=43]"],
+                        },
+                        {
+                            text: "第一項",
+                            containers: ["container-Law-MainProvision[1]-Article[2][num=43]-Paragraph[1][num=1]"],
+                        },
+                    ],
+                },
+                directLawRef: null,
+                namingParent: "第三十九条第一項",
+                namingChildren: [
+                    "前条",
+                    "第四項",
+                ],
+                seriesPrev: "第三十九条第一項",
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "PREV",
+                                targetType: "Article",
+                                name: "前条",
+                            },
+                            children: ["前条"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "前条",
+                            containers: ["container-Law-MainProvision[1]-Article[3][num=44]"],
+                        },
+                    ],
+                },
+                directLawRef: null,
+                namingParent: "第四十三条第一項",
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: "第四項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第四項",
+                                num: "4",
+                            },
+                            children: ["第四項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第四項",
+                            containers: ["container-Law-MainProvision[1]-Article[2][num=43]-Paragraph[4][num=4]"],
+                        },
+                    ],
+                },
+                directLawRef: null,
+                namingParent: "第四十三条第一項",
+                namingChildren: [
+                    "前条",
+                    "第五項",
+                ],
+                seriesPrev: "前条",
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "PREV",
+                                targetType: "Article",
+                                name: "前条",
+                            },
+                            children: ["前条"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "前条",
+                            containers: ["container-Law-MainProvision[1]-Article[3][num=44]"],
+                        },
+                    ],
+                },
+                directLawRef: null,
+                namingParent: "第四項",
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: "第五項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第五項",
+                                num: "5",
+                            },
+                            children: ["第五項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第五項",
+                            containers: ["container-Law-MainProvision[1]-Article[2][num=43]-Paragraph[5][num=5]"],
+                        },
+                    ],
+                },
+                directLawRef: null,
+                namingParent: "第四項",
+                namingChildren: [],
+                seriesPrev: "前条",
                 seriesNext: null,
             },
         ];

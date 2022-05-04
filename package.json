@@ -1,6 +1,6 @@
 {
   "name": "lawtext",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "Plain text format for Japanese law",
   "homepage": "https://github.com/yamachig/lawtext#readme",
   "bugs": {

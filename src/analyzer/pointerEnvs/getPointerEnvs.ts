@@ -36,6 +36,20 @@ const getPointerEnvsForEL = (
         const pointerRanges = el;
         pointerRangesList.push(pointerRanges);
 
+        // A PointerRanges establishes a new naming context if no naming parent is given.
+        // e.g.
+        //     "第七十五条第一項又は第七十六条第四項（第四号を除く。）若しくは第五項（第五号を除く。）"
+        //     -> "第五項" referes to "第七十六条第五項"
+        // Not the case:
+        //     "第三十八条の二十一第一項の規定は第二項の規定による" at "第四条の二第五項"
+        //     -> "第二項" referes to "第四条の二第二項" because "第二項" is not included in the previous PointerRanges.
+        //
+        // If a naming parent is given, the given naming parent is inherited.
+        // e.g.
+        //     "第二十四条の二第二項各号（第二号を除く。）のいずれかに該当するに至つたとき"
+        //     -> "第二号" referes to "第二十四条の二第二項第二号" because the Parentheses gives the naming parent.
+        let pointerRangesNamingParent = namingParent;
+
         for (const pointerRange of pointerRanges.ranges()) {
 
             for (const pointer of pointerRange.pointers()) {
@@ -51,23 +65,9 @@ const getPointerEnvsForEL = (
                     sentenceEnv,
                 });
 
-                // A PointerRanges establishes a new naming context if no naming parent is given.
-                // e.g.
-                //     "第七十五条第一項又は第七十六条第四項（第四号を除く。）若しくは第五項（第五号を除く。）"
-                //     -> "第五項" referes to "第七十六条第五項"
-                // Not the case:
-                //     "第三十八条の二十一第一項の規定は第二項の規定による" at "第四条の二第五項"
-                //     -> "第二項" referes to "第四条の二第二項" because "第二項" is not included in the previous PointerRanges.
-                //
-                // If a naming parent is given, the given naming parent is inherited.
-                // e.g.
-                //     "第二十四条の二第二項各号（第二号を除く。）のいずれかに該当するに至つたとき"
-                //     -> "第二号" referes to "第二十四条の二第二項第二号" because the Parentheses gives the naming parent.
-                const newNamingParent = lastPointerEnv ?? namingParent;
-
-                if (newNamingParent) {
-                    pointerEnv.namingParent = newNamingParent;
-                    newNamingParent.namingChildren.push(pointerEnv);
+                if (pointerRangesNamingParent) {
+                    pointerEnv.namingParent = pointerRangesNamingParent;
+                    pointerRangesNamingParent.namingChildren.push(pointerEnv);
                 }
 
                 const lastOrPrevPointerEnv = lastPointerEnv ?? prevPointerEnv;
@@ -79,21 +79,22 @@ const getPointerEnvsForEL = (
 
                 if (!firstPointerEnv) firstPointerEnv = pointerEnv;
                 lastPointerEnv = pointerEnv;
+                pointerRangesNamingParent = pointerEnv;
                 pointerEnvByEL.set(pointer, pointerEnv);
             }
 
             {
                 const modifierParentheses = pointerRange.modifierParentheses();
                 if (modifierParentheses) {
-                    const newNamingParent = lastPointerEnv ?? namingParent;
                     const result = getPointerEnvsForEL(
                         modifierParentheses,
                         sentenceEnv,
                         lastPointerEnv,
-                        newNamingParent,
+                        pointerRangesNamingParent,
                     );
                     if (result){
                         if (!firstPointerEnv) firstPointerEnv = result.value.firstPointerEnv;
+                        // Not update pointerRangesNamingParent
                         lastPointerEnv = result.value.lastPointerEnv;
 
                         for (const [k, v] of result.value.pointerEnvByEL) {
@@ -122,13 +123,13 @@ const getPointerEnvsForEL = (
             // e.g.
             //     "第二十四条の二第二項各号（第二号を除く。）のいずれかに該当するに至つたとき"
             //     -> "第二号" referes to "第二十四条の二第二項第二号"
-            const newNamingParent = ((child instanceof __Parentheses) && lastPointerEnv) ? lastPointerEnv : namingParent;
+            const parenthesesNamingParent = ((child instanceof __Parentheses) && lastPointerEnv) ? lastPointerEnv : namingParent;
 
             const result = getPointerEnvsForEL(
                 child as std.StdEL | std.__EL,
                 sentenceEnv,
                 lastPointerEnv,
-                newNamingParent,
+                parenthesesNamingParent,
             );
             if (result){
                 if (!firstPointerEnv) firstPointerEnv = result.value.firstPointerEnv;
