@@ -37,7 +37,7 @@ export const ElawsPartialLawView = (props: HTMLComponentProps & ElawsPartialLawV
     }, [appdxTable, article, lawNum, paragraph]);
 
     if (loading) {
-        return <div>e-Gov法令APIから法令データを取得しています...</div>;
+        return <div className="text-secondary"><span className="spinner-border" style={{ width: "1em", height: "1em" }}role="status"/> e-Gov法令APIから法令データを取得しています...</div>;
     }
 
     if (!el) {

@@ -29,6 +29,17 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
             let article: string|undefined = undefined;
             let paragraph: string|undefined = undefined;
             let appdxTable: string|undefined = undefined;
+            for (const prefix of pointerEnv.located.fqPrefixFragments) {
+                article = (
+                    prefix.attr.targetType === "Article" ? prefix.attr.name : undefined
+                ) ?? article;
+                paragraph = (
+                    prefix.attr.targetType === "Paragraph" ? prefix.attr.name : undefined
+                ) ?? paragraph;
+                appdxTable = (
+                    prefix.attr.targetType === "AppdxTable" ? prefix.attr.name : undefined
+                ) ?? appdxTable;
+            }
             for (const child of el.children) {
                 if (child instanceof ____PF) {
                     article = (
