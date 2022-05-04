@@ -1,11 +1,11 @@
-import { assertNever } from "../util";
-import { Container, ContainerType } from "../node/container";
-import { EL } from "../node/el";
-import { getContainerType } from "./common";
-import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../node/el/controls/pointer";
-import * as std from "../law/std";
-import { __Parentheses, __Text, RangeInfo } from "../node/el/controls";
-import { parseNamedNum } from "../law/num";
+import { assertNever } from "../../util";
+import { Container, ContainerType } from "../../node/container";
+import { EL } from "../../node/el";
+import { getContainerType } from "../common";
+import { RelPos, ____PF, ____Pointer, ____PointerRanges } from "../../node/el/controls/pointer";
+import * as std from "../../law/std";
+import { __Parentheses, __Text, RangeInfo } from "../../node/el/controls";
+import { parseNamedNum } from "../../law/num";
 
 const locateContainerFromParent = (parentContainer: Container, fragment: ____PF) => {
     return parentContainer.find(

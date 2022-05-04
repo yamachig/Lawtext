@@ -5,7 +5,7 @@ import { ____PointerRanges } from "../../node/el/controls";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
 import { isIgnoreAnalysis } from "../common";
-import getScope, { OnBeforeModifierParentheses } from "../getScope";
+import getScope, { OnBeforeModifierParentheses } from "./getScope";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 
 
