@@ -171,8 +171,7 @@ describe("Test getScope", () => {
                     },
                 ],
             },
-        ]
-          ;
+        ];
         const expectedErrorMessages: string[] = [];
 
         [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));

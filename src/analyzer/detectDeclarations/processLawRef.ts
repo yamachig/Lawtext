@@ -4,7 +4,7 @@ import sha512 from "hash.js/lib/hash/sha/512";
 import { LAWNUM_TABLE, KEY_LENGTH } from "../../law/lawNumTable";
 import { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
-import { __Text, ____Declaration, ____LawRef } from "../../node/el/controls";
+import { __Text, ____Declaration, ____LawRef, ____PointerRanges } from "../../node/el/controls";
 import { ContainerType } from "../../node/container";
 import $lawRef from "../sentenceChildrenParser/rules/$lawRef";
 import { initialEnv } from "../sentenceChildrenParser/env";
@@ -119,7 +119,27 @@ export const processLawRef = (
                 });
                 lawRefs.push(lawRef);
                 lawRef.children.push(result.value.value.lawRefInfo.lawRefParentheses);
-                elToBeModified.children.splice((elToBeModified.children as (typeof elToBeModified.children)[number][]).indexOf(result.value.value.lawRefInfo.lawRefParentheses), 1, lawRef);
+                const replacingIndex = (elToBeModified.children as (typeof elToBeModified.children)[number][]).indexOf(result.value.value.lawRefInfo.lawRefParentheses);
+                elToBeModified.children.splice(
+                    replacingIndex,
+                    1,
+                    lawRef,
+                );
+
+                const pointerRangesIndex = replacingIndex + 1;
+
+                if (
+                    (pointerRangesIndex < elToBeModified.children.length)
+                    && (elToBeModified.children[pointerRangesIndex] instanceof ____PointerRanges)
+                )
+                {
+                    const pointerRanges = elToBeModified.children[pointerRangesIndex] as ____PointerRanges;
+                    const firstPointer = pointerRanges.ranges()[0].pointers()[0];
+                    const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
+                    if (pointerEnv) {
+                        pointerEnv.directLawRef = lawRef;
+                    }
+                }
 
             } else {
                 const lawNameLength = getLawNameLength(lawNumText);
@@ -184,6 +204,8 @@ export const processLawRef = (
                     lawRef.children.push(declaration);
                     lawRef.children.push(result.value.value.lawRefInfo.lawRefParentheses);
 
+                    const pointerRangesIndex = i + 2;
+
                     elToBeModified.children.splice(
                         i,
                         2,
@@ -197,6 +219,19 @@ export const processLawRef = (
                         lawRef,
                     );
                     i++;
+
+                    if (
+                        (pointerRangesIndex < elToBeModified.children.length)
+                        && (elToBeModified.children[pointerRangesIndex] instanceof ____PointerRanges)
+                    )
+                    {
+                        const pointerRanges = elToBeModified.children[pointerRangesIndex] as ____PointerRanges;
+                        const firstPointer = pointerRanges.ranges()[0].pointers()[0];
+                        const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
+                        if (pointerEnv) {
+                            pointerEnv.directLawRef = lawRef;
+                        }
+                    }
                 }
 
             }

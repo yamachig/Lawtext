@@ -3,7 +3,7 @@ import * as std from "../../law/std";
 import { ErrorMessage } from "../../parser/cst/error";
 import { WithErrorValue } from "../../parser/std/util";
 import { processNameInline } from "./processNameInline";
-import { ____Declaration } from "../../node/el/controls";
+import { ____Declaration, ____LawRef } from "../../node/el/controls";
 import { SentenceEnv } from "../../node/container/sentenceEnv";
 import { processLawRef } from "./processLawRef";
 import { isIgnoreAnalysis } from "../common";
@@ -18,9 +18,13 @@ export const detectDeclarationsByEL = (
     sentenceEnv: SentenceEnv,
     sentenceEnvsStruct: SentenceEnvsStruct,
     pointerEnvsStruct: PointerEnvsStruct,
-): WithErrorValue<____Declaration[]> => {
+): WithErrorValue<{
+    declarations: ____Declaration[],
+    lawRefs: ____LawRef[],
+}> => {
 
     const declarations: ____Declaration[] = [];
+    const lawRefs: ____LawRef[] = [];
     const errors: ErrorMessage[] = [];
 
     {
@@ -32,6 +36,7 @@ export const detectDeclarationsByEL = (
         );
         if (result){
             declarations.push(...result.value.declarations);
+            lawRefs.push(...result.value.lawRefs);
             errors.push(...result.errors);
         }
     }
@@ -64,7 +69,8 @@ export const detectDeclarationsByEL = (
                 sentenceEnvsStruct,
                 pointerEnvsStruct,
             );
-            declarations.push(...detectLawnameResult.value);
+            declarations.push(...detectLawnameResult.value.declarations);
+            lawRefs.push(...detectLawnameResult.value.lawRefs);
             errors.push(...detectLawnameResult.errors);
 
         }
@@ -72,7 +78,7 @@ export const detectDeclarationsByEL = (
     }
 
 
-    return { value: declarations, errors };
+    return { value: { declarations, lawRefs }, errors };
 };
 
 
@@ -80,9 +86,13 @@ export const detectDeclarationsBySentence = (
     sentenceEnv: SentenceEnv,
     sentenceEnvsStruct: SentenceEnvsStruct,
     pointerEnvsStruct: PointerEnvsStruct,
-): WithErrorValue<____Declaration[]> => {
+): WithErrorValue<{
+    declarations: ____Declaration[],
+    lawRefs: ____LawRef[],
+}> => {
 
     const declarations: ____Declaration[] = [];
+    const lawRefs: ____LawRef[] = [];
     const errors: ErrorMessage[] = [];
 
     {
@@ -105,28 +115,36 @@ export const detectDeclarationsBySentence = (
             pointerEnvsStruct,
         );
         if (result){
-            declarations.push(...result.value);
+            declarations.push(...result.value.declarations);
+            lawRefs.push(...result.value.lawRefs);
             errors.push(...result.errors);
         }
     }
 
 
-    return { value: declarations, errors };
+    return { value: { declarations, lawRefs }, errors };
 };
 
 
 export const detectDeclarations = (
     sentenceEnvsStruct: SentenceEnvsStruct,
     pointerEnvsStruct: PointerEnvsStruct,
-): WithErrorValue<Declarations> => {
+): WithErrorValue<{
+    declarations: Declarations,
+    lawRefByDeclarationID: Map<string, ____LawRef>,
+}> => {
 
     const declarations = new Declarations();
+    const lawRefByDeclarationID: Map<string, ____LawRef> = new Map();
     const errors: ErrorMessage[] = [];
 
     for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
         const result = detectDeclarationsBySentence(sentenceEnv, sentenceEnvsStruct, pointerEnvsStruct);
         if (result){
-            for (const declaration of result.value) declarations.add(declaration);
+            for (const declaration of result.value.declarations) declarations.add(declaration);
+            for (const lawRef of result.value.lawRefs) {
+                lawRefByDeclarationID.set(lawRef.attr.includingDeclarationID, lawRef);
+            }
             errors.push(...result.errors);
         }
     }
@@ -136,7 +154,7 @@ export const detectDeclarations = (
         errors.push(...result.errors);
         for (const declaration of result.value.toAddDeclarations) declarations.add(declaration);
     }
-    return { value: declarations, errors };
+    return { value: { declarations, lawRefByDeclarationID }, errors };
 };
 
 export default detectDeclarations;

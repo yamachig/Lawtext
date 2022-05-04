@@ -6,6 +6,7 @@ import { parse } from "../../parser/lawtext";
 import detectVariableReferences from ".";
 import { assertELVaridity } from "../../parser/std/testHelper";
 import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
+import getScope from "../pointerEnvs/getScope";
 
 describe("Test detectVariableReferences", () => {
 
@@ -27,7 +28,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -66,7 +67,8 @@ describe("Test detectVariableReferences", () => {
         ] ;
         const expectedErrorMessages: string[] = [];
 
-        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -104,7 +106,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -155,7 +157,8 @@ describe("Test detectVariableReferences", () => {
           ;
         const expectedErrorMessages: string[] = [];
 
-        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -194,7 +197,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -224,7 +227,8 @@ describe("Test detectVariableReferences", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -289,7 +293,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -316,8 +320,7 @@ describe("Test detectVariableReferences", () => {
                 },
                 children: ["旧法"],
             },
-        ]
-          ;
+        ];
 
         const expected: JsonEL[] = [
             {
@@ -359,7 +362,8 @@ describe("Test detectVariableReferences", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -412,7 +416,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -988,7 +992,8 @@ describe("Test detectVariableReferences", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1025,7 +1030,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1065,7 +1070,8 @@ describe("Test detectVariableReferences", () => {
           ;
         const expectedErrorMessages: string[] = [];
 
-        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1111,7 +1117,7 @@ describe("Test detectVariableReferences", () => {
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
         const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const declarations = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1182,7 +1188,8 @@ describe("Test detectVariableReferences", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const result = detectVariableReferences(sentenceEnvsStruct, declarations);
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1197,6 +1204,179 @@ describe("Test detectVariableReferences", () => {
             varRefs.map(r => r.json(true)),
             expected,
         );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+});
+
+describe("Test detectVariableReferences and PointerRanges with lawRef", () => {
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第二条　法律の規定に基づき内閣に置かれる機関若しくは内閣の所轄の下に置かれる機関、宮内庁、内閣府設置法（平成十一年法律第八十九号）第四十九条第一項若しくは第二項に規定する機関、国家行政組織法（昭和二十三年法律第百二十号）第三条第二項に規定する機関、会計検査院若しくはこれらに置かれる機関又はこれらの機関の職員であって法律上独立に権限を行使することを認められた職員
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_41_47",
+                    type: "LawName",
+                    name: "内閣府設置法",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
+                    value: "平成十一年法律第八十九号",
+                },
+                children: ["内閣府設置法"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_84_91",
+                    type: "LawName",
+                    name: "国家行政組織法",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
+                    value: "昭和二十三年法律第百二十号",
+                },
+                children: ["国家行政組織法"],
+            },
+        ];
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第四十九条",
+                                num: "49",
+                            },
+                            children: ["第四十九条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: "内閣府設置法（平成十一年法律第八十九号）",
+                    fqPrefixFragments: [],
+                },
+                directLawRef: "内閣府設置法（平成十一年法律第八十九号）",
+                namingParent: null,
+                namingChildren: ["第二項"],
+                seriesPrev: null,
+                seriesNext: "第二項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第二項",
+                                num: "2",
+                            },
+                            children: ["第二項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: "内閣府設置法（平成十一年法律第八十九号）",
+                    fqPrefixFragments: [],
+                },
+                directLawRef: null,
+                namingParent: "第四十九条第一項",
+                namingChildren: [],
+                seriesPrev: "第四十九条第一項",
+                seriesNext: "第三条第二項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第三条",
+                                num: "3",
+                            },
+                            children: ["第三条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第二項",
+                                num: "2",
+                            },
+                            children: ["第二項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: "国家行政組織法（昭和二十三年法律第百二十号）",
+                    fqPrefixFragments: [],
+                },
+                directLawRef: "国家行政組織法（昭和二十三年法律第百二十号）",
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: "第二項",
+                seriesNext: null,
+            },
+        ];
+
+
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        // console.log(JSON.stringify([...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
 
         assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
 

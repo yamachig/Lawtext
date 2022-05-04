@@ -223,7 +223,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.values().map(r => r.json(true)),
+            result.value.declarations.values().map(r => r.json(true)),
             expected,
         );
 
@@ -448,7 +448,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.values().map(r => r.json(true)),
+            result.value.declarations.values().map(r => r.json(true)),
             expected,
         );
 
@@ -740,7 +740,7 @@ describe("Test detectDeclarations", () => {
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            result.value.values().map(r => r.json(true)),
+            result.value.declarations.values().map(r => r.json(true)),
             expected,
         );
 
@@ -1194,9 +1194,9 @@ describe("Test detectDeclarations", () => {
 
         const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
-        // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.values().map(r => r.json(true)),
+            declarationsResult.value.declarations.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 
@@ -1750,9 +1750,9 @@ describe("Test detectDeclarations", () => {
 
         const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
-        // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.values().map(r => r.json(true)),
+            declarationsResult.value.declarations.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 
@@ -2145,9 +2145,9 @@ describe("Test detectDeclarations", () => {
 
         const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
-        // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.values().map(r => r.json(true)),
+            declarationsResult.value.declarations.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 
@@ -2536,9 +2536,9 @@ describe("Test detectDeclarations", () => {
 
         const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
-        // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.values().map(r => r.json(true)),
+            declarationsResult.value.declarations.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 
@@ -3110,9 +3110,9 @@ describe("Test detectDeclarations", () => {
 
         const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
-        // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.values().map(r => r.json(true)),
+            declarationsResult.value.declarations.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 
@@ -4048,9 +4048,9 @@ describe("Test detectDeclarations", () => {
 
         const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
 
-        // console.log(JSON.stringify(declarationsResult.value.values().map(r => r.json(true)), null, 2));
+        // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
-            declarationsResult.value.values().map(r => r.json(true)),
+            declarationsResult.value.declarations.values().map(r => r.json(true)),
             expectedDeclarations,
         );
 

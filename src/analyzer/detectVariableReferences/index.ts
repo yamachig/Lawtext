@@ -3,14 +3,19 @@ import * as std from "../../law/std";
 import { Declarations } from "../common/declarations";
 import { ____VarRef } from "../../node/el/controls/varRef";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
-import { __Parentheses, __Text, ____Declaration } from "../../node/el/controls";
+import { __Parentheses, __Text, ____Declaration, ____LawRef, ____PointerRanges } from "../../node/el/controls";
 import { WithErrorValue } from "../../parser/std/util";
 import { SentenceChildEL } from "../../node/cst/inline";
 import { ErrorMessage } from "../../parser/cst/error";
 import { isSentenceText, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import { isIgnoreAnalysis } from "../common";
+import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
-export const matchVariableReferences = (textEL: __Text, sentenceEnv: SentenceEnv, declarations: Declarations): (
+export const matchVariableReferences = (
+    textEL: __Text,
+    sentenceEnv: SentenceEnv,
+    declarations: Declarations,
+): (
     | WithErrorValue<{
         newItems: SentenceChildEL[],
         varRefs: ____VarRef[],
@@ -104,7 +109,13 @@ export const matchVariableReferences = (textEL: __Text, sentenceEnv: SentenceEnv
 };
 
 
-export const detectVariableReferencesOfEL = (elToBeModified: std.StdEL | std.__EL, sentenceEnv: SentenceEnv, declarations: Declarations): WithErrorValue<{varRefs: ____VarRef[]}> => {
+export const detectVariableReferencesOfEL = (
+    elToBeModified: std.StdEL | std.__EL,
+    sentenceEnv: SentenceEnv,
+    declarations: Declarations,
+    lawRefByDeclarationID: Map<string, ____LawRef>,
+    pointerEnvsStruct: PointerEnvsStruct,
+): WithErrorValue<{varRefs: ____VarRef[]}> => {
 
     const varRefs: ____VarRef[] = [];
     const errors: ErrorMessage[] = [];
@@ -148,6 +159,25 @@ export const detectVariableReferencesOfEL = (elToBeModified: std.StdEL | std.__E
                         ...match.value.newItems,
                     );
 
+                    const lastNewItem = match.value.newItems[match.value.newItems.length - 1];
+                    if (lastNewItem instanceof ____VarRef && declarations.get(lastNewItem.attr.declarationID).attr.type === "LawName") {
+                        const pointerRangesIndex = childIndex + match.value.newItems.length;
+
+                        if (
+                            (pointerRangesIndex < elToBeModified.children.length)
+                            && (elToBeModified.children[pointerRangesIndex] instanceof ____PointerRanges)
+                        )
+                        {
+                            const pointerRanges = elToBeModified.children[pointerRangesIndex] as ____PointerRanges;
+                            const firstPointer = pointerRanges.ranges()[0].pointers()[0];
+                            const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
+                            const lawRef = lawRefByDeclarationID.get(lastNewItem.attr.declarationID);
+                            if (pointerEnv && lawRef) {
+                                pointerEnv.directLawRef = lawRef;
+                            }
+                        }
+                    }
+
                     childIndex += match.value.newItems.length - 1;
                     continue;
                 }
@@ -172,7 +202,7 @@ export const detectVariableReferencesOfEL = (elToBeModified: std.StdEL | std.__E
                 },
             });
 
-            const newResult = detectVariableReferencesOfEL(child as std.StdEL | std.__EL, sentenceEnv, filteredDeclarations);
+            const newResult = detectVariableReferencesOfEL(child as std.StdEL | std.__EL, sentenceEnv, filteredDeclarations, lawRefByDeclarationID, pointerEnvsStruct);
             varRefs.push(...newResult.value.varRefs);
             errors.push(...newResult.errors);
         }
@@ -187,7 +217,12 @@ export const detectVariableReferencesOfEL = (elToBeModified: std.StdEL | std.__E
 };
 
 
-export const detectVariableReferences = (sentenceEnvsStruct: SentenceEnvsStruct, declarations: Declarations): WithErrorValue<{varRefs: ____VarRef[]}> => {
+export const detectVariableReferences = (
+    sentenceEnvsStruct: SentenceEnvsStruct,
+    declarations: Declarations,
+    lawRefByDeclarationID: Map<string, ____LawRef>,
+    pointerEnvsStruct: PointerEnvsStruct,
+): WithErrorValue<{varRefs: ____VarRef[]}> => {
 
     const varRefs: ____VarRef[] = [];
     const errors: ErrorMessage[] = [];
@@ -206,6 +241,8 @@ export const detectVariableReferences = (sentenceEnvsStruct: SentenceEnvsStruct,
                     textOffset: 0,
                 },
             }),
+            lawRefByDeclarationID,
+            pointerEnvsStruct,
         );
         if (result){
             varRefs.push(...result.value.varRefs);

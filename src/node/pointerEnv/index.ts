@@ -59,12 +59,12 @@ export class PointerEnv {
                     : (this.located?.type === "external")
                         ? {
                             ...this.located,
-                            lawRef: this.located.lawRef.json(true),
+                            lawRef: this.located.lawRef.text(),
                             fqPrefixFragments: this.located.fqPrefixFragments.map(f => f.json(true)),
                         }
                         : null
             ),
-            directLawRef: this.directLawRef ? this.directLawRef?.json(true) : null,
+            directLawRef: this.directLawRef ? this.directLawRef?.text() : null,
             namingParent: this.namingParent ? this.namingParent.pointer.text() : null,
             namingChildren: this.namingChildren.map(c => c.pointer.text()),
             seriesPrev: this.seriesPrev ? this.seriesPrev.pointer.text() : null,

@@ -105,44 +105,6 @@ export class EL implements JsonEL {
     public innerXML(withControlEl = false): string {
         return innerXML(this, withControlEl);
     }
-
-    public replaceSpan(start: number, end: number/* half open */, replChildren: Array<EL | string> | EL | string): void {
-        if (!Array.isArray(replChildren)) {
-            replChildren = [replChildren];
-        }
-        let nextCStart = 0;
-        for (let i = 0; i < this.children.length; i++) {
-            const child = this.children[i];
-            const cStart = nextCStart;
-            const cEnd = cStart + (child instanceof EL ? child.text() : child).length; // half open
-            nextCStart = cEnd;
-
-            if (cStart <= start && start < cEnd) {
-                if (cStart < end && end <= cEnd) {
-                    const startInChild = start - cStart;
-                    const endInChild = end - cStart;
-
-                    if (child instanceof EL) {
-                        child.replaceSpan(startInChild, endInChild, replChildren);
-                    } else {
-                        let newChildren: Array<EL | string> = [];
-                        if (0 < startInChild) newChildren.push(child.slice(0, startInChild));
-                        newChildren = newChildren.concat(replChildren);
-                        if (endInChild < child.length) newChildren.push(child.slice(endInChild));
-                        newChildren = [
-                            ...this.children.slice(0, i),
-                            ...newChildren,
-                            ...this.children.slice(i + 1),
-                        ];
-                        this.children = newChildren;
-                    }
-                } else {
-                    throw new Error("Attempted to replace across elements.");
-                }
-                break;
-            }
-        }
-    }
 }
 
 export const rangeOfELs = (els: unknown[]): [start: number, end: number] | null => {

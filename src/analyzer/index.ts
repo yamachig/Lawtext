@@ -28,17 +28,18 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
 
     // detectDeclarations partially locates PointerRanges, assuming the located PointerRanges are all internal.
     const detectDeclarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
-    const declarations = detectDeclarationsResult.value;
+    const declarations = detectDeclarationsResult.value.declarations;
+    const lawRefByDeclarationID = detectDeclarationsResult.value.lawRefByDeclarationID;
     errors.push(...detectDeclarationsResult.errors);
 
-    // Locate remaining PointerRanges. This time, the remaining PointerRanges are located considering LawRef's.
+    const detectVariableReferencesResult = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+    const variableReferences = detectVariableReferencesResult.value.varRefs;
+    errors.push(...detectVariableReferencesResult.errors);
+
+    // Locate remaining PointerRanges. This time, the remaining PointerRanges are located considering LawRef's and VarRef's for laws.
     for (const pointerRanges of pointerEnvsStruct.pointerRangesList) {
         getScope(pointerRanges, pointerEnvsStruct);
     }
-
-    const detectVariableReferencesResult = detectVariableReferences(sentenceEnvsStruct, declarations);
-    const variableReferences = detectVariableReferencesResult.value.varRefs;
-    errors.push(...detectVariableReferencesResult.errors);
 
     return {
         declarations,
