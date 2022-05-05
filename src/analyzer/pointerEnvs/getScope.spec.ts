@@ -1861,4 +1861,188 @@ describe("Test getScope", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+      第一章　総則
+
+第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
+２　（略）
+
+      第七章　補則
+
+第四十六条　（略）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "HERE",
+                                            targetType: "Law",
+                                            name: "この法律",
+                                        },
+                                        children: ["この法律"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Chapter[2][num=7]-Article[1][num=46]\"}]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第四十六条",
+                                            num: "46",
+                                        },
+                                        children: ["第四十六条"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+
+
+        const expectedErrorMessages: string[] = [];
+
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
+２　（略）
+
+第四十六条　（略）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+
+        const expectedPointerRangesList: JsonEL[] = [
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "HERE",
+                                            targetType: "Law",
+                                            name: "この法律",
+                                        },
+                                        children: ["この法律"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[2][num=46]\"}]",
+                },
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第四十六条",
+                                            num: "46",
+                                        },
+                                        children: ["第四十六条"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+
+
+        const expectedErrorMessages: string[] = [];
+
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+
+        // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)),
+            expectedPointerRangesList,
+        );
+
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });
