@@ -17,7 +17,7 @@ Lawtext: Manageable plain text format and utility tools for laws
 
 ## 法令を読む / Browsing laws
 
-[![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)
+[![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)
 
 <div style="text-align: center;"><a href="https://yamachig.github.io/lawtext-app/#/%E5%B9%B3%E6%88%90%E4%BA%94%E5%B9%B4%E6%B3%95%E5%BE%8B%E7%AC%AC%E5%85%AB%E5%8D%81%E5%85%AB%E5%8F%B7" style="display: inline-block; border: 1px solid currentColor; padding: 0.5em;border-radius: 0.5em;" target="_blank" rel="noopener">試してみる / Try it</a></div>
 
@@ -127,7 +127,7 @@ Lawtext works efficiently with existing source code management tools to make law
 - **インストール不要（ブラウザで動作）**：ブラウザ上でシングルページアプリケーション（single-page application、SPA）として動作します。
 - **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#/download/)）
 
-[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
+[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
 
 #### Main features of Lawtext-app
 
@@ -260,7 +260,7 @@ Lawtext-appは次の特徴を備えます：
 - **インストール不要（ブラウザで動作）**：ブラウザ上でシングルページアプリケーション（single-page application、SPA）として動作します。
 - **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#/download/)）
 
-[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
+[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
 
 ------------
 
@@ -380,7 +380,7 @@ Lawtext-app has these features:
 - Lawtext-app is accompanied by an additional syntax analyzer and an elemental semantic analyzer of law text. For example, it shows corresponding parentheses and nesting depth. It also indicates term definition positions and clause number references.
 - It can emit Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
 
-[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
+[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
 
 
 ------------
