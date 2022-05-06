@@ -1,17 +1,36 @@
 Lawtext: Manageable plain text format and utility tools for laws
 ========================================================================
 
+<div style="display: flex; flex-direction: row; gap: 1em; flex-wrap: wrap;">
+
+<div style="flex: 1 1 20em;">
+
+## 法令を編集する / Editing laws
+
 [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
 
-- [Visual Studio Code拡張はこちら / Visual Studio Code Extension that provides the Lawtext language server](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext)
+<div style="text-align: center;"><a href="#try-vscode-extension" style="display: inline-block; border: 1px solid currentColor; padding: 0.5em;border-radius: 0.5em;" target="_blank" rel="noopener">試してみる / Try it</a></div>
+
+</div>
+
+<div style="flex: 1 1 20em;">
+
+## 法令を読む / Browsing laws
+
+[![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)
+
+<div style="text-align: center;"><a href="https://yamachig.github.io/lawtext-app/#/%E5%B9%B3%E6%88%90%E4%BA%94%E5%B9%B4%E6%B3%95%E5%BE%8B%E7%AC%AC%E5%85%AB%E5%8D%81%E5%85%AB%E5%8F%B7" style="display: inline-block; border: 1px solid currentColor; padding: 0.5em;border-radius: 0.5em;" target="_blank" rel="noopener">試してみる / Try it</a></div>
+
+</div>
+
+</div>
+
 
 ------------
 
-**Lawtext** は、法令標準XMLと相互変換可能な法令のプレーンテキストフォーマットです。読みやすく、人の手により編集しやすいように設計されています。
+**Lawtext** は、法令標準XMLとの間で相互変換可能な法令のプレーンテキストフォーマットです。読みやすく、人の手により編集しやすいように設計されています。
 
 Lawtextを用いると、既存のソースコード管理ツールを法令管理にそのまま活用することができます。また、法令標準XMLを使用する高度な法令管理ツールと共存することができます。これにより、法令文書のオープン化を容易にし、編集作業をより安全にし、法令執務の創造性を高めることができます。
-
-現在、Lawtextは継続して開発中の状況ですが、基本的な機能は概ね動作します。
 
 - [例](#examples)
 - [詳細](#background-jp)
@@ -21,8 +40,6 @@ Lawtextを用いると、既存のソースコード管理ツールを法令管�
 **Lawtext** is a human-readable/editable plain text format designed for Japanese laws.
 
 Lawtext works efficiently with existing source code management tools to make law text management open, safe, and creative.
-
-Lawtext is currently under development; however, the essential feature is already available.
 
 - [Examples](#examples)
 - [Detail](#background-en)
@@ -46,7 +63,7 @@ Lawtext is currently under development; however, the essential feature is alread
 第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
 ２　処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。
 ```
-- [法令全体のLawtextサンプルをダウンロード / Download a sample of Lawtext for a whole law](https://yamachig.github.io/lawtext-app/#(sample) )
+- [法令全体のLawtextサンプルをダウンロード / Download a sample of Lawtext for a whole law](https://yamachig.github.io/lawtext-app/#/(sample) )
 
 <details>
 <summary>（参考）上記の Lawtext を変換して生成した法令標準XML（クリックして表示） / Standard law XML generated from the lawtext above (click to open)</summary>
@@ -104,24 +121,22 @@ Lawtext is currently under development; however, the essential feature is alread
 
 - **法令閲覧**：Lawtextや法令標準XML（ファイルまたはe-LAWS APIから）を解析し、見やすく表示します。法令名や法令番号での検索ができます。
 - **文書構造の解析・可視化**：対応する括弧や入れ子構造を解析し、可視化します。
-- **定義語の解析・可視化**：一部の用語（定義語）については、定義箇所を解析し、表示することができます。
+- **定義語・条項参照の解析・可視化**：一部の用語（定義語）や条項の参照については、定義箇所を解析し、表示することができます。
 - **WordやXML、Lawtextへの出力**：表示している法令を、Lawtextや法令標準XMLだけでなく、Microsoft Word文書（.docx）として出力できます。条文の引用に便利な、選択した条のみWordファイルに出力する機能もあります。
 - **XMLの文書構造や正規表現を使用した高度な法令検索（Lawtext query）**：ブラウザのコンソールを用いて、XMLの文書構造や正規表現を使用した高度な法令検索を実行できます。
 - **インストール不要（ブラウザで動作）**：ブラウザ上でシングルページアプリケーション（single-page application、SPA）として動作します。
-- **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#download/)）
+- **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#/download/)）
 
-[![app-screenshot2](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
-
-[![app-screenshot3](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)
+[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
 
 #### Main features of Lawtext-app
 
 - It perses Lawtext, standard law XML (from local file or e-LAWS API) and shows as a easy-to-read web page with some navigating features.
 - It analyses and vidualizes corresponding parentheses and nesting depth.
-- It analyses and indicates term definition positions.
+- It analyses and indicates term definition positions and clause number references.
 - It can emit Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
 - It is a single-page application run on web browsers.
-- In a confidential use-case, you can [download](https://yamachig.github.io/lawtext-app/#download/) and run it offline.
+- In a confidential use-case, you can [download](https://yamachig.github.io/lawtext-app/#/download/) and run it offline.
 
 ------------
 
@@ -150,8 +165,8 @@ Lawtext is currently under development; however, the essential feature is alread
 一方で、近年、日本の法令文書管理においていくつかのブレイクスルーがありました：
 
 - [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html)（2016年10月リリース)。法令文書の、政府内部での管理に用いられる、正式なデータベース・出版システムです。e-LAWSにより、日本のすべての現行法令はデジタル形式で保存され、これが正式な文書として扱われるようになりました。
-- [法令標準XML](http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2)（2017年5月リリース）。法令を段落単位でマークアップする、標準化されたXML形式です。日本のあらゆる法令は、（既にあるHTML形式に加えて）法令標準XMLで公開されるようになりました。
-- [e-Gov 法令 API](http://www.e-gov.go.jp/elaws/interface_api/index.html)（2017年6月リリース）。広く一般に利用可能な、法令標準XMLを提供するAPIです。
+- [法令標準XML](https://elaws.e-gov.go.jp/download/)（2017年5月リリース）。法令を段落単位でマークアップする、標準化されたXML形式です。日本のあらゆる法令は、（既にあるHTML形式に加えて）法令標準XMLで公開されるようになりました。
+- [e-Gov 法令 API](https://elaws.e-gov.go.jp/apitop/)（2017年6月リリース）。広く一般に利用可能な、法令標準XMLを提供するAPIです。
 - [e-Gov 法令検索リニューアル](https://elaws.e-gov.go.jp/)（2020年11月リリース）。それまでHTML形式形式で公開され、きれいに印刷することが難しい状況でしたが、RTFやPDFのダウンロードにも対応しました。
 
 e-LAWSや法令標準XMLは、法令執務の自動化の礎を築いたといえますが、しかしなお、いくつかの課題が残ります：
@@ -239,15 +254,13 @@ Lawtext-appは次の特徴を備えます：
 
 - **法令閲覧**：Lawtextや法令標準XML（ファイルまたはe-LAWS APIから）を解析し、見やすく表示します。法令名や法令番号での検索ができます。
 - **文書構造の解析・可視化**：対応する括弧や入れ子構造を解析し、可視化します。
-- **定義語の解析・可視化**：一部の用語（定義語）については、定義箇所を解析し、表示することができます。
+- **定義語・条項参照の解析・可視化**：一部の用語（定義語）や条項の参照については、定義箇所を解析し、表示することができます。
 - **WordやXML、Lawtextへの出力**：表示している法令を、Lawtextや法令標準XMLだけでなく、Microsoft Word文書（.docx）として出力できます。条文の引用に便利な、選択した条のみWordファイルに出力する機能もあります。
 - **XMLの文書構造や正規表現を使用した高度な法令検索（Lawtext query）**：ブラウザのコンソールを用いて、XMLの文書構造や正規表現を使用した高度な法令検索を実行できます。
 - **インストール不要（ブラウザで動作）**：ブラウザ上でシングルページアプリケーション（single-page application、SPA）として動作します。
-- **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#download/)）
+- **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#/download/)）
 
-[![app-screenshot2](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
-
-[![app-screenshot3](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)
+[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
 
 ------------
 
@@ -276,8 +289,8 @@ Problems of reader side:
 Besides, recently, some breakthroughs are made in the field of Japanese law management:
 
 - [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html) (released in October 2016), authentic database and publishing system for laws, for use inside the government. By e-LAWS, all current law documents in Japan are formally stored as digital.
-- [Standard law XML](http://search.e-gov.go.jp/servlet/Public?CLASSNAME=PCMMSTDETAIL&id=145208896&Mode=2) (released in May 2017), standardized paragraph-level markup format for Japanese laws. Any Japanese law is now made public as standard law XML (in addition to HTML already available).
-- [e-Gov laws API](http://www.e-gov.go.jp/elaws/interface_api/index.html) (released in June 2017), an open web API which provides standard law XML.
+- [Standard law XML](https://elaws.e-gov.go.jp/download/) (released in May 2017), standardized paragraph-level markup format for Japanese laws. Any Japanese law is now made public as standard law XML (in addition to HTML already available).
+- [e-Gov laws API](https://elaws.e-gov.go.jp/apitop/) (released in June 2017), an open web API which provides standard law XML.
 - [Renewed e-Gov laws search](https://elaws.e-gov.go.jp/) (released in November 2020). Before renewal, it provided the laws HTML, which often could not be pretty-printed and are not reusable for editing. It now provides RTF or PDF.
 
   Example of Standard law XML (extracted):
@@ -360,14 +373,29 @@ Lawtext has these features:
 
 Along with the Lawtext format, I also provide a utility tool, "Lawtext-app" ([working example](https://yamachig.github.io/lawtext-app/)), which utilizes Lawtext, standard law XML, and e-LAWS API.
 
-[![app-screenshot2](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
-
 Lawtext-app has these features:
 
-- Lawtext-app is a single-page application run on web browsers. In a confidential use-case, you can [download](https://yamachig.github.io/lawtext-app/#download/) and run it offline.
+- Lawtext-app is a single-page application run on web browsers. In a confidential use-case, you can [download](https://yamachig.github.io/lawtext-app/#/download/) and run it offline.
 - It shows Lawtext, standard law XML (both from local file and e-LAWS API) as a web page with some navigating features.
-- Lawtext-app is accompanied by an additional syntax analyzer and an elemental semantic analyzer of law text. For example, it shows corresponding parentheses and nesting depth. It also indicates term definition positions.
+- Lawtext-app is accompanied by an additional syntax analyzer and an elemental semantic analyzer of law text. For example, it shows corresponding parentheses and nesting depth. It also indicates term definition positions and clause number references.
 - It can emit Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
 
-[![app-screenshot3](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot3.png)
+[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167059068-e5a1cf6a-cf57-4f0a-8bb3-32e76a12f413.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
+
+
+------------
+
+<a id="try-vscode-extension"></a>
+
+# Visual Studio Code 拡張機能を試す / Try the Visual Studio Code extension
+
+<div style="max-width: 20em;">
+
+[![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://github.dev/yamachig/Lawtext-sample-Administrative-Procedure-Act)
+
+</div>
+
+- [こちらのリンク (github.dev)](https://github.dev/yamachig/vscode-lawtext-sample) から数クリックでお試しいただけます。（GitHubアカウントが必要です。） / You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required.)
+
+- もしくは、[vscode.dev](https://vscode.dev/) にて [Lawtext拡張機能](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) をインストールし、[サンプルLawtext](https://yamachig.github.io/lawtext-app/#/(sample)) を開くことでもお試しいただけます / Otherwise, you can visit [vscode.dev](https://vscode.dev/), install [Lawtext extension](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) and open the [sample Lawtext](https://yamachig.github.io/lawtext-app/#/(sample)).
 
