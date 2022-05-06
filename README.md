@@ -165,7 +165,7 @@ Lawtext works efficiently with existing source code management tools to make law
 一方で、近年、日本の法令文書管理においていくつかのブレイクスルーがありました：
 
 - [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html)（2016年10月リリース)。法令文書の、政府内部での管理に用いられる、正式なデータベース・出版システムです。e-LAWSにより、日本のすべての現行法令はデジタル形式で保存され、これが正式な文書として扱われるようになりました。
-- [法令標準XML](https://elaws.e-gov.go.jp/download/)（2017年5月リリース）。法令を段落単位でマークアップする、標準化されたXML形式です。日本のあらゆる法令は、（既にあるHTML形式に加えて）法令標準XMLで公開されるようになりました。
+- [法令標準XML](https://elaws.e-gov.go.jp/download/)（2017年5月リリース）。法令を段落単位でマークアップする、標準化されたXML形式です。法律や省令などは、（既にあるHTML形式に加えて）法令標準XMLで公開されるようになりました。
 - [e-Gov 法令 API](https://elaws.e-gov.go.jp/apitop/)（2017年6月リリース）。広く一般に利用可能な、法令標準XMLを提供するAPIです。
 - [e-Gov 法令検索リニューアル](https://elaws.e-gov.go.jp/)（2020年11月リリース）。それまでHTML形式形式で公開され、きれいに印刷することが難しい状況でしたが、RTFやPDFのダウンロードにも対応しました。
 
@@ -209,9 +209,9 @@ e-LAWSや法令標準XMLは、法令執務の自動化の礎を築いたとい�
 法典のことを英語で「コード」と言いますが、プログラミングの分野やオープンソースコミュニティでは、上記のような課題は、最適化されたいくつかの手段によって解決されています：
 
 - **可読性の高いプレーンテキスト**：ソースコードは扱いやすいプレーンテキストで書かれます。役割上、機械的に読める文書であることはもちろんですが、人が効率的に読み書きできるように工夫されています。単なるプレーンテキストなので、第三者が多くのツールを提供できます（その多くが無料です）。
-- **オープンで汎用的な編集ツール**：様々な種類のエディタやビューアが存在します。多くが構文ハイライト機能を持っています。また、ナビゲーション機能を持っていたり、linterのような高度なツールと組み合わせることができるものもあります。
-- **確立されたバージョン管理**：高機能なバージョン管理システムが提供されています。バージョン管理は、一般に、プログラミングのワークフローにおける基本的な手法として認知されています。これにより意図しない“先祖返り”を防ぎ、また、チームによる共同作業を容易にします。
-- **再利用・共同編集を前提とした保存・公開方法**：公開リポジトリにおいて、ソースコードが読みやすく編集しやすい形で保管・共有されています。しかも、修正や意見を行うための機能と統合されています。
+- **オープンで汎用的な編集ツール**：様々な種類のエディタ（Visual Studio Codeなど）やビューアが存在します。多くが構文ハイライト機能を持っています。また、ナビゲーション機能を持っていたり、linterのような高度なツールと組み合わせることができるものもあります。
+- **確立されたバージョン管理**：Gitをはじめとする高機能なバージョン管理システムが提供されています。バージョン管理は、一般に、プログラミングのワークフローにおける基本的な手法として認知されています。これにより意図しない“先祖返り”を防ぎ、また、チームによる共同作業を容易にします。
+- **再利用・共同編集を前提とした保存・公開方法**：GitHubなどの公開リポジトリにおいて、ソースコードが読みやすく編集しやすい形で保管・共有されています。しかも、修正や意見を行うための機能と統合されています。
 
 
 ## 提案：Lawtext
@@ -222,7 +222,7 @@ Lawtextを用いると、既存のソースコード管理ツールを法令管�
 
 Lawtextは次のような特徴があります：
 
-- **人が読み書きしやすい**：Lawtext（単なるプレーンテキスト）は、それ自体が読むための文書形式としても機能します。Lawtextの見た目は、印刷されたりWebページとして表示された法令とあまり変わりません。通常の文書を編集するようにLawtextを読み書きすることが可能です。複雑なスタイル管理に気を遣う必要はありません。この特徴は、reStructuredTextやMarkdownを参考にしています。
+- **人が読み書きしやすい**：Lawtext（単なるプレーンテキスト）は、それ自体が読むための文書形式としても機能します。Lawtextの見た目は、印刷されたりWebページとして表示された法令とあまり変わりません。通常の文書を編集するようにLawtextを読み書きすることが可能です。複雑なスタイル管理に気を遣う必要はありません。この特徴は、Markdown、reStructuredText、YAMLなどを参考にしています。
 
   Lawtextの例（前述の法令標準XMLの例と同じ部分）：
 
@@ -237,7 +237,7 @@ Lawtextは次のような特徴があります：
   ２　処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。
   ```
 
-- **法令標準XMLと相互変換できる**：Lawtextは法令標準XMLにコンパイルすることができます。したがって、Lawtextは、e-LAWSや、法令標準XMLを活用するあらゆるシステムと互換性があります。さらに、法令標準XMLを逆にLawtextに変換することもできます。そのため、公開されているあらゆる法令のLawtextを入手することが可能です。Lawtextでも、法令標準XMLでも、好きな方で保存・共有することができます。
+- **法令標準XMLと相互変換できる**：Lawtextは法令標準XMLにコンパイルすることができます。したがって、Lawtextは、e-LAWSや、法令標準XMLを活用するあらゆるシステムと互換性があります。さらに、法令標準XMLを逆にLawtextに変換することもできます。そのため、公開されている法律や省令などのLawtextを入手することが可能です。Lawtextでも、法令標準XMLでも、都合の良い方で保存・共有することができます。
 
 - **既存の汎用ソースコード管理・編集ツールを活用できる**：Lawtextは、GitHubのようなオンラインのソースコードリポジトリでもうまく表示できます（[例](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)）。そのほかにも、既存の汎用的なソースコード管理・編集ツールを効果的に活用することができます。一例として、 [Lawtextの編集を支援するVisual Studio Code拡張](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) を提供しています。
 
@@ -289,7 +289,7 @@ Problems of reader side:
 Besides, recently, some breakthroughs are made in the field of Japanese law management:
 
 - [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html) (released in October 2016), authentic database and publishing system for laws, for use inside the government. By e-LAWS, all current law documents in Japan are formally stored as digital.
-- [Standard law XML](https://elaws.e-gov.go.jp/download/) (released in May 2017), standardized paragraph-level markup format for Japanese laws. Any Japanese law is now made public as standard law XML (in addition to HTML already available).
+- [Standard law XML](https://elaws.e-gov.go.jp/download/) (released in May 2017), standardized paragraph-level markup format for Japanese laws. Most of the major Japanese laws are now made public as standard law XML (in addition to HTML already available).
 - [e-Gov laws API](https://elaws.e-gov.go.jp/apitop/) (released in June 2017), an open web API which provides standard law XML.
 - [Renewed e-Gov laws search](https://elaws.e-gov.go.jp/) (released in November 2020). Before renewal, it provided the laws HTML, which often could not be pretty-printed and are not reusable for editing. It now provides RTF or PDF.
 
@@ -333,9 +333,9 @@ Although e-LAWS and standard law XML laid the foundation for automation of legis
 In the field of programming and open source community (suggestive of the term "code"), several optimized solutions are available to solve such problems:
 
 - Source codes are in a manageable plain text format. It is machine-readable by nature and designed so that people can read and edit them efficiently. Because they are just simple plain text files, many third-party useful (and often free) tools are available.
-- Various kinds of source code editors and viewers are available. These editors and viewers typically have syntax highlighting features. Some of them provide navigation features, and more advanced tools like linters can be combined.
-- Multifunctional version control systems are available, which are generally the basis of programming workflow. They avoid reversions and make it easy for developers to collaborate in a team.
-- Source codes are stored and shared on public repositories with changing history in human-readable and editable form. Modifying and commenting features are also integrated.
+- Various kinds of source code editors (e.g. Visual Studio Code) and viewers are available. These editors and viewers typically have syntax highlighting features. Some of them provide navigation features, and more advanced tools like linters can be combined.
+- Multifunctional version control systems are available (e.g. Git), which are generally the basis of programming workflow. They avoid reversions and make it easy for developers to collaborate in a team.
+- Source codes are stored and shared on public repositories (e.g. GitHub) with changing history in human-readable and editable form. Modifying and commenting features are also integrated.
 
 
 ## Proposal
@@ -346,7 +346,7 @@ To solve such problems of law text management described above, I propose "**Lawt
 
 Lawtext has these features:
 
-- A Lawtext document itself (just a plain text file) works well as a presentation format. It looks akin to what you read law on a printed/web page. You can read/edit a Lawtext like writing a regular document without managing complicated style configurations. This feature is made referring to reStructuredText and Markdown.
+- A Lawtext document itself (just a plain text file) works well as a presentation format. It looks akin to what you read law on a printed/web page. You can read/edit a Lawtext like writing a regular document without managing complicated style configurations. This feature is made referring to Markdown, reStructuredText and YAML.
 
     Example of a Lawtext (of the same part as the XML example above):
 
