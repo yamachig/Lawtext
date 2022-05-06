@@ -391,7 +391,7 @@ Lawtext-app has these features:
 
 <div style="max-width: 20em;">
 
-[![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://github.dev/yamachig/Lawtext-sample-Administrative-Procedure-Act)
+[![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
 
 </div>
 
