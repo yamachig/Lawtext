@@ -40,3 +40,5 @@ export const xmlToEL = (xml: string): EL => {
     if (!dom.documentElement) throw new Error("never");
     return elementToEL(dom.documentElement);
 };
+
+export default xmlToEL;

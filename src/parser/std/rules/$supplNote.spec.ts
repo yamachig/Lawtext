@@ -39,9 +39,7 @@ describe("Test $supplNote and supplNoteToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",

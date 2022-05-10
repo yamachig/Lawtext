@@ -62,9 +62,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {
-                                OldStyle: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ParagraphNum",
@@ -225,9 +223,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {
-                                OldStyle: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ParagraphNum",
@@ -301,9 +297,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -395,9 +389,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphCaption",
@@ -424,9 +416,7 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphCaption",

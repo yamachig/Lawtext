@@ -39,9 +39,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {
-                OldStyle: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ParagraphCaption",
@@ -352,14 +350,14 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
 第一条の三　地方公共団体は、普通地方公共団体及び特別地方公共団体とする。
-:anonym-paragraph:[OldNum="true"]普通地方公共団体は、都道府県及び市町村とする。
-:anonym-paragraph:[OldNum="true"]特別地方公共団体は、特別区、地方公共団体の組合及び財産区とする。
+②　普通地方公共団体は、都道府県及び市町村とする。
+③　特別地方公共団体は、特別区、地方公共団体の組合及び財産区とする。
 `;
         const expectedErrorMessages: string[] = [];
         const expectedRendered = `\
 第一条の三　地方公共団体は、普通地方公共団体及び特別地方公共団体とする。
-:anonym-paragraph:[OldNum="true"]普通地方公共団体は、都道府県及び市町村とする。
-:anonym-paragraph:[OldNum="true"]特別地方公共団体は、特別区、地方公共団体の組合及び財産区とする。
+②　普通地方公共団体は、都道府県及び市町村とする。
+③　特別地方公共団体は、特別区、地方公共団体の組合及び財産区とする。
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
@@ -375,9 +373,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -400,7 +396,6 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 {
                     tag: "Paragraph",
                     attr: {
-                        OldStyle: "false",
                         OldNum: "true",
                         Num: "2"
                     },
@@ -426,7 +421,127 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 {
                     tag: "Paragraph",
                     attr: {
-                        OldStyle: "false",
+                        OldNum: "true",
+                        Num: "3"
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["特別地方公共団体は、特別区、地方公共団体の組合及び財産区とする。"]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $article.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = articleToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+第一条の三　地方公共団体は、普通地方公共団体及び特別地方公共団体とする。
+:anonym-paragraph:[OldNum="true"]普通地方公共団体は、都道府県及び市町村とする。
+:anonym-paragraph:[OldNum="true"]特別地方公共団体は、特別区、地方公共団体の組合及び財産区とする。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+第一条の三　地方公共団体は、普通地方公共団体及び特別地方公共団体とする。
+②　普通地方公共団体は、都道府県及び市町村とする。
+③　特別地方公共団体は、特別区、地方公共団体の組合及び財産区とする。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Article",
+            attr: {
+                Delete: "false",
+                Hide: "false"
+            },
+            children: [
+                {
+                    tag: "ArticleTitle",
+                    attr: {},
+                    children: ["第一条の三"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["地方公共団体は、普通地方公共団体及び特別地方公共団体とする。"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        OldNum: "true",
+                        Num: "2"
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["普通地方公共団体は、都道府県及び市町村とする。"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
                         OldNum: "true",
                         Num: "3"
                     },
@@ -492,9 +607,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {
-                OldStyle: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ParagraphCaption",
@@ -588,9 +701,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {
-                OldStyle: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ParagraphNum",
@@ -679,9 +790,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {
-                OldStyle: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ParagraphNum",
@@ -788,9 +897,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {
-                OldStyle: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ParagraphCaption",
@@ -963,9 +1070,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {
-                OldStyle: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ParagraphNum",
@@ -1052,9 +1157,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1093,9 +1196,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -1189,9 +1290,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1326,9 +1425,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1463,9 +1560,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1600,9 +1695,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1641,9 +1734,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -1737,9 +1828,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1874,9 +1963,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1926,6 +2013,142 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                                 },
                                                 {
                                                     tag: "Subitem5Sentence",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "Column",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {},
+                                                                    children: ["命令等"]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            tag: "Column",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {},
+                                                                    children: ["内閣又は行政機関が定める次に掲げるものをいう。"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $article.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = articleToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+第十三条　法の一部を次のように改正する。
+  第十七条に次の一項を加える。
+    # ⑤　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+第十三条　法の一部を次のように改正する。
+  第十七条に次の一項を加える。
+    # ⑤　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Article",
+            attr: {
+                Delete: "false",
+                Hide: "false"
+            },
+            children: [
+                {
+                    tag: "ArticleTitle",
+                    attr: {},
+                    children: ["第十三条"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["法の一部を次のように改正する。"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "AmendProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "AmendProvisionSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["第十七条に次の一項を加える。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "NewProvision",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Paragraph",
+                                            attr: {
+                                                OldNum: "true",
+                                                Num: "5",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ParagraphNum",
+                                                    attr: {},
+                                                    children: []
+                                                },
+                                                {
+                                                    tag: "ParagraphSentence",
                                                     attr: {},
                                                     children: [
                                                         {

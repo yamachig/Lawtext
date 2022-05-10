@@ -56,9 +56,7 @@ describe("Test HTML amendProvision", () => {
                                 },
                                 {
                                     tag: "Paragraph",
-                                    attr: {
-                                        OldStyle: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ParagraphNum",
@@ -172,9 +170,7 @@ describe("Test DOCX amendProvision", () => {
                                 },
                                 {
                                     tag: "Paragraph",
-                                    attr: {
-                                        OldStyle: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ParagraphNum",

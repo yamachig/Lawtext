@@ -164,7 +164,7 @@ export const $article: WithErrorRule<std.Article> = factory
             }
 
             const firstParagraph = newStdEL("Paragraph");
-            firstParagraph.attr.OldStyle = "false";
+            // firstParagraph.attr.OldStyle = "false";
 
             const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
             firstParagraph.children.push(newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null));

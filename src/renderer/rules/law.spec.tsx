@@ -78,9 +78,7 @@ describe("Test HTML law", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {
-                                                        OldStyle: "false",
-                                                    },
+                                                    attr: {},
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -102,9 +100,7 @@ describe("Test HTML law", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {
-                                                        OldStyle: "false",
-                                                    },
+                                                    attr: {},
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -267,9 +263,7 @@ describe("Test DOCX law", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {
-                                                        OldStyle: "false",
-                                                    },
+                                                    attr: {},
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -291,9 +285,7 @@ describe("Test DOCX law", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {
-                                                        OldStyle: "false",
-                                                    },
+                                                    attr: {},
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",

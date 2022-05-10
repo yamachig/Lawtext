@@ -45,9 +45,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {
-                                OldStyle: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ParagraphNum",
@@ -88,9 +86,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {
-                                OldStyle: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ParagraphNum",
@@ -172,9 +168,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {
-                                OldStyle: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ParagraphNum",
@@ -237,9 +231,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
             children: [
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -311,9 +303,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
             children: [
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -393,9 +383,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
             children: [
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphCaption",
@@ -422,9 +410,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphCaption",

@@ -318,9 +318,7 @@ describe("Test $law and lawToLines", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {
-                                                        OldStyle: "false"
-                                                    },
+                                                    attr: {},
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -342,9 +340,7 @@ describe("Test $law and lawToLines", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {
-                                                        OldStyle: "false"
-                                                    },
+                                                    attr: {},
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -401,9 +397,7 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -504,9 +498,7 @@ describe("Test $law and lawToLines", () => {
                             children: [
                                 {
                                     tag: "Paragraph",
-                                    attr: {
-                                        OldStyle: "false"
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ParagraphNum",
@@ -697,9 +689,7 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -829,9 +819,7 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -877,9 +865,7 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -934,9 +920,7 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {
-                                                OldStyle: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",

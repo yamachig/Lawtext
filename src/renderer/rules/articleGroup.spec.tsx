@@ -63,9 +63,7 @@ describe("Test HTML articleGroup", () => {
                                 },
                                 {
                                     tag: "Paragraph",
-                                    attr: {
-                                        OldStyle: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ParagraphNum",
@@ -121,9 +119,7 @@ describe("Test HTML articleGroup", () => {
                                 },
                                 {
                                     tag: "Paragraph",
-                                    attr: {
-                                        OldStyle: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ParagraphNum",
@@ -278,9 +274,7 @@ describe("Test DOCX articleGroup", () => {
                                 },
                                 {
                                     tag: "Paragraph",
-                                    attr: {
-                                        OldStyle: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ParagraphNum",
@@ -336,9 +330,7 @@ describe("Test DOCX articleGroup", () => {
                                 },
                                 {
                                     tag: "Paragraph",
-                                    attr: {
-                                        OldStyle: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ParagraphNum",

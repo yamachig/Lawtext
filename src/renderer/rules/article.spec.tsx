@@ -37,9 +37,7 @@ describe("Test HTML article", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false",
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -202,9 +200,7 @@ describe("Test HTML article", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false",
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -333,9 +329,7 @@ describe("Test DOCX article", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false",
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -498,9 +492,7 @@ describe("Test DOCX article", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false",
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",

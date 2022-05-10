@@ -48,9 +48,7 @@ describe("Test $article and articleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -213,9 +211,7 @@ describe("Test $article and articleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -284,9 +280,7 @@ describe("Test $article and articleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {
-                        OldStyle: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ParagraphNum",

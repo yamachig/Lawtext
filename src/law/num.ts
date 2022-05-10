@@ -47,12 +47,14 @@ const kanjiDigitToNumDict = {
     "五": 5, "六": 6, "七": 7, "八": 8, "九": 9,
 } as const;
 
+export const circledDigitChars = "⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿";
 export const irohaChars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
 export const aiuChars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
 
 const reNamedNum = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
 const reIrohaChar = new RegExp(`[${irohaChars}]`);
 const reAiuChar = new RegExp(`[${aiuChars}]`);
+const reCircledDigit = new RegExp(`[${circledDigitChars}]`);
 const reItemNum = /^\D*(\d+)\D*$/;
 
 export const parseRomanNum = (text: string): number => {
@@ -148,6 +150,12 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
             }
 
         } else { throw assertNever(kanaMode); }
+
+        m = reCircledDigit.exec(subtext);
+        if (m) {
+            numsGroup.push(String(circledDigitChars.indexOf(m[0])));
+            continue;
+        }
 
         const replacedSubtext = replaceWideNum(subtext);
         m = reItemNum.exec(replacedSubtext);

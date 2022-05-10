@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 import { ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine } from "../../../node/cst/line";
 import { isParagraph, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
@@ -20,6 +21,9 @@ import $figStruct, { figStructToLines } from "./$figStruct";
 import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
 import { paragraphItemTitleMatch, paragraphItemTitleRule, unknownParagraphItemTitleMatch } from "../../cst/rules/$paragraphItemLine";
 import { anonymParagraphItemControls, autoTagControls, paragraphItemControls } from "../../cst/rules/$tagControl";
+import { circledDigitChars, parseNamedNum } from "../../../law/num";
+
+const reOldParagraphNum = new RegExp(`^(?:○[0123456789０１２３４５６７８９]+|[${circledDigitChars}])`);
 
 interface ParagraphItemToLinesOptions {
     firstArticleParagraphArticleTitle?: (string | SentenceChildEL)[],
@@ -99,24 +103,27 @@ export const paragraphItemToLines = (
         firstArticleParagraphArticleTitle
         && firstArticleParagraphArticleTitle.length > 0
     ) Title.push(...firstArticleParagraphArticleTitle);
-    const paragraphItemTitleStr = sentenceChildrenToString(Title);
+    let paragraphItemTitleStr = sentenceChildrenToString(Title);
 
-    const OldNum = (paragraphItemTitleStr.length === 0 && el.tag === "Paragraph" && el.attr.OldNum === "true") ? "true" : undefined;
+    const oldNum = (paragraphItemTitleStr.length === 0 && el.tag === "Paragraph" && el.attr.OldNum === "true");
+    if (oldNum) {
+        paragraphItemTitleStr = circledDigitChars[Number(el.attr.Num)];
+    }
     const MissingNum = (secondaryArticleParagraph && Title.length === 0 && el.tag === "Paragraph" && el.attr.OldNum !== "true") ? "true" : undefined;
 
     const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
     const sentencesArray = columnsOrSentencesToSentencesArray(SentenceChildren);
-    if (OldNum) {
-        sentencesArray[0].attrEntries.unshift(
-            new AttrEntry(
-                `[OldNum="${OldNum}"]`,
-                ["OldNum", "${OldNum}"],
-                null,
-                "",
-                null,
-            )
-        );
-    }
+    // if (OldNum) {
+    //     sentencesArray[0].attrEntries.unshift(
+    //         new AttrEntry(
+    //             `[OldNum="${OldNum}"]`,
+    //             ["OldNum", "${OldNum}"],
+    //             null,
+    //             "",
+    //             null,
+    //         )
+    //     );
+    // }
     if (MissingNum) {
         sentencesArray[0].attrEntries.unshift(
             new AttrEntry(
@@ -155,39 +162,61 @@ export const paragraphItemToLines = (
             lineEndText: CST.EOL,
         }));
     } else if (paragraphItemTitleStr.length > 0) {
+        const controls: Control[] = [];
+
+        if (
+            (el.tag === defaultTag)
+            && unknownParagraphItemTitleMatch(paragraphItemTitleStr).ok
+        ) {
+            // e.g.
+            //  │第一条・・・
+            //  │　一    <- Item
+            //  │　１    <- Item
+            //   -> If "一" or "１" appears as Item, no control needed.
+
+        } else if (
+            (
+                (el.tag in paragraphItemTitleRule)
+                && (
+                    paragraphItemTitleMatch[el.tag as keyof typeof paragraphItemTitleRule](paragraphItemTitleStr).ok
+                )
+            )
+            || (
+                (el.tag === "Paragraph")
+                && (el.attr.OldNum === "true")
+                && reOldParagraphNum.test(paragraphItemTitleStr)
+            )
+        ) {
+            // e.g.
+            //  │第一条・・・
+            //  │　# １             <- Paragraph
+            //   -> If "１" appears as Paragraph, auto control needed.
+            controls.push(new Control(
+                autoTagControls[0],
+                null,
+                " ",
+                null,
+            ));
+
+        } else {
+            // e.g.
+            //  │第一条・・・
+            //  │　:paragraph:一    <- Paragraph
+            //   -> If "一" appears as Paragraph, specified control needed.
+
+            controls.push(new Control(
+                paragraphItemControls[el.tag],
+                null,
+                "",
+                null,
+            ));
+        }
+
         lines.push(new ParagraphItemLine({
             range: null,
             indentTexts,
             mainTag: el.tag,
-            controls: (
-                (
-                    (el.tag === defaultTag)
-                    && unknownParagraphItemTitleMatch(paragraphItemTitleStr).ok
-                )
-                    ? []
-                    : (
-                        (el.tag in paragraphItemTitleRule)
-                        && (
-                            paragraphItemTitleMatch[el.tag as keyof typeof paragraphItemTitleRule](paragraphItemTitleStr).ok
-                        )
-                    )
-                        ? [
-                            new Control(
-                                autoTagControls[0],
-                                null,
-                                " ",
-                                null,
-                            )
-                        ]
-                        : [
-                            new Control(
-                                paragraphItemControls[el.tag],
-                                null,
-                                "",
-                                null,
-                            )
-                        ]
-            ),
+            controls,
             title: paragraphItemTitleStr,
             midSpace: (sentencesArray.length === 0) ? "" : CST.MARGIN,
             sentencesArray,
@@ -387,7 +416,7 @@ export const paragraphItemFromAuto = (
     const tag = paragraphItem.tag === "__AutoParagraphItem" ? defautTag : paragraphItem.tag;
     const attr = {} as Record<string, string>;
     if (tag === "Paragraph") {
-        attr.OldStyle = "false";
+        // attr.OldStyle = "false";
     } else {
         attr.Delete = "false";
     }
@@ -417,6 +446,16 @@ export const paragraphItemFromAuto = (
             return c;
         }
     });
+
+    if (tag === "Paragraph") {
+        const titleEL = children.find(std.isParagraphItemTitle);
+        const titleStr = titleEL ? titleEL.text() : "";
+        if (titleEL && reOldParagraphNum.test(titleStr)) {
+            attr.OldNum = "true";
+            attr.Num = parseNamedNum(titleStr);
+            titleEL.children.splice(0, titleEL.children.length);
+        }
+    }
 
     return newStdEL(
         tag,
@@ -470,7 +509,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
 
             if (std.isParagraphItem(paragraphItem)) {
                 if (isParagraph(paragraphItem)) {
-                    (paragraphItem as std.Paragraph).attr.OldStyle = "false";
+                    // (paragraphItem as std.Paragraph).attr.OldStyle = "false";
                 } else {
                     (paragraphItem as Diff<std.ParagraphItem, std.Paragraph>).attr.Delete = "false";
                 }
@@ -605,7 +644,7 @@ export const $noControlAnonymParagraph: WithErrorRule<std.Paragraph> = factory
             const paragraph = newStdEL(
                 "Paragraph",
                 {
-                    OldStyle: "false",
+                    // OldStyle: "false",
                 },
                 [
                     newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null),

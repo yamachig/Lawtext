@@ -31,7 +31,7 @@ describe("Test $preamble and preambleToLines", () => {
             children: [
                 {
                     tag: "Paragraph",
-                    attr: { Num: "1", OldStyle: "false" },
+                    attr: { Num: "1" },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -63,7 +63,7 @@ describe("Test $preamble and preambleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: { Num: "2", OldStyle: "false" },
+                    attr: { Num: "2" },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -85,7 +85,7 @@ describe("Test $preamble and preambleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: { Num: "3", OldStyle: "false" },
+                    attr: { Num: "3" },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -112,7 +112,7 @@ describe("Test $preamble and preambleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: { Num: "4", OldStyle: "false" },
+                    attr: { Num: "4" },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -199,7 +199,7 @@ describe("Test $preamble and preambleToLines", () => {
             children: [
                 {
                     tag: "Paragraph",
-                    attr: { Num: "1", OldStyle: "false" },
+                    attr: { Num: "1" },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -231,7 +231,7 @@ describe("Test $preamble and preambleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: { Num: "2", OldStyle: "false" },
+                    attr: { Num: "2" },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -253,7 +253,7 @@ describe("Test $preamble and preambleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: { Num: "3", OldStyle: "false" },
+                    attr: { Num: "3" },
                     children: [
                         {
                             tag: "ParagraphNum",

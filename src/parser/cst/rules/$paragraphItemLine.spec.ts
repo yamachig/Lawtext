@@ -325,6 +325,75 @@ describe("Test $paragraphItemLine", () => {
         }
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+②　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 30,
+        } as const;
+        const expectedText = `\
+②　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`;
+        const expectedValue = {
+            type: LineType.PIT,
+            indentTexts: [] as string[],
+            mainTag: null,
+            controls: [] as Controls,
+            title: "②",
+            midSpace: "　",
+            lineEndText: `
+`,
+        } as const;
+        const result = $paragraphItemLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+  # ②　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 34,
+        } as const;
+        const expectedText = `\
+  # ②　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`;
+        const expectedValue = {
+            type: LineType.PIT,
+            indentTexts: ["  "] as string[],
+            mainTag: "Paragraph",
+            controls: [
+                {
+                    control: "#",
+                    controlRange: [2, 3],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [3, 4],
+                }
+            ] as Controls,
+            title: "②",
+            midSpace: "　",
+            lineEndText: `
+`,
+        } as const;
+        const result = $paragraphItemLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;

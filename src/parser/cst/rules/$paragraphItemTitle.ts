@@ -1,11 +1,13 @@
 import factory from "../factory";
 import { kanjiDigits } from "./lexical";
 import { WithErrorRule } from "../util";
-import { irohaChars } from "../../../law/num";
+import { circledDigitChars, irohaChars } from "../../../law/num";
+
+const reStdParagraphNum = new RegExp(`^(?:○?[0123456789０１２３４５６７８９]+|[${circledDigitChars}])`);
 
 export const $stdParagraphNum = factory
     .withName("stdParagraphNum")
-    .regExp(/^○?[0123456789０１２３４５６７８９]+/) // e.g. "１", "○２０"
+    .regExp(reStdParagraphNum) // e.g. "１", "２０",  "○１", "○２０", "①"
     ;
 
 export const $stdItemTitle = factory
@@ -30,7 +32,7 @@ export const $stdSubitem3Title = factory
 
 const paragraphItemTitlePtn1 = "(?:[0123456789０１２３４５６７８９]+|[a-zA-Zａ-ｚＡ-Ｚ])[.．]"; // e.g. "１．", "a."
 const paragraphItemTitlePtn2 = `[(（](?:[0123456789０１２３４５６７８９]+|[${irohaChars}]|[${kanjiDigits}]+|[a-zA-Zａ-ｚＡ-Ｚ]+)[)）]`; // e.g. "（十二）", "（イ）", "(１０)", "(a)"
-const paragraphItemTitlePtn3 = `(?:[0123456789０１２３４５６７８９]+|[${irohaChars}]|[${kanjiDigits}]+|[a-zA-Zａ-ｚＡ-Ｚ]+|[⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿]|[⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇])`; // e.g. "１０", "イ", "十一", "①", "⑴"
+const paragraphItemTitlePtn3 = `(?:[0123456789０１２３４５６７８９]+|[${irohaChars}]|[${kanjiDigits}]+|[a-zA-Zａ-ｚＡ-Ｚ]+|[${circledDigitChars}]|[⑴⑵⑶⑷⑸⑹⑺⑻⑼⑽⑾⑿⒀⒁⒂⒃⒄⒅⒆⒇])`; // e.g. "１０", "イ", "十一", "①", "⑴"
 const paragraphItemTitleFragmentPtn = `(?:${paragraphItemTitlePtn1}|${paragraphItemTitlePtn2}|${paragraphItemTitlePtn3})`;
 const paragraphItemTitlePtn = `^○?${paragraphItemTitleFragmentPtn}(?:[のノ](?:${paragraphItemTitleFragmentPtn}))*`;
 export const $paragraphItemTitle: WithErrorRule<string> = factory
