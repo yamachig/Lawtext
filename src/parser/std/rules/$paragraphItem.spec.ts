@@ -64,9 +64,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -105,9 +103,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -155,9 +151,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -179,9 +173,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -205,9 +197,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -244,9 +234,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -270,9 +258,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -309,9 +295,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -361,10 +345,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",
@@ -482,10 +463,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",
@@ -632,9 +610,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -721,9 +697,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -810,9 +784,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -922,9 +894,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1084,9 +1054,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        "Delete": "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1145,10 +1113,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1278,10 +1243,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1329,9 +1291,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Subitem1",
-                                            attr: {
-                                                Delete: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "Subitem1Title",
@@ -1413,10 +1373,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1464,9 +1421,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Subitem1",
-                                            attr: {
-                                                Delete: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "Subitem1Title",
@@ -1548,10 +1503,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1599,9 +1551,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Item",
-                                            attr: {
-                                                Delete: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ItemTitle",
@@ -1683,10 +1633,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1816,10 +1763,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1867,9 +1811,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Item",
-                                            attr: {
-                                                Delete: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ItemTitle",
@@ -1951,10 +1893,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",
@@ -2002,9 +1941,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Subitem5",
-                                            attr: {
-                                                Delete: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "Subitem5Title",
@@ -2086,10 +2023,7 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleTitle",

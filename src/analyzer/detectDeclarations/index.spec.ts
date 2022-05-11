@@ -821,10 +821,7 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -931,7 +928,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-                                                        Delete: "false",
+
                                                     },
                                                     children: [
                                                         {
@@ -1120,7 +1117,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-                                                        Delete: "false",
+
                                                     },
                                                     children: [
                                                         {
@@ -1288,10 +1285,7 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -1500,7 +1494,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-                                                        Delete: "false",
+
                                                     },
                                                     children: [
                                                         {
@@ -1573,7 +1567,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-                                                        Delete: "false",
+
                                                     },
                                                     children: [
                                                         {
@@ -1819,10 +1813,7 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -1964,7 +1955,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-                                                        Delete: "false",
+
                                                     },
                                                     children: [
                                                         {
@@ -2037,7 +2028,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-                                                        Delete: "false",
+
                                                     },
                                                     children: [
                                                         {
@@ -2210,10 +2201,7 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -2613,10 +2601,7 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -2870,10 +2855,7 @@ describe("Test detectDeclarations", () => {
                                 },
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -3201,10 +3183,7 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Chapter",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                        Num: "1",
+                                    attr: { Num: "1",
                                     },
                                     children: [
                                         {
@@ -3220,10 +3199,7 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {
-                                                Delete: "false",
-                                                Hide: "false",
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ArticleTitle",
@@ -3323,7 +3299,7 @@ describe("Test detectDeclarations", () => {
                                                         {
                                                             tag: "Item",
                                                             attr: {
-                                                                Delete: "false",
+
                                                             },
                                                             children: [
                                                                 {
@@ -3416,10 +3392,7 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {
-                                                Delete: "false",
-                                                Hide: "false",
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ArticleTitle",
@@ -3811,7 +3784,7 @@ describe("Test detectDeclarations", () => {
                                                         {
                                                             tag: "Item",
                                                             attr: {
-                                                                Delete: "false",
+
                                                             },
                                                             children: [
                                                                 {

@@ -883,9 +883,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1012,9 +1010,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1036,9 +1032,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1060,9 +1054,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1084,9 +1076,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1108,9 +1098,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1132,9 +1120,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1156,9 +1142,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1180,9 +1164,7 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1263,11 +1245,11 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
                 },
                 {
                     tag: "StyleStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Style",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -1335,11 +1317,11 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
                 },
                 {
                     tag: "StyleStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Style",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -1407,11 +1389,11 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
                 },
                 {
                     tag: "StyleStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Style",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -1486,11 +1468,11 @@ describe("Test $appdxStyle and appdxItemToLines", () => {
                 },
                 {
                     tag: "StyleStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Style",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -1578,11 +1560,11 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
                 },
                 {
                     tag: "FormatStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Format",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -1650,11 +1632,11 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
                 },
                 {
                     tag: "FormatStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Format",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -1722,11 +1704,11 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
                 },
                 {
                     tag: "FormatStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Format",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -1801,11 +1783,11 @@ describe("Test $appdxFormat and appdxItemToLines", () => {
                 },
                 {
                     tag: "FormatStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Format",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -1891,7 +1873,7 @@ describe("Test $appdxFig and appdxItemToLines", () => {
                 },
                 {
                     tag: "FigStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -1955,7 +1937,7 @@ describe("Test $appdxFig and appdxItemToLines", () => {
                 },
                 {
                     tag: "FigStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -2019,7 +2001,7 @@ describe("Test $appdxFig and appdxItemToLines", () => {
                 },
                 {
                     tag: "FigStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -2089,11 +2071,11 @@ describe("Test $appdxNote and appdxItemToLines", () => {
                 },
                 {
                     tag: "NoteStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Note",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -2161,11 +2143,11 @@ describe("Test $appdxNote and appdxItemToLines", () => {
                 },
                 {
                     tag: "NoteStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Note",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -2233,11 +2215,11 @@ describe("Test $appdxNote and appdxItemToLines", () => {
                 },
                 {
                     tag: "NoteStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Note",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -2312,11 +2294,11 @@ describe("Test $appdxNote and appdxItemToLines", () => {
                 },
                 {
                     tag: "NoteStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Note",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",

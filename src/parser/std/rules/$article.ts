@@ -136,9 +136,6 @@ export const $article: WithErrorRule<std.Article> = factory
                 ...supplNotes.map(n => n.errors).flat(),
             ];
 
-            article.attr.Delete = "false";
-            article.attr.Hide = "false";
-
             if (captionLine) {
                 article.children.push(
                     newStdEL(

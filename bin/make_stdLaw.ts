@@ -34,6 +34,7 @@ function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
 
 elementIfs.push(`\
 import { EL } from "../../node/el";
+import { Diff } from "../../util";
 `);
 elementIfs.push(`\
 export interface __EL extends EL {
@@ -68,6 +69,9 @@ export interface ${element.attr.name ?? ""} extends _StdEL {
 export const is${element.attr.name ?? ""} = (obj: EL | string): obj is ${element.attr.name ?? ""} => {
     return (typeof obj !== "string") && (obj.tag === "${element.attr.name ?? ""}");
 };
+
+const defaultAttrOf${element.attr.name ?? ""} = {
+} as const;
 `);
 
     } else if (element.attr.type) {
@@ -83,6 +87,9 @@ export interface ${element.attr.name ?? ""} extends _StdEL {
 export const is${element.attr.name ?? ""} = (obj: EL | string): obj is ${element.attr.name ?? ""} => {
     return (typeof obj !== "string") && (obj.tag === "${element.attr.name ?? ""}");
 };
+
+const defaultAttrOf${element.attr.name ?? ""} = {
+} as const;
 `);
 
     } else {
@@ -97,15 +104,20 @@ export const is${element.attr.name ?? ""} = (obj: EL | string): obj is ${element
         if (isMixed2) childTags.add("string").add("StdEL").add("__EL");
 
         const attrLines: string[] = [];
+        const defaultAttrLines: string[] = [];
         for (const attr of getByTagName(element, "xs:attribute")) {
             const name = attr.attr.name ?? "";
             const optional = attr.attr.use === "required" ? "" : "?";
             const enums = new Set([...getByTagName(attr, "xs:enumeration")].map(el => el.attr.value));
             const attrType = enums.size === 0 ? "string" : [...enums].map(s => `"${s ?? ""}"`).join(" | ");
             attrLines.push(`        ${name}${optional}: ${attrType},`);
+            if (attr.attr.default) {
+                defaultAttrLines.push(`    ${name}: "${attr.attr.default}",`);
+            }
         }
 
         const attrsType = attrLines.length === 0 ? "Record<string, never>" : `{${["", ...attrLines, "    "].join("\r\n")}}`;
+        const defaultAttrs = attrLines.length === 0 ? "{}" : `{${["", ...defaultAttrLines, ""].join("\r\n")}}`;
         const childrenType = childTags.size === 0 ? "never[]" : `Array<(${[...childTags].join(" | ")})>`;
 
         elementIfs.push(`\
@@ -118,6 +130,8 @@ export interface ${element.attr.name ?? ""} extends _StdEL {
 export const is${element.attr.name ?? ""} = (obj: EL | string): obj is ${element.attr.name ?? ""} => {
     return (typeof obj !== "string") && (obj.tag === "${element.attr.name ?? ""}");
 };
+
+const defaultAttrOf${element.attr.name ?? ""} = ${defaultAttrs} as const;
 `);
     }
 }
@@ -134,6 +148,10 @@ ${stdElTags.map(tag => `    | ${tag}`).join("\r\n")}
 export const stdELTags = [
 ${stdElTags.map(tag => `    "${tag}",`).join("\r\n")}
 ] as const;
+
+export const defaultAttrs = {
+${stdElTags.map(tag => `    ${tag}: defaultAttrOf${tag},`).join("\r\n")}
+} as const;
 
 export type StdELTag = typeof stdELTags[number];
 

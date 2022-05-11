@@ -28,10 +28,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
             children: [
                 {
                     tag: "Article",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false"
-                    },
+                    attr: {                    },
                     children: [
                         {
                             tag: "ArticleCaption",
@@ -69,10 +66,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
                 },
                 {
                     tag: "Article",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false"
-                    },
+                    attr: {                    },
                     children: [
                         {
                             tag: "ArticleCaption",
@@ -151,10 +145,7 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
             children: [
                 {
                     tag: "Article",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false"
-                    },
+                    attr: {                    },
                     children: [
                         {
                             tag: "ArticleCaption",

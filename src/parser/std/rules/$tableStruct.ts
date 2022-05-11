@@ -39,6 +39,7 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                 lineEndText: CST.EOL,
             });
             for (const [name, value] of Object.entries(cell.attr)) {
+                if ((std.defaultAttrs[cell.tag] as Record<string, string>)[name] === value) continue;
                 cellLine.attrEntries.push(
                     new AttrEntry(
                         `[${name}="${value}"]`,

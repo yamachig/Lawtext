@@ -557,11 +557,11 @@ describe("Test $supplProvisionAppdxStyle and supplProvisionAppdxItemToLines", ()
                 },
                 {
                     tag: "StyleStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Style",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -628,11 +628,11 @@ describe("Test $supplProvisionAppdxStyle and supplProvisionAppdxItemToLines", ()
                 },
                 {
                     tag: "StyleStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Style",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",
@@ -699,11 +699,11 @@ describe("Test $supplProvisionAppdxStyle and supplProvisionAppdxItemToLines", ()
                 },
                 {
                     tag: "StyleStruct",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Style",
-                            attr: { },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Fig",

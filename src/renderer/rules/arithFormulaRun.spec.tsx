@@ -73,7 +73,7 @@ ${rendered}
                         {
                             tag: "Item",
                             attr: {
-                                Delete: "false",
+
                             },
                             children: [
                                 {
@@ -196,7 +196,7 @@ describe("Test DOCX arithFormulaRun", () => {
                         {
                             tag: "Item",
                             attr: {
-                                Delete: "false",
+
                             },
                             children: [
                                 {

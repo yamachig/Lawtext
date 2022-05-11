@@ -288,10 +288,7 @@ describe("Test $law and lawToLines", () => {
                             children: [
                                 {
                                     tag: "Chapter",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                        Num: "1"
+                                    attr: { Num: "1"
                                     },
                                     children: [
                                         {
@@ -301,10 +298,7 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {
-                                                Delete: "false",
-                                                Hide: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",
@@ -380,10 +374,7 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false"
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -465,8 +456,8 @@ describe("Test $law and lawToLines", () => {
 
 平成十四年四月から平成十五年三月までの月分の次の表の上欄に掲げる額については、同表の下欄に掲げる規定（他の法令において、引用し、準用し、又はその例による場合を含む。）にかかわらず、これらの規定による平成十年の年平均の物価指数（従前の総務庁において作成した全国消費者物価指数をいう。）に対する平成十三年の年平均の物価指数（総務省において作成する全国消費者物価指数をいう。）の比率を基準とする改定は、行わない。
 
-  * - [BorderBottom="solid"][BorderLeft="solid"][BorderRight="solid"][BorderTop="solid"]国民年金法（昭和三十四年法律第百四十一号）による年金たる給付（付加年金を除く。）の額
-    - [BorderBottom="solid"][BorderLeft="solid"][BorderRight="solid"][BorderTop="solid"]国民年金法第十六条の二
+  * - 国民年金法（昭和三十四年法律第百四十一号）による年金たる給付（付加年金を除く。）の額
+    - 国民年金法第十六条の二
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Law",
@@ -677,10 +668,7 @@ describe("Test $law and lawToLines", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false"
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleTitle",
@@ -802,10 +790,7 @@ describe("Test $law and lawToLines", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false"
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -839,9 +824,7 @@ describe("Test $law and lawToLines", () => {
                                                 },
                                                 {
                                                     tag: "Item",
-                                                    attr: {
-                                                        Delete: "false"
-                                                    },
+                                                    attr: {},
                                                     children: [
                                                         {
                                                             tag: "ItemTitle",
@@ -903,10 +886,7 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "Article",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false"
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "ArticleCaption",

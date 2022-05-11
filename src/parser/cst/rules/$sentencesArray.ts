@@ -18,6 +18,7 @@ export const sentencesArrayToString = (
     for (const sentences of sentencesArray) {
         runs.push(sentences.leadingSpace);
         for (const attrEntry of sentences.attrEntries) {
+            if ((std.defaultAttrs.Sentence as Record<string, string>)[attrEntry.entry[0]] === attrEntry.entry[1]) continue;
             runs.push(attrEntry.entryText + attrEntry.trailingSpace);
         }
         for (const sentence of sentences.sentences) {

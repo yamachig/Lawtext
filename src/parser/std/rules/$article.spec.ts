@@ -31,10 +31,7 @@ describe("Test $article and articleToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false",
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleCaption",
@@ -68,9 +65,7 @@ describe("Test $article and articleToLines", () => {
                         },
                         {
                             tag: "Item",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ItemTitle",
@@ -109,9 +104,7 @@ describe("Test $article and articleToLines", () => {
                         },
                         {
                             tag: "Item",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ItemTitle",
@@ -159,9 +152,7 @@ describe("Test $article and articleToLines", () => {
                                 },
                                 {
                                     tag: "Subitem1",
-                                    attr: {
-                                        Delete: "false"
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "Subitem1Title",
@@ -183,9 +174,7 @@ describe("Test $article and articleToLines", () => {
                                 },
                                 {
                                     tag: "Subitem1",
-                                    attr: {
-                                        Delete: "false"
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "Subitem1Title",
@@ -263,10 +252,7 @@ describe("Test $article and articleToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false",
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleCaption",
@@ -300,9 +286,7 @@ describe("Test $article and articleToLines", () => {
                         },
                         {
                             tag: "Item",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ItemTitle",

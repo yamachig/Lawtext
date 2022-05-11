@@ -21,7 +21,7 @@ describe("Test HTML paragraphItem", () => {
         const input = loadEL({
             tag: "Item",
             attr: {
-                Delete: "false",
+
             },
             children: [
                 {
@@ -106,7 +106,7 @@ describe("Test DOCX paragraphItem", () => {
         const input = loadEL({
             tag: "Item",
             attr: {
-                Delete: "false",
+
             },
             children: [
                 {

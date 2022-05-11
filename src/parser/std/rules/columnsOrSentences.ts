@@ -20,11 +20,11 @@ export const columnsOrSentencesToSentencesArray = (
         const el = els[i];
 
         if (el.tag === "Sentence") {
-            if (el.attr.WritingMode === "horizontal") {
+            if (el.attr.WritingMode && (el.attr.WritingMode !== std.defaultAttrs.Sentence.WritingMode)) {
                 sentences.attrEntries.unshift(
                     new AttrEntry(
-                        "[WritingMode=\"horizontal\"]",
-                        ["WritingMode", "horizontal"],
+                        `[WritingMode="${el.attr.WritingMode}"]`,
+                        ["WritingMode", el.attr.WritingMode],
                         null,
                         "",
                         null,
@@ -35,11 +35,11 @@ export const columnsOrSentencesToSentencesArray = (
 
         } else if (el.tag === "Column") {
             sentences.leadingSpace = i === 0 ? "" : CST.MARGIN;
-            if (el.attr.LineBreak === "true") {
+            if (el.attr.LineBreak && (el.attr.LineBreak !== std.defaultAttrs.Column.LineBreak)) {
                 sentences.attrEntries.unshift(
                     new AttrEntry(
-                        "[LineBreak=\"true\"]",
-                        ["LineBreak", "true"],
+                        `[LineBreak="${el.attr.LineBreak}"]`,
+                        ["LineBreak", el.attr.LineBreak],
                         null,
                         "",
                         null,

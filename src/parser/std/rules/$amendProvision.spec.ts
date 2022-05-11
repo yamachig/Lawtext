@@ -34,10 +34,7 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -107,10 +104,7 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                                     children: [
                                         {
                                             tag: "Article",
-                                            attr: {
-                                                Delete: "false",
-                                                Hide: "false"
-                                            },
+                                            attr: {                                            },
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",
@@ -210,10 +204,7 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -333,10 +324,7 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -577,10 +565,7 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                     children: [
                         {
                             tag: "Chapter",
-                            attr: {
-                                Delete: "false",
-                                Hide: "false",
-                                Num: "3"
+                            attr: {                                Num: "3"
                             },
                             children: [
                                 {
@@ -590,10 +575,7 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                                 },
                                 {
                                     tag: "Section",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                        Num: "1"
+                                    attr: {                                        Num: "1"
                                     },
                                     children: [
                                         {
@@ -603,10 +585,7 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {
-                                                Delete: "false",
-                                                Hide: "false"
-                                            },
+                                            attr: {                                            },
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",

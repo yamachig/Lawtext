@@ -71,7 +71,7 @@ describe("Test $remarks and remarksToLines", () => {
                 {
                     tag: "Item",
                     attr: {
-                        Delete: "false",
+
                     },
                     children: [
                         {
@@ -146,9 +146,7 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -170,9 +168,7 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -192,9 +188,7 @@ describe("Test $remarks and remarksToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -216,9 +210,7 @@ describe("Test $remarks and remarksToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -297,7 +289,7 @@ describe("Test $remarks and remarksToLines", () => {
                         {
                             tag: "Item",
                             attr: {
-                                Delete: "false",
+
                             },
                             children: [
                                 {
@@ -403,9 +395,7 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -549,9 +539,7 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -613,9 +601,7 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -734,9 +720,7 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {
-                        Delete: "false"
-                    },
+                    attr: {},
                     children: [
                         {
                             tag: "ItemTitle",
@@ -756,9 +740,7 @@ describe("Test $remarks and remarksToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -772,9 +754,7 @@ describe("Test $remarks and remarksToLines", () => {
                                 },
                                 {
                                     tag: "Subitem2",
-                                    attr: {
-                                        Delete: "false"
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "Subitem2Title",
@@ -856,9 +836,7 @@ describe("Test $remarks and remarksToLines", () => {
                         },
                         {
                             tag: "Item",
-                            attr: {
-                                Delete: "false"
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ItemTitle",
@@ -878,9 +856,7 @@ describe("Test $remarks and remarksToLines", () => {
                                 },
                                 {
                                     tag: "Subitem1",
-                                    attr: {
-                                        Delete: "false"
-                                    },
+                                    attr: {},
                                     children: [
                                         {
                                             tag: "Subitem1Title",
@@ -894,9 +870,7 @@ describe("Test $remarks and remarksToLines", () => {
                                         },
                                         {
                                             tag: "Subitem2",
-                                            attr: {
-                                                Delete: "false"
-                                            },
+                                            attr: {},
                                             children: [
                                                 {
                                                     tag: "Subitem2Title",

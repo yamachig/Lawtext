@@ -37,10 +37,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Chapter",
-            attr: {
-                Delete: "false",
-                Hide: "false",
-                Num: "3"
+            attr: {                Num: "3"
             },
             children: [
                 {
@@ -50,10 +47,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
                 },
                 {
                     tag: "Section",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false",
-                        Num: "1"
+                    attr: {                        Num: "1"
                     },
                     children: [
                         {
@@ -63,10 +57,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
                         },
                         {
                             tag: "Article",
-                            attr: {
-                                Delete: "false",
-                                Hide: "false"
-                            },
+                            attr: {                            },
                             children: [
                                 {
                                     tag: "ArticleCaption",
@@ -106,10 +97,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
                 },
                 {
                     tag: "Section",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false",
-                        Num: "2"
+                    attr: {                        Num: "2"
                     },
                     children: [
                         {
@@ -119,10 +107,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
                         },
                         {
                             tag: "Article",
-                            attr: {
-                                Delete: "false",
-                                Hide: "false"
-                            },
+                            attr: {                            },
                             children: [
                                 {
                                     tag: "ArticleCaption",
@@ -194,10 +179,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Subsection",
-            attr: {
-                Delete: "false",
-                Hide: "false",
-                Num: "2"
+            attr: {                Num: "2"
             },
             children: [
                 {
@@ -246,10 +228,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Subsection",
-            attr: {
-                Delete: "false",
-                Hide: "false",
-                Num: "2"
+            attr: {                Num: "2"
             },
             children: [
                 {
@@ -259,10 +238,7 @@ describe("Test $articleGroup and articleGroupToLines", () => {
                 },
                 {
                     tag: "Article",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false"
-                    },
+                    attr: {                    },
                     children: [
                         {
                             tag: "ArticleTitle",

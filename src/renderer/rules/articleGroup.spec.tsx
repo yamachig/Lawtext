@@ -20,10 +20,7 @@ describe("Test HTML articleGroup", () => {
     it("Success case", async () => {
         const input = loadEL({
             tag: "Chapter",
-            attr: {
-                Delete: "false",
-                Hide: "false",
-                Num: "3",
+            attr: { Num: "3",
             },
             children: [
                 {
@@ -33,10 +30,7 @@ describe("Test HTML articleGroup", () => {
                 },
                 {
                     tag: "Section",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false",
-                        Num: "1",
+                    attr: { Num: "1",
                     },
                     children: [
                         {
@@ -46,10 +40,7 @@ describe("Test HTML articleGroup", () => {
                         },
                         {
                             tag: "Article",
-                            attr: {
-                                Delete: "false",
-                                Hide: "false",
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ArticleCaption",
@@ -89,10 +80,7 @@ describe("Test HTML articleGroup", () => {
                 },
                 {
                     tag: "Section",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false",
-                        Num: "2",
+                    attr: { Num: "2",
                     },
                     children: [
                         {
@@ -102,10 +90,7 @@ describe("Test HTML articleGroup", () => {
                         },
                         {
                             tag: "Article",
-                            attr: {
-                                Delete: "false",
-                                Hide: "false",
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ArticleCaption",
@@ -231,10 +216,7 @@ describe("Test DOCX articleGroup", () => {
     it("Success case", async () => {
         const input = loadEL({
             tag: "Chapter",
-            attr: {
-                Delete: "false",
-                Hide: "false",
-                Num: "3",
+            attr: { Num: "3",
             },
             children: [
                 {
@@ -244,10 +226,7 @@ describe("Test DOCX articleGroup", () => {
                 },
                 {
                     tag: "Section",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false",
-                        Num: "1",
+                    attr: { Num: "1",
                     },
                     children: [
                         {
@@ -257,10 +236,7 @@ describe("Test DOCX articleGroup", () => {
                         },
                         {
                             tag: "Article",
-                            attr: {
-                                Delete: "false",
-                                Hide: "false",
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ArticleCaption",
@@ -300,10 +276,7 @@ describe("Test DOCX articleGroup", () => {
                 },
                 {
                     tag: "Section",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false",
-                        Num: "2",
+                    attr: { Num: "2",
                     },
                     children: [
                         {
@@ -313,10 +286,7 @@ describe("Test DOCX articleGroup", () => {
                         },
                         {
                             tag: "Article",
-                            attr: {
-                                Delete: "false",
-                                Hide: "false",
-                            },
+                            attr: {},
                             children: [
                                 {
                                     tag: "ArticleCaption",

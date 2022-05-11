@@ -20,10 +20,7 @@ describe("Test HTML article", () => {
     it("Success case", async () => {
         const input = loadEL({
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false",
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleCaption",
@@ -58,7 +55,7 @@ describe("Test HTML article", () => {
                         {
                             tag: "Item",
                             attr: {
-                                Delete: "false",
+
                             },
                             children: [
                                 {
@@ -99,7 +96,7 @@ describe("Test HTML article", () => {
                         {
                             tag: "Item",
                             attr: {
-                                Delete: "false",
+
                             },
                             children: [
                                 {
@@ -149,7 +146,7 @@ describe("Test HTML article", () => {
                                 {
                                     tag: "Subitem1",
                                     attr: {
-                                        Delete: "false",
+
                                     },
                                     children: [
                                         {
@@ -173,7 +170,7 @@ describe("Test HTML article", () => {
                                 {
                                     tag: "Subitem1",
                                     attr: {
-                                        Delete: "false",
+
                                     },
                                     children: [
                                         {
@@ -312,10 +309,7 @@ describe("Test DOCX article", () => {
     it("Success case", async () => {
         const input = loadEL({
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false",
-            },
+            attr: {},
             children: [
                 {
                     tag: "ArticleCaption",
@@ -350,7 +344,7 @@ describe("Test DOCX article", () => {
                         {
                             tag: "Item",
                             attr: {
-                                Delete: "false",
+
                             },
                             children: [
                                 {
@@ -391,7 +385,7 @@ describe("Test DOCX article", () => {
                         {
                             tag: "Item",
                             attr: {
-                                Delete: "false",
+
                             },
                             children: [
                                 {
@@ -441,7 +435,7 @@ describe("Test DOCX article", () => {
                                 {
                                     tag: "Subitem1",
                                     attr: {
-                                        Delete: "false",
+
                                     },
                                     children: [
                                         {
@@ -465,7 +459,7 @@ describe("Test DOCX article", () => {
                                 {
                                     tag: "Subitem1",
                                     attr: {
-                                        Delete: "false",
+
                                     },
                                     children: [
                                         {

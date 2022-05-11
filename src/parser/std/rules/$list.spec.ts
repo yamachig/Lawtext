@@ -33,10 +33,7 @@ describe("Test $list and listOrSublistToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -202,10 +199,7 @@ describe("Test $list and listOrSublistToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {
-                Delete: "false",
-                Hide: "false"
-            },
+            attr: {            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -342,10 +336,7 @@ describe("Test $list and listOrSublistToLines", () => {
             children: [
                 {
                     tag: "Article",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false"
-                    },
+                    attr: {                    },
                     children: [
                         {
                             tag: "ArticleCaption",
@@ -417,10 +408,7 @@ describe("Test $list and listOrSublistToLines", () => {
                 },
                 {
                     tag: "Article",
-                    attr: {
-                        Delete: "false",
-                        Hide: "false"
-                    },
+                    attr: {                    },
                     children: [
                         {
                             tag: "ArticleCaption",

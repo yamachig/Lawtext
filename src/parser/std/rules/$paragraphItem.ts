@@ -1,6 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
 import { ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine } from "../../../node/cst/line";
-import { isParagraph, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
@@ -91,7 +90,7 @@ export const paragraphItemToLines = (
                     "",
                     null,
                     [],
-                    [newStdEL("Sentence", {}, ParagraphCaption)]
+                    [std.newStdEL("Sentence", {}, ParagraphCaption)]
                 ),
             ],
             lineEndText: CST.EOL,
@@ -113,17 +112,6 @@ export const paragraphItemToLines = (
 
     const SentenceChildren = ParagraphItemSentence ? ParagraphItemSentence.children : [];
     const sentencesArray = columnsOrSentencesToSentencesArray(SentenceChildren);
-    // if (OldNum) {
-    //     sentencesArray[0].attrEntries.unshift(
-    //         new AttrEntry(
-    //             `[OldNum="${OldNum}"]`,
-    //             ["OldNum", "${OldNum}"],
-    //             null,
-    //             "",
-    //             null,
-    //         )
-    //     );
-    // }
     if (MissingNum) {
         sentencesArray[0].attrEntries.unshift(
             new AttrEntry(
@@ -415,11 +403,6 @@ export const paragraphItemFromAuto = (
 ): std.ParagraphItem => {
     const tag = paragraphItem.tag === "__AutoParagraphItem" ? defautTag : paragraphItem.tag;
     const attr = {} as Record<string, string>;
-    if (tag === "Paragraph") {
-        // attr.OldStyle = "false";
-    } else {
-        attr.Delete = "false";
-    }
     Object.assign(attr, paragraphItem.attr);
 
     const children = paragraphItem.children.map(c => {
@@ -429,14 +412,14 @@ export const paragraphItemFromAuto = (
                 c,
             );
         } else if (isAutoParagraphItemTitle(c)) {
-            return newStdEL(
+            return std.newStdEL(
                 std.paragraphItemTitleTags[std.paragraphItemTags.indexOf(tag)],
                 c.attr,
                 c.children,
                 c.range,
             );
         } else if (isAutoParagraphItemSentence(c)) {
-            return newStdEL(
+            return std.newStdEL(
                 std.paragraphItemSentenceTags[std.paragraphItemTags.indexOf(tag)],
                 c.attr,
                 c.children,
@@ -457,7 +440,7 @@ export const paragraphItemFromAuto = (
         }
     }
 
-    return newStdEL(
+    return std.newStdEL(
         tag,
         attr,
         children,
@@ -507,18 +490,10 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
             const paragraphItem = new EL(tag) as std.ParagraphItem | __AutoParagraphItem;
             const errors = tailChildren?.errors ?? [];
 
-            if (std.isParagraphItem(paragraphItem)) {
-                if (isParagraph(paragraphItem)) {
-                    // (paragraphItem as std.Paragraph).attr.OldStyle = "false";
-                } else {
-                    (paragraphItem as Diff<std.ParagraphItem, std.Paragraph>).attr.Delete = "false";
-                }
-            }
-
             if (firstParagraphItemLine.line.sentencesArray.length >= 1) {
                 const replacedAttrEntries: AttrEntries = [];
                 for (const attrEntry of firstParagraphItemLine.line.sentencesArray[0].attrEntries) {
-                    if (attrEntry.entry[0] === "OldNum") {
+                    if (attrEntry.entry[0] === "OldNum" && attrEntry.entry[1] !== std.defaultAttrs.Paragraph.OldNum) {
                         (paragraphItem as std.Paragraph).attr.OldNum = attrEntry.entry[1];
                     } else {
                         replacedAttrEntries.push(attrEntry);
@@ -531,7 +506,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
 
             if (captionLine) {
                 (paragraphItem.children as (typeof paragraphItem.children)[number][]).push(
-                    newStdEL(
+                    std.newStdEL(
                         "ParagraphCaption",
                         {},
                         captionLine.line.sentencesArray
@@ -545,7 +520,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
             }
 
             (paragraphItem.children as (typeof paragraphItem.children)[number][]).push(
-                newStdEL(
+                std.newStdEL(
                     tag !== "__AutoParagraphItem"
                         ? std.paragraphItemTitleTags[std.paragraphItemTags.indexOf(tag)]
                         : "__AutoParagraphItemTitle",
@@ -558,7 +533,7 @@ export const $autoParagraphItem: WithErrorRule<std.ParagraphItem | __AutoParagra
             const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
             const paragraphItemSentencePos = firstParagraphItemLine.line.indentsEndPos;
             (paragraphItem.children as (typeof paragraphItem.children)[number][]).push(
-                newStdEL(
+                std.newStdEL(
                     tag !== "__AutoParagraphItem"
                         ? std.paragraphItemSentenceTags[std.paragraphItemTags.indexOf(tag)]
                         : "__AutoParagraphItemSentence",
@@ -641,14 +616,14 @@ export const $noControlAnonymParagraph: WithErrorRule<std.Paragraph> = factory
         .action(({ firstParagraphItemLine, tailChildren }) => {
 
             const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
-            const paragraph = newStdEL(
+            const paragraph = std.newStdEL(
                 "Paragraph",
                 {
                     // OldStyle: "false",
                 },
                 [
-                    newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null),
-                    newStdEL(
+                    std.newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null),
+                    std.newStdEL(
                         "ParagraphSentence",
                         {},
                         sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),

@@ -48,10 +48,7 @@ describe("Test HTML law", () => {
                             children: [
                                 {
                                     tag: "Chapter",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                        Num: "1",
+                                    attr: {                                        Num: "1",
                                     },
                                     children: [
                                         {
@@ -61,10 +58,7 @@ describe("Test HTML law", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {
-                                                Delete: "false",
-                                                Hide: "false",
-                                            },
+                                            attr: {                                            },
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",
@@ -233,10 +227,7 @@ describe("Test DOCX law", () => {
                             children: [
                                 {
                                     tag: "Chapter",
-                                    attr: {
-                                        Delete: "false",
-                                        Hide: "false",
-                                        Num: "1",
+                                    attr: {                                        Num: "1",
                                     },
                                     children: [
                                         {
@@ -246,10 +237,7 @@ describe("Test DOCX law", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {
-                                                Delete: "false",
-                                                Hide: "false",
-                                            },
+                                            attr: {                                            },
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",

@@ -31,6 +31,9 @@ export const isLaw = (obj: EL | string): obj is Law => {
     return (typeof obj !== "string") && (obj.tag === "Law");
 };
 
+const defaultAttrOfLaw = {
+} as const;
+
 export interface LawNum extends _StdEL {
     tag: "LawNum"
     children: Array<__EL | string>
@@ -39,6 +42,9 @@ export interface LawNum extends _StdEL {
 export const isLawNum = (obj: EL | string): obj is LawNum => {
     return (typeof obj !== "string") && (obj.tag === "LawNum");
 };
+
+const defaultAttrOfLawNum = {
+} as const;
 
 export interface LawBody extends _StdEL {
     tag: "LawBody"
@@ -51,6 +57,9 @@ export interface LawBody extends _StdEL {
 export const isLawBody = (obj: EL | string): obj is LawBody => {
     return (typeof obj !== "string") && (obj.tag === "LawBody");
 };
+
+const defaultAttrOfLawBody = {
+} as const;
 
 export interface LawTitle extends _StdEL {
     tag: "LawTitle"
@@ -66,6 +75,9 @@ export const isLawTitle = (obj: EL | string): obj is LawTitle => {
     return (typeof obj !== "string") && (obj.tag === "LawTitle");
 };
 
+const defaultAttrOfLawTitle = {
+} as const;
+
 export interface EnactStatement extends _StdEL {
     tag: "EnactStatement"
     attr: Record<string, never>
@@ -75,6 +87,8 @@ export interface EnactStatement extends _StdEL {
 export const isEnactStatement = (obj: EL | string): obj is EnactStatement => {
     return (typeof obj !== "string") && (obj.tag === "EnactStatement");
 };
+
+const defaultAttrOfEnactStatement = {} as const;
 
 export interface TOC extends _StdEL {
     tag: "TOC"
@@ -86,6 +100,8 @@ export const isTOC = (obj: EL | string): obj is TOC => {
     return (typeof obj !== "string") && (obj.tag === "TOC");
 };
 
+const defaultAttrOfTOC = {} as const;
+
 export interface TOCLabel extends _StdEL {
     tag: "TOCLabel"
     attr: Record<string, never>
@@ -96,6 +112,8 @@ export const isTOCLabel = (obj: EL | string): obj is TOCLabel => {
     return (typeof obj !== "string") && (obj.tag === "TOCLabel");
 };
 
+const defaultAttrOfTOCLabel = {} as const;
+
 export interface TOCPreambleLabel extends _StdEL {
     tag: "TOCPreambleLabel"
     attr: Record<string, never>
@@ -105,6 +123,8 @@ export interface TOCPreambleLabel extends _StdEL {
 export const isTOCPreambleLabel = (obj: EL | string): obj is TOCPreambleLabel => {
     return (typeof obj !== "string") && (obj.tag === "TOCPreambleLabel");
 };
+
+const defaultAttrOfTOCPreambleLabel = {} as const;
 
 export interface TOCPart extends _StdEL {
     tag: "TOCPart"
@@ -119,6 +139,10 @@ export const isTOCPart = (obj: EL | string): obj is TOCPart => {
     return (typeof obj !== "string") && (obj.tag === "TOCPart");
 };
 
+const defaultAttrOfTOCPart = {
+    Delete: "false",
+} as const;
+
 export interface TOCChapter extends _StdEL {
     tag: "TOCChapter"
     attr: {
@@ -131,6 +155,10 @@ export interface TOCChapter extends _StdEL {
 export const isTOCChapter = (obj: EL | string): obj is TOCChapter => {
     return (typeof obj !== "string") && (obj.tag === "TOCChapter");
 };
+
+const defaultAttrOfTOCChapter = {
+    Delete: "false",
+} as const;
 
 export interface TOCSection extends _StdEL {
     tag: "TOCSection"
@@ -145,6 +173,10 @@ export const isTOCSection = (obj: EL | string): obj is TOCSection => {
     return (typeof obj !== "string") && (obj.tag === "TOCSection");
 };
 
+const defaultAttrOfTOCSection = {
+    Delete: "false",
+} as const;
+
 export interface TOCSubsection extends _StdEL {
     tag: "TOCSubsection"
     attr: {
@@ -157,6 +189,10 @@ export interface TOCSubsection extends _StdEL {
 export const isTOCSubsection = (obj: EL | string): obj is TOCSubsection => {
     return (typeof obj !== "string") && (obj.tag === "TOCSubsection");
 };
+
+const defaultAttrOfTOCSubsection = {
+    Delete: "false",
+} as const;
 
 export interface TOCDivision extends _StdEL {
     tag: "TOCDivision"
@@ -171,6 +207,10 @@ export const isTOCDivision = (obj: EL | string): obj is TOCDivision => {
     return (typeof obj !== "string") && (obj.tag === "TOCDivision");
 };
 
+const defaultAttrOfTOCDivision = {
+    Delete: "false",
+} as const;
+
 export interface TOCArticle extends _StdEL {
     tag: "TOCArticle"
     attr: {
@@ -184,6 +224,10 @@ export const isTOCArticle = (obj: EL | string): obj is TOCArticle => {
     return (typeof obj !== "string") && (obj.tag === "TOCArticle");
 };
 
+const defaultAttrOfTOCArticle = {
+    Delete: "false",
+} as const;
+
 export interface TOCSupplProvision extends _StdEL {
     tag: "TOCSupplProvision"
     attr: Record<string, never>
@@ -193,6 +237,8 @@ export interface TOCSupplProvision extends _StdEL {
 export const isTOCSupplProvision = (obj: EL | string): obj is TOCSupplProvision => {
     return (typeof obj !== "string") && (obj.tag === "TOCSupplProvision");
 };
+
+const defaultAttrOfTOCSupplProvision = {} as const;
 
 export interface TOCAppdxTableLabel extends _StdEL {
     tag: "TOCAppdxTableLabel"
@@ -204,6 +250,8 @@ export const isTOCAppdxTableLabel = (obj: EL | string): obj is TOCAppdxTableLabe
     return (typeof obj !== "string") && (obj.tag === "TOCAppdxTableLabel");
 };
 
+const defaultAttrOfTOCAppdxTableLabel = {} as const;
+
 export interface ArticleRange extends _StdEL {
     tag: "ArticleRange"
     attr: Record<string, never>
@@ -214,6 +262,8 @@ export const isArticleRange = (obj: EL | string): obj is ArticleRange => {
     return (typeof obj !== "string") && (obj.tag === "ArticleRange");
 };
 
+const defaultAttrOfArticleRange = {} as const;
+
 export interface Preamble extends _StdEL {
     tag: "Preamble"
     attr: Record<string, never>
@@ -223,6 +273,8 @@ export interface Preamble extends _StdEL {
 export const isPreamble = (obj: EL | string): obj is Preamble => {
     return (typeof obj !== "string") && (obj.tag === "Preamble");
 };
+
+const defaultAttrOfPreamble = {} as const;
 
 export interface MainProvision extends _StdEL {
     tag: "MainProvision"
@@ -235,6 +287,9 @@ export interface MainProvision extends _StdEL {
 export const isMainProvision = (obj: EL | string): obj is MainProvision => {
     return (typeof obj !== "string") && (obj.tag === "MainProvision");
 };
+
+const defaultAttrOfMainProvision = {
+} as const;
 
 export interface Part extends _StdEL {
     tag: "Part"
@@ -250,6 +305,11 @@ export const isPart = (obj: EL | string): obj is Part => {
     return (typeof obj !== "string") && (obj.tag === "Part");
 };
 
+const defaultAttrOfPart = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface PartTitle extends _StdEL {
     tag: "PartTitle"
     attr: Record<string, never>
@@ -259,6 +319,8 @@ export interface PartTitle extends _StdEL {
 export const isPartTitle = (obj: EL | string): obj is PartTitle => {
     return (typeof obj !== "string") && (obj.tag === "PartTitle");
 };
+
+const defaultAttrOfPartTitle = {} as const;
 
 export interface Chapter extends _StdEL {
     tag: "Chapter"
@@ -274,6 +336,11 @@ export const isChapter = (obj: EL | string): obj is Chapter => {
     return (typeof obj !== "string") && (obj.tag === "Chapter");
 };
 
+const defaultAttrOfChapter = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface ChapterTitle extends _StdEL {
     tag: "ChapterTitle"
     attr: Record<string, never>
@@ -283,6 +350,8 @@ export interface ChapterTitle extends _StdEL {
 export const isChapterTitle = (obj: EL | string): obj is ChapterTitle => {
     return (typeof obj !== "string") && (obj.tag === "ChapterTitle");
 };
+
+const defaultAttrOfChapterTitle = {} as const;
 
 export interface Section extends _StdEL {
     tag: "Section"
@@ -298,6 +367,11 @@ export const isSection = (obj: EL | string): obj is Section => {
     return (typeof obj !== "string") && (obj.tag === "Section");
 };
 
+const defaultAttrOfSection = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface SectionTitle extends _StdEL {
     tag: "SectionTitle"
     attr: Record<string, never>
@@ -307,6 +381,8 @@ export interface SectionTitle extends _StdEL {
 export const isSectionTitle = (obj: EL | string): obj is SectionTitle => {
     return (typeof obj !== "string") && (obj.tag === "SectionTitle");
 };
+
+const defaultAttrOfSectionTitle = {} as const;
 
 export interface Subsection extends _StdEL {
     tag: "Subsection"
@@ -322,6 +398,11 @@ export const isSubsection = (obj: EL | string): obj is Subsection => {
     return (typeof obj !== "string") && (obj.tag === "Subsection");
 };
 
+const defaultAttrOfSubsection = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface SubsectionTitle extends _StdEL {
     tag: "SubsectionTitle"
     attr: Record<string, never>
@@ -331,6 +412,8 @@ export interface SubsectionTitle extends _StdEL {
 export const isSubsectionTitle = (obj: EL | string): obj is SubsectionTitle => {
     return (typeof obj !== "string") && (obj.tag === "SubsectionTitle");
 };
+
+const defaultAttrOfSubsectionTitle = {} as const;
 
 export interface Division extends _StdEL {
     tag: "Division"
@@ -346,6 +429,11 @@ export const isDivision = (obj: EL | string): obj is Division => {
     return (typeof obj !== "string") && (obj.tag === "Division");
 };
 
+const defaultAttrOfDivision = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface DivisionTitle extends _StdEL {
     tag: "DivisionTitle"
     attr: Record<string, never>
@@ -355,6 +443,8 @@ export interface DivisionTitle extends _StdEL {
 export const isDivisionTitle = (obj: EL | string): obj is DivisionTitle => {
     return (typeof obj !== "string") && (obj.tag === "DivisionTitle");
 };
+
+const defaultAttrOfDivisionTitle = {} as const;
 
 export interface Article extends _StdEL {
     tag: "Article"
@@ -370,6 +460,11 @@ export const isArticle = (obj: EL | string): obj is Article => {
     return (typeof obj !== "string") && (obj.tag === "Article");
 };
 
+const defaultAttrOfArticle = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface ArticleTitle extends _StdEL {
     tag: "ArticleTitle"
     attr: Record<string, never>
@@ -379,6 +474,8 @@ export interface ArticleTitle extends _StdEL {
 export const isArticleTitle = (obj: EL | string): obj is ArticleTitle => {
     return (typeof obj !== "string") && (obj.tag === "ArticleTitle");
 };
+
+const defaultAttrOfArticleTitle = {} as const;
 
 export interface ArticleCaption extends _StdEL {
     tag: "ArticleCaption"
@@ -391,6 +488,9 @@ export interface ArticleCaption extends _StdEL {
 export const isArticleCaption = (obj: EL | string): obj is ArticleCaption => {
     return (typeof obj !== "string") && (obj.tag === "ArticleCaption");
 };
+
+const defaultAttrOfArticleCaption = {
+} as const;
 
 export interface Paragraph extends _StdEL {
     tag: "Paragraph"
@@ -407,6 +507,12 @@ export const isParagraph = (obj: EL | string): obj is Paragraph => {
     return (typeof obj !== "string") && (obj.tag === "Paragraph");
 };
 
+const defaultAttrOfParagraph = {
+    OldStyle: "false",
+    OldNum: "false",
+    Hide: "false",
+} as const;
+
 export interface ParagraphCaption extends _StdEL {
     tag: "ParagraphCaption"
     attr: {
@@ -419,6 +525,9 @@ export const isParagraphCaption = (obj: EL | string): obj is ParagraphCaption =>
     return (typeof obj !== "string") && (obj.tag === "ParagraphCaption");
 };
 
+const defaultAttrOfParagraphCaption = {
+} as const;
+
 export interface ParagraphNum extends _StdEL {
     tag: "ParagraphNum"
     attr: Record<string, never>
@@ -428,6 +537,8 @@ export interface ParagraphNum extends _StdEL {
 export const isParagraphNum = (obj: EL | string): obj is ParagraphNum => {
     return (typeof obj !== "string") && (obj.tag === "ParagraphNum");
 };
+
+const defaultAttrOfParagraphNum = {} as const;
 
 export interface ParagraphSentence extends _StdEL {
     tag: "ParagraphSentence"
@@ -439,6 +550,8 @@ export const isParagraphSentence = (obj: EL | string): obj is ParagraphSentence 
     return (typeof obj !== "string") && (obj.tag === "ParagraphSentence");
 };
 
+const defaultAttrOfParagraphSentence = {} as const;
+
 export interface SupplNote extends _StdEL {
     tag: "SupplNote"
     attr: Record<string, never>
@@ -448,6 +561,8 @@ export interface SupplNote extends _StdEL {
 export const isSupplNote = (obj: EL | string): obj is SupplNote => {
     return (typeof obj !== "string") && (obj.tag === "SupplNote");
 };
+
+const defaultAttrOfSupplNote = {} as const;
 
 export interface AmendProvision extends _StdEL {
     tag: "AmendProvision"
@@ -459,6 +574,8 @@ export const isAmendProvision = (obj: EL | string): obj is AmendProvision => {
     return (typeof obj !== "string") && (obj.tag === "AmendProvision");
 };
 
+const defaultAttrOfAmendProvision = {} as const;
+
 export interface AmendProvisionSentence extends _StdEL {
     tag: "AmendProvisionSentence"
     attr: Record<string, never>
@@ -469,6 +586,8 @@ export const isAmendProvisionSentence = (obj: EL | string): obj is AmendProvisio
     return (typeof obj !== "string") && (obj.tag === "AmendProvisionSentence");
 };
 
+const defaultAttrOfAmendProvisionSentence = {} as const;
+
 export interface NewProvision extends _StdEL {
     tag: "NewProvision"
     attr: Record<string, never>
@@ -478,6 +597,8 @@ export interface NewProvision extends _StdEL {
 export const isNewProvision = (obj: EL | string): obj is NewProvision => {
     return (typeof obj !== "string") && (obj.tag === "NewProvision");
 };
+
+const defaultAttrOfNewProvision = {} as const;
 
 export interface Class extends _StdEL {
     tag: "Class"
@@ -491,6 +612,9 @@ export const isClass = (obj: EL | string): obj is Class => {
     return (typeof obj !== "string") && (obj.tag === "Class");
 };
 
+const defaultAttrOfClass = {
+} as const;
+
 export interface ClassTitle extends _StdEL {
     tag: "ClassTitle"
     attr: Record<string, never>
@@ -501,6 +625,8 @@ export const isClassTitle = (obj: EL | string): obj is ClassTitle => {
     return (typeof obj !== "string") && (obj.tag === "ClassTitle");
 };
 
+const defaultAttrOfClassTitle = {} as const;
+
 export interface ClassSentence extends _StdEL {
     tag: "ClassSentence"
     attr: Record<string, never>
@@ -510,6 +636,8 @@ export interface ClassSentence extends _StdEL {
 export const isClassSentence = (obj: EL | string): obj is ClassSentence => {
     return (typeof obj !== "string") && (obj.tag === "ClassSentence");
 };
+
+const defaultAttrOfClassSentence = {} as const;
 
 export interface Item extends _StdEL {
     tag: "Item"
@@ -525,6 +653,11 @@ export const isItem = (obj: EL | string): obj is Item => {
     return (typeof obj !== "string") && (obj.tag === "Item");
 };
 
+const defaultAttrOfItem = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface ItemTitle extends _StdEL {
     tag: "ItemTitle"
     attr: Record<string, never>
@@ -535,6 +668,8 @@ export const isItemTitle = (obj: EL | string): obj is ItemTitle => {
     return (typeof obj !== "string") && (obj.tag === "ItemTitle");
 };
 
+const defaultAttrOfItemTitle = {} as const;
+
 export interface ItemSentence extends _StdEL {
     tag: "ItemSentence"
     attr: Record<string, never>
@@ -544,6 +679,8 @@ export interface ItemSentence extends _StdEL {
 export const isItemSentence = (obj: EL | string): obj is ItemSentence => {
     return (typeof obj !== "string") && (obj.tag === "ItemSentence");
 };
+
+const defaultAttrOfItemSentence = {} as const;
 
 export interface Subitem1 extends _StdEL {
     tag: "Subitem1"
@@ -559,6 +696,11 @@ export const isSubitem1 = (obj: EL | string): obj is Subitem1 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem1");
 };
 
+const defaultAttrOfSubitem1 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem1Title extends _StdEL {
     tag: "Subitem1Title"
     attr: Record<string, never>
@@ -569,6 +711,8 @@ export const isSubitem1Title = (obj: EL | string): obj is Subitem1Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem1Title");
 };
 
+const defaultAttrOfSubitem1Title = {} as const;
+
 export interface Subitem1Sentence extends _StdEL {
     tag: "Subitem1Sentence"
     attr: Record<string, never>
@@ -578,6 +722,8 @@ export interface Subitem1Sentence extends _StdEL {
 export const isSubitem1Sentence = (obj: EL | string): obj is Subitem1Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem1Sentence");
 };
+
+const defaultAttrOfSubitem1Sentence = {} as const;
 
 export interface Subitem2 extends _StdEL {
     tag: "Subitem2"
@@ -593,6 +739,11 @@ export const isSubitem2 = (obj: EL | string): obj is Subitem2 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem2");
 };
 
+const defaultAttrOfSubitem2 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem2Title extends _StdEL {
     tag: "Subitem2Title"
     attr: Record<string, never>
@@ -603,6 +754,8 @@ export const isSubitem2Title = (obj: EL | string): obj is Subitem2Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem2Title");
 };
 
+const defaultAttrOfSubitem2Title = {} as const;
+
 export interface Subitem2Sentence extends _StdEL {
     tag: "Subitem2Sentence"
     attr: Record<string, never>
@@ -612,6 +765,8 @@ export interface Subitem2Sentence extends _StdEL {
 export const isSubitem2Sentence = (obj: EL | string): obj is Subitem2Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem2Sentence");
 };
+
+const defaultAttrOfSubitem2Sentence = {} as const;
 
 export interface Subitem3 extends _StdEL {
     tag: "Subitem3"
@@ -627,6 +782,11 @@ export const isSubitem3 = (obj: EL | string): obj is Subitem3 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem3");
 };
 
+const defaultAttrOfSubitem3 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem3Title extends _StdEL {
     tag: "Subitem3Title"
     attr: Record<string, never>
@@ -637,6 +797,8 @@ export const isSubitem3Title = (obj: EL | string): obj is Subitem3Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem3Title");
 };
 
+const defaultAttrOfSubitem3Title = {} as const;
+
 export interface Subitem3Sentence extends _StdEL {
     tag: "Subitem3Sentence"
     attr: Record<string, never>
@@ -646,6 +808,8 @@ export interface Subitem3Sentence extends _StdEL {
 export const isSubitem3Sentence = (obj: EL | string): obj is Subitem3Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem3Sentence");
 };
+
+const defaultAttrOfSubitem3Sentence = {} as const;
 
 export interface Subitem4 extends _StdEL {
     tag: "Subitem4"
@@ -661,6 +825,11 @@ export const isSubitem4 = (obj: EL | string): obj is Subitem4 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem4");
 };
 
+const defaultAttrOfSubitem4 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem4Title extends _StdEL {
     tag: "Subitem4Title"
     attr: Record<string, never>
@@ -671,6 +840,8 @@ export const isSubitem4Title = (obj: EL | string): obj is Subitem4Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem4Title");
 };
 
+const defaultAttrOfSubitem4Title = {} as const;
+
 export interface Subitem4Sentence extends _StdEL {
     tag: "Subitem4Sentence"
     attr: Record<string, never>
@@ -680,6 +851,8 @@ export interface Subitem4Sentence extends _StdEL {
 export const isSubitem4Sentence = (obj: EL | string): obj is Subitem4Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem4Sentence");
 };
+
+const defaultAttrOfSubitem4Sentence = {} as const;
 
 export interface Subitem5 extends _StdEL {
     tag: "Subitem5"
@@ -695,6 +868,11 @@ export const isSubitem5 = (obj: EL | string): obj is Subitem5 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem5");
 };
 
+const defaultAttrOfSubitem5 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem5Title extends _StdEL {
     tag: "Subitem5Title"
     attr: Record<string, never>
@@ -705,6 +883,8 @@ export const isSubitem5Title = (obj: EL | string): obj is Subitem5Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem5Title");
 };
 
+const defaultAttrOfSubitem5Title = {} as const;
+
 export interface Subitem5Sentence extends _StdEL {
     tag: "Subitem5Sentence"
     attr: Record<string, never>
@@ -714,6 +894,8 @@ export interface Subitem5Sentence extends _StdEL {
 export const isSubitem5Sentence = (obj: EL | string): obj is Subitem5Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem5Sentence");
 };
+
+const defaultAttrOfSubitem5Sentence = {} as const;
 
 export interface Subitem6 extends _StdEL {
     tag: "Subitem6"
@@ -729,6 +911,11 @@ export const isSubitem6 = (obj: EL | string): obj is Subitem6 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem6");
 };
 
+const defaultAttrOfSubitem6 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem6Title extends _StdEL {
     tag: "Subitem6Title"
     attr: Record<string, never>
@@ -739,6 +926,8 @@ export const isSubitem6Title = (obj: EL | string): obj is Subitem6Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem6Title");
 };
 
+const defaultAttrOfSubitem6Title = {} as const;
+
 export interface Subitem6Sentence extends _StdEL {
     tag: "Subitem6Sentence"
     attr: Record<string, never>
@@ -748,6 +937,8 @@ export interface Subitem6Sentence extends _StdEL {
 export const isSubitem6Sentence = (obj: EL | string): obj is Subitem6Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem6Sentence");
 };
+
+const defaultAttrOfSubitem6Sentence = {} as const;
 
 export interface Subitem7 extends _StdEL {
     tag: "Subitem7"
@@ -763,6 +954,11 @@ export const isSubitem7 = (obj: EL | string): obj is Subitem7 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem7");
 };
 
+const defaultAttrOfSubitem7 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem7Title extends _StdEL {
     tag: "Subitem7Title"
     attr: Record<string, never>
@@ -773,6 +969,8 @@ export const isSubitem7Title = (obj: EL | string): obj is Subitem7Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem7Title");
 };
 
+const defaultAttrOfSubitem7Title = {} as const;
+
 export interface Subitem7Sentence extends _StdEL {
     tag: "Subitem7Sentence"
     attr: Record<string, never>
@@ -782,6 +980,8 @@ export interface Subitem7Sentence extends _StdEL {
 export const isSubitem7Sentence = (obj: EL | string): obj is Subitem7Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem7Sentence");
 };
+
+const defaultAttrOfSubitem7Sentence = {} as const;
 
 export interface Subitem8 extends _StdEL {
     tag: "Subitem8"
@@ -797,6 +997,11 @@ export const isSubitem8 = (obj: EL | string): obj is Subitem8 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem8");
 };
 
+const defaultAttrOfSubitem8 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem8Title extends _StdEL {
     tag: "Subitem8Title"
     attr: Record<string, never>
@@ -807,6 +1012,8 @@ export const isSubitem8Title = (obj: EL | string): obj is Subitem8Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem8Title");
 };
 
+const defaultAttrOfSubitem8Title = {} as const;
+
 export interface Subitem8Sentence extends _StdEL {
     tag: "Subitem8Sentence"
     attr: Record<string, never>
@@ -816,6 +1023,8 @@ export interface Subitem8Sentence extends _StdEL {
 export const isSubitem8Sentence = (obj: EL | string): obj is Subitem8Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem8Sentence");
 };
+
+const defaultAttrOfSubitem8Sentence = {} as const;
 
 export interface Subitem9 extends _StdEL {
     tag: "Subitem9"
@@ -831,6 +1040,11 @@ export const isSubitem9 = (obj: EL | string): obj is Subitem9 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem9");
 };
 
+const defaultAttrOfSubitem9 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem9Title extends _StdEL {
     tag: "Subitem9Title"
     attr: Record<string, never>
@@ -841,6 +1055,8 @@ export const isSubitem9Title = (obj: EL | string): obj is Subitem9Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem9Title");
 };
 
+const defaultAttrOfSubitem9Title = {} as const;
+
 export interface Subitem9Sentence extends _StdEL {
     tag: "Subitem9Sentence"
     attr: Record<string, never>
@@ -850,6 +1066,8 @@ export interface Subitem9Sentence extends _StdEL {
 export const isSubitem9Sentence = (obj: EL | string): obj is Subitem9Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem9Sentence");
 };
+
+const defaultAttrOfSubitem9Sentence = {} as const;
 
 export interface Subitem10 extends _StdEL {
     tag: "Subitem10"
@@ -865,6 +1083,11 @@ export const isSubitem10 = (obj: EL | string): obj is Subitem10 => {
     return (typeof obj !== "string") && (obj.tag === "Subitem10");
 };
 
+const defaultAttrOfSubitem10 = {
+    Delete: "false",
+    Hide: "false",
+} as const;
+
 export interface Subitem10Title extends _StdEL {
     tag: "Subitem10Title"
     attr: Record<string, never>
@@ -875,6 +1098,8 @@ export const isSubitem10Title = (obj: EL | string): obj is Subitem10Title => {
     return (typeof obj !== "string") && (obj.tag === "Subitem10Title");
 };
 
+const defaultAttrOfSubitem10Title = {} as const;
+
 export interface Subitem10Sentence extends _StdEL {
     tag: "Subitem10Sentence"
     attr: Record<string, never>
@@ -884,6 +1109,8 @@ export interface Subitem10Sentence extends _StdEL {
 export const isSubitem10Sentence = (obj: EL | string): obj is Subitem10Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Subitem10Sentence");
 };
+
+const defaultAttrOfSubitem10Sentence = {} as const;
 
 export interface Sentence extends _StdEL {
     tag: "Sentence"
@@ -900,6 +1127,10 @@ export const isSentence = (obj: EL | string): obj is Sentence => {
     return (typeof obj !== "string") && (obj.tag === "Sentence");
 };
 
+const defaultAttrOfSentence = {
+    WritingMode: "vertical",
+} as const;
+
 export interface Column extends _StdEL {
     tag: "Column"
     attr: {
@@ -913,6 +1144,10 @@ export interface Column extends _StdEL {
 export const isColumn = (obj: EL | string): obj is Column => {
     return (typeof obj !== "string") && (obj.tag === "Column");
 };
+
+const defaultAttrOfColumn = {
+    LineBreak: "false",
+} as const;
 
 export interface SupplProvision extends _StdEL {
     tag: "SupplProvision"
@@ -928,6 +1163,9 @@ export const isSupplProvision = (obj: EL | string): obj is SupplProvision => {
     return (typeof obj !== "string") && (obj.tag === "SupplProvision");
 };
 
+const defaultAttrOfSupplProvision = {
+} as const;
+
 export interface SupplProvisionLabel extends _StdEL {
     tag: "SupplProvisionLabel"
     attr: Record<string, never>
@@ -937,6 +1175,8 @@ export interface SupplProvisionLabel extends _StdEL {
 export const isSupplProvisionLabel = (obj: EL | string): obj is SupplProvisionLabel => {
     return (typeof obj !== "string") && (obj.tag === "SupplProvisionLabel");
 };
+
+const defaultAttrOfSupplProvisionLabel = {} as const;
 
 export interface SupplProvisionAppdxTable extends _StdEL {
     tag: "SupplProvisionAppdxTable"
@@ -950,6 +1190,9 @@ export const isSupplProvisionAppdxTable = (obj: EL | string): obj is SupplProvis
     return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdxTable");
 };
 
+const defaultAttrOfSupplProvisionAppdxTable = {
+} as const;
+
 export interface SupplProvisionAppdxTableTitle extends _StdEL {
     tag: "SupplProvisionAppdxTableTitle"
     attr: {
@@ -961,6 +1204,10 @@ export interface SupplProvisionAppdxTableTitle extends _StdEL {
 export const isSupplProvisionAppdxTableTitle = (obj: EL | string): obj is SupplProvisionAppdxTableTitle => {
     return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdxTableTitle");
 };
+
+const defaultAttrOfSupplProvisionAppdxTableTitle = {
+    WritingMode: "vertical",
+} as const;
 
 export interface SupplProvisionAppdxStyle extends _StdEL {
     tag: "SupplProvisionAppdxStyle"
@@ -974,6 +1221,9 @@ export const isSupplProvisionAppdxStyle = (obj: EL | string): obj is SupplProvis
     return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdxStyle");
 };
 
+const defaultAttrOfSupplProvisionAppdxStyle = {
+} as const;
+
 export interface SupplProvisionAppdxStyleTitle extends _StdEL {
     tag: "SupplProvisionAppdxStyleTitle"
     attr: {
@@ -985,6 +1235,10 @@ export interface SupplProvisionAppdxStyleTitle extends _StdEL {
 export const isSupplProvisionAppdxStyleTitle = (obj: EL | string): obj is SupplProvisionAppdxStyleTitle => {
     return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdxStyleTitle");
 };
+
+const defaultAttrOfSupplProvisionAppdxStyleTitle = {
+    WritingMode: "vertical",
+} as const;
 
 export interface SupplProvisionAppdx extends _StdEL {
     tag: "SupplProvisionAppdx"
@@ -998,6 +1252,9 @@ export const isSupplProvisionAppdx = (obj: EL | string): obj is SupplProvisionAp
     return (typeof obj !== "string") && (obj.tag === "SupplProvisionAppdx");
 };
 
+const defaultAttrOfSupplProvisionAppdx = {
+} as const;
+
 export interface AppdxTable extends _StdEL {
     tag: "AppdxTable"
     attr: {
@@ -1009,6 +1266,9 @@ export interface AppdxTable extends _StdEL {
 export const isAppdxTable = (obj: EL | string): obj is AppdxTable => {
     return (typeof obj !== "string") && (obj.tag === "AppdxTable");
 };
+
+const defaultAttrOfAppdxTable = {
+} as const;
 
 export interface AppdxTableTitle extends _StdEL {
     tag: "AppdxTableTitle"
@@ -1022,6 +1282,10 @@ export const isAppdxTableTitle = (obj: EL | string): obj is AppdxTableTitle => {
     return (typeof obj !== "string") && (obj.tag === "AppdxTableTitle");
 };
 
+const defaultAttrOfAppdxTableTitle = {
+    WritingMode: "vertical",
+} as const;
+
 export interface AppdxNote extends _StdEL {
     tag: "AppdxNote"
     attr: {
@@ -1033,6 +1297,9 @@ export interface AppdxNote extends _StdEL {
 export const isAppdxNote = (obj: EL | string): obj is AppdxNote => {
     return (typeof obj !== "string") && (obj.tag === "AppdxNote");
 };
+
+const defaultAttrOfAppdxNote = {
+} as const;
 
 export interface AppdxNoteTitle extends _StdEL {
     tag: "AppdxNoteTitle"
@@ -1046,6 +1313,10 @@ export const isAppdxNoteTitle = (obj: EL | string): obj is AppdxNoteTitle => {
     return (typeof obj !== "string") && (obj.tag === "AppdxNoteTitle");
 };
 
+const defaultAttrOfAppdxNoteTitle = {
+    WritingMode: "vertical",
+} as const;
+
 export interface AppdxStyle extends _StdEL {
     tag: "AppdxStyle"
     attr: {
@@ -1057,6 +1328,9 @@ export interface AppdxStyle extends _StdEL {
 export const isAppdxStyle = (obj: EL | string): obj is AppdxStyle => {
     return (typeof obj !== "string") && (obj.tag === "AppdxStyle");
 };
+
+const defaultAttrOfAppdxStyle = {
+} as const;
 
 export interface AppdxStyleTitle extends _StdEL {
     tag: "AppdxStyleTitle"
@@ -1070,6 +1344,10 @@ export const isAppdxStyleTitle = (obj: EL | string): obj is AppdxStyleTitle => {
     return (typeof obj !== "string") && (obj.tag === "AppdxStyleTitle");
 };
 
+const defaultAttrOfAppdxStyleTitle = {
+    WritingMode: "vertical",
+} as const;
+
 export interface AppdxFormat extends _StdEL {
     tag: "AppdxFormat"
     attr: {
@@ -1081,6 +1359,9 @@ export interface AppdxFormat extends _StdEL {
 export const isAppdxFormat = (obj: EL | string): obj is AppdxFormat => {
     return (typeof obj !== "string") && (obj.tag === "AppdxFormat");
 };
+
+const defaultAttrOfAppdxFormat = {
+} as const;
 
 export interface AppdxFormatTitle extends _StdEL {
     tag: "AppdxFormatTitle"
@@ -1094,6 +1375,10 @@ export const isAppdxFormatTitle = (obj: EL | string): obj is AppdxFormatTitle =>
     return (typeof obj !== "string") && (obj.tag === "AppdxFormatTitle");
 };
 
+const defaultAttrOfAppdxFormatTitle = {
+    WritingMode: "vertical",
+} as const;
+
 export interface Appdx extends _StdEL {
     tag: "Appdx"
     attr: Record<string, never>
@@ -1104,6 +1389,8 @@ export const isAppdx = (obj: EL | string): obj is Appdx => {
     return (typeof obj !== "string") && (obj.tag === "Appdx");
 };
 
+const defaultAttrOfAppdx = {} as const;
+
 export interface ArithFormulaNum extends _StdEL {
     tag: "ArithFormulaNum"
     attr: Record<string, never>
@@ -1113,6 +1400,8 @@ export interface ArithFormulaNum extends _StdEL {
 export const isArithFormulaNum = (obj: EL | string): obj is ArithFormulaNum => {
     return (typeof obj !== "string") && (obj.tag === "ArithFormulaNum");
 };
+
+const defaultAttrOfArithFormulaNum = {} as const;
 
 export interface ArithFormula extends _StdEL {
     tag: "ArithFormula"
@@ -1126,6 +1415,9 @@ export const isArithFormula = (obj: EL | string): obj is ArithFormula => {
     return (typeof obj !== "string") && (obj.tag === "ArithFormula");
 };
 
+const defaultAttrOfArithFormula = {
+} as const;
+
 export interface AppdxFig extends _StdEL {
     tag: "AppdxFig"
     attr: {
@@ -1137,6 +1429,9 @@ export interface AppdxFig extends _StdEL {
 export const isAppdxFig = (obj: EL | string): obj is AppdxFig => {
     return (typeof obj !== "string") && (obj.tag === "AppdxFig");
 };
+
+const defaultAttrOfAppdxFig = {
+} as const;
 
 export interface AppdxFigTitle extends _StdEL {
     tag: "AppdxFigTitle"
@@ -1150,6 +1445,10 @@ export const isAppdxFigTitle = (obj: EL | string): obj is AppdxFigTitle => {
     return (typeof obj !== "string") && (obj.tag === "AppdxFigTitle");
 };
 
+const defaultAttrOfAppdxFigTitle = {
+    WritingMode: "vertical",
+} as const;
+
 export interface TableStruct extends _StdEL {
     tag: "TableStruct"
     attr: Record<string, never>
@@ -1159,6 +1458,8 @@ export interface TableStruct extends _StdEL {
 export const isTableStruct = (obj: EL | string): obj is TableStruct => {
     return (typeof obj !== "string") && (obj.tag === "TableStruct");
 };
+
+const defaultAttrOfTableStruct = {} as const;
 
 export interface TableStructTitle extends _StdEL {
     tag: "TableStructTitle"
@@ -1172,6 +1473,10 @@ export const isTableStructTitle = (obj: EL | string): obj is TableStructTitle =>
     return (typeof obj !== "string") && (obj.tag === "TableStructTitle");
 };
 
+const defaultAttrOfTableStructTitle = {
+    WritingMode: "vertical",
+} as const;
+
 export interface Table extends _StdEL {
     tag: "Table"
     attr: {
@@ -1184,6 +1489,10 @@ export const isTable = (obj: EL | string): obj is Table => {
     return (typeof obj !== "string") && (obj.tag === "Table");
 };
 
+const defaultAttrOfTable = {
+    WritingMode: "vertical",
+} as const;
+
 export interface TableRow extends _StdEL {
     tag: "TableRow"
     attr: Record<string, never>
@@ -1193,6 +1502,8 @@ export interface TableRow extends _StdEL {
 export const isTableRow = (obj: EL | string): obj is TableRow => {
     return (typeof obj !== "string") && (obj.tag === "TableRow");
 };
+
+const defaultAttrOfTableRow = {} as const;
 
 export interface TableHeaderRow extends _StdEL {
     tag: "TableHeaderRow"
@@ -1204,6 +1515,8 @@ export const isTableHeaderRow = (obj: EL | string): obj is TableHeaderRow => {
     return (typeof obj !== "string") && (obj.tag === "TableHeaderRow");
 };
 
+const defaultAttrOfTableHeaderRow = {} as const;
+
 export interface TableHeaderColumn extends _StdEL {
     tag: "TableHeaderColumn"
     attr: Record<string, never>
@@ -1213,6 +1526,8 @@ export interface TableHeaderColumn extends _StdEL {
 export const isTableHeaderColumn = (obj: EL | string): obj is TableHeaderColumn => {
     return (typeof obj !== "string") && (obj.tag === "TableHeaderColumn");
 };
+
+const defaultAttrOfTableHeaderColumn = {} as const;
 
 export interface TableColumn extends _StdEL {
     tag: "TableColumn"
@@ -1233,6 +1548,13 @@ export const isTableColumn = (obj: EL | string): obj is TableColumn => {
     return (typeof obj !== "string") && (obj.tag === "TableColumn");
 };
 
+const defaultAttrOfTableColumn = {
+    BorderTop: "solid",
+    BorderBottom: "solid",
+    BorderLeft: "solid",
+    BorderRight: "solid",
+} as const;
+
 export interface FigStruct extends _StdEL {
     tag: "FigStruct"
     attr: Record<string, never>
@@ -1243,6 +1565,8 @@ export const isFigStruct = (obj: EL | string): obj is FigStruct => {
     return (typeof obj !== "string") && (obj.tag === "FigStruct");
 };
 
+const defaultAttrOfFigStruct = {} as const;
+
 export interface FigStructTitle extends _StdEL {
     tag: "FigStructTitle"
     attr: Record<string, never>
@@ -1252,6 +1576,8 @@ export interface FigStructTitle extends _StdEL {
 export const isFigStructTitle = (obj: EL | string): obj is FigStructTitle => {
     return (typeof obj !== "string") && (obj.tag === "FigStructTitle");
 };
+
+const defaultAttrOfFigStructTitle = {} as const;
 
 export interface Fig extends _StdEL {
     tag: "Fig"
@@ -1265,6 +1591,9 @@ export const isFig = (obj: EL | string): obj is Fig => {
     return (typeof obj !== "string") && (obj.tag === "Fig");
 };
 
+const defaultAttrOfFig = {
+} as const;
+
 export interface NoteStruct extends _StdEL {
     tag: "NoteStruct"
     attr: Record<string, never>
@@ -1274,6 +1603,8 @@ export interface NoteStruct extends _StdEL {
 export const isNoteStruct = (obj: EL | string): obj is NoteStruct => {
     return (typeof obj !== "string") && (obj.tag === "NoteStruct");
 };
+
+const defaultAttrOfNoteStruct = {} as const;
 
 export interface NoteStructTitle extends _StdEL {
     tag: "NoteStructTitle"
@@ -1285,6 +1616,8 @@ export const isNoteStructTitle = (obj: EL | string): obj is NoteStructTitle => {
     return (typeof obj !== "string") && (obj.tag === "NoteStructTitle");
 };
 
+const defaultAttrOfNoteStructTitle = {} as const;
+
 export interface Note extends _StdEL {
     tag: "Note"
     children: Array<StdEL | __EL | string>
@@ -1293,6 +1626,9 @@ export interface Note extends _StdEL {
 export const isNote = (obj: EL | string): obj is Note => {
     return (typeof obj !== "string") && (obj.tag === "Note");
 };
+
+const defaultAttrOfNote = {
+} as const;
 
 export interface StyleStruct extends _StdEL {
     tag: "StyleStruct"
@@ -1304,6 +1640,8 @@ export const isStyleStruct = (obj: EL | string): obj is StyleStruct => {
     return (typeof obj !== "string") && (obj.tag === "StyleStruct");
 };
 
+const defaultAttrOfStyleStruct = {} as const;
+
 export interface StyleStructTitle extends _StdEL {
     tag: "StyleStructTitle"
     attr: Record<string, never>
@@ -1314,6 +1652,8 @@ export const isStyleStructTitle = (obj: EL | string): obj is StyleStructTitle =>
     return (typeof obj !== "string") && (obj.tag === "StyleStructTitle");
 };
 
+const defaultAttrOfStyleStructTitle = {} as const;
+
 export interface Style extends _StdEL {
     tag: "Style"
     children: Array<StdEL | __EL | string>
@@ -1322,6 +1662,9 @@ export interface Style extends _StdEL {
 export const isStyle = (obj: EL | string): obj is Style => {
     return (typeof obj !== "string") && (obj.tag === "Style");
 };
+
+const defaultAttrOfStyle = {
+} as const;
 
 export interface FormatStruct extends _StdEL {
     tag: "FormatStruct"
@@ -1333,6 +1676,8 @@ export const isFormatStruct = (obj: EL | string): obj is FormatStruct => {
     return (typeof obj !== "string") && (obj.tag === "FormatStruct");
 };
 
+const defaultAttrOfFormatStruct = {} as const;
+
 export interface FormatStructTitle extends _StdEL {
     tag: "FormatStructTitle"
     attr: Record<string, never>
@@ -1343,6 +1688,8 @@ export const isFormatStructTitle = (obj: EL | string): obj is FormatStructTitle 
     return (typeof obj !== "string") && (obj.tag === "FormatStructTitle");
 };
 
+const defaultAttrOfFormatStructTitle = {} as const;
+
 export interface Format extends _StdEL {
     tag: "Format"
     children: Array<StdEL | __EL | string>
@@ -1351,6 +1698,9 @@ export interface Format extends _StdEL {
 export const isFormat = (obj: EL | string): obj is Format => {
     return (typeof obj !== "string") && (obj.tag === "Format");
 };
+
+const defaultAttrOfFormat = {
+} as const;
 
 export interface RelatedArticleNum extends _StdEL {
     tag: "RelatedArticleNum"
@@ -1362,6 +1712,8 @@ export const isRelatedArticleNum = (obj: EL | string): obj is RelatedArticleNum 
     return (typeof obj !== "string") && (obj.tag === "RelatedArticleNum");
 };
 
+const defaultAttrOfRelatedArticleNum = {} as const;
+
 export interface Remarks extends _StdEL {
     tag: "Remarks"
     attr: Record<string, never>
@@ -1371,6 +1723,8 @@ export interface Remarks extends _StdEL {
 export const isRemarks = (obj: EL | string): obj is Remarks => {
     return (typeof obj !== "string") && (obj.tag === "Remarks");
 };
+
+const defaultAttrOfRemarks = {} as const;
 
 export interface RemarksLabel extends _StdEL {
     tag: "RemarksLabel"
@@ -1384,6 +1738,10 @@ export const isRemarksLabel = (obj: EL | string): obj is RemarksLabel => {
     return (typeof obj !== "string") && (obj.tag === "RemarksLabel");
 };
 
+const defaultAttrOfRemarksLabel = {
+    LineBreak: "false",
+} as const;
+
 export interface List extends _StdEL {
     tag: "List"
     attr: Record<string, never>
@@ -1393,6 +1751,8 @@ export interface List extends _StdEL {
 export const isList = (obj: EL | string): obj is List => {
     return (typeof obj !== "string") && (obj.tag === "List");
 };
+
+const defaultAttrOfList = {} as const;
 
 export interface ListSentence extends _StdEL {
     tag: "ListSentence"
@@ -1404,6 +1764,8 @@ export const isListSentence = (obj: EL | string): obj is ListSentence => {
     return (typeof obj !== "string") && (obj.tag === "ListSentence");
 };
 
+const defaultAttrOfListSentence = {} as const;
+
 export interface Sublist1 extends _StdEL {
     tag: "Sublist1"
     attr: Record<string, never>
@@ -1413,6 +1775,8 @@ export interface Sublist1 extends _StdEL {
 export const isSublist1 = (obj: EL | string): obj is Sublist1 => {
     return (typeof obj !== "string") && (obj.tag === "Sublist1");
 };
+
+const defaultAttrOfSublist1 = {} as const;
 
 export interface Sublist1Sentence extends _StdEL {
     tag: "Sublist1Sentence"
@@ -1424,6 +1788,8 @@ export const isSublist1Sentence = (obj: EL | string): obj is Sublist1Sentence =>
     return (typeof obj !== "string") && (obj.tag === "Sublist1Sentence");
 };
 
+const defaultAttrOfSublist1Sentence = {} as const;
+
 export interface Sublist2 extends _StdEL {
     tag: "Sublist2"
     attr: Record<string, never>
@@ -1433,6 +1799,8 @@ export interface Sublist2 extends _StdEL {
 export const isSublist2 = (obj: EL | string): obj is Sublist2 => {
     return (typeof obj !== "string") && (obj.tag === "Sublist2");
 };
+
+const defaultAttrOfSublist2 = {} as const;
 
 export interface Sublist2Sentence extends _StdEL {
     tag: "Sublist2Sentence"
@@ -1444,6 +1812,8 @@ export const isSublist2Sentence = (obj: EL | string): obj is Sublist2Sentence =>
     return (typeof obj !== "string") && (obj.tag === "Sublist2Sentence");
 };
 
+const defaultAttrOfSublist2Sentence = {} as const;
+
 export interface Sublist3 extends _StdEL {
     tag: "Sublist3"
     children: Array<Sublist3Sentence>
@@ -1452,6 +1822,9 @@ export interface Sublist3 extends _StdEL {
 export const isSublist3 = (obj: EL | string): obj is Sublist3 => {
     return (typeof obj !== "string") && (obj.tag === "Sublist3");
 };
+
+const defaultAttrOfSublist3 = {
+} as const;
 
 export interface Sublist3Sentence extends _StdEL {
     tag: "Sublist3Sentence"
@@ -1463,6 +1836,8 @@ export const isSublist3Sentence = (obj: EL | string): obj is Sublist3Sentence =>
     return (typeof obj !== "string") && (obj.tag === "Sublist3Sentence");
 };
 
+const defaultAttrOfSublist3Sentence = {} as const;
+
 export interface QuoteStruct extends _StdEL {
     tag: "QuoteStruct"
     children: Array<StdEL | __EL | string>
@@ -1471,6 +1846,9 @@ export interface QuoteStruct extends _StdEL {
 export const isQuoteStruct = (obj: EL | string): obj is QuoteStruct => {
     return (typeof obj !== "string") && (obj.tag === "QuoteStruct");
 };
+
+const defaultAttrOfQuoteStruct = {
+} as const;
 
 export interface Ruby extends _StdEL {
     tag: "Ruby"
@@ -1482,6 +1860,8 @@ export const isRuby = (obj: EL | string): obj is Ruby => {
     return (typeof obj !== "string") && (obj.tag === "Ruby");
 };
 
+const defaultAttrOfRuby = {} as const;
+
 export interface Rt extends _StdEL {
     tag: "Rt"
     children: Array<__EL | string>
@@ -1490,6 +1870,9 @@ export interface Rt extends _StdEL {
 export const isRt = (obj: EL | string): obj is Rt => {
     return (typeof obj !== "string") && (obj.tag === "Rt");
 };
+
+const defaultAttrOfRt = {
+} as const;
 
 export interface Line extends _StdEL {
     tag: "Line"
@@ -1503,6 +1886,10 @@ export const isLine = (obj: EL | string): obj is Line => {
     return (typeof obj !== "string") && (obj.tag === "Line");
 };
 
+const defaultAttrOfLine = {
+    Style: "solid",
+} as const;
+
 export interface Sup extends _StdEL {
     tag: "Sup"
     children: Array<__EL | string>
@@ -1512,6 +1899,9 @@ export const isSup = (obj: EL | string): obj is Sup => {
     return (typeof obj !== "string") && (obj.tag === "Sup");
 };
 
+const defaultAttrOfSup = {
+} as const;
+
 export interface Sub extends _StdEL {
     tag: "Sub"
     children: Array<__EL | string>
@@ -1520,6 +1910,9 @@ export interface Sub extends _StdEL {
 export const isSub = (obj: EL | string): obj is Sub => {
     return (typeof obj !== "string") && (obj.tag === "Sub");
 };
+
+const defaultAttrOfSub = {
+} as const;
 
 export type StdELType<TName extends string> =
     TName extends "Law" ? Law :
@@ -1931,6 +2324,143 @@ export const stdELTags = [
     "Sup",
     "Sub",
 ] as const;
+
+export const defaultAttrs = {
+    Law: defaultAttrOfLaw,
+    LawNum: defaultAttrOfLawNum,
+    LawBody: defaultAttrOfLawBody,
+    LawTitle: defaultAttrOfLawTitle,
+    EnactStatement: defaultAttrOfEnactStatement,
+    TOC: defaultAttrOfTOC,
+    TOCLabel: defaultAttrOfTOCLabel,
+    TOCPreambleLabel: defaultAttrOfTOCPreambleLabel,
+    TOCPart: defaultAttrOfTOCPart,
+    TOCChapter: defaultAttrOfTOCChapter,
+    TOCSection: defaultAttrOfTOCSection,
+    TOCSubsection: defaultAttrOfTOCSubsection,
+    TOCDivision: defaultAttrOfTOCDivision,
+    TOCArticle: defaultAttrOfTOCArticle,
+    TOCSupplProvision: defaultAttrOfTOCSupplProvision,
+    TOCAppdxTableLabel: defaultAttrOfTOCAppdxTableLabel,
+    ArticleRange: defaultAttrOfArticleRange,
+    Preamble: defaultAttrOfPreamble,
+    MainProvision: defaultAttrOfMainProvision,
+    Part: defaultAttrOfPart,
+    PartTitle: defaultAttrOfPartTitle,
+    Chapter: defaultAttrOfChapter,
+    ChapterTitle: defaultAttrOfChapterTitle,
+    Section: defaultAttrOfSection,
+    SectionTitle: defaultAttrOfSectionTitle,
+    Subsection: defaultAttrOfSubsection,
+    SubsectionTitle: defaultAttrOfSubsectionTitle,
+    Division: defaultAttrOfDivision,
+    DivisionTitle: defaultAttrOfDivisionTitle,
+    Article: defaultAttrOfArticle,
+    ArticleTitle: defaultAttrOfArticleTitle,
+    ArticleCaption: defaultAttrOfArticleCaption,
+    Paragraph: defaultAttrOfParagraph,
+    ParagraphCaption: defaultAttrOfParagraphCaption,
+    ParagraphNum: defaultAttrOfParagraphNum,
+    ParagraphSentence: defaultAttrOfParagraphSentence,
+    SupplNote: defaultAttrOfSupplNote,
+    AmendProvision: defaultAttrOfAmendProvision,
+    AmendProvisionSentence: defaultAttrOfAmendProvisionSentence,
+    NewProvision: defaultAttrOfNewProvision,
+    Class: defaultAttrOfClass,
+    ClassTitle: defaultAttrOfClassTitle,
+    ClassSentence: defaultAttrOfClassSentence,
+    Item: defaultAttrOfItem,
+    ItemTitle: defaultAttrOfItemTitle,
+    ItemSentence: defaultAttrOfItemSentence,
+    Subitem1: defaultAttrOfSubitem1,
+    Subitem1Title: defaultAttrOfSubitem1Title,
+    Subitem1Sentence: defaultAttrOfSubitem1Sentence,
+    Subitem2: defaultAttrOfSubitem2,
+    Subitem2Title: defaultAttrOfSubitem2Title,
+    Subitem2Sentence: defaultAttrOfSubitem2Sentence,
+    Subitem3: defaultAttrOfSubitem3,
+    Subitem3Title: defaultAttrOfSubitem3Title,
+    Subitem3Sentence: defaultAttrOfSubitem3Sentence,
+    Subitem4: defaultAttrOfSubitem4,
+    Subitem4Title: defaultAttrOfSubitem4Title,
+    Subitem4Sentence: defaultAttrOfSubitem4Sentence,
+    Subitem5: defaultAttrOfSubitem5,
+    Subitem5Title: defaultAttrOfSubitem5Title,
+    Subitem5Sentence: defaultAttrOfSubitem5Sentence,
+    Subitem6: defaultAttrOfSubitem6,
+    Subitem6Title: defaultAttrOfSubitem6Title,
+    Subitem6Sentence: defaultAttrOfSubitem6Sentence,
+    Subitem7: defaultAttrOfSubitem7,
+    Subitem7Title: defaultAttrOfSubitem7Title,
+    Subitem7Sentence: defaultAttrOfSubitem7Sentence,
+    Subitem8: defaultAttrOfSubitem8,
+    Subitem8Title: defaultAttrOfSubitem8Title,
+    Subitem8Sentence: defaultAttrOfSubitem8Sentence,
+    Subitem9: defaultAttrOfSubitem9,
+    Subitem9Title: defaultAttrOfSubitem9Title,
+    Subitem9Sentence: defaultAttrOfSubitem9Sentence,
+    Subitem10: defaultAttrOfSubitem10,
+    Subitem10Title: defaultAttrOfSubitem10Title,
+    Subitem10Sentence: defaultAttrOfSubitem10Sentence,
+    Sentence: defaultAttrOfSentence,
+    Column: defaultAttrOfColumn,
+    SupplProvision: defaultAttrOfSupplProvision,
+    SupplProvisionLabel: defaultAttrOfSupplProvisionLabel,
+    SupplProvisionAppdxTable: defaultAttrOfSupplProvisionAppdxTable,
+    SupplProvisionAppdxTableTitle: defaultAttrOfSupplProvisionAppdxTableTitle,
+    SupplProvisionAppdxStyle: defaultAttrOfSupplProvisionAppdxStyle,
+    SupplProvisionAppdxStyleTitle: defaultAttrOfSupplProvisionAppdxStyleTitle,
+    SupplProvisionAppdx: defaultAttrOfSupplProvisionAppdx,
+    AppdxTable: defaultAttrOfAppdxTable,
+    AppdxTableTitle: defaultAttrOfAppdxTableTitle,
+    AppdxNote: defaultAttrOfAppdxNote,
+    AppdxNoteTitle: defaultAttrOfAppdxNoteTitle,
+    AppdxStyle: defaultAttrOfAppdxStyle,
+    AppdxStyleTitle: defaultAttrOfAppdxStyleTitle,
+    AppdxFormat: defaultAttrOfAppdxFormat,
+    AppdxFormatTitle: defaultAttrOfAppdxFormatTitle,
+    Appdx: defaultAttrOfAppdx,
+    ArithFormulaNum: defaultAttrOfArithFormulaNum,
+    ArithFormula: defaultAttrOfArithFormula,
+    AppdxFig: defaultAttrOfAppdxFig,
+    AppdxFigTitle: defaultAttrOfAppdxFigTitle,
+    TableStruct: defaultAttrOfTableStruct,
+    TableStructTitle: defaultAttrOfTableStructTitle,
+    Table: defaultAttrOfTable,
+    TableRow: defaultAttrOfTableRow,
+    TableHeaderRow: defaultAttrOfTableHeaderRow,
+    TableHeaderColumn: defaultAttrOfTableHeaderColumn,
+    TableColumn: defaultAttrOfTableColumn,
+    FigStruct: defaultAttrOfFigStruct,
+    FigStructTitle: defaultAttrOfFigStructTitle,
+    Fig: defaultAttrOfFig,
+    NoteStruct: defaultAttrOfNoteStruct,
+    NoteStructTitle: defaultAttrOfNoteStructTitle,
+    Note: defaultAttrOfNote,
+    StyleStruct: defaultAttrOfStyleStruct,
+    StyleStructTitle: defaultAttrOfStyleStructTitle,
+    Style: defaultAttrOfStyle,
+    FormatStruct: defaultAttrOfFormatStruct,
+    FormatStructTitle: defaultAttrOfFormatStructTitle,
+    Format: defaultAttrOfFormat,
+    RelatedArticleNum: defaultAttrOfRelatedArticleNum,
+    Remarks: defaultAttrOfRemarks,
+    RemarksLabel: defaultAttrOfRemarksLabel,
+    List: defaultAttrOfList,
+    ListSentence: defaultAttrOfListSentence,
+    Sublist1: defaultAttrOfSublist1,
+    Sublist1Sentence: defaultAttrOfSublist1Sentence,
+    Sublist2: defaultAttrOfSublist2,
+    Sublist2Sentence: defaultAttrOfSublist2Sentence,
+    Sublist3: defaultAttrOfSublist3,
+    Sublist3Sentence: defaultAttrOfSublist3Sentence,
+    QuoteStruct: defaultAttrOfQuoteStruct,
+    Ruby: defaultAttrOfRuby,
+    Rt: defaultAttrOfRt,
+    Line: defaultAttrOfLine,
+    Sup: defaultAttrOfSup,
+    Sub: defaultAttrOfSub,
+} as const;
 
 export type StdELTag = typeof stdELTags[number];
 

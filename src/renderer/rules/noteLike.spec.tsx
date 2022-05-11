@@ -40,7 +40,7 @@ describe("Test HTML noteLike", () => {
                 },
                 {
                     tag: "Note",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Table",
@@ -242,7 +242,7 @@ describe("Test DOCX noteLike", () => {
                 },
                 {
                     tag: "Note",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Table",

@@ -163,7 +163,6 @@ export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
 
             const articleGroup = newStdEL(
                 headLine.line.mainTag,
-                { Delete: "false", Hide: "false" },
             );
 
             (articleGroup.children as (typeof articleGroup.children)[number][]).push(newStdEL(

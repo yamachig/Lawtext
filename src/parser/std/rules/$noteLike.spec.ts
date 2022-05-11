@@ -28,7 +28,7 @@ describe("Test $noteStruct and noteLikeStructToLines", () => {
                 },
                 {
                     tag: "Note",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -81,7 +81,7 @@ describe("Test $noteStruct and noteLikeStructToLines", () => {
             children: [
                 {
                     tag: "Note",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -160,7 +160,7 @@ describe("Test $noteStruct and noteLikeStructToLines", () => {
                 },
                 {
                     tag: "Note",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -270,7 +270,7 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
                 },
                 {
                     tag: "Style",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -323,7 +323,7 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
             children: [
                 {
                     tag: "Style",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -375,7 +375,7 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
             children: [
                 {
                     tag: "Style",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -454,7 +454,7 @@ describe("Test $styleStruct and noteLikeStructToLines", () => {
                 },
                 {
                     tag: "Style",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -526,7 +526,7 @@ describe("Test $formatStruct and noteLikeStructToLines", () => {
                 },
                 {
                     tag: "Format",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -579,7 +579,7 @@ describe("Test $formatStruct and noteLikeStructToLines", () => {
             children: [
                 {
                     tag: "Format",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
@@ -658,7 +658,7 @@ describe("Test $formatStruct and noteLikeStructToLines", () => {
                 },
                 {
                     tag: "Format",
-                    attr: { },
+                    attr: {},
                     children: [
                         {
                             tag: "Fig",
