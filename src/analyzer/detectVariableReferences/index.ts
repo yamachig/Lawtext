@@ -10,6 +10,7 @@ import { ErrorMessage } from "../../parser/cst/error";
 import { isSentenceText, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import { isIgnoreAnalysis } from "../common";
 import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
+import { toStdLawNum } from "../../law/num";
 
 export const matchVariableReferences = (
     textEL: __Text,
@@ -160,20 +161,22 @@ export const detectVariableReferencesOfEL = (
                     );
 
                     const lastNewItem = match.value.newItems[match.value.newItems.length - 1];
-                    if (lastNewItem instanceof ____VarRef && declarations.get(lastNewItem.attr.declarationID).attr.type === "LawName") {
-                        const pointerRangesIndex = childIndex + match.value.newItems.length;
+                    if (lastNewItem instanceof ____VarRef) {
+                        const declaration = declarations.get(lastNewItem.attr.declarationID);
+                        if (declaration.attr.type === "LawName") {
+                            const pointerRangesIndex = childIndex + match.value.newItems.length;
 
-                        if (
-                            (pointerRangesIndex < elToBeModified.children.length)
+                            if (
+                                (pointerRangesIndex < elToBeModified.children.length)
                             && (elToBeModified.children[pointerRangesIndex] instanceof ____PointerRanges)
-                        )
-                        {
-                            const pointerRanges = elToBeModified.children[pointerRangesIndex] as ____PointerRanges;
-                            const firstPointer = pointerRanges.ranges()[0].pointers()[0];
-                            const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
-                            const lawRef = lawRefByDeclarationID.get(lastNewItem.attr.declarationID);
-                            if (pointerEnv && lawRef) {
-                                pointerEnv.directLawRef = lawRef;
+                            )
+                            {
+                                const pointerRanges = elToBeModified.children[pointerRangesIndex] as ____PointerRanges;
+                                const firstPointer = pointerRanges.ranges()[0].pointers()[0];
+                                const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
+                                if (pointerEnv && declaration.attr.value) {
+                                    pointerEnv.directLawNum = toStdLawNum(declaration.attr.value);
+                                }
                             }
                         }
                     }

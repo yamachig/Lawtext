@@ -769,6 +769,70 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
         assert.strictEqual(text, expectedRendered);
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const target = `\
+もつぱら日本国憲法第七十三条にいう官吏に関する事務を掌理する基準を定めるものである。
+`;
+        const expectedRendered = `\
+もつぱら日本国憲法第七十三条にいう官吏に関する事務を掌理する基準を定めるものである。`;
+        const expectedCST = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["もつぱら"],
+            },
+            {
+                tag: "____LawNum",
+                attr: {},
+                children: ["日本国憲法"],
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {},
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第七十三条"
+                                        },
+                                        children: ["第七十三条"]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                ],
+            },
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["にいう官吏に関する事務を掌理する基準を定めるものである。"],
+            },
+        ];
+        const expectedErrors: ErrorMessage[] = [];
+
+        const result = $sentenceChildren.abstract().match(0, target, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+            assert.deepStrictEqual(result.value.value.map(el => el.json(true)), expectedCST);
+            assert.deepStrictEqual(result.value.errors, expectedErrors);
+        }
+
+        const text = sentenceChildrenToString(expectedCST.map(loadEL) as SentenceChildEL[]);
+        assert.strictEqual(text, expectedRendered);
+    });
+
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;

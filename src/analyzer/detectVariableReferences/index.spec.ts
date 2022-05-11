@@ -1211,7 +1211,7 @@ describe("Test detectVariableReferences", () => {
     });
 });
 
-describe("Test detectVariableReferences and PointerRanges with lawRef", () => {
+describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
@@ -1281,10 +1281,10 @@ describe("Test detectVariableReferences and PointerRanges with lawRef", () => {
                 },
                 located: {
                     type: "external",
-                    lawRef: "内閣府設置法（平成十一年法律第八十九号）",
+                    lawNum: "平成十一年法律第八十九号",
                     fqPrefixFragments: [],
                 },
-                directLawRef: "内閣府設置法（平成十一年法律第八十九号）",
+                directLawNum: "平成十一年法律第八十九号",
                 namingParent: null,
                 namingChildren: ["第二項"],
                 seriesPrev: null,
@@ -1309,10 +1309,10 @@ describe("Test detectVariableReferences and PointerRanges with lawRef", () => {
                 },
                 located: {
                     type: "external",
-                    lawRef: "内閣府設置法（平成十一年法律第八十九号）",
+                    lawNum: "平成十一年法律第八十九号",
                     fqPrefixFragments: ["第四十九条"],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第四十九条第一項",
                 namingChildren: [],
                 seriesPrev: "第四十九条第一項",
@@ -1347,10 +1347,10 @@ describe("Test detectVariableReferences and PointerRanges with lawRef", () => {
                 },
                 located: {
                     type: "external",
-                    lawRef: "国家行政組織法（昭和二十三年法律第百二十号）",
+                    lawNum: "昭和二十三年法律第百二十号",
                     fqPrefixFragments: [],
                 },
-                directLawRef: "国家行政組織法（昭和二十三年法律第百二十号）",
+                directLawNum: "昭和二十三年法律第百二十号",
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: "第二項",

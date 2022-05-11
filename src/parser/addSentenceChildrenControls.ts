@@ -4,7 +4,7 @@ import { initialEnv } from "./cst/env";
 import $sentenceChildren from "./cst/rules/$sentenceChildren";
 
 export const addSentenceChildrenControls = <TEL extends std.StdEL | std.__EL>(elToBeModified: TEL): TEL => {
-    if (["LawNum", "QuoteStruct"].includes(elToBeModified.tag)) {
+    if (["LawTitle", "LawNum", "QuoteStruct"].includes(elToBeModified.tag)) {
         //
     } else if (["ArticleTitle", ...std.paragraphItemTitleTags, ...std.appdxItemTitleTags, ...std.supplProvisionAppdxItemTitleTags].includes(elToBeModified.tag)) {
         elToBeModified.children = [new __Text(elToBeModified.text(), elToBeModified.range)];

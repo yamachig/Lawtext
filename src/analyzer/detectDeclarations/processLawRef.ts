@@ -14,6 +14,7 @@ import * as std from "../../law/std";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import getScope from "../pointerEnvs/getScope";
 import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
+import { toStdLawNum } from "../../law/num";
 
 export const getLawNameLength = (lawNum: string): number | null => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -137,7 +138,7 @@ export const processLawRef = (
                     const firstPointer = pointerRanges.ranges()[0].pointers()[0];
                     const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
                     if (pointerEnv) {
-                        pointerEnv.directLawRef = lawRef;
+                        pointerEnv.directLawNum = toStdLawNum(lawNumText);
                     }
                 }
 
@@ -229,7 +230,7 @@ export const processLawRef = (
                         const firstPointer = pointerRanges.ranges()[0].pointers()[0];
                         const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
                         if (pointerEnv) {
-                            pointerEnv.directLawRef = lawRef;
+                            pointerEnv.directLawNum = toStdLawNum(lawNumText);
                         }
                     }
                 }

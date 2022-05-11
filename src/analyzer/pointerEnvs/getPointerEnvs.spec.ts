@@ -49,7 +49,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: null,
@@ -95,7 +95,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: null,
                 namingChildren: ["第二号"],
                 seriesPrev: null,
@@ -127,7 +127,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第二十四条の二第二項",
                 namingChildren: [],
                 seriesPrev: null,
@@ -228,7 +228,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: null,
                 namingChildren: ["第七十六条第四項"],
                 seriesPrev: null,
@@ -274,7 +274,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第七十五条第一項",
                 namingChildren: ["第四号", "第五項"],
                 seriesPrev: "第七十五条第一項",
@@ -306,7 +306,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第七十六条第四項",
                 namingChildren: [],
                 seriesPrev: null,
@@ -338,7 +338,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第七十六条第四項",
                 namingChildren: ["第五号"],
                 seriesPrev: "第四号",
@@ -370,7 +370,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第五項",
                 namingChildren: [],
                 seriesPrev: null,
@@ -452,7 +452,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: null,
@@ -484,7 +484,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: "第三十八条の二十一第一項",
@@ -570,7 +570,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: null,
                 namingChildren: ["第四十三条第一項"],
                 seriesPrev: null,
@@ -616,7 +616,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第三十九条第一項",
                 namingChildren: [
                     "前条",
@@ -650,7 +650,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第四十三条第一項",
                 namingChildren: [],
                 seriesPrev: null,
@@ -682,7 +682,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第四十三条第一項",
                 namingChildren: [
                     "前条",
@@ -716,7 +716,7 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第四項",
                 namingChildren: [],
                 seriesPrev: null,
@@ -748,10 +748,68 @@ describe("Test getPointerEnvs", () => {
                         },
                     ],
                 },
-                directLawRef: null,
+                directLawNum: null,
                 namingParent: "第四項",
                 namingChildren: [],
                 seriesPrev: "前条",
+                seriesNext: null,
+            },
+        ];
+
+
+        const expectedErrorMessages: string[] = [];
+
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+
+        // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第一条　（略）
+②　（略）もつぱら日本国憲法第七十三条にいう官吏に関する事務を掌理する基準を定めるものである。
+③～⑤　（略）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第七十三条",
+                                num: "73",
+                            },
+                            children: ["第七十三条"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawNum: "昭和二十一年憲法",
+                    fqPrefixFragments: [],
+                },
+                directLawNum: "昭和二十一年憲法",
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
                 seriesNext: null,
             },
         ];
