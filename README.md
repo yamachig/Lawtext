@@ -127,7 +127,7 @@ Lawtext works efficiently with existing source code management tools to make law
 - **インストール不要（ブラウザで動作）**：ブラウザ上でシングルページアプリケーション（single-page application、SPA）として動作します。
 - **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#/download/)）
 
-[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
+[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)
 
 #### Main features of Lawtext-app
 
@@ -260,7 +260,7 @@ Lawtext-appは次の特徴を備えます：
 - **インストール不要（ブラウザで動作）**：ブラウザ上でシングルページアプリケーション（single-page application、SPA）として動作します。
 - **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#/download/)）
 
-[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
+[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)
 
 ------------
 
@@ -380,7 +380,7 @@ Lawtext-app has these features:
 - Lawtext-app is accompanied by an additional syntax analyzer and an elemental semantic analyzer of law text. For example, it shows corresponding parentheses and nesting depth. It also indicates term definition positions and clause number references.
 - It can emit Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
 
-[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://github.com/yamachig/Lawtext/wiki/images/app-screenshot2.png)
+[![app-screenshot2](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)](https://user-images.githubusercontent.com/26037044/167064241-d0713800-61bb-4c70-a55c-83337e1666db.gif)
 
 
 ------------
@@ -395,7 +395,7 @@ Lawtext-app has these features:
 
 </div>
 
-- [こちらのリンク (github.dev)](https://github.dev/yamachig/vscode-lawtext-sample) から数クリックでお試しいただけます。（GitHubアカウントが必要です。） / You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required.)
+- [こちらのリンク (github.dev)](https://github.dev/yamachig/vscode-lawtext-sample) から数クリックでお試しいただけます。（GitHubアカウントが必要です。リンク先でアカウントを作成できます。） / You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required. You can create one at the linked page.)
 
 - もしくは、[vscode.dev](https://vscode.dev/) にて [Lawtext拡張機能](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) をインストールし、[サンプルLawtext](https://yamachig.github.io/lawtext-app/#/(sample)) を開くことでもお試しいただけます / Otherwise, you can visit [vscode.dev](https://vscode.dev/), install [Lawtext extension](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) and open the [sample Lawtext](https://yamachig.github.io/lawtext-app/#/(sample)).
 

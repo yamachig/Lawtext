@@ -21,8 +21,7 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
     if (pointerEnv && pointerEnv.located) {
         const runs: JSX.Element[] = [];
         if (pointerEnv.located.type === "external") {
-            const declaration = analysis.declarations.get(pointerEnv.located.lawRef.attr.includingDeclarationID);
-            const lawNum = declaration?.attr.value;
+            const lawNum = pointerEnv.located.lawNum;
             if (!lawNum) {
                 return <ChildComponent {...childProps} />;
             }
