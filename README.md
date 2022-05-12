@@ -399,3 +399,6 @@ Lawtext-app has these features:
 
 - もしくは、[vscode.dev](https://vscode.dev/) にて [Lawtext拡張機能](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) をインストールし、[サンプルLawtext](https://yamachig.github.io/lawtext-app/#/(sample)) を開くことでもお試しいただけます / Otherwise, you can visit [vscode.dev](https://vscode.dev/), install [Lawtext extension](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) and open the [sample Lawtext](https://yamachig.github.io/lawtext-app/#/(sample)).
 
+-----------
+
+法令元データの取得に<a href="https://elaws.e-gov.go.jp/apitop/" target="_blank" rel="noreferrer">e-Gov法令API</a>を使用しています。定義語・条項参照などの表示は<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>で別途解析・編集したものです。
