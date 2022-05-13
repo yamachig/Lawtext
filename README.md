@@ -164,7 +164,7 @@ Lawtext works efficiently with existing source code management tools to make law
 
 一方で、近年、日本の法令文書管理においていくつかのブレイクスルーがありました：
 
-- [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html)（2016年10月リリース)。法令文書の、政府内部での管理に用いられる、正式なデータベース・出版システムです。e-LAWSにより、日本のすべての現行法令はデジタル形式で保存され、これが正式な文書として扱われるようになりました。
+- [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html)（2016年10月リリース)。法令文書の、政府内部での管理に用いられる、正式なデータベース・出版システムです。e-LAWSにより、現行の法律や省令などはデジタル形式で保存され、これが正式な文書として扱われるようになりました。
 - [法令標準XML](https://elaws.e-gov.go.jp/download/)（2017年5月リリース）。法令を段落単位でマークアップする、標準化されたXML形式です。法律や省令などは、（既にあるHTML形式に加えて）法令標準XMLで公開されるようになりました。
 - [e-Gov 法令 API](https://elaws.e-gov.go.jp/apitop/)（2017年6月リリース）。広く一般に利用可能な、法令標準XMLを提供するAPIです。
 - [e-Gov 法令検索リニューアル](https://elaws.e-gov.go.jp/)（2020年11月リリース）。それまでHTML形式形式で公開され、きれいに印刷することが難しい状況でしたが、RTFやPDFのダウンロードにも対応しました。
