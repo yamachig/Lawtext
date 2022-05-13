@@ -11,8 +11,13 @@ import $ambiguousNameParenthesesContent from "../sentenceChildrenParser/rules/$a
 import getScope from "../pointerEnvs/getScope";
 import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
-const ptnNameChar = "(?!(?:\\s|[。、]))[^ぁ-ゟ](?<!当該)";
-const reName = new RegExp(`(?:(?:${ptnNameChar})+の)?((?:${ptnNameChar})+)$`);
+// Characters other than Hiragana's, spaces, and punctuations.
+const ptnNameChar = "(?!(?:\\s|[。、]))[^ぁ-ゟ]";
+
+// match[0] possibly includes "当該"
+// match[1] possibly includes "の"
+// match[2] does not include "の"
+const reNameGrp1 = new RegExp(`(?:当該)?((?:(?:${ptnNameChar})+の(?!当該))?((?:${ptnNameChar})+))$`);
 
 interface AmbiguousNameCandidateInfo {
     elToBeModified: std.StdEL | std.__EL,
@@ -141,7 +146,7 @@ export const findFilteredAmbiguousNameInline = (
         // e.g. "（略）その担任する事務に関する国の不作為" -> ["不作為", "国の不作為"]
         // e.g. "（略）その担任する事務に関する都道府県の不作為" -> ["不作為", "都道府県の不作為"]
 
-        const match = reName.exec(info.nameCandidateEL.text());
+        const match = reNameGrp1.exec(info.nameCandidateEL.text());
         if (!match) {
             if (!info.errorEmitted) errors.push(new ErrorMessage(
                 "processAmbiguousNameInline: 定義語のような文字列が見つかりませんでした。",
@@ -153,9 +158,9 @@ export const findFilteredAmbiguousNameInline = (
             info.errorEmitted = true;
             continue;
         }
-        info.nameCandidates.add(match[0]); // possibly includes "の"
-        info.nameCandidates.add(match[1]); // without "の"
-        info.maxCandidateLength = match[0].length;
+        info.nameCandidates.add(match[1]); // possibly includes "の"
+        info.nameCandidates.add(match[2]); // without "の"
+        info.maxCandidateLength = match[1].length;
 
         const nameCandidateLastOffset = info.sentenceEnv.textRageOfEL(info.nameCandidateEL)?.[1] ?? null;
         const parentheseeLastOffset = info.sentenceEnv.textRageOfEL(info.afterNameParentheses)?.[1] ?? null;
@@ -198,18 +203,18 @@ export const findFilteredAmbiguousNameInline = (
                         // TODO: exclude other declared words.
                         {
                             const newWord = sentenceEnv.text.substring(0, inSentenceOffset + name.length);
-                            const match = reName.exec(newWord);
-                            if (match && match[0] !== newWord) continue;
+                            const match = reNameGrp1.exec(newWord);
+                            if (match && match[1] !== newWord) continue;
                         }
                         if (inSentenceOffset + name.length < sentenceEnv.text.length) {
                             const newWord = sentenceEnv.text.substring(inSentenceOffset, inSentenceOffset + name.length + 1);
-                            const match = reName.exec(newWord);
-                            if (match && match[0] === newWord) continue;
+                            const match = reNameGrp1.exec(newWord);
+                            if (match && match[1] === newWord) continue;
                         }
                         if (inSentenceOffset + name.length + 1 < sentenceEnv.text.length) {
                             const newWord = sentenceEnv.text.substring(inSentenceOffset, inSentenceOffset + name.length + 2);
-                            const match = reName.exec(newWord);
-                            if (match && match[0] === newWord) continue;
+                            const match = reNameGrp1.exec(newWord);
+                            if (match && match[1] === newWord) continue;
                         }
                     }
 

@@ -16,7 +16,7 @@ export const renderLawtext = (el: EL, indentTexts: string[] = []): string => {
     } else {
         throw new NotImplementedError(`render ${el.tag}`);
     }
-    ret = ret.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1").replace(/(?<!\r\n)$/, "\r\n").replace(/(?:\r?\n)+$/, "\r\n");
+    ret = ret.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1").replace(/(?:\r?\n)?$/, "\r\n").replace(/(?:\r?\n)+$/, "\r\n");
     return ret;
 };
 

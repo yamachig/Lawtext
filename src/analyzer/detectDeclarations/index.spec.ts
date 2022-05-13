@@ -4013,4 +4013,49 @@ describe("Test detectDeclarations", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第三十九条　命令等制定機関は、命令等を定めようとする場合には、当該命令等の案（命令等で定めようとする内容を示すものをいう。以下同じ。）及びこれに関連する資料をあらかじめ公示し、（略）
+２　前項の規定により公示する命令等の案は、具体的かつ明確な内容のものであって、かつ、当該命令等の題名及び当該命令等を定める根拠となる法令の条項が明示されたものでなければならない。
+３・４　（略）
+
+第四十条　命令等制定機関は、命令等を定めようとする場合において、三十日以上の意見提出期間を定めることができないやむを得ない理由があるときは、前条第三項の規定にかかわらず、三十日を下回る意見提出期間を定めることができる。この場合においては、当該命令等の案の公示の際その理由を明らかにしなければならない。
+２　命令等制定機関は、委員会等の議を経て命令等を定めようとする場合（前条第四項第四号に該当する場合を除く。）において、当該委員会等が意見公募手続に準じた手続を実施したときは、同条第一項の規定にかかわらず、自ら意見公募手続を実施することを要しない。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                "tag": "____Declaration",
+                "attr": {
+                    "declarationID": "decl-sentence_0-text_27_32",
+                    "type": "Keyword",
+                    "name": "命令等の案",
+                    "scope": "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":32},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
+                    "nameSentenceTextRange": "{\"start\":{\"sentenceIndex\":0,\"textOffset\":27},\"end\":{\"sentenceIndex\":0,\"textOffset\":32}}",
+                },
+                "children": ["命令等の案"],
+            },
+        ];
+
+
+        const expectedErrorMessages: string[] = [];
+
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+
+        // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsResult.value.declarations.values().map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        assert.deepStrictEqual(declarationsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });
