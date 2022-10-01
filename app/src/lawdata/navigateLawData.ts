@@ -43,6 +43,11 @@ export const navigateLawData = async (
             ok: false,
             error: new Error(`「${lawSearchKey}」を検索しましたが、見つかりませんでした。`),
         };
+    } else if (typeof lawnum !== "string") {
+        return {
+            ok: false,
+            error: new Error(`「${lawSearchKey}」の検索時にエラーが発生しました： ${lawnum.error}: "${lawnum.message}"`),
+        };
     }
 
     try {

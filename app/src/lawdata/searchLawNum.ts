@@ -2,7 +2,7 @@ import { LawInfo } from "lawtext/dist/src/data/lawinfo";
 import levenshtein from "js-levenshtein";
 import { storedLoader } from "./loaders";
 
-export const searchLawnum = async (lawSearchKey: string): Promise<string | null> => {
+export const searchLawnum = async (lawSearchKey: string): Promise<string | {error: string, message: string} | null> => {
 
     const reLawnum = /^(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[〇一二三四五六七八九―]+|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)$/;
     const match = reLawnum.exec(lawSearchKey);
@@ -84,16 +84,29 @@ const getLawnumStored = async (lawSearchKey: string): Promise<string | null> => 
     }
 };
 
-const getLawnumRemote = async (lawSearchKey: string): Promise<string | null> => {
+const getLawnumRemote = async (lawSearchKey: string): Promise<string | {error: string, message: string} | null> => {
     // console.log(`getLawnumRemote("${lawSearchKey}")`);
 
-    const response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=${encodeURI(lawSearchKey)}`, {
-        mode: "cors",
-    });
-    const data = await response.json() as string[][];
-    if (data.length) {
-        data.sort((a, b) => a[0].length - b[0].length);
-        return data[0][1];
+    try {
+        const response = await fetch(`https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawnums&lawname=${encodeURI(lawSearchKey)}`, {
+            mode: "cors",
+        });
+        const rawData = await response.json();
+        if (Array.isArray(rawData)) {
+            const data = rawData as string[][];
+            if (data.length) {
+                data.sort((a, b) => a[0].length - b[0].length);
+                return data[0][1];
+            }
+        } else if ("error" in rawData) {
+            return rawData;
+        }
+    } catch (_e) {
+        const e = _e as Error;
+        return {
+            error: e.name,
+            message: e.message,
+        };
     }
     return null;
 };
