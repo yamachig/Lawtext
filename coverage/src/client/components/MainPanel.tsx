@@ -542,7 +542,7 @@ export const LawCoverageInfoDetail: React.FC<{
                         </small>
                         {" "}
                         <small>
-                            <a href={`https://yamachig.github.io/lawtext-app/#${lawCoverage.LawNum}`} target="_blank" rel="noreferrer">Lawtext <FontAwesomeIcon icon="external-link-alt" /></a>
+                            <a href={`https://yamachig.github.io/lawtext-app/#/${lawCoverage.LawNum}`} target="_blank" rel="noreferrer">Lawtext <FontAwesomeIcon icon="external-link-alt" /></a>
                         </small>
                         {" "}
                         <small>
@@ -623,7 +623,7 @@ export const LawCoverageInfoDetail: React.FC<{
                                     date={lawCoverage.updateDate}
                                 />
                             </div>
-                            {("error" in lawCoverage.parsedLaw.info) && (!!lawCoverage.parsedLaw.info.error) && (
+                            {("error" in lawCoverage.parsedLaw.info) && (Boolean(lawCoverage.parsedLaw.info.error)) && (
                                 <pre>{lawCoverage.parsedLaw.info.error as string}</pre>
                             )}
                             <hr />
