@@ -408,7 +408,14 @@ export const processAmbiguousNameInline = (
 
         const nameCandidateELTextRange = sentenceEnv.textRageOfEL(nameCandidateEL);
         if (!nameCandidateELTextRange) {
-            throw new Error("nameCandidateELRange is null");
+            errors.push(new ErrorMessage(
+                "nameCandidateELRange is null",
+                [
+                    pointerRanges?.range?.[0] ?? 0,
+                    pointerRanges?.range?.[1] ?? 0,
+                ],
+            ));
+            continue;
         }
 
         const nameSentenceTextRange: SentenceTextRange = {

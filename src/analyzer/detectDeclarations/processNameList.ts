@@ -77,7 +77,14 @@ export const processNameList = (
 
                 const nameTextRange = sentenceEnv.textRageOfEL(nameChild.content);
                 if (!nameTextRange) {
-                    throw new Error("nameTextRange is null");
+                    errors.push(new ErrorMessage(
+                        "nameTextRange is null",
+                        [
+                            pointerRanges?.range?.[0] ?? 0,
+                            pointerRanges?.range?.[1] ?? 0,
+                        ],
+                    ));
+                    continue;
                 }
 
                 const nameSentenceTextRange: SentenceTextRange = {

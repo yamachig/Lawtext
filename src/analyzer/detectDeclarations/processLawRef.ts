@@ -81,7 +81,14 @@ export const processLawRef = (
 
                 const nameTextRange = sentenceEnv.textRageOfEL(nameSquareParentheses.content);
                 if (!nameTextRange) {
-                    throw new Error("nameTextRange is null");
+                    errors.push(new ErrorMessage(
+                        "nameTextRange is null",
+                        [
+                            pointerRanges?.range?.[0] ?? 0,
+                            pointerRanges?.range?.[1] ?? 0,
+                        ],
+                    ));
+                    continue;
                 }
 
                 const nameSentenceTextRange: SentenceTextRange = {
@@ -164,7 +171,14 @@ export const processLawRef = (
 
                     const lawNameCandidateTextRange = sentenceEnv.textRageOfEL(lawNameCandidate);
                     if (!lawNameCandidateTextRange) {
-                        throw new Error("lawNameCandidateTextRange is null");
+                        errors.push(new ErrorMessage(
+                            "lawNameCandidateTextRange is null",
+                            [
+                                lawNameCandidate?.range?.[0] ?? 0,
+                                lawNameCandidate?.range?.[1] ?? 0,
+                            ],
+                        ));
+                        continue;
                     }
 
                     const nameSentenceTextRange: SentenceTextRange = {

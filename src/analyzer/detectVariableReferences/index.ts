@@ -136,7 +136,16 @@ export const detectVariableReferencesOfEL = (
 
         } else if (child instanceof __Text) {
             const textRange = sentenceEnv.textRageOfEL(child);
-            if (!textRange) throw new Error("textRange is null");
+            if (!textRange) {
+                errors.push(new ErrorMessage(
+                    "textRange is null",
+                    [
+                        child?.range?.[0] ?? 0,
+                        child?.range?.[1] ?? 0,
+                    ],
+                ));
+                continue;
+            }
             const filteredDeclarations = declarations.filterByRange({
                 start: {
                     sentenceIndex: sentenceEnv.index,
@@ -192,7 +201,14 @@ export const detectVariableReferencesOfEL = (
         } else {
             const textRange = sentenceEnv.textRageOfEL(child);
             if (!textRange) {
-                throw new Error("textRange is null");
+                errors.push(new ErrorMessage(
+                    "textRange is null",
+                    [
+                        child?.range?.[0] ?? 0,
+                        child?.range?.[1] ?? 0,
+                    ],
+                ));
+                continue;
             }
             const filteredDeclarations = declarations.filterByRange({
                 start: {
