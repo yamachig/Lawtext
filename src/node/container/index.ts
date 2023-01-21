@@ -1,5 +1,5 @@
-import { getContainerType } from "../../analyzer/common";
 import { EL } from "../el";
+import * as std from "../../law/std";
 
 export enum ContainerType {
     ROOT = "ROOT",
@@ -8,6 +8,35 @@ export enum ContainerType {
     SENTENCES = "SENTENCES",
 }
 
+export const rootContainerTags = ["Law"] as const;
+
+export const toplevelContainerTags = ["EnactStatement", "MainProvision", "SupplProvision", ...std.appdxItemTags] as const;
+
+export const articlesContainerTags = std.articleGroupTags;
+
+export const sentencesContainerTags = [
+    "Article",
+    ...std.paragraphItemTags,
+    "Table",
+    "TableRow",
+    "TableColumn",
+    "Sentence",
+] as const;
+
+export const containerTags = [
+    ...rootContainerTags,
+    ...toplevelContainerTags,
+    ...articlesContainerTags,
+    ...sentencesContainerTags,
+] as const;
+
+export const getContainerType = (tag: string): ContainerType => {
+    if ((rootContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.ROOT;
+    else if ((toplevelContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.TOPLEVEL;
+    else if ((articlesContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.ARTICLES;
+    else if ((sentencesContainerTags as readonly string[]).indexOf(tag) >= 0) return ContainerType.SENTENCES;
+    else return ContainerType.SENTENCES;
+};
 
 interface IterableIterator<T> extends Iterator<T, void, undefined> {
     [Symbol.iterator](): IterableIterator<T>;

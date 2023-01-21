@@ -1,6 +1,6 @@
-import { Container, ContainerType } from "../node/container";
+import { containerTags, Container, ContainerType } from "../node/container";
 import { EL } from "../node/el";
-import { containerTags, isIgnoreAnalysis } from "./common";
+import { isIgnoreAnalysis } from "./common";
 import { isSentenceLike, SentenceEnv } from "../node/container/sentenceEnv";
 import * as std from "../law/std";
 import { parseNamedNum } from "../law/num";

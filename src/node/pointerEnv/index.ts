@@ -1,6 +1,5 @@
-import { getContainerType } from "../../analyzer/common";
 import { assertNever } from "../../util";
-import { Container, ContainerType } from "../container";
+import { getContainerType, Container, ContainerType } from "../container";
 import { SentenceEnv } from "../container/sentenceEnv";
 import { EL } from "../el";
 import { RelPos, ____PF, ____Pointer } from "../el/controls";
