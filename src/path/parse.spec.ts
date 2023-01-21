@@ -1,9 +1,9 @@
 import { assert } from "chai";
 import { LawIDActCategory, LawIDType } from "../law/lawID";
 import { Era } from "../law/num";
-import { parse, ParseResult } from "./parser";
+import parse, { ParseResult } from "./parse";
 
-describe("Test path.parser.parse", () => {
+describe("Test path.parse", () => {
 
     it("Success case", () => {
         const text = "405AC0000000088";
@@ -100,19 +100,19 @@ describe("Test path.parser.parse", () => {
     });
 
     it("Success case", () => {
-        const text = "SupplProvision[AmendLawNum=\"昭和二七年七月三一日法律第二四九号\"]";
+        const text = "AppdxTable[Num=\"1\"]";
         const expected: ParseResult = {
             ok: true,
             value: [
                 {
                     type: "TOPLEVEL",
-                    text: "SupplProvision[AmendLawNum=\"昭和二七年七月三一日法律第二四九号\"]",
-                    tag: "SupplProvision",
+                    text: "AppdxTable[Num=\"1\"]",
+                    tag: "AppdxTable",
                     num: null,
                     attr: [
                         {
-                            key: "AmendLawNum",
-                            value: "昭和二七年七月三一日法律第二四九号",
+                            key: "Num",
+                            value: "1",
                         },
                     ],
                 },
@@ -254,6 +254,51 @@ describe("Test path.parser.parse", () => {
                         num: "088",
                     },
                     revision: null,
+                },
+                {
+                    type: "SENTENCES",
+                    text: "a=1",
+                    tag: "Article",
+                    num: "1",
+                    attr: [],
+                },
+                {
+                    type: "SENTENCES",
+                    text: "p=1",
+                    tag: "Paragraph",
+                    num: "1",
+                    attr: [],
+                },
+            ],
+        };
+        const actual = parse(text);
+        assert.deepStrictEqual(actual, expected);
+    });
+
+    it("Success case", () => {
+        const text = "405AC0000000088/sp/a=1/p=1";
+        const expected: ParseResult = {
+            ok: true,
+            value: [
+                {
+                    type: "LAW",
+                    text: "405AC0000000088",
+                    lawIDStruct: {
+                        text: "405AC0000000088",
+                        type: LawIDType.Act,
+                        era: Era.Heisei,
+                        year: "05",
+                        category: LawIDActCategory.Cabinet,
+                        num: "088",
+                    },
+                    revision: null,
+                },
+                {
+                    type: "TOPLEVEL",
+                    text: "sp",
+                    tag: "SupplProvision",
+                    num: null,
+                    attr: [],
                 },
                 {
                     type: "SENTENCES",

@@ -73,7 +73,6 @@ const $suareBracketsAttr = factory
     .sequence(s => s
         // .andOmit(r => r.assert(({ offset, target }) => { console.log({ offset: offset(), target: target() }); return true; }))
         .andOmit(r => r.seqEqual("["))
-        .andOmit(r => r.assert(({ offset, target }) => { console.log({ offset: offset(), target: target() }); return true; }))
         // eslint-disable-next-line no-irregular-whitespace
         .and(r => r.regExp(/^[^/ 　\t=[\]"]+/), "key")
         .andOmit(r => r.seqEqual("="))
@@ -90,7 +89,7 @@ const $suareBracketsAttr = factory
     )
     ;
 
-// e.g. `sp`, `AppdxTable=1`, `SupplProvision[AmendLawNum="昭和二七年七月三一日法律第二四九号"]`
+// e.g. `sp`, `AppdxTable=1`, `AppdxTable[Num="1"]`
 export interface PathFragmentTopLevel {
     type: "TOPLEVEL",
     text: string,
@@ -252,3 +251,4 @@ export const parse = (text: string): ParseResult => {
         };
     }
 };
+export default parse;
