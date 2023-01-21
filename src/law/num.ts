@@ -12,10 +12,18 @@ export const toStdLawNum = (lawNum: string): string => {
 };
 // export const reLawnum = /(?:(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年(?:(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[―〇一二三四五六七八九]+)|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)|明治三十二年勅令|大正十二年内務省・鉄道省令|昭和五年逓信省・鉄道省令|昭和九年逓信省・農林省令|人事院規則一〇―一五)/;
 
+export enum Era {
+    Meiji = "Meiji",
+    Taisho = "Taisho",
+    Showa = "Showa",
+    Heisei = "Heisei",
+    Reiwa = "Reiwa",
+}
+
 export const eras = {
-    "明治": "Meiji", "大正": "Taisho",
-    "昭和": "Showa", "平成": "Heisei",
-    "令和": "Reiwa",
+    "明治": Era.Meiji, "大正": Era.Taisho,
+    "昭和": Era.Showa, "平成": Era.Heisei,
+    "令和": Era.Reiwa,
 } as const;
 
 export const lawTypes = [
@@ -255,3 +263,5 @@ export const articleGroupTitleTag = {
     "款": "SubsectionTitle", "目": "DivisionTitle", "条": "ArticleTitle",
     "則": "SupplProvisionLabel",
 } as const;
+
+
