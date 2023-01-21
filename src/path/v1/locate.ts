@@ -1,6 +1,6 @@
-import { Container } from "../node/container";
-import { ErrorMessage } from "../parser/cst/error";
-import { assertNever } from "../util";
+import { Container } from "../../node/container";
+import { ErrorMessage } from "../../parser/cst/error";
+import { assertNever } from "../../util";
 import { PathFragment } from "./parse";
 
 

@@ -1,9 +1,9 @@
 import { assert } from "chai";
-import { LawIDActCategory, LawIDType } from "../law/lawID";
-import { Era } from "../law/num";
+import { LawIDActCategory, LawIDType } from "../../law/lawID";
+import { Era } from "../../law/num";
 import parse, { ParseResult } from "./parse";
 
-describe("Test path.parse", () => {
+describe("Test path.v1.parse", () => {
 
     it("Success case", () => {
         const text = "405AC0000000088";

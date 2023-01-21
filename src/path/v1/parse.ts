@@ -1,8 +1,8 @@
 import * as gp from "generic-parser";
-import { ErrorMessage } from "../parser/cst/error";
-import { toplevelContainerTags, articlesContainerTags } from "../node/container";
-import * as std from "../law/std";
-import { LawIDStruct, parseLawID, ptnLawID } from "../law/lawID";
+import { ErrorMessage } from "../../parser/cst/error";
+import { toplevelContainerTags, articlesContainerTags } from "../../node/container";
+import * as std from "../../law/std";
+import { LawIDStruct, parseLawID, ptnLawID } from "../../law/lawID";
 import { Empty, Rule } from "generic-parser";
 
 const makeEnv = () => gp.makeStringEnv();

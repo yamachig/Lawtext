@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 import { assert } from "chai";
-import getSentenceEnvs from "../analyzer/getSentenceEnvs";
-import xmlToEL from "../node/el/xmlToEL";
+import getSentenceEnvs from "../../analyzer/getSentenceEnvs";
+import xmlToEL from "../../node/el/xmlToEL";
 import locate, { LocateFail, LocateResult } from "./locate";
 import parse from "./parse";
 
@@ -135,7 +135,7 @@ const xml2 = `\
 </Law>
 `;
 
-describe("Test path.locater.locate", () => {
+describe("Test path.v1.locate", () => {
 
     it("Success case", () => {
         const el = xmlToEL(xml1);
