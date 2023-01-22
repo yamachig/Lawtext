@@ -2,6 +2,7 @@
 import { assert } from "chai";
 import getSentenceEnvs from "../../analyzer/getSentenceEnvs";
 import xmlToEL from "../../node/el/xmlToEL";
+import { omit } from "../../util";
 import locate, { LocateFail, LocateResult } from "./locate";
 import parse from "./parse";
 
@@ -390,6 +391,7 @@ describe("Test path.v1.locate", () => {
                     range: [0, 1],
                 },
             ],
+            partialValue: null,
         };
         const actual = locate(rootContainer, path.value, []);
         assert.deepStrictEqual(actual, expected);
@@ -400,7 +402,7 @@ describe("Test path.v1.locate", () => {
         const { rootContainer } = getSentenceEnvs(el);
         const path = parse("a=2/i=10");
         if (!path.ok) throw new Error("path.parse failed");
-        const expected: LocateResult = {
+        const expected = {
             ok: false,
             errors: [
                 {
@@ -408,9 +410,38 @@ describe("Test path.v1.locate", () => {
                     range: [1, 2],
                 },
             ],
+            partialValue: {
+                container: {
+                    el: {
+                        tag: "Article",
+                        attr: {
+                            "Num": "2",
+                        },
+                    },
+                },
+                fragments: [
+                    {
+                        container: {
+                            el: {
+                                tag: "Article",
+                                attr: {
+                                    "Num": "2",
+                                },
+                            },
+                        },
+                    },
+                ],
+            },
         };
         const actual = locate(rootContainer, path.value, []);
-        assert.deepStrictEqual(actual, expected);
+        assert.deepStrictEqual(omit(actual as LocateFail, "partialValue"), omit(expected, "partialValue"));
+        assert.deepInclude((actual as LocateFail).partialValue?.container.el, expected.partialValue.container.el);
+        if (!actual.ok && actual.partialValue) {
+            assert.strictEqual(actual.partialValue.fragments.length, expected.partialValue.fragments.length);
+            for (let i = 0; i < actual.partialValue.fragments.length; i++) {
+                assert.deepInclude(actual.partialValue.fragments[i].container.el, expected.partialValue.fragments[i].container.el);
+            }
+        }
     });
 
 });

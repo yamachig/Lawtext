@@ -15,6 +15,10 @@ export interface LocateSuccess {
 export interface LocateFail {
     ok: false,
     errors: ErrorMessage[],
+    partialValue: {
+        container: Container,
+        fragments: {container: Container, pathFragment: PathFragment}[],
+    } | null,
 }
 
 export type LocateResult = LocateSuccess | LocateFail;
@@ -42,7 +46,11 @@ export const locate = (
                     "Unexpected \"LAW\" type fragment in the path",
                     [processedFragments.length, processedFragments.length + path.length],
                 ),
-            ]
+            ],
+            partialValue: processedFragments.length === 0 ? null : {
+                container: processedFragments[processedFragments.length - 1].container,
+                fragments: processedFragments,
+            },
         };
 
     } else if (fragment.type === "TOPLEVEL" || fragment.type === "ARTICLES") {
@@ -127,7 +135,11 @@ export const locate = (
                 `Cannot locate ${fragment.text} in <${contextContainer.el.tag}${Object.entries(contextContainer.el.attr).map(([key, value]) => " " + (value === undefined ? key : (key + "=\"" + value + "\""))).join("")} />`,
                 [processedFragments.length, processedFragments.length + path.length],
             ),
-        ]
+        ],
+        partialValue: processedFragments.length === 0 ? null : {
+            container: processedFragments[processedFragments.length - 1].container,
+            fragments: processedFragments,
+        },
     };
 };
 export default locate;
