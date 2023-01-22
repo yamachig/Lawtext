@@ -136,6 +136,20 @@ const xml2 = `\
 </Law>
 `;
 
+const xml3 = `\
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Law Era="Meiji" Lang="ja" LawType="Act" Num="089" Year="29" PromulgateMonth="04" PromulgateDay="27" ScheduledEnforcementDate="">
+  <LawNum>明治二十九年法律第八十九号</LawNum>
+  <LawBody>
+    <LawTitle Kana="みんぽう" Abbrev="" AbbrevKana="">民法</LawTitle>
+    <EnactStatement>民法第一編第二編第三編別冊ノ通定ム</EnactStatement>
+    <EnactStatement>此法律施行ノ期日ハ勅令ヲ以テ之ヲ定ム</EnactStatement>
+    <EnactStatement>明治二十三年法律第二十八号民法財産編財産取得編債権担保編証拠編ハ此法律発布ノ日ヨリ廃止ス</EnactStatement>
+    <EnactStatement>（別冊）</EnactStatement>
+  </LawBody>
+</Law>
+`;
+
 describe("Test path.v1.locate", () => {
 
     it("Success case", () => {
@@ -374,6 +388,37 @@ describe("Test path.v1.locate", () => {
             assert.strictEqual(actual.value.fragments.length, expected.value.fragments.length);
             for (let i = 0; i < actual.value.fragments.length; i++) {
                 assert.deepInclude(actual.value.fragments[i].container.el, expected.value.fragments[i].container.el);
+            }
+        }
+    });
+
+    it("Success case", () => {
+        const el = xmlToEL(xml3);
+        const { rootContainer } = getSentenceEnvs(el);
+        const path = parse("EnactStatement[2]");
+        if (!path.ok) throw new Error("path.parse failed");
+        const expected = {
+            ok: true,
+            value: {
+                fragments: [
+                    {
+                        container: {
+                            el: {
+                                tag: "EnactStatement",
+                                attr: {},
+                            },
+                        },
+                    },
+                ],
+            },
+        } as const;
+        const actual = locate(rootContainer, path.value, []);
+        assert.isTrue(actual.ok, JSON.stringify((actual as LocateFail).errors));
+        if (actual.ok) {
+            assert.strictEqual(actual.value.fragments.length, expected.value.fragments.length);
+            for (let i = 0; i < actual.value.fragments.length; i++) {
+                assert.deepInclude(actual.value.fragments[i].container.el, expected.value.fragments[i].container.el);
+                assert.strictEqual(actual.value.fragments[i].container.el.text(), "此法律施行ノ期日ハ勅令ヲ以テ之ヲ定ム");
             }
         }
     });

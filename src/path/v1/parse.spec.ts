@@ -77,6 +77,7 @@ describe("Test path.v1.parse", () => {
                     tag: "SupplProvision",
                     num: null,
                     attr: [],
+                    nth: null,
                 },
             ],
         };
@@ -95,6 +96,7 @@ describe("Test path.v1.parse", () => {
                     tag: "AppdxTable",
                     num: "1",
                     attr: [],
+                    nth: null,
                 },
             ],
         };
@@ -118,6 +120,26 @@ describe("Test path.v1.parse", () => {
                             value: "1",
                         },
                     ],
+                    nth: null,
+                },
+            ],
+        };
+        const actual = parse(text);
+        assert.deepStrictEqual(actual, expected);
+    });
+
+    it("Success case", () => {
+        const text = "AppdxTable[1]";
+        const expected: ParseResult = {
+            ok: true,
+            value: [
+                {
+                    type: "TOPLEVEL",
+                    text: "AppdxTable[1]",
+                    tag: "AppdxTable",
+                    num: null,
+                    attr: [],
+                    nth: "1",
                 },
             ],
         };
@@ -136,6 +158,7 @@ describe("Test path.v1.parse", () => {
                     tag: "Section",
                     num: "1",
                     attr: [],
+                    nth: null,
                 },
             ],
         };
@@ -159,6 +182,26 @@ describe("Test path.v1.parse", () => {
                             value: "1",
                         },
                     ],
+                    nth: null,
+                },
+            ],
+        };
+        const actual = parse(text);
+        assert.deepStrictEqual(actual, expected);
+    });
+
+    it("Success case", () => {
+        const text = "Section[1]";
+        const expected: ParseResult = {
+            ok: true,
+            value: [
+                {
+                    type: "ARTICLES",
+                    text: "Section[1]",
+                    tag: "Section",
+                    num: null,
+                    attr: [],
+                    nth: "1",
                 },
             ],
         };
@@ -177,6 +220,7 @@ describe("Test path.v1.parse", () => {
                     tag: "Article",
                     num: "1",
                     attr: [],
+                    nth: null,
                 },
             ],
         };
@@ -195,6 +239,7 @@ describe("Test path.v1.parse", () => {
                     tag: "Article",
                     num: "1",
                     attr: [],
+                    nth: null,
                 },
             ],
         };
@@ -218,6 +263,26 @@ describe("Test path.v1.parse", () => {
                             value: "1",
                         },
                     ],
+                    nth: null,
+                },
+            ],
+        };
+        const actual = parse(text);
+        assert.deepStrictEqual(actual, expected);
+    });
+
+    it("Success case", () => {
+        const text = "Article[1]";
+        const expected: ParseResult = {
+            ok: true,
+            value: [
+                {
+                    type: "SENTENCES",
+                    text: "Article[1]",
+                    tag: "Article",
+                    num: null,
+                    attr: [],
+                    nth: "1",
                 },
             ],
         };
@@ -265,6 +330,7 @@ describe("Test path.v1.parse", () => {
                     tag: "Article",
                     num: "1",
                     attr: [],
+                    nth: null,
                 },
                 {
                     type: "SENTENCES",
@@ -272,6 +338,7 @@ describe("Test path.v1.parse", () => {
                     tag: "Paragraph",
                     num: "1",
                     attr: [],
+                    nth: null,
                 },
             ],
         };
@@ -304,6 +371,7 @@ describe("Test path.v1.parse", () => {
                     tag: "SupplProvision",
                     num: null,
                     attr: [],
+                    nth: null,
                 },
                 {
                     type: "SENTENCES",
@@ -311,6 +379,7 @@ describe("Test path.v1.parse", () => {
                     tag: "Article",
                     num: "1",
                     attr: [],
+                    nth: null,
                 },
                 {
                     type: "SENTENCES",
@@ -318,6 +387,7 @@ describe("Test path.v1.parse", () => {
                     tag: "Paragraph",
                     num: "1",
                     attr: [],
+                    nth: null,
                 },
             ],
         };

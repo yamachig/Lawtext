@@ -32,16 +32,20 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
                 tag: container.el.tag as PathFragmentTopLevel["tag"],
                 num: null,
                 attr: [],
+                nth: null,
             };
             return makePathFragments(container.parent, [fragment, ...childFragments]);
 
         } else {
             let num: string | null = null;
             const attr: {key: string, value: string}[] = [];
+            let nth: string | null = null;
             if ("Num" in container.el.attr) {
                 num = container.el.attr.Num ?? "";
             } else if ("AmendLawNum" in container.el.attr) {
                 attr.push({ key: "AmendLawNum", value: container.el.attr.AmendLawNum ?? "" });
+            } else {
+                nth = (container.parent.children.filter(c => c.el.tag === container.el.tag).indexOf(container) + 1).toString();
             }
 
             const modifier = (
@@ -49,7 +53,7 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
                     ? `=${num}`
                     : (attr.length !== 0)
                         ? attr.map(({ key, value }) => `[${key}="${value}"]`).join("")
-                        : `[${container.parent.children.filter(c => c.el.tag === container.el.tag).indexOf(container) + 1}]`
+                        : `[${nth}]`
             );
 
             const fragment: PathFragmentTopLevel = {
@@ -58,6 +62,7 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
                 tag: container.el.tag as PathFragmentTopLevel["tag"],
                 num,
                 attr,
+                nth,
             };
             return makePathFragments(container.parent, [fragment, ...childFragments]);
         }
@@ -65,14 +70,17 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
     } else if (container.type === ContainerType.ARTICLES) {
 
         let num: string | null = null;
+        let nth: string | null = null;
         if ("Num" in container.el.attr) {
             num = container.el.attr.Num ?? "";
+        } else {
+            nth = (container.parent.children.filter(c => c.el.tag === container.el.tag).indexOf(container) + 1).toString();
         }
 
         const modifier = (
             (num !== null)
                 ? `=${num}`
-                : `[${container.parent.children.filter(c => c.el.tag === container.el.tag).indexOf(container) + 1}]`
+                : `[${nth}]`
         );
 
         const fragment: PathFragmentArticlesContainer = {
@@ -81,6 +89,7 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
             tag: container.el.tag as PathFragmentArticlesContainer["tag"],
             num,
             attr: [],
+            nth,
         };
         return makePathFragments(container.parent, [fragment, ...childFragments]);
 
@@ -91,14 +100,17 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
         const alias = (Object.entries(sentencesContainerAlias).find(([, value]) => value === container.el.tag) ?? [container.el.tag])[0];
 
         let num: string | null = null;
+        let nth: string | null = null;
         if ("Num" in container.el.attr) {
             num = container.el.attr.Num ?? "";
+        } else {
+            nth = (container.parent.children.filter(c => c.el.tag === container.el.tag).indexOf(container) + 1).toString();
         }
 
         const modifier = (
             (num !== null)
                 ? `=${num}`
-                : `[${container.parent.children.filter(c => c.el.tag === container.el.tag).indexOf(container) + 1}]`
+                : `[${nth}]`
         );
 
         const fragment: PathFragmentTopLevel = {
@@ -107,6 +119,7 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
             tag: container.el.tag as PathFragmentTopLevel["tag"],
             num,
             attr: [],
+            nth,
         };
 
         return makePathFragments(

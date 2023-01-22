@@ -78,17 +78,27 @@ const $suareBracketsAttr = factory
     )
     ;
 
+const $suareBracketsNth = factory
+    .sequence(s => s
+        .andOmit(r => r.seqEqual("["))
+        .and(r => r.regExp(/^\d+/))
+        .andOmit(r => r.seqEqual("]"))
+    )
+    ;
+
 const $fragmentTopLevel: ValueRule<PathFragmentTopLevel> = factory
     .sequence(s => s
         .and(r => r.regExp(new RegExp(`^(?:${Object.keys(topLevelAlias).join("|")})`)), "topLevelKey")
         .and(r => r.zeroOrOne(() => $equalsNum), "num")
         .and(r => r.zeroOrMore(() => $suareBracketsAttr), "attr")
-        .action(({ text, topLevelKey, num, attr }) => ({
+        .and(r => r.zeroOrOne(() => $suareBracketsNth), "nth")
+        .action(({ text, topLevelKey, num, attr, nth }) => ({
             type: "TOPLEVEL" as const,
             text: text(),
             tag: topLevelAlias[topLevelKey as keyof typeof topLevelAlias],
             num,
             attr,
+            nth,
         }))
     )
     ;
@@ -98,12 +108,14 @@ const $fragmentArticlesContainer: ValueRule<PathFragmentArticlesContainer> = fac
         .and(r => r.regExp(new RegExp(`^(?:${articlesContainerTags.join("|")})`)), "tag")
         .and(r => r.zeroOrOne(() => $equalsNum), "num")
         .and(r => r.zeroOrMore(() => $suareBracketsAttr), "attr")
-        .action(({ text, tag, num, attr }) => ({
+        .and(r => r.zeroOrOne(() => $suareBracketsNth), "nth")
+        .action(({ text, tag, num, attr, nth }) => ({
             type: "ARTICLES" as const,
             text: text(),
             tag: tag as typeof articlesContainerTags[number],
             num,
             attr,
+            nth,
         }))
     )
     ;
@@ -114,12 +126,14 @@ const $fragmentSentencesContainer: ValueRule<PathFragmentSentencesContainer> = f
         .and(r => r.regExp(new RegExp(`^(?:${Object.keys(sentencesContainerAlias).join("|")})`)), "sentencesContainerKey")
         .and(r => r.zeroOrOne(() => $equalsNum), "num")
         .and(r => r.zeroOrMore(() => $suareBracketsAttr), "attr")
-        .action(({ text, sentencesContainerKey, num, attr }) => ({
+        .and(r => r.zeroOrOne(() => $suareBracketsNth), "nth")
+        .action(({ text, sentencesContainerKey, num, attr, nth }) => ({
             type: "SENTENCES" as const,
             text: text(),
             tag: sentencesContainerAlias[sentencesContainerKey as keyof typeof sentencesContainerAlias],
             num,
             attr,
+            nth,
         }))
     )
     ;

@@ -65,14 +65,19 @@ export const locate = (
         }
 
         if (fragment.tag === "SupplProvision" && fragment.num === null && fragment.attr.length === 0) {
-            const c = contextContainer.children.find(c => (
+            const cs = contextContainer.children.filter(c => (
                 (c.el.tag === fragment.tag) &&
                 !("AmendLawNum" in c.el.attr)
             ));
+            const c = (
+                (fragment.nth)
+                    ? cs[Number(fragment.nth) - 1]
+                    : cs[0]
+            );
             if (c) return locate(c, path.slice(1), [...processedFragments, { container: c, pathFragment: fragment }]);
         }
 
-        const c = contextContainer.children.find(c => (
+        const cs = contextContainer.children.filter(c => (
             (c.el.tag === fragment.tag) &&
                 (
                     (fragment.num === null) ||
@@ -80,6 +85,11 @@ export const locate = (
                 ) &&
                 fragment.attr.every(({ key, value }) => (key in c.el.attr && c.el.attr[key] === value))
         ));
+        const c = (
+            (fragment.nth)
+                ? cs[Number(fragment.nth) - 1]
+                : cs[0]
+        );
         if (c) return locate(c, path.slice(1), [...processedFragments, { container: c, pathFragment: fragment }]);
 
     } else if (fragment.type === "SENTENCES") {
@@ -110,7 +120,7 @@ export const locate = (
             );
         }
 
-        const c = contextContainer.subChildren.find(c => (
+        const cs = contextContainer.subChildren.filter(c => (
             (c.el.tag === fragment.tag) &&
             (
                 (fragment.num === null) ||
@@ -118,6 +128,11 @@ export const locate = (
             ) &&
             fragment.attr.every(({ key, value }) => (key in c.el.attr && c.el.attr[key] === value))
         ));
+        const c = (
+            (fragment.nth)
+                ? cs[Number(fragment.nth) - 1]
+                : cs[0]
+        );
         if (c) return locate(
             c,
             path.slice(1),

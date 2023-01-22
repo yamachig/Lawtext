@@ -13,7 +13,7 @@ export interface PathFragmentLaw {
     } | null,
 }
 
-// e.g. `sp`, `AppdxTable=1`, `AppdxTable[Num="1"]`
+// e.g. `sp`, `AppdxTable=1`, `AppdxTable[Num="1"]`, `AppdxTable[1]`
 export interface PathFragmentTopLevel {
     type: "TOPLEVEL",
     text: string,
@@ -23,6 +23,7 @@ export interface PathFragmentTopLevel {
         key: string,
         value: string,
     }[],
+    nth: string | null,
 }
 
 export const topLevelAlias = {
@@ -31,7 +32,7 @@ export const topLevelAlias = {
 };
 
 
-// e.g. `Section=1`, `Section[Num="1"]`
+// e.g. `Section=1`, `Section[Num="1"]`, `Section[1]`
 export interface PathFragmentArticlesContainer {
     type: "ARTICLES",
     text: string,
@@ -41,10 +42,11 @@ export interface PathFragmentArticlesContainer {
         key: string,
         value: string,
     }[],
+    nth: string | null,
 }
 
 
-// e.g. `a=1`, `Article=1`, `Article[Num="1"]`
+// e.g. `a=1`, `Article=1`, `Article[Num="1"]`, `Article[1]`
 export interface PathFragmentSentencesContainer {
     type: "SENTENCES",
     text: string,
@@ -54,6 +56,7 @@ export interface PathFragmentSentencesContainer {
         key: string,
         value: string,
     }[],
+    nth: string | null,
 }
 
 export const sentencesContainerAlias = {
