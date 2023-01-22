@@ -6,7 +6,6 @@ import { downloadLawtext } from "./download";
 import { getLawTitleWithNum } from "@appsrc/law_util";
 import { showErrorModal } from "./showErrorModal";
 import { LawDataProps } from "@appsrc/lawdata/common";
-import parsePath from "lawtext/dist/src/path/v1/parse";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const sampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml").default;
@@ -18,20 +17,11 @@ export const onNavigated = async (
 ): Promise<void> => {
     console.log(`onNavigated(${pathStr})`);
 
-    if (
-        (/^v1:(.+)$/.test(pathStr)) &&
-        (/^v1:(.+)$/.test(prevPathStr))
-    ) {
-        const path = parsePath(pathStr.replace(/^v1:/, ""));
-        const prevPath = parsePath(prevPathStr.replace(/^v1:/, ""));
-        if (
-            path.ok &&
-            prevPath.ok &&
-            (path.value[0].type === "LAW") &&
-            (prevPath.value[0].type === "LAW") &&
-            (path.value[0].text === prevPath.value[0].text)
-        ) {
-            console.log("onNavigated: the LAW part in the path did not change.");
+    {
+        const firstPart = pathStr.split("/")[0];
+        const prevFirstPart = prevPathStr.split("/")[0];
+        if (firstPart === prevFirstPart) {
+            console.log("onNavigated: the first step in the path did not change.");
             origSetState(s => {
                 return {
                     ...s,

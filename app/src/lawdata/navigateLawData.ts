@@ -14,7 +14,9 @@ export const navigateLawData = async (
     timing: Timing,
 ): Promise<LawDataResult<TempXMLLawDataProps | TempLawtextLawDataProps | StoredLawDataProps | ElawsLawDataProps>> => {
 
-    const text = getTempLaw(pathStr);
+    const firstPart = pathStr.split("/")[0];
+
+    const text = getTempLaw(firstPart);
     if (text !== null) {
         if (/^(?:<\?xml|<Law)/.test(text.trim())) {
             onMessage("法令XMLをパースしています...");
@@ -62,11 +64,11 @@ export const navigateLawData = async (
         }
 
         const reLawNumLike = new RegExp(`^(?:${ptnLawNumLike})$`);
-        if (lawID === null && parseLawID(pathStr)) {
-            lawID = pathStr;
+        if (lawID === null && parseLawID(firstPart)) {
+            lawID = firstPart;
 
-        } else if (reLawNumLike.test(pathStr)) {
-            lawnum = pathStr;
+        } else if (reLawNumLike.test(firstPart)) {
+            lawnum = firstPart;
 
         }
 
@@ -78,18 +80,18 @@ export const navigateLawData = async (
     if (lawIDOrLawNum === null) {
         onMessage("法令番号を検索しています...");
         // console.log("navigateLawData: searching lawnum...");
-        const [searchLawNumTime, lawnumResult] = await util.withTime(searchLawnum)(pathStr);
+        const [searchLawNumTime, lawnumResult] = await util.withTime(searchLawnum)(firstPart);
         timing.searchLawNum = searchLawNumTime;
 
         if (!lawnumResult) {
             return {
                 ok: false,
-                error: new Error(`「${pathStr}」を検索しましたが、見つかりませんでした。`),
+                error: new Error(`「${firstPart}」を検索しましたが、見つかりませんでした。`),
             };
         } else if (typeof lawnumResult !== "string") {
             return {
                 ok: false,
-                error: new Error(`「${pathStr}」の検索時にエラーが発生しました： ${lawnumResult.error}: "${lawnumResult.message}"`),
+                error: new Error(`「${firstPart}」の検索時にエラーが発生しました： ${lawnumResult.error}: "${lawnumResult.message}"`),
             };
         }
 

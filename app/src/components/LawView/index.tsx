@@ -9,7 +9,7 @@ import { LawViewOptions } from "./common";
 import { WrapLawComponent } from "./LawWrapper";
 import useAfterMountTasks from "./useAfterMountTask";
 import ControlGlobalStyle from "./controls/ControlGlobalStyle";
-import parsePath from "lawtext/dist/src/path/v1/parse";
+import parsePath, { PathFragment } from "lawtext/dist/src/path/v1/parse";
 import locatePath from "lawtext/dist/src/path/v1/locate";
 import { scrollToLawAnchor } from "../../actions/scroll";
 
@@ -34,19 +34,35 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
     React.useEffect(() => {
         if (prevPath !== origState.navigatedPath) {
             if (origState.law) {
-                const m = /^v1:(.+)$/.exec(origState.navigatedPath);
-                if (m) {
-                    const parsedPath = parsePath(m[1]);
-                    if (parsedPath.ok && parsedPath.value.length > 1 && parsedPath.value[0].type === "LAW") {
-                        const restPath = parsedPath.value.slice(1);
-                        const located = locatePath(origState.law.analysis.rootContainer, restPath, []);
-                        if (located.ok) {
-                            scrollToLawAnchor(located.value.container.el.id.toString());
-                        } else {
-                            console.error(located);
-                            if (located.partialValue){
-                                scrollToLawAnchor(located.partialValue.container.el.id.toString());
+
+                let restPath: PathFragment[] | null = null;
+
+                {
+                    const m = /^v1:(.+)$/.exec(origState.navigatedPath);
+                    if (m) {
+                        const parsedPath = parsePath(m[1]);
+                        if (parsedPath.ok && parsedPath.value.length > 1 && parsedPath.value[0].type === "LAW") {
+                            restPath = parsedPath.value.slice(1);
+                        }
+                    } else {
+                        const m = /^.+?\/(.+)$/.exec(origState.navigatedPath);
+                        if (m) {
+                            const parsedPath = parsePath(m[1]);
+                            if (parsedPath.ok && parsedPath.value.length >= 1) {
+                                restPath = parsedPath.value;
                             }
+                        }
+                    }
+                }
+
+                if (restPath){
+                    const located = locatePath(origState.law.analysis.rootContainer, restPath, []);
+                    if (located.ok) {
+                        scrollToLawAnchor(located.value.container.el.id.toString());
+                    } else {
+                        console.error(located);
+                        if (located.partialValue){
+                            scrollToLawAnchor(located.partialValue.container.el.id.toString());
                         }
                     }
                 }
