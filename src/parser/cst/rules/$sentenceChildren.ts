@@ -10,7 +10,7 @@ import { SentenceChildEL } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $xml from "./$xml";
 import $pointerRanges, { pointerRangesCandidateChars, reSuppressPointerRanges } from "./$pointerRanges";
-import { ptnLawNum } from "../../../law/num";
+import { ptnLawNumLike } from "../../../law/lawNum";
 import { ErrorMessage } from "../error";
 
 
@@ -43,8 +43,6 @@ export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): st
 
     return /* $$$$$$ */`${runs.join("")}`/* $$$$$$ */;
 };
-
-const reLawNum = new RegExp(`^${ptnLawNum}`);
 
 export const $sentenceChildren: WithErrorRule<SentenceChildEL[]> = factory
     .withName("sentenceChildren")
@@ -94,6 +92,8 @@ export const $sentenceChildrenWithoutToplevelInlineToken: WithErrorRule<Sentence
 
 export default $sentenceChildren;
 
+const reLawNumLike = new RegExp(`^${ptnLawNumLike}`);
+
 export const $inlineToken = factory
     .withName("inlineToken")
     .choice(c => c
@@ -105,7 +105,7 @@ export const $inlineToken = factory
             }))
         )
         .orSequence(s => s
-            .and(r => r.regExp(reLawNum), "text")
+            .and(r => r.regExp(reLawNumLike), "text")
             .action(({ text, range }) => ({
                 value: new ____LawNum(text, range()),
                 errors: [],

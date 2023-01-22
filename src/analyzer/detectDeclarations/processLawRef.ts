@@ -14,7 +14,7 @@ import * as std from "../../law/std";
 import { SentenceEnvsStruct } from "../getSentenceEnvs";
 import getScope from "../pointerEnvs/getScope";
 import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
-import { toStdLawNum } from "../../law/num";
+import { toStdLawNum } from "../../law/lawNum";
 
 export const getLawNameLength = (lawNum: string): number | null => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access

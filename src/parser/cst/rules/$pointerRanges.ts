@@ -1,5 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { articleGroupType, irohaChars, parseKanjiNum } from "../../../law/num";
+import { typeCharsMap } from "../../../law/std/helpers";
+import { irohaChars, parseKanjiNum } from "../../../law/num";
 import { SentenceChildEL } from "../../../node/cst/inline";
 import { RelPos, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
 import { ErrorMessage } from "../error";
@@ -110,7 +111,7 @@ export const $singleOnlyPointerFragment = factory
             , (({ text, count, type_char, range }) => {
                 const targetType = (type_char === "表")
                     ? "TableStruct"
-                    : (articleGroupType)[type_char as keyof typeof articleGroupType];
+                    : (typeCharsMap)[type_char as keyof typeof typeCharsMap];
                 if (count === "各") {
                     return new ____PF({
                         relPos: RelPos.PREV,
@@ -149,7 +150,7 @@ export const $firstOnlyPointerFragment = factory
                     relPos: RelPos.NEXT,
                     targetType: (type_char === "表")
                         ? "TableStruct"
-                        : articleGroupType[type_char as keyof typeof articleGroupType],
+                        : typeCharsMap[type_char as keyof typeof typeCharsMap],
                     name: text(),
                     range: range(),
                 });
@@ -167,7 +168,7 @@ export const $firstOnlyPointerFragment = factory
                     relPos: RelPos.PREV,
                     targetType: (type_char === "表")
                         ? "TableStruct"
-                        : articleGroupType[type_char as keyof typeof articleGroupType],
+                        : typeCharsMap[type_char as keyof typeof typeCharsMap],
                     name: text(),
                     range: range(),
                 });
@@ -190,7 +191,7 @@ export const $firstOnlyPointerFragment = factory
                     relPos: RelPos.HERE,
                     targetType: (type_char === "表")
                         ? "TableStruct"
-                        : articleGroupType[type_char as keyof typeof articleGroupType],
+                        : typeCharsMap[type_char as keyof typeof typeCharsMap],
                     name: text(),
                     range: range(),
                 });
@@ -234,7 +235,7 @@ export const $firstOnlyPointerFragment = factory
                     relPos: RelPos.SAME,
                     targetType: (type_char === "表")
                         ? "TableStruct"
-                        : articleGroupType[type_char as keyof typeof articleGroupType],
+                        : typeCharsMap[type_char as keyof typeof typeCharsMap],
                     name: text(),
                     range: range(),
                 });
@@ -250,7 +251,7 @@ export const $firstOnlyPointerFragment = factory
             , (({ text, type_char, range }) => {
                 return new ____PF({
                     relPos: RelPos.NAMED,
-                    targetType: articleGroupType[type_char],
+                    targetType: typeCharsMap[type_char],
                     name: text(),
                     range: range(),
                 });
@@ -329,7 +330,7 @@ export const $anyWherePointerFragment = factory
                 const type_char = match[1];
                 return new ____PF({
                     relPos: RelPos.NAMED,
-                    targetType: articleGroupType[type_char as keyof typeof articleGroupType],
+                    targetType: typeCharsMap[type_char as keyof typeof typeCharsMap],
                     name: text(),
                     range: range(),
                 });

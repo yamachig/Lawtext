@@ -1,11 +1,11 @@
 import { assert } from "chai";
 import { LawIDActCategory, LawIDCabinetOrderEffect, LawIDStructAct, LawIDStructCabinetOrder, LawIDStructConstitution, LawIDStructDajokanFukoku, LawIDStructDajokanFutatsu, LawIDStructDajokanTasshi, LawIDStructImperialOrder, LawIDStructJinji, LawIDStructMinisterialOrdinance, LawIDStructPrimeMinisterDecision, LawIDStructRule, LawIDType, parseLawID } from "./lawID";
-import { Era } from "./num";
+import { Era } from "./std";
 
 
 describe("Test parseLawID", () => {
 
-    it("Success case", () => {
+    it("Success case (Constitution)", () => {
         const text = "321CONSTITUTION";
         const expected: LawIDStructConstitution = {
             text,
@@ -17,14 +17,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (Constitution)", () => {
         const text = "321CONSTITUTION!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (Act)", () => {
         const text = "335AC0000000105";
         const expected: LawIDStructAct = {
             text,
@@ -38,14 +38,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (Act)", () => {
         const text = "335AC0000000105!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (CabinetOrder)", () => {
         const text = "415CO0000000263";
         const expected: LawIDStructCabinetOrder = {
             text,
@@ -59,14 +59,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (CabinetOrder)", () => {
         const text = "415CO0000000263!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (ImperialOrder)", () => {
         const text = "318IO0000000618";
         const expected: LawIDStructImperialOrder = {
             text,
@@ -80,14 +80,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (ImperialOrder)", () => {
         const text = "318IO0000000618!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (DajokanFukoku)", () => {
         const text = "105DF0000000337";
         const expected: LawIDStructDajokanFukoku = {
             text,
@@ -101,14 +101,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (DajokanFukoku)", () => {
         const text = "105DF0000000337!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (DajokanTasshi)", () => {
         const text = "110DT0000000097";
         const expected: LawIDStructDajokanTasshi = {
             text,
@@ -122,14 +122,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (DajokanTasshi)", () => {
         const text = "110DT0000000097!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (DajokanFutatsu)", () => {
         const text = "106DH0000000016";
         const expected: LawIDStructDajokanFutatsu = {
             text,
@@ -143,14 +143,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (DajokanFutatsu)", () => {
         const text = "106DH0000000016!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (MinisterialOrdinance)", () => {
         const text = "427M60001080001";
         const expected: LawIDStructMinisterialOrdinance = {
             text,
@@ -164,14 +164,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (MinisterialOrdinance)", () => {
         const text = "427M60001080001!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (Jinji)", () => {
         const text = "333RJNJ09024000";
         const expected: LawIDStructJinji = {
             text,
@@ -186,14 +186,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (Jinji)", () => {
         const text = "333RJNJ09024000!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (Rule)", () => {
         const text = "322R00000001001";
         const expected: LawIDStructRule = {
             text,
@@ -207,14 +207,14 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (Rule)", () => {
         const text = "322R00000001001!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Success case", () => {
+    it("Success case (PrimeMinisterDecision)", () => {
         const text = "427RPMD10100000";
         const expected: LawIDStructPrimeMinisterDecision = {
             text,
@@ -228,7 +228,7 @@ describe("Test parseLawID", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
-    it("Fail case", () => {
+    it("Fail case (PrimeMinisterDecision)", () => {
         const text = "427RPMD10100000!";
         const expected = null;
         const actual = parseLawID(text);

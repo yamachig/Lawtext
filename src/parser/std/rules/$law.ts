@@ -14,7 +14,7 @@ import $supplProvision, { supplProvisionToLines } from "./$supplProvision";
 import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, appdxItemToLines } from "./$appdxItem";
 import { ErrorMessage } from "../../cst/error";
 import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
-import { parseLawNum } from "../../../law/num";
+import { parseLawNum } from "../../../law/lawNum";
 import { rangeOfELs } from "../../../node/el";
 
 

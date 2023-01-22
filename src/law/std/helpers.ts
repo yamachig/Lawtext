@@ -1,6 +1,20 @@
 import { EL } from "../../node/el";
 import * as std from "./stdEL";
 
+export enum Era {
+    Meiji = "Meiji",
+    Taisho = "Taisho",
+    Showa = "Showa",
+    Heisei = "Heisei",
+    Reiwa = "Reiwa",
+}
+
+export const eras = {
+    "明治": Era.Meiji, "大正": Era.Taisho,
+    "昭和": Era.Showa, "平成": Era.Heisei,
+    "令和": Era.Reiwa,
+} as const;
+
 export const paragraphItemTags = [
     "Paragraph",
     "Item",
@@ -103,6 +117,12 @@ export const isParagraphItemSentence = (el: EL | string): el is ParagraphItemSen
 
 export const listTags = ["List", "Sublist1", "Sublist2", "Sublist3"] as const;
 
+
+export const typeCharsMap = {
+    "編": "Part", "章": "Chapter", "節": "Section", "款": "Subsection", "目": "Division",
+    "条": "Article", "項": "Paragraph", "号": "Item",
+    "則": "SupplProvision",
+} as const;
 
 export const articleGroupTypeChars = ["編", "章", "節", "款", "目"] as const;
 

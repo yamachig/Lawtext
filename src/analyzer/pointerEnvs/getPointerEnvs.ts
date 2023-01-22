@@ -1,4 +1,5 @@
-import { parseNamedNum, toStdLawNum } from "../../law/num";
+import { parseNamedNum } from "../../law/num";
+import { toStdLawNum } from "../../law/lawNum";
 import * as std from "../../law/std";
 import { SentenceEnv } from "../../node/container/sentenceEnv";
 import { __Parentheses, ____LawNum, ____Pointer, ____PointerRanges } from "../../node/el/controls";

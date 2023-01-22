@@ -10,7 +10,7 @@ import { ErrorMessage } from "../../parser/cst/error";
 import { isSentenceText, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import { isIgnoreAnalysis } from "../common";
 import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
-import { toStdLawNum } from "../../law/num";
+import { toStdLawNum } from "../../law/lawNum";
 
 export const matchVariableReferences = (
     textEL: __Text,

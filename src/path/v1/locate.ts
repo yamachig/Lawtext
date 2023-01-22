@@ -72,8 +72,6 @@ export const locate = (
             if (c) return locate(c, path.slice(1), [...processedFragments, { container: c, pathFragment: fragment }]);
         }
 
-        console.log(contextContainer);
-
         const c = contextContainer.children.find(c => (
             (c.el.tag === fragment.tag) &&
                 (

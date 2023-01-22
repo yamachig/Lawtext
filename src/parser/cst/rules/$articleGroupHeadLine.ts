@@ -5,7 +5,7 @@ import $indents from "./$indents";
 import { ArticleGroupHeadLine } from "../../../node/cst/line";
 import { $__, $_EOL, $_ } from "./lexical";
 import { mergeAdjacentTexts, WithErrorRule } from "../util";
-import { articleGroupType } from "../../../law/num";
+import { typeCharsMap } from "../../../law/std/helpers";
 import { Control } from "../../../node/cst/inline";
 import makeRangesRule from "./makeRangesRule";
 import { __Text } from "../../../node/el/controls";
@@ -89,7 +89,7 @@ export const $articleGroupHeadLine: WithErrorRule<ArticleGroupHeadLine> = factor
                 value: new ArticleGroupHeadLine({
                     range: range(),
                     indentTexts: indentsStruct.value.indentTexts,
-                    mainTag: articleGroupType[articleGroupNum.ranges.value[0][0].value.typeChar],
+                    mainTag: typeCharsMap[articleGroupNum.ranges.value[0][0].value.typeChar],
                     controls: control ? [control] : [],
                     sentenceChildren,
                     lineEndText,

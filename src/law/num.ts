@@ -1,47 +1,4 @@
-import { EL } from "../node/el";
-import * as std from "./std";
-import { assertNever, Diff } from "../util";
-
-export const ptnLawNum = "(?:(?:(明治|大正|昭和|平成|令和)([一二三四五六七八九十]+)年([^ 　\t\r\n<>()（）[\\]［］{}｛｝「」]+?)(?:第([一二三四五六七八九十百千]+)号))|(?:日本国憲法))";
-export const toStdLawNum = (lawNum: string): string => {
-    if (/日本国憲法$/.test(lawNum)) {
-        return "昭和二十一年憲法";
-    } else {
-        return lawNum;
-    }
-};
-// export const reLawnum = /(?:(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年(?:(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[―〇一二三四五六七八九]+)|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)|明治三十二年勅令|大正十二年内務省・鉄道省令|昭和五年逓信省・鉄道省令|昭和九年逓信省・農林省令|人事院規則一〇―一五)/;
-
-export enum Era {
-    Meiji = "Meiji",
-    Taisho = "Taisho",
-    Showa = "Showa",
-    Heisei = "Heisei",
-    Reiwa = "Reiwa",
-}
-
-export const eras = {
-    "明治": Era.Meiji, "大正": Era.Taisho,
-    "昭和": Era.Showa, "平成": Era.Heisei,
-    "令和": Era.Reiwa,
-} as const;
-
-export const lawTypes = [
-    ["憲法", "Constitution"] as const,
-    ["法律", "Act"] as const,
-    ["政令", "CabinetOrder"] as const,
-    ["勅令", "ImperialOrder"] as const,
-    ["\\S*[^政勅]令", "MinisterialOrdinance"] as const,
-    ["\\S*規則", "Rule"] as const,
-];
-
-export const getLawtype = (text: string): (typeof lawTypes)[number][1] | null => {
-    for (const [ptn, type] of lawTypes) {
-        const re = new RegExp(`^${ptn}`);
-        if (re.exec(text)) return type;
-    }
-    return null;
-};
+import { assertNever } from "../util";
 
 const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 
@@ -72,7 +29,7 @@ const reAiuChar = new RegExp(`[${aiuChars}]`);
 const reCircledDigit = new RegExp(`[${circledDigitChars}]`);
 const reItemNum = /^\D*(\d+)\D*$/;
 
-export const parseRomanNum = (text: string): number => {
+const parseRomanNum = (text: string): number => {
     let num = 0;
     for (let i = 0; i < text.length; i++) {
         const char = text[i];
@@ -91,7 +48,7 @@ export const parseRomanNum = (text: string): number => {
     return num;
 };
 
-export const reWideDigits: Array<[RegExp, string]> = [
+const reWideDigits: Array<[RegExp, string]> = [
     [/０/g, "0"],
     [/１/g, "1"],
     [/２/g, "2"],
@@ -104,7 +61,7 @@ export const reWideDigits: Array<[RegExp, string]> = [
     [/９/g, "9"],
 ];
 
-export const replaceWideNum = (text: string): string => {
+const replaceWideNum = (text: string): string => {
     let ret = text;
 
     for (const [reWide, narrow] of reWideDigits) {
@@ -188,80 +145,40 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
     return numsGroup.join(":");
 };
 
-interface LawNumStruct {
-    Era: (typeof eras)[keyof typeof eras] | null,
-    Year: number | null,
-    LawType: (typeof lawTypes)[number][1] | null,
-    Num: number | null,
-}
 
-const reLawNum = new RegExp(`^${ptnLawNum}$`);
-export const parseLawNum = (lawNum: string): LawNumStruct => {
+// export const setItemNum = (els: EL[]): void => {
+//     const items: Array<Diff<std.ParagraphItem, std.Paragraph>> = [];
 
-    const ret: LawNumStruct = {
-        Era: null,
-        Year: null,
-        LawType: null,
-        Num: null,
-    };
-    const m = lawNum.match(reLawNum);
-    if (m) {
-        const [era, year, law_type, num] = m.slice(1);
-        if (era in eras) ret.Era = eras[era as keyof typeof eras];
-        ret.Year = parseKanjiNum(year);
-        ret.LawType = getLawtype(law_type);
-        ret.Num = parseKanjiNum(num);
-    }
+//     for (const el of els) {
+//         if (std.isParagraphItem(el) && el.tag !== "Paragraph") {
+//             items.push(el);
+//         }
+//     }
 
-    return ret;
-};
-
-
-export const setItemNum = (els: EL[]): void => {
-    const items: Array<Diff<std.ParagraphItem, std.Paragraph>> = [];
-
-    for (const el of els) {
-        if (std.isParagraphItem(el) && el.tag !== "Paragraph") {
-            items.push(el);
-        }
-    }
-
-    if (items.length) {
-        let kanaMode = KanaMode.Iroha;
-        for (const child of items[0].children) {
-            if (std.isParagraphItemTitle(child)) {
-                if (/ア/.exec(child.text())) {
-                    kanaMode = KanaMode.Aiu;
-                    break;
-                }
-            }
-        }
-        for (const item of items) {
-            let paragraphItemTitle = "";
-            for (const child of item.children) {
-                if (std.isParagraphItemTitle(child)) {
-                    paragraphItemTitle = child.text();
-                    break;
-                }
-            }
-            const num = parseNamedNum(paragraphItemTitle, kanaMode);
-            if (num) {
-                item.attr.Num = num;
-            }
-        }
-    }
-};
-
-export const articleGroupType = {
-    "編": "Part", "章": "Chapter", "節": "Section",
-    "款": "Subsection", "目": "Division",
-    "条": "Article", "項": "Paragraph", "号": "Item", "則": "SupplProvision",
-} as const;
-
-export const articleGroupTitleTag = {
-    "編": "PartTitle", "章": "ChapterTitle", "節": "SectionTitle",
-    "款": "SubsectionTitle", "目": "DivisionTitle", "条": "ArticleTitle",
-    "則": "SupplProvisionLabel",
-} as const;
+//     if (items.length) {
+//         let kanaMode = KanaMode.Iroha;
+//         for (const child of items[0].children) {
+//             if (std.isParagraphItemTitle(child)) {
+//                 if (/ア/.exec(child.text())) {
+//                     kanaMode = KanaMode.Aiu;
+//                     break;
+//                 }
+//             }
+//         }
+//         for (const item of items) {
+//             let paragraphItemTitle = "";
+//             for (const child of item.children) {
+//                 if (std.isParagraphItemTitle(child)) {
+//                     paragraphItemTitle = child.text();
+//                     break;
+//                 }
+//             }
+//             const num = parseNamedNum(paragraphItemTitle, kanaMode);
+//             if (num) {
+//                 item.attr.Num = num;
+//             }
+//         }
+//     }
+// };
 
 

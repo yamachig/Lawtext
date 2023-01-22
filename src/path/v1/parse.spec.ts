@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { LawIDActCategory, LawIDType } from "../../law/lawID";
-import { Era } from "../../law/num";
+import { Era } from "../../law/std";
 import parse, { ParseResult } from "./parse";
 
 describe("Test path.v1.parse", () => {

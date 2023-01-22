@@ -1,5 +1,5 @@
 import { assertNever } from "../util";
-import { Era } from "./num";
+import { Era } from "./std";
 
 
 // c.f. https://elaws.e-gov.go.jp/file/LawIdNamingConvention.pdf
