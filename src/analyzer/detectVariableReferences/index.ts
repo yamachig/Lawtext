@@ -10,7 +10,7 @@ import { ErrorMessage } from "../../parser/cst/error";
 import { isSentenceText, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
 import { isIgnoreAnalysis } from "../common";
 import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
-import { toStdLawNum } from "../../law/lawNum";
+import { lawNumLikeToLawNum } from "../../law/lawNum";
 
 export const matchVariableReferences = (
     textEL: __Text,
@@ -184,7 +184,7 @@ export const detectVariableReferencesOfEL = (
                                 const firstPointer = pointerRanges.ranges()[0].pointers()[0];
                                 const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
                                 if (pointerEnv && declaration.attr.value) {
-                                    pointerEnv.directLawNum = toStdLawNum(declaration.attr.value);
+                                    pointerEnv.directLawNum = lawNumLikeToLawNum(declaration.attr.value);
                                 }
                             }
                         }

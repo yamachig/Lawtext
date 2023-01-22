@@ -3,13 +3,21 @@ import { assertNever } from "../util";
 const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 
 export const parseKanjiNum = (text: string): number | null => {
+    if (text === "元") return 1;
     const m = reKanjiNum.exec(text);
     if (m) {
-        const d1000 = m[1] ? kanjiDigitToNumDict[m[2] as keyof typeof kanjiDigitToNumDict] || 1 : 0;
-        const d100 = m[3] ? kanjiDigitToNumDict[m[4] as keyof typeof kanjiDigitToNumDict] || 1 : 0;
-        const d10 = m[5] ? kanjiDigitToNumDict[m[6] as keyof typeof kanjiDigitToNumDict] || 1 : 0;
-        const d1 = kanjiDigitToNumDict[m[7] as keyof typeof kanjiDigitToNumDict] || 0;
-        return d1000 * 1000 + d100 * 100 + d10 * 10 + d1;
+        if (!m[1] && !m[2] && !m[3] && m[7] && m[7].length > 1) {
+            const ds = m[7].split("").map(c => (kanjiDigitToNumDict[c as keyof typeof kanjiDigitToNumDict] || 0).toString()).join("");
+            const ret = Number(ds);
+            if (Number.isNaN(ret)) return null;
+            return ret;
+        } else {
+            const d1000 = m[1] ? kanjiDigitToNumDict[m[2] as keyof typeof kanjiDigitToNumDict] || 1 : 0;
+            const d100 = m[3] ? kanjiDigitToNumDict[m[4] as keyof typeof kanjiDigitToNumDict] || 1 : 0;
+            const d10 = m[5] ? kanjiDigitToNumDict[m[6] as keyof typeof kanjiDigitToNumDict] || 1 : 0;
+            const d1 = kanjiDigitToNumDict[m[7] as keyof typeof kanjiDigitToNumDict] || 0;
+            return d1000 * 1000 + d100 * 100 + d10 * 10 + d1;
+        }
     }
     return null;
 };
@@ -23,7 +31,7 @@ export const circledDigitChars = "⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭�
 export const irohaChars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
 export const aiuChars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
 
-const reNamedNum = /^(○?)第?([一二三四五六七八九十百千]+)\S*?([のノ一二三四五六七八九十百千]*)$/;
+const reNamedNum = /^(○?)第?([〇一二三四五六七八九十百千]+)\S*?([のノ―〇一二三四五六七八九十百千]*)$/;
 const reIrohaChar = new RegExp(`[${irohaChars}]`);
 const reAiuChar = new RegExp(`[${aiuChars}]`);
 const reCircledDigit = new RegExp(`[${circledDigitChars}]`);
@@ -97,7 +105,7 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
         if (m) {
             const nums = [parseKanjiNum(m[2])];
             if (m[3]) {
-                const bs = m[3].split(/[のノ]/g);
+                const bs = m[3].split(/[のノ―]/g);
                 for (const b of bs) {
                     if (!b) continue;
                     nums.push(parseKanjiNum(b));

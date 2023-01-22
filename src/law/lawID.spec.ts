@@ -1,9 +1,25 @@
 import { assert } from "chai";
 import { LawIDActCategory, LawIDCabinetOrderEffect, LawIDStructAct, LawIDStructCabinetOrder, LawIDStructConstitution, LawIDStructDajokanFukoku, LawIDStructDajokanFutatsu, LawIDStructDajokanTasshi, LawIDStructImperialOrder, LawIDStructJinji, LawIDStructMinisterialOrdinance, LawIDStructPrimeMinisterDecision, LawIDStructRule, LawIDType, parseLawID } from "./lawID";
 import { Era } from "./std";
+import { loader } from "../../test/prepare_test";
+import { LawInfo } from "../data/lawinfo";
 
 
 describe("Test parseLawID", () => {
+
+    it("Test parseLawID", async () => {
+
+        const { lawInfos } = await loader.cacheLawListStruct();
+
+        const failedLawInfos: LawInfo[] = [];
+        for (const lawInfo of lawInfos) {
+            const result = parseLawID(lawInfo.LawID);
+            if (!result) failedLawInfos.push(lawInfo);
+        }
+        if (failedLawInfos.length !== 0) {
+            assert.strictEqual(failedLawInfos.map(l => l.LawID), []);
+        }
+    });
 
     it("Success case (Constitution)", () => {
         const text = "321CONSTITUTION";
@@ -32,6 +48,7 @@ describe("Test parseLawID", () => {
             era: Era.Showa,
             year: "35",
             category: LawIDActCategory.Cabinet,
+            rawNum: "105",
             num: "105",
         };
         const actual = parseLawID(text);
@@ -53,6 +70,7 @@ describe("Test parseLawID", () => {
             era: Era.Heisei,
             year: "15",
             category: LawIDCabinetOrderEffect.CabinetOrder,
+            rawNum: "263",
             num: "263",
         };
         const actual = parseLawID(text);
@@ -74,6 +92,7 @@ describe("Test parseLawID", () => {
             era: Era.Showa,
             year: "18",
             category: LawIDCabinetOrderEffect.CabinetOrder,
+            rawNum: "618",
             num: "618",
         };
         const actual = parseLawID(text);
@@ -95,6 +114,7 @@ describe("Test parseLawID", () => {
             era: Era.Meiji,
             year: "05",
             category: LawIDCabinetOrderEffect.CabinetOrder,
+            rawNum: "337",
             num: "337",
         };
         const actual = parseLawID(text);
@@ -116,7 +136,8 @@ describe("Test parseLawID", () => {
             era: Era.Meiji,
             year: "10",
             category: LawIDCabinetOrderEffect.CabinetOrder,
-            num: "097",
+            rawNum: "097",
+            num: "97",
         };
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
@@ -137,7 +158,8 @@ describe("Test parseLawID", () => {
             era: Era.Meiji,
             year: "06",
             category: LawIDCabinetOrderEffect.CabinetOrder,
-            num: "016",
+            rawNum: "016",
+            num: "16",
         };
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
@@ -158,7 +180,8 @@ describe("Test parseLawID", () => {
             era: Era.Heisei,
             year: "27",
             category: "60001080",
-            num: "001",
+            rawNum: "001",
+            num: "1",
         };
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
@@ -178,9 +201,10 @@ describe("Test parseLawID", () => {
             type: LawIDType.Jinji,
             era: Era.Showa,
             year: "33",
-            num1: "09",
-            num2: "024",
-            num3: "000",
+            rawNumPart1: "09",
+            rawNumPart2: "024",
+            rawNumPart3: "000",
+            num: "9_24",
         };
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
@@ -188,6 +212,29 @@ describe("Test parseLawID", () => {
 
     it("Fail case (Jinji)", () => {
         const text = "333RJNJ09024000!";
+        const expected = null;
+        const actual = parseLawID(text);
+        assert.deepStrictEqual(actual, expected);
+    });
+
+    it("Success case (Jinji)", () => {
+        const text = "427RJNJ09017142";
+        const expected: LawIDStructJinji = {
+            text,
+            type: LawIDType.Jinji,
+            era: Era.Heisei,
+            year: "27",
+            rawNumPart1: "09",
+            rawNumPart2: "017",
+            rawNumPart3: "142",
+            num: "9_17_142",
+        };
+        const actual = parseLawID(text);
+        assert.deepStrictEqual(actual, expected);
+    });
+
+    it("Fail case (Jinji)", () => {
+        const text = "427RJNJ09017142!";
         const expected = null;
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
@@ -201,7 +248,8 @@ describe("Test parseLawID", () => {
             era: Era.Showa,
             year: "22",
             category: "00000001",
-            num: "001",
+            rawNum: "001",
+            num: "1",
         };
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);
@@ -222,7 +270,8 @@ describe("Test parseLawID", () => {
             era: Era.Heisei,
             year: "27",
             date: "1010",
-            num: "0000",
+            rawNum: "0000",
+            num: "",
         };
         const actual = parseLawID(text);
         assert.deepStrictEqual(actual, expected);

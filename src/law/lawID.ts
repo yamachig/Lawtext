@@ -152,6 +152,7 @@ export interface LawIDStructAct {
     era: Era,
     year: string,
     category: LawIDActCategory,
+    rawNum: string,
     num: string,
 }
 
@@ -166,6 +167,7 @@ export interface LawIDStructCabinetOrder {
     era: Era,
     year: string,
     category: LawIDCabinetOrderEffect,
+    rawNum: string,
     num: string,
 }
 
@@ -175,6 +177,7 @@ export interface LawIDStructImperialOrder {
     era: Era,
     year: string,
     category: LawIDCabinetOrderEffect,
+    rawNum: string,
     num: string,
 }
 
@@ -184,6 +187,7 @@ export interface LawIDStructDajokanFukoku {
     era: Era,
     year: string,
     category: LawIDCabinetOrderEffect,
+    rawNum: string,
     num: string,
 }
 
@@ -193,6 +197,7 @@ export interface LawIDStructDajokanTasshi {
     era: Era,
     year: string,
     category: LawIDCabinetOrderEffect,
+    rawNum: string,
     num: string,
 }
 
@@ -202,6 +207,7 @@ export interface LawIDStructDajokanFutatsu {
     era: Era,
     year: string,
     category: LawIDCabinetOrderEffect,
+    rawNum: string,
     num: string,
 }
 
@@ -211,6 +217,7 @@ export interface LawIDStructMinisterialOrdinance {
     era: Era,
     year: string,
     category: string,
+    rawNum: string,
     num: string,
 }
 
@@ -219,9 +226,10 @@ export interface LawIDStructJinji {
     type: LawIDType.Jinji,
     era: Era,
     year: string,
-    num1: string,
-    num2: string,
-    num3: string,
+    rawNumPart1: string,
+    rawNumPart2: string,
+    rawNumPart3: string,
+    num: string,
 }
 
 export interface LawIDStructRule {
@@ -230,6 +238,7 @@ export interface LawIDStructRule {
     era: Era,
     year: string,
     category: string,
+    rawNum: string,
     num: string,
 }
 
@@ -239,6 +248,7 @@ export interface LawIDStructPrimeMinisterDecision {
     era: Era,
     year: string,
     date: string,
+    rawNum: string,
     num: string,
 }
 
@@ -270,7 +280,8 @@ export const parseLawID = (text: string): LawIDStruct | null => {
                 era: (eraNumToEra as {[K: string]: Era})[m.groups.era],
                 year: m.groups.year,
                 category: m.groups.category,
-                num: m.groups.num,
+                rawNum: m.groups.num,
+                num: m.groups.num.replace(/^(?:0(?!$))+/, ""),
             };
         }
         else if (type === LawIDType.Act) {
@@ -280,7 +291,8 @@ export const parseLawID = (text: string): LawIDStruct | null => {
                 era: (eraNumToEra as {[K: string]: Era})[m.groups.era],
                 year: m.groups.year,
                 category: m.groups.category as LawIDActCategory,
-                num: m.groups.num,
+                rawNum: m.groups.num,
+                num: m.groups.num.replace(/^(?:0(?!$))+/, ""),
             };
         }
         else if (type === LawIDType.CabinetOrder || type === LawIDType.ImperialOrder || type === LawIDType.DajokanFukoku || type === LawIDType.DajokanTasshi || type === LawIDType.DajokanFutatsu) {
@@ -290,18 +302,27 @@ export const parseLawID = (text: string): LawIDStruct | null => {
                 era: (eraNumToEra as {[K: string]: Era})[m.groups.era],
                 year: m.groups.year,
                 category: m.groups.category as LawIDCabinetOrderEffect,
-                num: m.groups.num,
+                rawNum: m.groups.num,
+                num: m.groups.num.replace(/^(?:0(?!$))+/, ""),
             };
         }
         else if (type === LawIDType.Jinji) {
+            const numParts: string[] = [
+                m.groups.num1.replace(/^(?:0(?!$))+/, ""),
+                m.groups.num2.replace(/^(?:0(?!$))+/, ""),
+            ];
+            if (m.groups.num3 !== "000") {
+                numParts.push(m.groups.num3.replace(/^(?:0(?!$))+/, ""));
+            }
             return {
                 text,
                 type,
                 era: (eraNumToEra as {[K: string]: Era})[m.groups.era],
                 year: m.groups.year,
-                num1: m.groups.num1,
-                num2: m.groups.num2,
-                num3: m.groups.num3,
+                rawNumPart1: m.groups.num1,
+                rawNumPart2: m.groups.num2,
+                rawNumPart3: m.groups.num3,
+                num: numParts.join("_"),
             };
         }
         else if (type === LawIDType.Rule) {
@@ -311,7 +332,8 @@ export const parseLawID = (text: string): LawIDStruct | null => {
                 era: (eraNumToEra as {[K: string]: Era})[m.groups.era],
                 year: m.groups.year,
                 category: m.groups.category,
-                num: m.groups.num,
+                rawNum: m.groups.num,
+                num: m.groups.num.replace(/^(?:0(?!$))+/, ""),
             };
         }
         else if (type === LawIDType.PrimeMinisterDecision) {
@@ -321,7 +343,8 @@ export const parseLawID = (text: string): LawIDStruct | null => {
                 era: (eraNumToEra as {[K: string]: Era})[m.groups.era],
                 year: m.groups.year,
                 date: m.groups.date,
-                num: m.groups.num,
+                rawNum: m.groups.num,
+                num: m.groups.num.replace(/^0+/, ""),
             };
         }
         else if (type === LawIDType.Constitution) {
