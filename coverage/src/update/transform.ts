@@ -35,7 +35,7 @@ export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Prom
         Era: Era | null,
         Year: number | null,
         LawType: LawType | null,
-        Num: number | null,
+        Num: string | null,
     } | null,
     originalLaw: DeNull<LawCoverage["originalLaw"]>,
 }> => {
@@ -51,7 +51,6 @@ export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Prom
         requiredms.set("xmlToEL", lap.lapms());
 
         const Year = Number(origEL.attr.Year);
-        const Num = Number(origEL.attr.Num);
 
         return {
             origEL,
@@ -59,7 +58,7 @@ export const getOriginalLaw = async (lawInfo: BaseLawInfo, loader: Loader): Prom
             lawNumStruct: {
                 Era: origEL.attr.Era as Era,
                 Year: Number.isNaN(Year) ? null : Year,
-                Num: Number.isNaN(Num) ? null : Num,
+                Num: origEL.attr.Num,
                 LawType: origEL.attr.LawType as LawType,
             },
             originalLaw: {

@@ -1,6 +1,6 @@
 // import formatXML from "xml-formatter";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
-import { parseLawNum } from "lawtext/dist/src/law/num";
+import { parseLawNum } from "lawtext/dist/src/law/lawNum";
 import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { Era, LawCoverage, LawType } from "../lawCoverage";
 import { ConnectionInfo } from "../connection";

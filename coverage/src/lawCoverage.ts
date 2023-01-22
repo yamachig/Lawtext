@@ -103,7 +103,7 @@ export interface LawCoverage extends BaseLawInfo {
     Era: Era | null;
     Year: number | null;
     LawType: LawType | null;
-    Num: number | null;
+    Num: string | null;
 
     originalLaw: {
         ok: {
