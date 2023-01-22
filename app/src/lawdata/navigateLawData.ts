@@ -4,7 +4,7 @@ import { elawsLoader, storedLoader } from "./loaders";
 import { searchLawnum } from "./searchLawNum";
 import * as util from "lawtext/dist/src/util";
 import { LawDataResult, Timing, toLawData } from "lawtext/dist/src/data/lawdata";
-import { ptnLawNumLike } from "lawtext/dist/src/law/lawNum";
+import { lawNumLikeToLawNum, ptnLawNumLike } from "lawtext/dist/src/law/lawNum";
 import parsePath from "lawtext/dist/src/path/v1/parse";
 import { parseLawID } from "lawtext/dist/src/law/lawID";
 
@@ -68,7 +68,7 @@ export const navigateLawData = async (
             lawID = firstPart;
 
         } else if (reLawNumLike.test(firstPart)) {
-            lawnum = firstPart;
+            lawnum = lawNumLikeToLawNum(firstPart);
 
         }
 

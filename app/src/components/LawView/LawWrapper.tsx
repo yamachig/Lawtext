@@ -8,6 +8,7 @@ import * as std from "lawtext/dist/src/law/std";
 import { containerInfoOf } from "../../actions/download";
 import ReplaceHTMLFigRun from "./ReplaceHTMLFigRun";
 import WrapHTMLControlRun from "./controls/WrapHTMLControlRun";
+import { containerTags } from "lawtext/dist/src/node/container";
 
 
 const wrapperByID: Record<string, React.FC<WrapperComponentProps>> = {};
@@ -35,7 +36,7 @@ export const WrapLawComponent: React.FC<WrapperComponentProps> = props => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const el = (childProps as any).el;
 
-    const elID = (el instanceof EL) && (std.isLaw(el) || std.isPreamble(el) || std.isTOC(el) || std.isAppdxItem(el) || std.isSupplProvisionAppdxItem(el) || std.isSupplProvision(el) || std.isArticleGroup(el) || std.isArticle(el)) && el.id;
+    const elID = (el instanceof EL) && (containerTags.includes(el.tag as typeof containerTags[number]) || std.isPreamble(el) || std.isTOC(el)) && el.id;
 
     const WrapperByID = wrapperByID[htmlComponentID];
 
@@ -59,7 +60,7 @@ export const WrapLawComponent: React.FC<WrapperComponentProps> = props => {
 
     if (
         (el instanceof EL)
-        && (std.isArticle(el) || std.isParagraph(el))
+        && (containerTags.includes(el.tag as typeof containerTags[number]))
     ){
         dataset.push(["data-container_info", JSON.stringify(containerInfoOf(el))]);
     }

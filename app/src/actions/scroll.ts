@@ -6,6 +6,8 @@ export const scrollToLawAnchor = (id: string): void => {
             const elRect = el.getBoundingClientRect();
             const scrollELRect = scrollEL.getBoundingClientRect();
             scrollEL.scrollTop = elRect.top - scrollELRect.top;
+            return;
         }
     }
+    console.error(`scrollToLawAnchor(id=${id}) could not find id.`);
 };

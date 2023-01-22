@@ -9,6 +9,7 @@ import { openFile } from "@appsrc/actions/openFile";
 import { scrollToLawAnchor } from "@appsrc/actions/scroll";
 import { Container } from "lawtext/dist/src/node/container";
 import makePath from "lawtext/dist/src/path/v1/make";
+import { NavigateFunction } from "react-router-dom";
 
 
 const SidebarH1 = styled.h1`
@@ -210,6 +211,7 @@ const LawNavDiv = styled.div`
 interface TOCItemPropsForPath {
     containers: Map<EL, Container>,
     firstPart: string,
+    navigate: NavigateFunction,
 }
 
 const TOCItem: React.FC<{el: std.StdEL, indent: number, text: string} & TOCItemPropsForPath> = props => {
@@ -231,6 +233,7 @@ const TOCItem: React.FC<{el: std.StdEL, indent: number, text: string} & TOCItemP
 
     } else {
         const onClick = () => {
+            props.navigate(`/${props.firstPart}`);
             scrollToLawAnchor(props.el.id.toString());
         };
 
@@ -312,6 +315,7 @@ const NavArticleGroup: React.FC<{
                 return (
                     <TOCItem
                         {...props}
+                        key={i}
                         text={el.text()}
                     />
                 );
@@ -592,6 +596,7 @@ export const Sidebar: React.FC<LawtextAppPageStateStruct> = props => {
                 law={props.origState.law?.el ?? null}
                 containers={props.origState.law?.analysis.containersByEL ?? new Map()}
                 firstPart={props.origState.navigatedPath.split("/")[0]}
+                navigate={props.navigate}
             />
             <SidebarFooter />
         </SidebarDiv >
