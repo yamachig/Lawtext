@@ -40,7 +40,7 @@ const render = async (lawNum: string) => {
         viewerMessages: {},
         hasError: false,
         errors: [],
-        navigatedLawSearchKey: lawInfo.LawNum,
+        navigatedPath: lawInfo.LawNum,
     };
 
     const origSetState: OrigSetLawtextAppPageState = newState => {
@@ -55,7 +55,7 @@ const render = async (lawNum: string) => {
         setState,
         origSetState,
         navigate: (() => { /* */ }),
-        lawSearchKey: currentState.navigatedLawSearchKey,
+        path: currentState.navigatedPath,
     }) as JSX.Element;
 
     void renderToString(renderedElement);

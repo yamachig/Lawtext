@@ -50,7 +50,7 @@ const renderAllLaws = async () => {
                 viewerMessages: {},
                 hasError: false,
                 errors: [],
-                navigatedLawSearchKey: lawInfo.LawNum,
+                navigatedPath: lawInfo.LawNum,
             };
 
             const origSetState: OrigSetLawtextAppPageState = newState => {
@@ -67,7 +67,7 @@ const renderAllLaws = async () => {
                     setState={setState}
                     origSetState={origSetState}
                     navigate={() => { /* */ }}
-                    lawSearchKey={currentState.navigatedLawSearchKey}
+                    path={currentState.navigatedPath}
                 />,
             );
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Sidebar } from "./Sidebar";
 import { useLawtextAppPageState } from "./LawtextAppPageState";
@@ -32,15 +32,19 @@ const HiddenInput = styled.input`
 export const LawtextAppPage: React.FC = () => {
 
     const stateStruct = useLawtextAppPageState();
-    const { navigate, lawSearchKey, origSetState } = stateStruct;
+    const { navigate, path, origSetState } = stateStruct;
 
     React.useEffect(() => {
         document.title = "Lawtext";
     }, []);
 
+    const [prevPath, setPrevPath] = useState("");
     React.useEffect(() => {
-        onNavigated(lawSearchKey.trim(), origSetState);
-    }, [lawSearchKey, origSetState]);
+        if (path !== prevPath) {
+            onNavigated(path.trim(), prevPath, origSetState);
+            setPrevPath(path);
+        }
+    }, [path, prevPath, origSetState]);
 
     const inputChanged = async () => {
         origSetState(s => ({

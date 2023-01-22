@@ -45,9 +45,9 @@ const ViewerWelcomeDiv = styled.div`
 `;
 
 const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
-    const { navigate, lawSearchKey } = props;
+    const { navigate, path } = props;
 
-    const [editingKey, setEditingKey] = React.useState(lawSearchKey);
+    const [editingKey, setEditingKey] = React.useState(path);
 
     const lawSearchKeyInputRef = React.useRef<HTMLInputElement>(null);
 

@@ -6,15 +6,41 @@ import { downloadLawtext } from "./download";
 import { getLawTitleWithNum } from "@appsrc/law_util";
 import { showErrorModal } from "./showErrorModal";
 import { LawDataProps } from "@appsrc/lawdata/common";
+import parsePath from "lawtext/dist/src/path/v1/parse";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const sampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml").default;
 
 export const onNavigated = async (
-    lawSearchKey: string,
+    pathStr: string,
+    prevPathStr: string,
     origSetState: OrigSetLawtextAppPageState,
 ): Promise<void> => {
-    console.log(`onNavigated(${lawSearchKey})`);
+    console.log(`onNavigated(${pathStr})`);
+
+    if (
+        (/^v1:(.+)$/.test(pathStr)) &&
+        (/^v1:(.+)$/.test(prevPathStr))
+    ) {
+        const path = parsePath(pathStr.replace(/^v1:/, ""));
+        const prevPath = parsePath(prevPathStr.replace(/^v1:/, ""));
+        if (
+            path.ok &&
+            prevPath.ok &&
+            (path.value[0].type === "LAW") &&
+            (prevPath.value[0].type === "LAW") &&
+            (path.value[0].text === prevPath.value[0].text)
+        ) {
+            console.log("onNavigated: the LAW part in the path did not change.");
+            origSetState(s => {
+                return {
+                    ...s,
+                    navigatedPath: pathStr,
+                };
+            });
+            return;
+        }
+    }
 
     const onMessage = (message: string) => {
         origSetState(s => ({
@@ -27,7 +53,7 @@ export const onNavigated = async (
         console.log(message);
     };
 
-    if (!lawSearchKey) {
+    if (!pathStr) {
         console.log("onNavigated: detected the top page.");
         origSetState(s => {
             // const { law: oldLaw } = s;
@@ -36,7 +62,7 @@ export const onNavigated = async (
             // }
             return {
                 ...s,
-                navigatedLawSearchKey: lawSearchKey,
+                navigatedPath: pathStr,
                 law: null,
                 loadingLaw: false,
                 viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
@@ -52,7 +78,7 @@ export const onNavigated = async (
         // }
         return {
             ...s,
-            navigatedLawSearchKey: lawSearchKey,
+            navigatedPath: pathStr,
             law: null,
             loadingLaw: true,
             viewerMessages: {
@@ -62,7 +88,7 @@ export const onNavigated = async (
         };
     });
 
-    const toDownloadSample = (lawSearchKey.startsWith("(sample)"));
+    const toDownloadSample = (pathStr.startsWith("(sample)"));
     let lawDataResult: LawDataResult<LawDataProps>;
 
     const timing = new Timing();
@@ -79,7 +105,7 @@ export const onNavigated = async (
         onMessage("法令を検索しています...");
         // console.log("onNavigated: searching law...");
         await util.wait(30);
-        lawDataResult = await navigateLawData(lawSearchKey, onMessage, timing);
+        lawDataResult = await navigateLawData(pathStr, onMessage, timing);
     }
 
     if (!lawDataResult.ok) {

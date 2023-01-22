@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { HTMLLaw } from "lawtext/dist/src/renderer/rules/law";
 import { LawtextAppPageStateStruct, OrigSetLawtextAppPageState } from "../LawtextAppPageState";
@@ -27,6 +27,13 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
 
     const MemoLawDataComponent = React.useMemo(() => React.memo(LawDataComponent), []);
 
+    const [prevPath, setPrevPath] = useState("");
+    React.useEffect(() => {
+        if (prevPath !== origState.navigatedPath) {
+            setPrevPath(origState.navigatedPath);
+        }
+    }, [prevPath, origState.navigatedPath]);
+
     return (
         <LawViewDiv>
             <style>
@@ -36,7 +43,7 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
             <ControlGlobalStyle/>
             {origState.hasError && <LawViewError {...props} />}
             {origState.law &&
-                (origState.navigatedLawSearchKey === props.lawSearchKey) &&
+            // (origState.navigatedPath === props.path) &&
                     <MemoLawDataComponent lawData={origState.law} onError={onError} origSetState={origSetState} />
             }
         </LawViewDiv>

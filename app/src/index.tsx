@@ -13,7 +13,7 @@ const App = () => {
         <HashRouter>
             <Routes>
                 <Route path="/download/" element={<DownloadPage/>} />
-                <Route path=":lawSearchKey" element={<LawtextAppPage/>} />
+                <Route path="/*" element={<LawtextAppPage/>} />
                 <Route path="" element={<LawtextAppPage/>} />
             </Routes>
         </HashRouter>

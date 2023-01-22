@@ -9,12 +9,12 @@ import parsePath from "lawtext/dist/src/path/v1/parse";
 import { parseLawID } from "lawtext/dist/src/law/lawID";
 
 export const navigateLawData = async (
-    lawSearchKey: string,
+    pathStr: string,
     onMessage: (message: string) => unknown,
     timing: Timing,
 ): Promise<LawDataResult<TempXMLLawDataProps | TempLawtextLawDataProps | StoredLawDataProps | ElawsLawDataProps>> => {
 
-    const text = getTempLaw(lawSearchKey);
+    const text = getTempLaw(pathStr);
     if (text !== null) {
         if (/^(?:<\?xml|<Law)/.test(text.trim())) {
             onMessage("法令XMLをパースしています...");
@@ -42,7 +42,7 @@ export const navigateLawData = async (
         let lawID: string | null = null;
         let lawnum: string | null = null;
 
-        const v1Match = /^v1:(.+)$/.exec(lawSearchKey);
+        const v1Match = /^v1:(.+)$/.exec(pathStr);
         if (v1Match) {
             const path = parsePath(v1Match[1]);
             if (!path.ok) {
@@ -62,11 +62,11 @@ export const navigateLawData = async (
         }
 
         const reLawNumLike = new RegExp(`^(?:${ptnLawNumLike})$`);
-        if (lawID === null && parseLawID(lawSearchKey)) {
-            lawID = lawSearchKey;
+        if (lawID === null && parseLawID(pathStr)) {
+            lawID = pathStr;
 
-        } else if (reLawNumLike.test(lawSearchKey)) {
-            lawnum = lawSearchKey;
+        } else if (reLawNumLike.test(pathStr)) {
+            lawnum = pathStr;
 
         }
 
@@ -78,18 +78,18 @@ export const navigateLawData = async (
     if (lawIDOrLawNum === null) {
         onMessage("法令番号を検索しています...");
         // console.log("navigateLawData: searching lawnum...");
-        const [searchLawNumTime, lawnumResult] = await util.withTime(searchLawnum)(lawSearchKey);
+        const [searchLawNumTime, lawnumResult] = await util.withTime(searchLawnum)(pathStr);
         timing.searchLawNum = searchLawNumTime;
 
         if (!lawnumResult) {
             return {
                 ok: false,
-                error: new Error(`「${lawSearchKey}」を検索しましたが、見つかりませんでした。`),
+                error: new Error(`「${pathStr}」を検索しましたが、見つかりませんでした。`),
             };
         } else if (typeof lawnumResult !== "string") {
             return {
                 ok: false,
-                error: new Error(`「${lawSearchKey}」の検索時にエラーが発生しました： ${lawnumResult.error}: "${lawnumResult.message}"`),
+                error: new Error(`「${pathStr}」の検索時にエラーが発生しました： ${lawnumResult.error}: "${lawnumResult.message}"`),
             };
         }
 

@@ -8,7 +8,7 @@ export interface BaseLawtextAppPageState {
     viewerMessages: Record<string, string>;
     hasError: boolean;
     errors: Error[];
-    navigatedLawSearchKey: string;
+    navigatedPath: string;
 }
 
 const getInitialState = (): BaseLawtextAppPageState => ({
@@ -17,7 +17,7 @@ const getInitialState = (): BaseLawtextAppPageState => ({
     viewerMessages: {},
     hasError: false,
     errors: [],
-    navigatedLawSearchKey: "",
+    navigatedPath: "",
 });
 export type SetLawtextAppPageState = (newState: Partial<BaseLawtextAppPageState>) => void;
 export type OrigSetLawtextAppPageState = React.Dispatch<React.SetStateAction<BaseLawtextAppPageState>>;
@@ -27,16 +27,16 @@ export interface LawtextAppPageStateStruct {
     origSetState: OrigSetLawtextAppPageState,
     setState: SetLawtextAppPageState,
     navigate: ReturnType<typeof useNavigate>,
-    lawSearchKey: string,
+    path: string,
 }
 interface RouteParams {
-    lawSearchKey: string | undefined,
+    "*": string | undefined,
     [key: string]: string | undefined,
 }
 
 export const useLawtextAppPageState = (): LawtextAppPageStateStruct => {
 
-    const { lawSearchKey } = useParams<RouteParams>();
+    const { "*": path } = useParams<RouteParams>();
 
     const [state, origSetState] = React.useState<BaseLawtextAppPageState>(getInitialState);
 
@@ -53,6 +53,6 @@ export const useLawtextAppPageState = (): LawtextAppPageStateStruct => {
         origSetState,
         setState,
         navigate,
-        lawSearchKey: lawSearchKey ?? "",
+        path: path ?? "",
     };
 };

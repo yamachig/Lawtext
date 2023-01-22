@@ -21,9 +21,9 @@ const SidebarHeadDiv = styled.div`
 `;
 
 const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
-    const { origState, navigate, lawSearchKey } = props;
+    const { origState, navigate } = props;
 
-    const [editingKey, setEditingKey] = React.useState(lawSearchKey);
+    const [editingKey, setEditingKey] = React.useState("");
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
