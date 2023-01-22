@@ -104,7 +104,7 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
         if ("Num" in container.el.attr) {
             num = container.el.attr.Num ?? "";
         } else {
-            nth = (container.parent.children.filter(c => c.el.tag === container.el.tag).indexOf(container) + 1).toString();
+            nth = (container.subParent.subChildren.filter(c => c.el.tag === container.el.tag).indexOf(container) + 1).toString();
         }
 
         const modifier = (
@@ -127,7 +127,7 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
                 (
                     (container.subParent.el.tag === "Paragraph") &&
                     (container.subParent.subParent) &&
-                    (container.subParent.subParent.children.length === 1)
+                    (container.subParent.subParent.subChildren.length === 1)
                 )
                     ? container.subParent.subParent
                     : container.subParent
