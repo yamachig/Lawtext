@@ -7,6 +7,8 @@ import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { downloadDocx, downloadLawtext, downloadXml } from "@appsrc/actions/download";
 import { openFile } from "@appsrc/actions/openFile";
 import { scrollToLawAnchor } from "@appsrc/actions/scroll";
+import { Container } from "lawtext/dist/src/node/container";
+import makePath from "lawtext/dist/src/path/v1/make";
 
 
 const SidebarH1 = styled.h1`
@@ -27,7 +29,7 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        navigate(`/${editingKey}`);
+        navigate(`/${editingKey.replace("/", "")}`);
     };
 
     const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,6 +181,22 @@ const TOCItemDiv = styled.div`
     }
 `;
 
+const TOCItemAnchor = styled.a`
+    display: block;
+    color: currentColor;
+    text-decoration: none;
+    text-indent: -1em;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    &:hover {
+        background-color: rgba(255, 255, 255, .8);
+        color: currentColor;
+    }
+`;
+
 const LawNavDiv = styled.div`
     flex-grow: 1;
     flex-basis: 0;
@@ -189,118 +207,119 @@ const LawNavDiv = styled.div`
     font-size: 0.75em;
 `;
 
+interface TOCItemPropsForPath {
+    containers: Map<EL, Container>,
+    firstPart: string,
+}
 
-const NavLaw: React.FC<{law: std.Law, indent: number}> = props => {
-    const onClick = () => {
-        scrollToLawAnchor(props.law.id.toString());
-    };
+const TOCItem: React.FC<{el: std.StdEL, indent: number, text: string} & TOCItemPropsForPath> = props => {
+    const container = props.containers.get(props.el);
+    const path = (container && makePath(container)) ?? null;
 
+    if (path) {
+
+        return (
+            <TOCItemAnchor
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                href={`#/${props.firstPart}/${path}`}
+            >
+                {props.text}
+            </TOCItemAnchor>
+        );
+
+    } else {
+        const onClick = () => {
+            scrollToLawAnchor(props.el.id.toString());
+        };
+
+        return (
+            <TOCItemDiv
+                style={{
+                    paddingLeft: (props.indent + 2) + "em",
+                }}
+                onClick={onClick}
+            >
+                {props.text}
+            </TOCItemDiv>
+        );
+    }
+
+};
+
+
+const NavLaw: React.FC<{el: std.Law, indent: number} & TOCItemPropsForPath> = props => {
     return (
-        <TOCItemDiv
-            style={{
-                paddingLeft: (props.indent + 2) + "em",
-            }}
-            onClick={onClick}
-        >
-            {props.law.children.find(std.isLawBody)?.children.find(std.isLawTitle)?.text() ?? ""}
-        </TOCItemDiv>
+        <TOCItem
+            {...props}
+            text={props.el.children.find(std.isLawBody)?.children.find(std.isLawTitle)?.text() ?? ""}
+        />
     );
 };
 
-const NavEnactStatement: React.FC<{enactStatement: std.EnactStatement, indent: number}> = props => {
-    const onClick = () => {
-        scrollToLawAnchor(props.enactStatement.id.toString());
-    };
-
+const NavEnactStatement: React.FC<{el: std.EnactStatement, indent: number} & TOCItemPropsForPath> = props => {
     return (
-        <TOCItemDiv
-            style={{
-                paddingLeft: (props.indent + 2) + "em",
-            }}
-            onClick={onClick}
-        >
-            制定文
-        </TOCItemDiv>
+        <TOCItem
+            {...props}
+            text={"制定文"}
+        />
     );
 };
 
-const NavPreamble: React.FC<{preamble: std.Preamble, indent: number}> = props => {
-    const onClick = () => {
-        scrollToLawAnchor(props.preamble.id.toString());
-    };
-
+const NavPreamble: React.FC<{el: std.Preamble, indent: number} & TOCItemPropsForPath> = props => {
     return (
-        <TOCItemDiv
-            style={{
-                paddingLeft: (props.indent + 2) + "em",
-            }}
-            onClick={onClick}
-        >
-            前文
-        </TOCItemDiv>
+        <TOCItem
+            {...props}
+            text={"前文"}
+        />
     );
 };
 
-const NavTOC: React.FC<{toc: std.TOC, indent: number}> = props => {
-    const tocLabel = props.toc.children.find((el) => el.tag === "TOCLabel") as std.TOCLabel | undefined;
-
-    const onClick = () => {
-        scrollToLawAnchor(props.toc.id.toString());
-    };
-
+const NavTOC: React.FC<{el: std.TOC, indent: number} & TOCItemPropsForPath> = props => {
+    const tocLabel = props.el.children.find((el) => el.tag === "TOCLabel") as std.TOCLabel | undefined;
     return tocLabel ? (
-        <TOCItemDiv
-            style={{
-                paddingLeft: (props.indent + 2) + "em",
-            }}
-            onClick={onClick}
-        >
-            {tocLabel.text()}
-        </TOCItemDiv>
+        <TOCItem
+            {...props}
+            text={tocLabel.text()}
+        />
     ) : null;
 };
 
 const NavArticleGroup: React.FC<{
-    articleGroup: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division,
+    el: std.MainProvision | std.Part | std.Chapter | std.Section | std.Subsection | std.Division,
     indent: number,
-}> = props => {
+} & TOCItemPropsForPath> = props => {
     return (<>
-        {[...props.articleGroup.children].map((el, i) => {
+        {[...props.el.children].map((el, i) => {
             if (std.isArticleGroup(el)) {
                 return <NavArticleGroup
+                    {...props}
                     key={i}
-                    articleGroup={el}
-                    indent={props.articleGroup.tag === "MainProvision" ? props.indent : props.indent + 1}
+                    el={el}
+                    indent={props.el.tag === "MainProvision" ? props.indent : props.indent + 1}
                 />;
 
             } else if (std.isArticle(el)) {
                 return <NavArticle
+                    {...props}
                     key={i}
-                    article={el}
-                    indent={props.articleGroup.tag === "MainProvision" ? props.indent : props.indent + 1}
+                    el={el}
+                    indent={props.el.tag === "MainProvision" ? props.indent : props.indent + 1}
                 />;
 
-            } else if (el.tag === "Paragraph" || el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
-                const onClick = () => {
-                    scrollToLawAnchor(props.articleGroup.id.toString());
-                };
-
+            } else if (el.tag === "PartTitle" || el.tag === "ChapterTitle" || el.tag === "SectionTitle" || el.tag === "SubsectionTitle" || el.tag === "DivisionTitle") {
                 return (
-                    <TOCItemDiv
-                        key={i}
-                        style={{
-                            paddingLeft: (props.indent + 2) + "em",
-                        }}
-                        onClick={onClick}
-                        title={el.text()}
-                    >
-                        {el.text()}
-                    </TOCItemDiv>
+                    <TOCItem
+                        {...props}
+                        text={el.text()}
+                    />
                 );
 
             } else {
                 console.error(`unexpected element! ${JSON.stringify(el, undefined, 2)}`);
                 return <NavAnyLaw
+                    {...props}
                     key={i}
                     el={el}
                     indent={props.indent}
@@ -311,9 +330,9 @@ const NavArticleGroup: React.FC<{
     </>);
 };
 
-const NavArticle: React.FC<{article: std.Article, indent: number}> = props => {
-    const articleCaption = props.article.children.find((el) => el.tag === "ArticleCaption") as std.ArticleCaption | undefined;
-    const articleTitle = props.article.children.find((el) => el.tag === "ArticleTitle") as std.ArticleCaption | undefined;
+const NavArticle: React.FC<{el: std.Article, indent: number} & TOCItemPropsForPath> = props => {
+    const articleCaption = props.el.children.find((el) => el.tag === "ArticleCaption") as std.ArticleCaption | undefined;
+    const articleTitle = props.el.children.find((el) => el.tag === "ArticleTitle") as std.ArticleCaption | undefined;
 
     if (articleTitle) {
         const name = articleTitle.text();
@@ -322,247 +341,187 @@ const NavArticle: React.FC<{article: std.Article, indent: number}> = props => {
             const appendText = articleCaption.text();
             text += (appendText[0] === "（" ? "" : "　") + appendText;
         }
-
-        const onClick = () => {
-            scrollToLawAnchor(props.article.id.toString());
-        };
-
         return (
-            <TOCItemDiv
-                style={{
-                    paddingLeft: (props.indent + 2) + "em",
-                }}
-                onClick={onClick}
-                title={text}
-            >
-                {text}
-            </TOCItemDiv>
+            <TOCItem
+                {...props}
+                text={text}
+            />
         );
+
     } else {
         return null;
     }
 };
 
-const NavSupplProvision: React.FC<{supplProvision: std.SupplProvision, indent: number}> = props => {
-    const supplProvisionLabel = props.supplProvision.children.find((el) => el.tag === "SupplProvisionLabel") as std.SupplProvisionLabel | undefined;
+const NavSupplProvision: React.FC<{el: std.SupplProvision, indent: number} & TOCItemPropsForPath> = props => {
+    const supplProvisionLabel = props.el.children.find((el) => el.tag === "SupplProvisionLabel") as std.SupplProvisionLabel | undefined;
 
     if (supplProvisionLabel) {
         const name = supplProvisionLabel.text();
-        const amendLawNum = props.supplProvision.attr.AmendLawNum || "";
+        const amendLawNum = props.el.attr.AmendLawNum || "";
         // eslint-disable-next-line no-irregular-whitespace
         const text = (name + (amendLawNum ? ("（" + amendLawNum + "）") : "")).replace(/[\s　]+/, "");
 
-        const onClick = () => {
-            scrollToLawAnchor(props.supplProvision.id.toString());
-        };
-
         return (
-            <TOCItemDiv
-                style={{
-                    paddingLeft: (props.indent + 2) + "em",
-                }}
-                onClick={onClick}
-                title={text}
-            >
-                {text}
-            </TOCItemDiv>
+            <TOCItem
+                {...props}
+                text={text}
+            />
         );
+
     } else {
         return null;
     }
 };
 
-const NavAppdxTable: React.FC<{appdxTable: std.AppdxTable, indent: number}> = props => {
-    const appdxTableTitle = props.appdxTable.children.find((el) => el.tag === "AppdxTableTitle") as std.AppdxTableTitle | undefined;
+const NavAppdxTable: React.FC<{el: std.AppdxTable, indent: number} & TOCItemPropsForPath> = props => {
+    const appdxTableTitle = props.el.children.find((el) => el.tag === "AppdxTableTitle") as std.AppdxTableTitle | undefined;
 
     if (appdxTableTitle) {
-        const onClick = () => {
-            scrollToLawAnchor(props.appdxTable.id.toString());
-        };
 
         return (
-            <TOCItemDiv
-                style={{
-                    paddingLeft: (props.indent + 2) + "em",
-                }}
-                onClick={onClick}
-                title={appdxTableTitle.text()}
-            >
-                {appdxTableTitle.text()}
-            </TOCItemDiv>
+            <TOCItem
+                {...props}
+                text={appdxTableTitle.text()}
+            />
         );
+
     } else {
         return null;
     }
 };
 
-const NavAppdxStyle: React.FC<{appdxStyle: std.AppdxStyle, indent: number}> = props => {
-    const appdxStyleTitle = props.appdxStyle.children.find((el) => el.tag === "AppdxStyleTitle") as std.AppdxStyleTitle | undefined;
+const NavAppdxStyle: React.FC<{el: std.AppdxStyle, indent: number} & TOCItemPropsForPath> = props => {
+    const appdxStyleTitle = props.el.children.find((el) => el.tag === "AppdxStyleTitle") as std.AppdxStyleTitle | undefined;
 
     if (appdxStyleTitle) {
-        const onClick = () => {
-            scrollToLawAnchor(props.appdxStyle.id.toString());
-        };
+
         return (
-            <TOCItemDiv
-                style={{
-                    paddingLeft: (props.indent + 2) + "em",
-                }}
-                onClick={onClick}
-                title={appdxStyleTitle.text()}
-            >
-                {appdxStyleTitle.text()}
-            </TOCItemDiv>
+            <TOCItem
+                {...props}
+                text={appdxStyleTitle.text()}
+            />
         );
+
     } else {
         return null;
     }
 };
 
-const NavAppdxFig: React.FC<{appdxFig: std.AppdxFig, indent: number}> = props => {
-    const AppdxFigTitle = props.appdxFig.children.find((el) => el.tag === "AppdxFigTitle") as std.AppdxFigTitle | undefined;
+const NavAppdxFig: React.FC<{el: std.AppdxFig, indent: number} & TOCItemPropsForPath> = props => {
+    const AppdxFigTitle = props.el.children.find((el) => el.tag === "AppdxFigTitle") as std.AppdxFigTitle | undefined;
 
     if (AppdxFigTitle) {
-        const onClick = () => {
-            scrollToLawAnchor(props.appdxFig.id.toString());
-        };
+
         return (
-            <TOCItemDiv
-                style={{
-                    paddingLeft: (props.indent + 2) + "em",
-                }}
-                onClick={onClick}
-                title={AppdxFigTitle.text()}
-            >
-                {AppdxFigTitle.text()}
-            </TOCItemDiv>
+            <TOCItem
+                {...props}
+                text={AppdxFigTitle.text()}
+            />
         );
+
     } else {
         return null;
     }
 };
 
-const NavAppdxFormat: React.FC<{appdxFig: std.AppdxFormat, indent: number}> = props => {
-    const appdxFormatTitle = props.appdxFig.children.find((el) => el.tag === "AppdxFormatTitle") as std.AppdxFormatTitle | undefined;
+const NavAppdxFormat: React.FC<{el: std.AppdxFormat, indent: number} & TOCItemPropsForPath> = props => {
+    const appdxFormatTitle = props.el.children.find((el) => el.tag === "AppdxFormatTitle") as std.AppdxFormatTitle | undefined;
 
     if (appdxFormatTitle) {
-        const onClick = () => {
-            scrollToLawAnchor(props.appdxFig.id.toString());
-        };
+
         return (
-            <TOCItemDiv
-                style={{
-                    paddingLeft: (props.indent + 2) + "em",
-                }}
-                onClick={onClick}
-                title={appdxFormatTitle.text()}
-            >
-                {appdxFormatTitle.text()}
-            </TOCItemDiv>
+            <TOCItem
+                {...props}
+                text={appdxFormatTitle.text()}
+            />
         );
+
     } else {
         return null;
     }
 };
 
-const NavAppdxNote: React.FC<{appdxFig: std.AppdxNote, indent: number}> = props => {
-    const appdxNoteTitle = props.appdxFig.children.find((el) => el.tag === "AppdxNoteTitle") as std.AppdxNoteTitle | undefined;
+const NavAppdxNote: React.FC<{el: std.AppdxNote, indent: number} & TOCItemPropsForPath> = props => {
+    const appdxNoteTitle = props.el.children.find((el) => el.tag === "AppdxNoteTitle") as std.AppdxNoteTitle | undefined;
 
     if (appdxNoteTitle) {
-        const onClick = () => {
-            scrollToLawAnchor(props.appdxFig.id.toString());
-        };
+
         return (
-            <TOCItemDiv
-                style={{
-                    paddingLeft: (props.indent + 2) + "em",
-                }}
-                onClick={onClick}
-                title={appdxNoteTitle.text()}
-            >
-                {appdxNoteTitle.text()}
-            </TOCItemDiv>
+            <TOCItem
+                {...props}
+                text={appdxNoteTitle.text()}
+            />
         );
+
     } else {
         return null;
     }
 };
 
 
-const NavAppdx: React.FC<{appdxFig: std.Appdx, indent: number}> = props => {
-    const ArithFormulaNum = props.appdxFig.children.find((el) => el.tag === "ArithFormulaNum") as std.ArithFormulaNum | undefined;
+const NavAppdx: React.FC<{el: std.Appdx, indent: number} & TOCItemPropsForPath> = props => {
+    const ArithFormulaNum = props.el.children.find((el) => el.tag === "ArithFormulaNum") as std.ArithFormulaNum | undefined;
 
     if (ArithFormulaNum) {
-        const onClick = () => {
-            scrollToLawAnchor(props.appdxFig.id.toString());
-        };
+
         return (
-            <TOCItemDiv
-                style={{
-                    paddingLeft: (props.indent + 2) + "em",
-                }}
-                onClick={onClick}
-                title={ArithFormulaNum.text()}
-            >
-                {ArithFormulaNum.text()}
-            </TOCItemDiv>
+            <TOCItem
+                {...props}
+                text={ArithFormulaNum.text()}
+            />
         );
+
     } else {
         return null;
     }
 };
 
-const NavAnyLaw: React.FC<{el: EL, indent: number}> = props => {
+const NavAnyLaw: React.FC<{el: std.StdEL, indent: number} & TOCItemPropsForPath> = props => {
     const titleEL = props.el.children.find(c => typeof c !== "string" && c.tag.includes("Title")) as EL | undefined || props.el;
 
     if (titleEL) {
-        const onClick = () => {
-            scrollToLawAnchor(props.el.id.toString());
-        };
+
         return (
-            <TOCItemDiv
-                style={{
-                    paddingLeft: (props.indent + 2) + "em",
-                }}
-                onClick={onClick}
-                title={titleEL.text()}
-            >
-                {titleEL.text()}
-            </TOCItemDiv>
+            <TOCItem
+                {...props}
+                text={titleEL.text()}
+            />
         );
+
     } else {
         return null;
     }
 };
 
-const LawBody: React.FC<{lawBody: std.LawBody}> = props => {
+const LawBody: React.FC<{el: std.LawBody} & TOCItemPropsForPath> = props => {
     return (
         <>
-            {props.lawBody.children.map((el, i) => {
+            {props.el.children.map((el, i) => {
                 if (el.tag === "LawTitle") {
                     return null;
                 } else if (el.tag === "EnactStatement") {
-                    return <NavEnactStatement key={i} enactStatement={el} indent={0} />;
+                    return <NavEnactStatement {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "TOC") {
-                    return <NavTOC key={i} toc={el} indent={0} />;
+                    return <NavTOC {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "Preamble") {
-                    return <NavPreamble key={i} preamble={el} indent={0} />;
+                    return <NavPreamble {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "MainProvision") {
-                    return <NavArticleGroup key={i} articleGroup={el} indent={0} />;
+                    return <NavArticleGroup {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "SupplProvision") {
-                    return <NavSupplProvision key={i} supplProvision={el} indent={0} />;
+                    return <NavSupplProvision {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "AppdxTable") {
-                    return <NavAppdxTable key={i} appdxTable={el} indent={0} />;
+                    return <NavAppdxTable {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "AppdxStyle") {
-                    return <NavAppdxStyle key={i} appdxStyle={el} indent={0} />;
+                    return <NavAppdxStyle {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "AppdxFig") {
-                    return <NavAppdxFig key={i} appdxFig={el} indent={0} />;
+                    return <NavAppdxFig {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "AppdxNote") {
-                    return <NavAppdxNote key={i} appdxFig={el} indent={0} />;
+                    return <NavAppdxNote {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "AppdxFormat") {
-                    return <NavAppdxFormat key={i} appdxFig={el} indent={0} />;
+                    return <NavAppdxFormat {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "Appdx") {
-                    return <NavAppdx key={i} appdxFig={el} indent={0} />;
+                    return <NavAppdx {...props} key={i} el={el} indent={0} />;
                 } else {
                     return assertNever(el);
                 }
@@ -571,13 +530,13 @@ const LawBody: React.FC<{lawBody: std.LawBody}> = props => {
     );
 };
 
-const NavBlock: React.FC<{law: std.Law | null}> = props => {
+const NavBlock: React.FC<{law: std.Law | null} & TOCItemPropsForPath> = props => {
     if (props.law) {
         const lawBody = props.law.children.find((el) => el.tag === "LawBody") as std.LawBody;
         return (
             <LawNavDiv>
-                <NavLaw law={props.law} indent={0} />
-                <LawBody lawBody={lawBody}/>
+                <NavLaw {...props} el={props.law} indent={0} />
+                <LawBody {...props} el={lawBody}/>
             </LawNavDiv>
         );
     }
@@ -585,11 +544,11 @@ const NavBlock: React.FC<{law: std.Law | null}> = props => {
 };
 
 
-const SidebarBody: React.FC<{law: std.Law | null}> = props => {
+const SidebarBody: React.FC<{law: std.Law | null} & TOCItemPropsForPath> = props => {
     const MemoNavBlock = React.useMemo(() => React.memo(NavBlock), []);
     return (
         <SidebarBodyDiv>
-            <MemoNavBlock law={props.law} />
+            <MemoNavBlock {...props} law={props.law} />
         </SidebarBodyDiv>
     );
 };
@@ -629,7 +588,11 @@ export const Sidebar: React.FC<LawtextAppPageStateStruct> = props => {
     return (
         <SidebarDiv>
             <SidebarHead {...props} />
-            <SidebarBody law={props.origState.law?.el ?? null} />
+            <SidebarBody
+                law={props.origState.law?.el ?? null}
+                containers={props.origState.law?.analysis.containersByEL ?? new Map()}
+                firstPart={props.origState.navigatedPath.split("/")[0]}
+            />
             <SidebarFooter />
         </SidebarDiv >
     );

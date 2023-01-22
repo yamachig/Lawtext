@@ -53,7 +53,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        navigate(`/${editingKey}`);
+        navigate(`/${editingKey.replace("/", "")}`);
     };
 
     const [fetchAbility, setFetchAbility] = React.useState<ResolvedType<ReturnType<typeof ensureFetch>> | null>(null);

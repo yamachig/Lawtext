@@ -9,7 +9,8 @@ import { LawViewOptions } from "./common";
 import { WrapLawComponent } from "./LawWrapper";
 import useAfterMountTasks from "./useAfterMountTask";
 import ControlGlobalStyle from "./controls/ControlGlobalStyle";
-import parsePath, { PathFragment } from "lawtext/dist/src/path/v1/parse";
+import parsePath from "lawtext/dist/src/path/v1/parse";
+import { PathFragment } from "lawtext/dist/src/path/v1/common";
 import locatePath from "lawtext/dist/src/path/v1/locate";
 import { scrollToLawAnchor } from "../../actions/scroll";
 
