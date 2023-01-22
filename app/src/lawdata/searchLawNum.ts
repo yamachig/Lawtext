@@ -1,15 +1,10 @@
 import { LawInfo } from "lawtext/dist/src/data/lawinfo";
 import levenshtein from "js-levenshtein";
 import { storedLoader } from "./loaders";
-import { ptnLawNumLike } from "lawtext/dist/src/law/lawNum";
 
 export const searchLawnum = async (lawSearchKey: string): Promise<string | {error: string, message: string} | null> => {
 
-    const reLawNumLike = new RegExp(`^(?:${ptnLawNumLike})$`);
-    const match = reLawNumLike.exec(lawSearchKey);
-
     const lawnum = (
-        (match && match[0]) ||
         // await getLawnumCache(lawSearchKey) ||
         await getLawnumStored(lawSearchKey) ||
         await getLawnumRemote(lawSearchKey)

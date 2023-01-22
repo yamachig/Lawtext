@@ -5,6 +5,8 @@ import { searchLawnum } from "./searchLawNum";
 import * as util from "lawtext/dist/src/util";
 import { LawDataResult, Timing, toLawData } from "lawtext/dist/src/data/lawdata";
 import { ptnLawNumLike } from "lawtext/dist/src/law/lawNum";
+import parsePath from "lawtext/dist/src/path/v1/parse";
+import { parseLawID } from "lawtext/dist/src/law/lawID";
 
 export const navigateLawData = async (
     lawSearchKey: string,
@@ -34,13 +36,46 @@ export const navigateLawData = async (
         }
     }
 
-    let lawnum: string;
+    let lawIDOrLawNum: string | null;
 
-    const reLawNumLike = new RegExp(`^(?:${ptnLawNumLike})$`);
-    if (reLawNumLike.test(lawSearchKey)) {
-        lawnum = lawSearchKey;
+    {
+        let lawID: string | null = null;
+        let lawnum: string | null = null;
 
-    } else {
+        const v1Match = /^v1:(.+)$/.exec(lawSearchKey);
+        if (v1Match) {
+            const path = parsePath(v1Match[1]);
+            if (!path.ok) {
+                return {
+                    ok: false,
+                    error: new Error(`パス「${v1Match[1]}」にエラーがあります：${JSON.stringify(path.errors)}`),
+                };
+            }
+            const firstFragment = path.value[0];
+            if (firstFragment.type !== "LAW") {
+                return {
+                    ok: false,
+                    error: new Error(`パス「${v1Match[1]}」の先頭には法令IDを指定してください。`),
+                };
+            }
+            lawID = firstFragment.text;
+        }
+
+        const reLawNumLike = new RegExp(`^(?:${ptnLawNumLike})$`);
+        if (lawID === null && parseLawID(lawSearchKey)) {
+            lawID = lawSearchKey;
+
+        } else if (reLawNumLike.test(lawSearchKey)) {
+            lawnum = lawSearchKey;
+
+        }
+
+        lawIDOrLawNum = lawID ?? lawnum;
+
+    }
+
+
+    if (lawIDOrLawNum === null) {
         onMessage("法令番号を検索しています...");
         // console.log("navigateLawData: searching lawnum...");
         const [searchLawNumTime, lawnumResult] = await util.withTime(searchLawnum)(lawSearchKey);
@@ -58,14 +93,14 @@ export const navigateLawData = async (
             };
         }
 
-        lawnum = lawnumResult;
+        lawIDOrLawNum = lawnumResult;
     }
 
 
     try {
         onMessage("保存されている法令情報を探しています...");
         // console.log(`navigateLawData: fetching stored law info for "${lawnum}"...`);
-        const [fetchStoredLawInfoTime, lawInfo] = await util.withTime(storedLoader.getLawInfoByLawNum.bind(storedLoader))(lawnum);
+        const [fetchStoredLawInfoTime, lawInfo] = await util.withTime(storedLoader.getLawInfoByLawIDOrLawNum.bind(storedLoader))(lawIDOrLawNum);
         timing.fetchStoredLawInfo = fetchStoredLawInfoTime;
         if (!lawInfo) throw null;
 
@@ -89,8 +124,8 @@ export const navigateLawData = async (
 
     try {
         onMessage("e-Gov 法令APIから法令XMLを取得しています...");
-        console.log(`navigateLawData: fetching law data via e-LAWS API for "${lawnum}"...`);
-        const [loadDataTime, lawXMLStruct] = await util.withTime(elawsLoader.loadLawXMLStructByInfo.bind(storedLoader))(lawnum);
+        console.log(`navigateLawData: fetching law data via e-LAWS API for "${lawIDOrLawNum}"...`);
+        const [loadDataTime, lawXMLStruct] = await util.withTime(elawsLoader.loadLawXMLStructByInfo.bind(storedLoader))(lawIDOrLawNum);
         timing.loadData = loadDataTime;
 
         onMessage("法令XMLをパースしています...");
