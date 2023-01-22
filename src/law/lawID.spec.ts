@@ -7,7 +7,9 @@ import { LawInfo } from "../data/lawinfo";
 
 describe("Test parseLawID", () => {
 
-    it("Test parseLawID", async () => {
+    it("Test parseLawID", async function () {
+
+        this.slow(250);
 
         const { lawInfos } = await loader.cacheLawListStruct();
 

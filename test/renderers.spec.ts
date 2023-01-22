@@ -16,9 +16,11 @@ describe("Test Renderes", () => {
     // lawNums.splice(0, lawNums.length);
 
     for (const lawNum of lawNums) {
-        it(`Render and Parse: ${lawNum}`, async () => {
-        // const [list, listByLawnum] = await getLawList();
-        // chai.assert(false);
+        it(`Render and Parse: ${lawNum}`, async function () {
+
+            this.slow(750);
+            // const [list, listByLawnum] = await getLawList();
+            // chai.assert(false);
 
             const renderAndParseResult = await renderAndParse(lawNum);
             if (!renderAndParseResult) return;

@@ -44,7 +44,9 @@ describe("Test lawNum", () => {
         assert.isNotNull(reLawNum.exec(lawNumLikeToLawNum("日本国憲法")));
     });
 
-    it("Test parseLawNum and parseLawID", async () => {
+    it("Test parseLawNum and parseLawID", async function () {
+
+        this.slow(250);
 
         const { lawInfos } = await loader.cacheLawListStruct();
 
