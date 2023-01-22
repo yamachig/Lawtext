@@ -39,7 +39,7 @@ export const LawtextAppPage: React.FC = () => {
     }, []);
 
     React.useEffect(() => {
-        onNavigated(lawSearchKey, origSetState);
+        onNavigated(lawSearchKey.trim(), origSetState);
     }, [lawSearchKey, origSetState]);
 
     const inputChanged = async () => {

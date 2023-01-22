@@ -1,11 +1,12 @@
 import { LawInfo } from "lawtext/dist/src/data/lawinfo";
 import levenshtein from "js-levenshtein";
 import { storedLoader } from "./loaders";
+import { ptnLawNumLike } from "lawtext/dist/src/law/lawNum";
 
 export const searchLawnum = async (lawSearchKey: string): Promise<string | {error: string, message: string} | null> => {
 
-    const reLawnum = /^(?:明治|大正|昭和|平成|令和)[元〇一二三四五六七八九十]+年(?:\S+?第[〇一二三四五六七八九十百千]+号|人事院規則[〇一二三四五六七八九―]+|[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定|憲法)$/;
-    const match = reLawnum.exec(lawSearchKey);
+    const reLawNumLike = new RegExp(`^(?:${ptnLawNumLike})$`);
+    const match = reLawNumLike.exec(lawSearchKey);
 
     const lawnum = (
         (match && match[0]) ||

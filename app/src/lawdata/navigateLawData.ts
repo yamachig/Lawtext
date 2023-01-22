@@ -4,6 +4,7 @@ import { elawsLoader, storedLoader } from "./loaders";
 import { searchLawnum } from "./searchLawNum";
 import * as util from "lawtext/dist/src/util";
 import { LawDataResult, Timing, toLawData } from "lawtext/dist/src/data/lawdata";
+import { ptnLawNumLike } from "lawtext/dist/src/law/lawNum";
 
 export const navigateLawData = async (
     lawSearchKey: string,
@@ -33,22 +34,33 @@ export const navigateLawData = async (
         }
     }
 
-    onMessage("法令番号を検索しています...");
-    // console.log("navigateLawData: searching lawnum...");
-    const [searchLawNumTime, lawnum] = await util.withTime(searchLawnum)(lawSearchKey);
-    timing.searchLawNum = searchLawNumTime;
+    let lawnum: string;
 
-    if (!lawnum) {
-        return {
-            ok: false,
-            error: new Error(`「${lawSearchKey}」を検索しましたが、見つかりませんでした。`),
-        };
-    } else if (typeof lawnum !== "string") {
-        return {
-            ok: false,
-            error: new Error(`「${lawSearchKey}」の検索時にエラーが発生しました： ${lawnum.error}: "${lawnum.message}"`),
-        };
+    const reLawNumLike = new RegExp(`^(?:${ptnLawNumLike})$`);
+    if (reLawNumLike.test(lawSearchKey)) {
+        lawnum = lawSearchKey;
+
+    } else {
+        onMessage("法令番号を検索しています...");
+        // console.log("navigateLawData: searching lawnum...");
+        const [searchLawNumTime, lawnumResult] = await util.withTime(searchLawnum)(lawSearchKey);
+        timing.searchLawNum = searchLawNumTime;
+
+        if (!lawnumResult) {
+            return {
+                ok: false,
+                error: new Error(`「${lawSearchKey}」を検索しましたが、見つかりませんでした。`),
+            };
+        } else if (typeof lawnumResult !== "string") {
+            return {
+                ok: false,
+                error: new Error(`「${lawSearchKey}」の検索時にエラーが発生しました： ${lawnumResult.error}: "${lawnumResult.message}"`),
+            };
+        }
+
+        lawnum = lawnumResult;
     }
+
 
     try {
         onMessage("保存されている法令情報を探しています...");
