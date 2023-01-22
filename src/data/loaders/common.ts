@@ -59,6 +59,12 @@ export abstract class Loader {
         return lawInfos[0];
     }
 
+    public async getLawInfoByLawIDOrLawNum(lawIDOrLawNum: string): Promise<LawInfo | null> {
+        const byLawID = await this.getLawInfoByLawID(lawIDOrLawNum);
+        if (byLawID) return byLawID;
+        return this.getLawInfoByLawNum(lawIDOrLawNum);
+    }
+
     public async makeLawListFromBaseLawInfos(
         baseLawInfos: BaseLawInfo[],
         onProgress: (ratio: number, message: string) => void = () => undefined,

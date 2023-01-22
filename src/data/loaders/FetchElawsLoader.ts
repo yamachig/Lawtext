@@ -30,8 +30,8 @@ export class FetchElawsLoader extends Loader {
         return fetchBaseLawInfosFromElaws();
     }
 
-    public async loadLawXMLStructByInfo(lawInfoOrLawID: BaseLawInfo | string): Promise<ElawsLawData> {
-        return fetchLawData(typeof lawInfoOrLawID === "string" ? lawInfoOrLawID : lawInfoOrLawID.LawID);
+    public async loadLawXMLStructByInfo(lawInfoOrLawIDOrLawNum: BaseLawInfo | string): Promise<ElawsLawData> {
+        return fetchLawData(typeof lawInfoOrLawIDOrLawNum === "string" ? lawInfoOrLawIDOrLawNum : lawInfoOrLawIDOrLawNum.LawID);
     }
 
 }
