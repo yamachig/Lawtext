@@ -219,6 +219,12 @@ const TOCItem: React.FC<{el: std.StdEL, indent: number, text: string} & TOCItemP
     const path = (container && makePath(container)) ?? null;
 
     if (path) {
+        const onClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+            props.navigate(`/${props.firstPart}`);
+            scrollToLawAnchor(props.el.id.toString());
+            e.preventDefault();
+            return false;
+        };
 
         return (
             <TOCItemAnchor
@@ -226,6 +232,7 @@ const TOCItem: React.FC<{el: std.StdEL, indent: number, text: string} & TOCItemP
                     paddingLeft: (props.indent + 2) + "em",
                 }}
                 href={`#/${props.firstPart}/${path}`}
+                onClick={onClick}
             >
                 {props.text}
             </TOCItemAnchor>
