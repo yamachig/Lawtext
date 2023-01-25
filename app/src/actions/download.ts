@@ -29,15 +29,17 @@ const tobeDownloadedRange = (): SelectionRange | null => {
         const el = node.parentNode as HTMLElement;
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const findData = (el: HTMLElement, key: string): any | null => {
+        const findData = (el: HTMLElement, key: string, func?: (data: any) => boolean): any | null => {
             const containerInfo = el.parentElement
-                ? findData(el.parentElement as HTMLElement, key)
+                ? findData(el.parentElement as HTMLElement, key, func)
                 : null;
             if (containerInfo) return containerInfo;
-            return el.dataset[key] ? JSON.parse(el.dataset[key] ?? "") : null;
+            const data = el.dataset[key] ? JSON.parse(el.dataset[key] ?? "") : null;
+            if (!data) return null;
+            return (!func || func(data)) ? data : null;
         };
 
-        const containerInfo = findData(el, "container_info");
+        const containerInfo = findData(el, "container_info", (data) => ["Article", "Paragraph", "Item"].includes(data.tag));
 
         const toplevelContainerInfo = findData(el, "toplevel_container_info");
         if (!toplevelContainerInfo) return null;
