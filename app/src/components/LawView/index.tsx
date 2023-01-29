@@ -13,6 +13,7 @@ import parsePath from "lawtext/dist/src/path/v1/parse";
 import { PathFragment } from "lawtext/dist/src/path/v1/common";
 import locatePath from "lawtext/dist/src/path/v1/locate";
 import { scrollToLawAnchor } from "../../actions/scroll";
+import { HTMLParagraphItemMenuCSS } from "./controls/WrapHTMLParagraphItem";
 
 
 const GlobalStyle = createGlobalStyle`
@@ -72,6 +73,8 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
         }
     }, [prevPath, origState.navigatedPath, origState.law]);
 
+    const firstPart = props.origState.navigatedPath.split("/")[0];
+
     return (
         <LawViewDiv>
             <style>
@@ -79,10 +82,11 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
             </style>
             <GlobalStyle />
             <ControlGlobalStyle/>
+            <HTMLParagraphItemMenuCSS/>
             {origState.hasError && <LawViewError {...props} />}
             {origState.law &&
             // (origState.navigatedPath === props.path) &&
-                    <MemoLawDataComponent lawData={origState.law} onError={onError} origSetState={origSetState} />
+                <MemoLawDataComponent lawData={origState.law} onError={onError} origSetState={origSetState} firstPart={firstPart} />
             }
         </LawViewDiv>
     );
@@ -104,8 +108,9 @@ const LawDataComponent: React.FC<{
     lawData: LawData,
     onError: (error: Error) => unknown,
     origSetState: OrigSetLawtextAppPageState,
+    firstPart: string,
 }> = props => {
-    const { lawData, onError, origSetState } = props;
+    const { lawData, onError, origSetState, firstPart } = props;
 
     const { addAfterMountTask } = useAfterMountTasks(origSetState);
 
@@ -117,7 +122,8 @@ const LawDataComponent: React.FC<{
         onError,
         lawData,
         addAfterMountTask,
-    }), [onError, lawData, addAfterMountTask]);
+        firstPart,
+    }), [onError, lawData, addAfterMountTask, firstPart]);
 
     const htmlOptions: HTMLOptions = {
         WrapComponent: WrapLawComponent,

@@ -9,4 +9,5 @@ export interface LawViewOptions {
     onError: (error: Error) => void;
     lawData: LawData,
     addAfterMountTask: (func: () => unknown) => void,
+    firstPart: string,
 }

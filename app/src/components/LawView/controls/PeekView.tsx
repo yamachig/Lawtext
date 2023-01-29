@@ -114,6 +114,7 @@ export const PeekView = (props: HTMLComponentProps & PeekViewProps) => {
                         fontSize: 0,
                         fontWeight: "normal",
                         position: "relative",
+                        zIndex: 100,
                         color: "initial",
                     }}
                 >

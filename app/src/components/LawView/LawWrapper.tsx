@@ -8,6 +8,7 @@ import * as std from "lawtext/dist/src/law/std";
 import { containerInfoOf } from "../../actions/download";
 import ReplaceHTMLFigRun from "./ReplaceHTMLFigRun";
 import WrapHTMLControlRun from "./controls/WrapHTMLControlRun";
+import WrapHTMLParagraphItem from "./controls/WrapHTMLParagraphItem";
 import { containerTags } from "lawtext/dist/src/node/container";
 
 
@@ -15,6 +16,7 @@ const wrapperByID: Record<string, React.FC<WrapperComponentProps>> = {};
 
 wrapperByID["HTMLControlRun"] = WrapHTMLControlRun;
 wrapperByID["HTMLFigRun"] = ReplaceHTMLFigRun;
+wrapperByID["HTMLParagraphItem"] = WrapHTMLParagraphItem;
 
 const ErrorComponentDiv = styled.div`
 `;
