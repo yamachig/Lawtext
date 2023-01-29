@@ -14,7 +14,7 @@ export interface ParagraphItemProps {
     el: std.ParagraphItem,
     indent: number,
     ArticleTitle?: std.ArticleTitle,
-    Decorations?: React.ComponentType<HTMLComponentProps>[],
+    decorations?: React.ComponentType<HTMLComponentProps & ParagraphItemProps>[],
 }
 
 export const HTMLParagraphItemCSS = /*css*/`
@@ -159,7 +159,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
         else { throw assertNever(child); }
     }
 
-    const decorations = [HTMLParagraphItemLeftBorder, ...(props.Decorations ?? [])];
+    const decorations = [HTMLParagraphItemLeftBorder, ...(props.decorations ?? [])];
 
     return (
         <div
@@ -169,7 +169,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
             {(decorations.length > 0) && <>
                 {decorations.map((D, i) => (
                     <div key={i} className={"paragraph-item-decoration-block"} style={{ ["--paragraph-item-indent" as string]: `${indent}em` }}>
-                        <D htmlOptions={htmlOptions}></D>
+                        <D {...props}/>
                     </div>
                 ))}
             </>}
