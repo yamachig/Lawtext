@@ -85,86 +85,113 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
 
     return (
         <ViewerWelcomeDiv>
-            <div>
-                <div className="container-fluid">
-                    <p style={{ fontSize: "3em", textAlign: "center" }}>
-                        Lawtextへようこそ！
-                    </p>
-                </div>
+            <div className="container-fluid" style={{ marginBottom: "2em" }}>
+                <p style={{ fontSize: "3em", textAlign: "center" }}>
+                    Lawtextへようこそ！
+                </p>
             </div>
 
-            <div className="row justify-content-center search-law-block" style={{ margin: "1em" }}>
-                <div className="col-md-6" style={{ maxWidth: "500px" }}>
-                    <form onSubmit={handleSearchSubmit}>
-                        <div className="input-group">
-                            <input
-                                ref={lawSearchKeyInputRef}
-                                name="lawSearchKey"
-                                onChange={lawSearchKeyOnChange}
-                                className="form-control search-law-textbox"
-                                placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
-                                value={editingKey}
-                            />
-                            <button className="btn btn-primary search-law-button" type="submit" >
-                                検索
-                            </button>
-                        </div>
-                    </form>
+            <div className="container-fluid" style={{ marginBottom: "2em" }}>
+
+                <div className="row justify-content-center search-law-block">
+                    <div className="col-md-6" style={{ maxWidth: "500px" }}>
+                        <form onSubmit={handleSearchSubmit}>
+                            <div className="input-group">
+                                <input
+                                    ref={lawSearchKeyInputRef}
+                                    name="lawSearchKey"
+                                    onChange={lawSearchKeyOnChange}
+                                    className="form-control search-law-textbox"
+                                    placeholder={"法令名か法令番号を検索"}
+                                    value={editingKey}
+                                />
+                                <button className="btn btn-primary search-law-button" type="submit" >
+                                    検索
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
+
+                <p style={{ textAlign: "center", marginTop: "1em" }}>
+                    <a href="/#/v1:405AC0000000088" className="btn btn-outline-primary">例：「行政手続法」を表示</a>
+                </p>
             </div>
 
-            <div className="container-fluid" style={{ alignSelf: "center", maxWidth: "15em", margin: "1em" }}>
+            <div className="container-fluid" style={{ alignSelf: "center", maxWidth: "20em", margin: "0.5em" }}>
                 <hr />
             </div>
 
-            <div style={{ alignSelf: "center", maxWidth: "500px" }}>
-                <div className="container-fluid">
+            <div className="container-fruid" style={{ alignSelf: "center", maxWidth: "500px" }}>
+
+                <div>
                     <div style={{ textAlign: "center" }}>
-                        <p className="text-primary" style={{ marginBottom: "1em" }}>
-                            または
-                        </p>
                         <button
                             onClick={openFile}
-                            className="lawtext-open-file-button btn btn-outline-primary"
+                            className="lawtext-open-file-button btn btn-outline-secondary"
                         >
-                            法令ファイルを開く
+                            法令XML または Lawtext を開く
                         </button>
                     </div>
                     <div className="text-muted" style={{ marginTop: "1em" }}>
-                        <p style={{ textAlign: "center" }}>
-                            法令ファイルがありませんか？
-                        </p>
-                        <ul>
-                            <li><a href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
-                            <li>メモ帳などのテキストエディタで、<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>ファイルを作れます。<a href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
+                        <ul style={{ marginBottom: 0 }}>
+                            <li><a className="link-secondary" href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
+                            <li>メモ帳などのテキストエディタで、<a className="link-secondary" href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>ファイルを作れます。<a className="link-secondary" href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <div className="container-fluid" style={{ alignSelf: "center", maxWidth: "15em", margin: "1em" }}>
+            <div className="container-fluid" style={{ alignSelf: "center", maxWidth: "20em", margin: "0.5em" }}>
+                <hr />
+            </div>
+
+            <div className="container-fruid" style={{ alignSelf: "center" }}>
+
+
+                {location.hostname === "yamachig.github.io" ? (<>
+                    <div style={{ textAlign: "center" }}>
+                        <a href="https://yamachig.github.io/lawtext-app/#/download/" target="_blank" rel="noreferrer">ダウンロード版Lawtextはこちら</a>
+                    </div>
+                </>) : (<>
+                    <div style={{ textAlign: "center" }}>
+                        <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer">Web版Lawtextはこちら</a>
+                    </div>
+                </>)}
+                {fetchAbility?.canFetch && location.hostname !== "yamachig.github.io" && (
+                    <div style={{ margin: "1em 1em 0 1em" }}>
+                        <DataDirInfoToggle />
+                    </div>
+                )}
+            </div>
+
+            <div className="container-fluid" style={{ alignSelf: "center", maxWidth: "20em", margin: "0.5em" }}>
                 <hr />
             </div>
 
             <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px" }}>
                 <div className="container-fluid">
-                    <p style={{ textAlign: "center" }}>
-                        {location.hostname === "yamachig.github.io" ? (<>
-                            <a href="https://yamachig.github.io/lawtext-app/#/download/" target="_blank" rel="noreferrer">ダウンロード版Lawtextはこちら</a>
-                        </>) : (<>
-                            <a href="https://yamachig.github.io/lawtext-app/" target="_blank" rel="noreferrer">Web版Lawtextはこちら</a>
-                        </>)}
+                    <p className="text-muted" style={{ textAlign: "center" }}>
+                        法令データを検索・処理する
                     </p>
+                    <div style={{ alignSelf: "center", maxWidth: "600px", marginTop: "1em" }}>
+                        <a href="./query-docs/" target="_blank" rel="noreferrer">Lawtext query の使用方法<small>（法令XML構造・正規表現検索など）</small></a>
+                    </div>
                 </div>
             </div>
 
-            {fetchAbility?.canFetch && location.hostname !== "yamachig.github.io" && (
-                <div style={{ alignSelf: "center", maxWidth: "600px", marginTop: "1em" }}>
-                    <DataDirInfoToggle />
+            <div className="container-fluid" style={{ alignSelf: "center", maxWidth: "20em", margin: "0.5em" }}>
+                <hr />
+            </div>
+
+            <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px" }}>
+                <div className="container-fluid">
+                    <div style={{ alignSelf: "center" }}>
+                        <a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">
+                            GitHub
+                        </a>
+                    </div>
                 </div>
-            )}
-            <div style={{ alignSelf: "center", maxWidth: "600px", marginTop: "1em" }}>
-                <a href="./query-docs/" target="_blank" rel="noreferrer">Lawtext query の使用方法<small>（法令XML構造・正規表現検索など）</small></a>
             </div>
         </ViewerWelcomeDiv>
     );
