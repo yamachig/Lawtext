@@ -10,6 +10,7 @@ import ReplaceHTMLFigRun from "./ReplaceHTMLFigRun";
 import WrapHTMLControlRun from "./controls/WrapHTMLControlRun";
 import WrapHTMLParagraphItem from "./controls/WrapHTMLParagraphItem";
 import { containerTags } from "lawtext/dist/src/node/container";
+import WrapHTMLToplevelAndArticles from "./controls/WrapHTMLToplevelAndArticles";
 
 
 const wrapperByID: Record<string, React.FC<WrapperComponentProps>> = {};
@@ -17,6 +18,12 @@ const wrapperByID: Record<string, React.FC<WrapperComponentProps>> = {};
 wrapperByID["HTMLControlRun"] = WrapHTMLControlRun;
 wrapperByID["HTMLFigRun"] = ReplaceHTMLFigRun;
 wrapperByID["HTMLParagraphItem"] = WrapHTMLParagraphItem;
+
+wrapperByID["HTMLArticleGroup"] = WrapHTMLToplevelAndArticles;
+wrapperByID["HTMLAppdxItem"] = WrapHTMLToplevelAndArticles;
+wrapperByID["HTMLSupplProvision"] = WrapHTMLToplevelAndArticles;
+wrapperByID["HTMLEnactStatement"] = WrapHTMLToplevelAndArticles;
+wrapperByID["HTMLPreamble"] = WrapHTMLToplevelAndArticles;
 
 const ErrorComponentDiv = styled.div`
 `;

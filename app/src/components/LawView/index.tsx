@@ -14,6 +14,7 @@ import { PathFragment } from "lawtext/dist/src/path/v1/common";
 import locatePath from "lawtext/dist/src/path/v1/locate";
 import { scrollToLawAnchor } from "../../actions/scroll";
 import { HTMLParagraphItemMenuCSS } from "./controls/WrapHTMLParagraphItem";
+import { HTMLToplevelAndArticlesMenuCSS } from "./controls/WrapHTMLToplevelAndArticles";
 
 
 const GlobalStyle = createGlobalStyle`
@@ -83,6 +84,7 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
             <GlobalStyle />
             <ControlGlobalStyle/>
             <HTMLParagraphItemMenuCSS/>
+            <HTMLToplevelAndArticlesMenuCSS/>
             {origState.hasError && <LawViewError {...props} />}
             {origState.law &&
             // (origState.navigatedPath === props.path) &&
