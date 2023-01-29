@@ -38,8 +38,6 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
     if (!analysis) return null;
     const container = analysis.containersByEL.get(el);
     if (!container) return null;
-
-    const path = makePath(container);
     let articlePath: string | null = null;
     let articleTitle: string | null = null;
 
@@ -49,6 +47,14 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
         articlePath = makePath(articleContainer);
         articleTitle = article.children.find(isArticleTitle)?.text() ?? "この条";
     }
+
+    const path = (
+        articlePath
+        && container.el.tag === "Paragraph"
+        && container.subParent?.subChildren.filter(c => c.el.tag === "Paragraph").length === 1
+    )
+        ? null
+        : makePath(container);
 
     const onClickParagraphItemLink: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
         navigator.clipboard.writeText(`${location.protocol}//${location.host}${location.pathname}#/${options.firstPart}/${path}`);
@@ -67,13 +73,15 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
             <button className="btn btn-sm btn-outline-secondary paragraph-item-menu-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             </button>
             <ul className="dropdown-menu">
-                <li>
-                    <a
-                        className="dropdown-item"
-                        href={`#/${options.firstPart}/${path}`}
-                        onClick={onClickParagraphItemLink}
-                    >この項目へのリンクをコピー</a>
-                </li>
+                {path && (
+                    <li>
+                        <a
+                            className="dropdown-item"
+                            href={`#/${options.firstPart}/${path}`}
+                            onClick={onClickParagraphItemLink}
+                        >この項目へのリンクをコピー</a>
+                    </li>
+                )}
                 {articlePath && (
                     <li>
                         <a
