@@ -10,23 +10,34 @@ import { DOCXList, HTMLList } from "./list";
 import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision";
 import { withKey } from "../common";
 
-
 export interface ParagraphItemProps {
     el: std.ParagraphItem,
     indent: number,
     ArticleTitle?: std.ArticleTitle,
+    Decorations?: React.ComponentType<HTMLComponentProps>[],
 }
 
 export const HTMLParagraphItemCSS = /*css*/`
-.paragraph-item-Paragraph {
-    clear: both;
-    border-left: 0.2em solid transparent;
-    padding-left: 0.8em;
+.paragraph-item-any {
+    position: relative;
+}
+
+.paragraph-item-decoration-block {
+    position: absolute;
+    width: calc(100% - var(--paragraph-item-indent, 0));
+    left: var(--paragraph-item-indent, 0);
+    height: 100%;
+}
+
+.paragraph-item-decoration-left-border {
     margin: 0 0 0 -1em;
+    border-left: 0.1em solid transparent;
+    width: 100%;
+    height: 100%;
     transition: border-left-color 0.3s;
 }
 
-.paragraph-item-Paragraph:hover {
+.paragraph-item-any:hover > * > .paragraph-item-decoration-left-border {
     border-left-color: rgba(255, 166, 0, 0.5);
 }
 
@@ -48,10 +59,15 @@ ${
 
 
 .paragraph-item-main {
+    position: relative;
     padding-left: 1em;
     text-indent: -1em;
 }
 `;
+
+const HTMLParagraphItemLeftBorder: React.FC = () => {
+    return <div className="paragraph-item-decoration-left-border"></div>;
+};
 
 export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props: HTMLComponentProps & ParagraphItemProps) => {
 
@@ -143,12 +159,23 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
         else { throw assertNever(child); }
     }
 
+    const decorations = [HTMLParagraphItemLeftBorder, ...(props.Decorations ?? [])];
+
     return (
         <div
-            className={`paragraph-item-${el.tag}`}
+            className={`paragraph-item-${el.tag} paragraph-item-any`}
             {...elProps(el, htmlOptions)}
         >
-            {withKey(blocks)}
+            {(decorations.length > 0) && <>
+                {decorations.map((D, i) => (
+                    <div key={i} className={"paragraph-item-decoration-block"} style={{ ["--paragraph-item-indent" as string]: `${indent}em` }}>
+                        <D htmlOptions={htmlOptions}></D>
+                    </div>
+                ))}
+            </>}
+            <>
+                {withKey(blocks)}
+            </>
         </div>
     );
 }));
