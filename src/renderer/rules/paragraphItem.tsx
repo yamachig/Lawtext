@@ -173,9 +173,9 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
                     </div>
                 ))}
             </>}
-            <>
+            <div style={{ position: "relative" }}>
                 {withKey(blocks)}
-            </>
+            </div>
         </div>
     );
 }));
