@@ -114,7 +114,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                 </div>
 
                 <p style={{ textAlign: "center", marginTop: "1em" }}>
-                    <a href="/#/v1:405AC0000000088" className="btn btn-outline-primary">例：「行政手続法」を表示</a>
+                    <a href="#/v1:405AC0000000088" className="btn btn-outline-primary">例：「行政手続法」を表示</a>
                 </p>
             </div>
 
