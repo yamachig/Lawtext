@@ -9,7 +9,7 @@ Lawtext: Manageable plain text format and utility tools for laws
 
 [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)
 
-<div style="text-align: center;"><a href="https://yamachig.github.io/lawtext-app/#/%E5%B9%B3%E6%88%90%E4%BA%94%E5%B9%B4%E6%B3%95%E5%BE%8B%E7%AC%AC%E5%85%AB%E5%8D%81%E5%85%AB%E5%8F%B7" style="display: inline-block; border: 1px solid currentColor; padding: 0.5em;border-radius: 0.5em;" target="_blank" rel="noopener">試してみる / Try it</a></div>
+<div style="text-align: center;"><a href="https://yamachig.github.io/lawtext-app/" style="display: inline-block; border: 1px solid currentColor; padding: 0.5em;border-radius: 0.5em;" target="_blank" rel="noopener">試してみる / Try it</a></div>
 
 </div>
 
