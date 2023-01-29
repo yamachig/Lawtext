@@ -38,7 +38,12 @@ export const WrapLawComponent: React.FC<WrapperComponentProps> = props => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const el = (childProps as any).el;
 
-    const elID = (el instanceof EL) && (containerTags.includes(el.tag as typeof containerTags[number]) || std.isPreamble(el) || std.isTOC(el)) && el.id;
+    const elID = (
+        (el instanceof EL)
+        && (containerTags.includes(el.tag as typeof containerTags[number]) || std.isPreamble(el) || std.isTOC(el))
+        && (!["TableRow", "TableColumn"].includes(el.tag as typeof containerTags[number]))
+        && el.id
+    );
 
     const WrapperByID = wrapperByID[htmlComponentID];
 
@@ -63,6 +68,7 @@ export const WrapLawComponent: React.FC<WrapperComponentProps> = props => {
     if (
         (el instanceof EL)
         && (containerTags.includes(el.tag as typeof containerTags[number]))
+        && (!["TableRow", "TableColumn"].includes(el.tag as typeof containerTags[number]))
     ){
         dataset.push(["data-container_info", JSON.stringify(containerInfoOf(el))]);
     }
