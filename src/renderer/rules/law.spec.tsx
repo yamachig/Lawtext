@@ -48,7 +48,7 @@ describe("Test HTML law", () => {
                             children: [
                                 {
                                     tag: "Chapter",
-                                    attr: {                                        Num: "1",
+                                    attr: { Num: "1",
                                     },
                                     children: [
                                         {
@@ -58,7 +58,7 @@ describe("Test HTML law", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {                                            },
+                                            attr: { },
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",
@@ -143,14 +143,20 @@ describe("Test HTML law", () => {
             <div class="article">
               <div class="article-caption indent-1">（目的等）</div>
               <div class="article-body">
-                <div class="paragraph-item-Paragraph">
+                <div class="paragraph-item-Paragraph paragraph-item-any">
+                  <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:0em">
+                    <div class="paragraph-item-decoration-left-border"></div>
+                  </div>
                   <div class="paragraph-item-main indent-0">
                     <span class="article-title">第一条</span>
                     <span class="paragraph-item-margin">　</span>
                     <span class="paragraph-item-body">この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。</span>
                   </div>
                 </div>
-                <div class="paragraph-item-Paragraph">
+                <div class="paragraph-item-Paragraph paragraph-item-any">
+                  <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:0em">
+                    <div class="paragraph-item-decoration-left-border"></div>
+                  </div>
                   <div class="paragraph-item-main indent-0">
                     <span class="paragraph-item-title">２</span>
                     <span class="paragraph-item-margin">　</span>
@@ -227,7 +233,7 @@ describe("Test DOCX law", () => {
                             children: [
                                 {
                                     tag: "Chapter",
-                                    attr: {                                        Num: "1",
+                                    attr: { Num: "1",
                                     },
                                     children: [
                                         {
@@ -237,7 +243,7 @@ describe("Test DOCX law", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {                                            },
+                                            attr: { },
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",

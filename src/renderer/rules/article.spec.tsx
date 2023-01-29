@@ -223,13 +223,19 @@ describe("Test HTML article", () => {
 <div class="article">
   <div class="article-caption indent-1">（定義）</div>
   <div class="article-body">
-    <div class="paragraph-item-Paragraph">
+    <div class="paragraph-item-Paragraph paragraph-item-any">
+      <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:0em">
+        <div class="paragraph-item-decoration-left-border"></div>
+      </div>
       <div class="paragraph-item-main indent-0">
         <span class="article-title">第二条</span>
         <span class="paragraph-item-margin">　</span>
         <span class="paragraph-item-body">この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。</span>
       </div>
-      <div class="paragraph-item-Item">
+      <div class="paragraph-item-Item paragraph-item-any">
+        <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:1em">
+          <div class="paragraph-item-decoration-left-border"></div>
+        </div>
         <div class="paragraph-item-main indent-1">
           <span class="paragraph-item-title">一</span>
           <span class="paragraph-item-margin">　</span>
@@ -240,7 +246,10 @@ describe("Test HTML article", () => {
           </span>
         </div>
       </div>
-      <div class="paragraph-item-Item">
+      <div class="paragraph-item-Item paragraph-item-any">
+        <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:1em">
+          <div class="paragraph-item-decoration-left-border"></div>
+        </div>
         <div class="paragraph-item-main indent-1">
           <span class="paragraph-item-title">四</span>
           <span class="paragraph-item-margin">　</span>
@@ -250,14 +259,20 @@ describe("Test HTML article", () => {
             <span class="lawtext-column">行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。</span>
           </span>
         </div>
-        <div class="paragraph-item-Subitem1">
+        <div class="paragraph-item-Subitem1 paragraph-item-any">
+          <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:2em">
+            <div class="paragraph-item-decoration-left-border"></div>
+          </div>
           <div class="paragraph-item-main indent-2">
             <span class="paragraph-item-title">イ</span>
             <span class="paragraph-item-margin">　</span>
             <span class="paragraph-item-body">事実上の行為及び事実上の行為をするに当たりその範囲、時期等を明らかにするために法令上必要とされている手続としての処分</span>
           </div>
         </div>
-        <div class="paragraph-item-Subitem1">
+        <div class="paragraph-item-Subitem1 paragraph-item-any">
+          <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:2em">
+            <div class="paragraph-item-decoration-left-border"></div>
+          </div>
           <div class="paragraph-item-main indent-2">
             <span class="paragraph-item-title">ロ</span>
             <span class="paragraph-item-margin">　</span>
@@ -266,7 +281,10 @@ describe("Test HTML article", () => {
         </div>
       </div>
     </div>
-    <div class="paragraph-item-Paragraph">
+    <div class="paragraph-item-Paragraph paragraph-item-any">
+      <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:0em">
+        <div class="paragraph-item-decoration-left-border"></div>
+      </div>
       <div class="paragraph-item-main indent-0">
         <span class="paragraph-item-title">２</span>
         <span class="paragraph-item-margin">　</span>

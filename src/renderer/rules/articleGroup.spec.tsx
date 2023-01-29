@@ -146,7 +146,10 @@ describe("Test HTML articleGroup", () => {
         <div class="article">
           <div class="article-caption indent-2">（処分の基準）</div>
           <div class="article-body">
-            <div class="paragraph-item-Paragraph">
+            <div class="paragraph-item-Paragraph paragraph-item-any">
+              <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:1em">
+                <div class="paragraph-item-decoration-left-border"></div>
+              </div>
               <div class="paragraph-item-main indent-1">
                 <span class="article-title">第十二条</span>
                 <span class="paragraph-item-margin">　</span>
@@ -169,7 +172,10 @@ describe("Test HTML articleGroup", () => {
         <div class="article">
           <div class="article-caption indent-2">（聴聞の通知の方式）</div>
           <div class="article-body">
-            <div class="paragraph-item-Paragraph">
+            <div class="paragraph-item-Paragraph paragraph-item-any">
+              <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:1em">
+                <div class="paragraph-item-decoration-left-border"></div>
+              </div>
               <div class="paragraph-item-main indent-1">
                 <span class="article-title">第十五条</span>
                 <span class="paragraph-item-margin">　</span>

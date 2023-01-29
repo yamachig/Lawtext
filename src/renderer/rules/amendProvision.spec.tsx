@@ -86,7 +86,10 @@ describe("Test HTML amendProvision", () => {
     <div class="article">
       <div class="article-caption indent-3">（株式等の取得及び保有）</div>
       <div class="article-body">
-        <div class="paragraph-item-Paragraph">
+        <div class="paragraph-item-Paragraph paragraph-item-any">
+          <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:2em">
+            <div class="paragraph-item-decoration-left-border"></div>
+          </div>
           <div class="paragraph-item-main indent-2">
             <span class="article-title">第十七条の二</span>
             <span class="paragraph-item-margin">　</span>

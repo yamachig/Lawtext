@@ -22,6 +22,10 @@ export const HTMLParagraphItemCSS = /*css*/`
     position: relative;
 }
 
+.paragraph-item-any > div:not(.paragraph-item-decoration-block) {
+    position: relative;
+}
+
 .paragraph-item-decoration-block {
     position: absolute;
     width: calc(100% - var(--paragraph-item-indent, 0));
@@ -173,9 +177,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
                     </div>
                 ))}
             </>}
-            <div style={{ position: "relative" }}>
-                {withKey(blocks)}
-            </div>
+            {withKey(blocks)}
         </div>
     );
 }));

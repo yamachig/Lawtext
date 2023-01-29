@@ -60,7 +60,10 @@ describe("Test HTML paragraphItem", () => {
             ],
         }) as std.Item;
         const expectedHTML = /*html*/`\
-<div class="paragraph-item-Item">
+<div class="paragraph-item-Item paragraph-item-any">
+  <div class="paragraph-item-decoration-block" style="--paragraph-item-indent:1em">
+    <div class="paragraph-item-decoration-left-border"></div>
+  </div>
   <div class="paragraph-item-main indent-1">
     <span class="paragraph-item-title">一</span>
     <span class="paragraph-item-margin">　</span>

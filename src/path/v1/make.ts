@@ -1,6 +1,6 @@
 import { Container, ContainerType } from "../../node/container";
 import { assertNever } from "../../util";
-import { PathFragment, PathFragmentArticlesContainer, PathFragmentTopLevel, sentencesContainerAlias, topLevelAlias } from "./common";
+import { PathFragment, PathFragmentArticlesContainer, PathFragmentSentencesContainer, PathFragmentTopLevel, sentencesContainerAlias, topLevelAlias } from "./common";
 
 
 export const makePathFragments = (container: Container, childFragments: PathFragment[]): PathFragment[] => {
@@ -113,10 +113,10 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
                 : `[${nth}]`
         );
 
-        const fragment: PathFragmentTopLevel = {
-            type: "TOPLEVEL",
+        const fragment: PathFragmentSentencesContainer = {
+            type: "SENTENCES",
             text: `${alias}${modifier}`,
-            tag: container.el.tag as PathFragmentTopLevel["tag"],
+            tag: container.el.tag as PathFragmentSentencesContainer["tag"],
             num,
             attr: [],
             nth,
