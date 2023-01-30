@@ -146,7 +146,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                 <hr />
             </div>
 
-            <div className="container-fruid" style={{ alignSelf: "center" }}>
+            <div className="container-fruid" style={{ alignSelf: "center", maxWidth: "100%" }}>
 
 
                 {location.hostname === "yamachig.github.io" ? (<>
