@@ -1,0 +1,10 @@
+*~
+.vscode
+.env
+node_modules
+package-lock.json
+/lib/
+/lib-dev/
+temp_*
+*.tsbuildinfo
+symlinks

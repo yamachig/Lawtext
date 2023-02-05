@@ -1,0 +1,31 @@
+{
+  "name": "lawtext-api-cdk",
+  "version": "0.1.0",
+  "bin": {
+    "_cdk": "bin/_cdk.js"
+  },
+  "scripts": {
+    "build": "pushd \"../lambda\" && ((npm run build:prod && popd) || popd) && cdk synth --no-staging > template.yml",
+    "deploy": "npm run build && cdk deploy --require-approval never",
+    "start": "npm run build && sam build && sam local start-api --docker-network lawtext-api-cdk-sam"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigatewayv2": "^1.187.0",
+    "@aws-cdk/aws-apigatewayv2-integrations": "^1.187.0",
+    "@aws-cdk/aws-iam": "^1.187.0",
+    "@aws-cdk/core": "^1.187.0",
+    "dotenv": "^16.0.3",
+    "source-map-support": "^0.5.21"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "18.11.15",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.50.0",
+    "aws-cdk": "2.59.0",
+    "eslint": "^8.33.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "ts-node": "^10.9.1",
+    "typescript": "~4.9.4"
+  }
+}

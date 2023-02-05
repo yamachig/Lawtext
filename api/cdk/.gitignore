@@ -1,0 +1,11 @@
+*~
+.vscode
+.env
+node_modules
+package-lock.json
+temp_*
+*.tsbuildinfo
+.aws-sam
+cdk.out
+dynamodblocal_data
+template.yml

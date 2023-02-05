@@ -1,0 +1,21 @@
+version: '3'
+
+name: lawtext-api-cdk
+
+services:
+
+  db:
+    container_name: lawtext-api-cdk-dynamodb
+    image: amazon/dynamodb-local
+    hostname: dynamodb
+    ports:
+      - 18000:8000
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/db
+    volumes:
+      - ./dynamodblocal_data:/home/dynamodblocal/db
+    networks:
+      - lawtext-api-cdk-sam
+
+networks:
+  lawtext-api-cdk-sam:
+    name: lawtext-api-cdk-sam
