@@ -1,6 +1,6 @@
 import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { FetchElawsLoader } from "lawtext/dist/src/data/loaders/FetchElawsLoader";
-
+import { fetch } from "lawtext/dist/src/util/node-fetch";
 
 export abstract class Store {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,42 +18,69 @@ export abstract class Store {
 
 const loader = new FetchElawsLoader();
 type InvIndex = Record<string, {items: {[key: string]: number[]}}>;
+type Aliases = Record<string, {items: string[]}>;
+export interface Stores {
+    lawInfos: Store,
+    aliases: Store,
+    invIndex: Store,
+}
 
-export const updateIndex = async (baseLawInfosStore: Store, lawTitleInvIndexStore: Store) => {
-    const { lawInfos } = await loader.cacheLawListStruct();
+export const updateIndex = async (stores: Stores) => {
+    const { lawInfos, lawInfosByLawnum } = await loader.cacheLawListStruct();
 
     {
-        const origKeys = await baseLawInfosStore.getKeys();
-        if (origKeys.length === 0) {
-            const items = Object.fromEntries(lawInfos.map(lawInfo => [
-                lawInfo.LawID,
-                lawInfo.toBaseLawInfo(),
-            ]));
-            console.log(`LawInfos count: ${Object.keys(items).length}`);
-            await baseLawInfosStore.set(items);
+        const items = Object.fromEntries(lawInfos.map(lawInfo => [
+            lawInfo.LawID,
+            lawInfo.toBaseLawInfo(),
+        ]));
+        console.log(`LawInfos count: ${Object.keys(items).length}`);
+        await stores.lawInfos.empty();
+        await stores.lawInfos.set(items);
+    }
+
+    const aliases: Aliases = Object.fromEntries(lawInfos.map(l => [l.LawID, { items: [l.LawTitle] }]));
+    {
+        const html = (await (await fetch("https://elaws.e-gov.go.jp/abb/")).text()).replace(/[\r\n]/g, "");
+        const mTable = /<table id="abbreviationTable".+?<\/table>/.exec(html);
+        const table = (mTable && mTable[0]) ?? "";
+        const mTbody = /<tbody.+?<\/tbody>/.exec(table);
+        const tbody = (mTbody && mTbody[0]) ?? "";
+        for (const mTr of tbody.matchAll(/<tr.+?<\/tr>/g)) {
+            const tr = mTr[0];
+            const mLawNum = /<td class="lawNoCol">(.+?)<\/td>/.exec(tr);
+            const lawNum = ((mLawNum && mLawNum[1]) ?? "").trim();
+            if (!lawNum || !(lawNum in lawInfosByLawnum)) continue;
+            const lawInfo = lawInfosByLawnum[lawNum][0];
+            for (const mTd of tr.matchAll(/<td class="abbrLawNameCol">(.+?)<\/td>/g)) {
+                const alias = mTd[1].trim();
+                if (alias) aliases[lawInfo.LawID].items.push(alias);
+            }
         }
+        console.log(`Aliases count: ${Object.keys(aliases).length}`);
+        await stores.aliases.empty();
+        await stores.aliases.set(aliases);
     }
 
     {
-        const origKeys = await lawTitleInvIndexStore.getKeys();
-        if (origKeys.length === 0) {
-            const invIndex: InvIndex = {};
-            for (const lawInfo of lawInfos) {
-                for (const [i, c] of Array.from(lawInfo.LawTitle).entries()) {
-                    const key = lawInfo.LawID;
+        const invIndex: InvIndex = {};
+        for (const [LawID, { items }] of Object.entries(aliases)) {
+            for (const [ai, alias] of items.entries()) {
+                for (const [i, c] of Array.from(alias).entries()) {
+                    const key = `${LawID}/${ai}`;
                     if (!(c in invIndex)) invIndex[c] = { items: {} };
                     if (!(key in invIndex[c].items)) invIndex[c].items[key] = [];
                     invIndex[c].items[key].push(i);
                 }
             }
-            console.log(`LawTitleInvIndex count: ${Object.keys(invIndex).length}`);
-            await lawTitleInvIndexStore.set(invIndex);
         }
+        console.log(`LawTitleInvIndex count: ${Object.keys(invIndex).length}`);
+        await stores.invIndex.empty();
+        await stores.invIndex.set(invIndex);
     }
 };
 
-export const search = async (searchKey: string, baseLawInfosStore: Store, lawTitleInvIndexStore: Store) => {
-    const invIndices: InvIndex = await lawTitleInvIndexStore.get(Array.from(searchKey));
+export const search = async (searchKey: string, stores: Stores) => {
+    const invIndices: InvIndex = await stores.invIndex.get(Array.from(searchKey));
     const hitCount: Record<string, number> = {};
     for (const [, c] of Array.from(searchKey).entries()) {
         const items = invIndices[c]?.items ?? {};
@@ -63,27 +90,42 @@ export const search = async (searchKey: string, baseLawInfosStore: Store, lawTit
         }
     }
 
-    let maxCountKeys: string[] = [];
+    let maxCountAliasKeys: string[] = [];
     {
         let maxCount = 0;
         for (const key of Object.keys(hitCount)) {
             if (maxCount < hitCount[key]) {
                 maxCount = hitCount[key];
-                maxCountKeys = [];
+                maxCountAliasKeys = [];
             }
             if (maxCount <= hitCount[key]) {
-                maxCountKeys.push(key);
+                maxCountAliasKeys.push(key);
             }
         }
     }
 
-    const lawInfos: BaseLawInfo[] = Object.values(await baseLawInfosStore.get(maxCountKeys));
-    if (lawInfos.length === 0) return null;
-    lawInfos.sort((a, b) => a.LawTitle.length - b.LawTitle.length);
+    const maxCountKeys = Array.from(new Set(maxCountAliasKeys.map(k => k.split("/")[0])));
+    const aliases: Aliases = await stores.aliases.get(maxCountKeys);
+    const aliasToLawID = maxCountAliasKeys.map(k => {
+        const [key, indexStr] = k.split("/");
+        const index = Number(indexStr);
+        return {
+            alias: aliases[key].items[index],
+            lawID: key,
+        };
+    });
+    if (aliasToLawID.length === 0) return null;
 
-    for (const lawInfo of lawInfos) {
-        if (lawInfo.LawTitle.includes(searchKey)) return lawInfo;
+
+    aliasToLawID.sort((a, b) => a.alias.length - b.alias.length);
+
+    let foundLawID: string | null = null;
+    for (const { alias, lawID } of aliasToLawID) {
+        if (alias.includes(searchKey)) {
+            foundLawID = lawID;
+            break;
+        }
     }
-
-    return lawInfos[0];
+    if (!foundLawID) foundLawID = aliasToLawID[0].lawID;
+    return (await stores.lawInfos.get([foundLawID]))[foundLawID] as BaseLawInfo;
 };

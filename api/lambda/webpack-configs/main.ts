@@ -22,6 +22,7 @@ export default (_env: Record<string, string>, argv: Record<string, string>): web
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
         },
+        externals: ["jsdom"],
         // externals: [
         //     nodeExternals({
         //         allowlist: ["lawtext-api-search"],

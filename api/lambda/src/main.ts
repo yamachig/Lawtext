@@ -1,7 +1,7 @@
 import { Context, APIGatewayProxyResultV2, APIGatewayProxyEventV2 } from "aws-lambda";
 import * as ddb from "@aws-sdk/client-dynamodb";
 import { unmarshall, marshall } from "@aws-sdk/util-dynamodb";
-import { search, Store, updateIndex } from "lawtext-api-search";
+import { search, Store, Stores, updateIndex } from "lawtext-api-search";
 
 const getClient = () => {
     // const ddbOptions: ddb.DynamoDBClientConfig = (
@@ -148,12 +148,15 @@ class DDBStore extends Store {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const lambdaHandler = async (_event: APIGatewayProxyEventV2, _context: Context): Promise<APIGatewayProxyResultV2> => {
     const ddbClient = getClient();
-    const baseLawInfosStore = new DDBStore(ddbClient, "BaseLawInfos");
-    const lawTitleInvIndexStore = new DDBStore(ddbClient, "LawTitleInvIndex");
+    const stores: Stores = {
+        lawInfos: new DDBStore(ddbClient, "BaseLawInfos"),
+        aliases: new DDBStore(ddbClient, "Aliases"),
+        invIndex: new DDBStore(ddbClient, "LawTitleInvIndex"),
+    };
 
     if (_event.requestContext.http.path === "/updateIndex") {
 
-        await updateIndex(baseLawInfosStore, lawTitleInvIndexStore);
+        await updateIndex(stores);
 
         return {
             isBase64Encoded: false,
@@ -168,7 +171,7 @@ export const lambdaHandler = async (_event: APIGatewayProxyEventV2, _context: Co
             body: JSON.stringify({ error: "Search key missing." }),
         };
         const searchKey = _event.queryStringParameters.q ?? "";
-        const lawInfo = await search(searchKey, baseLawInfosStore, lawTitleInvIndexStore);
+        const lawInfo = await search(searchKey, stores);
 
         return {
             isBase64Encoded: false,

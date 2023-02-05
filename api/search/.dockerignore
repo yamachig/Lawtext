@@ -1,9 +1,0 @@
-*~
-.vscode
-.env
-node_modules
-package-lock.json
-/lib/
-temp_*
-*.tsbuildinfo
-Dockerfile
