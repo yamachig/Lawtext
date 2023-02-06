@@ -15,7 +15,7 @@
 
       "baseUrl": "./",
       "outDir": "./lib",
-      "rootDir": "./src",
+      "rootDir": "./",
 
       "skipLibCheck": true,
 

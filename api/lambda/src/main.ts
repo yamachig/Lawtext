@@ -2,18 +2,17 @@ import { Context, APIGatewayProxyResultV2, APIGatewayProxyEventV2 } from "aws-la
 import * as ddb from "@aws-sdk/client-dynamodb";
 import { unmarshall, marshall } from "@aws-sdk/util-dynamodb";
 import { search, Store, Stores, updateIndex } from "lawtext-api-search";
+import { FetchElawsLoader } from "lawtext/dist/src/data/loaders/FetchElawsLoader";
 
 const getClient = () => {
-    // const ddbOptions: ddb.DynamoDBClientConfig = (
-    //     (process.env.ENV === "local")
-    //         ? {
-    //             endpoint: "http://lawtext-api-cdk-dynamodb:8000",
-    //         }
-    //         : {}
-    // );
-    const ddbOptions: ddb.DynamoDBClientConfig = {
-        endpoint: "http://dynamodb:8000",
-    };
+    const ddbOptions: ddb.DynamoDBClientConfig = (
+        (!process.env.FUNCTION_ARN)
+            ? {
+                endpoint: "http://dynamodb:8000",
+            }
+            // : (() => { throw new Error(); })()
+            : {}
+    );
     const ddbClient = new ddb.DynamoDBClient(ddbOptions);
     return ddbClient;
 };
@@ -153,10 +152,11 @@ export const lambdaHandler = async (_event: APIGatewayProxyEventV2, _context: Co
         aliases: new DDBStore(ddbClient, "Aliases"),
         invIndex: new DDBStore(ddbClient, "LawTitleInvIndex"),
     };
+    const loader = new FetchElawsLoader();
 
     if (_event.requestContext.http.path === "/updateIndex") {
 
-        await updateIndex(stores);
+        await updateIndex(stores, loader);
 
         return {
             isBase64Encoded: false,

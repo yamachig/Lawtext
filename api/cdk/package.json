@@ -7,7 +7,7 @@
   "scripts": {
     "build": "pushd \"../lambda\" && ((npm run build:prod && popd) || popd) && cdk synth --no-staging > template.yml",
     "deploy": "npm run build && cdk deploy --require-approval never",
-    "start": "npm run build && sam build && sam local start-api --docker-network lawtext-api-cdk-sam"
+    "start": "npm run build && sam build && sam local start-api --docker-network lawtext-api-cdk-sam --env-vars debug-env.json"
   },
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2": "^1.187.0",

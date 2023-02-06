@@ -4,8 +4,8 @@
   "author": "yamachi",
   "license": "MIT",
   "homepage": "https://github.com/yamachig/Lawtext",
-  "main": "./lib/main.js",
-  "types": "./lib/main.d.ts",
+  "main": "./lib/src/main.js",
+  "types": "./lib/src/main.d.ts",
   "scripts": {
     "build": "npx tsc",
     "prepare": "npm run build",

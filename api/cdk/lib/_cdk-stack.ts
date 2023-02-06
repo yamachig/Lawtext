@@ -45,7 +45,9 @@ export class CdkStack extends cdk.Stack {
             code: lambda.DockerImageCode.fromImageAsset("../lambda"),
             timeout: cdk.Duration.seconds(300),
             role: functionRole,
+            environment: { DEBUG: "" }
         });
+        lambdaFunction.addEnvironment("FUNCTION_ARN", lambdaFunction.functionArn);
 
         const integration = new HttpLambdaIntegration(`${namePrefix}_integration`, lambdaFunction);
 
