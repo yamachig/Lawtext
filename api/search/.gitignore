@@ -6,3 +6,4 @@ package-lock.json
 /lib/
 temp_*
 *.tsbuildinfo
+*.log

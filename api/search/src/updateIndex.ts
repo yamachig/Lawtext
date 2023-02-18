@@ -17,6 +17,7 @@ export const updateIndex = async (stores: Stores, loader: Loader) => {
 
     const aliases: Aliases = Object.fromEntries(lawInfos.map(l => [l.LawID, { items: [l.LawTitle] }]));
     {
+        const aliasesSet = new Set(lawInfos.map(l => l.LawTitle));
         const html = (await (await fetch("https://elaws.e-gov.go.jp/abb/")).text()).replace(/[\r\n]/g, "");
         const mTable = /<table id="abbreviationTable".+?<\/table>/.exec(html);
         const table = (mTable && mTable[0]) ?? "";
@@ -30,7 +31,14 @@ export const updateIndex = async (stores: Stores, loader: Loader) => {
             const lawInfo = lawInfosByLawnum[lawNum][0];
             for (const mTd of tr.matchAll(/<td class="abbrLawNameCol">(.+?)<\/td>/g)) {
                 const alias = mTd[1].trim();
-                if (alias) aliases[lawInfo.LawID].items.push(alias);
+                if (alias) {
+                    if (aliasesSet.has(alias)) {
+                        // console.warn(`Duplicated alias "${alias}" for ${lawInfo.LawID}`);
+                    } else {
+                        aliasesSet.add(alias);
+                        aliases[lawInfo.LawID].items.push(alias);
+                    }
+                }
             }
         }
         console.log(`Aliases count: ${Object.keys(aliases).length}`);
