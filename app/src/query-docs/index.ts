@@ -53,10 +53,8 @@ export const generateDocs = async (targetDir: string): Promise<void> => {
     const tempIncludesDir = path.join(__dirname, "./temp-includes");
 
     app.bootstrap({
-        entryPoints: [
-            path.join(__dirname, "../globals/coreQuery.ts"),
-            path.join(__dirname, "../globals/lawtext.ts"),
-        ],
+        entryPoints: [path.join(__dirname, "../globals/")],
+        entryPointStrategy: "expand",
         // excludePrivate: true,
         // excludeProtected: true,
         // excludeInternal: true,

@@ -17,15 +17,15 @@ Lawtext query は、ブラウザのコンソールとjavascriptを利用した�
 
 Lawtext query の検索に用いるデータは、e-Gov 法令API とオフライン用データの2種類のどちらかを選択します。
 
-- **e-Gov 法令API**: {@link queryViaAPI | lawtext.queryViaAPI()} を使用した場合は、e-Gov法令APIからデータを取得します。e-Gov 法令APIにアクセスできる環境があれば事前の準備なく利用できます。ただし、データをインターネット経由で毎回取得するため、実行に時間がかかる場合があります。
+- **e-Gov 法令API**: {@link lawtext.queryViaAPI | lawtext.queryViaAPI()} を使用した場合は、e-Gov法令APIからデータを取得します。e-Gov 法令APIにアクセスできる環境があれば事前の準備なく利用できます。ただし、データをインターネット経由で毎回取得するため、実行に時間がかかる場合があります。
 
-- **オフライン用データ**: {@link query | lawtext.query()} を使用した場合は、オフライン用データを利用します。ダウンロード版Lawtextでオフライン用データを保存している場合に使用できます。多くの場合、e-Gov 法令APIを使用する方法よりも高速です。
+- **オフライン用データ**: {@link lawtext.query | lawtext.query()} を使用した場合は、オフライン用データを利用します。ダウンロード版Lawtextでオフライン用データを保存している場合に使用できます。多くの場合、e-Gov 法令APIを使用する方法よりも高速です。
 
 ## Lawtext query リファレンス
 
-- 法令の検索条件について: {@link LawCriteriaArgs}
-- 検索結果の制御について: {@link Query}, {@link LawQuery}
-- ブラウザのコンソールから利用できる {@link app/src/globals/lawtext | lawtext} オブジェクトについて: {@link app/src/globals/lawtext | lawtext}
+- 法令の検索条件について: {@link coreQuery.LawCriteriaArgs}
+- 検索結果の制御について: {@link coreQuery.Query}, {@link coreQuery.LawQuery}
+- ブラウザのコンソールから利用できる {@link lawtext} オブジェクトについて: {@link lawtext}
 
 ## Lawtext query のコード例<a name="examples"></a>
 

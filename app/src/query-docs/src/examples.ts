@@ -18,7 +18,7 @@ void (async () => { //[md-ignore]
 void (async () => { //[md-ignore]
 
     //[md]### &lt;EnactStatement&gt;タグを含む法律を順不同で10件検索し、見つかり次第タグの内容を出力
-    //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
+    //[md][.assignDocument()](classes/coreQuery.LawQuery.html#assignDocument) によりXMLのDOMを順次取得するため時間がかかります。
     //[md]```ts
     lawtext
         .queryViaAPI({ LawNum: /^.{3,5}年法律/ })
@@ -44,7 +44,7 @@ void (async () => { //[md-ignore]
 void (async () => { //[md-ignore]
 
     //[md]### &lt;Fig&gt;タグを含む政令を順不同で10件検索し、見つかり次第法令内の位置を出力
-    //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
+    //[md][.assignDocument()](classes/coreQuery.LawQuery.html#assignDocument) によりXMLのDOMを順次取得するため時間がかかります。
     //[md]```ts
     lawtext
         .queryViaAPI({ LawNum: /政令/ })
@@ -70,7 +70,7 @@ void (async () => { //[md-ignore]
 void (async () => { //[md-ignore]
 
     //[md]### 正規表現 `/の意[義味].*に定めるところによる/` にマッチする文を含む本文タグを検索し、タグ内の文言が重複しないものを見つかり次第10件まで出力（途中経過を表示しない）
-    //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
+    //[md][.assignDocument()](classes/coreQuery.LawQuery.html#assignDocument) によりXMLのDOMを順次取得するため時間がかかります。
     //[md]```ts
     (async () => {
         const set = new Set()/*[md-ignore-start]*/as Set<string>/*[md-ignore-end]*/;
@@ -101,7 +101,7 @@ void (async () => { //[md-ignore]
 void (async () => { //[md-ignore]
 
     //[md]### 項番号がなくOldNum属性がtrueでない2以上の項のみからなる条を含む法律を順不同で10件検索し、見つかり次第条のタグの内容を出力
-    //[md]{@link LawQuery.assignDocument | .assignDocument()} によりXMLのDOMを順次取得するため時間がかかります。
+    //[md][.assignDocument()](classes/coreQuery.LawQuery.html#assignDocument) によりXMLのDOMを順次取得するため時間がかかります。
     //[md]```ts
     lawtext
         .queryViaAPI({ LawNum: /^.{3,5}年法律/ })
