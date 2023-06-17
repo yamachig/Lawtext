@@ -18,8 +18,8 @@ export const onNavigated = async (
     console.log(`onNavigated(${pathStr})`);
 
     {
-        const firstPart = pathStr.split("/")[0];
-        const prevFirstPart = prevPathStr.split("/")[0];
+        const firstPart = pathStr.split("/", 1)[0];
+        const prevFirstPart = prevPathStr.split("/", 1)[0];
         if (firstPart === prevFirstPart) {
             console.log("onNavigated: the first step in the path did not change.");
             origSetState(s => {
@@ -95,7 +95,21 @@ export const onNavigated = async (
         onMessage("法令を検索しています...");
         // console.log("onNavigated: searching law...");
         await util.wait(30);
-        lawDataResult = await navigateLawData(pathStr, onMessage, timing);
+        const navigateLawDataResult = await navigateLawData(pathStr, onMessage, timing);
+        if ("redirectPath" in navigateLawDataResult) {
+            const redirectPath = navigateLawDataResult.redirectPath;
+            console.log(`onNavigated: redirecting to the new path: "${redirectPath}"`);
+            origSetState(s => ({
+                ...s,
+                law: null,
+                loadingLaw: false,
+                viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
+            }));
+            location.hash = "/" + redirectPath;
+            return;
+        } else {
+            lawDataResult = navigateLawDataResult;
+        }
     }
 
     if (!lawDataResult.ok) {

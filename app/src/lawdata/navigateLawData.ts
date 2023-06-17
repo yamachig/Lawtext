@@ -12,9 +12,9 @@ export const navigateLawData = async (
     pathStr: string,
     onMessage: (message: string) => unknown,
     timing: Timing,
-): Promise<LawDataResult<TempXMLLawDataProps | TempLawtextLawDataProps | StoredLawDataProps | ElawsLawDataProps>> => {
+): Promise<{redirectPath: string} | LawDataResult<TempXMLLawDataProps | TempLawtextLawDataProps | StoredLawDataProps | ElawsLawDataProps>> => {
 
-    const firstPart = pathStr.split("/")[0];
+    const firstPart = pathStr.split("/", 1)[0];
 
     const text = getTempLaw(firstPart);
     if (text !== null) {
@@ -95,7 +95,9 @@ export const navigateLawData = async (
             };
         }
 
-        lawIDOrLawNum = lawnumResult;
+        return {
+            redirectPath: [lawnumResult, ...pathStr.split("/").slice(1)].join("/"),
+        };
     }
 
 
