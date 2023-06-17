@@ -206,7 +206,7 @@ export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number
                     {},
                     children,
                     range,
-                );
+                ) as unknown as StdELType<TTag>;
                 return {
                     value: appdxItem,
                     errors,

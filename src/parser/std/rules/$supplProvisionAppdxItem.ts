@@ -162,7 +162,7 @@ export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplPr
                     {},
                     children,
                     range,
-                );
+                ) as unknown as StdELType<TTag>;
 
                 return {
                     value: supplProvisionAppdxItem,
