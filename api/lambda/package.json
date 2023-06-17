@@ -6,7 +6,6 @@
   "homepage": "https://github.com/yamachig/Lawtext",
   "main": "./lib/main.js",
   "scripts": {
-    "preinstall": "node bin/preinstall.js",
     "build": "npx webpack --mode development --color --config ./webpack-configs/main.ts",
     "build:prod": "npx webpack --mode production --color --config ./webpack-configs/main.ts",
     "watch": "npx webpack --watch --mode development --color --config ./webpack-configs/main.ts",
