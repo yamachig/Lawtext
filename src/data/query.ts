@@ -358,7 +358,7 @@ export class Query<
     public async toArray(options: {preserveCache: boolean} = { preserveCache: false }): Promise<TItem[]> {
         const arr: TItem[] = [];
         await this.forEach(item => {
-            if (options.preserveCache && symbolDoNotFinalize in item) {
+            if (options.preserveCache && item && (typeof item === "object") && (symbolDoNotFinalize in item)) {
                 (item[symbolDoNotFinalize as keyof TItem] as unknown as boolean) = true;
             }
             arr.push(item);

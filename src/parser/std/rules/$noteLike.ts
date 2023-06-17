@@ -81,7 +81,7 @@ export const makeNoteLikeRule = <TTag extends (typeof std.noteLikeTags)[number]>
     .sequence(s => s
         .and(() => $any, "any")
         .action(({ any }) => {
-            const el = newStdEL(tag, {}, any.value);
+            const el = newStdEL(tag, {}, any.value) as unknown as StdELType<TTag>;
             el.range = rangeOfELs(el.children);
             return {
                 value: el,
@@ -188,7 +188,7 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
                     {},
                     children,
                     range,
-                );
+                ) as unknown as StdELType<TTag>;
                 return {
                     value: noteLikeStruct,
                     errors,

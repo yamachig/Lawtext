@@ -109,7 +109,7 @@ export const $fig: WithErrorRule<std.Fig> = factory
                     "$figStruct: Figタグ に src 属性が設定されていません。",
                     item.virtualRange,
                 ));
-                fig.attr.src = "";
+                (fig as std.Fig).attr.src = "";
             }
             return {
                 value: fig,
