@@ -419,6 +419,3 @@ Lawtext-app has these features:
 -----------
 
 法令元データの取得に<a href="https://elaws.e-gov.go.jp/apitop/" target="_blank" rel="noreferrer">e-Gov法令API</a>を使用しています。定義語・条項参照などの表示は<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>で別途解析・編集したものです。
-
-
-## Visual Studio Code 拡張機能を試す / Try the Visual Studio Code extension
