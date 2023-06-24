@@ -100,6 +100,8 @@ Lawtext works efficiently with existing source code management tools to make law
 ```
 </details>
 
+- [Lawtextのコアライブラリ・CLIはこちら / Click here for Lawtext core library and CLI](https://github.com/yamachig/Lawtext-core)
+
 ------------
 
 ### Lawtext を用いたバージョン管理のイメージ / Example of version management using Lawtext
@@ -129,14 +131,14 @@ Lawtext works efficiently with existing source code management tools to make law
 
 [![app-screenshot2](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)
 
-#### Main features of Lawtext-app
+#### Main features of the Lawtext-app
 
-- It perses Lawtext, standard law XML (from local file or e-LAWS API) and shows as a easy-to-read web page with some navigating features.
-- It analyses and vidualizes corresponding parentheses and nesting depth.
+It parses Lawtext and standard law XML (from a local file or e-LAWS API) and shows as an easy-to-read web page with some navigating features.
+- It analyses and visualizes corresponding parentheses and nesting depth.
 - It analyses and indicates term definition positions and clause number references.
-- It can emit Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
+- It can emit Microsoft Word documents (.docx), Lawtext, and standard law XML of displayed law.
 - It is a single-page application run on web browsers.
-- In a confidential use-case, you can [download](https://yamachig.github.io/lawtext-app/#/download/) and run it offline.
+- In a confidential use case, you can [download](https://yamachig.github.io/lawtext-app/#/download/) and run it offline.
 
 ------------
 
@@ -248,6 +250,10 @@ Lawtextは次のような特徴があります：
   [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
 
 
+### Lawtextのコアライブラリ、CLI、技術的詳細
+
+Lawtextのコアライブラリ、CLI、技術的詳細は、[Lawtext-core リポジトリ](https://github.com/yamachig/Lawtext-core)をご覧ください。
+
 ### Lawtext-app
 
 Lawtext-appは、Lawtextを取り扱うフロントエンドツールです。また、e-Gov 法令APIを利用しているため、e-Gov法令検索のような汎用法令表示ツールとしても利用できます。
@@ -272,29 +278,29 @@ Lawtext-appは次の特徴を備えます：
 
 ## Background
 
-Law is one of the most influential document types, which draws interest from legal, business, and academic area. It is considered that the text of law and changes in the law should be open and transparent, and editing law should not allow any mistake.
+Law is one of the most influential document types, which draws interest from legal, business, and academic area. It is considered that the text of the law and changes in the law should be open and transparent, and editing law should not allow any mistakes.
 
 However, currently in Japan, managing law text has several problems.
 
-Problems of editor side:
+Problems of the editors' side:
 
-- Editing law ends up managing layout and font settings in a document editor, rather than editing text itself, because the document's editing process and presentation are not separated. It not only costs time and effort but also yields mistakes.
-- The layout configuration of law files is not uniform. It causes editing law files in a team or maintaining old archived data is not as simple as just modifying text. It is like analyzing the complicated structure of styles, which is not essential.
-- There is only primitive version control: copying files. Editing by multiple people often results in reversions hard to find.
+- Editing law ends up managing the layout and font settings in a document editor rather than editing the text itself because the document's editing process and presentation are not separated. It not only costs time and effort but also yields mistakes.
+- The layout configuration of law files is not uniform. It causes editing law files in a team or maintaining old archived data to be not as simple as just modifying text. It is like analyzing the complicated structure of styles, which is not essential.
+- There is only primitive version control: copying files. Editing by multiple people often results in reversions that are hard to find.
 - The whole workflow depends on specific apps like Microsoft Word and JustSystems Ichitaro. It causes vendor lock-in.
 
-Problems of reader side:
+Problems of the readers' side:
 
 - Most law data made available are in HTML or PDF, which are not reusable for editing.
 - There is no way available to compare versions.
 - Law text itself is not human-friendly: deeply nested parentheses, for example.
-- When a law is under public comments, the only document made available is always PDF, which is hard to modify or compare.
+- When a law is under public comment, the only document made available is always PDF, which is hard to modify or compare.
 
-Besides, recently, some breakthroughs are made in the field of Japanese law management:
+Besides, recently, some breakthroughs have been made in the field of Japanese law management:
 
-- [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html) (released in October 2016), authentic database and publishing system for laws, for use inside the government. By e-LAWS, all current law documents in Japan are formally stored as digital.
+- [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html) (released in October 2016), an authentic database and publishing system for laws for use inside the government. By e-LAWS, all current law documents in Japan are formally stored as digital.
 - [Standard law XML](https://elaws.e-gov.go.jp/download/) (released in May 2017), standardized paragraph-level markup format for Japanese laws. Most of the major Japanese laws are now made public as standard law XML (in addition to HTML already available).
-- [e-Gov laws API](https://elaws.e-gov.go.jp/apitop/) (released in June 2017), an open web API which provides standard law XML.
+- [e-Gov laws API](https://elaws.e-gov.go.jp/apitop/) (released in June 2017), an open web API that provides standard law XML.
 - [Renewed e-Gov laws search](https://elaws.e-gov.go.jp/) (released in November 2020). Before renewal, it provided the laws HTML, which often could not be pretty-printed and are not reusable for editing. It now provides RTF or PDF.
 
   Example of Standard law XML (extracted):
@@ -329,17 +335,17 @@ Besides, recently, some breakthroughs are made in the field of Japanese law mana
   </Law>
   ```
 
-Although e-LAWS and standard law XML laid the foundation for automation of legislation, there are still some problems that remain:
+Although e-LAWS and standard law XML laid the foundation for the automation of legislation, there are still some problems that remain:
 
 - XML tags and structures are not an essential matter of laws themselves and require other skills to edit. In other words, XML is not readable/editable for law writers.
-- e-LAWS provides a specially made editor to avoid writing XML directly. It may cause another lock-in.
+- e-LAWS provides a specially-made editor to avoid writing XML directly. It may cause another lock-in.
 
 In the field of programming and open source community (suggestive of the term "code"), several optimized solutions are available to solve such problems:
 
 - Source codes are in a manageable plain text format. It is machine-readable by nature and designed so that people can read and edit them efficiently. Because they are just simple plain text files, many third-party useful (and often free) tools are available.
-- Various kinds of source code editors (e.g. Visual Studio Code) and viewers are available. These editors and viewers typically have syntax highlighting features. Some of them provide navigation features, and more advanced tools like linters can be combined.
-- Multifunctional version control systems are available (e.g. Git), which are generally the basis of programming workflow. They avoid reversions and make it easy for developers to collaborate in a team.
-- Source codes are stored and shared on public repositories (e.g. GitHub) with changing history in human-readable and editable form. Modifying and commenting features are also integrated.
+- Various kinds of source code editors (e.g., Visual Studio Code) and viewers are available. These editors and viewers typically have syntax highlighting features. Some of them provide navigation features, and more advanced tools like linters can be combined.
+- Multifunctional version control systems are available (e.g., Git), which are generally the basis of programming workflow. They avoid reversions and make it easy for developers to collaborate in a team.
+- Source codes are stored and shared on public repositories (e.g., GitHub) with changing history in human-readable and editable form. Modifying and commenting features are also integrated.
 
 
 ## Proposal
@@ -350,7 +356,7 @@ To solve such problems of law text management described above, I propose "**Lawt
 
 Lawtext has these features:
 
-- A Lawtext document itself (just a plain text file) works well as a presentation format. It looks akin to what you read law on a printed/web page. You can read/edit a Lawtext like writing a regular document without managing complicated style configurations. This feature is made referring to Markdown, reStructuredText and YAML.
+- A Lawtext document itself (just a plain text file) works well as a presentation format. It looks akin to what you read the law on a printed/web page. You can read/edit a Lawtext like writing a regular document without managing complicated style configurations. This feature is made referring to Markdown, reStructuredText, and YAML.
 
     Example of a Lawtext (of the same part as the XML example above):
 
@@ -365,7 +371,7 @@ Lawtext has these features:
     ２　処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。
     ```
 
-- You can compile a Lawtext to a standard law XML. It means Lawtext is compatible with e-LAWS and any system utilizing standard law XML. Moreover, reversely, a standard law XML, can be converted to a Lawtext. Therefore, you can obtain the Lawtext of any existing law available online. You can store and share law documents in both forms of Lawtext or standard law XML as you like.
+- You can compile a Lawtext to a standard law XML. It means Lawtext is compatible with e-LAWS and any system utilizing standard law XML. Moreover, reversely, a standard law XML can be converted to a Lawtext. Therefore, you can obtain the Lawtext of any existing law available online. You can store and share law documents in both forms of Lawtext or standard law XML as you like.
 - Lawtext works effectively with existing source code management tools ([example on GitHub](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)).  
 
   [![github-screenshot1](https://user-images.githubusercontent.com/26037044/168134565-d8f2857d-a231-4200-aae4-fb8167bc9b0a.gif)](https://user-images.githubusercontent.com/26037044/168134565-d8f2857d-a231-4200-aae4-fb8167bc9b0a.gif)
@@ -376,6 +382,9 @@ Lawtext has these features:
 
 - You can display Lawtext appropriately in an online source code repository such as GitHub ([example](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)).
 
+### The Lawtext core library, the CLI, and the technical detail of Lawtext
+
+- For the Lawtext core library, the CLI, and the technical detail of Lawtext, please visit the [Lawtext-core repository](https://github.com/yamachig/Lawtext-core).
 
 ### Lawtext-app
 
@@ -383,10 +392,10 @@ Along with the Lawtext format, I also provide a utility tool, "Lawtext-app" ([wo
 
 Lawtext-app has these features:
 
-- Lawtext-app is a single-page application run on web browsers. In a confidential use-case, you can [download](https://yamachig.github.io/lawtext-app/#/download/) and run it offline.
+- Lawtext-app is a single-page application run on web browsers. In a confidential use case, you can [download](https://yamachig.github.io/lawtext-app/#/download/) and run it offline.
 - It shows Lawtext, standard law XML (both from local file and e-LAWS API) as a web page with some navigating features.
 - Lawtext-app is accompanied by an additional syntax analyzer and an elemental semantic analyzer of law text. For example, it shows corresponding parentheses and nesting depth. It also indicates term definition positions and clause number references.
-- It can emit Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
+- It can emit a Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
 
 [![app-screenshot2](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)
 
@@ -395,7 +404,7 @@ Lawtext-app has these features:
 
 <a id="try-vscode-extension"></a>
 
-# Visual Studio Code 拡張機能を試す / Try the Visual Studio Code extension
+## Visual Studio Code 拡張機能を試す / Try the Visual Studio Code extension
 
 <div style="max-width: 20em;">
 
@@ -403,10 +412,13 @@ Lawtext-app has these features:
 
 </div>
 
-- [こちらのリンク (github.dev)](https://github.dev/yamachig/vscode-lawtext-sample) から数クリックでお試しいただけます。（GitHubアカウントが必要です。リンク先でアカウントを作成できます。） / You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required. You can create one at the linked page.)
+- [こちらのリンク (github.dev)](https://github.dev/yamachig/vscode-lawtext-sample) から数クリックでお試しいただけます。（GitHubアカウントが必要です。リンク先でアカウントを作成できます。） / You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required. You can create one on the linked page.)
 
 - もしくは、[vscode.dev](https://vscode.dev/) にて [Lawtext拡張機能](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) をインストールし、[サンプルLawtext](https://yamachig.github.io/lawtext-app/#/(sample)) を開くことでもお試しいただけます / Otherwise, you can visit [vscode.dev](https://vscode.dev/), install [Lawtext extension](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) and open the [sample Lawtext](https://yamachig.github.io/lawtext-app/#/(sample)).
 
 -----------
 
 法令元データの取得に<a href="https://elaws.e-gov.go.jp/apitop/" target="_blank" rel="noreferrer">e-Gov法令API</a>を使用しています。定義語・条項参照などの表示は<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>で別途解析・編集したものです。
+
+
+## Visual Studio Code 拡張機能を試す / Try the Visual Studio Code extension
