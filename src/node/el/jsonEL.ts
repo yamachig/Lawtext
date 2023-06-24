@@ -1,11 +1,13 @@
-
+/**
+ * JsonEL: a tree structure that represents simplified structure of XML. A JsonEL object corresponds to an XML element.
+ */
 export interface JsonEL {
-    tag: string
-    attr: { [key: string]: string | undefined }
-    children: Array<JsonEL | string>
-}
+    /** The tag name of the element */
+    tag: string;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-export const isJsonEL = (object: any): object is JsonEL => {
-    return "tag" in object && "attr" in object && "children" in object;
-};
+    /** The attributes of the element */
+    attr: Record<string, string | undefined>;
+
+    /** The children of the element */
+    children: (JsonEL | string)[];
+}

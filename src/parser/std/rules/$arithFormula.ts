@@ -11,6 +11,9 @@ import { rangeOfELs } from "../../../node/el";
 
 export const arithFormulaControl = ":arith-formula:";
 
+/**
+ * The renderer for [ArithFormula](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$arithFormula.spec.ts) for examples.
+ */
 export const arithFormulaToLines = (arithFormula: std.ArithFormula, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -42,6 +45,9 @@ const $arithFormulaChildrenBlock = makeIndentBlockWithCaptureRule(
     (factory.ref(() => $any)),
 );
 
+/**
+ * The parser rule for [ArithFormula](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$arithFormula.spec.ts) for examples.
+ */
 export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
     .withName("arithFormula")
     .sequence(s => s

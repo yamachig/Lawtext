@@ -32,6 +32,9 @@ interface ParagraphItemToLinesOptions {
     defaultTag?: (typeof std.paragraphItemTags)[number],
 }
 
+/**
+ * The renderer for [Paragraph, Item and subitem (ParagraphItem)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](./$paragraphItem.spec.ts) for examples.
+ */
 export const paragraphItemToLines = (
     el: std.ParagraphItem,
     indentTexts: string[],
@@ -585,6 +588,9 @@ export const $requireControlParagraphItem: WithErrorRule<std.ParagraphItem> = fa
         })
     );
 
+/**
+ * The parser rule for [Paragraph, Item and subitem (ParagraphItem)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](./$paragraphItem.spec.ts) for examples.
+ */
 export const $paragraphItem = (defautTag: (typeof std.paragraphItemTags)[number]): WithErrorRule<std.ParagraphItem> => factory
     .withName("$paragraphItem")
     .sequence(s => s

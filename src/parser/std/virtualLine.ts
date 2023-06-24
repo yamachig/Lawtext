@@ -1,6 +1,16 @@
 import { AppdxItemHeadLine, ArticleGroupHeadLine, ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine, SupplProvisionAppdxItemHeadLine, SupplProvisionHeadLine, TableColumnLine, TOCHeadLine } from "../../node/cst/line";
 import { isSingleParentheses } from "./util";
 
+/**
+ * The extension of CST with the structure of indent blocks.
+ *
+ * A `VirtualLine` represents either a physical line or indent/dedent in the lawtext. The `VirtualLine` object has a property named `type` with the type of `VirtualLineType`, and the different types of `VirtualLine` are distinguished by that property.
+ */
+export type VirtualLine = PhysicalLine | Indent | Dedent;
+
+/**
+ * The type identifiers of `VirtualLine` that are not included in [LineType](../../node/cst/line.ts).
+ */
 export enum VirtualOnlyLineType {
     IND = "IND", // Indent
     DED = "DED", // Dedent
@@ -9,6 +19,9 @@ export enum VirtualOnlyLineType {
     CAP = "CAP", // Caption
 }
 
+/**
+ * The identifiers that distinguish the different types of `VirtualLine`.
+ */
 export type VirtualLineType = LineType | VirtualOnlyLineType;
 
 export type PhysicalLine =
@@ -91,132 +104,70 @@ export const isVirtualLine = (line: Line | VirtualLine): line is VirtualLine => 
     );
 };
 
-export type VirtualLine = PhysicalLine | Indent | Dedent;
-
-// const getIndentDepth = (
-//     lines: Line[],
-//     offset: number,
-//     inTOC: boolean,
-// ): number => {
-//     const line = lines[offset];
-//     if (line.type === LineType.BNK) {
-//         return 0;
-//     } else if (
-//         !inTOC
-//         && (line.type === LineType.ARG || line.type === LineType.SPR)
-//     ) {
-//         return 0;
-//     } else if (line.type === LineType.OTH && isSingleParentheses(line.columns)) {
-//         let currentOffset = offset + 1;
-//         while (currentOffset < lines.length) {
-//             const nextLine = lines[currentOffset];
-//             if (nextLine.type === LineType.BNK) {
-//                 currentOffset++;
-//                 continue;
-//             } else if (nextLine.indentTexts.length <= line.indentTexts.length) {
-//                 return nextLine.indentTexts.length;
-//             } else {
-//                 return line.indentTexts.length;
-//             }
-//         }
-//         return line.indentTexts.length;
-//     } else {
-//         return line.indentTexts.length;
-//     }
-// };
-
-// const getVirtualLines = (
-//     lines: Line[],
-//     offset: number,
-//     currentIndentDepth: number,
-//     inTOCDepth: number | null,
-// ): { block: Block, nextOffset: number } => {
-//     const virtualLines: VirtualLine[] = [];
-//     let currentOffset = offset;
-//     while (currentOffset < lines.length) {
-//         const line = lines[currentOffset];
-//         if (
-//             inTOCDepth !== null
-//             && (line.type === LineType.BNK || line.indentTexts.length <= inTOCDepth)
-//         ) {
-//             break;
-//         }
-//         if (line.type === LineType.BNK) {
-//             virtualLines.push({
-//                 virtualIndentDepth: currentIndentDepth,
-//                 line,
-//             });
-//             currentOffset++;
-//         } else {
-//             const indentDepth = getIndentDepth(lines, currentOffset, inTOCDepth !== null);
-//             if (indentDepth > currentIndentDepth) {
-//                 const { block: newBlock, nextOffset } = getVirtualLines(
-//                     lines,
-//                     currentOffset,
-//                     currentIndentDepth + 1,
-//                     inTOCDepth,
-//                 );
-//                 block.children.push(newBlock);
-//                 currentOffset = nextOffset;
-//             } else if (indentDepth === currentIndentDepth) {
-//                 block.children.push(line);
-//                 currentOffset++;
-//                 if (line.type === LineType.TOC) {
-//                     const { block: tocBlock, nextOffset } = getBlock(
-//                         lines,
-//                         currentOffset,
-//                         currentIndentDepth + 1,
-//                         line.indentTexts.length,
-//                     );
-//                     if (block.children.length > 0) {
-//                         block.children.push(tocBlock);
-//                     }
-//                     currentOffset = nextOffset;
-//                 }
-//             } else {
-//                 break;
-//             }
-//         }
-//     }
-//     return {
-//         block,
-//         nextOffset: currentOffset,
-//     };
-// };
-
+/**
+ * The parsing logic that converts a sequence of [Line](../../node/cst/line.ts)s to `VirtualLine`s.
+ */
 export const toVirtualLines = (lines: Line[]) => {
     const virtualLines: VirtualLine[] = [];
+
+    /**
+     * The virtual (logical) indent depth.
+     */
     let virtualIndentDepth = 0;
+
+    /**
+     * The base indent depth of a TOC. It is `null` if not in a TOC.
+     */
     let inTOCDepth: number | null = null;
+
     for (const [i, line] of lines.entries()) {
         let type: VirtualLineType;
         let currentDepth = virtualIndentDepth;
+
         if (
             inTOCDepth !== null
             && (line.type === LineType.BNK || line.indentTexts.length <= inTOCDepth)
         ) {
+            // When in a TOC, if the current line is blank or the current indent depth is shallower than the TOC, exit the TOC.
             inTOCDepth = null;
         }
+
         if (line.type === LineType.BNK) {
+            // If the current line is a `BlankLine`, do nothing particular.
             type = line.type;
+
         } else if (line.type === LineType.TOC) {
+            // If the current line is a `TOCHeadLine`, enter the TOC.
             inTOCDepth = line.indentTexts.length;
             currentDepth = line.indentTexts.length;
             type = line.type;
+
         } else if (line.type === LineType.ARG || line.type === LineType.SPR) {
+            // If the current line is a `ArticleGroupHeadLine` or `SupplProvisionHeadLine`
+
             if (inTOCDepth !== null) {
+                // When in TOC, process as TOC ArticleGroup or TOC SupplProvision.
                 currentDepth = line.indentTexts.length;
                 type = line.type === LineType.ARG ? VirtualOnlyLineType.TAG : VirtualOnlyLineType.TSP;
+
             } else if (line.controls.some(c => c.control === ":keep-indents:")) {
+                // Keep the indent depth if `:keep-indents:` is specified.
                 currentDepth = line.indentTexts.length;
                 type = line.type;
+
             } else {
+                // Treat as no-indent by default.
                 currentDepth = 0;
                 type = line.type;
             }
+
         } else {
+            // For a line of remaining types
+
             currentDepth = line.indentTexts.length;
             type = line.type;
+
+            // If the current line is `OtherLine` and the following line is `ArticleLine` or `ParagraphItemLine`, treat the current line as Caption.
             if (line.type === LineType.OTH && isSingleParentheses(line) && line.controls.length === 0) {
                 for (let currentOffset = i + 1; currentOffset < lines.length; currentOffset++) {
                     const nextLine = lines[currentOffset];
@@ -232,6 +183,8 @@ export const toVirtualLines = (lines: Line[]) => {
                     break;
                 }
             }
+
+            // If the current line is `TableColumnLine` and it indicates that it is NOT a first column of the table line, search for the preceding first line and adopt the indent depth of the first line.
             if (line.type === LineType.TBL && line.firstColumnIndicator === "") {
                 for (let currentOffset = i - 1; currentOffset >= 0; currentOffset--) {
                     const prevLine = lines[currentOffset];
@@ -248,11 +201,13 @@ export const toVirtualLines = (lines: Line[]) => {
                     break;
                 }
             }
+
         }
 
         const indentTextLengths = "indentTexts" in line ? line.indentTexts.map(s => s.length) : [];
         const indentLength = indentTextLengths.reduce((a, b) => a + b, 0);
 
+        // Process the increase of indentation (Indent).
         if (virtualIndentDepth < currentDepth) {
             const indentTextRanges: [start: number, end: number][] = [];
             for (const [i, len] of indentTextLengths.entries()) {
@@ -273,6 +228,7 @@ export const toVirtualLines = (lines: Line[]) => {
             }
         }
 
+        // Process the decrease of indentation (Dedent).
         if (currentDepth < virtualIndentDepth) {
             while (currentDepth < virtualIndentDepth) {
                 virtualLines.push({
@@ -295,6 +251,7 @@ export const toVirtualLines = (lines: Line[]) => {
         } as VirtualLine);
     }
 
+    // Process the remaining indent depth as dedents.
     if (0 < virtualIndentDepth) {
         const lastRange = lines.slice(-1)[0]?.range ?? [0, 0];
         while (0 < virtualIndentDepth) {

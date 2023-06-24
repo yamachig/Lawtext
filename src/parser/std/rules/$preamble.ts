@@ -11,6 +11,9 @@ import { rangeOfELs } from "../../../node/el";
 
 export const preambleControl = ":preamble:";
 
+/**
+ * The renderer for [Preamble](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$preamble.spec.ts) for examples.
+ */
 export const preambleToLines = (preamble: std.Preamble, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -57,6 +60,9 @@ const $preambleChildrenBlock = makeIndentBlockWithCaptureRule(
     ),
 );
 
+/**
+ * The parser rule for [Preamble](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$preamble.spec.ts) for examples.
+ */
 export const $preamble: WithErrorRule<std.Preamble> = factory
     .withName("preamble")
     .sequence(s => s

@@ -10,6 +10,9 @@ import { WithErrorRule } from "../util";
 const { $ranges: $articleRanges } = makeRangesRule(() => $articleTitle);
 
 
+/**
+ * The parser rule for [ArticleLine](../../../node/cst/line.ts) that represents a first line of an article. Please see the source code for the detailed syntax, and the [test code](./$articleLine.spec.ts) for examples.
+ */
 export const $articleLine: WithErrorRule<ArticleLine> = factory
     .withName("articleLine")
     .sequence(s => s

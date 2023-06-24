@@ -4,6 +4,27 @@ import { sentencesArrayToString } from "../../parser/cst/rules/$sentencesArray";
 import { rangeOfELs } from "../el";
 import { AttrEntries, SentencesArray, Controls, SentenceChildEL } from "./inline";
 
+/**
+ * Line: the unit of a CST of the parsed lawtext.
+ *
+ * A `Line` represents a physical line in the lawtext separated by newline characters. The `Line` object has a property named `type` with the type of `LineType`, and the different types of `Line` are distinguished by that property.
+ */
+export type Line =
+    | BlankLine
+    | TOCHeadLine
+    | ArticleGroupHeadLine
+    | AppdxItemHeadLine
+    | SupplProvisionHeadLine
+    | SupplProvisionAppdxItemHeadLine
+    | ArticleLine
+    | ParagraphItemLine
+    | TableColumnLine
+    | OtherLine
+    ;
+
+/**
+ * LineType: the identifiers that distinguish the different types of `Line`.
+ */
 export enum LineType {
     BNK = "BNK",
     TOC = "TOC",
@@ -112,6 +133,9 @@ abstract class WithControlsLine<TType extends LineType = LineType> extends Inden
 
 type BlankLineOptions = Omit<BaseLineOptions<never>, "type">;
 
+/**
+ * A blank line with no printable characters. Please see the source code of [$blankLine](../../parser/cst/rules/$blankLine.ts) for the detailed syntax.
+ */
 export class BlankLine extends BaseLine<LineType.BNK> {
     public constructor(
         options: BlankLineOptions,
@@ -127,6 +151,9 @@ type TOCHeadLineOptions = Omit<IndentsLineOptions<never>, "type"> & {
     title: string;
 };
 
+/**
+ * A head line of a TOC (Table Of Contents). Please see the source code of [$tocHeadLine](../../parser/cst/rules/$tocHeadLine.ts) for the detailed syntax.
+ */
 export class TOCHeadLine extends IndentsLine<LineType.TOC> {
     public title: string;
     public constructor(
@@ -157,6 +184,9 @@ type ArticleGroupHeadLineOptions = Omit<WithControlsLineOptions<never>, "type"> 
     sentenceChildren: SentenceChildEL[],
 };
 
+/**
+ * A head line of an article group (e.g. "Chapter"). Please see the source code of [$articleGroupHeadLine](../../parser/cst/rules/$articleGroupHeadLine.ts) for the detailed syntax.
+ */
 export class ArticleGroupHeadLine extends WithControlsLine<LineType.ARG> {
     public mainTag: (typeof articleGroupTags)[number];
     public title: SentenceChildEL[];
@@ -191,6 +221,9 @@ type AppdxItemHeadLineOptions = Omit<WithControlsLineOptions<never>, "type"> & {
     relatedArticleNum: SentenceChildEL[],
 };
 
+/**
+ * A head line of an appended item such as an appended table. Please see the source code of [$appdxItemHeadLine](../../parser/cst/rules/$appdxItemHeadLine.ts) for the detailed syntax.
+ */
 export class AppdxItemHeadLine extends WithControlsLine<LineType.APP> {
     public mainTag: (typeof appdxItemTags)[number];
     public title: SentenceChildEL[];
@@ -240,6 +273,9 @@ type SupplProvisionHeadLineOptions = Omit<WithControlsLineOptions<never>, "type"
     extractText: string;
 };
 
+/**
+ * A head line of a supplementary provision. Please see the source code of [$supplProvisionHeadLine](../../parser/cst/rules/$supplProvisionHeadLine.ts) for the detailed syntax.
+ */
 export class SupplProvisionHeadLine extends WithControlsLine<LineType.SPR> {
     public title: string;
     public titleRange: [number, number] | null;
@@ -298,6 +334,9 @@ type SupplProvisionAppdxItemHeadLineOptions = Omit<WithControlsLineOptions<never
     relatedArticleNum: SentenceChildEL[],
 };
 
+/**
+ * A head line of an appended item in a supplementary provision. Please see the source code of [$supplProvisionAppdxItemHeadLine](../../parser/cst/rules/$supplProvisionAppdxItemHeadLine.ts) for the detailed syntax.
+ */
 export class SupplProvisionAppdxItemHeadLine extends WithControlsLine<LineType.SPA> {
     public mainTag: (typeof supplProvisionAppdxItemTags)[number];
     public title: SentenceChildEL[];
@@ -344,6 +383,9 @@ type ArticleLineOptions = Omit<IndentsLineOptions<never>, "type"> & {
     sentencesArray: SentencesArray,
 };
 
+/**
+ * A first line of an article. Please see the source code of [$articleLine](../../parser/cst/rules/$articleLine.ts) for the detailed syntax.
+ */
 export class ArticleLine extends IndentsLine<LineType.ART> {
     public title: string;
     public midSpace: string;
@@ -399,6 +441,9 @@ type ParagraphItemLineOptions<TTag extends (typeof paragraphItemTags)[number] | 
     sentencesArray: SentencesArray,
 };
 
+/**
+ * A first line of a paragraph, item, and subitem. Please see the source code of [$paragraphItemLine](../../parser/cst/rules/$paragraphItemLine.ts) for the detailed syntax.
+ */
 export class ParagraphItemLine<TTag extends (typeof paragraphItemTags)[number] | null = (typeof paragraphItemTags)[number] | null> extends WithControlsLine<LineType.PIT> {
     public mainTag: TTag;
     public override controls: Controls;
@@ -466,6 +511,9 @@ type TableColumnLineOptions = Omit<IndentsLineOptions<never>, "type"> & {
     sentencesArray: SentencesArray,
 };
 
+/**
+ * A line of table column. Please see the source code of [$tableColumnLine](../../parser/cst/rules/$tableColumnLine.ts) for the detailed syntax.
+ */
 export class TableColumnLine extends IndentsLine<LineType.TBL> {
     public firstColumnIndicator: "*" | "";
     public midIndicatorsSpace: string;
@@ -565,6 +613,9 @@ type OtherLineOptions = Omit<WithControlsLineOptions<never>, "type"> & {
     sentencesArray: SentencesArray,
 };
 
+/**
+ * A line of other types. Please see the source code of [$otherLine](../../parser/cst/rules/$otherLine.ts) for the detailed syntax.
+ */
 export class OtherLine extends WithControlsLine<LineType.OTH> {
     public sentencesArray: SentencesArray;
     public constructor(
@@ -596,17 +647,4 @@ export class OtherLine extends WithControlsLine<LineType.OTH> {
         return ret;
     }
 }
-
-export type Line =
-    | BlankLine
-    | TOCHeadLine
-    | ArticleGroupHeadLine
-    | AppdxItemHeadLine
-    | SupplProvisionHeadLine
-    | SupplProvisionAppdxItemHeadLine
-    | ArticleLine
-    | ParagraphItemLine
-    | TableColumnLine
-    | OtherLine
-    ;
 

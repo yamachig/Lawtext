@@ -2,9 +2,9 @@
   "name": "lawtext",
   "version": "0.1.29",
   "description": "Plain text format for Japanese law",
-  "homepage": "https://github.com/yamachig/lawtext#readme",
+  "homepage": "https://github.com/yamachig/lawtext-core#readme",
   "bugs": {
-    "url": "https://github.com/yamachig/lawtext/issues"
+    "url": "https://github.com/yamachig/lawtext-core/issues"
   },
   "repository": {
     "type": "git",

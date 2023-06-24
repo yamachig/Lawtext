@@ -11,6 +11,9 @@ import * as std from "../../../law/std";
 import { EL } from "../../../node/el";
 
 
+/**
+ * The parser rule for [OtherLine](../../../node/cst/line.ts) that represents a line of other types. Please see the source code for the detailed syntax, and the [test code](./$otherLine.spec.ts) for examples.
+ */
 export const $otherLine: WithErrorRule<OtherLine> = factory
     .withName("otherLine")
     .sequence(s => s

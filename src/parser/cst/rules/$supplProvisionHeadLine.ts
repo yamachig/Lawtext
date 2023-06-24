@@ -9,6 +9,9 @@ import { Control } from "../../../node/cst/inline";
 export const supplProvisionLabelPtn = /^[附付][ 　\t\r\n]*則/;
 export const supplProvisionControl = ":suppl-provision:";
 
+/**
+ * The parser rule for [SupplProvisionHeadLine](../../../node/cst/line.ts) that represents a head line of a supplementary provision. Please see the source code for the detailed syntax, and the [test code](./$supplProvisionHeadLine.spec.ts) for examples.
+ */
 export const $supplProvisionHeadLine: WithErrorRule<SupplProvisionHeadLine> = factory
     .withName("supplProvisionHeadLine")
     .sequence(s => s

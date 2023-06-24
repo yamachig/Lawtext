@@ -14,6 +14,9 @@ import { Control } from "../../../node/cst/inline";
 import { supplProvisionControl, supplProvisionLabelPtn } from "../../cst/rules/$supplProvisionHeadLine";
 import { rangeOfELs } from "../../../node/el";
 
+/**
+ * The renderer for [SupplProvision](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$supplProvision.spec.ts) for examples.
+ */
 export const supplProvisionToLines = (supplProvision: std.SupplProvision, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -144,6 +147,9 @@ const $supplProvisionChildren: WithErrorRule<(std.ParagraphItem | std.Article | 
         })
     );
 
+/**
+ * The parser rule for [SupplProvision](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$supplProvision.spec.ts) for examples.
+ */
 export const $supplProvision: WithErrorRule<std.SupplProvision> = factory
     .withName("supplProvision")
     .sequence(s => s

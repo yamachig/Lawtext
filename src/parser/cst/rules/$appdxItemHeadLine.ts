@@ -32,6 +32,9 @@ export const detectAppdxItemTitle = (text: string) => {
     return null;
 };
 
+/**
+ * The parser rule for [AppdxItemHeadLine](../../../node/cst/line.ts) that represents a head line of an appended item such as an appended table. Please see the source code for the detailed syntax, and the [test code](./$appdxItemHeadLine.spec.ts) for examples.
+ */
 export const $appdxItemHeadLine: WithErrorRule<AppdxItemHeadLine> = factory
     .withName("appdxItemHeadLine")
     .sequence(s => s

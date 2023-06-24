@@ -14,6 +14,9 @@ import { __Parentheses, __Text } from "../../../node/el/controls";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 import { rangeOfELs } from "../../../node/el";
 
+/**
+ * The renderer for [TOC](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$toc.spec.ts) for examples.
+ */
 export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -446,6 +449,9 @@ const $tocChildrenBlock = makeIndentBlockWithCaptureRule(
     ),
 );
 
+/**
+ * The parser rule for [TOC](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$toc.spec.ts) for examples.
+ */
 export const $toc: WithErrorRule<std.TOC> = factory
     .withName("toc")
     .sequence(s => s

@@ -10,6 +10,9 @@ import $articleGroup, { articleGroupToLines } from "./$articleGroup";
 import CST from "../toCSTSettings";
 import { rangeOfELs } from "../../../node/el";
 
+/**
+ * The renderer for [MainProvision](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$mainProvision.spec.ts) for examples.
+ */
 export const mainProvisionToLines = (mainProvision: std.MainProvision, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -90,6 +93,9 @@ const $mainProvisionChildren: WithErrorRule<(std.ParagraphItem | std.Article | s
         })
     );
 
+/**
+ * The parser rule for [MainProvision](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$mainProvision.spec.ts) for examples.
+ */
 export const $mainProvision: WithErrorRule<std.MainProvision> = factory
     .withName("mainProvision")
     .sequence(s => s

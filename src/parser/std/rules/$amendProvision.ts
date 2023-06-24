@@ -27,6 +27,9 @@ interface AmendProvisionToLinesOptions {
     withControl?: boolean,
 }
 
+/**
+ * The renderer for [AmendProvision](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$amendProvision.spec.ts) for examples.
+ */
 export const amendProvisionToLines = (
     amendProvision: std.AmendProvision,
     indentTexts: string[],
@@ -208,6 +211,9 @@ const $newProvisionsBlock = makeIndentBlockWithCaptureRule(
 );
 
 
+/**
+ * The parser rule for [AmendProvision](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$amendProvision.spec.ts) for examples.
+ */
 export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
     .withName("amendProvision")
     .sequence(s => s

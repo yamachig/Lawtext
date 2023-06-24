@@ -9,6 +9,9 @@ import CST from "../toCSTSettings";
 import { assertNever, Diff } from "../../../util";
 import { rangeOfELs } from "../../../node/el";
 
+/**
+ * The renderer for [List or sublist (ListOrSublist)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](./$list.spec.ts) for examples.
+ */
 export const listOrSublistToLines = (listOrSublist: std.ListOrSublist, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -150,9 +153,24 @@ TRet
         );
 };
 
+/**
+ * The parser rule for [Sublist3](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$list.spec.ts) for examples.
+ */
 export const $sublist3 = makelistOrSublistRule("$sublist3", "Sublist3", null);
+
+/**
+ * The parser rule for [Sublist2](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$list.spec.ts) for examples.
+ */
 export const $sublist2 = makelistOrSublistRule("$sublist2", "Sublist2", $sublist3);
+
+/**
+ * The parser rule for [Sublist1](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$list.spec.ts) for examples.
+ */
 export const $sublist1 = makelistOrSublistRule("$sublist1", "Sublist1", $sublist2);
+
+/**
+ * The parser rule for [List](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$list.spec.ts) for examples.
+ */
 export const $list = makelistOrSublistRule("$list", "List", $sublist1);
 
 // export const $listsOuter = makeIndentBlockWithCaptureRule(

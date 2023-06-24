@@ -12,6 +12,9 @@ import $remarks, { remarksToLines } from "./$remarks";
 import $any, { anyToLines } from "./$any";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 
+/**
+ * The renderer for [note-like item (NoteLike)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ */
 export const noteLikeStructControl = {
     NoteStruct: ":note-struct:",
     StyleStruct: ":style-struct:",
@@ -27,6 +30,9 @@ export const noteLikeToLines = (noteLike: std.NoteLike, indentTexts: string[]): 
 };
 
 
+/**
+ * The renderer for [note-like struct item (NoteLikeStruct)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ */
 export const noteLikeStructToLines = (noteLikeStruct: std.NoteLikeStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -91,8 +97,19 @@ export const makeNoteLikeRule = <TTag extends (typeof std.noteLikeTags)[number]>
     )
     ;
 
+/**
+ * The parser rule for [Note](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ */
 export const $note = makeNoteLikeRule("Note");
+
+/**
+ * The parser rule for [Style](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ */
 export const $style = makeNoteLikeRule("Style");
+
+/**
+ * The parser rule for [Format](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ */
 export const $format = makeNoteLikeRule("Format");
 
 const noteLikeRules = {
@@ -198,7 +215,18 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
     ;
 };
 
+/**
+ * The parser rule for [NoteStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ */
 export const $noteStruct = makeNoteLikeStructRule("NoteStruct");
+
+/**
+ * The parser rule for [StyleStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ */
 export const $styleStruct = makeNoteLikeStructRule("StyleStruct");
+
+/**
+ * The parser rule for [FormatStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ */
 export const $formatStruct = makeNoteLikeStructRule("FormatStruct");
 

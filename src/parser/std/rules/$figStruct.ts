@@ -13,6 +13,9 @@ import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentence
 
 export const figStructControl = ":fig-struct:";
 
+/**
+ * The renderer for [Fig](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$figStruct.spec.ts) for examples.
+ */
 export const figToLines = (fig: std.Fig, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -34,6 +37,9 @@ export const figToLines = (fig: std.Fig, indentTexts: string[]): Line[] => {
     return lines;
 };
 
+/**
+ * The renderer for [FigStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$figStruct.spec.ts) for examples.
+ */
 export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
@@ -87,6 +93,9 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
     return lines;
 };
 
+/**
+ * The parser rule for [Fig](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$figStruct.spec.ts) for examples.
+ */
 export const $fig: WithErrorRule<std.Fig> = factory
     .withName("fig")
     .oneMatch(({ item }) => {
@@ -132,6 +141,9 @@ const $figStructChildrenBlock = makeIndentBlockWithCaptureRule(
     ),
 );
 
+/**
+ * The parser rule for [FigStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$figStruct.spec.ts) for examples.
+ */
 export const $figStruct: WithErrorRule<std.FigStruct> = factory
     .withName("figStruct")
     .choice(c => c

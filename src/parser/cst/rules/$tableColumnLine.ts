@@ -7,6 +7,9 @@ import $columnsOrSentences from "./$sentencesArray";
 import { WithErrorRule } from "../util";
 
 
+/**
+ * The parser rule for [TableColumnLine](../../../node/cst/line.ts) that represents a line of table column. Please see the source code for the detailed syntax, and the [test code](./$tableColumnLine.spec.ts) for examples.
+ */
 export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
     .withName("tableColumnLine")
     .sequence(s => s

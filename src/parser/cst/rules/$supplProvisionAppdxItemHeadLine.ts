@@ -28,7 +28,9 @@ export const detectSupplProvisionAppdxItemTitle = (text: string) => {
     return null;
 };
 
-
+/**
+ * The parser rule for [SupplProvisionAppdxItemHeadLine](../../../node/cst/line.ts) that represents a head line of an appended item in a supplementary provision. Please see the source code for the detailed syntax, and the [test code](./$supplProvisionAppdxItemHeadLine.spec.ts) for examples.
+ */
 export const $supplProvisionAppdxItemHeadLine: WithErrorRule<SupplProvisionAppdxItemHeadLine> = factory
     .withName("supplProvisionAppdxItemHeadLine")
     .sequence(s => s
