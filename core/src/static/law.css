@@ -1,0 +1,120 @@
+.law .law-title {
+    font-weight: bold;
+}
+
+.law .law-num {
+    font-weight: bold;
+}
+
+.law .enact-statement {
+    clear: both;
+    padding-top: 1em;
+    text-indent: 1em;
+}
+
+.law .toc {
+    clear: both;
+    padding-top: 1em;
+}
+
+.law .toc-group {
+    padding-left: 1em;
+}
+
+.law .article-group-title {
+    clear: both;
+    font-weight: bold;
+    padding-top: 1em;
+}
+
+.law .article {
+    clear: both;
+    padding-top: 1em;
+}
+
+.law .article-caption {
+    margin-left: 1em;
+    padding-left: 1em;
+    text-indent: -1em;
+}
+
+.law .article-title {
+    font-weight: bold;
+}
+
+.law .paragraph-item-caption {
+    margin-left: 1em;
+    padding-left: 1em;
+    text-indent: -1em;
+}
+
+.law .paragraph-item-body {
+    clear: both;
+    padding-left: 1em;
+    text-indent: -1em;
+}
+
+.law .paragraph-item-num {
+    font-weight: bold;
+}
+
+.law .indent-first-line {
+    text-indent: 1em;
+}
+
+.law .appdx_table {
+    clear: both;
+    padding-top: 1em;
+}
+
+.law .appdx_table_title {
+    font-weight: bold;
+}
+
+.law .appdx_table_body {
+    padding-left: 1em;
+}
+
+.law .appdx_style {
+    clear: both;
+    padding-top: 1em;
+}
+
+.law .appdx_style_title {
+    font-weight: bold;
+}
+
+.law .appdx_style_body {
+    padding-left: 1em;
+}
+
+.law .list {
+    text-indent: 0;
+    padding-left: 1em;
+}
+
+.law .amend-provision-sentence {
+    text-indent: 1em;
+}
+
+.law .new-provision {
+    padding-left: 1em;
+}
+
+.law table {
+    border-collapse: collapse;
+    text-indent: 0;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.law td {
+    border: 1px solid black;
+    min-height: 1em;
+    height: 1em;
+}
+
+.law pre {
+    white-space: pre-wrap;
+    text-indent: 0;
+}

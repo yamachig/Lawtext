@@ -1,0 +1,49 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2017",
+        "downlevelIteration": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "lib": ["es2017", "scripthost"],
+        "jsx": "react",
+        
+        "composite": true,
+        "allowJs": true,
+        "declaration": true,
+
+        "baseUrl": "./",
+        "outDir": "dist",
+        // "paths": {"@coresrc/*": ["src/*"]},
+        // "rootDirs": ["src", "bin", "test"],
+
+        "skipLibCheck": true,
+
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitOverride": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+    },
+    "exclude": [
+        "**/* copy.*",
+        "./node_modules",
+        "./mochawesome-report",
+        "./dist",
+        "./data",
+    ]
+}
