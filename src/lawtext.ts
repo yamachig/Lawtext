@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 "use strict";
 
 import * as argparse from "argparse";

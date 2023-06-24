@@ -1,6 +1,6 @@
 {
   "name": "lawtext",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "description": "Plain text format for Japanese law",
   "homepage": "https://github.com/yamachig/lawtext#readme",
   "bugs": {
@@ -8,13 +8,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yamachig/lawtext.git"
+    "url": "git+https://github.com/yamachig/lawtext-core.git"
   },
   "license": "MIT",
   "author": "yamachi",
-  "main": "dist/lawtext.js",
-  "types": "dist/lawtext.d.ts",
-  "bin": "dist/lawtext.js",
+  "main": "./dist/src/lawtext.js",
+  "types": "./dist/src/lawtext.d.ts",
+  "bin": "./dist/src/lawtext.js",
   "directories": {
     "test": "test"
   },
@@ -23,6 +23,7 @@
     "build": "node --trace-deprecation --trace-warnings bin/build/ && tsc",
     "watch": "node --trace-deprecation --trace-warnings bin/build/ && tsc --watch",
     "prepare": "npm run build",
+    "lawtext": "node ./dist/src/lawtext.js",
     "test": "node --max_old_space_size=4096 ./dist/test/prepare_test.js && npx mocha"
   },
   "dependencies": {
