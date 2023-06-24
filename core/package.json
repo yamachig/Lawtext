@@ -1,0 +1,74 @@
+{
+  "name": "lawtext",
+  "version": "0.1.30",
+  "description": "Plain text format for Japanese law",
+  "homepage": "https://github.com/yamachig/lawtext-core#readme",
+  "bugs": {
+    "url": "https://github.com/yamachig/lawtext-core/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yamachig/lawtext-core.git"
+  },
+  "license": "MIT",
+  "author": "yamachi",
+  "main": "./dist/src/lawtext.js",
+  "types": "./dist/src/lawtext.d.ts",
+  "bin": "./dist/src/lawtext.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "emitBinDeclarations": "tsc -p bin/build/tsconfig.json",
+    "build": "node --trace-deprecation --trace-warnings bin/build/ && tsc",
+    "watch": "node --trace-deprecation --trace-warnings bin/build/ && tsc --watch",
+    "prepare": "npm run build",
+    "lawtext": "node ./dist/src/lawtext.js",
+    "test": "node --max_old_space_size=4096 ./dist/test/prepare_test.js && npx mocha"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.8",
+    "argparse": "^2.0.1",
+    "browserfs": "^1.4.3",
+    "cli-progress": "^3.12.0",
+    "fs-extra": "^11.1.1",
+    "generic-parser": "^0.1.10",
+    "hash.js": "^1.1.7",
+    "js-levenshtein": "^1.1.6",
+    "jszip": "^3.10.1",
+    "node-fetch": "^3.3.1",
+    "node-stream-zip": "^1.15.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "xml-parser-xo": "^4.1.0",
+    "xpath": "^0.0.32",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/argparse": "^2.0.10",
+    "@types/chai": "^4.3.5",
+    "@types/cli-progress": "^3.11.0",
+    "@types/fs-extra": "^11.0.1",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.3.1",
+    "@types/node-fetch": "^3.0.2",
+    "@types/pegjs": "^0.10.3",
+    "@types/react": "^18.2.12",
+    "@types/react-dom": "^18.2.5",
+    "@types/xmldom": "^0.1.31",
+    "@types/yargs": "^17.0.24",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "@typescript-eslint/parser": "^5.59.11",
+    "chai": "^4.3.7",
+    "dotenv": "^16.3.0",
+    "eslint": "^8.43.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-tsdoc": "^0.2.17",
+    "mocha": "^10.2.0",
+    "mochawesome": "^7.1.3",
+    "source-map-loader": "^4.0.1",
+    "typescript": "^5.1.3"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "include": ["./*.js"],
+  "compilerOptions": {
+    "types": [],
+    "target": "es2017",
+    "module": "commonjs",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "strict": true,
+    "outDir": "types",
+  }
+}
