@@ -69,7 +69,7 @@ export const unknownParagraphItemTitleMatch = (() => {
 
 
 /**
- * The parser rule for [ParagraphItemLine](../../../node/cst/line.ts) that represents a first line of a paragraph, item, and subitem. Please see the source code for the detailed syntax, and the [test code](./$paragraphItemLine.spec.ts) for examples.
+ * The parser rule for {@link ParagraphItemLine} that represents a first line of a paragraph, item, and subitem. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/cst/rules/$paragraphItemLine.spec.ts) for examples.
  */
 export const $paragraphItemLine: WithErrorRule<ParagraphItemLine> = factory
     .withName("paragraphItemLine")

@@ -11,7 +11,7 @@ import { rangeOfELs } from "../../../node/el";
 export const supplNoteControl = ":suppl-note:";
 
 /**
- * The renderer for [SupplNote](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$supplNote.spec.ts) for examples.
+ * The renderer for {@link std.SupplNote}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$supplNote.spec.ts) for examples.
  */
 export const supplNoteToLines = (supplNote: std.SupplNote, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -42,7 +42,7 @@ export const supplNoteToLines = (supplNote: std.SupplNote, indentTexts: string[]
 };
 
 /**
- * The parser rule for [SupplNote](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$supplNote.spec.ts) for examples.
+ * The parser rule for {@link std.SupplNote}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$supplNote.spec.ts) for examples.
  */
 export const $supplNote: WithErrorRule<std.SupplNote> = factory
     .withName("supplNote")

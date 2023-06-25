@@ -12,7 +12,7 @@ import { EL } from "../../../node/el";
 
 
 /**
- * The parser rule for [OtherLine](../../../node/cst/line.ts) that represents a line of other types. Please see the source code for the detailed syntax, and the [test code](./$otherLine.spec.ts) for examples.
+ * The parser rule for {@link OtherLine} that represents a line of other types. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/cst/rules/$otherLine.spec.ts) for examples.
  */
 export const $otherLine: WithErrorRule<OtherLine> = factory
     .withName("otherLine")

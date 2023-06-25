@@ -2,7 +2,7 @@
   "tsconfig": "../core/tsconfig.json",
   "entryPoints": ["../core/src/"],
   "basePath": "../",
-  "exclude": ["../core/src/util/node-fetch/*"],
+  "exclude": ["../core/src/util/node-fetch/*", "**/*.spec.ts"],
   "entryPointStrategy": "expand",
   "useTsLinkResolution": true,
   "name": "Lawtext core references",

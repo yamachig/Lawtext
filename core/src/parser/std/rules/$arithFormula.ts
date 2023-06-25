@@ -12,7 +12,7 @@ import { rangeOfELs } from "../../../node/el";
 export const arithFormulaControl = ":arith-formula:";
 
 /**
- * The renderer for [ArithFormula](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$arithFormula.spec.ts) for examples.
+ * The renderer for {@link std.ArithFormula}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$arithFormula.spec.ts) for examples.
  */
 export const arithFormulaToLines = (arithFormula: std.ArithFormula, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -46,7 +46,7 @@ const $arithFormulaChildrenBlock = makeIndentBlockWithCaptureRule(
 );
 
 /**
- * The parser rule for [ArithFormula](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$arithFormula.spec.ts) for examples.
+ * The parser rule for {@link std.ArithFormula}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$arithFormula.spec.ts) for examples.
  */
 export const $arithFormula: WithErrorRule<std.ArithFormula> = factory
     .withName("arithFormula")

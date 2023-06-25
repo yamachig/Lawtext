@@ -21,7 +21,7 @@ import { appdxItemControls, autoTagControls } from "../../cst/rules/$tagControl"
 
 
 /**
- * The renderer for [appended items (AppdxItem)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](./$appdxItem.spec.ts) for examples.
+ * The renderer for [appended items (AppdxItem)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$appdxItem.spec.ts) for examples.
  */
 export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -221,32 +221,32 @@ export const makeAppdxItemRule = <TTag extends (typeof std.appdxItemTags)[number
 };
 
 /**
- * The parser rule for [AppdxFig](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$appdxItem.spec.ts) for examples.
+ * The parser rule for {@link std.AppdxFig}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$appdxItem.spec.ts) for examples.
  */
 export const $appdxFig = makeAppdxItemRule("$appdxFig", "AppdxFig");
 
 /**
- * The parser rule for [AppdxTable](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$appdxItem.spec.ts) for examples.
+ * The parser rule for {@link std.AppdxTable}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$appdxItem.spec.ts) for examples.
  */
 export const $appdxTable = makeAppdxItemRule("$appdxTable", "AppdxTable");
 
 /**
- * The parser rule for [AppdxStyle](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$appdxItem.spec.ts) for examples.
+ * The parser rule for {@link std.AppdxStyle}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$appdxItem.spec.ts) for examples.
  */
 export const $appdxStyle = makeAppdxItemRule("$appdxStyle", "AppdxStyle");
 
 /**
- * The parser rule for [AppdxNote](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$appdxItem.spec.ts) for examples.
+ * The parser rule for {@link std.AppdxNote}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$appdxItem.spec.ts) for examples.
  */
 export const $appdxNote = makeAppdxItemRule("$appdxNote", "AppdxNote");
 
 /**
- * The parser rule for [AppdxFormat](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$appdxItem.spec.ts) for examples.
+ * The parser rule for {@link std.AppdxFormat}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$appdxItem.spec.ts) for examples.
  */
 export const $appdxFormat = makeAppdxItemRule("$appdxFormat", "AppdxFormat");
 
 /**
- * The parser rule for [Appdx](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$appdxItem.spec.ts) for examples.
+ * The parser rule for {@link std.Appdx}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$appdxItem.spec.ts) for examples.
  */
 export const $appdx = makeAppdxItemRule("$appdx", "Appdx");
 

@@ -14,7 +14,7 @@ import $supplNote, { supplNoteToLines } from "./$supplNote";
 import { rangeOfELs } from "../../../node/el";
 
 /**
- * The renderer for [Article](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$article.spec.ts) for examples.
+ * The renderer for {@link std.Article}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$article.spec.ts) for examples.
  */
 export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -83,7 +83,7 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
 
 
 /**
- * The parser rule for [Article](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$article.spec.ts) for examples.
+ * The parser rule for {@link std.Article}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$article.spec.ts) for examples.
  */
 export const $article: WithErrorRule<std.Article> = factory
     .withName("article")

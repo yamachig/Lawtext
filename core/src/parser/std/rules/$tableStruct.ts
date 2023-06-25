@@ -19,7 +19,7 @@ import $figStruct from "./$figStruct";
 
 
 /**
- * The renderer for [Table](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$tableStruct.spec.ts) for examples.
+ * The renderer for {@link std.Table}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$tableStruct.spec.ts) for examples.
  */
 export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -83,7 +83,7 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
 
 
 /**
- * The renderer for [TableStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$tableStruct.spec.ts) for examples.
+ * The renderer for {@link std.TableStruct}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$tableStruct.spec.ts) for examples.
  */
 export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -391,7 +391,7 @@ const $tableStructChildrenBlock = makeIndentBlockWithCaptureRule(
 );
 
 /**
- * The parser rule for [TableStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$tableStruct.spec.ts) for examples.
+ * The parser rule for {@link std.TableStruct}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$tableStruct.spec.ts) for examples.
  */
 export const $tableStruct: WithErrorRule<std.TableStruct> = factory
     .withName("tableStruct")

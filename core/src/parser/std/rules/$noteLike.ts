@@ -13,7 +13,7 @@ import $any, { anyToLines } from "./$any";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 
 /**
- * The renderer for [note-like item (NoteLike)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ * The renderer for [note-like item (NoteLike)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const noteLikeStructControl = {
     NoteStruct: ":note-struct:",
@@ -31,7 +31,7 @@ export const noteLikeToLines = (noteLike: std.NoteLike, indentTexts: string[]): 
 
 
 /**
- * The renderer for [note-like struct item (NoteLikeStruct)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ * The renderer for [note-like struct item (NoteLikeStruct)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const noteLikeStructToLines = (noteLikeStruct: std.NoteLikeStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -98,17 +98,17 @@ export const makeNoteLikeRule = <TTag extends (typeof std.noteLikeTags)[number]>
     ;
 
 /**
- * The parser rule for [Note](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ * The parser rule for {@link std.Note}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const $note = makeNoteLikeRule("Note");
 
 /**
- * The parser rule for [Style](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ * The parser rule for {@link std.Style}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const $style = makeNoteLikeRule("Style");
 
 /**
- * The parser rule for [Format](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ * The parser rule for {@link std.Format}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const $format = makeNoteLikeRule("Format");
 
@@ -216,17 +216,17 @@ export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTa
 };
 
 /**
- * The parser rule for [NoteStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ * The parser rule for {@link std.NoteStruct}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const $noteStruct = makeNoteLikeStructRule("NoteStruct");
 
 /**
- * The parser rule for [StyleStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ * The parser rule for {@link std.StyleStruct}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const $styleStruct = makeNoteLikeStructRule("StyleStruct");
 
 /**
- * The parser rule for [FormatStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$noteLike.spec.ts) for examples.
+ * The parser rule for {@link std.FormatStruct}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const $formatStruct = makeNoteLikeStructRule("FormatStruct");
 

@@ -18,7 +18,7 @@ import { detectSupplProvisionAppdxItemTitle } from "../../cst/rules/$supplProvis
 
 
 /**
- * The renderer for [appended item in a supplementary provision (SupplProvisionAppdxItem)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](./$supplProvisionAppdxItem.spec.ts) for examples.
+ * The renderer for [appended item in a supplementary provision (SupplProvisionAppdxItem)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$supplProvisionAppdxItem.spec.ts) for examples.
  */
 export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.SupplProvisionAppdxItem, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -178,17 +178,17 @@ export const makeSupplProvisionAppdxItemRule = <TTag extends (typeof std.supplPr
 };
 
 /**
- * The parser rule for [SupplProvisionAppdxStyle](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$supplProvisionAppdxItem.spec.ts) for examples.
+ * The parser rule for {@link std.SupplProvisionAppdxStyle}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$supplProvisionAppdxItem.spec.ts) for examples.
  */
 export const $supplProvisionAppdxStyle = makeSupplProvisionAppdxItemRule("$supplProvisionAppdxStyle", "SupplProvisionAppdxStyle");
 
 /**
- * The parser rule for [SupplProvisionAppdxTable](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$supplProvisionAppdxItem.spec.ts) for examples.
+ * The parser rule for {@link std.SupplProvisionAppdxTable}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$supplProvisionAppdxItem.spec.ts) for examples.
  */
 export const $supplProvisionAppdxTable = makeSupplProvisionAppdxItemRule("$supplProvisionAppdxTable", "SupplProvisionAppdxTable");
 
 /**
- * The parser rule for [SupplProvisionAppdx](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$supplProvisionAppdxItem.spec.ts) for examples.
+ * The parser rule for {@link std.SupplProvisionAppdx}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$supplProvisionAppdxItem.spec.ts) for examples.
  */
 export const $supplProvisionAppdx = makeSupplProvisionAppdxItemRule("$supplProvisionAppdx", "SupplProvisionAppdx");
 

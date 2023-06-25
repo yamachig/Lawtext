@@ -28,7 +28,7 @@ interface AmendProvisionToLinesOptions {
 }
 
 /**
- * The renderer for [AmendProvision](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$amendProvision.spec.ts) for examples.
+ * The renderer for {@link std.AmendProvision}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$amendProvision.spec.ts) for examples.
  */
 export const amendProvisionToLines = (
     amendProvision: std.AmendProvision,
@@ -212,7 +212,7 @@ const $newProvisionsBlock = makeIndentBlockWithCaptureRule(
 
 
 /**
- * The parser rule for [AmendProvision](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$amendProvision.spec.ts) for examples.
+ * The parser rule for {@link std.AmendProvision}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$amendProvision.spec.ts) for examples.
  */
 export const $amendProvision: WithErrorRule<std.AmendProvision> = factory
     .withName("amendProvision")

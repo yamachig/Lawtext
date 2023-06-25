@@ -7,7 +7,7 @@ import { $_EOL } from "./lexical";
 import { WithErrorRule } from "../util";
 
 /**
- * The parser rule for [TOCHeadLine](../../../node/cst/line.ts) that represents a head line of a TOC (Table Of Contents). Please see the source code for the detailed syntax, and the [test code](./$tocHeadLine.spec.ts) for examples.
+ * The parser rule for {@link TOCHeadLine} that represents a head line of a TOC (Table Of Contents). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/cst/rules/$tocHeadLine.spec.ts) for examples.
  */
 export const $tocHeadLine: WithErrorRule<TOCHeadLine> = factory
     .withName("tocHeadLine")

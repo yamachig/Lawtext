@@ -14,7 +14,7 @@ import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentence
 export const figStructControl = ":fig-struct:";
 
 /**
- * The renderer for [Fig](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$figStruct.spec.ts) for examples.
+ * The renderer for {@link std.Fig}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$figStruct.spec.ts) for examples.
  */
 export const figToLines = (fig: std.Fig, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -38,7 +38,7 @@ export const figToLines = (fig: std.Fig, indentTexts: string[]): Line[] => {
 };
 
 /**
- * The renderer for [FigStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$figStruct.spec.ts) for examples.
+ * The renderer for {@link std.FigStruct}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$figStruct.spec.ts) for examples.
  */
 export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -94,7 +94,7 @@ export const figStructToLines = (figStruct: std.FigStruct, indentTexts: string[]
 };
 
 /**
- * The parser rule for [Fig](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$figStruct.spec.ts) for examples.
+ * The parser rule for {@link std.Fig}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$figStruct.spec.ts) for examples.
  */
 export const $fig: WithErrorRule<std.Fig> = factory
     .withName("fig")
@@ -142,7 +142,7 @@ const $figStructChildrenBlock = makeIndentBlockWithCaptureRule(
 );
 
 /**
- * The parser rule for [FigStruct](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$figStruct.spec.ts) for examples.
+ * The parser rule for {@link std.FigStruct}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$figStruct.spec.ts) for examples.
  */
 export const $figStruct: WithErrorRule<std.FigStruct> = factory
     .withName("figStruct")

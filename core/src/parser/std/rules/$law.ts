@@ -19,7 +19,7 @@ import { rangeOfELs } from "../../../node/el";
 
 
 /**
- * The renderer for [Law](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$law.spec.ts) for examples.
+ * The renderer for {@link std.Law}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$law.spec.ts) for examples.
  */
 export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -221,7 +221,7 @@ export const $enactStatement: WithErrorRule<std.EnactStatement> = factory
 
 
 /**
- * The parser rule for [Law](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$law.spec.ts) for examples.
+ * The parser rule for {@link std.Law}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$law.spec.ts) for examples.
  */
 export const $law: WithErrorRule<std.Law> = factory
     .withName("Law")

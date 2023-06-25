@@ -11,7 +11,7 @@ const { $ranges: $articleRanges } = makeRangesRule(() => $articleTitle);
 
 
 /**
- * The parser rule for [ArticleLine](../../../node/cst/line.ts) that represents a first line of an article. Please see the source code for the detailed syntax, and the [test code](./$articleLine.spec.ts) for examples.
+ * The parser rule for {@link ArticleLine} that represents a first line of an article. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/cst/rules/$articleLine.spec.ts) for examples.
  */
 export const $articleLine: WithErrorRule<ArticleLine> = factory
     .withName("articleLine")

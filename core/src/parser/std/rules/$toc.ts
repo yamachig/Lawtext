@@ -15,7 +15,7 @@ import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentence
 import { rangeOfELs } from "../../../node/el";
 
 /**
- * The renderer for [TOC](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$toc.spec.ts) for examples.
+ * The renderer for {@link std.TOC}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$toc.spec.ts) for examples.
  */
 export const tocItemToLines = (el: std.TOCItem, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -450,7 +450,7 @@ const $tocChildrenBlock = makeIndentBlockWithCaptureRule(
 );
 
 /**
- * The parser rule for [TOC](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$toc.spec.ts) for examples.
+ * The parser rule for {@link std.TOC}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$toc.spec.ts) for examples.
  */
 export const $toc: WithErrorRule<std.TOC> = factory
     .withName("toc")

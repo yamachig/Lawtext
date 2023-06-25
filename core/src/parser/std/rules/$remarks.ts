@@ -16,7 +16,7 @@ export const remarksControl = ":remarks:";
 export const remarksLabelPtn = /^(?:備\s*考|注)\s*$/;
 
 /**
- * The renderer for [Remarks](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$remarks.spec.ts) for examples.
+ * The renderer for {@link std.Remarks}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$remarks.spec.ts) for examples.
  */
 export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -112,7 +112,7 @@ const $remarksChildrenBlock = makeIndentBlockWithCaptureRule(
 );
 
 /**
- * The parser rule for [Remarks](../../../law/std/StdEL.ts). Please see the source code for the detailed syntax, and the [test code](./$remarks.spec.ts) for examples.
+ * The parser rule for {@link std.Remarks}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$remarks.spec.ts) for examples.
  */
 export const $remarks: WithErrorRule<std.Remarks> = factory
     .withName("remarks")
