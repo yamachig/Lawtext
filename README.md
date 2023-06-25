@@ -32,8 +32,7 @@ Lawtext: Manageable plain text format and utility tools for laws
 
 Lawtextを用いると、既存のソースコード管理ツールを法令管理にそのまま活用することができます。また、法令標準XMLを使用する高度な法令管理ツールと共存することができます。これにより、法令文書のオープン化を容易にし、編集作業をより安全にし、法令執務の創造性を高めることができます。
 
-- [例](#examples)
-- [詳細](#background-jp)
+- 詳細：[Lawtextドキュメンテーション](https://yamachig.github.io/Lawtext/)
 
 ------------
 
@@ -41,8 +40,7 @@ Lawtextを用いると、既存のソースコード管理ツールを法令管�
 
 Lawtext works efficiently with existing source code management tools to make law text management open, safe, and creative.
 
-- [Examples](#examples)
-- [Detail](#background-en)
+- Detail: the [Lawtext documentation](https://yamachig.github.io/Lawtext/)
 
 ------------
 
@@ -249,11 +247,6 @@ Lawtextは次のような特徴があります：
 
   [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
 
-
-### Lawtextのコアライブラリ、CLI、技術的詳細
-
-Lawtextのコアライブラリ、CLI、技術的詳細は、[`core` フォルダ](./core/README.md)をご覧ください。
-
 ### Lawtext-app
 
 Lawtext-appは、Lawtextを取り扱うフロントエンドツールです。また、e-Gov 法令APIを利用しているため、e-Gov法令検索のような汎用法令表示ツールとしても利用できます。
@@ -271,6 +264,10 @@ Lawtext-appは次の特徴を備えます：
 - **オフライン環境を選択可能**：ローカルファイルからも実行でき、（オンラインの機能が不要であれば）オフライン環境でも実行できるため、機密性の高い場面にも適用することが可能です。（[ダウンロード版はこちら](https://yamachig.github.io/lawtext-app/#/download/)）
 
 [![app-screenshot2](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)
+
+## Lawtextの詳細
+
+Lawtextの詳細は、[Lawtextドキュメンテーション](https://yamachig.github.io/Lawtext/)をご覧ください。
 
 ------------
 
@@ -382,10 +379,6 @@ Lawtext has these features:
 
 - You can display Lawtext appropriately in an online source code repository such as GitHub ([example](https://github.com/yamachig/Lawtext-sample-Administrative-Procedure-Act/commit/8832079d99549b1c605e92bfd3774e79b10e58ed?diff=split)).
 
-### The Lawtext core library, the CLI, and the technical detail of Lawtext
-
-- For the Lawtext core library, the CLI, and the technical detail of Lawtext, please visit the [`core` directory](./core/README.md).
-
 ### Lawtext-app
 
 Along with the Lawtext format, I also provide a utility tool, "Lawtext-app" ([working example](https://yamachig.github.io/lawtext-app/)), which utilizes Lawtext, standard law XML, and e-LAWS API.
@@ -398,6 +391,10 @@ Lawtext-app has these features:
 - It can emit a Microsoft Word document (.docx), Lawtext, and standard law XML of displayed law.
 
 [![app-screenshot2](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)
+
+## Detail of Lawtext
+
+For the detail of lawtext, please visit the [Lawtext documentation](https://yamachig.github.io/Lawtext/).
 
 
 ------------
