@@ -11,7 +11,7 @@ Lawtext works efficiently with existing source code management tools to make law
 - [How to use CLI](#usage)
 - [Technical detail](./docs/readme.md)
 
-This package ([`lawtext-core` repository](https://github.com/yamachig/Lawtext-core)) is a core library / CLI as a part of the [Lawtext](https://github.com/yamachig/Lawtext) project. See [Lawtext](https://github.com/yamachig/Lawtext) for background.
+This package ([`core` directory](https://github.com/yamachig/Lawtext/tree/main/core)) is a core library / CLI as a part of the [Lawtext](https://github.com/yamachig/Lawtext) project. See [Lawtext](https://github.com/yamachig/Lawtext) for background.
 
 ------------
 
@@ -25,7 +25,7 @@ Lawtextを用いると、既存のソースコード管理ツールを法令管�
 - [CLIの使用方法](#usage)
 - [技術詳細](./docs/readme.md)
 
-このパッケージ（[`lawtext-core` リポジトリ](https://github.com/yamachig/Lawtext-core)）は [Lawtext](https://github.com/yamachig/Lawtext) プロジェクトの一部であるコアライブラリ / CLIです。背景の詳細は [Lawtext](https://github.com/yamachig/Lawtext) を参照してください。
+このパッケージ（[`core` フォルダ](https://github.com/yamachig/Lawtext/tree/main/core)）は [Lawtext](https://github.com/yamachig/Lawtext) プロジェクトの一部であるコアライブラリ / CLIです。背景の詳細は [Lawtext](https://github.com/yamachig/Lawtext) を参照してください。
 
 ------------
 
@@ -93,7 +93,7 @@ Lawtextを用いると、既存のソースコード管理ツールを法令管�
 
 ## Background
 
-This package (core repository) is a part of the [Lawtext](https://github.com/yamachig/Lawtext) project. See [Lawtext](https://github.com/yamachig/Lawtext) for background.
+This package (`core` directory) is a part of the [Lawtext](https://github.com/yamachig/Lawtext) project. See [Lawtext](https://github.com/yamachig/Lawtext) for background.
 
 
 ## Frontends
@@ -119,19 +119,14 @@ See [Lawtext](https://github.com/yamachig/Lawtext) for frontend tools.
 #### Option 2: Run as a package
 
 - Run the following command in your working directory (or just an empty directory).
-  - In case using the npm published version:
-    ```
-    npm install lawtext
-    ```
-  - In case using the GitHub development version:
-    ```
-    npm install https://github.com/yamachig/Lawtext-core
-    ```
+  ```
+  npm install lawtext
+  ```
 - Run `npx lawtext -h`
 
 #### Option 3: Run independently
 
-- Clone or download this repository and run `npm install` in the repository root.
+- Clone or download this repository, move to `core` directory, and run `npm install`.
 - Run `npm run lawtext -h`
 
 

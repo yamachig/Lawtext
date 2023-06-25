@@ -100,7 +100,7 @@ Lawtext works efficiently with existing source code management tools to make law
 ```
 </details>
 
-- [Lawtextのコアライブラリ・CLIはこちら / Click here for Lawtext core library and CLI](https://github.com/yamachig/Lawtext-core)
+- [Lawtextのコアライブラリ・CLIはこちら / Click here for Lawtext core library and CLI](./core/README.md)
 
 ------------
 
@@ -252,7 +252,7 @@ Lawtextは次のような特徴があります：
 
 ### Lawtextのコアライブラリ、CLI、技術的詳細
 
-Lawtextのコアライブラリ、CLI、技術的詳細は、[Lawtext-core リポジトリ](https://github.com/yamachig/Lawtext-core)をご覧ください。
+Lawtextのコアライブラリ、CLI、技術的詳細は、[`core` フォルダ](./core/README.md)をご覧ください。
 
 ### Lawtext-app
 
@@ -384,7 +384,7 @@ Lawtext has these features:
 
 ### The Lawtext core library, the CLI, and the technical detail of Lawtext
 
-- For the Lawtext core library, the CLI, and the technical detail of Lawtext, please visit the [Lawtext-core repository](https://github.com/yamachig/Lawtext-core).
+- For the Lawtext core library, the CLI, and the technical detail of Lawtext, please visit the [`core` directory](./core/README.md).
 
 ### Lawtext-app
 

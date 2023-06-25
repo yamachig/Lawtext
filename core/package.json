@@ -2,13 +2,13 @@
   "name": "lawtext",
   "version": "0.1.30",
   "description": "Plain text format for Japanese law",
-  "homepage": "https://github.com/yamachig/lawtext-core#readme",
+  "homepage": "https://github.com/yamachig/lawtext#readme",
   "bugs": {
-    "url": "https://github.com/yamachig/lawtext-core/issues"
+    "url": "https://github.com/yamachig/lawtext/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yamachig/lawtext-core.git"
+    "url": "git+https://github.com/yamachig/lawtext.git"
   },
   "license": "MIT",
   "author": "yamachi",
