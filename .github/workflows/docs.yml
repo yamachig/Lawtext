@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Install dependencies in core
         run: npm install
-        working-directory: ./docs
+        working-directory: ./core
       - name: Install dependencies in docs
         run: npm install
         working-directory: ./docs
