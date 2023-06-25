@@ -19,7 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -56,11 +56,11 @@ jobs:
         working-directory: ./docs
 
       - name: Build with Next.js
-        run: next build
+        run: npx next build
         working-directory: ./docs
 
       - name: Static HTML export with Next.js
-        run: npm run export
+        run: npx next export
         working-directory: ./docs
 
       - name: Upload artifact
