@@ -19,17 +19,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: "16"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
         with:
           static_site_generator: next
+
       - name: Restore cache
         uses: actions/cache@v3
         with:
@@ -38,18 +42,27 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
       - name: Install dependencies in core
         run: npm install
         working-directory: ./core
+
       - name: Install dependencies in docs
         run: npm install
         working-directory: ./docs
-      - name: Build with Next.js
-        run: npm run build
+
+      - name: Build library documentation
+        run: npx typedoc --options core-typedoc.json
         working-directory: ./docs
+
+      - name: Build with Next.js
+        run: next build
+        working-directory: ./docs
+
       - name: Static HTML export with Next.js
         run: npm run export
         working-directory: ./docs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
