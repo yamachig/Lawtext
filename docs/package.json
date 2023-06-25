@@ -1,0 +1,29 @@
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "npx typedoc --options core-typedoc.json && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "core-docs-watch": "npx typedoc --options core-typedoc.json --watch",
+    "core-docs": "npx typedoc --options core-typedoc.json",
+    "export": "next export"
+  },
+  "dependencies": {
+    "next": "^13.4.7",
+    "nextra": "^2.8.0",
+    "nextra-theme-docs": "^2.8.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typedoc": "^0.24.8",
+    "typedoc-plugin-markdown": "^3.15.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "@types/react": "^18.2.14",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
+    "eslint": "^8.43.0",
+    "eslint-config-next": "^13.4.7",
+    "typescript": "^5.1.3"
+  }
+}

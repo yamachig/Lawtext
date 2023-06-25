@@ -1,15 +1,18 @@
-Technical detail of Lawtext
-====================================================
+---
+title: Technical detail of Lawtext
+---
+
+# Technical detail of Lawtext
 
 This document explains the technical detail of Lawtext.
 
-# The intermediate data representation: JsonEL and StdEL
+## The intermediate data representation: JsonEL and StdEL
 
 Lawtext is a plain-text format for law (mainly targeting Japanese law). The Lawtext parser converts a Lawtext string into JSON data representing the law structure based on the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
 
 The extracted law structure is expressed internally in the parser using a generic format **JsonEL**. You can think of `JsonEL` as a highly simplified DOM (Document Object Model) of the corresponding XML that only supports the basic structure of XML. `JsonEL` itself does not depend on Standard Law XML Schema. Within the domain of the basic structure of XML, you can easily convert the `JsonEL` into XML and vice versa.
 
-`JsonEL` definition ([source](../src/node/el/jsonEL.ts)):
+[`JsonEL`](lib/core/interfaces/core_src_node_el_jsonEL.JsonEL.md) definition:
 
 ```ts
 interface JsonEL {
@@ -19,11 +22,11 @@ interface JsonEL {
 }
 ```
 
-**StdEL** ([source](../src/law/std/stdEL.ts)) is a special type of `JsonEL` that complies with the Standard Law XML Schema. A `StdEL` object has a tag name, corresponding attributes, and children defined in the Standard Law XML Schema. The Lawtext parser aims to convert the Lawtext string into the `StdEL` tree.
+[**StdEL**](lib/core/modules/core_src_law_std_stdEL.md#stdel) is a special type of `JsonEL` that complies with the Standard Law XML Schema. A `StdEL` object has a tag name, corresponding attributes, and children defined in the Standard Law XML Schema. The Lawtext parser aims to convert the Lawtext string into the `StdEL` tree.
 
 The `StdEL` works as an intermediate representation of the law. The Lawtext library provides several renderers that enable converting the law (`StdEL`) into HTML, docx, Standard Law XML, and Lawtext (reversely).
 
-# Examples of Lawtext, standard law XML, and StdEL representation
+## Examples of Lawtext, standard law XML, and StdEL representation
 
 A Lawtext string looks like the one below:
 
@@ -187,12 +190,12 @@ The `StdEL` representation of the law looks like below:
 </details>
 
 
-# Parsing steps
+## Parsing steps
 
 The goal of the Lawtext parser is to extract the law content that the original Lawtext expresses and obtain it as `StdEL`. The parser processes the Lawtext in three steps to achieve that goal:
 
-1. Parse the Lawtext into a CST (Concrete Syntax Tree). The CST is a sequence of `Line`s ([source of `Line`](../src/node/cst/line.ts)).
-2. Analyze the indentation of `Lines` and inserts indent (one increase of indent level) / dedent (one decrease of indent level) markers between the lines. The output of this step is a sequence of `VirtualLine`s ([source of `VirtualLine`](../src/parser/std/virtualLine.ts)).
+1. Parse the Lawtext into a CST (Concrete Syntax Tree). The CST is a sequence of [`Line`](lib/core/modules/core_src_node_cst_line.md#line)s.
+2. Analyze the indentation of `Lines` and inserts indent (one increase of indent level) / dedent (one decrease of indent level) markers between the lines. The output of this step is a sequence of [`VirtualLine`](lib/core/modules/core_src_parser_std_virtualLine.md#virtualline)s.
 3. Parse the `VirtualLine`s into a `StdEL` tree ([source of `StdEL`](../src/law/std/stdEL.ts)).
 
 The Lawtext CST is a sequence of `Line`s. A `Line` represents a physical line in the Lawtext string and contains all detailed features in the original string (not included in the resulting `StdEL` tree), such as verbose blank lines, meaningless whitespaces, and physical position (line and character index).
@@ -210,7 +213,7 @@ We made the indentation analysis separate from building CST because the virtual 
 For steps 1 and 3, the main process of parsing is recursive descent parsing of a string (a sequence of characters) and `VirtualLine`s, respectively. We utilize a generic recursive descent parser [`generic-parser`](https://github.com/yamachig/generic-parser) for both steps.
 
 
-# Lawtext syntax
+## Lawtext syntax
 
 Please refer to the comments in the following source codes for the detailed syntax of Lawtext.
 

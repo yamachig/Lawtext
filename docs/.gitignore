@@ -1,0 +1,7 @@
+/out
+/node_modules
+/next-env.d.ts
+/.next
+/.vscode
+~$*
+package-lock.json

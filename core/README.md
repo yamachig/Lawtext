@@ -9,7 +9,6 @@ Lawtext works efficiently with existing source code management tools to make law
 - [Background](https://github.com/yamachig/Lawtext#background-en)
 - [Frontends](https://github.com/yamachig/Lawtext)
 - [How to use CLI](#usage)
-- [Technical detail](./docs/readme.md)
 
 This package ([`core` directory](https://github.com/yamachig/Lawtext/tree/main/core)) is a core library / CLI as a part of the [Lawtext](https://github.com/yamachig/Lawtext) project. See [Lawtext](https://github.com/yamachig/Lawtext) for background.
 
@@ -23,7 +22,6 @@ Lawtextを用いると、既存のソースコード管理ツールを法令管�
 - [背景](https://github.com/yamachig/Lawtext#background-jp)
 - [フロントエンド](https://github.com/yamachig/Lawtext)
 - [CLIの使用方法](#usage)
-- [技術詳細](./docs/readme.md)
 
 このパッケージ（[`core` フォルダ](https://github.com/yamachig/Lawtext/tree/main/core)）は [Lawtext](https://github.com/yamachig/Lawtext) プロジェクトの一部であるコアライブラリ / CLIです。背景の詳細は [Lawtext](https://github.com/yamachig/Lawtext) を参照してください。
 
@@ -128,8 +126,3 @@ See [Lawtext](https://github.com/yamachig/Lawtext) for frontend tools.
 
 - Clone or download this repository, move to `core` directory, and run `npm install`.
 - Run `npm run lawtext -h`
-
-
-## Technical detail
-
-See [Technical detail](./docs/readme.md).

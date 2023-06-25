@@ -1,0 +1,13 @@
+{
+  "tsconfig": "../core/tsconfig.json",
+  "entryPoints": ["../core/src/"],
+  "basePath": "../",
+  "exclude": ["../core/src/util/node-fetch/*"],
+  "entryPointStrategy": "expand",
+  "useTsLinkResolution": true,
+  "name": "Lawtext core references",
+  "plugin": ["typedoc-plugin-markdown"],
+  "cleanOutputDir": true,
+  "readme": "none",
+  "out": "pages/lib/core"
+}
