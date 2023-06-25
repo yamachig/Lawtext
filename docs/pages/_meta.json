@@ -1,5 +1,27 @@
 {
     "index": {},
     "background": {},
-    "technical": {}
+    "technical": {},
+    "CLI": {
+        "href": "https://github.com/yamachig/Lawtext/tree/main/core",
+        "newWindow": true
+    },
+    "lawtext-app": {
+      "title": "Lawtext-app",
+      "href": "https://yamachig.github.io/lawtext-app/",
+      "newWindow": true,
+      "type": "page"
+    },
+    "github": {
+      "title": "GitHub",
+      "href": "https://github.com/yamachig/Lawtext",
+      "newWindow": true,
+      "type": "page"
+    },
+    "---": {
+      "type": "separator"
+    },
+    "lib": {
+        "title": "Library"
+    }
 }
