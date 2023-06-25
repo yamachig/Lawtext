@@ -18,7 +18,7 @@ import { detectSupplProvisionAppdxItemTitle } from "../../cst/rules/$supplProvis
 
 
 /**
- * The renderer for [appended item in a supplementary provision (SupplProvisionAppdxItem)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$supplProvisionAppdxItem.spec.ts) for examples.
+ * The renderer for appended item in a supplementary provision ({@link std.SupplProvisionAppdxItem | SupplProvisionAppdxItem}). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$supplProvisionAppdxItem.spec.ts) for examples.
  */
 export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.SupplProvisionAppdxItem, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];

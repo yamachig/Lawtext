@@ -10,7 +10,7 @@ import { assertNever, Diff } from "../../../util";
 import { rangeOfELs } from "../../../node/el";
 
 /**
- * The renderer for [List or sublist (ListOrSublist)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$list.spec.ts) for examples.
+ * The renderer for List or sublist ({@link std.ListOrSublist | ListOrSublist}). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$list.spec.ts) for examples.
  */
 export const listOrSublistToLines = (listOrSublist: std.ListOrSublist, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];

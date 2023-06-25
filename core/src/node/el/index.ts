@@ -3,6 +3,10 @@ import { JsonEL } from "./jsonEL";
 
 
 let currentID = 0;
+
+/**
+ * EL: a simplified XML DOM functionality that implements {@link JsonEL} interface.
+ */
 export class EL implements JsonEL {
     public tag: string;
     public attr: { [key: string]: string | undefined };

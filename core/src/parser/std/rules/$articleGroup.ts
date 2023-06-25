@@ -16,7 +16,7 @@ import { Control } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 
 /**
- * The renderer for [article group (ArticleGroup)](../../../law/std/helpers.ts) such as Chapter. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$articleGroup.spec.ts) for examples.
+ * The renderer for article group ({@link std.ArticleGroup | ArticleGroup}) such as Chapter. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$articleGroup.spec.ts) for examples.
  */
 export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
@@ -81,7 +81,7 @@ export const articleGroupToLines = (el: std.ArticleGroup, indentTexts: string[])
 
 
 /**
- * The parser rule for [article group (ArticleGroup)](../../../law/std/helpers.ts) such as Chapter. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$articleGroup.spec.ts) for examples.
+ * The parser rule for article group ({@link std.ArticleGroup | ArticleGroup}) such as Chapter. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$articleGroup.spec.ts) for examples.
  */
 export const $articleGroup: WithErrorRule<std.ArticleGroup> = factory
     .withName("articleGroup")

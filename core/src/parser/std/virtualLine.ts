@@ -9,7 +9,7 @@ import { isSingleParentheses } from "./util";
 export type VirtualLine = PhysicalLine | Indent | Dedent;
 
 /**
- * The type identifiers of `VirtualLine` that are not included in [LineType](../../node/cst/line.ts).
+ * The type identifiers of `VirtualLine` that are not included in {@link LineType}.
  */
 export enum VirtualOnlyLineType {
     IND = "IND", // Indent
@@ -105,7 +105,7 @@ export const isVirtualLine = (line: Line | VirtualLine): line is VirtualLine => 
 };
 
 /**
- * The parsing logic that converts a sequence of [Line](../../node/cst/line.ts)s to `VirtualLine`s.
+ * The parsing logic that converts a sequence of {@link Line}s to {@link VirtualLine}s.
  */
 export const toVirtualLines = (lines: Line[]) => {
     const virtualLines: VirtualLine[] = [];

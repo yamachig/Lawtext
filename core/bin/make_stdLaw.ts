@@ -138,7 +138,7 @@ const defaultAttrOf${element.attr.name ?? ""} = ${defaultAttrs} as const;
 
 elementIfs.splice(1, 0, `\
 /**
- * StdEL: a special type of [JsonEL](../../node/el/jsonEL.ts) that complies with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
+ * StdEL: a special type of {@link EL} (implements \`JsonEL\`) that complies with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
  */
 export type StdEL =
 ${stdElTags.map(tag => `    | ${tag}`).join("\r\n")}

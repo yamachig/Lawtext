@@ -2,7 +2,7 @@ import { EL } from "../../node/el";
 import { Diff } from "../../util";
 
 /**
- * StdEL: a special type of [JsonEL](../../node/el/jsonEL.ts) that complies with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
+ * StdEL: a special type of {@link EL} (implements `JsonEL`) that complies with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
  */
 export type StdEL =
     | Law

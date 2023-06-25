@@ -13,7 +13,7 @@ import $any, { anyToLines } from "./$any";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 
 /**
- * The renderer for [note-like item (NoteLike)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
+ * The renderer for note-like item ({@link std.NoteLike | NoteLike}). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const noteLikeStructControl = {
     NoteStruct: ":note-struct:",
@@ -31,7 +31,7 @@ export const noteLikeToLines = (noteLike: std.NoteLike, indentTexts: string[]): 
 
 
 /**
- * The renderer for [note-like struct item (NoteLikeStruct)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
+ * The renderer for note-like struct item ({@link std.NoteLikeStruct | NoteLikeStruct}). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
  */
 export const noteLikeStructToLines = (noteLikeStruct: std.NoteLikeStruct, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];

@@ -21,7 +21,7 @@ import { appdxItemControls, autoTagControls } from "../../cst/rules/$tagControl"
 
 
 /**
- * The renderer for [appended items (AppdxItem)](../../../law/std/helpers.ts). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$appdxItem.spec.ts) for examples.
+ * The renderer for appended items ({@link std.AppdxItem | AppdxItem}). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$appdxItem.spec.ts) for examples.
  */
 export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
