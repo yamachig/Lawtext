@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "next dev",
+    "dev": "npx concurrently -n core,docs \"npx typedoc --options core-typedoc.json --watch --preserveWatchOutput\" \"next dev\"",
     "build": "npx typedoc --options core-typedoc.json && next build",
     "start": "next start",
     "lint": "next lint",
@@ -22,6 +22,7 @@
     "@types/react": "^18.2.14",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
+    "concurrently": "^8.2.0",
     "eslint": "^8.43.0",
     "eslint-config-next": "^13.4.7",
     "typescript": "^5.1.3"
