@@ -35,7 +35,7 @@ export const styles = (
                 <w.autoSpaceDN w:val="0"/>
             </w.pPr>
             <w.rPr>
-                <w.rFonts w:ascii="ＭＳ 明朝" w:eastAsia="ＭＳ 明朝" w:hAnsi="ＭＳ 明朝"/>
+                <w.rFonts w:ascii="ＭＳ 明朝" w:eastAsia="ＭＳ 明朝" w:hAnsi="ＭＳ 明朝" w:cs="ＭＳ 明朝"/>
                 <w.sz w:val={`${fontSizePt * 2}`}/>
             </w.rPr>
         </w.style>
@@ -66,7 +66,7 @@ export const styles = (
             <w.uiPriority w:val="1"/>
             <w.qFormat/>
             <w.rPr>
-                <w.rFonts w:eastAsia="ＭＳ ゴシック"/>
+                <w.rFonts w:ascii="ＭＳ ゴシック" w:eastAsia="ＭＳ ゴシック" w:hAnsi="ＭＳ ゴシック" w:cs="ＭＳ ゴシック"/>
             </w.rPr>
         </w.style>
 

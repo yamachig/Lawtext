@@ -104,21 +104,27 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
             <div className={`paragraph-item-main indent-${indent}`}>
                 {Boolean(ParagraphItemTitle || ArticleTitle || OldParatraphNum) && ((
                     <>
-                        {ParagraphItemTitle && ((!ArticleTitle && !OldParatraphNum) || (ParagraphItemTitle.children.length > 0)) && (
-                            <span className={"paragraph-item-title"} {...elProps(ParagraphItemTitle, htmlOptions)}>
-                                <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />
-                            </span>
-                        )}
                         {ArticleTitle && (
                             <span className={"article-title"} {...elProps(ArticleTitle, htmlOptions)}>
                                 <HTMLSentenceChildrenRun els={ArticleTitle.children} {...{ htmlOptions }} />
                             </span>
                         )}
-                        {OldParatraphNum && (
+                        {ParagraphItemTitle && ((!ArticleTitle && !OldParatraphNum) || (ParagraphItemTitle.text().length > 0)) && (<>
+                            {ArticleTitle && (
+                                <HTMLMarginSpan className="paragraph-item-margin"/>
+                            )}
+                            <span className={"paragraph-item-title"} {...elProps(ParagraphItemTitle, htmlOptions)}>
+                                <HTMLSentenceChildrenRun els={ParagraphItemTitle.children} {...{ htmlOptions }} />
+                            </span>
+                        </>)}
+                        {OldParatraphNum && (<>
+                            {ArticleTitle && (
+                                <HTMLMarginSpan className="paragraph-item-margin"/>
+                            )}
                             <span className={"old-paragraph-num"}>
                                 <HTMLSentenceChildrenRun els={[OldParatraphNum]} {...{ htmlOptions }} />
                             </span>
-                        )}
+                        </>)}
                         {Boolean(ParagraphItemSentence) && (
                             <HTMLMarginSpan className="paragraph-item-margin"/>
                         )}
@@ -222,15 +228,21 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
                         <w.pStyle w:val={`IndentFirstLine${indent}`}/>
                     )}
                 </w.pPr>
-                {ParagraphItemTitle && ((!ArticleTitle && !OldParatraphNum) || (ParagraphItemTitle.children.length > 0)) && (
-                    <DOCXSentenceChildrenRun els={ParagraphItemTitle.children} {...{ docxOptions }} />
-                )}
                 {ArticleTitle && (
                     <DOCXSentenceChildrenRun els={ArticleTitle.children} emphasis={true} {...{ docxOptions }} />
                 )}
-                {OldParatraphNum && (
+                {ParagraphItemTitle && ((!ArticleTitle && !OldParatraphNum) || (ParagraphItemTitle.text().length > 0)) && (<>
+                    {ArticleTitle && (
+                        <w.r><w.t>{DOCXMargin}</w.t></w.r>
+                    )}
+                    <DOCXSentenceChildrenRun els={ParagraphItemTitle.children} {...{ docxOptions }} />
+                </>)}
+                {OldParatraphNum && (<>
+                    {ArticleTitle && (
+                        <w.r><w.t>{DOCXMargin}</w.t></w.r>
+                    )}
                     <DOCXSentenceChildrenRun els={[OldParatraphNum]} {...{ docxOptions }} />
-                )}
+                </>)}
                 {Boolean((ParagraphItemTitle || ArticleTitle) && ParagraphItemSentence) && (
                     <w.r><w.t>{DOCXMargin}</w.t></w.r>
                 )}
