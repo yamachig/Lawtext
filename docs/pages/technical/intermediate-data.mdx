@@ -28,6 +28,8 @@ In Lawtext, a helper class [**EL**](/lib/core/classes/core_src_node_el.EL) that 
 
 The `StdEL` works as an intermediate representation of the law. The Lawtext library provides several renderers that enable converting the law (`StdEL`) into HTML, docx, Standard Law XML, and Lawtext (reversely).
 
+<a id="control-element"></a>
+
 ## Adding extra information on `StdEL`: `__EL`
 
 Lawtext provides some functionalities for analyzing corresponding parentheses, term definition positions, clause number references, etc. The Lawtext analyzer emits that information into the parsed `StdEL` tree in the form of `JsonEL`. To distinguish the extra `JsonEL` objects from the Standard Law XML Schema elements, we append `_` (mostly `__` for visual clarity) at the beginning of the `tag` of the `JsonEL`, and call such element "**control element**." As the form of the `EL` class, the control elements have the [**__EL**](/lib/core/interfaces/core_src_law_std_stdEL.__EL) interface.

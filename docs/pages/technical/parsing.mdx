@@ -12,6 +12,8 @@ The goal of the Lawtext parser is to extract the law content that the original L
 2. Analyze the indentation of `Lines` and inserts indent (one increase of indent level) / dedent (one decrease of indent level) markers between the lines. The output of this step is a sequence of [`VirtualLine`](/lib/core/modules/core_src_parser_std_virtualLine.md#virtualline)s.
 3. Parse the `VirtualLine`s into a [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree.
 
+You can find the entry point of the Lawtext parser at [`(core/src/parser/)lawtext.parse()`](/lib/core/modules/core_src_parser_lawtext/#parse).
+
 ## Syntax trees
 
 The Lawtext CST (Concrete Syntax Tree) is a sequence of [`Line`](/lib/core/modules/core_src_node_cst_line.md#line)s. A `Line` represents a physical line in the Lawtext string and contains all detailed features in the original string (not included in the resulting `StdEL` tree), such as verbose blank lines, meaningless whitespaces, and physical position (line and character index).

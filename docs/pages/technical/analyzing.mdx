@@ -1,0 +1,126 @@
+---
+title: Analyzing
+---
+
+# Analyzing
+
+## Analyzing `StdEL` tree
+
+Lawtext provides some functionalities for analyzing corresponding parentheses, term definition positions, clause number references, etc. Because those analyses are conducted on a [**StdEL**](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree, you can utilize the analysis functionalities for both Lawtext string and XML string that comply with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
+
+The Lawtext analyzer analyzes a [**StdEL**](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree and adds [control elements](/technical/intermediate-data#control-element) on the tree.
+
+Most of analysis processes is called via [`(core/src/analyzer).analyze()`](/lib/core/modules/core_src_analyzer/#analyze). However, some processes (such as the pattern analysis for parentheses, law numbers, and clause pointers) are called in other places.
+
+## Parentheses, law numbers, and pointers
+
+The Lawtext analyzer detects several patterns in the text, such as corresponding parentheses and clause pointers.
+
+When the input data is a Lawtext string, the patterns are analyzed during the parsing (at [`$sentenceChildren`](/lib/core/modules/core_src_parser_cst_rules__sentenceChildren/#sentencechildren)). On the other hand, when the input data is a `StdEL` tree or a Standard Law XML, the patterns are analyzed on the existing `StdEL` tree (at [`addSentenceChildrenControls()`](/lib/core/modules/core_src_parser_addSentenceChildrenControls/)), which calls [`$sentenceChildren`](/lib/core/modules/core_src_parser_cst_rules__sentenceChildren/#sentencechildren) internally.
+
+The patterns that the Lawtext analyzer can detect include the following.
+
+### Corresponding parentheses
+
+Such as `（` and `）`. The parser rule is defined at [`ANY_PARENTHESES_INLINE`](/lib/core/modules/core_src_parser_cst_rules__sentenceChildren/#any_parentheses_inline).
+
+### Law numbers
+
+Such as `平成五年法律第八十八号` (meaning "Act No. 88 of November 12, 1993"). The parser rule is defined at [`$inlinetoken`](/lib/core/modules/core_src_parser_cst_rules__sentenceChildren/#inlinetoken).
+
+### Pointers and pointer ranges
+
+Pointers in this context are the terms that reference a particular clause, such as`第一条` (meaning "Article 1") and `前項` (meaning "the preceding Article"). Ranges of pointers ("pointer ranges") are generalized forms of pointers like `第三十九条及び第四十一条から前条まで` (meaning "Articles 39 and 41 through the preceding Article").
+
+The parser rule is defined at [`$pointerRanges`](/lib/core/modules/core_src_parser_cst_rules__pointerRanges/#pointerranges). The detected pointers will be resolved to refer to the actual clauses later.
+
+## Pointer resolution
+
+The Lawtext analyzer resolvers the pointers to refer to the actual clauses by the following steps.
+
+1. Analyze the tree of clauses by [`getSentenceEnvs()`](/lib/core/modules/core_src_analyzer_getSentenceEnvs/#getsentenceenvs)
+
+2. Obtain the abstract path of the relative pointers by [`getPointerEnvs()`](/lib/core/modules/core_src_analyzer_pointerEnvs_getPointerEnvs/#getpointerenvs).
+
+3. Locate where the pointers refer by [`getScope()`](/lib/core/modules/core_src_analyzer_pointerEnvs_getScope/#getscope).
+
+Strictly speaking, the resolution of external pointers (the pointers that refer to the clauses in the other law as the pointers) needs the information of law reference (a specific type of term references). However, the detection of terms needs the info on resolved pointers. Therefore, if a term needs the information, the Lawtext analyzer resolves the internal pointers (refer to the clauses in the same law as the pointers) on demand and then resolves the remaining pointers, including external pointers.
+
+## Detecting term declarations
+
+The Lawtext analyzer detects the term declarations by [`detectDeclarations()`](/lib/core/modules/core_src_analyzer_detectDeclarations/#detectdeclarations). The declaration of terms accompanies the scope (the text range that the definition applies) in most cases, and the Lawtext analyzer detects the scope as well.
+
+The type of declarations the Lawtext analyzer can detect includes the following.
+
+### Naming list
+
+A naming list is a type of name declaration that takes the form of a list like the one below. This pattern of declarations is detected by [`processNameList()`](/lib/core/modules/core_src_analyzer_detectDeclarations_processNameList/#processnamelist).
+
+```
+　（定義）
+第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+　一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
+　二　処分　行政庁の処分その他公権力の行使に当たる行為をいう。
+　三　申請　法令に基づき、行政庁の許可、認可、免許その他の自己に対し何らかの利益を付与する処分（以下「許認可等」という。）を求める行為であって、当該行為に対して行政庁が諾否の応答をすべきこととされているものをいう。
+　四～八　（略）
+```
+
+<p><small>Note: The second line of the text above (starts with `第二条`) means `Article 2 - In this Act, the meanings of the terms listed in the following items are as prescribed respectively in those items:`, and the fourth line (starts with `二　処分`) means `(ii) Dispositions: dispositions and other acts involving the exercising of public authority by administrative agencies;`.</small></p>
+
+### Inline naming with square brackets
+
+Inline naming is a type of term definition that occurs in the middle of a sentence. In some cases, such naming accompanies a pair of square brackets (`「` and `」`) explicitly indicating the name like the one below. This type of naming is detected by [`processNameInline()`](/lib/core/modules/core_src_analyzer_detectDeclarations_processNameInline/#processnameinline).
+
+```
+法令に基づき、行政庁の許可、認可、免許その他の自己に対し何らかの利益を付与する処分（以下「許認可等」という。）
+```
+
+<p><small>Note: The text above means `requests, made pursuant to laws and regulations, for permission, approval, licenses, or some other disposition by an administrative agency granting some form of benefit to the applicant (collectively hereinafter referred to as "permission, etc.")`. The part of square brackets, `「許認可等」`, corresponds to `"permission, etc."`.</small></p>
+
+
+### Inline naming without square brackets
+
+In the other cases, the inline naming does not accompany a pair of square brackets. In this case, although the existence of the declaration itself is obvious by a sentence with round parentheses, detection of the exact binding name (exact text of the identifier) is not self-evident, or exactly speaking, requires analysis of semantics or meaning of natural language.
+
+An example of an inline naming without square brackets is below.
+
+```
+命令等制定機関は、命令等を定めようとする場合には、当該命令等の案（命令等で定めようとする内容を示すものをいう。以下同じ。）及びこれに関連する資料をあらかじめ公示し、（略）
+```
+
+<p><small>Note: The text above means `When establishing Administrative Orders, etc., Organs Establishing Administrative Orders, etc. must make public in advance a draft of Administrative Orders, etc. (meaning a draft showing the content of the anticipated Administrative Orders, etc.. The same applies hereinafter.) and any materials relating to the proposed Administrative Orders, etc., (omitted)` (unofficial translation). The guessed declared term is `命令等の案`, corresponds to `draft of Administrative Orders, etc.`.</small></p>
+
+In the Lawtext analyzer, we adopted a heuristic under some assumptions to avoid computational complexity and ensure algorithmic explainability. The process is defined in [`processAmbiguousNameInline()`](/lib/core/modules/core_src_analyzer_detectDeclarations_processAmbiguousNameInline/#processambiguousnameinline).
+
+The assumption we made in the Lawtext analyzer is the following:
+
+#### Assumption 1: Word-likeness
+
+The assumption of "word-likeness" means that a declared term will have particular characteristics to look like a (compound) word. This assumption is based on the reasoning that without such characteristics, it cannot be recognized as a (compound) word without explicit square brackets. In a practical sense, this assumption provides the search limit for picking candidates for a term.
+
+The current implementation of the assumption is picking keywords consisting of Kanji's or Katakana's (those characters often form a legal term), excluding `当該` (meaning "the (said)", etc.), connected by at most one `の` (meaning "of", etc.). In the example text above, the candidates will be `案` and `命令等の案`. Also, the current Lawtext analyzer picks the shortest candidate, avoiding a candidate with one character if possible, so that if the final candidates are `案` and `命令等の案`, `命令等の案` will be left.
+
+#### Assumption 2: Consistency
+
+The assumption of "consistency" means that a declared term will not be used without a declaration in the same law. This assumption is based on the reasoning that the declaration of the term exists because of the reason the meaning of the term is unclear without definition; therefore, it is unlikely that such a term is used without definition despite the fact that it is defined in another place in the same law. In a practical sense, this assumption screens candidates for a term.
+
+The current implementation of the Lawtext analyzer implements the assumption as defined: it skips candidates that occurred outside of the scope.
+
+#### Assumption 3: Distinctiveness
+
+The assumption of "distinctiveness" means that the term definition in the form `...をいう。` (meaning `meaning ...`) is distinct from the existing defined terms in the scope that includes the new definition. This assumption is based on the reasoning that the meaning of a defined term should be clear in a context, so contradicting definitions should not co-exist in the same context. Please note that the assumption does not always hold when considering the ad-hoc override of a term such as `...を除く。` (meaning `excluding ...`). In a practical sense, this assumption screens candidates for a term.
+
+The current implementation of the assumption is divided into two parts. First, the analyzer skips candidates that are unambiguously declared with square brackets. Second, the analyzer checks whether the other declaration without square brackets with an overlapping scope has common candidates and omits the candidates from both declarations.
+
+### Law referencing
+
+Law referencing is a special type of term declaration that refers to another law name with a law number. In general, the name of another law accompanies the law number for the first occurrence in the text, and the law number is omitted in the other occurrences. The Lawtext analyzer treats the first occurrence with the law number as a term declaration and the other occurrences without the law number as term references. The process is defined in [`processLawRef()`](/lib/core/modules/core_src_analyzer_detectDeclarations_processLawRef/#processlawref).
+
+
+## Detecting term references
+
+The Lawtext analyzer searches the occurrences of the declared terms in the detected scopes and marks them as term references. The process is defined in [`detectVariableReferences()`](/lib/core/modules/core_src_analyzer_detectVariableReferences/#detectvariablereferences).
+
+
+
+
