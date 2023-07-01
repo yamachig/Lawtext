@@ -139,7 +139,7 @@ export const findFilteredAmbiguousNameInline = (
 
     for (const info of nameInfos) {
 
-        // "Word-likeness": Pick keywords consists of Kanji's or Katakana's excluding "当該", connected by at most one "の"
+        // "Word-likeness" (part 1): Pick keywords consisting of Kanji's or Katakana's excluding "当該", connected by at most one "の"
         // e.g. "（略）行政運営における公正の確保と透明性" -> ["透明性"]
         // e.g. "（略）命令等を定めようとする場合には、当該命令等の案" -> ["案", "命令等の案"]
         // e.g. "中期目標の期間" -> ["期間", "中期目標の期間"]
@@ -165,7 +165,7 @@ export const findFilteredAmbiguousNameInline = (
         const nameCandidateLastOffset = info.sentenceEnv.textRageOfEL(info.nameCandidateEL)?.[1] ?? null;
         const parentheseeLastOffset = info.sentenceEnv.textRageOfEL(info.afterNameParentheses)?.[1] ?? null;
 
-        // "Consistency": Skip candidates occured outside of the scope.
+        // "Consistency": Skip candidates occurred outside of the scope.
 
         for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
             // TODO: exclude square parentheses, QuoteStruct and NewProvision
@@ -359,10 +359,12 @@ export const findFilteredAmbiguousNameInline = (
             continue;
         }
 
-        // "Greedy": Pick the longest candidate
+        // "Word-likeness" (part 2): Pick the shortest candidate, avoiding a candidate with one character if possible.
+        let filteredCandidates = [...info.nameCandidates].filter(a => a.length > 1);
+        if (filteredCandidates.length === 0) filteredCandidates = [...info.nameCandidates];
         filteredNameInfos.push({
             ...info,
-            name: [...info.nameCandidates].sort((a, b) => b.length - a.length)[0],
+            name: filteredCandidates.sort((a, b) => a.length - b.length)[0],
         });
     }
 
