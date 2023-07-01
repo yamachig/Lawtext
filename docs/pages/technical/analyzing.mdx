@@ -6,9 +6,9 @@ title: Analyzing
 
 ## Analyzing `StdEL` tree
 
-Lawtext provides some functionalities for analyzing corresponding parentheses, term definition positions, clause number references, etc. Because those analyses are conducted on a [**StdEL**](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree, you can utilize the analysis functionalities for both Lawtext string and XML string that comply with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
+Lawtext provides some functionalities for analyzing corresponding parentheses, term definition positions, clause number references, etc. Because those analyses are conducted on a [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree, you can utilize the analysis functionalities for both Lawtext string and XML string that comply with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
 
-The Lawtext analyzer analyzes a [**StdEL**](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree and adds [control elements](/technical/intermediate-data#control-element) on the tree.
+The Lawtext analyzer analyzes a [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree and adds [control elements](/technical/intermediate-data#control-element) on the tree.
 
 Most of analysis processes is called via [`(core/src/analyzer).analyze()`](/lib/core/modules/core_src_analyzer/#analyze). However, some processes (such as the pattern analysis for parentheses, law numbers, and clause pointers) are called in other places.
 
