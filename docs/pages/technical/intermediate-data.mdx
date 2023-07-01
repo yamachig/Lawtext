@@ -4,13 +4,13 @@ title: "Intermediate data"
 
 # Intermediate data
 
-## The intermediate data representation: JsonEL and StdEL
+## The intermediate data representation: `JsonEL` and `StdEL`
 
 Lawtext is a plain-text format for law (mainly targeting Japanese law). The Lawtext parser converts a Lawtext string into JSON data representing the law structure based on the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
 
 The extracted law structure is expressed internally in the parser using a generic format **JsonEL**. You can think of `JsonEL` as a highly simplified DOM (Document Object Model) of the corresponding XML that only supports the basic structure of XML. `JsonEL` itself does not depend on Standard Law XML Schema. Within the domain of the basic structure of XML, you can easily convert the `JsonEL` into XML and vice versa.
 
-[`JsonEL`](lib/core/interfaces/core_src_node_el_jsonEL.JsonEL.md) definition:
+[`JsonEL`](/lib/core/interfaces/core_src_node_el_jsonEL.JsonEL.md) definition:
 
 ```ts
 interface JsonEL {
@@ -20,11 +20,19 @@ interface JsonEL {
 }
 ```
 
-[**StdEL**](lib/core/modules/core_src_law_std_stdEL.md#stdel) is a special type of `JsonEL` that complies with the Standard Law XML Schema. A `StdEL` object has a tag name, corresponding attributes, and children defined in the Standard Law XML Schema. The Lawtext parser aims to convert the Lawtext string into the `StdEL` tree.
+Since `JsonEL` is just a simple interface, the `JsonEL` tree can be easily serialized into JSON (and XML) and exchanged and stored between different environments.
+
+In Lawtext, a helper class [**EL**](/lib/core/classes/core_src_node_el.EL) that implements the `JsonEL` interface is mainly utilized to provide additional javascript functionalities.
+
+[**StdEL**](/lib/core/modules/core_src_law_std_stdEL.md#stdel) is a special type of `JsonEL` (or `EL`) that complies with the Standard Law XML Schema. A `StdEL` object has a tag name, corresponding attributes, and children defined in the Standard Law XML Schema. The Lawtext parser aims to convert the Lawtext string into the `StdEL` tree.
 
 The `StdEL` works as an intermediate representation of the law. The Lawtext library provides several renderers that enable converting the law (`StdEL`) into HTML, docx, Standard Law XML, and Lawtext (reversely).
 
-## Examples of Lawtext, standard law XML, and StdEL representation
+## Adding extra information on `StdEL`: `__EL`
+
+Lawtext provides some functionalities for analyzing corresponding parentheses, term definition positions, clause number references, etc. The Lawtext analyzer emits that information into the parsed `StdEL` tree in the form of `JsonEL`. To distinguish the extra `JsonEL` objects from the Standard Law XML Schema elements, we append `_` (mostly `__` for visual clarity) at the beginning of the `tag` of the `JsonEL`, and call such element "**control element**." As the form of the `EL` class, the control elements have the [**__EL**](/lib/core/interfaces/core_src_law_std_stdEL.__EL) interface.
+
+## Examples of Lawtext, standard law XML, and `StdEL` representation
 
 A Lawtext string looks like the one below:
 
