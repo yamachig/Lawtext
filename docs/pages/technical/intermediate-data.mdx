@@ -1,0 +1,179 @@
+---
+title: "Intermediate data"
+---
+
+# Intermediate data
+
+## The intermediate data representation: JsonEL and StdEL
+
+Lawtext is a plain-text format for law (mainly targeting Japanese law). The Lawtext parser converts a Lawtext string into JSON data representing the law structure based on the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
+
+The extracted law structure is expressed internally in the parser using a generic format **JsonEL**. You can think of `JsonEL` as a highly simplified DOM (Document Object Model) of the corresponding XML that only supports the basic structure of XML. `JsonEL` itself does not depend on Standard Law XML Schema. Within the domain of the basic structure of XML, you can easily convert the `JsonEL` into XML and vice versa.
+
+[`JsonEL`](lib/core/interfaces/core_src_node_el_jsonEL.JsonEL.md) definition:
+
+```ts
+interface JsonEL {
+    tag: string;
+    attr: Record<string, string | undefined>;
+    children: (JsonEL | string)[];
+}
+```
+
+[**StdEL**](lib/core/modules/core_src_law_std_stdEL.md#stdel) is a special type of `JsonEL` that complies with the Standard Law XML Schema. A `StdEL` object has a tag name, corresponding attributes, and children defined in the Standard Law XML Schema. The Lawtext parser aims to convert the Lawtext string into the `StdEL` tree.
+
+The `StdEL` works as an intermediate representation of the law. The Lawtext library provides several renderers that enable converting the law (`StdEL`) into HTML, docx, Standard Law XML, and Lawtext (reversely).
+
+## Examples of Lawtext, standard law XML, and StdEL representation
+
+A Lawtext string looks like the one below:
+
+```
+行政手続法
+（平成五年法律第八十八号）
+
+      第一章　総則
+
+  （目的等）
+第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。
+２　処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。
+```
+
+The standard law XML that corresponds to the Lawtext above looks like below:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Law Era="Heisei" Lang="ja" LawType="Act" Num="88" Year="5">
+  <LawNum>平成五年法律第八十八号</LawNum>
+  <LawBody>
+    <LawTitle>行政手続法</LawTitle>
+    <MainProvision>
+      <Chapter Delete="false" Hide="false" Num="1">
+        <ChapterTitle>第一章　総則</ChapterTitle>
+        <Article Delete="false" Hide="false" Num="1">
+          <ArticleCaption>（目的等）</ArticleCaption>
+          <ArticleTitle>第一条</ArticleTitle>
+          <Paragraph Delete="false" Num="1" OldStyle="false">
+            <ParagraphNum />
+            <ParagraphSentence>
+              <Sentence>この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによって、行政運営における公正の確保と透明性（行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の向上を図り、もって国民の権利利益の保護に資することを目的とする。</Sentence>
+            </ParagraphSentence>
+          </Paragraph>
+          <Paragraph Hide="false" OldStyle="false">
+            <ParagraphNum>２</ParagraphNum>
+            <ParagraphSentence>
+              <Sentence>処分、行政指導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項について、他の法律に特別の定めがある場合は、その定めるところによる。</Sentence>
+            </ParagraphSentence>
+          </Paragraph>
+        </Article>
+      </Chapter>
+    </MainProvision>
+  </LawBody>
+</Law>
+```
+
+The `StdEL` representation of the law looks like below:
+
+```json
+{
+  "tag": "Law",
+  "attr": {
+    "Era": "Heisei",
+    "Lang": "ja",
+    "LawType": "Act",
+    "Num": "88",
+    "Year": "5"
+  },
+  "children": [
+    { "tag": "LawNum", "attr": {}, "children": ["平成五年法律第八十八号"] },
+    {
+      "tag": "LawBody",
+      "attr": {},
+      "children": [
+        { "tag": "LawTitle", "attr": {}, "children": ["行政手続法"] },
+        {
+          "tag": "MainProvision",
+          "attr": {},
+          "children": [
+            {
+              "tag": "Chapter",
+              "attr": { "Delete": "false", "Hide": "false", "Num": "1" },
+              "children": [
+                {
+                  "tag": "ChapterTitle",
+                  "attr": {},
+                  "children": ["第一章　総則"]
+                },
+                {
+                  "tag": "Article",
+                  "attr": { "Delete": "false", "Hide": "false", "Num": "1" },
+                  "children": [
+                    {
+                      "tag": "ArticleCaption",
+                      "attr": {},
+                      "children": ["（目的等）"]
+                    },
+                    {
+                      "tag": "ArticleTitle",
+                      "attr": {},
+                      "children": ["第一条"]
+                    },
+                    {
+                      "tag": "Paragraph",
+                      "attr": {
+                        "Delete": "false",
+                        "Num": "1",
+                        "OldStyle": "false"
+                      },
+                      "children": [
+                        { "tag": "ParagraphNum", "attr": {}, "children": [""] },
+                        {
+                          "tag": "ParagraphSentence",
+                          "attr": {},
+                          "children": [
+                            {
+                              "tag": "Sentence",
+                              "attr": {},
+                              "children": [
+                                "この法律は、処分、行政指導及び届出 に関する手続並びに命令等を定める手続に関し、共通する事項を定めることによっ て、行政運営における公正の確保と透明性（行政上の意思決定について、その内容 及び過程が国民にとって明らかであることをいう。第四十六条において同じ。）の 向上を図り、もって国民の権利利益の保護に資することを目的とする。"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "Paragraph",
+                      "attr": { "Hide": "false", "OldStyle": "false" },
+                      "children": [
+                        {
+                          "tag": "ParagraphNum",
+                          "attr": {},
+                          "children": ["２"]
+                        },
+                        {
+                          "tag": "ParagraphSentence",
+                          "attr": {},
+                          "children": [
+                            {
+                              "tag": "Sentence",
+                              "attr": {},
+                              "children": [
+                                "処分、行政指 導及び届出に関する手続並びに命令等を定める手続に関しこの法律に規定する事項 について、他の法律に特別の定めがある場合は、その定めるところによる。"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
