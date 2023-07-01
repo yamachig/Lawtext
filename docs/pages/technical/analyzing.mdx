@@ -40,11 +40,11 @@ The Lawtext analyzer resolvers the pointers to refer to the actual clauses by th
 
 1. Analyze the tree of clauses by [`getSentenceEnvs()`](/lib/core/modules/core_src_analyzer_getSentenceEnvs/#getsentenceenvs)
 
-2. Obtain the abstract path of the relative pointers by [`getPointerEnvs()`](/lib/core/modules/core_src_analyzer_pointerEnvs_getPointerEnvs/#getpointerenvs).
+2. Obtain the absolute path of the relative pointers by [`getPointerEnvs()`](/lib/core/modules/core_src_analyzer_pointerEnvs_getPointerEnvs/#getpointerenvs).
 
 3. Locate where the pointers refer by [`getScope()`](/lib/core/modules/core_src_analyzer_pointerEnvs_getScope/#getscope).
 
-Strictly speaking, the resolution of external pointers (the pointers that refer to the clauses in the other law as the pointers) needs the information of law reference (a specific type of term references). However, the detection of terms needs the info on resolved pointers. Therefore, if a term needs the information, the Lawtext analyzer resolves the internal pointers (refer to the clauses in the same law as the pointers) on demand and then resolves the remaining pointers, including external pointers.
+Strictly speaking, the resolution of external pointers (the pointers that refer to the clauses in the other law as the pointers) needs the information of law reference (a specific type of term reference). However, the detection of terms needs the info on resolved pointers. Therefore, if a term needs the information, the Lawtext analyzer resolves the internal pointers (refer to the clauses in the same law as the pointers) on demand and then resolves the remaining pointers, including external pointers.
 
 ## Detecting term declarations
 
@@ -88,7 +88,7 @@ An example of an inline naming without square brackets is below.
 命令等制定機関は、命令等を定めようとする場合には、当該命令等の案（命令等で定めようとする内容を示すものをいう。以下同じ。）及びこれに関連する資料をあらかじめ公示し、（略）
 ```
 
-<p><small>Note: The text above means `When establishing Administrative Orders, etc., Organs Establishing Administrative Orders, etc. must make public in advance a draft of Administrative Orders, etc. (meaning a draft showing the content of the anticipated Administrative Orders, etc.. The same applies hereinafter.) and any materials relating to the proposed Administrative Orders, etc., (omitted)` (unofficial translation). The guessed declared term is `命令等の案`, corresponds to `draft of Administrative Orders, etc.`.</small></p>
+<p><small>Note: The text above means `When establishing Administrative Orders, etc., Organs Establishing Administrative Orders, etc. must make public in advance a draft of Administrative Orders, etc. (meaning a draft showing the content of the anticipated Administrative Orders, etc.. The same applies hereinafter.) and any materials relating to the proposed Administrative Orders, etc., (omitted)` (unofficial translation). The guessed declared term is `命令等の案`, which corresponds to `draft of Administrative Orders, etc.`.</small></p>
 
 In the Lawtext analyzer, we adopted a heuristic under some assumptions to avoid computational complexity and ensure algorithmic explainability. The process is defined in [`processAmbiguousNameInline()`](/lib/core/modules/core_src_analyzer_detectDeclarations_processAmbiguousNameInline/#processambiguousnameinline).
 
