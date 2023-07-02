@@ -112,7 +112,7 @@ See [Lawtext](https://github.com/yamachig/Lawtext) for frontend tools.
 
 #### Option 1: Run using `npx` globally
 
-- Run `npx lawtext -h`
+- Run `npx lawtext --help`
 
 #### Option 2: Run as a package
 
@@ -120,9 +120,9 @@ See [Lawtext](https://github.com/yamachig/Lawtext) for frontend tools.
   ```
   npm install lawtext
   ```
-- Run `npx lawtext -h`
+- Run `npx lawtext --help`
 
 #### Option 3: Run independently
 
 - Clone or download this repository, move to `core` directory, and run `npm install`.
-- Run `npm run lawtext -h`
+- Run `npm run lawtext -- --help` (note that you need `--` before the lawtext options.)

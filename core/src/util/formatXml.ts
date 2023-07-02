@@ -207,7 +207,9 @@ export const formatXML = (xml: string, _options: Partial<XMLFormatterOptions> = 
         ..._options,
     };
 
-    const parsedXml = parser(`<root>${xml}</root>`, { filter: options.filter, strictMode: options.strictMode });
+    const m = /^((?:<\?.+?\?>)?)([\s\S]*)$/m.exec(xml.trim());
+
+    const parsedXml = parser(`${m ? m[1] : ""}<root>${m ? m[2] : xml}</root>`, { filter: options.filter, strictMode: options.strictMode });
     const state = { content: "", level: 0, options: options, path: [] };
 
     if (parsedXml.declaration) {
@@ -220,8 +222,8 @@ export const formatXML = (xml: string, _options: Partial<XMLFormatterOptions> = 
 
     return state.content
         .replace(/\r\n/g, "\n")
-        .replace(/^<root>\n?/, "")
-        .replace(/<\/root>\n?$/, "")
+        .replace(/^(\s*(?:<\?.+?\?>)?\s*)<root>\n?/, "$1")
+        .replace(/\n?<\/root>(\s*)$/, "$1")
         .replace(/\n*$/, "\n")
         .replace(new RegExp(`^${options.indentation}`, "mg"), "")
         .replace(/\n/g, options.lineSeparator);
