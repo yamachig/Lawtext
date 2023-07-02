@@ -190,6 +190,10 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                         <a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">
                             GitHub
                         </a>
+                        ・
+                        <a href="https://yamachig.github.io/Lawtext/" target="_blank" rel="noreferrer">
+                            Docs
+                        </a>
                     </div>
                 </div>
             </div>

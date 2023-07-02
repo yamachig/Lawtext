@@ -578,9 +578,15 @@ const SidebarFooter: React.FC = () => {
                 法令検索・元データは<a href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov法令検索</a>・<a href="https://elaws.e-gov.go.jp/apitop/" target="_blank" rel="noreferrer">法令API</a>を使用しています。定義語・条項参照などの表示は<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>で別途解析・編集したものです。
             </div>
             <div style={{ fontSize: "0.8em", textAlign: "center", padding: "0.3em 0", color: "rgb(140, 140, 140)" }}>
-                <a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer" style={{ marginRight: "2em" }}>
+                <span style={{ marginRight: "1em" }}>
+                    <a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">
                         GitHub
-                </a>
+                    </a>
+                    ・
+                    <a href="https://yamachig.github.io/Lawtext/" target="_blank" rel="noreferrer">
+                        Docs
+                    </a>
+                </span>
                 &copy; 2017-{new Date().getFullYear()} yamachi
             </div>
         </SidebarFooterDiv >
