@@ -83,7 +83,14 @@ export class FetchStoredLoader extends Loader {
     }
 
     public async loadBaseLawInfosFromCSV(): Promise<BaseLawInfo[]> {
-        const text = await fetchSjisText(this.listCSVPath);
+        let text: string | null = null;
+        text = await fetchSjisText(this.listCSVPath);
+        if (!(text?.includes("法令番号"))) {
+            text = await fetchText(this.listCSVPath);
+            if (text?.charCodeAt(0) === 0xFEFF) {
+                text = text.substring(1);
+            }
+        }
         if (text === null) throw new Error("Text cannot be fetched");
         return csvTextToLawInfos(text);
     }

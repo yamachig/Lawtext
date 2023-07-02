@@ -8,9 +8,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const DATA_PATH = process.env["DATA_PATH"];
-if (!DATA_PATH) throw new Error("Environment variable DATA_PATH not set");
 
-export const loader = new FSStoredLoader(DATA_PATH);
+export const __loader = DATA_PATH ? new FSStoredLoader(DATA_PATH) : null;
+export const assertLoader = (it: Mocha.Context) => {
+    if (__loader) return __loader;
+    it.skip();
+};
 
 // before("Run prepare_test", async function() {
 //     this.timeout(3600_000);
@@ -47,6 +50,6 @@ if (typeof require !== "undefined" && require.main === module) {
         // console.error(newErr);
         process.exit(1);
     });
-    prepare(loader);
+    if (__loader) prepare(__loader);
 
 }

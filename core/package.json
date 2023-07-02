@@ -24,7 +24,7 @@
     "watch": "node --trace-deprecation --trace-warnings bin/build/ && tsc --watch",
     "prepare": "npm run build",
     "lawtext": "node ./dist/src/lawtext.js",
-    "test": "node --max_old_space_size=4096 ./dist/test/prepare_test.js && npx mocha"
+    "test": "node --max_old_space_size=8192 ./dist/test/prepare_test.js && npx mocha"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.8.8",

@@ -11,17 +11,17 @@ import { parse } from "../src/parser/lawtext";
 import { analyze } from "../src/analyzer";
 import { renderDocxAsync, renderHTML, renderLawtext } from "../src/renderer";
 import { TERMC } from "../src/util/term";
-import { loader } from "./prepare_test";
 import { ErrorMessage } from "../src/parser/cst/error";
 import formatXML from "../src/util/formatXml";
 import { xmlToEL } from "../src/node/el/xmlToEL";
 import { outerXML } from "../src/node/el/elToXML";
+import { Loader } from "../src/data/loaders/common";
 
 const domParser = new xmldom.DOMParser();
 
 const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
-const renderAndParse = async (lawNum: string) => {
+const renderAndParse = async (loader: Loader, lawNum: string) => {
 
     const lawInfo = await loader.getLawInfoByLawNum(lawNum);
     if (lawInfo === null) throw Error("LawInfo not found");
@@ -96,30 +96,30 @@ ${errors.length > 7 ? "\n... more errors ..." : ""}
     return { origEL, parsedEL, origDOM, parsedDOM, tempOrigXml, tempRenderedLawtext, tempRenderedHTML, tempRenderedDocx, tempParsedXml } ;
 };
 
-if (typeof require !== "undefined" && require.main === module) {
-    console.log("running renderAndParse() from toplevel.");
-    process.on("unhandledRejection", e => {
-        // const newErr = new Error(`Unhandled rejection in prepare(): ${e}`);
-        console.log();
-        console.dir(e);
-        // console.error(newErr);
-        process.exit(1);
-    });
+// if (typeof require !== "undefined" && require.main === module) {
+//     console.log("running renderAndParse() from toplevel.");
+//     process.on("unhandledRejection", e => {
+//         // const newErr = new Error(`Unhandled rejection in prepare(): ${e}`);
+//         console.log();
+//         console.dir(e);
+//         // console.error(newErr);
+//         process.exit(1);
+//     });
 
-    const lawNums = [
-        "平成五年法律第八十八号",
-        "昭和二十五年法律第百三十一号",
-        "昭和五十九年法律第八十六号",
-        "昭和二十二年法律第六十七号",
-    ];
-    // lawNums.splice(0, lawNums.length);
+//     const lawNums = [
+//         "平成五年法律第八十八号",
+//         "昭和二十五年法律第百三十一号",
+//         "昭和五十九年法律第八十六号",
+//         "昭和二十二年法律第六十七号",
+//     ];
+//     // lawNums.splice(0, lawNums.length);
 
-    (async () => {
-        for (const lawNum of lawNums) {
-            await renderAndParse(lawNum);
-        }
-    })();
+//     (async () => {
+//         for (const lawNum of lawNums) {
+//             await renderAndParse(loader, lawNum);
+//         }
+//     })();
 
-}
+// }
 
 export default renderAndParse;

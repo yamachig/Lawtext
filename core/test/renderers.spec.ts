@@ -7,6 +7,7 @@ import { TERMC, toTableText } from "../src/util/term";
 import * as util from "../src/util";
 import renderAndParse from "./renderAndParse";
 import makeDiffTable from "./makeDiffTable";
+import { assertLoader } from "./prepare_test";
 
 const LIMIT_WIDTH = 34;
 
@@ -22,7 +23,8 @@ describe("Test Renderes", () => {
             // const [list, listByLawnum] = await getLawList();
             // chai.assert(false);
 
-            const renderAndParseResult = await renderAndParse(lawNum);
+            const loader = assertLoader(this);
+            const renderAndParseResult = await renderAndParse(loader, lawNum);
             if (!renderAndParseResult) return;
             const { origEL, parsedEL, origDOM, parsedDOM, tempOrigXml, tempRenderedLawtext, tempRenderedHTML, tempRenderedDocx, tempParsedXml } = renderAndParseResult;
 

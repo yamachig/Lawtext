@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { loader } from "../../test/prepare_test";
+import { assertLoader } from "../../test/prepare_test";
 import { LawInfo } from "../data/lawinfo";
 import { LawIDType, parseLawID } from "./lawID";
 import { ptnLawNum, ptnLawNumLike, lawNumLikeToLawNum, parseLawNum } from "./lawNum";
@@ -7,8 +7,9 @@ import { ptnLawNum, ptnLawNumLike, lawNumLikeToLawNum, parseLawNum } from "./law
 
 describe("Test lawNum", () => {
 
-    it("Test ptnLawNum", async () => {
+    it("Test ptnLawNum", async function () {
 
+        const loader = assertLoader(this);
         const { lawInfos } = await loader.cacheLawListStruct();
         const reLawNum = new RegExp(`^(?:${ptnLawNum})$`);
 
@@ -22,8 +23,9 @@ describe("Test lawNum", () => {
         }
     });
 
-    it("Test ptnLawNumLike", async () => {
+    it("Test ptnLawNumLike", async function () {
 
+        const loader = assertLoader(this);
         const { lawInfos } = await loader.cacheLawListStruct();
         const reLawNumLike = new RegExp(`^(?:${ptnLawNumLike})$`);
 
@@ -48,6 +50,7 @@ describe("Test lawNum", () => {
 
         this.slow(250);
 
+        const loader = assertLoader(this);
         const { lawInfos } = await loader.cacheLawListStruct();
 
         const failedLawInfos: LawInfo[] = [];
