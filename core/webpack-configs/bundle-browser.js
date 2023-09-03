@@ -8,13 +8,13 @@ const rootDir = path.dirname(__dirname);
 module.exports = (env, argv) => {
     const distDir = path.resolve(
         rootDir,
-        (argv.mode === "development") ? "dist-bundle-dev/browser" : "dist-bundle-prod/browser",
+        (argv.mode === "development") ? "dist-bundle-dev" : "dist-bundle-prod",
     );
     return {
         mode: (argv.mode === "development") ? "development" : "production",
         entry: [path.resolve(rootDir, "./src/lawtext.ts")],
         output: {
-            filename: "lawtext.js",
+            filename: "browser/lawtext.js",
             path: distDir,
             library: {
                 name: "lawtext",

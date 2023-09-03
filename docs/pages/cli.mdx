@@ -1,0 +1,31 @@
+---
+title: CLI usage
+---
+
+# CLI usage
+
+## How to use in Node.js
+
+- Prerequisites: [Node.js](https://nodejs.org/)
+
+### Option 1: Run the prebuilt bundle
+
+- Download the prebuilt bundle from here: [lawtext.js](/static/lawtext_bundles/node/lawtext.js)
+- Run `node lawtext.js --help`
+
+### Option 2: Run using `npx` globally
+
+- Run `npx lawtext --help`
+
+### Option 3: Run as a package
+
+- Run the following command in your working directory (or just an empty directory).
+  ```
+  npm install lawtext
+  ```
+- Run `npx lawtext --help`
+
+### Option 4: Run independently
+
+- Clone or download this repository, move to `core` directory, and run `npm install`.
+- Run `npm run lawtext -- --help` (note that you need `--` before the lawtext options.)

@@ -2,10 +2,7 @@
     "index": {},
     "background": {},
     "technical": {},
-    "CLI": {
-        "href": "https://github.com/yamachig/Lawtext/tree/main/core",
-        "newWindow": true
-    },
+    "cli": {},
     "lawtext-app": {
       "title": "Lawtext-app",
       "href": "https://yamachig.github.io/lawtext-app/",
