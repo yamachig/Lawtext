@@ -23,6 +23,24 @@ export interface RunArgs {
     controlel: boolean;
 }
 
+export const runHelp = `\
+usage: lawtext.run(<options>)
+
+example: lawtext.run({ input: {elaws:"405AC0000000088"}, outtypes: ["lawtext"] }).then(r => console.log(r.lawtext))
+
+options:
+    input: { elaws: string } | { lawtext: string } | { xml: string } | { json: string }
+        # For \`elaws\` input, specify lawID or lawNum to be requested to e-LAWS API.
+    outtypes: ("lawtext" | "xml" | "json" | "html" | "htmlfragment" | "docx")[]
+        # Specify the output types.
+    analyze: boolean [default: false]
+        # If true, conduct the analysis process.
+    format: boolean [default: false]
+        # If true, format the XML or JSON output.
+    controlel: boolean [default: false]
+        # If true, emit the control elements in XML or JSON output.
+`;
+
 export interface RunResult {
     virtuallines: VirtualLine[],
     analysis: Analysis,
@@ -123,3 +141,5 @@ export const run = async (args: RunArgs) => {
 
     return ret;
 };
+
+run.help = runHelp;
