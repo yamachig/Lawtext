@@ -22,6 +22,8 @@ MANIFEST
 /dist
 /dist-dev
 /dist-prod
+/dist-bundle-dev
+/dist-bundle-prod
 /src/law/lawNumTable.ts
 /test/lawdata
 /data

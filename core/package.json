@@ -12,9 +12,9 @@
   },
   "license": "MIT",
   "author": "yamachi",
-  "main": "./dist/src/lawtext.js",
-  "types": "./dist/src/lawtext.d.ts",
-  "bin": "./dist/src/lawtext.js",
+  "main": "./dist/src/main.js",
+  "types": "./dist/src/main.d.ts",
+  "bin": "./dist/src/main.js",
   "directories": {
     "test": "test"
   },
@@ -22,8 +22,10 @@
     "emitBinDeclarations": "tsc -p bin/build/tsconfig.json",
     "build": "node --trace-deprecation --trace-warnings bin/build/ && tsc",
     "watch": "node --trace-deprecation --trace-warnings bin/build/ && tsc --watch",
+    "build-bundles": "webpack --mode=development --config ./webpack-configs/bundles.js",
+    "build-bundles:prod": "webpack --mode=production --config ./webpack-configs/bundles.js",
     "prepare": "npm run build",
-    "lawtext": "node ./dist/src/lawtext.js",
+    "lawtext": "node ./dist/src/main.js",
     "test": "node --max_old_space_size=8192 ./dist/test/prepare_test.js && npx mocha"
   },
   "dependencies": {
@@ -66,7 +68,12 @@
     "eslint-plugin-tsdoc": "^0.2.17",
     "mocha": "^10.2.0",
     "mochawesome": "^7.1.3",
+    "path-browserify": "^1.0.1",
     "source-map-loader": "^4.0.1",
-    "typescript": "^5.1.3"
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.1.3",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
   }
 }
