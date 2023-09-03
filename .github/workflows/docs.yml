@@ -68,8 +68,8 @@ jobs:
         working-directory: ./docs
 
       - name: Build core bundles
-        run: npm run build-core-bundles
-        working-directory: ./docs
+        run: npm run build-bundles:prod -- --output-path="../docs/out/static/lawtext_bundles"
+        working-directory: ./core
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
