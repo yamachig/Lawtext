@@ -67,6 +67,10 @@ jobs:
         run: npx next export
         working-directory: ./docs
 
+      - name: Build core bundles
+        run: npm run build-core-bundles
+        working-directory: ./docs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
