@@ -98,7 +98,7 @@ Lawtext works efficiently with existing source code management tools to make law
 ```
 </details>
 
-- [Lawtextのコアライブラリ・CLIはこちら / Click here for Lawtext core library and CLI](./core/README.md)
+- [Lawtext CLIはこちら / Click here for Lawtext CLI](https://yamachig.github.io/Lawtext/cli/)
 
 ------------
 

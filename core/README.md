@@ -96,7 +96,7 @@ This package (`core` directory) is a part of the [Lawtext](https://github.com/ya
 
 ## Frontends
 
-See [Lawtext](https://github.com/yamachig/Lawtext) for frontend tools.
+See [Lawtext](https://github.com/yamachig/Lawtext) for the frontend tools.
 
 
 <a id="usage"></a>
@@ -104,9 +104,11 @@ See [Lawtext](https://github.com/yamachig/Lawtext) for frontend tools.
 
 ## Usage
 
-See [Lawtext](https://github.com/yamachig/Lawtext) for frontend tools.
+### How to use the CLI prebuilt bundle
 
-### How to use
+See [the Lawtext documentation](https://yamachig.github.io/Lawtext/cli/) for the CLI prebuilt bundle.
+
+### How to use the CLI from the NPM package
 
 - Prerequisites: [Node.js](https://nodejs.org/)
 
@@ -122,7 +124,7 @@ See [Lawtext](https://github.com/yamachig/Lawtext) for frontend tools.
   ```
 - Run `npx lawtext --help`
 
-#### Option 3: Run independently
+### How to use the CLI from the Lawtext repository
 
-- Clone or download this repository, move to `core` directory, and run `npm install`.
+- Clone or download [the Lawtext repository](https://github.com/yamachig/Lawtext), move to the `core` directory, and run `npm install`.
 - Run `npm run lawtext -- --help` (note that you need `--` before the lawtext options.)
