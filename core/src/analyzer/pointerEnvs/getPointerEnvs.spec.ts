@@ -830,4 +830,139 @@ describe("Test getPointerEnvs", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （聴聞の通知の方式）
+第十五条　行政庁は、聴聞を行うに当たっては、聴聞を行うべき期日までに相当な期間をおいて、不利益処分の名あて人となるべき者に対し、次に掲げる事項を書面により通知しなければならない。
+  一～四　（略）
+２　（略）
+３　（略）
+
+  （代理人）
+第十六条　前条第一項の通知を受けた者（同条第三項後段の規定により当該通知が到達したものとみなされる者を含む。以下「当事者」という。）は、代理人を選任することができる。
+２～４　（略）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "PREV",
+                                targetType: "Article",
+                                name: "前条",
+                            },
+                            children: ["前条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "前条",
+                            containers: ["container-Law-MainProvision[1]-Article[1][num=15]"],
+                        },
+                        {
+                            text: "第一項",
+                            containers: ["container-Law-MainProvision[1]-Article[1][num=15]-Paragraph[1][num=1]"],
+                        },
+                    ],
+                },
+                directLawNum: null,
+                namingParent: null,
+                namingChildren: ["同条第三項後段"],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "SAME",
+                                targetType: "Article",
+                                name: "同条",
+                            },
+                            children: ["同条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第三項",
+                                num: "3",
+                            },
+                            children: ["第三項"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "LATTERPART",
+                                name: "後段",
+                            },
+                            children: ["後段"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "同条",
+                            containers: ["container-Law-MainProvision[1]-Article[1][num=15]"],
+                        },
+                        {
+                            text: "第三項",
+                            containers: ["container-Law-MainProvision[1]-Article[1][num=15]-Paragraph[3][num=3]"],
+                        },
+                    ],
+                },
+                directLawNum: null,
+                namingParent: "前条第一項",
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+        ];
+
+
+        const expectedErrorMessages: string[] = [];
+
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+
+        // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

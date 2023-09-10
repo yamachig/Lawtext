@@ -78,13 +78,15 @@ export class PointerEnv {
         if ((fragments[0].attr.relPos === RelPos.SAME)) {
             // e.g.: "同条"
 
-            if (!this.seriesPrev) {
-                // console.warn(`No seriesPrev for ${this.pointer.text()}`);
+            const prevEnv = this.seriesPrev ?? this.namingParent;
+
+            if (!prevEnv) {
+                // console.warn(`No seriesPrev and namingParent for ${this.pointer.text()}`);
                 return;
             }
 
-            this.seriesPrev.locate(force);
-            const prev = this.seriesPrev.located;
+            prevEnv.locate(force);
+            const prev = prevEnv.located;
             if (!prev) {
                 // console.warn(`Not located ${this.seriesPrev.pointer.text()}`);
                 return;
