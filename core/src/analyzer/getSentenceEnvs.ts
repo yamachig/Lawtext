@@ -60,6 +60,8 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
                         || std.isParagraphItemTitle(c)
                         || std.isArticleGroupTitle(c)
                         || std.isAppdxItemTitle(c)
+                        || std.isSupplProvisionLabel(c)
+                        || std.isSupplProvisionAppdxItemTitle(c)
                     )) as EL | undefined)?.text()
                     ?? null
                 );
