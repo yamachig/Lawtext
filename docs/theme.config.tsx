@@ -1,8 +1,10 @@
 import React from "react";
 import { DocsThemeConfig } from "nextra-theme-docs";
+import { useRouter } from "next/router";
 
 const HeadComponent = () => {
-    const src = "/static/lawtext_bundles/browser/lawtext.js";
+    const router = useRouter();
+    const src = `${router.basePath}/static/lawtext_bundles/browser/lawtext.js`;
     const fallbackSrc = "https://yamachig.github.io/Lawtext/static/lawtext_bundles/browser/lawtext.js";
     React.useEffect(() => {
         import(/*webpackIgnore: true*/ src)
@@ -10,7 +12,7 @@ const HeadComponent = () => {
                 return import(/*webpackIgnore: true*/ fallbackSrc);
             })
             .catch(console.error);
-    }, []);
+    }, [src]);
     return null;
 };
 
