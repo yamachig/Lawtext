@@ -105,9 +105,6 @@ export const run = async (args: RunArgs) => {
             console.error("[parsing lawtext at main]", e);
             throw e;
         }
-        if (!analyze) {
-            law = loadEL(law.json()) as std.Law;
-        }
     } else { throw assertNever(input); }
 
     if (analyze) {
