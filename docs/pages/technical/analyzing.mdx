@@ -6,9 +6,9 @@ title: Analyzing
 
 ## Analyzing `StdEL` tree
 
-Lawtext provides some functionalities for analyzing corresponding parentheses, term definition positions, clause number references, etc. Because those analyses are conducted on a [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree, you can utilize the analysis functionalities for both Lawtext string and XML string that comply with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
+Lawtext provides some functionalities for analyzing corresponding parentheses, term definition positions, clause number references, etc. Because those analyses are conducted on a [`StdEL`](/technical/intermediate-data#stdel) tree, you can utilize the analysis functionalities for both Lawtext string and XML string that comply with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
 
-The Lawtext analyzer analyzes a [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree and adds [control elements](/technical/intermediate-data#control-element) on the tree.
+The Lawtext analyzer analyzes a `StdEL` tree and adds [control elements](/technical/intermediate-data#control-element) on the tree.
 
 Most of analysis processes is called via [`(core/src/analyzer).analyze()`](/lib/core/modules/core_src_analyzer/#analyze). However, some processes (such as the pattern analysis for parentheses, law numbers, and clause pointers) are called in other places.
 
@@ -120,6 +120,60 @@ Law referencing is a special type of term declaration that refers to another law
 ## Detecting term references
 
 The Lawtext analyzer searches the occurrences of the declared terms in the detected scopes and marks them as term references. The process is defined in [`detectVariableReferences()`](/lib/core/modules/core_src_analyzer_detectVariableReferences/#detectvariablereferences).
+
+## How to try
+
+### Try here now
+
+1. Open the browser console (press `Ctrl+Shift+J` for Chrome).
+1. Run the following command in the browser console:
+    ```js
+    lawtext.run({
+        input: { elaws: "405AC0000000088" },
+        outtypes: ["json"],
+        analyze: true,
+        controlel: true,
+    })
+        .then(r => {
+            console.log("\u{2705} Result:");
+            console.log(r);
+            console.log("\u{2705} Detected declarations:");
+            console.log(r.analysis.declarations);
+            const declarations = [...r.analysis.declarations.db.values()];
+            declarations.sort((a, b) => (
+                (a.nameSentenceTextRange.start.sentenceIndex - b.nameSentenceTextRange.start.sentenceIndex) ||
+                (a.nameSentenceTextRange.start.textOffset - b.nameSentenceTextRange.start.textOffset)
+            ));
+            console.table(declarations.map(d => {
+                const container = r.analysis.sentenceEnvs[d.nameSentenceTextRange.start.sentenceIndex].container;
+                const parents = [container, ...container.parentsSub(() => true)].filter(c => c?.name);
+                parents.reverse();
+                return {
+                    name: d.attr.name,
+                    type: d.attr.type,
+                    container: parents.map(c => c.name).join("/"),
+                    scope: d.attr.scope,
+                };
+            }));
+        });
+    ```
+
+Hint: run `console.log(lawtext.run.help)` to show the help.
+
+### Try using the CLI
+
+Please see [CLI usage](/cli) and run CLI with `analyze` and `controlel` options (and `analysisout` option when running in Node.js) to get the analysis result.
+
+### Try using the Visual Studio Code extension
+
+- You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required. You can create one on the linked page.)
+
+- Otherwise, you can visit [vscode.dev](https://vscode.dev/), install [Lawtext extension](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) and ope
+n the [sample Lawtext](https://yamachig.github.io/lawtext-app/#/(sample)).
+
+### Try using Lawtext-app
+
+- [Click here to go to Lawtext-app](https://yamachig.github.io/lawtext-app/#/v1:405AC0000000088)
 
 
 

@@ -6,17 +6,20 @@ title: Parsing
 
 ## Parsing steps
 
-The goal of the Lawtext parser is to extract the law content that the original Lawtext expresses and obtain it as [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel). The parser processes the Lawtext in three steps to achieve that goal:
+The goal of the Lawtext parser is to extract the law content that the original Lawtext expresses and obtain it as [`StdEL`](/technical/intermediate-data#stdel). The parser processes the Lawtext in three steps to achieve that goal:
 
-1. Parse the Lawtext into a CST (Concrete Syntax Tree). The CST is a sequence of [**Line**](/lib/core/modules/core_src_node_cst_line.md#line)s.
-2. Analyze the indentation of `Lines` and inserts indent (one increase of indent level) / dedent (one decrease of indent level) markers between the lines. The output of this step is a sequence of [**VirtualLine**](/lib/core/modules/core_src_parser_std_virtualLine.md#virtualline)s.
-3. Parse the `VirtualLine`s into a [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree.
+1. Parse the Lawtext into a CST (Concrete Syntax Tree). The CST is a sequence of [`Line`](#line)s.
+2. Analyze the indentation of `Line`s and insert indent (one increase of indent level) / dedent (one decrease of indent level) markers between the lines. The output of this step is a sequence of [`VirtualLine`](#virtualline)s.
+3. Parse the `VirtualLine`s into a [`StdEL`](/technical/intermediate-data#stdel) tree.
 
 You can find the entry point of the Lawtext parser at [`(core/src/parser/)lawtext.parse()`](/lib/core/modules/core_src_parser_lawtext/#parse).
 
-## Syntax trees
+<a id="line"></a>
+<a id="virtualline"></a>
 
-The Lawtext CST (Concrete Syntax Tree) is a sequence of [`Line`](/lib/core/modules/core_src_node_cst_line.md#line)s. A `Line` represents a physical line in the Lawtext string and contains all detailed features in the original string (not included in the resulting `StdEL` tree), such as verbose blank lines, meaningless whitespaces, and physical position (line and character index).
+## Syntax trees: `Line`s and `VirtualLine`s
+
+The Lawtext CST (Concrete Syntax Tree) is a sequence of **Line**s ([library documentation here](/lib/core/modules/core_src_node_cst_line.md#line)). A `Line` represents a physical line in the Lawtext string and contains all detailed features in the original string (not included in the resulting [`StdEL`](/technical/intermediate-data#stdel) tree), such as verbose blank lines, meaningless whitespaces, and physical position (line and character index).
 
 Instead of directly parsing the Lawtext into `StdEL`, we adopted the intermediate CST representation (`Line`s) for the following reasons.
 
@@ -24,10 +27,56 @@ Instead of directly parsing the Lawtext into `StdEL`, we adopted the intermediat
 - We can use the same CST to render the law into Lawtext and format Lawtext.
 - We need detailed position information to provide a language server in source code editors such as Visual Studio Code.
 
-During parsing the CST into a `StdEL` tree, the parser first analyzes the structure of indented blocks (indent levels) and inserts indent (one increase of indent level) / dedent (one decrease of indent level) markers between the lines. The resulting structure is a sequence of [`VirtualLine`](/lib/core/modules/core_src_parser_std_virtualLine.md#virtualline)s, and the main part of parsing is conducted on the sequence of `VirtualLine`s.
+During parsing the CST into a `StdEL` tree, the parser first analyzes the structure of indented blocks (indent levels) and inserts indent (one increase of indent level) / dedent (one decrease of indent level) markers between the lines. The resulting structure is a sequence of **VirtualLine**s ([library documentation here](/lib/core/modules/core_src_parser_std_virtualLine.md#virtualline)), and the main part of parsing is conducted on the sequence of `VirtualLine`s.
 
 We made the indentation analysis separate from building CST because the virtual (logical) indent levels in Lawtext do not always match the physical (visual) indent levels. For example, the article caption line in the Lawtext sample above (`␣␣（目的等）`) has one full-width (two ASCII-width) whitespace indentation. This whitespace complies with the layout rule of traditional Japanese law texts for visual compatibility. However, the article caption line does not make a new indentation level, and we have to consider the context of the lines to understand the line is an article caption, not a part of indented lines. Therefore, the Lawtext parser first parses the physical indent levels (and output `Line`s) and then detects the virtual indent levels (and output `VirtualLine`s).
 
 ## Parsing algorithm
 
 For steps 1 and 3, the main process of parsing is recursive descent parsing of a string (a sequence of characters) and `VirtualLine`s, respectively. We utilize a generic recursive descent parser [`generic-parser`](https://github.com/yamachig/generic-parser) for both steps.
+
+## How to try
+
+### Try here now
+
+1. Open the browser console (press `Ctrl+Shift+J` for Chrome).
+1. Run the following command in the browser console:
+    ```js
+    lawtext.run({
+        input: { elaws: "405AC0000000088" },
+        outtypes: ["lawtext"],
+    })
+        .then(r => {
+            console.log("Lawtext:");
+            console.log(r.lawtext);
+            return lawtext.run({
+                input: { lawtext: r.lawtext },
+                outtypes: ["json"],
+                controlel: true,
+            });
+        })
+        .then(r => {
+            console.log("\u{2705} Parsed VirtualLines:");
+            console.log(r.virtuallines);
+            console.table(r.virtuallines.map(v => ({
+                "VirtualLine.type": v.type,
+                ...Object.fromEntries(v.line?.rangeTexts().map(([, t, d], i) => [`rangeTexts()[${i}]`, t]) ?? []),
+            })));
+            console.log("\u{2705} Parsed StdEL (JsonEL):");
+            console.log(r.json);
+            console.log(JSON.stringify(r.json, undefined, 2));
+        });
+    ```
+
+Hint: run `console.log(lawtext.run.help)` to show the help.
+
+### Try using the CLI
+
+Please see [CLI usage](/cli) and run CLI with a `lawtext` input and `json` output with `controlel` option (and `virtuallinesout` option when running in Node.js) to get the parsed `VirtualLine`s and the parsed `StdEL` (`JsonEL`) representation.
+
+### Try using the Visual Studio Code extension
+
+- You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required. You can create one on the linked page.)
+
+- Otherwise, you can visit [vscode.dev](https://vscode.dev/), install [Lawtext extension](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) and ope
+n the [sample Lawtext](https://yamachig.github.io/lawtext-app/#/(sample)).

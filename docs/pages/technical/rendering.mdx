@@ -4,23 +4,23 @@ title: Rendering
 
 # Rendering
 
-Lawtext provides the functionality of rendering [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree into several formats such as Lawtext, [Standard Law XML](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd), HTML, and docx.
+Lawtext provides the functionality of rendering a [`StdEL`](/technical/intermediate-data#stdel) tree into several formats, such as Lawtext, [Standard Law XML](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd), HTML, and docx.
 
 ## Rendering into Lawtext
 
-The rendering process into Lawtext is basically the reverse transformation of [parsing](/technical/parsing). However, the Lawtext renderer skips the creation of [`VirtualLine`](/lib/core/modules/core_src_parser_std_virtualLine.md#virtualline)s and directly transforms the [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree into [`Line`](/lib/core/modules/core_src_node_cst_line.md#line)s.
+The rendering process into Lawtext is basically the reverse transformation of [parsing](/technical/parsing). However, the Lawtext renderer skips the creation of [`VirtualLine`](/technical/parsing#virtualline)s and directly transforms the [`StdEL`](/technical/intermediate-data#stdel) tree into [`Line`](/technical/parsing#line)s.
 
 You can find the entry point of the Lawtext renderer at [`renderLawtext()`](/lib/core/modules/core_src_renderer_lawtext/#renderlawtext).
 
 ## Rendering into Standard Law XML
 
-The rendering process into Standard Law XML is just serializing the [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree and adding an XML declaration on top of that.
+The rendering process into Standard Law XML is just serializing the [`StdEL`](/technical/intermediate-data#stdel) tree and adding an XML declaration on top of that.
 
 You can find the entry point of the Standard Law XML renderer at [`renderXML()`](/lib/core/modules/core_src_renderer_xml/#renderxml).
 
 ## Rendering into HTML
 
-The rendering process into HTML utilizes [React DOM Server API](https://react.dev/reference/react-dom/server). The HTML renderer first constructs a tree of React components from the [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel) tree and then converts the component into HTML string using [`renderToStaticMarkup()`](https://react.dev/reference/react-dom/server/renderToStaticMarkup#rendertostaticmarkup).
+The rendering process into HTML utilizes [React DOM Server API](https://react.dev/reference/react-dom/server). The HTML renderer first constructs a tree of React components from the [`StdEL`](/technical/intermediate-data#stdel) tree and then converts the component into HTML string using [`renderToStaticMarkup()`](https://react.dev/reference/react-dom/server/renderToStaticMarkup#rendertostaticmarkup).
 
 The same React component such as [`HTMLLaw`](/lib/core/modules/core_src_renderer_rules_law/#htmllaw), can be utilized to create React web apps that render `StdEL`.
 
@@ -31,3 +31,50 @@ The same React component such as [`HTMLLaw`](/lib/core/modules/core_src_renderer
 Like the HTML renderer, the rendering process into docx utilizes [React DOM Server API](https://react.dev/reference/react-dom/server) but builds a WordprocessingML of [Office Open XML](https://www.ecma-international.org/publications-and-standards/standards/ecma-376/).
 
 [`renderDocxAsync()`](/lib/core/modules/core_src_renderer_docx/#renderdocxasync) builds a docx binary as Office Open XML.
+
+## How to try
+
+### Try here now
+
+1. Open the browser console (press `Ctrl+Shift+J` for Chrome)..
+1. Run the following command in the browser console:
+    ```js
+    ret = await lawtext.run({
+        input: { elaws: "405AC0000000088" },
+        outtypes: ["lawtext", "xml", "html", "htmlfragment", "docx"],
+    })
+        .then(r => {
+            console.log("\u{2705} Rendered Lawtext:");
+            console.log(r.lawtext);
+            console.log("\u{2705} Rendered XML:");
+            console.log(r.xml);
+            console.log("\u{2705} Rendered HTML:");
+            console.log(r.html);
+            console.log("\u{2705} Rendered HTML fragment:");
+            console.log(r.htmlfragment);
+            const saveDocx = () => {
+                const base64 = btoa(r.docx.reduce((s, b) => s + String.fromCharCode(b), ""));
+                const mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                const url = `data:${mime};base64,${base64}`;
+                const a = document.createElement("a");
+                document.body.appendChild(a);
+                a.download = "405AC0000000088.docx";
+                a.href = url;
+                a.click();
+                a.remove();
+            };
+            console.log("\u{2705} Rendered Docx:");
+            console.log("run ret.saveDocx() to save the docx file.");
+            return { saveDocx };
+        });
+    ```
+
+Hint: run `console.log(lawtext.run.help)` to show the help.
+
+### Try using the CLI
+
+Please see [CLI usage](/cli) and run CLI with output options like `lawtext`, `xml`, `html`, `docx`, etc. to get the rendered results.
+
+### Try using Lawtext-app
+
+- [Click here to go to Lawtext-app](https://yamachig.github.io/lawtext-app/#/v1:405AC0000000088)

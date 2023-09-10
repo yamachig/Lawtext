@@ -4,13 +4,18 @@ title: "Intermediate data"
 
 # Intermediate data
 
+<a id="jsonel"></a>
+<a id="stdel"></a>
+
 ## The intermediate data representation: `JsonEL` and `StdEL`
 
 Lawtext is a plain-text format for law (mainly targeting Japanese law). The Lawtext parser converts a Lawtext string into JSON data representing the law structure based on the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
 
-The extracted law structure is expressed internally in the parser using a generic format **JsonEL**. You can think of `JsonEL` as a highly simplified DOM (Document Object Model) of the corresponding XML that only supports the basic structure of XML. `JsonEL` itself does not depend on Standard Law XML Schema. Within the domain of the basic structure of XML, you can easily convert the `JsonEL` into XML and vice versa.
+### `JsonEL`: a schema-agnostic JSON representation of simple XML
 
-[`JsonEL`](/lib/core/interfaces/core_src_node_el_jsonEL.JsonEL.md) definition:
+The extracted law structure is expressed internally in the parser using a generic format **JsonEL**. You can think of `JsonEL` as a highly simplified DOM (Document Object Model) of the corresponding XML that only supports the basic structure of XML. `JsonEL` itself does not depend on Standard Law XML Schema (schema-agnostic). Within the domain of the basic structure of XML, you can easily convert the `JsonEL` into XML and vice versa.
+
+`JsonEL` definition ([library documentation here](/lib/core/interfaces/core_src_node_el_jsonEL.JsonEL.md)):
 
 ```ts
 interface JsonEL {
@@ -24,7 +29,9 @@ Since `JsonEL` is just a simple interface, the `JsonEL` tree can be easily seria
 
 In Lawtext, a helper class [**EL**](/lib/core/classes/core_src_node_el.EL) that implements the `JsonEL` interface is mainly utilized to provide additional javascript functionalities.
 
-[**StdEL**](/lib/core/modules/core_src_law_std_stdEL.md#stdel) is a special type of `JsonEL` (or `EL`) that complies with the Standard Law XML Schema. A `StdEL` object has a tag name, corresponding attributes, and children defined in the Standard Law XML Schema. The Lawtext parser aims to convert the Lawtext string into the `StdEL` tree.
+### `StdEL`: a Standard-Law-XML-Schema-compliant JSON representation
+
+**StdEL** ([library documentation here](/lib/core/modules/core_src_law_std_stdEL.md#stdel)) is a special type of `JsonEL` (or `EL`) that complies with the Standard Law XML Schema. A `StdEL` object has a tag name, corresponding attributes, and children defined in the Standard Law XML Schema. The Lawtext parser aims to convert the Lawtext string into the `StdEL` tree.
 
 The `StdEL` works as an intermediate representation of the law. The Lawtext library provides several renderers that enable converting the law (`StdEL`) into HTML, docx, Standard Law XML, and Lawtext (reversely).
 
@@ -187,3 +194,30 @@ The `StdEL` representation of the law looks like below:
   ]
 }
 ```
+
+## How to try
+
+### Try here now
+
+1. Open the browser console (press `Ctrl+Shift+J` for Chrome).
+1. Run the following command in the browser console:
+    ```js
+    lawtext.run({
+        input: { elaws: "405AC0000000088" },
+        outtypes: ["xml", "json"],
+        format: true,
+    })
+        .then(r => {
+            console.log("\u{2705} Standard Law XML:");
+            console.log(r.xml);
+            console.log("\u{2705} StdEL (JsonEL):");
+            console.log(r.json);
+            console.log(JSON.stringify(r.json, undefined, 2));
+        })
+    ```
+
+Hint: run `console.log(lawtext.run.help)` to show the help.
+
+### Try using the CLI
+
+Please see [CLI usage](/cli) and run CLI with `json` output type to get the `StdEL` (`JsonEL`) representation.

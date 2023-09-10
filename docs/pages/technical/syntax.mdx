@@ -4,8 +4,56 @@ title: Lawtext syntax
 
 # Lawtext syntax
 
-Please refer to the comments in the following documents for the detailed syntax of Lawtext.
+## Detailed syntax
 
-- The documentation for [`Line`](/lib/core/modules/core_src_node_cst_line.md#line) describes the types of `Line`s and links to the codes that contain the actual syntax definition by [`generic-parser`](https://github.com/yamachig/generic-parser) to convert a Lawtext string to a sequence of `Line`s.
-- The documentation for [`VirtualLine`](/lib/core/modules/core_src_parser_std_virtualLine.md#virtualline) describes the types of `VirtualLine`s and the steps to convert a sequence of `Line`s to `VirtualLine`s.
-- The documentation for [`$law`](/lib/core/modules/core_src_parser_std_rules__law.md#law) is the entry point of the parser that converts a sequence of `VirtualLine`s to [`StdEL`](/lib/core/modules/core_src_law_std_stdEL.md#stdel). It contains the actual syntax definition by [`generic-parser`](https://github.com/yamachig/generic-parser), and you can follow the defined rule to find syntax definitions for other element types.
+Please refer to the comments in the source code referred from the following documents for the detailed syntax of Lawtext.
+
+- [The library documentation for `Line`](/lib/core/modules/core_src_node_cst_line#line) describes the types of [`Line`](/technical/parsing#line)s and links to the codes that contain the actual syntax definition by [`generic-parser`](https://github.com/yamachig/generic-parser) to convert a Lawtext string to a sequence of `Line`s.
+- [The library documentation for `VirtualLine`](/lib/core/modules/core_src_parser_std_virtualLine#virtualline) describes the types of [`VirtualLine`](/technical/parsing#virtualline)s and the steps to convert a sequence of `Line`s to `VirtualLine`s.
+- [The library documentation for `$law`](/lib/core/modules/core_src_parser_std_rules__law#law) is the entry point of the parser that converts a sequence of `VirtualLine`s to [`StdEL` (`JsonEL`)](/technical/intermediate-data#stdel). It contains the actual syntax definition by [`generic-parser`](https://github.com/yamachig/generic-parser), and you can follow the defined rule to find syntax definitions for other element types.
+
+## How to try
+
+### Try here now
+
+1. Open the browser console (press `Ctrl+Shift+J` for Chrome)..
+1. Run the following command in the browser console:
+    ```js
+    lawtext.run({
+        input: { elaws: "405AC0000000088" },
+        outtypes: ["lawtext"],
+    })
+        .then(r => {
+            console.log("Lawtext:");
+            console.log(r.lawtext);
+            return lawtext.run({
+                input: { lawtext: r.lawtext },
+                outtypes: ["json"],
+                controlel: true,
+            });
+        })
+        .then(r => {
+            console.log("\u{2705} Parsed VirtualLines:");
+            console.log(r.virtuallines);
+            console.table(r.virtuallines.map(v => ({
+                "VirtualLine.type": v.type,
+                ...Object.fromEntries(v.line?.rangeTexts().map(([, t, d], i) => [`rangeTexts()[${i}]`, t]) ?? []),
+            })));
+            console.log("\u{2705} Parsed StdEL (JsonEL):");
+            console.log(r.json);
+            console.log(JSON.stringify(r.json, undefined, 2));
+        });
+    ```
+
+Hint: run `console.log(lawtext.run.help)` to show the help.
+
+### Try using the CLI
+
+Please see [CLI usage](/cli) and run CLI with a `lawtext` input and `json` output with `controlel` option (and `virtuallinesout` option when running in Node.js) to get the parsed `VirtualLine`s and the parsed `StdEL` (`JsonEL`) representation.
+
+### Try using the Visual Studio Code extension
+
+- You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required. You can create one on the linked page.)
+
+- Otherwise, you can visit [vscode.dev](https://vscode.dev/), install [Lawtext extension](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) and ope
+n the [sample Lawtext](https://yamachig.github.io/lawtext-app/#/(sample)).

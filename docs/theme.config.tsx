@@ -1,9 +1,22 @@
 import React from "react";
 import { DocsThemeConfig } from "nextra-theme-docs";
 
+const HeadComponent = () => {
+    const src = "/static/lawtext_bundles/browser/lawtext.js";
+    const fallbackSrc = "https://yamachig.github.io/Lawtext/static/lawtext_bundles/browser/lawtext.js";
+    React.useEffect(() => {
+        import(/*webpackIgnore: true*/ src)
+            .catch(() => {
+                return import(/*webpackIgnore: true*/ fallbackSrc);
+            })
+            .catch(console.error);
+    }, []);
+    return null;
+};
+
 const config: DocsThemeConfig = {
     logo: <span>Lawtext documentation</span>,
-    head: () => null,
+    head: HeadComponent,
     editLink: { component: () => null },
     feedback: { content: () => null },
     footer: { text: () => (<div><small>
