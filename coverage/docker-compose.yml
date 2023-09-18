@@ -1,0 +1,27 @@
+version: '3'
+
+name: lawtext-coverage
+
+services:
+
+  db:
+    container_name: lawtext-coverage-db
+    hostname: lawtext-coverage-db
+    ports:
+        - 27017:27017
+    build: ./dockerfiles/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    volumes:
+      - db_data:/var/lib/mongo/data
+    healthcheck:
+      test: "mongosh --port 27017 --eval \"exit();\" || exit 1"
+      interval: 2s
+      timeout: 2s
+      retries: 10
+      start_period: 2s
+
+volumes:
+  db_data:
+    name: lawtext-coverage-db-volume
