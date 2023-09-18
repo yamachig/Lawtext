@@ -37,6 +37,11 @@ if (typeof require !== "undefined" && require.main === module) {
                     type: "boolean",
                     default: false,
                 })
+                .option("parallel", {
+                    alias: "p",
+                    type: "boolean",
+                    default: false,
+                })
                 .option("maxDiffLength", {
                     type: "number",
                     default: DEFAULT_MAX_DIFF_LENGTH,

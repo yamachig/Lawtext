@@ -19,7 +19,7 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
         nullable: true,
     },
     Year: { type: Number, required: true, nullable: true },
-    Num: { type: Number, required: true, nullable: true },
+    Num: { type: String, required: true, nullable: true },
     LawType: {
         type: String,
         enum: Object.values(LawType),
