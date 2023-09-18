@@ -37,8 +37,8 @@ if (typeof require !== "undefined" && require.main === module) {
                     type: "boolean",
                     default: false,
                 })
-                .option("parallel", {
-                    alias: "p",
+                .option("noParallel", {
+                    alias: "np",
                     type: "boolean",
                     default: false,
                 })

@@ -2,7 +2,7 @@ export interface UpdateArgs {
     force: boolean,
     retry: boolean,
     dryRun: boolean,
-    parallel: boolean,
+    noParallel: boolean,
     maxDiffLength: number,
     before?: Date,
     lawID?: string,

@@ -123,10 +123,13 @@ const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
 
     if (lawInfos.length === 0 || args.dryRun) return;
 
-    const workers_count = parseInt(process.env.WORKERS_COUNT ?? Math.ceil(os.cpus().length / 5).toString());
+    const workers_count = Math.min(
+        parseInt(process.env.MAX_WORKERS ?? "8"),
+        parseInt(process.env.WORKERS_COUNT ?? Math.ceil(os.cpus().length).toString()),
+    );
     const minimum_parallel_count = parseInt(process.env.MINIMUM_PARALLEL_COUNT || "0");
 
-    if (args.parallel && workers_count > 1 && lawInfos.length >= minimum_parallel_count) {
+    if ((!args.noParallel) && workers_count > 1 && lawInfos.length >= minimum_parallel_count) {
         console.log(`Running in parallel with ${workers_count} workers...`);
         await updateParallel(args, lawInfos, workers_count);
     } else {

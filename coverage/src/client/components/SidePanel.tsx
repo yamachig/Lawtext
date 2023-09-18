@@ -164,7 +164,10 @@ export const FilterInfoSortItem = (props: FilterInfoSortItemProps) => {
         return (
             <ActiveItem ref={setNodeRef} style={style} {...attributes} {...listeners}>
                 <span style={{ verticalAlign: "middle" }}>{KeyToName[key]}</span>
-                <ButtonTag onClick={props.directionButtonClick}>
+                <ButtonTag
+                    onClick={props.directionButtonClick}
+                    onPointerDown={e => e.stopPropagation()}
+                >
                     <FontAwesomeIcon icon="exchange-alt" style={{ pointerEvents: "none" }} />
                 </ButtonTag>
             </ActiveItem>
@@ -209,6 +212,7 @@ export const FilterInfoSortContainer = (props: FilterInfoSortContainerProps) => 
     );
 
     const directionButtonClick = (sort: FilterInfoSortContainerProps["sort"][0]) => () => {
+        console.log("directionButtonClick");
         if (sort) {
             if (Array.isArray(sort)) props.directionButtonClick(sort[0]);
             else props.directionButtonClick(sort);
