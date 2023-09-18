@@ -735,8 +735,8 @@ const getPosition = ([el, tt]: [ComparableEL, TagType], dom: Node): LawPosition 
 
     if (xPathString) {
         try {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const r = xpath.evaluate(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+            const r = (xpath as any).selectWithResolver(
                 xPathString,
                 dom,
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -748,7 +748,7 @@ const getPosition = ([el, tt]: [ComparableEL, TagType], dom: Node): LawPosition 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ) as any;
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-            const rel = r.nodes[0];
+            const rel = r[0];
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
             return { line: rel.lineNumber, col: rel.columnNumber, str: `${rel.lineNumber}:${rel.columnNumber}` };
         } catch (e) {

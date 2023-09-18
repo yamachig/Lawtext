@@ -13,7 +13,10 @@ const LIMIT_WIDTH = 34;
 
 describe("Test Renderes", () => {
 
-    const lawNums = ["平成五年法律第八十八号"];
+    const lawNums = [
+        "平成五年法律第八十八号",
+        "平成十一年法律第百二十七号",
+    ];
     // lawNums.splice(0, lawNums.length);
 
     for (const lawNum of lawNums) {
