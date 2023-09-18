@@ -15,6 +15,16 @@ const withNextra = nextra({
 
 const config = {
     ...baseConfig,
+    ...(
+        process.env.GITHUB_ACTION
+            ? {}
+            : {
+                experimental: {
+                    workerThreads: false,
+                    cpus: 1,
+                },
+            }
+    ),
     images: {
         unoptimized: true,
     },
