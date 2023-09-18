@@ -26,6 +26,33 @@ const kanjiDigitToNumDict = {
     "〇": 0, "一": 1, "二": 2, "三": 3, "四": 4,
     "五": 5, "六": 6, "七": 7, "八": 8, "九": 9,
 } as const;
+const numToKanjiDigitDict = {
+    0: "〇", 1: "一", 2: "二", 3: "三", 4: "四",
+    5: "五", 6: "六", 7: "七", 8: "八", 9: "九",
+} as Record<number, string>;
+const digitToKanjiDigitDict = {
+    "0": "〇", "1": "一", "2": "二", "3": "三", "4": "四",
+    "5": "五", "6": "六", "7": "七", "8": "八", "9": "九",
+} as Record<string, string>;
+
+export const digitsToKanjiNum = (digits: number | string, type: "positional" | "non-positional"): string => {
+    if (type === "positional") {
+        const numStr = replaceWideNum(typeof digits === "string" ? digits : digits.toString());
+        return Array.from(numStr).map(n => digitToKanjiDigitDict[n]).join("");
+    } else {
+        const num = typeof digits === "string" ? Number(replaceWideNum(digits)) : digits;
+        const d1 = num % 10;
+        const d10 = Math.floor((num % 100) / 10);
+        const d100 = Math.floor((num % 1000) / 100);
+        const d1000 = Math.floor(num / 1000);
+        const parts: string[] = [];
+        if (d1000) parts.push(`${d1000 === 1 ? "" : numToKanjiDigitDict[d1000]}千`);
+        if (d100) parts.push(`${d100 === 1 ? "" : numToKanjiDigitDict[d100]}百`);
+        if (d10) parts.push(`${d10 === 1 ? "" : numToKanjiDigitDict[d10]}十`);
+        if (d1) parts.push(numToKanjiDigitDict[d1]);
+        return parts.join("");
+    }
+};
 
 export const circledDigitChars = "⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿";
 export const irohaChars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";

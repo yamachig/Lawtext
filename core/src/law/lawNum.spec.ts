@@ -46,6 +46,10 @@ describe("Test lawNum", () => {
         assert.isNotNull(reLawNum.exec(lawNumLikeToLawNum("日本国憲法")));
     });
 
+    it("Test lawNumLikeToLawNum", async () => {
+        assert.strictEqual(lawNumLikeToLawNum("平成１６年法律第６３号"), "平成十六年法律第六十三号");
+    });
+
     it("Test parseLawNum and parseLawID", async function () {
 
         this.slow(250);

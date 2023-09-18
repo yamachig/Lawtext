@@ -128,4 +128,42 @@ describe("Test $lawRef", () => {
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const origEL = loadEL({
+            tag: "Sentence",
+            attr: {},
+            children: ["裁判員の参加する刑事裁判に関する法律（平成１６年法律第６３号）第２条第１項に規定する事件に該当する事件の捜査を行う場合は、国民の中から選任された裁判員に分かりやすい立証が可能となるよう、配慮しなければならない。"],
+        }) as std.Sentence;
+        addSentenceChildrenControls(origEL);
+        const input = origEL.children as SentenceChildEL[];
+        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
+        const expectedErrorMessages: string[] = [];
+        const expectedLawNameCandidate = {
+            tag: "__Text",
+            attr: {},
+            children: ["裁判員の参加する刑事裁判に関する法律"]
+        } ;
+        const expectedLawNum = {
+            tag: "____LawNum",
+            attr: {},
+            children: ["平成１６年法律第６３号"]
+        } ;
+
+        const result = $lawRef.abstract().match(0, input, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+
+            // console.log(JSON.stringify(result.value.value.lawNameCandidate.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.lawNameCandidate.json(true), expectedLawNameCandidate);
+
+            // console.log(JSON.stringify(result.value.value.lawRefInfo.lawNum.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.lawRefInfo.lawNum.json(true), expectedLawNum);
+
+            assert.deepStrictEqual(result.value.value.lawRefInfo.aliasInfo, null);
+
+            assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
+        }
+    });
 });

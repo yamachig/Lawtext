@@ -1,4 +1,4 @@
-import { parseKanjiNum, parseNamedNum } from "./num";
+import { digitsToKanjiNum, parseKanjiNum, parseNamedNum } from "./num";
 import { eras } from "./std";
 
 export const ptnLawNum = "(?:\
@@ -25,15 +25,44 @@ export const ptnLawNum = "(?:\
 )\
 )";
 
+export const ptnLawNumArabic = "(?:\
+(?<a_era>明治|大正|昭和|平成|令和)(?<a_year>[0123456789０１２３４５６７８９]+)年\
+(?:\
+(?:\
+(?<a_type1>[^ 　\t\r\n<>()（）[\\]［］{}｛｝「」]+?)\
+(?:第(?<a_num1>[0123456789０１２３４５６７８９]+)号)\
+)\
+|\
+(?:\
+(?<a_type2>人事院規則)\
+(?<a_num2>[―0123456789０１２３４５６７８９]+)\
+)\
+|\
+(?:\
+([0123456789０１２３４５６７８９]+)月([0123456789０１２３４５６７８９]+)日\
+(?<a_type3>内閣総理大臣決定)\
+)\
+|\
+(?:\
+(?<a_type4>憲法|勅令|内務省・鉄道省令|逓信省・鉄道省令|逓信省・農林省令|農林省・大蔵省・内務省令第(?<a_num3>[0０])号)\
+)\
+)\
+)";
+
 export const ptnLawNumLike = `(?:\
 (?:${ptnLawNum})\
 |\
 (?:日本国憲法)\
+|\
+(?:${ptnLawNumArabic})\
 )`;
 
+const reLawNumArabic = new RegExp(`^${ptnLawNumArabic}$`);
 export const lawNumLikeToLawNum = (lawNum: string): string => {
     if (/日本国憲法$/.test(lawNum)) {
         return "昭和二十一年憲法";
+    } else if (reLawNumArabic.test(lawNum)) {
+        return lawNum.replace(/[0123456789０１２３４５６７８９]+/g, digits => digitsToKanjiNum(digits, "non-positional"));
     } else {
         return lawNum;
     }
@@ -65,7 +94,7 @@ interface LawNumStruct {
     Num: string | null,
 }
 
-const reLawNum = new RegExp(`^${ptnLawNumLike}$`);
+const reLawNum = new RegExp(`^${ptnLawNum}$`);
 export const parseLawNum = (lawNum: string): LawNumStruct => {
 
     const ret: LawNumStruct = {

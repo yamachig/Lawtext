@@ -150,7 +150,7 @@ export const processLawRef = (
                 }
 
             } else {
-                const lawNameLength = getLawNameLength(lawNumText);
+                const lawNameLength = getLawNameLength(lawNumLikeToLawNum(lawNumText));
 
                 if (lawNameLength !== null) {
 

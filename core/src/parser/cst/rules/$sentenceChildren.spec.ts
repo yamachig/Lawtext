@@ -833,6 +833,111 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
         assert.strictEqual(text, expectedRendered);
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const target = `\
+裁判員の参加する刑事裁判に関する法律（平成１６年法律第６３号）第２条第１項に規定する事件に該当する事件の捜査を行う場合は、
+`;
+        const expectedRendered = `\
+裁判員の参加する刑事裁判に関する法律（平成１６年法律第６３号）第２条第１項に規定する事件に該当する事件の捜査を行う場合は、`;
+        const expectedCST = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["裁判員の参加する刑事裁判に関する法律"]
+            },
+            {
+                tag: "__Parentheses",
+                attr: {
+                    type: "round",
+                    depth: "1"
+                },
+                children: [
+                    {
+                        tag: "__PStart",
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["（"]
+                    },
+                    {
+                        tag: "__PContent",
+                        attr: {
+                            type: "round"
+                        },
+                        children: [
+                            {
+                                tag: "____LawNum",
+                                attr: {},
+                                children: ["平成１６年法律第６３号"]
+                            }
+                        ]
+                    },
+                    {
+                        tag: "__PEnd",
+                        attr: {
+                            type: "round"
+                        },
+                        children: ["）"]
+                    }
+                ]
+            },
+            {
+                tag: "____PointerRanges",
+                attr: {},
+                children: [
+                    {
+                        tag: "____PointerRange",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "____Pointer",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Article",
+                                            name: "第２条"
+                                        },
+                                        children: ["第２条"]
+                                    },
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "NAMED",
+                                            targetType: "Paragraph",
+                                            name: "第１項"
+                                        },
+                                        children: ["第１項"]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["に規定する事件に該当する事件の捜査を行う場合は、"]
+            }
+        ];
+        const expectedErrors: ErrorMessage[] = [];
+
+        const result = $sentenceChildren.abstract().match(0, target, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+            // console.log(JSON.stringify(result.value.value.map(el => el.json(true)), null, 2));
+            assert.deepStrictEqual(result.value.value.map(el => el.json(true)), expectedCST);
+            assert.deepStrictEqual(result.value.errors, expectedErrors);
+        }
+
+        const text = sentenceChildrenToString(expectedCST.map(loadEL) as SentenceChildEL[]);
+        assert.strictEqual(text, expectedRendered);
+    });
+
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
