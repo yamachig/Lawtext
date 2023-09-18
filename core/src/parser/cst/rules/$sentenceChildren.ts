@@ -2,7 +2,7 @@
 import { isSub, __EL } from "../../../law/std";
 import { ParenthesesType, __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____LawNum } from "../../../node/el/controls";
 import { EL } from "../../../node/el";
-import { assertNever, NotImplementedError } from "../../../util";
+import { assertNever } from "../../../util";
 import { factory } from "../factory";
 import { ValueRule, WithErrorRule } from "../util";
 import { $_EOL, $__ } from "./lexical";
@@ -34,7 +34,7 @@ export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): st
             runs.push(/* $$$$$$ */el.outerXML()/* $$$$$$ */);
 
         } else if (el.tag === "Line") {
-            throw new NotImplementedError(el.tag);
+            runs.push(/* $$$$$$ */el.outerXML()/* $$$$$$ */);
 
         } else {
             throw assertNever(el);

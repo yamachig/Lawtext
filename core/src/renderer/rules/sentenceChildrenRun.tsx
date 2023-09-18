@@ -1,7 +1,7 @@
 import React from "react";
 import { SentenceChildEL } from "../../node/cst/inline";
 import * as std from "../../law/std";
-import { assertNever, NotImplementedError } from "../../util";
+import { assertNever } from "../../util";
 import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
 import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
@@ -62,7 +62,11 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
                 runs.push(<HTMLArithFormulaRun el={el} {...{ htmlOptions }} />);
 
             } else if (el.tag === "Line") {
-                throw new NotImplementedError(el.tag);
+                return ((
+                    <span className="line" {...elProps(el, htmlOptions)}>
+                        <HTMLSentenceChildrenRun els={el.children} {...{ htmlOptions }} />
+                    </span>
+                ));
 
             }
             else { assertNever(el); }
@@ -139,7 +143,7 @@ export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRu
                 runs.push(<DOCXArithFormulaRun el={el} {...{ docxOptions }} />);
 
             } else if (el.tag === "Line") {
-                throw new NotImplementedError(el.tag);
+                runs.push(<DOCXSentenceChildrenRun els={el.children} {...{ docxOptions }} />);
 
             }
             else { assertNever(el); }
