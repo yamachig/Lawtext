@@ -2,30 +2,45 @@
 import { typeCharsMap } from "../../../law/std/helpers";
 import { irohaChars, parseKanjiNum } from "../../../law/num";
 import { SentenceChildEL } from "../../../node/cst/inline";
-import { RelPos, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
+import { RelPos, __Parentheses, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
 import { ErrorMessage } from "../error";
 import { factory } from "../factory";
-import { $kanjiDigits, kanjiDigits, romanDigits } from "./lexical";
+import { $kanjiDigits, arabicDigits, kanjiDigits, romanDigits } from "./lexical";
 import makeRangesRule, { RangeMaker, RangesMaker } from "./makeRangesRule";
+import { $ROUND_PARENTHESES_INLINE } from "./$sentenceChildren";
+import { WithErrorRule, WithErrorValue } from "../util";
 
-const makeRange: RangeMaker<____Pointer, ____PointerRange> = (from, midText, to, trailingText, modifierParentheses, range) => {
-    return new ____PointerRange({
-        from,
-        midChildren: midText ? [new __Text(midText.text, midText.range)] : [],
-        to,
-        trailingChildren: [
-            ...(trailingText ? [new __Text(trailingText.text, trailingText.range)] : []),
-            ...(modifierParentheses ? [modifierParentheses] : []),
-        ],
-        range,
-    });
+const makeRange: RangeMaker<
+    WithErrorValue<____Pointer>,
+    WithErrorValue<____PointerRange>
+> = (from, midText, to, trailingText, modifierParentheses, range) => {
+    return {
+        value: new ____PointerRange({
+            from: from.value,
+            midChildren: midText ? [new __Text(midText.text, midText.range)] : [],
+            to: to?.value ?? null,
+            trailingChildren: [
+                ...(trailingText ? [new __Text(trailingText.text, trailingText.range)] : []),
+                ...(modifierParentheses ? [modifierParentheses] : []),
+            ],
+            range,
+        }),
+        errors: [
+            ...from.errors,
+            ...(to?.errors ?? []),
+        ]
+    };
 };
 
-const makeRanges: RangesMaker<____PointerRange, ____PointerRanges> = (first, midText, rest, range) => {
+const makeRanges: RangesMaker<
+    WithErrorValue<____PointerRange>,
+    ____PointerRanges
+> = (first, midText, rest, range) => {
     const children: (____PointerRange | SentenceChildEL)[] = [];
     const errors: ErrorMessage[] = [];
 
-    children.push(first.value);
+    children.push(first.value.value);
+    errors.push(...first.value.errors);
     errors.push(...first.errors);
 
     if (midText) children.push(new __Text(midText.text, midText.range));
@@ -56,7 +71,7 @@ export const { $ranges: $pointerRanges, $range: $pointerRange } = makeRangesRule
 );
 
 
-export const $pointer = factory
+export const $pointer: WithErrorRule<____Pointer> = factory
     .withName("pointer")
     .choice(c => c
         .orSequence(s => s
@@ -68,26 +83,51 @@ export const $pointer = factory
             , "first")
             .and(r => r
                 .zeroOrMore(r => r
-                    .choice(c => c
-                        .or(() => $anyWherePointerFragment)
-                        .or(() => $secondaryOnlyPointerFragment)
+                    .sequence(s => s
+                        .and(r => r
+                            .zeroOrOne(() => $ROUND_PARENTHESES_INLINE)
+                        , "prevModifierParentheses")
+                        .and(r => r
+                            .choice(c => c
+                                .or(() => $anyWherePointerFragment)
+                                .or(() => $secondaryOnlyPointerFragment)
+                            )
+                        , "fragment")
+                        .action(({ prevModifierParentheses, fragment }) => {
+                            return [
+                                ...(prevModifierParentheses ? [prevModifierParentheses] : []),
+                                { value: fragment, errors: [] },
+                            ] as {
+                                value: __Parentheses | ____PF,
+                                errors: ErrorMessage[],
+                            }[];
+                        })
                     )
                 )
             , "rest")
             .action(({ first, rest, range }) => {
-                return new ____Pointer({
-                    children: [first, ...rest],
-                    range: range(),
-                });
+                return {
+                    value: new ____Pointer({
+                        children: [
+                            first,
+                            ...rest.map(s => s.map(({ value }) => value)).flat(),
+                        ],
+                        range: range(),
+                    }),
+                    errors: [...rest.map(s => s.map(({ errors }) => errors)).flat(2)],
+                };
             })
         )
         .orSequence(s => s
             .and(() => $singleOnlyPointerFragment, "single")
             .action(({ single, range }) => {
-                return new ____Pointer({
-                    children: [single],
-                    range: range(),
-                });
+                return {
+                    value: new ____Pointer({
+                        children: [single],
+                        range: range(),
+                    }),
+                    errors: [],
+                };
             })
         )
     )
@@ -325,6 +365,20 @@ export const $anyWherePointerFragment = factory
         .orSequence(c => c
             .and(r => r
                 .regExpObj(new RegExp(`^第[${kanjiDigits}]+([編章節款目章条項号表])(?:[のノ][${kanjiDigits}]+)*`)) // e.g. "第十二条", "第一章の二", "第一号の二の三"
+            , "match")
+            .action(({ text, match, range }) => {
+                const type_char = match[1];
+                return new ____PF({
+                    relPos: RelPos.NAMED,
+                    targetType: typeCharsMap[type_char as keyof typeof typeCharsMap],
+                    name: text(),
+                    range: range(),
+                });
+            })
+        )
+        .orSequence(c => c
+            .and(r => r
+                .regExpObj(new RegExp(`^第[${arabicDigits}]+([編章節款目章条項号表])(?:[のノ][${arabicDigits}]+)*`)) // e.g. "第１２条", "第1章の2", "第１号の２の３"
             , "match")
             .action(({ text, match, range }) => {
                 const type_char = match[1];

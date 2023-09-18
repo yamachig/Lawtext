@@ -26,6 +26,12 @@ export const $kanjiDigits = factory
     .regExp(new RegExp(`^[${kanjiDigits}]+`))
     ;
 
+export const arabicDigits = "0123456789０１２３４５６７８９";
+export const $arabicDigits = factory
+    .withName("arabicDigits")
+    .regExp(new RegExp(`^[${arabicDigits}]+`))
+    ;
+
 export const romanDigits = "iIｉＩvVｖＶxXｘＸ";
 export const $romanDigits = factory
     .withName("romanDigits")

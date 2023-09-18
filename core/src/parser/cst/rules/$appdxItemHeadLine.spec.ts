@@ -1345,9 +1345,45 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第１９条"
+                                                        },
+                                                        children: ["第１９条"]
+                                                    },
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Paragraph",
+                                                            name: "第１項"
+                                                        },
+                                                        children: ["第１項"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第１９条第１項の表の６の項関係"]
+                                children: ["の表の６の項関係"]
                             }
                         ]
                     },
@@ -1431,9 +1467,45 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
+                                tag: "____PointerRanges",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "____PointerRange",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "____Pointer",
+                                                attr: {},
+                                                children: [
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Article",
+                                                            name: "第１９条"
+                                                        },
+                                                        children: ["第１９条"]
+                                                    },
+                                                    {
+                                                        tag: "____PF",
+                                                        attr: {
+                                                            relPos: "NAMED",
+                                                            targetType: "Paragraph",
+                                                            name: "第１項"
+                                                        },
+                                                        children: ["第１項"]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["第１９条第１項の表の６の項関係"]
+                                children: ["の表の６の項関係"]
                             }
                         ]
                     },

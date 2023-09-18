@@ -6,6 +6,7 @@ import { Env } from "./env";
 import { ErrorMessage } from "./error";
 
 export type ValueRule<TValue> = Rule<string, TValue, Env, Empty>
+export type WithErrorValue<TValue> = { value: TValue, errors: ErrorMessage[] }
 export type WithErrorRule<TValue> = Rule<string, { value: TValue, errors: ErrorMessage[] }, Env, Empty>
 
 export const enumAllELs = (el: EL | string): EL[] => {

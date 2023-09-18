@@ -34,6 +34,19 @@ describe("Test $articleTitle", () => {
         assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = "第１１２条の２　領置物の還付に関して刑訴法第４９９条第２項の規定による公告をするときは、警察本部長又は警察署長の指揮を受けて行わなければならない。";
+        const expectedResult = {
+            ok: true,
+            nextOffset: 7,
+            value: { value: "第１１２条の２", errors: [] as ErrorMessage[] },
+        } as const;
+        const result = $articleTitle.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+    });
+
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;

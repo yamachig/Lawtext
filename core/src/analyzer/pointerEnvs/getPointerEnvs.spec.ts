@@ -965,4 +965,236 @@ describe("Test getPointerEnvs", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （協力要請）
+第１４７条の２　（略）
+
+  （捜索中止の場合の処置）
+第１４８条　（略）
+
+  （捜索調書）
+第１４９条　捜索を行つた場合は、捜索の状況を明らかにした捜索調書（被疑者捜索調書を含む。）を作成しなければならない。
+２　（略）
+
+  （捜索に関する規定の準用等）
+第１５８条　（略）、第１４７条の２（協力要請）、第１４８条（捜索中止の場合の処置）及び第１４９条（捜索調書）第１項の規定は検証を行う場合について、（略）それぞれ準用する。この場合において、第１４９条第１項の規定中「捜索調書」とあるのは、「検証調書又は身体検査調書」と読み替えるものとする。
+２　身体検査に際し、やむを得ない理由により立会人を得ることができなかつたときは、その事情を身体検査調書に明らかにしておかなければならない。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第１４７条の２",
+                                num: "147_2",
+                            },
+                            children: ["第１４７条の２"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第１４７条の２",
+                            containers: ["container-Law-MainProvision[1]-Article[1][num=147_2]"],
+                        },
+                    ],
+                },
+                directLawNum: null,
+                namingParent: null,
+                namingChildren: ["第１４８条"],
+                seriesPrev: null,
+                seriesNext: "第１４８条",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第１４８条",
+                                num: "148",
+                            },
+                            children: ["第１４８条"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第１４８条",
+                            containers: ["container-Law-MainProvision[1]-Article[2][num=148]"],
+                        },
+                    ],
+                },
+                directLawNum: null,
+                namingParent: "第１４７条の２",
+                namingChildren: ["第１４９条（捜索調書）第１項"],
+                seriesPrev: "第１４７条の２",
+                seriesNext: "第１４９条（捜索調書）第１項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第１４９条",
+                                num: "149",
+                            },
+                            children: ["第１４９条"],
+                        },
+                        {
+                            tag: "__Parentheses",
+                            attr: {
+                                type: "round",
+                                depth: "1",
+                            },
+                            children: [
+                                {
+                                    tag: "__PStart",
+                                    attr: {
+                                        type: "round",
+                                    },
+                                    children: ["（"],
+                                },
+                                {
+                                    tag: "__PContent",
+                                    attr: {
+                                        type: "round",
+                                    },
+                                    children: [
+                                        {
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["捜索調書"],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "__PEnd",
+                                    attr: {
+                                        type: "round",
+                                    },
+                                    children: ["）"],
+                                },
+                            ],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第１項",
+                                num: "1",
+                            },
+                            children: ["第１項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第１４９条",
+                            containers: ["container-Law-MainProvision[1]-Article[3][num=149]"],
+                        },
+                        {
+                            text: "第１項",
+                            containers: ["container-Law-MainProvision[1]-Article[3][num=149]-Paragraph[1][num=1]"],
+                        },
+                    ],
+                },
+                directLawNum: null,
+                namingParent: "第１４８条",
+                namingChildren: [],
+                seriesPrev: "第１４８条",
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第１４９条",
+                                num: "149",
+                            },
+                            children: ["第１４９条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第１項",
+                                num: "1",
+                            },
+                            children: ["第１項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第１４９条",
+                            containers: ["container-Law-MainProvision[1]-Article[3][num=149]"],
+                        },
+                        {
+                            text: "第１項",
+                            containers: ["container-Law-MainProvision[1]-Article[3][num=149]-Paragraph[1][num=1]"],
+                        },
+                    ],
+                },
+                directLawNum: null,
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+        ];
+
+
+        const expectedErrorMessages: string[] = [];
+
+        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+
+        // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

@@ -31,7 +31,8 @@ export const circledDigitChars = "⓪①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭�
 export const irohaChars = "イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセスン";
 export const aiuChars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
 
-const reNamedNum = /^(○?)第?([〇一二三四五六七八九十百千]+)\S*?([のノ―〇一二三四五六七八九十百千]*)$/;
+const reKanjiNamedNum = /^(○?)第?([〇一二三四五六七八九十百千]+)\S*?([のノ―〇一二三四五六七八九十百千]*)$/;
+const reArabicNamedNum = /^(○?)第?([0123456789０１２３４５６７８９]+)\S*?([のノ―0123456789０１２３４５６７８９]*)$/;
 const reIrohaChar = new RegExp(`[${irohaChars}]`);
 const reAiuChar = new RegExp(`[${aiuChars}]`);
 const reCircledDigit = new RegExp(`[${circledDigitChars}]`);
@@ -101,29 +102,47 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
 
     for (const subtext of subtexts) {
 
-        let m = reNamedNum.exec(subtext);
-        if (m) {
-            const nums = [parseKanjiNum(m[2])];
-            if (m[3]) {
-                const bs = m[3].split(/[のノ―]/g);
-                for (const b of bs) {
-                    if (!b) continue;
-                    nums.push(parseKanjiNum(b));
+        {
+            const m = reKanjiNamedNum.exec(subtext);
+            if (m) {
+                const nums = [parseKanjiNum(m[2])];
+                if (m[3]) {
+                    const bs = m[3].split(/[のノ―]/g);
+                    for (const b of bs) {
+                        if (!b) continue;
+                        nums.push(parseKanjiNum(b));
+                    }
                 }
+                numsGroup.push(nums.join("_"));
+                continue;
             }
-            numsGroup.push(nums.join("_"));
-            continue;
+        }
+
+        {
+            const m = reArabicNamedNum.exec(subtext);
+            if (m) {
+                const nums = [replaceWideNum(m[2])];
+                if (m[3]) {
+                    const bs = m[3].split(/[のノ―]/g);
+                    for (const b of bs) {
+                        if (!b) continue;
+                        nums.push(replaceWideNum(b));
+                    }
+                }
+                numsGroup.push(nums.join("_"));
+                continue;
+            }
         }
 
         if (kanaMode === KanaMode.Iroha) {
-            m = reIrohaChar.exec(subtext);
+            const m = reIrohaChar.exec(subtext);
             if (m) {
                 numsGroup.push(String(irohaChars.indexOf(m[0]) + 1));
                 continue;
             }
 
         } else if (kanaMode === KanaMode.Aiu) {
-            m = reAiuChar.exec(subtext);
+            const m = reAiuChar.exec(subtext);
             if (m) {
                 numsGroup.push(String(aiuChars.indexOf(m[0]) + 1));
                 continue;
@@ -131,23 +150,27 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
 
         } else { throw assertNever(kanaMode); }
 
-        m = reCircledDigit.exec(subtext);
-        if (m) {
-            numsGroup.push(String(circledDigitChars.indexOf(m[0])));
-            continue;
+        {
+            const m = reCircledDigit.exec(subtext);
+            if (m) {
+                numsGroup.push(String(circledDigitChars.indexOf(m[0])));
+                continue;
+            }
         }
 
-        const replacedSubtext = replaceWideNum(subtext);
-        m = reItemNum.exec(replacedSubtext);
-        if (m) {
-            numsGroup.push(m[1]);
-            continue;
+        {
+            const replacedSubtext = replaceWideNum(subtext);
+            const m = reItemNum.exec(replacedSubtext);
+            if (m) {
+                numsGroup.push(m[1]);
+                continue;
+            }
+            const romanNum = parseRomanNum(replacedSubtext);
+            if (romanNum !== 0) {
+                numsGroup.push(String(romanNum));
+            }
         }
 
-        const romanNum = parseRomanNum(replacedSubtext);
-        if (romanNum !== 0) {
-            numsGroup.push(String(romanNum));
-        }
     }
 
     return numsGroup.join(":");
