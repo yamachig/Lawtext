@@ -14,7 +14,12 @@ const run = async (): Promise<void> => {
 
     parentPort?.on("message", async (msg) => {
         const lawInfo = msg.lawInfo as BaseLawInfo;
-        await update(lawInfo, maxDiffLength, db, loader);
+        try {
+            await update(lawInfo, maxDiffLength, db, loader);
+        } catch (e) {
+            parentPort?.postMessage({ error: true, message: e, lawInfo });
+            return;
+        }
         parentPort?.postMessage({ finished: true });
     });
 

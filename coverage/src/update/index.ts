@@ -69,8 +69,13 @@ const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_cou
     const runWorker = (worker: Worker, lawInfo: BaseLawInfo) => new Promise<void>((resolve) => {
         worker.postMessage({ lawInfo });
         worker.once("message", msg => {
-            if (!msg.finished) console.error(`[${new Date().toISOString()}] Unknown message from worker: ${JSON.stringify(msg)}`);
-            resolve();
+            if (msg.error) {
+                console.error(`[${new Date().toISOString()}] Error in updateParallel.runWorker: ${JSON.stringify(msg, undefined, 2)}`);
+                resolve();
+            } else {
+                if (!msg.finished) console.error(`[${new Date().toISOString()}] Unknown message from worker: ${JSON.stringify(msg)}`);
+                resolve();
+            }
         });
     });
 
@@ -108,7 +113,12 @@ const updateSerial = async (args: UpdateArgs, lawInfos: LawInfo[], db: Connectio
     let progressCount = 0;
 
     for (const lawInfo of lawInfos) {
-        await update(lawInfo, args.maxDiffLength, db, loader);
+        try {
+            await update(lawInfo, args.maxDiffLength, db, loader);
+        } catch (e) {
+            console.error(`[${new Date().toISOString()}] ### Error in updateSerial ###`);
+            console.error(e);
+        }
         progressCount++;
         bar.progress(progressCount, `${lawInfo.LawID}`);
     }

@@ -16,6 +16,8 @@ import formatXML from "../src/util/formatXml";
 import { xmlToEL } from "../src/node/el/xmlToEL";
 import { outerXML } from "../src/node/el/elToXML";
 import { Loader } from "../src/data/loaders/common";
+import { getMemorizedStringOffsetToPos } from "generic-parser";
+import { lawNumLikeToLawNum } from "../src/law/lawNum";
 
 const domParser = new xmldom.DOMParser();
 
@@ -23,16 +25,17 @@ const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 const renderAndParse = async (loader: Loader, lawNum: string) => {
 
-    const lawInfo = await loader.getLawInfoByLawNum(lawNum);
+
+    const lawInfo = await loader.getLawInfoByLawNum(lawNumLikeToLawNum(lawNum));
     if (lawInfo === null) throw Error("LawInfo not found");
     const { xml: origXML } = await loader.loadLawXMLStructByInfo(lawInfo);
-    if (origXML === null) throw new Error(`XML cannot be fetched: ${lawNum}`);
+    if (origXML === null) throw new Error(`XML cannot be fetched: ${lawInfo.LawID}`);
     console.log(`${TERMC.CYAN}Temporary directory: "${tempDir}"${TERMC.DEFAULT}`);
-    const tempOrigXml = path.join(tempDir, `${lawNum}.orig.xml`);
-    const tempRenderedLawtext = path.join(tempDir, `${lawNum}.rendered.law.txt`);
-    const tempRenderedHTML = path.join(tempDir, `${lawNum}.rendered.html`);
-    const tempRenderedDocx = path.join(tempDir, `${lawNum}.rendered.docx`);
-    const tempParsedXml = path.join(tempDir, `${lawNum}.parsed.xml`);
+    const tempOrigXml = path.join(tempDir, `${lawInfo.LawID}.orig.xml`);
+    const tempRenderedLawtext = path.join(tempDir, `${lawInfo.LawID}.rendered.law.txt`);
+    const tempRenderedHTML = path.join(tempDir, `${lawInfo.LawID}.rendered.html`);
+    const tempRenderedDocx = path.join(tempDir, `${lawInfo.LawID}.rendered.docx`);
+    const tempParsedXml = path.join(tempDir, `${lawInfo.LawID}.parsed.xml`);
     await promisify(fsExtra.ensureDir)(tempDir);
 
     const origDOM = domParser.parseFromString(origXML);
@@ -63,18 +66,29 @@ const renderAndParse = async (loader: Loader, lawNum: string) => {
     let errors: ErrorMessage[];
     try {
         const result = parse(lawtext);
+        const offsetToPos = getMemorizedStringOffsetToPos();
         parsedEL = result.value;
         const ignoreErrorMessages = [
             "$MISMATCH_START_PARENTHESIS: この括弧に対応する閉じ括弧がありません。",
             "$MISMATCH_END_PARENTHESIS: この括弧に対応する開き括弧がありません。",
         ];
         errors = result.errors.filter(e => !ignoreErrorMessages.includes(e.message));
-        chai.assert(
-            errors.length === 0,
-            `\
-${errors.slice(0, 7).map(e => lawtext.slice(...e.range)).join("\n\n")}
-${errors.length > 7 ? "\n... more errors ..." : ""}
-`);
+
+        const errorTexts: string[] = [];
+        errorTexts.push("\n");
+        for (const e of errors.slice(0, 7)) {
+            const text = lawtext.slice(...e.range);
+            const [start] = e.range.map(o => offsetToPos(lawtext, o));
+            errorTexts.push(`At ${tempRenderedLawtext}:${start.line}:${start.column}`);
+            errorTexts.push(`"${text}"`);
+            errorTexts.push(`=> ${e.message}`);
+            errorTexts.push("\n");
+        }
+        if (errors.length > 7) {
+            errorTexts.push("\n... more errors ...");
+        }
+        const errorText = errorTexts.join("\n");
+        chai.assert( errors.length === 0, errorText);
         if (parsedEL === undefined) return;
     } catch (e) {
         const msg = [
