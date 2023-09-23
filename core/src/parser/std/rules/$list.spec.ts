@@ -49,7 +49,9 @@ describe("Test $list and listOrSublistToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -105,7 +107,9 @@ describe("Test $list and listOrSublistToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "2",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -217,7 +221,9 @@ describe("Test $list and listOrSublistToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -356,7 +362,9 @@ describe("Test $list and listOrSublistToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "ParagraphNum",
@@ -430,7 +438,9 @@ describe("Test $list and listOrSublistToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "ParagraphNum",

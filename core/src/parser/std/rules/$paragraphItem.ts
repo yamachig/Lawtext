@@ -433,14 +433,14 @@ export const paragraphItemFromAuto = (
         }
     });
 
-    if (tag === "Paragraph") {
-        const titleEL = children.find(std.isParagraphItemTitle);
-        const titleStr = titleEL ? titleEL.text() : "";
-        if (titleEL && reOldParagraphNum.test(titleStr)) {
-            attr.OldNum = "true";
-            attr.Num = parseNamedNum(titleStr);
-            titleEL.children.splice(0, titleEL.children.length);
-        }
+    const titleEL = children.find(std.isParagraphItemTitle);
+    const titleStr = titleEL ? titleEL.text() : "";
+    const num = titleStr ? parseNamedNum(titleStr) : null; // Assume KanaMode.Iroha tentatively
+    if (num) attr.Num = num;
+
+    if (tag === "Paragraph" && titleEL && reOldParagraphNum.test(titleStr)) {
+        attr.OldNum = "true";
+        titleEL.children.splice(0, titleEL.children.length);
     }
 
     return std.newStdEL(

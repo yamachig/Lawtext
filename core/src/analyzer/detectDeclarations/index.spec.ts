@@ -874,7 +874,9 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -930,7 +932,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-
+                                                        Num: "1",
                                                     },
                                                     children: [
                                                         {
@@ -1119,7 +1121,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-
+                                                        Num: "2",
                                                     },
                                                     children: [
                                                         {
@@ -1340,7 +1342,9 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -1498,7 +1502,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-
+                                                        Num: "1",
                                                     },
                                                     children: [
                                                         {
@@ -1571,7 +1575,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-
+                                                        Num: "2",
                                                     },
                                                     children: [
                                                         {
@@ -1870,7 +1874,9 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -1961,7 +1967,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-
+                                                        Num: "1",
                                                     },
                                                     children: [
                                                         {
@@ -2034,7 +2040,7 @@ describe("Test detectDeclarations", () => {
                                                 {
                                                     tag: "Item",
                                                     attr: {
-
+                                                        Num: "5",
                                                     },
                                                     children: [
                                                         {
@@ -2260,7 +2266,9 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -2662,7 +2670,9 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -2804,7 +2814,9 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "2",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -2918,7 +2930,9 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -3195,7 +3209,8 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Chapter",
-                                    attr: { Num: "1",
+                                    attr: {
+                                        Num: "1",
                                     },
                                     children: [
                                         {
@@ -3222,7 +3237,9 @@ describe("Test detectDeclarations", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {},
+                                                    attr: {
+                                                        Num: "1",
+                                                    },
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -3313,7 +3330,7 @@ describe("Test detectDeclarations", () => {
                                                         {
                                                             tag: "Item",
                                                             attr: {
-
+                                                                Num: "5",
                                                             },
                                                             children: [
                                                                 {
@@ -3417,7 +3434,9 @@ describe("Test detectDeclarations", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {},
+                                                    attr: {
+                                                        Num: "1",
+                                                    },
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -3476,7 +3495,9 @@ describe("Test detectDeclarations", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {},
+                                                    attr: {
+                                                        Num: "2",
+                                                    },
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -3800,7 +3821,7 @@ describe("Test detectDeclarations", () => {
                                                         {
                                                             tag: "Item",
                                                             attr: {
-
+                                                                Num: "1:6",
                                                             },
                                                             children: [
                                                                 {
@@ -3862,7 +3883,9 @@ describe("Test detectDeclarations", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {},
+                                                    attr: {
+                                                        Num: "3:7",
+                                                    },
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -3938,7 +3961,9 @@ describe("Test detectDeclarations", () => {
                                 },
                                 {
                                     tag: "Paragraph",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ParagraphNum",

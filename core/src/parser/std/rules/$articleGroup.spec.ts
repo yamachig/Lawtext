@@ -75,7 +75,9 @@ describe("Test $articleGroup and articleGroupToLines", () => {
                                 },
                                 {
                                     tag: "Paragraph",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ParagraphNum",
@@ -128,7 +130,9 @@ describe("Test $articleGroup and articleGroupToLines", () => {
                                 },
                                 {
                                     tag: "Paragraph",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ParagraphNum",
@@ -257,7 +261,9 @@ describe("Test $articleGroup and articleGroupToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "ParagraphNum",

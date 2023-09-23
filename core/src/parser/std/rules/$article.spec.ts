@@ -47,7 +47,9 @@ describe("Test $article and articleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -67,7 +69,9 @@ describe("Test $article and articleToLines", () => {
                         },
                         {
                             tag: "Item",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "ItemTitle",
@@ -106,7 +110,9 @@ describe("Test $article and articleToLines", () => {
                         },
                         {
                             tag: "Item",
-                            attr: {},
+                            attr: {
+                                Num: "4",
+                            },
                             children: [
                                 {
                                     tag: "ItemTitle",
@@ -154,7 +160,9 @@ describe("Test $article and articleToLines", () => {
                                 },
                                 {
                                     tag: "Subitem1",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "Subitem1Title",
@@ -176,7 +184,9 @@ describe("Test $article and articleToLines", () => {
                                 },
                                 {
                                     tag: "Subitem1",
-                                    attr: {},
+                                    attr: {
+                                        Num: "2",
+                                    },
                                     children: [
                                         {
                                             tag: "Subitem1Title",
@@ -202,7 +212,9 @@ describe("Test $article and articleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "2",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -270,7 +282,9 @@ describe("Test $article and articleToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -290,7 +304,9 @@ describe("Test $article and articleToLines", () => {
                         },
                         {
                             tag: "Item",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "ItemTitle",

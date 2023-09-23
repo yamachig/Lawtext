@@ -1010,7 +1010,9 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1032,7 +1034,9 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "2",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1054,7 +1058,9 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "3",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1076,7 +1082,9 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "4",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1098,7 +1106,9 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "5",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1120,7 +1130,9 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "6",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1142,7 +1154,9 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "7",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1164,7 +1178,9 @@ describe("Test $appdxTable and appdxItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "8",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",

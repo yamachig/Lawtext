@@ -189,7 +189,11 @@ export const $article: WithErrorRule<std.Article> = factory
 
             firstParagraph.range = rangeOfELs(firstParagraph.children);
 
-            article.children.push(paragraphItemFromAuto("Paragraph", firstParagraph) as std.Paragraph);
+            {
+                const paragraph = paragraphItemFromAuto("Paragraph", firstParagraph) as std.Paragraph;
+                paragraph.attr.Num = "1";
+                article.children.push(paragraph);
+            }
 
             article.children.push(...otherParagraphs.map((p, i) => {
                 if (std.isParagraph(p.value) && p.value.attr.OldNum === "true") {

@@ -50,7 +50,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -122,7 +124,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {},
+                                                    attr: {
+                                                        Num: "1",
+                                                    },
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -224,7 +228,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -346,7 +352,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -609,7 +617,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {},
+                                                    attr: {
+                                                        Num: "1",
+                                                    },
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",

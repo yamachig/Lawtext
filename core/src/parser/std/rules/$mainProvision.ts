@@ -72,15 +72,25 @@ const $mainProvisionChildren: WithErrorRule<(std.ParagraphItem | std.Article | s
                     )
                 )
                 .or(r => r
-                    .oneOrMore(r => r
-                        .sequence(s => s
-                            .and(r => r
-                                .choice(c => c
-                                    .or(() => $noControlAnonymParagraph)
+                    .sequence(s => s
+                        .and(r => r
+                            .oneOrMore(r => r
+                                .sequence(s => s
+                                    .and(r => r
+                                        .choice(c => c
+                                            .or(() => $noControlAnonymParagraph)
+                                        )
+                                    )
+                                    .andOmit(r => r.zeroOrMore(() => $blankLine))
                                 )
                             )
-                            .andOmit(r => r.zeroOrMore(() => $blankLine))
-                        )
+                        , "anonymParagraphs")
+                        .action(({ anonymParagraphs }) => {
+                            for (const [i, { value: paragraph }] of anonymParagraphs.entries()) {
+                                paragraph.attr.Num = (i + 1).toString();
+                            }
+                            return anonymParagraphs;
+                        })
                     )
                 )
             )

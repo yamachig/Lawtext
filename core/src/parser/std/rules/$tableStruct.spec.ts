@@ -215,7 +215,9 @@ describe("Test $tableStruct and tableStructToLines", () => {
                                     children: [
                                         {
                                             tag: "Item",
-                                            attr: {},
+                                            attr: {
+                                                Num: "3",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ItemTitle",
@@ -245,7 +247,9 @@ describe("Test $tableStruct and tableStructToLines", () => {
                                     children: [
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "4",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",

@@ -288,7 +288,8 @@ describe("Test $law and lawToLines", () => {
                             children: [
                                 {
                                     tag: "Chapter",
-                                    attr: { Num: "1"
+                                    attr: {
+                                        Num: "1"
                                     },
                                     children: [
                                         {
@@ -314,7 +315,9 @@ describe("Test $law and lawToLines", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {},
+                                                    attr: {
+                                                        Num: "1",
+                                                    },
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -336,7 +339,9 @@ describe("Test $law and lawToLines", () => {
                                                 },
                                                 {
                                                     tag: "Paragraph",
-                                                    attr: {},
+                                                    attr: {
+                                                        Num: "2",
+                                                    },
                                                     children: [
                                                         {
                                                             tag: "ParagraphNum",
@@ -392,7 +397,9 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -493,7 +500,9 @@ describe("Test $law and lawToLines", () => {
                             children: [
                                 {
                                     tag: "Paragraph",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ParagraphNum",
@@ -683,7 +692,9 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -812,7 +823,9 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -832,7 +845,9 @@ describe("Test $law and lawToLines", () => {
                                                 },
                                                 {
                                                     tag: "Item",
-                                                    attr: {},
+                                                    attr: {
+                                                        Num: "1",
+                                                    },
                                                     children: [
                                                         {
                                                             tag: "ItemTitle",
@@ -856,7 +871,9 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "2",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -910,7 +927,9 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",

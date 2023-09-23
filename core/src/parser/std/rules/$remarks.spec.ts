@@ -71,7 +71,7 @@ describe("Test $remarks and remarksToLines", () => {
                 {
                     tag: "Item",
                     attr: {
-
+                        Num: "1",
                     },
                     children: [
                         {
@@ -146,7 +146,9 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -168,7 +170,9 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "2",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -188,7 +192,9 @@ describe("Test $remarks and remarksToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -210,7 +216,9 @@ describe("Test $remarks and remarksToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {},
+                            attr: {
+                                Num: "2",
+                            },
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -289,7 +297,7 @@ describe("Test $remarks and remarksToLines", () => {
                         {
                             tag: "Item",
                             attr: {
-
+                                Num: "1",
                             },
                             children: [
                                 {
@@ -395,7 +403,9 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -539,7 +549,9 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -601,7 +613,9 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "2",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -720,7 +734,9 @@ describe("Test $remarks and remarksToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        // Num: "1", // Unset Num tantatively
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -740,7 +756,9 @@ describe("Test $remarks and remarksToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -754,7 +772,9 @@ describe("Test $remarks and remarksToLines", () => {
                                 },
                                 {
                                     tag: "Subitem2",
-                                    attr: {},
+                                    attr: {
+                                        // Num: "1", // Unset Num tantatively
+                                    },
                                     children: [
                                         {
                                             tag: "Subitem2Title",
@@ -836,7 +856,9 @@ describe("Test $remarks and remarksToLines", () => {
                         },
                         {
                             tag: "Item",
-                            attr: {},
+                            attr: {
+                                // Num: "1", // Unset Num tantatively
+                            },
                             children: [
                                 {
                                     tag: "ItemTitle",
@@ -856,7 +878,9 @@ describe("Test $remarks and remarksToLines", () => {
                                 },
                                 {
                                     tag: "Subitem1",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "Subitem1Title",
@@ -870,7 +894,9 @@ describe("Test $remarks and remarksToLines", () => {
                                         },
                                         {
                                             tag: "Subitem2",
-                                            attr: {},
+                                            attr: {
+                                                // Num: "1", // Unset Num tantatively
+                                            },
                                             children: [
                                                 {
                                                     tag: "Subitem2Title",

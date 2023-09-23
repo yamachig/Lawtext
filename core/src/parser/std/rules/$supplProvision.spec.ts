@@ -61,7 +61,9 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "ParagraphNum",
@@ -221,7 +223,9 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                         },
                         {
                             tag: "Paragraph",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "ParagraphNum",
@@ -295,7 +299,9 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -387,7 +393,9 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphCaption",
@@ -414,7 +422,9 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "2",
+                    },
                     children: [
                         {
                             tag: "ParagraphCaption",

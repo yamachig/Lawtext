@@ -39,7 +39,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {},
+            attr: {
+                Num: "2",
+            },
             children: [
                 {
                     tag: "ParagraphCaption",
@@ -64,7 +66,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -103,7 +107,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "4",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -151,7 +157,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -173,7 +181,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {},
+                            attr: {
+                                Num: "2",
+                            },
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -197,7 +207,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "5",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -234,7 +246,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {},
+                            attr: {
+                                Num: "2",
+                            },
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -258,7 +272,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "8",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -295,7 +311,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                         },
                         {
                             tag: "Subitem1",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "Subitem1Title",
@@ -356,7 +374,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -476,7 +496,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -589,7 +611,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {},
+            attr: {
+                Num: "2",
+            },
             children: [
                 {
                     tag: "ParagraphCaption",
@@ -614,7 +638,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -681,7 +707,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {},
+            attr: {
+                // Num: "1", // Unset Num tantatively
+            },
             children: [
                 {
                     tag: "ParagraphNum",
@@ -701,7 +729,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -768,7 +798,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {},
+            attr: {
+                // Num: "1", // Unset Num tantatively
+            },
             children: [
                 {
                     tag: "ParagraphNum",
@@ -788,7 +820,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -873,7 +907,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {},
+            attr: {
+                Num: "2",
+            },
             children: [
                 {
                     tag: "ParagraphCaption",
@@ -898,7 +934,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1044,7 +1082,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Paragraph",
-            attr: {},
+            attr: {
+                Num: "2",
+            },
             children: [
                 {
                     tag: "ParagraphNum",
@@ -1058,7 +1098,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Item",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ItemTitle",
@@ -1128,7 +1170,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1167,7 +1211,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -1260,7 +1306,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1299,7 +1347,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Subitem1",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "Subitem1Title",
@@ -1392,7 +1442,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1431,7 +1483,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Subitem1",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "Subitem1Title",
@@ -1524,7 +1578,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1563,7 +1619,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Item",
-                                            attr: {},
+                                            attr: {
+                                                Num: "8",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ItemTitle",
@@ -1656,7 +1714,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1695,7 +1755,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Paragraph",
-                                            attr: {},
+                                            attr: {
+                                                Num: "8",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ParagraphNum",
@@ -1788,7 +1850,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1827,7 +1891,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Item",
-                                            attr: {},
+                                            attr: {
+                                                Num: "8",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ItemTitle",
@@ -1920,7 +1986,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
@@ -1959,7 +2027,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                                     children: [
                                         {
                                             tag: "Subitem5",
-                                            attr: {},
+                                            attr: {
+                                                Num: "8",
+                                            },
                                             children: [
                                                 {
                                                     tag: "Subitem5Title",
@@ -2052,7 +2122,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
                 },
                 {
                     tag: "Paragraph",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ParagraphNum",
