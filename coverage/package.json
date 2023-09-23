@@ -71,6 +71,7 @@
         "cli-progress": "^3.12.0",
         "dotenv": "^16.3.1",
         "express": "^4.18.2",
+        "generic-parser": "^0.1.11",
         "jszip": "^3.10.1",
         "lawtext": "file:../core",
         "moment": "^2.29.4",

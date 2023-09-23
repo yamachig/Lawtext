@@ -10,6 +10,7 @@ import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { Era, LawCoverage, LawType } from "../lawCoverage";
 import { Law } from "lawtext/dist/src/law/std";
 import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
+import { getMemorizedStringOffsetToPos } from "generic-parser";
 
 const domParser = new DOMParser();
 type DeNull<T> = T extends null ? never : T;
@@ -202,12 +203,23 @@ export const getParsedLaw = async (lawtext: string): Promise<{
 
         // const allLines = lawtext.split("\n");
         const filteredParsedErrors = parsedErrors.filter(e => !ignoreErrorMessages.includes(e.message));
-        let errorText = filteredParsedErrors.length > 0
-            ? filteredParsedErrors.slice(0, 7).map(e => lawtext.slice(...e.range)).join("\n\n")
-            : null;
-        if (filteredParsedErrors.length > 7) {
-            errorText = (errorText ?? "") + `\n\n... ${filteredParsedErrors.length - 7} more errors ...`;
+
+        const offsetToPos = getMemorizedStringOffsetToPos();
+
+        const errorTexts: string[] = [];
+        errorTexts.push("\n");
+        for (const e of filteredParsedErrors.slice(0, 7)) {
+            const text = lawtext.slice(...e.range);
+            const [start] = e.range.map(o => offsetToPos(lawtext, o));
+            errorTexts.push(`At line ${start.line} column ${start.column}`);
+            errorTexts.push(`"${text}"`);
+            errorTexts.push(`=> ${e.message}`);
+            errorTexts.push("\n");
         }
+        if (filteredParsedErrors.length > 7) {
+            errorTexts.push("\n... more errors ...");
+        }
+        const errorText = errorTexts.join("\n").trim();
 
         return {
             parsedEL,
