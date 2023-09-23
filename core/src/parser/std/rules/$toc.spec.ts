@@ -58,7 +58,9 @@ describe("Test $toc and tocToLines", () => {
                 },
                 {
                     tag: "TOCArticle",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ArticleTitle",
@@ -74,7 +76,9 @@ describe("Test $toc and tocToLines", () => {
                 },
                 {
                     tag: "TOCChapter",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ChapterTitle",
@@ -90,7 +94,9 @@ describe("Test $toc and tocToLines", () => {
                 },
                 {
                     tag: "TOCChapter",
-                    attr: {},
+                    attr: {
+                        Num: "2",
+                    },
                     children: [
                         {
                             tag: "ChapterTitle",
@@ -106,7 +112,9 @@ describe("Test $toc and tocToLines", () => {
                 },
                 {
                     tag: "TOCChapter",
-                    attr: {},
+                    attr: {
+                        Num: "3",
+                    },
                     children: [
                         {
                             tag: "ChapterTitle",
@@ -115,7 +123,9 @@ describe("Test $toc and tocToLines", () => {
                         },
                         {
                             tag: "TOCSection",
-                            attr: {},
+                            attr: {
+                                Num: "1",
+                            },
                             children: [
                                 {
                                     tag: "SectionTitle",
@@ -131,7 +141,9 @@ describe("Test $toc and tocToLines", () => {
                         },
                         {
                             tag: "TOCSection",
-                            attr: {},
+                            attr: {
+                                Num: "2",
+                            },
                             children: [
                                 {
                                     tag: "SectionTitle",
@@ -147,7 +159,9 @@ describe("Test $toc and tocToLines", () => {
                         },
                         {
                             tag: "TOCSection",
-                            attr: {},
+                            attr: {
+                                Num: "3",
+                            },
                             children: [
                                 {
                                     tag: "SectionTitle",
@@ -165,7 +179,9 @@ describe("Test $toc and tocToLines", () => {
                 },
                 {
                     tag: "TOCChapter",
-                    attr: {},
+                    attr: {
+                        Num: "4",
+                    },
                     children: [
                         {
                             tag: "ChapterTitle",
@@ -181,7 +197,9 @@ describe("Test $toc and tocToLines", () => {
                 },
                 {
                     tag: "TOCChapter",
-                    attr: {},
+                    attr: {
+                        Num: "4_2",
+                    },
                     children: [
                         {
                             tag: "ChapterTitle",
@@ -197,7 +215,9 @@ describe("Test $toc and tocToLines", () => {
                 },
                 {
                     tag: "TOCChapter",
-                    attr: {},
+                    attr: {
+                        Num: "5",
+                    },
                     children: [
                         {
                             tag: "ChapterTitle",
@@ -213,7 +233,9 @@ describe("Test $toc and tocToLines", () => {
                 },
                 {
                     tag: "TOCChapter",
-                    attr: {},
+                    attr: {
+                        Num: "6",
+                    },
                     children: [
                         {
                             tag: "ChapterTitle",
@@ -229,7 +251,9 @@ describe("Test $toc and tocToLines", () => {
                 },
                 {
                     tag: "TOCChapter",
-                    attr: {},
+                    attr: {
+                        Num: "7",
+                    },
                     children: [
                         {
                             tag: "ChapterTitle",

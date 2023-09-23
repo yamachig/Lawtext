@@ -100,7 +100,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "TOCChapter",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ChapterTitle",
@@ -116,7 +118,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "TOCChapter",
-                                    attr: {},
+                                    attr: {
+                                        Num: "2",
+                                    },
                                     children: [
                                         {
                                             tag: "ChapterTitle",
@@ -132,7 +136,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "TOCChapter",
-                                    attr: {},
+                                    attr: {
+                                        Num: "3",
+                                    },
                                     children: [
                                         {
                                             tag: "ChapterTitle",
@@ -141,7 +147,9 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "TOCSection",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "SectionTitle",
@@ -157,7 +165,9 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "TOCSection",
-                                            attr: {},
+                                            attr: {
+                                                Num: "2",
+                                            },
                                             children: [
                                                 {
                                                     tag: "SectionTitle",
@@ -173,7 +183,9 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "TOCSection",
-                                            attr: {},
+                                            attr: {
+                                                Num: "3",
+                                            },
                                             children: [
                                                 {
                                                     tag: "SectionTitle",
@@ -191,7 +203,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "TOCChapter",
-                                    attr: {},
+                                    attr: {
+                                        Num: "4",
+                                    },
                                     children: [
                                         {
                                             tag: "ChapterTitle",
@@ -207,7 +221,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "TOCChapter",
-                                    attr: {},
+                                    attr: {
+                                        Num: "4_2",
+                                    },
                                     children: [
                                         {
                                             tag: "ChapterTitle",
@@ -223,7 +239,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "TOCChapter",
-                                    attr: {},
+                                    attr: {
+                                        Num: "5",
+                                    },
                                     children: [
                                         {
                                             tag: "ChapterTitle",
@@ -239,7 +257,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "TOCChapter",
-                                    attr: {},
+                                    attr: {
+                                        Num: "6",
+                                    },
                                     children: [
                                         {
                                             tag: "ChapterTitle",
@@ -255,7 +275,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "TOCChapter",
-                                    attr: {},
+                                    attr: {
+                                        Num: "7",
+                                    },
                                     children: [
                                         {
                                             tag: "ChapterTitle",

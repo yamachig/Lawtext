@@ -13,6 +13,7 @@ import { ErrorMessage } from "../../cst/error";
 import { __Parentheses, __Text } from "../../../node/el/controls";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
 import { rangeOfELs } from "../../../node/el";
+import { parseNamedNum } from "../../../law/num";
 
 /**
  * The renderer for {@link std.TOC}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$toc.spec.ts) for examples.
@@ -267,6 +268,9 @@ export const $tocArticleGroup: WithErrorRule<std.TOCArticleGroup> = factory
                 range,
             );
 
+            const num = parseNamedNum(articleGroupTitle.text());
+            if (num) tocArticleGroup.attr.Num = num;
+
             return {
                 value: tocArticleGroup,
                 errors,
@@ -323,6 +327,9 @@ export const $tocArticle: WithErrorRule<std.TOCArticle> = factory
                 tocArticleChildren,
                 range,
             );
+
+            const num = parseNamedNum(headLine.line.title);
+            if (num) tocArticle.attr.Num = num;
 
             return {
                 value: tocArticle,
