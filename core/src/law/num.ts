@@ -124,6 +124,7 @@ export const parseNamedNum = (text: string, kanaMode: KanaMode = KanaMode.Iroha)
         .replace("～", "、")
         .replace("・", "、")
         .replace("乃至", "、")
+        .replace("及ビ", "、")
         .replace("及", "、")
         .split("、");
 
