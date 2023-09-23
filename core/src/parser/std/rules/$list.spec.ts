@@ -33,7 +33,9 @@ describe("Test $list and listOrSublistToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {            },
+            attr: {
+                Num: "24",
+            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -199,7 +201,9 @@ describe("Test $list and listOrSublistToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {            },
+            attr: {
+                Num: "24",
+            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -336,7 +340,9 @@ describe("Test $list and listOrSublistToLines", () => {
             children: [
                 {
                     tag: "Article",
-                    attr: {                    },
+                    attr: {
+                        Num: "24",
+                    },
                     children: [
                         {
                             tag: "ArticleCaption",
@@ -408,7 +414,9 @@ describe("Test $list and listOrSublistToLines", () => {
                 },
                 {
                     tag: "Article",
-                    attr: {                    },
+                    attr: {
+                        Num: "25"
+                    },
                     children: [
                         {
                             tag: "ArticleCaption",

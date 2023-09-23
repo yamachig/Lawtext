@@ -31,7 +31,9 @@ describe("Test $article and articleToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "2",
+            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -252,7 +254,9 @@ describe("Test $article and articleToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "2",
+            },
             children: [
                 {
                     tag: "ArticleCaption",

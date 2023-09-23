@@ -22,7 +22,9 @@ describe("Test $supplNote and supplNoteToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {            },
+            attr: {
+                Num: "7",
+            },
             children: [
                 {
                     tag: "ArticleCaption",

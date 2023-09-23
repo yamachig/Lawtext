@@ -45,7 +45,9 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 },
                 {
                     tag: "Article",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ArticleCaption",
@@ -203,7 +205,9 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
                 },
                 {
                     tag: "Article",
-                    attr: {},
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ArticleCaption",

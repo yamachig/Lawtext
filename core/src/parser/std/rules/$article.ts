@@ -12,6 +12,7 @@ import { $blankLine } from "../util";
 import $paragraphItem, { $autoParagraphItemChildrenOuter, paragraphItemFromAuto, paragraphItemToLines } from "./$paragraphItem";
 import $supplNote, { supplNoteToLines } from "./$supplNote";
 import { rangeOfELs } from "../../../node/el";
+import { parseNamedNum } from "../../../law/num";
 
 /**
  * The renderer for {@link std.Article}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$article.spec.ts) for examples.
@@ -164,6 +165,8 @@ export const $article: WithErrorRule<std.Article> = factory
                         [firstParagraphItemLine.line.title],
                         firstParagraphItemLine.line.titleRange,
                     ));
+                const num = parseNamedNum(firstParagraphItemLine.line.title);
+                if (num) article.attr.Num = num;
             }
 
             const firstParagraph = newStdEL("Paragraph");

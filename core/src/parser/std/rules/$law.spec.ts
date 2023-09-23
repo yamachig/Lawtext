@@ -298,7 +298,9 @@ describe("Test $law and lawToLines", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {},
+                                            attr: {
+                                                Num: "1",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",
@@ -374,7 +376,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -668,7 +672,9 @@ describe("Test $law and lawToLines", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleTitle",
@@ -790,7 +796,9 @@ describe("Test $law and lawToLines", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -886,7 +894,9 @@ describe("Test $law and lawToLines", () => {
                                 },
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleCaption",

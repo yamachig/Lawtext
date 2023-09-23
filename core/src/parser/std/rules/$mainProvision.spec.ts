@@ -28,7 +28,9 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
             children: [
                 {
                     tag: "Article",
-                    attr: {                    },
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ArticleCaption",
@@ -66,7 +68,9 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
                 },
                 {
                     tag: "Article",
-                    attr: {                    },
+                    attr: {
+                        Num: "2",
+                    },
                     children: [
                         {
                             tag: "ArticleCaption",
@@ -145,7 +149,9 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
             children: [
                 {
                     tag: "Article",
-                    attr: {                    },
+                    attr: {
+                        Num: "1",
+                    },
                     children: [
                         {
                             tag: "ArticleCaption",

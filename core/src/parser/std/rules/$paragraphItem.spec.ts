@@ -345,7 +345,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "1_3"
+            },
             children: [
                 {
                     tag: "ArticleTitle",
@@ -463,7 +465,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "1_3",
+            },
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1113,7 +1117,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "13",
+            },
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1243,7 +1249,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "13",
+            },
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1373,7 +1381,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "13",
+            },
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1503,7 +1513,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "13",
+            },
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1633,7 +1645,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "13",
+            },
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1763,7 +1777,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "13",
+            },
             children: [
                 {
                     tag: "ArticleTitle",
@@ -1893,7 +1909,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "13",
+            },
             children: [
                 {
                     tag: "ArticleTitle",
@@ -2023,7 +2041,9 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {},
+            attr: {
+                Num: "13",
+            },
             children: [
                 {
                     tag: "ArticleTitle",

@@ -34,7 +34,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {            },
+            attr: {
+                Num: "13",
+            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -104,7 +106,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                                     children: [
                                         {
                                             tag: "Article",
-                                            attr: {                                            },
+                                            attr: {
+                                                Num: "17_2"
+                                            },
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",
@@ -204,7 +208,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {            },
+            attr: {
+                Num: "4",
+            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -324,7 +330,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
 `.replace(/\r?\n/g, "\r\n");
         const expectedValue = {
             tag: "Article",
-            attr: {            },
+            attr: {
+                Num: "10",
+            },
             children: [
                 {
                     tag: "ArticleCaption",
@@ -565,7 +573,7 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                     children: [
                         {
                             tag: "Chapter",
-                            attr: {                                Num: "3"
+                            attr: { Num: "3"
                             },
                             children: [
                                 {
@@ -575,7 +583,7 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                                 },
                                 {
                                     tag: "Section",
-                                    attr: {                                        Num: "1"
+                                    attr: { Num: "1"
                                     },
                                     children: [
                                         {
@@ -585,7 +593,9 @@ describe("Test $amendProvision and amendProvisionToLines", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {                                            },
+                                            attr: {
+                                                Num: "11",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ArticleCaption",

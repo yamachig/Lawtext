@@ -821,7 +821,9 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "2",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -1285,7 +1287,9 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -1813,7 +1817,9 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "2",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -2201,7 +2207,9 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "2",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -2601,7 +2609,9 @@ describe("Test detectDeclarations", () => {
                             children: [
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "1",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -2855,7 +2865,9 @@ describe("Test detectDeclarations", () => {
                                 },
                                 {
                                     tag: "Article",
-                                    attr: {},
+                                    attr: {
+                                        Num: "46",
+                                    },
                                     children: [
                                         {
                                             tag: "ArticleCaption",
@@ -3199,7 +3211,9 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {},
+                                            attr: {
+                                                Num: "2",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ArticleTitle",
@@ -3392,7 +3406,9 @@ describe("Test detectDeclarations", () => {
                                         },
                                         {
                                             tag: "Article",
-                                            attr: {},
+                                            attr: {
+                                                Num: "4_2",
+                                            },
                                             children: [
                                                 {
                                                     tag: "ArticleTitle",
