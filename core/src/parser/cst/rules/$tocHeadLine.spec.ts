@@ -40,14 +40,70 @@ describe("Test $tocHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-        目　次　
+:toc:目次
 `;
         const expectedResult = {
             ok: true,
-            nextOffset: 13,
+            nextOffset: 8,
         } as const;
         const expectedText = `\
-        目　次　
+:toc:目次
+`;
+        const expectedValue = {
+            type: LineType.TOC,
+            indentTexts: [] as string[],
+            title: "目次",
+            lineEndText: `
+`,
+        } as const;
+        const result = $tocHeadLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+:toc: 目次
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 9,
+        } as const;
+        const expectedText = `\
+:toc: 目次
+`;
+        const expectedValue = {
+            type: LineType.TOC,
+            indentTexts: [] as string[],
+            title: "目次",
+            lineEndText: `
+`,
+        } as const;
+        const result = $tocHeadLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+        :toc:目　次　
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 18,
+        } as const;
+        const expectedText = `\
+        :toc:目　次　
 `;
         const expectedValue = {
             type: LineType.TOC,
@@ -62,6 +118,21 @@ describe("Test $tocHeadLine", () => {
             assert.deepInclude(result.value.value, expectedValue);
             assert.strictEqual(result.value.value.text(), expectedText);
         }
+    });
+
+    it("Fail case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+        目　次　
+`;
+        const expectedResult = {
+            ok: false,
+            offset: 0,
+            expected: "tocHeadLine",
+        } as const;
+        const result = $tocHeadLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
     });
 
     it("Fail case", () => {

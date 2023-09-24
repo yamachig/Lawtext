@@ -151,7 +151,7 @@ export class BlankLine extends BaseLine<LineType.BNK> {
     }
 }
 
-type TOCHeadLineOptions = Omit<IndentsLineOptions<never>, "type"> & {
+type TOCHeadLineOptions = Omit<WithControlsLineOptions<never>, "type"> & {
     title: string;
 };
 
@@ -162,7 +162,7 @@ import { type $tocHeadLine } from "../../parser/cst/rules/$tocHeadLine";
  * A head line of a TOC (Table Of Contents). Please see the source code of {@link $tocHeadLine} for the detailed syntax.
  */
 /* eslint-enable tsdoc/syntax */
-export class TOCHeadLine extends IndentsLine<LineType.TOC> {
+export class TOCHeadLine extends WithControlsLine<LineType.TOC> {
     public title: string;
     public constructor(
         options: TOCHeadLineOptions,
@@ -172,7 +172,10 @@ export class TOCHeadLine extends IndentsLine<LineType.TOC> {
     }
     public get titleRange(): [number, number] | null {
         if (!this.range) return null;
-        const lastEnd = this.range[0] + this.indentTexts.map(t => t.length).reduce((a, b) => a + b, 0);
+        const lastEnd = (
+            (this.controlsEndPos) ??
+            (this.range[0] + this.indentTexts.map(t => t.length).reduce((a, b) => a + b, 0))
+        );
         return [
             lastEnd,
             lastEnd + this.title.length,
@@ -181,6 +184,7 @@ export class TOCHeadLine extends IndentsLine<LineType.TOC> {
     public rangeTexts() {
         const ret: ReturnType<BaseLine["rangeTexts"]> = [];
         ret.push(...this.indentRangeTexts());
+        ret.push(...this.controlsRangeTexts());
         ret.push([this.titleRange, this.title, "Title"]);
         ret.push([this.lineEndTextRange(), this.lineEndText, "LineEnd"]);
         return ret;

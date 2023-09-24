@@ -5,7 +5,7 @@ import CST from "../toCSTSettings";
 import { assertNever } from "../../../util";
 import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory from "../factory";
-import { Sentences } from "../../../node/cst/inline";
+import { Control, Sentences } from "../../../node/cst/inline";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { mergeAdjacentTexts, mergeAdjacentTextsWithString } from "../../cst/util";
 import { VirtualOnlyLineType } from "../virtualLine";
@@ -140,6 +140,14 @@ export const tocToLines = (el: std.TOC, indentTexts: string[]): Line[] => {
     lines.push(new TOCHeadLine({
         range: null,
         indentTexts,
+        controls: indentTexts.length == 0 ? [] : [
+            new Control(
+                ":toc:",
+                null,
+                "",
+                null,
+            )
+        ],
         title: sentenceChildrenToString(tocLabel?.children ?? []),
         lineEndText: CST.EOL,
     }));
