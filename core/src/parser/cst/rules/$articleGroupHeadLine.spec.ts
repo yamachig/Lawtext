@@ -51,6 +51,45 @@ describe("Test $articleGroupHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
+      第１章　総則
+
+  （目的）
+第１条　この規則は、
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 13,
+        } as const;
+        const expectedText = `\
+      第１章　総則
+`;
+        const expectedValue = {
+            type: LineType.ARG,
+            indentTexts: ["  ", "  ", "  "] as string[],
+            mainTag: "Chapter",
+            lineEndText: `
+`,
+        } as const;
+        const expectedInline = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["第１章　総則"],
+            },
+        ];
+        const result = $articleGroupHeadLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+            assert.deepStrictEqual(result.value.value.title.map(el => el.json(true)), expectedInline);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
   第四章の二　処分等の求め（第三十六条の三）　
   第五章　届出（第三十七条）
 `;
