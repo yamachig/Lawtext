@@ -302,7 +302,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                     diffTable: [dRow],
                 });
             }
-            ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
+            // ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
 
         } else if (dRow.status === DiffStatus.NoChange) {
             const r = processNoChange(dRow, oldELs, newELs, lawDiffMode === LawDiffMode.NoProblemAsNoDiff || lawDiffMode === LawDiffMode.WarningAsNoDiff);
@@ -315,7 +315,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
             )) {
                 emitNoDiff();
                 ret.items.push(r);
-                ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, r.mostSeriousStatus);
+                // ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, r.mostSeriousStatus);
             } else {
                 noDiffTable.push(dRow);
             }
@@ -336,7 +336,28 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                         diffTable: [dRow],
                     });
                 }
-                ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
+
+                if (dRow.newItem && (r.newELs[0].index < dRow.newItem.index)) {
+                    const maxDI = dRow.newItem.index - r.newELs[0].index;
+                    for (let i = ret.items.length - 1; i >= (ret.items.length - 1 - maxDI); i--) {
+                        if (ret.items[i].type === LawDiffType.NoDiff) continue;
+                        if (
+                            (ret.items[i].type === LawDiffType.ElementMismatch) &&
+                            (ret.items[i].mostSeriousStatus > ProblemStatus.Warning) &&
+                            (ret.items[i].diffTable[ret.items[i].diffTable.length - 1].newItem?.index === r.newELs[0].index)
+                        ) {
+                            if (lawDiffMode === LawDiffMode.WarningAsNoDiff) {
+                                ret.items[i].type = LawDiffType.NoDiff;
+                                ret.items[i].mostSeriousStatus = ProblemStatus.NoProblem;
+                            } else {
+                                ret.items[i].mostSeriousStatus = ProblemStatus.Warning;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                // ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
 
             } else {
                 emitNoDiff();
@@ -345,7 +366,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                     mostSeriousStatus: ProblemStatus.Error,
                     diffTable: [dRow],
                 });
-                ret.mostSeriousStatus = ProblemStatus.Error;
+                // ret.mostSeriousStatus = ProblemStatus.Error;
 
             }
 
@@ -358,7 +379,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                 mostSeriousStatus: ProblemStatus.Error,
                 diffTable: [dRow],
             });
-            ret.mostSeriousStatus = ProblemStatus.Error;
+            // ret.mostSeriousStatus = ProblemStatus.Error;
 
         } else if (dRow.status === DiffStatus.Remove) {
 
@@ -369,12 +390,16 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                 mostSeriousStatus: ProblemStatus.Error,
                 diffTable: [dRow],
             });
-            ret.mostSeriousStatus = ProblemStatus.Error;
+            // ret.mostSeriousStatus = ProblemStatus.Error;
 
         } else { throw util.assertNever(dRow); }
     }
 
     emitNoDiff();
+
+    for (const { mostSeriousStatus } of ret.items) {
+        ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, mostSeriousStatus);
+    }
 
     return ret;
 
@@ -483,21 +508,24 @@ const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
             oldEL.parent && newEL.parent &&
             oldEL.parent.tag === "Sentence" && newEL.parent.tag === "Sentence"
         ) {
-            const oldP = oldEL.parent;
-            const newP = newEL.parent;
-
-            const [oldSentences, newSentences] = [oldP, newP].map(el => {
-                const p = el.parent;
-                if (!p) return [el];
-                const ret: ComparableEL[] = [];
-                for (let i = p.children.indexOf(el); i < p.children.length; i++) {
-                    if (p.children[i].tag === el.tag) ret.push(p.children[i]);
-                    else break;
-                }
-                return ret;
-            });
 
             {
+                // Join Sentence elements
+
+                const oldSentence = oldEL.parent;
+                const newSentence = newEL.parent;
+
+                const [oldSentences, newSentences] = [oldSentence, newSentence].map(sentence => {
+                    const p = sentence.parent;
+                    if (!p) return [sentence];
+                    const ret: ComparableEL[] = [];
+                    for (let i = p.children.indexOf(sentence); i < p.children.length; i++) {
+                        if (p.children[i].tag === sentence.tag) ret.push(p.children[i]);
+                        else break;
+                    }
+                    return ret;
+                });
+
                 const oldJoinText = oldSentences.map(el => el.text).join("");
                 const newJoinText = newSentences.map(el => el.text).join("");
                 if (oldJoinText === newJoinText) {
@@ -516,15 +544,17 @@ const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
                 oldEL.parent.parent.children.every(el => el.tag === "Sentence") &&
                 newEL.parent.parent.children.every(el => el.tag === "Sentence")
             ) {
-                const oldPP = oldEL.parent.parent;
-                const newPP = newEL.parent.parent;
+                // Join Column elements
 
-                const [oldColumns, newColumns] = [oldPP, newPP].map(el => {
-                    const p = el.parent;
-                    if (!p) return [el];
+                const oldColumn = oldEL.parent.parent;
+                const newColumn = newEL.parent.parent;
+
+                const [oldColumns, newColumns] = [oldColumn, newColumn].map(column => {
+                    const p = column.parent;
+                    if (!p) return [column];
                     const ret: ComparableEL[] = [];
-                    for (let i = p.children.indexOf(el); i < p.children.length; i++) {
-                        if (p.children[i].tag === el.tag) ret.push(p.children[i]);
+                    for (let i = p.children.indexOf(column); i < p.children.length; i++) {
+                        if (p.children[i].tag === column.tag) ret.push(p.children[i]);
                         else break;
                     }
                     return ret;
@@ -535,6 +565,52 @@ const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
                     return {
                         oldELs: ([] as ComparableEL[])
                             .concat(...oldColumns.map(el => Array.from(el.allList()).map(([e ]) => e))),
+                        newELs: ([] as ComparableEL[])
+                            .concat(...newColumns.map(el => Array.from(el.allList()).map(([e ]) => e))),
+                    };
+                }
+            }
+
+            if (
+                newEL.parent.parent &&
+                newEL.parent.parent.tag === "Column" &&
+                newEL.parent.parent.children.every(el => el.tag === "Sentence")
+            ) {
+                // Join old Sentence elements and new Column elements
+
+                const oldSentence = oldEL.parent;
+
+                const [oldSentences] = [oldSentence].map(sentence => {
+                    const p = sentence.parent;
+                    if (!p) return [sentence];
+                    const ret: ComparableEL[] = [];
+                    for (let i = p.children.indexOf(sentence); i < p.children.length; i++) {
+                        if (p.children[i].tag === sentence.tag) ret.push(p.children[i]);
+                        else break;
+                    }
+                    return ret;
+                });
+
+                const newColumn = newEL.parent.parent;
+
+                const [newColumns] = [newColumn].map(column => {
+                    const p = column.parent;
+                    if (!p) return [column];
+                    const ret: ComparableEL[] = [];
+                    for (let i = p.children.indexOf(column); i < p.children.length; i++) {
+                        if (p.children[i].tag === column.tag) ret.push(p.children[i]);
+                        else break;
+                    }
+                    return ret;
+                });
+
+                const oldJoinText = oldSentences.map(el => el.text).join("");
+                const newJoinText = newColumns.map(el => el.children.map(ch => ch.text).join("")).join("　");
+
+                if (oldJoinText === newJoinText) {
+                    return {
+                        oldELs: ([] as ComparableEL[])
+                            .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e ]) => e))),
                         newELs: ([] as ComparableEL[])
                             .concat(...newColumns.map(el => Array.from(el.allList()).map(([e ]) => e))),
                     };
