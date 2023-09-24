@@ -41,7 +41,7 @@ const simpleRangesMaker = <TPointer>(
     };
 };
 
-export const ptnRangesConnectors = ["、", "及び", "及ビ", "及(?!至)", "並びに", "ならびに", "又は", "または", "若しくは", "もしくは"];
+export const ptnRangesConnectors = ["、", "及び", "及ビ", "及(?!至)", "および", "並びに", "ならびに", "又は", "または", "若しくは", "もしくは"];
 
 const reRangesConnector = new RegExp(`^(${ptnRangesConnectors.join("|")})`); // no $
 
