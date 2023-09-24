@@ -6,6 +6,7 @@ import { __Text } from "../../../node/el/controls";
 import { $_, $_EOL } from "./lexical";
 import { WithErrorRule } from "../util";
 import { Control } from "../../../node/cst/inline";
+import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren";
 
 /**
  * The parser rule for {@link TOCHeadLine} that represents a head line of a TOC (Table Of Contents). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/cst/rules/$tocHeadLine.spec.ts) for examples.
@@ -47,8 +48,20 @@ export const $tocHeadLine: WithErrorRule<TOCHeadLine> = factory
         )
         .and(r => r
             .sequence(s => s
-                // eslint-disable-next-line no-irregular-whitespace
-                .and(r => r.regExp(/^目[ 　\t]*次/), "label")
+                .and(r => r
+                    .choice(c => c
+                        // eslint-disable-next-line no-irregular-whitespace
+                        .or(r => r.regExp(/^目[ 　\t]*次/))
+                        .orSequence(s => s
+                            .andOmit(r => r
+                                .assert(({ control }) => control)
+                            )
+                            .and(r => r
+                                .asSlice(() => $sentenceChildrenWithoutToplevelInlineToken)
+                            )
+                        )
+                    )
+                , "label")
                 .action(({ label, range }) => {
                     return {
                         content: newStdEL(

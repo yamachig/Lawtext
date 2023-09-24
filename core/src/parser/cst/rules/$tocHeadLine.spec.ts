@@ -40,6 +40,34 @@ describe("Test $tocHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
+:toc:裁判所法目次
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 12,
+        } as const;
+        const expectedText = `\
+:toc:裁判所法目次
+`;
+        const expectedValue = {
+            type: LineType.TOC,
+            indentTexts: [] as string[],
+            title: "裁判所法目次",
+            lineEndText: `
+`,
+        } as const;
+        const result = $tocHeadLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
 :toc:目次
 `;
         const expectedResult = {
@@ -124,7 +152,22 @@ describe("Test $tocHeadLine", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
-        目　次　
+裁判所法目次
+`;
+        const expectedResult = {
+            ok: false,
+            offset: 0,
+            expected: "tocHeadLine",
+        } as const;
+        const result = $tocHeadLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+    });
+
+    it("Fail case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+裁判所法目次
 `;
         const expectedResult = {
             ok: false,

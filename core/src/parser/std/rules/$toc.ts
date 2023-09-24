@@ -137,10 +137,13 @@ export const tocToLines = (el: std.TOC, indentTexts: string[]): Line[] => {
 
     const tocLabel = el.children.find(std.isTOCLabel);
 
+    const title = sentenceChildrenToString(tocLabel?.children ?? []);
+
     lines.push(new TOCHeadLine({
         range: null,
         indentTexts,
-        controls: indentTexts.length == 0 ? [] : [
+        // eslint-disable-next-line no-irregular-whitespace
+        controls: ((indentTexts.length == 0) && /^目[ 　\t]*次/.test(title)) ? [] : [
             new Control(
                 ":toc:",
                 null,
@@ -148,7 +151,7 @@ export const tocToLines = (el: std.TOC, indentTexts: string[]): Line[] => {
                 null,
             )
         ],
-        title: sentenceChildrenToString(tocLabel?.children ?? []),
+        title: title,
         lineEndText: CST.EOL,
     }));
 
