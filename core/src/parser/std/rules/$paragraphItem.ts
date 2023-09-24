@@ -128,11 +128,12 @@ export const paragraphItemToLines = (
     }
 
     if (firstArticleParagraphArticleTitle) {
+        const title = sentenceChildrenToString(firstArticleParagraphArticleTitle);
         lines.push(new ArticleLine({
             range: null,
             indentTexts,
-            title: sentenceChildrenToString(firstArticleParagraphArticleTitle),
-            midSpace: CST.MARGIN,
+            title,
+            midSpace: (title.length === 0 || sentencesArray.length === 0) ? "" : CST.MARGIN,
             sentencesArray,
             lineEndText: CST.EOL,
         }));
