@@ -2,6 +2,7 @@ import * as xpath from "xpath";
 import { JsonEL } from "../node/el/jsonEL";
 import * as util from "../util";
 import { compare, EditTable } from "./edit_table";
+import { appdxItemTitleTags, supplProvisionAppdxItemTitleTags } from "../law/std";
 
 export enum TagType {
     // eslint-disable-next-line no-unused-vars
@@ -212,6 +213,52 @@ export class ComparableEL implements JsonEL {
     }
 }
 
+const truncateTags = [
+    "ArticleCaption",
+    "Paragraph",
+    "TableColumn",
+    "Note",
+    "Style",
+    "Format",
+    ...appdxItemTitleTags,
+    ...supplProvisionAppdxItemTitleTags,
+    "RelatedArticleNum",
+    "Remarks",
+];
+
+const truncateELs = (els: [ComparableEL, TagType][]) => {
+    const ret: [ComparableEL, TagType][] = [];
+    let closeIndex: number | null = null;
+    for (const [el, tagType] of els) {
+        if ((closeIndex !== null) && (el.index <= closeIndex)) continue;
+        closeIndex = null;
+        if (truncateTags.includes(el.tag)) {
+            closeIndex = el.closeIndex;
+        } else {
+            ret.push([el, tagType]);
+        }
+    }
+    return ret;
+};
+
+const elsToTexts = (els: [ComparableEL, TagType][]) => {
+    return els.map(([el, tt]) => {
+        if (tt === TagType.Open) {
+            return `<${el.tag}>`;
+
+        } else if (tt === TagType.Close) {
+            return `</${el.tag}>`;
+
+        } else if (tt === TagType.Empty) {
+            return `<${el.tag} />`;
+
+        } else if (tt === TagType.Text) {
+            return `${el.text.replace(/\r|\n/, "")}`;
+
+        } else { throw util.assertNever(tt); }
+    });
+};
+
 export enum LawDiffMode {
     // eslint-disable-next-line no-unused-vars
     DiffAll = "DiffAll",
@@ -224,65 +271,151 @@ export enum LawDiffMode {
 export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll): LawDiffResult<string> => {
 
     const oldRoot = new ComparableEL(oldJson);
-    const oldELs = [...oldRoot.allList()];
-    if (!oldELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
+    const origOldELs = [...oldRoot.allList()];
+    if (!origOldELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
 
     const newRoot = new ComparableEL(newJson);
-    const newELs = [...newRoot.allList()];
-    if (!newELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
+    const origNewELs = [...newRoot.allList()];
+    if (!origNewELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
 
-    const ret: LawDiffResult<string> = {
-        mostSeriousStatus: ProblemStatus.NoProblem,
-        items: [],
-        oldRoot,
-        newRoot,
-        oldELs,
-        newELs,
-    };
+    const trOldELs = truncateELs(origOldELs);
+    const trNewELs = truncateELs(origNewELs);
+    const [trOldTexts, trNewTexts] = [trOldELs, trNewELs].map(elsToTexts);
+    const trTextEdit = tuneEditTable(compare(trOldTexts, trNewTexts), trOldELs, trNewELs);
+    const trDiff = collapseChange(trTextEdit);
 
+    const origDRows: DiffTableRow<string>[] = [];
 
-    const [oldTexts, newTexts] = [oldELs, newELs].map(els => {
-        return els.map(([el, tt]) => {
-            if (tt === TagType.Open) {
-                return `<${el.tag}>`;
+    for (let trI = 0; trI < trDiff.length; trI++) {
+        const trDRow = trDiff[trI];
 
-            } else if (tt === TagType.Close) {
-                return `</${el.tag}>`;
-
-            } else if (tt === TagType.Empty) {
-                return `<${el.tag} />`;
-
-            } else if (tt === TagType.Text) {
-                return `${el.text.replace(/\r|\n/, "")}`;
-
-            } else { throw util.assertNever(tt); }
-        });
-    });
-
-    const textEdit = tuneEditTable(compare(oldTexts, newTexts), oldELs, newELs);
-    const diff = collapseChange(textEdit);
-
-    let noDiffTable: DiffTable<string> = [];
-
-    const emitNoDiff = () => {
-        if (noDiffTable.length) {
-            ret.items.push({
-                type: LawDiffType.NoDiff,
-                mostSeriousStatus: ProblemStatus.NoProblem,
-                diffTable: noDiffTable,
-            });
-            noDiffTable = [];
+        const oldELsRange: [number, number] = [-1, -1]; // half-open
+        if (trDRow.oldItem) {
+            const [el, type] = trOldELs[trDRow.oldItem.index];
+            oldELsRange[0] = (trI === 0) ? 0 : (type === TagType.Close ? el.closeIndex : el.index);
+            oldELsRange[1] = origOldELs.length;
+            for (let trII = trI + 1; trII < trDiff.length; trII++) {
+                const nextTrDRow = trDiff[trII];
+                if (!nextTrDRow.oldItem) continue;
+                const [el, type] = trOldELs[nextTrDRow.oldItem.index];
+                oldELsRange[1] = (type === TagType.Close ? el.closeIndex : el.index);
+                break;
+            }
         }
-    };
+
+        const newELsRange: [number, number] = [-1, -1]; // half-open
+        if (trDRow.newItem) {
+            const [el, type] = trNewELs[trDRow.newItem.index];
+            newELsRange[0] = (trI === 0) ? 0 : (type === TagType.Close ? el.closeIndex : el.index);
+            newELsRange[1] = origNewELs.length;
+            for (let trII = trI + 1; trII < trDiff.length; trII++) {
+                const nextTrDRow = trDiff[trII];
+                if (!nextTrDRow.newItem) continue;
+                const [el, type] = trNewELs[nextTrDRow.newItem.index];
+                newELsRange[1] = (type === TagType.Close ? el.closeIndex : el.index);
+                break;
+            }
+        }
+
+        if ((oldELsRange[1] - oldELsRange[0] <= 1) && (newELsRange[1] - newELsRange[0] <= 1)) {
+            const origDRow = {
+                ...trDRow,
+                oldItem: (
+                    trDRow.oldItem
+                        ? {
+                            ...trDRow.oldItem,
+                            index: trOldELs[trDRow.oldItem.index][0].index,
+                        }
+                        : null
+                ),
+                newItem: (
+                    trDRow.newItem
+                        ? {
+                            ...trDRow.newItem,
+                            index: trNewELs[trDRow.newItem.index][0].index,
+                        }
+                        : null
+                ),
+            } as typeof trDRow;
+            origDRows.push(origDRow);
+
+        } else {
+
+            const partOldELs = origOldELs.slice(...oldELsRange);
+            const partNewELs = origNewELs.slice(...newELsRange);
+
+            const [oldTexts, newTexts] = [partOldELs, partNewELs].map(elsToTexts);
+
+            let editTable: EditTable<string> | null = null;
+            try {
+                editTable = compare(oldTexts, newTexts);
+            } catch (e) { /**/ }
+
+            if (editTable) {
+                const partTextEdit = tuneEditTable(editTable, partOldELs, partNewELs);
+                const partDiff = collapseChange(partTextEdit);
+
+                for (const partDRow of partDiff) {
+                    const origDRow = {
+                        ...partDRow,
+                        oldItem: (
+                            partDRow.oldItem
+                                ? {
+                                    ...partDRow.oldItem,
+                                    index: partDRow.oldItem.index + oldELsRange[0],
+                                }
+                                : null
+                        ),
+                        newItem: (
+                            partDRow.newItem
+                                ? {
+                                    ...partDRow.newItem,
+                                    index: partDRow.newItem.index + newELsRange[0],
+                                }
+                                : null
+                        ),
+                    } as typeof partDRow;
+                    origDRows.push(origDRow);
+                }
+            } else {
+                const maxLength = Math.max(partOldELs.length, partNewELs.length);
+                for (let i = 0; i < maxLength; i++) {
+                    const origDRow: DiffTableRow<string> = {
+                        status: DiffStatus.Change,
+                        oldItem: (
+                            (i < partOldELs.length)
+                                ? {
+                                    index: i,
+                                    value: oldTexts[i],
+                                }
+                                : null
+                        ),
+                        newItem: (
+                            (i < partNewELs.length)
+                                ? {
+                                    index: i,
+                                    value: newTexts[i],
+                                }
+                                : null
+                        ),
+                    };
+                    origDRows.push(origDRow);
+                }
+            }
+        }
+
+    }
 
     const fragmentELsList: FragmentElements[] = [];
 
-    for (const dRow of diff) {
-        const oldIndex = dRow.oldItem && dRow.oldItem.index;
-        const newIndex = dRow.newItem && dRow.newItem.index;
+    const origRetItems: LawDiffResultItem<string>[] = [];
 
-        const [oldEL /**/] = oldIndex ? oldELs[oldIndex] : [null, null];
-        const [newEL /**/] = newIndex ? newELs[newIndex] : [null, null];
+    for (const origDRow of origDRows) {
+        const origOldIndex = origDRow.oldItem && origDRow.oldItem.index;
+        const origNewIndex = origDRow.newItem && origDRow.newItem.index;
+
+        const [oldEL /**/] = origOldIndex ? origOldELs[origOldIndex] : [null, null];
+        const [newEL /**/] = origNewIndex ? origNewELs[origNewIndex] : [null, null];
 
         const isFragment = fragmentELsList.some(els => {
             const oldIsFragment = !oldEL || 0 <= els.oldELs.indexOf(oldEL);
@@ -290,109 +423,144 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
             return oldIsFragment && newIsFragment;
         });
 
-        if (dRow.status !== DiffStatus.NoChange && isFragment) {
+        if (origDRow.status !== DiffStatus.NoChange && isFragment) {
             if (lawDiffMode === LawDiffMode.WarningAsNoDiff) {
-                noDiffTable.push(dRow);
+                origRetItems.push({
+                    type: LawDiffType.NoDiff,
+                    mostSeriousStatus: ProblemStatus.NoProblem,
+                    diffTable: [origDRow],
+                });
 
             } else {
-                emitNoDiff();
-                ret.items.push({
+                origRetItems.push({
                     type: LawDiffType.ElementMismatch,
                     mostSeriousStatus: ProblemStatus.Warning,
-                    diffTable: [dRow],
+                    diffTable: [origDRow],
                 });
             }
             // ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
 
-        } else if (dRow.status === DiffStatus.NoChange) {
-            const r = processNoChange(dRow, oldELs, newELs, lawDiffMode === LawDiffMode.NoProblemAsNoDiff || lawDiffMode === LawDiffMode.WarningAsNoDiff);
+        } else if (origDRow.status === DiffStatus.NoChange) {
+            const r = processNoChange(origDRow, origOldELs, origNewELs, lawDiffMode === LawDiffMode.NoProblemAsNoDiff || lawDiffMode === LawDiffMode.WarningAsNoDiff);
             if (r && (
                 (lawDiffMode === LawDiffMode.NoProblemAsNoDiff
-                    && ProblemStatus.NoProblem < r.mostSeriousStatus) ||
-                (lawDiffMode === LawDiffMode.WarningAsNoDiff
-                    && ProblemStatus.Warning < r.mostSeriousStatus) ||
-                (lawDiffMode === LawDiffMode.DiffAll)
+                && ProblemStatus.NoProblem < r.mostSeriousStatus) ||
+            (lawDiffMode === LawDiffMode.WarningAsNoDiff
+                && ProblemStatus.Warning < r.mostSeriousStatus) ||
+            (lawDiffMode === LawDiffMode.DiffAll)
             )) {
-                emitNoDiff();
-                ret.items.push(r);
-                // ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, r.mostSeriousStatus);
+                origRetItems.push(r);
+            // ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, r.mostSeriousStatus);
             } else {
-                noDiffTable.push(dRow);
+                origRetItems.push({
+                    type: LawDiffType.NoDiff,
+                    mostSeriousStatus: ProblemStatus.NoProblem,
+                    diffTable: [origDRow],
+                });
             }
 
-        } else if (dRow.status === DiffStatus.Change) {
-            const r = detectFragments(dRow, oldELs, newELs);
+        } else if (origDRow.status === DiffStatus.Change) {
+            const r = detectFragments(origDRow, origOldELs, origNewELs);
 
             if (r) {
                 fragmentELsList.push(r);
 
-                if (lawDiffMode === LawDiffMode.WarningAsNoDiff) {
-                    noDiffTable.push(dRow);
-                } else {
-                    emitNoDiff();
-                    ret.items.push({
-                        type: LawDiffType.ElementMismatch,
-                        mostSeriousStatus: ProblemStatus.Warning,
-                        diffTable: [dRow],
-                    });
-                }
-
-                if (dRow.newItem && (r.newELs[0].index < dRow.newItem.index)) {
-                    const maxDI = dRow.newItem.index - r.newELs[0].index;
-                    for (let i = ret.items.length - 1; i >= (ret.items.length - 1 - maxDI); i--) {
-                        if (ret.items[i].type === LawDiffType.NoDiff) continue;
+                const firstNewELIndex = origNewELs.findIndex(([el]) => el === r.newELs[0]);
+                if (origDRow.newItem && (firstNewELIndex < origDRow.newItem.index)) {
+                    const maxDI = origDRow.newItem.index - firstNewELIndex;
+                    for (let i = origRetItems.length - 1; i >= (origRetItems.length - 1 - maxDI); i--) {
+                        if (origRetItems[i].type === LawDiffType.NoDiff) continue;
                         if (
-                            (ret.items[i].type === LawDiffType.ElementMismatch) &&
-                            (ret.items[i].mostSeriousStatus > ProblemStatus.Warning) &&
-                            (ret.items[i].diffTable[ret.items[i].diffTable.length - 1].newItem?.index === r.newELs[0].index)
+                            (origRetItems[i].type === LawDiffType.ElementMismatch) &&
+                        (origRetItems[i].mostSeriousStatus > ProblemStatus.Warning) &&
+                        (origRetItems[i].diffTable[origRetItems[i].diffTable.length - 1].newItem?.index === firstNewELIndex)
                         ) {
                             if (lawDiffMode === LawDiffMode.WarningAsNoDiff) {
-                                ret.items[i].type = LawDiffType.NoDiff;
-                                ret.items[i].mostSeriousStatus = ProblemStatus.NoProblem;
+                                origRetItems[i].type = LawDiffType.NoDiff;
+                                origRetItems[i].mostSeriousStatus = ProblemStatus.NoProblem;
                             } else {
-                                ret.items[i].mostSeriousStatus = ProblemStatus.Warning;
+                                origRetItems[i].mostSeriousStatus = ProblemStatus.Warning;
                             }
                         }
                         break;
                     }
                 }
 
+                if (lawDiffMode === LawDiffMode.WarningAsNoDiff) {
+                    origRetItems.push({
+                        type: LawDiffType.NoDiff,
+                        mostSeriousStatus: ProblemStatus.NoProblem,
+                        diffTable: [origDRow],
+                    });
+                } else {
+                    origRetItems.push({
+                        type: LawDiffType.ElementMismatch,
+                        mostSeriousStatus: ProblemStatus.Warning,
+                        diffTable: [origDRow],
+                    });
+                }
+
                 // ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, ProblemStatus.Warning);
 
             } else {
-                emitNoDiff();
-                ret.items.push({
+                origRetItems.push({
                     type: LawDiffType.ElementMismatch,
                     mostSeriousStatus: ProblemStatus.Error,
-                    diffTable: [dRow],
+                    diffTable: [origDRow],
                 });
                 // ret.mostSeriousStatus = ProblemStatus.Error;
 
             }
 
-        } else if (dRow.status === DiffStatus.Add) {
-
-            emitNoDiff();
-
-            ret.items.push({
+        } else if (origDRow.status === DiffStatus.Add) {
+            origRetItems.push({
                 type: LawDiffType.ElementMismatch,
                 mostSeriousStatus: ProblemStatus.Error,
-                diffTable: [dRow],
+                diffTable: [origDRow],
             });
             // ret.mostSeriousStatus = ProblemStatus.Error;
 
-        } else if (dRow.status === DiffStatus.Remove) {
-
-            emitNoDiff();
-
-            ret.items.push({
+        } else if (origDRow.status === DiffStatus.Remove) {
+            origRetItems.push({
                 type: LawDiffType.ElementMismatch,
                 mostSeriousStatus: ProblemStatus.Error,
-                diffTable: [dRow],
+                diffTable: [origDRow],
             });
             // ret.mostSeriousStatus = ProblemStatus.Error;
 
-        } else { throw util.assertNever(dRow); }
+        } else { throw util.assertNever(origDRow); }
+    }
+
+    const ret: LawDiffResult<string> = {
+        mostSeriousStatus: ProblemStatus.NoProblem,
+        items: [],
+        oldRoot,
+        newRoot,
+        oldELs: origOldELs,
+        newELs: origNewELs,
+    };
+
+    const noDiffTable: LawDiffNoDiff<string>[] = [];
+
+    const emitNoDiff = () => {
+        if (noDiffTable.length !== 0) {
+            ret.items.push({
+                type: LawDiffType.NoDiff,
+                mostSeriousStatus: ProblemStatus.NoProblem,
+                diffTable: ([] as DiffTable<string>).concat(...noDiffTable.map(d => d.diffTable)),
+            });
+            noDiffTable.splice(0, noDiffTable.length);
+        }
+    };
+
+    for (const origRetItem of origRetItems) {
+        if (origRetItem.type === LawDiffType.NoDiff) {
+            noDiffTable.push(origRetItem);
+
+        } else {
+            emitNoDiff();
+            ret.items.push(origRetItem);
+        }
     }
 
     emitNoDiff();
@@ -650,7 +818,7 @@ const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
     return null;
 };
 
-const tuneEditTable = <T>(table: EditTable<T>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>) => {
+const tuneEditTable = <T, O extends {tag: string}>(table: EditTable<T>, oldELs: Array<[O, TagType]>, newELs: Array<[O, TagType]>) => {
     const ret: EditTable<T> = [];
     let nextEmitPos = 0;
     let startPos: number | null = null;

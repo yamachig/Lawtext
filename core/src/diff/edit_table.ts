@@ -5,7 +5,7 @@ export type RemoveRow<T> = [EditTableItem<T>, null];
 export type SameRow<T> = [EditTableItem<T>, EditTableItem<T>];
 export type EditTableItem<T> = [number, T];
 
-export const MAX_D = 1000;
+export const MAX_D = 200;
 
 export const compare = <T>(A: T[], B: T[], maxD = MAX_D): EditTable<T> => {
     const M = A.length;
