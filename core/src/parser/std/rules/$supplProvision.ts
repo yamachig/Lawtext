@@ -47,7 +47,13 @@ export const supplProvisionToLines = (supplProvision: std.SupplProvision, indent
     lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
     const paragraphs = supplProvision.children.filter(isParagraph);
-    const isSingleAnonymParagraph = paragraphs.length === 1 && paragraphs.every(p => p.children.filter(isParagraphItemTitle).every(el => el.text() === ""));
+    const isSingleAnonymParagraph = (
+        (paragraphs.length === 1) &&
+        paragraphs.every(p => (
+            p.children.filter(isParagraphItemTitle).every(el => el.text() === "") &&
+            (p.children.filter(c => std.isParagraphSentence(c) && c.text().length > 0).length > 0)
+        ))
+    );
 
     for (const child of supplProvision.children) {
         if (child.tag === "SupplProvisionLabel") continue;

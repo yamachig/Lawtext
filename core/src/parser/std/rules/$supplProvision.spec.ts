@@ -472,4 +472,119 @@ describe("Test $supplProvision and supplProvisionToLines", () => {
             },
         );
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+      附　則　（令和三年三月三一日外務省令第六号）
+:anonym-paragraph:
+  一　この省令は、令和三年四月一日から施行する。
+  二　この省令の施行の際現に存する在外職員が居住している住宅において使用する冷蔵庫及びレンジの賃借料については、当該冷蔵庫及びレンジの賃借に係る契約の期間の満了までの間は、なお従前の例による。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+      附　則　（令和三年三月三一日外務省令第六号）
+
+:anonym-paragraph:
+  一　この省令は、令和三年四月一日から施行する。
+  二　この省令の施行の際現に存する在外職員が居住している住宅において使用する冷蔵庫及びレンジの賃借料については、当該冷蔵庫及びレンジの賃借に係る契約の期間の満了までの間は、なお従前の例による。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "SupplProvision",
+            attr: {
+                AmendLawNum: "令和三年三月三一日外務省令第六号"
+            },
+            children: [
+                {
+                    tag: "SupplProvisionLabel",
+                    attr: {},
+                    children: ["附　則"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "Item",
+                            attr: {
+                                Num: "1"
+                            },
+                            children: [
+                                {
+                                    tag: "ItemTitle",
+                                    attr: {},
+                                    children: ["一"]
+                                },
+                                {
+                                    tag: "ItemSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["この省令は、令和三年四月一日から施行する。"]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "Item",
+                            attr: {
+                                Num: "2"
+                            },
+                            children: [
+                                {
+                                    tag: "ItemTitle",
+                                    attr: {},
+                                    children: ["二"]
+                                },
+                                {
+                                    tag: "ItemSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["この省令の施行の際現に存する在外職員が居住している住宅において使用する冷蔵庫及びレンジの賃借料については、当該冷蔵庫及びレンジの賃借に係る契約の期間の満了までの間は、なお従前の例による。"]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $supplProvision.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = supplProvisionToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });
