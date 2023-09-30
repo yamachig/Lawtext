@@ -1,5 +1,5 @@
 import { AppdxItemHeadLine, ArticleGroupHeadLine, ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine, SupplProvisionAppdxItemHeadLine, SupplProvisionHeadLine, TableColumnLine, TOCHeadLine } from "../../node/cst/line";
-import { isSingleParentheses } from "./util";
+import { captionControl, isSingleParentheses } from "./util";
 
 /**
  * The extension of CST with the structure of indent blocks.
@@ -168,7 +168,12 @@ export const toVirtualLines = (lines: Line[]) => {
             type = line.type;
 
             // If the current line is `OtherLine` and the following line is `ArticleLine` or `ParagraphItemLine`, treat the current line as Caption.
-            if (line.type === LineType.OTH && isSingleParentheses(line) && line.controls.length === 0) {
+            if (
+                (line.type === LineType.OTH) && (
+                    line.controls.some(c => c.control === captionControl) ||
+                    (isSingleParentheses(line) && line.controls.length === 0)
+                )
+            ) {
                 for (let currentOffset = i + 1; currentOffset < lines.length; currentOffset++) {
                     const nextLine = lines[currentOffset];
                     if (nextLine.type === LineType.BNK) continue;

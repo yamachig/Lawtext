@@ -226,6 +226,8 @@ export const makeDoubleIndentBlockWithCaptureRule = <TValue>(
             })
         );
 
+export const captionControl = ":caption:";
+
 export const isSingleParentheses = (line: VirtualLine | Line | SentencesArray): __Parentheses | null => {
     let columns: SentencesArray = [];
     if (Array.isArray(line)){

@@ -247,6 +247,71 @@ describe("Test $article and articleToLines", () => {
         );
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+  :caption:定義
+
+第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+  :caption:定義
+第二条　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Article",
+            attr: {
+                Num: "2",
+            },
+            children: [
+                {
+                    tag: "ArticleCaption",
+                    attr: {},
+                    children: ["定義"]
+                },
+                {
+                    tag: "ArticleTitle",
+                    attr: {},
+                    children: ["第二条"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        Num: "1",
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。"]
+                                }
+                            ]
+                        },
+                    ]
+                },
+            ],
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => $article.match(0, vlines, env),
+            el => articleToLines(el, []),
+        );
+    });
+
     it("Success with errors case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\

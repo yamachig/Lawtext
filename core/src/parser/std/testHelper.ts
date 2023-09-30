@@ -97,22 +97,24 @@ export const testLawtextToStd = <
     assert.isTrue(result.ok);
     if (result.ok) {
         // console.log(JSON.stringify(result.value.value.json(), undefined, 2));
-        const value = Array.isArray(result.value.value) ? result.value.value.map(v => v.json()) : result.value.value.json();
+        const value = Array.isArray(result.value.value) ? result.value.value : result.value.value;
+        const valueWithoutControl = Array.isArray(value) ? value.map(v => v.json()) : value.json();
         const errors = [...lines.errors, ...result.value.errors];
-        assert.deepStrictEqual({ value, errors }, { value: expectedValue, errors: expectedErrors });
+        assert.deepStrictEqual({ value: valueWithoutControl, errors }, { value: expectedValue, errors: expectedErrors });
 
         const topELs: EL[] = (result.value.value instanceof EL) ? [result.value.value] : result.value.value;
         topELs.map(el => assertELVaridity(el, lawtext, errors.length === 0));
+
+        let renderedLines: Line[];
+        if (Array.isArray(valueWithoutControl)) {
+            renderedLines = toLines((valueWithoutControl as unknown as JsonEL[]).map(v => loadEL(v)) as TEL);
+        } else {
+            renderedLines = toLines(loadEL(valueWithoutControl as unknown as JsonEL) as TEL);
+        }
+        const renderedText = renderedLines.map(l => l.text()).join("").replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1").replace(/(?:\r?\n)?$/, "\r\n").replace(/(?:\r?\n)+$/, "\r\n");
+        assert.strictEqual(renderedText, expectedRendered);
     }
 
-    let renderedLines: Line[];
-    if (Array.isArray(expectedValue)) {
-        renderedLines = toLines((expectedValue as unknown as JsonEL[]).map(v => loadEL(v)) as TEL);
-    } else {
-        renderedLines = toLines(loadEL(expectedValue as unknown as JsonEL) as TEL);
-    }
-    const renderedText = renderedLines.map(l => l.text()).join("").replace(/\r\n/g, "\n").replace(/\n/g, "\r\n").replace(/(\r?\n\r?\n)(?:\r?\n)+/g, "$1").replace(/(?:\r?\n)?$/, "\r\n").replace(/(?:\r?\n)+$/, "\r\n");
-    assert.strictEqual(renderedText, expectedRendered);
 };
 
 export const assertELVaridity = (el: EL | string, lawtext?: string, testGap?: boolean): void => {

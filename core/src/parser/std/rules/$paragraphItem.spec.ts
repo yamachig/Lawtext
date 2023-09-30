@@ -351,6 +351,58 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
+  :caption:定義
+
+２　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+  :caption:定義
+２　この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Paragraph",
+            attr: {
+                Num: "2",
+            },
+            children: [
+                {
+                    tag: "ParagraphCaption",
+                    attr: {},
+                    children: ["定義"]
+                },
+                {
+                    tag: "ParagraphNum",
+                    attr: {},
+                    children: ["２"]
+                },
+                {
+                    tag: "ParagraphSentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: ["この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。"]
+                        }
+                    ]
+                },
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => $paragraphItem("Paragraph").match(0, vlines, env),
+            el => paragraphItemToLines(el, [], { defaultTag: "Paragraph" }),
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
 第一条の三　地方公共団体は、普通地方公共団体及び特別地方公共団体とする。
 ②　普通地方公共団体は、都道府県及び市町村とする。
 ③　特別地方公共団体は、特別区、地方公共団体の組合及び財産区とする。
