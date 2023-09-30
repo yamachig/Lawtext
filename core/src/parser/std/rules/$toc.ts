@@ -492,14 +492,16 @@ export const $toc: WithErrorRule<std.TOC> = factory
             const children: (std.TOC["children"][number] | std.TOCArticleGroup)[] = [];
             const errors: ErrorMessage[] = [];
 
-            const tocLabel = newStdEL(
-                "TOCLabel",
-                {},
-                [headLine.line.title],
-                headLine.line.titleRange,
-            );
+            if (headLine.line.title.length > 0) {
+                const tocLabel = newStdEL(
+                    "TOCLabel",
+                    {},
+                    [headLine.line.title],
+                    headLine.line.titleRange,
+                );
 
-            children.push(tocLabel);
+                children.push(tocLabel);
+            }
 
             if (childrenBlock) {
                 children.push(...childrenBlock.value.flat().map(v => v.value));

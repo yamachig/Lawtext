@@ -1,8 +1,6 @@
 import factory from "../factory";
-import { newStdEL } from "../../../law/std";
 import $indents from "./$indents";
 import { TOCHeadLine } from "../../../node/cst/line";
-import { __Text } from "../../../node/el/controls";
 import { $_, $_EOL } from "./lexical";
 import { WithErrorRule } from "../util";
 import { Control } from "../../../node/cst/inline";
@@ -57,18 +55,18 @@ export const $tocHeadLine: WithErrorRule<TOCHeadLine> = factory
                                 .assert(({ control }) => control)
                             )
                             .and(r => r
-                                .asSlice(() => $sentenceChildrenWithoutToplevelInlineToken)
+                                .asSlice(r => r
+                                    .choice(c => c
+                                        .or(() => $sentenceChildrenWithoutToplevelInlineToken)
+                                        .or(r => r.nextIs(() => $_EOL))
+                                    )
+                                )
                             )
                         )
                     )
                 , "label")
-                .action(({ label, range }) => {
+                .action(({ label }) => {
                     return {
-                        content: newStdEL(
-                            "TOC",
-                            {},
-                            [newStdEL("TOCLabel", {}, [new __Text(label, range())], range())],
-                        ),
                         contentText: label,
                     };
                 })

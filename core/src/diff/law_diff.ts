@@ -215,6 +215,7 @@ export class ComparableEL implements JsonEL {
 
 const truncateTags: std.StdELTag[] = [
     "ArticleCaption",
+    "TOCLabel",
     ...std.tocItemTags,
     ...std.paragraphItemTags,
     ...std.listOrSublistTags,

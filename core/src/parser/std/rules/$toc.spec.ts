@@ -434,6 +434,58 @@ describe("Test $toc and tocToLines", () => {
         );
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+:toc:
+  第一章　総則
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+:toc:
+  第一章　総則
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "TOC",
+            attr: {},
+            children: [
+                {
+                    tag: "TOCChapter",
+                    attr: {
+                        Num: "1",
+                    },
+                    children: [
+                        {
+                            tag: "ChapterTitle",
+                            attr: {},
+                            children: ["第一章　総則"],
+                        },
+                    ],
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $toc.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = tocToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
     it("Success with errors case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
