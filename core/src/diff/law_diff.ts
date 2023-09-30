@@ -2,7 +2,7 @@ import * as xpath from "xpath";
 import { JsonEL } from "../node/el/jsonEL";
 import * as util from "../util";
 import { compare, EditTable } from "./edit_table";
-import { appdxItemTitleTags, supplProvisionAppdxItemTitleTags } from "../law/std";
+import * as std from "../law/std";
 
 export enum TagType {
     // eslint-disable-next-line no-unused-vars
@@ -213,15 +213,16 @@ export class ComparableEL implements JsonEL {
     }
 }
 
-const truncateTags = [
+const truncateTags: std.StdELTag[] = [
     "ArticleCaption",
-    "Paragraph",
+    ...std.tocItemTags,
+    ...std.paragraphItemTags,
+    ...std.listOrSublistTags,
     "TableColumn",
-    "Note",
-    "Style",
-    "Format",
-    ...appdxItemTitleTags,
-    ...supplProvisionAppdxItemTitleTags,
+    ...std.noteLikeTags,
+    "FigStruct",
+    ...std.appdxItemTitleTags,
+    ...std.supplProvisionAppdxItemTitleTags,
     "RelatedArticleNum",
     "Remarks",
 ];
@@ -232,9 +233,9 @@ const truncateELs = (els: [ComparableEL, TagType][]) => {
     for (const [el, tagType] of els) {
         if ((closeIndex !== null) && (el.index <= closeIndex)) continue;
         closeIndex = null;
-        if (truncateTags.includes(el.tag)) {
+        if ((truncateTags as string[]).includes(el.tag)) {
             closeIndex = el.closeIndex;
-        } else {
+        } else if (tagType !== TagType.Close) {
             ret.push([el, tagType]);
         }
     }
