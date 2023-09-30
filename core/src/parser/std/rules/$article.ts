@@ -5,7 +5,7 @@ import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { assertNever } from "../../../util";
 import { Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
-import { WithErrorRule, captionControl } from "../util";
+import { WithErrorRule, captionControl, isSingleParentheses } from "../util";
 import factory from "../factory";
 import { VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine } from "../util";
@@ -13,7 +13,8 @@ import $paragraphItem, { $autoParagraphItemChildrenOuter, paragraphItemFromAuto,
 import $supplNote, { supplNoteToLines } from "./$supplNote";
 import { rangeOfELs } from "../../../node/el";
 import { parseNamedNum } from "../../../law/num";
-import { sentencesArrayToString } from "../../cst/rules/$sentencesArray";
+import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
+import addSentenceChildrenControls from "../../addSentenceChildrenControls";
 
 /**
  * The renderer for {@link std.Article}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$article.spec.ts) for examples.
@@ -45,6 +46,8 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
 
     if (ArticleCaption.length > 0) {
         const newIndentTexts = [...indentTexts, CST.INDENT];
+        const captionSentence = std.newStdEL("Sentence", {}, [sentenceChildrenToString(ArticleCaption)]);
+        addSentenceChildrenControls(captionSentence);
         const line = new OtherLine({
             range: null,
             indentTexts: newIndentTexts,
@@ -54,12 +57,12 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
                     "",
                     null,
                     [],
-                    [newStdEL("Sentence", {}, ArticleCaption)]
+                    [captionSentence]
                 )
             ],
             lineEndText: CST.EOL,
         });
-        if (!/^（.*）$/.test(sentencesArrayToString(line.sentencesArray))) {
+        if (!isSingleParentheses(line)) {
             line.controls.push(new Control(
                 captionControl,
                 null,
