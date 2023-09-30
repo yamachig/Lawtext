@@ -946,6 +946,63 @@ describe("Test $remarks and remarksToLines", () => {
         );
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+:note-struct:
+  :remarks:（備考）
+    :keep-leading-spaces:　　この表中「法」とは、へき地教育振興法（昭和二十九年法律第百四十三号）をいう。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+:note-struct:
+  :remarks:（備考）
+    :keep-leading-spaces:　　この表中「法」とは、へき地教育振興法（昭和二十九年法律第百四十三号）をいう。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "NoteStruct",
+            attr: {},
+            children: [
+                {
+                    tag: "Remarks",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "RemarksLabel",
+                            attr: {},
+                            children: ["（備考）"]
+                        },
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: ["　　この表中「法」とは、へき地教育振興法（昭和二十九年法律第百四十三号）をいう。"]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $noteStruct.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = noteLikeStructToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
     it("Success with errors case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\

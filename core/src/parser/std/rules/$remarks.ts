@@ -11,6 +11,7 @@ import { assertNever } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
 import { rangeOfELs } from "../../../node/el";
+import { keepLeadingSpacesControl } from "../../cst/rules/$otherLine";
 
 export const remarksControl = ":remarks:";
 export const remarksLabelPtn = /^(?:備\s*考|注)\s*$/;
@@ -54,7 +55,7 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
         if (child.tag === "RemarksLabel") continue;
 
         if (child.tag === "Sentence") {
-            lines.push(new OtherLine({
+            const line = new OtherLine({
                 range: null,
                 indentTexts: childrenIndentTexts,
                 controls: [],
@@ -67,7 +68,17 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
                     ),
                 ],
                 lineEndText: CST.EOL,
-            }));
+            });
+            // eslint-disable-next-line no-irregular-whitespace
+            if (/^[ 　\t]+/.test(child.text())) {
+                line.controls.push(new Control(
+                    keepLeadingSpacesControl,
+                    null,
+                    "",
+                    null,
+                ));
+            }
+            lines.push(line);
         } else if (child.tag === "Item") {
             const itemLines = paragraphItemToLines(child, childrenIndentTexts, { defaultTag: "Item" });
             lines.push(...itemLines);

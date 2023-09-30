@@ -288,6 +288,69 @@ describe("Test $otherLine", () => {
         }
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+    :keep-leading-spaces:  様式第一
+
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 32,
+        } as const;
+        const expectedText = `\
+    :keep-leading-spaces:  様式第一
+`;
+        const expectedValue = {
+            type: LineType.OTH,
+            indentTexts: ["  ", "  "] as string[],
+            controls: [
+                {
+                    control: ":keep-leading-spaces:",
+                    controlRange: [4, 25],
+                    trailingSpace: "",
+                    trailingSpaceRange: [25, 25],
+                }
+            ] as Controls,
+            lineEndText: `
+`,
+        } as const;
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                leadingSpaceRange: [25, 25] as [number, number],
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["  様式第一"],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const result = $otherLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.value.sentencesArray.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
+        }
+    });
+
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;
