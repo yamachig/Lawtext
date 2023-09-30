@@ -366,6 +366,61 @@ describe("Test $mainProvision and mainProvisionToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
+:anonym-paragraph:
+
+附　則　（平成一一年七月一六日法律第一〇二号）　抄
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+:anonym-paragraph:
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "MainProvision",
+            attr: {},
+            children: [
+                {
+                    tag: "Paragraph",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: []
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $mainProvision.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = mainProvisionToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
   （施行期日）
 １　この法律は、サービスの貿易に関する一般協定の第四議定書が日本国について効力を生ずる日から施行する。
 
