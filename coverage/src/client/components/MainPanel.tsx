@@ -510,8 +510,10 @@ export const convertStatus = (s: OriginalLawStatus | RenderedHTMLStatus | Render
         return LawCoverageInfoCardStatus.SUCCESS;
     } else if (s === "Warning") {
         return LawCoverageInfoCardStatus.WARNING;
-    } else if (s === "Fail" || s === "Error") {
+    } else if (s === "Error") {
         return LawCoverageInfoCardStatus.ERROR;
+    } else if (s === "Fail") {
+        return LawCoverageInfoCardStatus.FAIL;
     } else { throw assertNever(s); }
 };
 

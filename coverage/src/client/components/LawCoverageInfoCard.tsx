@@ -9,6 +9,7 @@ export enum LawCoverageInfoCardStatus {
     SUCCESS,
     WARNING,
     ERROR,
+    FAIL,
 }
 
 const BaseTag = styled.div`
@@ -64,6 +65,11 @@ const ErrorTag = styled(BaseTag)`
         background-color: #f5c6cb;
     `;
 
+const FailTag = styled(BaseTag)`
+        color: #383d41;
+        background-color: #e2e3e5;
+    `;
+
 export const LawCoverageInfoCard: React.FC<{
     status: LawCoverageInfoCardStatus;
     date: Date;
@@ -76,7 +82,8 @@ export const LawCoverageInfoCard: React.FC<{
                 props.status === LawCoverageInfoCardStatus.SUCCESS ? SuccessTag :
                     props.status === LawCoverageInfoCardStatus.WARNING ? WarningTag :
                         props.status === LawCoverageInfoCardStatus.ERROR ? ErrorTag :
-                            assertNever(props.status);
+                            props.status === LawCoverageInfoCardStatus.FAIL ? FailTag :
+                                assertNever(props.status);
     const requiredms = (
         (props.requiredms instanceof Map)
             ? Array.from(props.requiredms.entries())
@@ -109,6 +116,12 @@ export const LawCoverageInfoCard: React.FC<{
                             <span>
                                 <FontAwesomeIcon icon="times" />
                                             &nbsp;Err
+                            </span>
+                        )}
+                        {props.status === LawCoverageInfoCardStatus.FAIL && (
+                            <span>
+                                <FontAwesomeIcon icon="times" />
+                                            &nbsp;Fail
                             </span>
                         )}
                     </div>
