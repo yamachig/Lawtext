@@ -136,6 +136,11 @@ const warningAttrKey = new Set([
     "Id",
 ]);
 
+const warnEmptyAddRemoveTags: std.StdELTag[] = [
+    ...std.appdxItemTitleTags,
+    ...std.supplProvisionAppdxItemTitleTags,
+];
+
 export class ComparableEL implements JsonEL {
     public tag = "";
     public attr: { [key: string]: string | undefined } = {};
@@ -515,20 +520,38 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
             }
 
         } else if (origDRow.status === DiffStatus.Add) {
-            origRetItems.push({
-                type: LawDiffType.ElementMismatch,
-                mostSeriousStatus: ProblemStatus.Error,
-                diffTable: [origDRow],
-            });
-            // ret.mostSeriousStatus = ProblemStatus.Error;
+            if (newEL && (warnEmptyAddRemoveTags as string[]).includes(newEL.tag)) {
+                origRetItems.push({
+                    type: LawDiffType.ElementMismatch,
+                    mostSeriousStatus: ProblemStatus.Warning,
+                    diffTable: [origDRow],
+                });
+
+            } else {
+                origRetItems.push({
+                    type: LawDiffType.ElementMismatch,
+                    mostSeriousStatus: ProblemStatus.Error,
+                    diffTable: [origDRow],
+                });
+                // ret.mostSeriousStatus = ProblemStatus.Error;
+            }
 
         } else if (origDRow.status === DiffStatus.Remove) {
-            origRetItems.push({
-                type: LawDiffType.ElementMismatch,
-                mostSeriousStatus: ProblemStatus.Error,
-                diffTable: [origDRow],
-            });
-            // ret.mostSeriousStatus = ProblemStatus.Error;
+            if (oldEL && (warnEmptyAddRemoveTags as string[]).includes(oldEL.tag)) {
+                origRetItems.push({
+                    type: LawDiffType.ElementMismatch,
+                    mostSeriousStatus: ProblemStatus.Warning,
+                    diffTable: [origDRow],
+                });
+
+            } else {
+                origRetItems.push({
+                    type: LawDiffType.ElementMismatch,
+                    mostSeriousStatus: ProblemStatus.Error,
+                    diffTable: [origDRow],
+                });
+                // ret.mostSeriousStatus = ProblemStatus.Error;
+            }
 
         } else { throw util.assertNever(origDRow); }
     }
