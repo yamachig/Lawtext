@@ -359,6 +359,7 @@ const RemoveColorSpan = styled.span`
     `;
 
 const BaseRow = styled.tr`
+        display: flex;
     `;
 
 const EmptyRow = styled(BaseRow)`
@@ -393,6 +394,7 @@ const LawDiffTable = styled.table`
         border-radius: .25rem;
         border-collapse: separate;
         overflow: hidden;
+        table-layout: fixed;
         td {
             padding: 0 0.25em;
         }
@@ -402,12 +404,15 @@ const LawDiffTable = styled.table`
     `;
 
 const PosCol = styled.td`
+        flex: 0 0 5rem;
+        max-width: 5rem;
         background-color: rgba(0,0,0,.05);
         border-left: 1px solid #d6d8db;
         border-right: 1px solid #d6d8db;
     `;
 
 const ValCol = styled.td`
+        flex: 1 1 50%;
     `;
 
 const LawCoverageInfoDetailTag = styled.div`
