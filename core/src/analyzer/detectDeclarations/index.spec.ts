@@ -4072,15 +4072,15 @@ describe("Test detectDeclarations", () => {
 
         const expectedDeclarations: JsonEL[] = [
             {
-                "tag": "____Declaration",
-                "attr": {
-                    "declarationID": "decl-sentence_0-text_27_32",
-                    "type": "Keyword",
-                    "name": "命令等の案",
-                    "scope": "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":32},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
-                    "nameSentenceTextRange": "{\"start\":{\"sentenceIndex\":0,\"textOffset\":27},\"end\":{\"sentenceIndex\":0,\"textOffset\":32}}",
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_27_32",
+                    type: "Keyword",
+                    name: "命令等の案",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":32},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":27},\"end\":{\"sentenceIndex\":0,\"textOffset\":32}}",
                 },
-                "children": ["命令等の案"],
+                children: ["命令等の案"],
             },
         ];
 
@@ -4270,6 +4270,190 @@ describe("Test detectDeclarations", () => {
                                     tag: "__Text",
                                     attr: {},
                                     children: ["に規定する事件に該当する事件の捜査を行う場合は、国民の中から選任された裁判員に分かりやすい立証が可能となるよう、配慮しなければならない。"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+
+        // console.log(JSON.stringify(result.value.declarations.values().map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            result.value.declarations.values().map(r => r.json(true)),
+            expected,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
+        assert.deepStrictEqual(
+            inputElToBeModified.json(true),
+            expectedModifiedInput,
+        );
+    });
+
+    it("Success case: lawRef", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const inputElToBeModified = loadEL({
+            tag: "Subitem1",
+            attr: {},
+            children: [
+                {
+                    tag: "Subitem1Title",
+                    attr: {},
+                    children: ["イ"],
+                },
+                {
+                    tag: "Subitem1Sentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: ["この法律において官民データ活用推進基本法（平成二十八年法律第百三号）に規定する人工知能関連技術。"],
+                        },
+                    ],
+                },
+            ],
+        }) as std.Subitem1;
+        addSentenceChildrenControls(inputElToBeModified);
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_8_20",
+                    type: "LawName",
+                    name: "官民データ活用推進基本法",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}",
+                    value: "平成二十八年法律第百三号",
+                },
+                children: ["官民データ活用推進基本法"],
+            },
+        ];
+        const expectedErrorMessages: string[] = [];
+        const expectedModifiedInput = {
+            tag: "Subitem1",
+            attr: {},
+            children: [
+                {
+                    tag: "Subitem1Title",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "__Text",
+                            attr: {},
+                            children: ["イ"],
+                        },
+                    ],
+                },
+                {
+                    tag: "Subitem1Sentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PointerRanges",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "____PointerRange",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "____Pointer",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____PF",
+                                                            attr: {
+                                                                relPos: "HERE",
+                                                                targetType: "Law",
+                                                                name: "この法律",
+                                                            },
+                                                            children: ["この法律"],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["において"],
+                                },
+                                {
+                                    tag: "____LawRef",
+                                    attr: {
+                                        includingDeclarationID: "decl-sentence_0-text_8_20",
+                                    },
+                                    children: [
+                                        {
+                                            tag: "____Declaration",
+                                            attr: {
+                                                declarationID: "decl-sentence_0-text_8_20",
+                                                type: "LawName",
+                                                name: "官民データ活用推進基本法",
+                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}",
+                                                value: "平成二十八年法律第百三号",
+                                            },
+                                            children: ["官民データ活用推進基本法"],
+                                        },
+                                        {
+                                            tag: "__Parentheses",
+                                            attr: {
+                                                type: "round",
+                                                depth: "1",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "__PStart",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["（"],
+                                                },
+                                                {
+                                                    tag: "__PContent",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "____LawNum",
+                                                            attr: {},
+                                                            children: ["平成二十八年法律第百三号"],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "__PEnd",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["）"],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["に規定する人工知能関連技術。"],
                                 },
                             ],
                         },

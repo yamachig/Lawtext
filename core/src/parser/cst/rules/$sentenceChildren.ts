@@ -115,7 +115,7 @@ export const $inlineToken = factory
     )
     ;
 
-const rePeriodSentenceTextChars = new RegExp(`^(?:(?![${pointerRangesCandidateChars}])[^\r\n<>()（）[\\]［］{}｛｝「」 　\t。])+`);
+const rePeriodSentenceTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}])[^\r\n<>()（）[\\]［］{}｛｝「」 　\t。])+`);
 
 export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
     .withName("PERIOD_SENTENCE_FRAGMENT")
@@ -125,6 +125,7 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                 .and(r => r
                     .oneOrMore(r => r
                         .choice(c => c
+                            .or(r => r.regExp(reSuppressPointerRanges))
                             .or(r => r.regExp(rePeriodSentenceTextChars))
                             .or(() => $inlineToken)
                             .or(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/))
@@ -211,7 +212,7 @@ export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES_WITHOUT_TOPLEVE
     )
 ;
 
-const reOutsideParenthesesTextChars = new RegExp(`^(?:(?![${pointerRangesCandidateChars}]|[ 　\t]*\r?\n)[^\r\n<>()（）[\\]［］{}｛｝「」])+`);
+const reOutsideParenthesesTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}]|[ 　\t]*\r?\n)[^\r\n<>()（）[\\]［］{}｛｝「」])+`);
 
 export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<SentenceChildEL[]> = factory
     .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES")
@@ -333,7 +334,7 @@ export const ANY_PARENTHESES_INLINE: WithErrorRule<SentenceChildEL> = factory
     )
 ;
 
-const reParenthesesInlineTextChars = new RegExp(`^(?:(?![${pointerRangesCandidateChars}])[^\r\n<>()（）[\\]［］{}｛｝「」])+`);
+const reParenthesesInlineTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}])[^\r\n<>()（）[\\]［］{}｛｝「」])+`);
 
 export const makeParenthesesInline = (
     parenthesisType: ParenthesesType,
