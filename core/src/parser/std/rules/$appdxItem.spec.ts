@@ -2129,6 +2129,83 @@ describe("Test $appdxNote and appdxItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
+:appdx-note:
+
+  :note-struct:
+    :ignore-title:２　Ｂは、超硬合金（日本産業規格Ｈ５５０１）とし、直径１／６ａ以上、長さ２／３ａ以上の円柱状のもの
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+:appdx-note:
+
+  :note-struct:
+    :ignore-title:２　Ｂは、超硬合金（日本産業規格Ｈ５５０１）とし、直径１／６ａ以上、長さ２／３ａ以上の円柱状のもの
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "AppdxNote",
+            attr: {},
+            children: [
+                {
+                    tag: "NoteStruct",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Note",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Column",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["２"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "Column",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["Ｂは、超硬合金（日本産業規格Ｈ５５０１）とし、直径１／６ａ以上、長さ２／３ａ以上の円柱状のもの"]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $appdxNote.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = appdxItemToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
 :appdx-note:付録別記（第一条第一項、第九条関係）　
 
   :note-struct:

@@ -11,6 +11,7 @@ import * as std from "../../../law/std";
 import { EL } from "../../../node/el";
 
 export const keepLeadingSpacesControl = ":keep-leading-spaces:";
+export const otherLineControl = ":ignore-title:";
 
 /**
  * The parser rule for {@link OtherLine} that represents a line of other types. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/cst/rules/$otherLine.spec.ts) for examples.

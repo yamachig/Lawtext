@@ -10,7 +10,10 @@ import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";
 import $remarks, { remarksToLines } from "./$remarks";
 import $any, { anyToLines } from "./$any";
-import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
+import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
+import { columnsOrSentencesToSentencesArray } from "./columnsOrSentences";
+import parseCST from "../../cst/parse";
+import { otherLineControl } from "../../cst/rules/$otherLine";
 
 /**
  * The renderer for note-like item ({@link std.NoteLike | NoteLike}). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
@@ -24,7 +27,32 @@ export const noteLikeStructControl = {
 export const noteLikeToLines = (noteLike: std.NoteLike, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    lines.push(...noteLike.children.map(c => anyToLines(c, indentTexts)).flat());
+    if (noteLike.children.every(std.isColumn) || noteLike.children.every(std.isSentence)) {
+        const line = new OtherLine({
+            range: null,
+            indentTexts,
+            controls: [],
+            sentencesArray: columnsOrSentencesToSentencesArray(noteLike.children),
+            lineEndText: CST.EOL,
+        });
+        const lineText = sentencesArrayToString(line.sentencesArray);
+        try {
+            const parsedLines = parseCST(lineText);
+            if (parsedLines.value[0].type !== LineType.OTH) {
+                line.controls.push(new Control(
+                    otherLineControl,
+                    null,
+                    "",
+                    null,
+                ));
+            }
+        } catch (e) {
+            //
+        }
+        lines.push(line);
+    } else {
+        lines.push(...noteLike.children.map(c => anyToLines(c, indentTexts)).flat());
+    }
 
     return lines;
 };

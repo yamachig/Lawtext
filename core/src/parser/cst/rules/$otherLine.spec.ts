@@ -4,6 +4,7 @@ import { initialEnv } from "../env";
 import $otherLine from "./$otherLine";
 import { SentencesArray, Controls } from "../../../node/cst/inline";
 import { matchResultToJson } from "generic-parser/lib/core";
+import $lines from "./$lines";
 
 const env = initialEnv({});
 
@@ -343,6 +344,69 @@ describe("Test $otherLine", () => {
             assert.strictEqual(result.value.value.text(), expectedText);
             assert.deepStrictEqual(
                 result.value.value.sentencesArray.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+    :ignore-title: 様式第一
+
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 25,
+        } as const;
+        const expectedText = `\
+    :ignore-title: 様式第一
+`;
+        const expectedValue = {
+            type: LineType.OTH,
+            indentTexts: ["  ", "  "] as string[],
+            controls: [
+                {
+                    control: ":ignore-title:",
+                    controlRange: [4, 18],
+                    trailingSpace: " ",
+                    trailingSpaceRange: [18, 19],
+                }
+            ] as Controls,
+            lineEndText: `
+`,
+        } as const;
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                leadingSpaceRange: [19, 19] as [number, number],
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["様式第一"],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const result = $lines.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value[0], expectedValue);
+            assert.strictEqual(result.value.value[0].text(), expectedText);
+            assert.deepStrictEqual(
+                (result.value.value[0] as {sentencesArray: SentencesArray}).sentencesArray.map(c => ({
                     ...c,
                     sentences: c.sentences.map(s => s.json(true))
                 })),
