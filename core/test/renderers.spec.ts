@@ -16,6 +16,7 @@ describe("Test Renderes", () => {
     const lawNums = [
         "平成五年法律第八十八号",
         "平成十一年法律第百二十七号",
+        ...(process.env.TEST_RENDERERS_LAWNUMS ?? "").split(/[\s,;]+/),
     ];
     // lawNums.splice(0, lawNums.length);
 
