@@ -21,11 +21,13 @@ describe("Test $lawRef", () => {
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
-        const expectedLawNameCandidate = {
-            tag: "__Text",
-            attr: {},
-            children: ["独立行政法人通則法の一部を改正する法律"]
-        } ;
+        const expectedLawNameCandidates = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["独立行政法人通則法の一部を改正する法律"]
+            }
+        ] ;
         const expectedLawNum = {
             tag: "____LawNum",
             attr: {},
@@ -74,7 +76,7 @@ describe("Test $lawRef", () => {
         if (result.ok) {
 
             // console.log(JSON.stringify(result.value.value.lawNameCandidate.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.lawNameCandidate.json(true), expectedLawNameCandidate);
+            assert.deepStrictEqual(result.value.value.lawNameCandidates.map(c => c.json(true)), expectedLawNameCandidates);
 
             // console.log(JSON.stringify(result.value.value.lawRefInfo.lawNum.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.lawRefInfo.lawNum.json(true), expectedLawNum);
@@ -102,11 +104,13 @@ describe("Test $lawRef", () => {
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
-        const expectedLawNameCandidate = {
-            tag: "__Text",
-            attr: {},
-            children: ["国の機関相互間の関係について定める命令等並びに地方自治法"]
-        } ;
+        const expectedLawNameCandidates = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["国の機関相互間の関係について定める命令等並びに地方自治法"]
+            }
+        ];
         const expectedLawNum = {
             tag: "____LawNum",
             attr: {},
@@ -118,7 +122,7 @@ describe("Test $lawRef", () => {
         if (result.ok) {
 
             // console.log(JSON.stringify(result.value.value.lawNameCandidate.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.lawNameCandidate.json(true), expectedLawNameCandidate);
+            assert.deepStrictEqual(result.value.value.lawNameCandidates.map(c => c.json(true)), expectedLawNameCandidates);
 
             // console.log(JSON.stringify(result.value.value.lawRefInfo.lawNum.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.lawRefInfo.lawNum.json(true), expectedLawNum);
@@ -140,11 +144,13 @@ describe("Test $lawRef", () => {
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
-        const expectedLawNameCandidate = {
-            tag: "__Text",
-            attr: {},
-            children: ["裁判員の参加する刑事裁判に関する法律"]
-        } ;
+        const expectedLawNameCandidates = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["裁判員の参加する刑事裁判に関する法律"]
+            }
+        ];
         const expectedLawNum = {
             tag: "____LawNum",
             attr: {},
@@ -156,7 +162,7 @@ describe("Test $lawRef", () => {
         if (result.ok) {
 
             // console.log(JSON.stringify(result.value.value.lawNameCandidate.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.lawNameCandidate.json(true), expectedLawNameCandidate);
+            assert.deepStrictEqual(result.value.value.lawNameCandidates.map(c => c.json(true)), expectedLawNameCandidates);
 
             // console.log(JSON.stringify(result.value.value.lawRefInfo.lawNum.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.lawRefInfo.lawNum.json(true), expectedLawNum);

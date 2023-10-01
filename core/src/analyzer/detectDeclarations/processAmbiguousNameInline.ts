@@ -454,6 +454,7 @@ export const processAmbiguousNameInline = (
                 nameCandidateEL.range[1] - name.length,
                 nameCandidateEL.range[1],
             ] : null,
+            children: [name],
         });
         toAddDeclarations.push(declaration);
         newItems.push(declaration);

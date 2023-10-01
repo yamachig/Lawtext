@@ -46,7 +46,7 @@ export const processLawRef = (
         );
 
         if (result.ok) {
-            const { lawNameCandidate, lawRefInfo: { aliasInfo, lawNum } } = result.value.value;
+            const { lawNameCandidates, lawRefInfo: { aliasInfo, lawNum } } = result.value.value;
             errors.push(...result.value.errors);
 
             const lawNumText = lawNum.text();
@@ -112,6 +112,7 @@ export const processLawRef = (
                     scope: scope,
                     nameSentenceTextRange,
                     range: nameSquareParentheses.content.range,
+                    children: [name],
                 });
                 declarations.push(declaration);
 
@@ -152,9 +153,37 @@ export const processLawRef = (
             } else {
                 const lawNameLength = getLawNameLength(lawNumLikeToLawNum(lawNumText));
 
+                const lawNameCandidateTexts = lawNameCandidates.map(c => {
+                    if (std.isRuby(c)) {
+                        return c.children.filter(cc => !std.isRt(cc)).map(cc => typeof cc === "string" ? cc : cc.text()).join("");
+                    } else {
+                        return c.text();
+                    }
+                });
+
                 if (lawNameLength !== null) {
 
-                    const name = lawNameCandidate.text().slice(-lawNameLength);
+                    let lawNameCandidateStartIndex = lawNameCandidateTexts.length - 1;
+                    let candidateStartTextRangeStart = (lawNameCandidates && sentenceEnv.textRageOfEL(lawNameCandidates[0])?.[0]) ?? 0;
+                    let candidateStartRestLength = 0;
+                    for (let i = lawNameCandidateTexts.length - 1; 0 <= i; i--) {
+                        const candidateLength = lawNameCandidateTexts.slice(i).reduce(((a, b) => a + b.length), 0);
+                        if (candidateLength >= lawNameLength) {
+                            const c = lawNameCandidates[i];
+                            const range = sentenceEnv.textRageOfEL(c);
+                            lawNameCandidateStartIndex = i;
+                            if (std.isRuby(c)) {
+                                if (range) candidateStartTextRangeStart = range[0];
+                                candidateStartRestLength = 0;
+                            } else if (range) {
+                                candidateStartTextRangeStart = range[0] + (candidateLength - lawNameLength);
+                                candidateStartRestLength = candidateLength - lawNameLength;
+                            }
+                            break;
+                        }
+                    }
+
+                    const name = lawNameCandidateTexts.slice(lawNameCandidateStartIndex).join("").slice(-lawNameLength);
 
                     const scope = [
                         {
@@ -169,13 +198,16 @@ export const processLawRef = (
                         },
                     ];
 
-                    const lawNameCandidateTextRange = sentenceEnv.textRageOfEL(lawNameCandidate);
+                    const lawNameStartEL = lawNameCandidates[lawNameCandidateStartIndex];
+                    const lawNameCandidateTextStartRange = sentenceEnv.textRageOfEL(lawNameStartEL);
+                    const lawNameCandidateTextEndRange = sentenceEnv.textRageOfEL(lawNameCandidates[lawNameCandidates.length - 1]);
+                    const lawNameCandidateTextRange = lawNameCandidateTextStartRange && lawNameCandidateTextEndRange && [lawNameCandidateTextStartRange[0], lawNameCandidateTextEndRange[1]];
                     if (!lawNameCandidateTextRange) {
                         errors.push(new ErrorMessage(
                             "lawNameCandidateTextRange is null",
                             [
-                                lawNameCandidate?.range?.[0] ?? 0,
-                                lawNameCandidate?.range?.[1] ?? 0,
+                                sentenceEnv.textRageOfEL(lawNameCandidates[0])?.[0] ?? 0,
+                                sentenceEnv.textRageOfEL(lawNameCandidates[lawNameCandidates.length - 1])?.[1] ?? 0,
                             ],
                         ));
                         continue;
@@ -184,7 +216,7 @@ export const processLawRef = (
                     const nameSentenceTextRange: SentenceTextRange = {
                         start: {
                             sentenceIndex: sentenceEnv.index,
-                            textOffset: lawNameCandidateTextRange[1] - lawNameLength,
+                            textOffset: candidateStartTextRangeStart,
                         },
                         end: {
                             sentenceIndex: sentenceEnv.index,
@@ -192,7 +224,7 @@ export const processLawRef = (
                         },
                     };
 
-                    const declarationID = `decl-sentence_${sentenceEnv.index}-text_${lawNameCandidateTextRange[1] - lawNameLength}_${lawNameCandidateTextRange[1]}`;
+                    const declarationID = `decl-sentence_${sentenceEnv.index}-text_${nameSentenceTextRange.start.textOffset}_${nameSentenceTextRange.end.textOffset}`;
 
                     const declaration = new ____Declaration({
                         declarationID,
@@ -201,9 +233,21 @@ export const processLawRef = (
                         value: lawNumText,
                         scope: scope,
                         nameSentenceTextRange,
-                        range: lawNameCandidate.range && [
-                            lawNameCandidate.range[1] - lawNameLength,
-                            lawNameCandidate.range[1],
+                        children: [
+                            ...((std.isRuby(lawNameStartEL) || candidateStartRestLength === 0) ? [lawNameStartEL] : [
+                                new __Text(
+                                    lawNameStartEL.text().slice(candidateStartRestLength),
+                                    lawNameStartEL.range && [
+                                        lawNameStartEL.range[0] + candidateStartRestLength,
+                                        lawNameStartEL.range[1],
+                                    ],
+                                ),
+                            ]),
+                            ...lawNameCandidates.slice(lawNameCandidateStartIndex + 1),
+                        ],
+                        range: lawNameStartEL.range && [
+                            lawNameStartEL.range[0] + candidateStartRestLength,
+                            lawNameStartEL.range[1],
                         ],
                     });
                     declarations.push(declaration);
@@ -219,21 +263,25 @@ export const processLawRef = (
                     lawRef.children.push(declaration);
                     lawRef.children.push(result.value.value.lawRefInfo.lawRefParentheses);
 
-                    const pointerRangesIndex = i + 2;
+                    const replacedCount = (lawNameCandidates.length - lawNameCandidateStartIndex) + 1;
+
+                    const pointerRangesIndex = i + lawNameCandidateStartIndex + replacedCount;
 
                     elToBeModified.children.splice(
-                        i,
-                        2,
-                        new __Text(
-                            lawNameCandidate.text().slice(0, lawNameCandidate.text().length - lawNameLength),
-                            lawNameCandidate.range && [
-                                lawNameCandidate.range[0],
-                                lawNameCandidate.range[1] - lawNameLength,
-                            ],
-                        ),
+                        i + lawNameCandidateStartIndex,
+                        replacedCount,
+                        ...((std.isRuby(lawNameStartEL) || candidateStartRestLength === 0) ? [] : [
+                            new __Text(
+                                lawNameStartEL.text().slice(0, lawNameStartEL.text().length - lawNameLength),
+                                lawNameStartEL.range && [
+                                    lawNameStartEL.range[0],
+                                    lawNameStartEL.range[0] + candidateStartRestLength,
+                                ],
+                            ),
+                        ]),
                         lawRef,
                     );
-                    i++;
+                    i += (replacedCount - 1);
 
                     if (
                         (pointerRangesIndex < elToBeModified.children.length)

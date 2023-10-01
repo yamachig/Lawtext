@@ -93,6 +93,7 @@ export const processNameInline = (
                 scope: scope,
                 nameSentenceTextRange,
                 range: nameSquareParentheses.content.range,
+                children: [name],
             });
             declarations.push(declaration);
 

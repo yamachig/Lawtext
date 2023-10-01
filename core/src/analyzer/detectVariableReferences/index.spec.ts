@@ -522,7 +522,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":41},\"end\":{\"sentenceIndex\":18,\"textOffset\":47}}",
                     value: "平成十一年法律第八十九号",
                 },
-                children: ["内閣府設置法"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["内閣府設置法"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -534,7 +540,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":84},\"end\":{\"sentenceIndex\":18,\"textOffset\":91}}",
                     value: "昭和二十三年法律第百二十号",
                 },
-                children: ["国家行政組織法"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["国家行政組織法"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -1235,7 +1247,13 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
                     value: "平成十一年法律第八十九号",
                 },
-                children: ["内閣府設置法"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["内閣府設置法"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -1247,7 +1265,13 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
                     value: "昭和二十三年法律第百二十号",
                 },
-                children: ["国家行政組織法"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["国家行政組織法"],
+                    },
+                ],
             },
         ];
 

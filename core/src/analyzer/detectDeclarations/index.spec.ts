@@ -501,7 +501,13 @@ describe("Test detectDeclarations", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
                     value: "昭和二十二年法律第六十七号",
                 },
-                children: ["地方自治法"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["地方自治法"],
+                    },
+                ],
             },
         ] ;
         const expectedErrorMessages: string[] = [];
@@ -549,7 +555,13 @@ describe("Test detectDeclarations", () => {
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
                                                 value: "昭和二十二年法律第六十七号",
                                             },
-                                            children: ["地方自治法"],
+                                            children: [
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["地方自治法"],
+                                                },
+                                            ],
                                         },
                                         {
                                             tag: "__Parentheses",
@@ -2181,7 +2193,13 @@ describe("Test detectDeclarations", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
                     value: "昭和二十三年法律第百二十号",
                 },
-                children: ["国家行政組織法"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["国家行政組織法"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -2193,7 +2211,13 @@ describe("Test detectDeclarations", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
                     value: "平成十一年法律第八十九号",
                 },
-                children: ["内閣府設置法"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["内閣府設置法"],
+                    },
+                ],
             },
         ];
 
@@ -2304,7 +2328,13 @@ describe("Test detectDeclarations", () => {
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
                                                                                 value: "平成十一年法律第八十九号",
                                                                             },
-                                                                            children: ["内閣府設置法"],
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "__Text",
+                                                                                    attr: {},
+                                                                                    children: ["内閣府設置法"],
+                                                                                },
+                                                                            ],
                                                                         },
                                                                         {
                                                                             tag: "__Parentheses",
@@ -2430,7 +2460,13 @@ describe("Test detectDeclarations", () => {
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
                                                                                 value: "昭和二十三年法律第百二十号",
                                                                             },
-                                                                            children: ["国家行政組織法"],
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "__Text",
+                                                                                    attr: {},
+                                                                                    children: ["国家行政組織法"],
+                                                                                },
+                                                                            ],
                                                                         },
                                                                         {
                                                                             tag: "__Parentheses",
@@ -4140,7 +4176,13 @@ describe("Test detectDeclarations", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":3},\"end\":{\"sentenceIndex\":0,\"textOffset\":21}}",
                     value: "平成１６年法律第６３号",
                 },
-                children: ["裁判員の参加する刑事裁判に関する法律"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["裁判員の参加する刑事裁判に関する法律"],
+                    },
+                ],
             },
         ];
         const expectedErrorMessages: string[] = [];
@@ -4188,7 +4230,13 @@ describe("Test detectDeclarations", () => {
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":3},\"end\":{\"sentenceIndex\":0,\"textOffset\":21}}",
                                                 value: "平成１６年法律第６３号",
                                             },
-                                            children: ["裁判員の参加する刑事裁判に関する法律"],
+                                            children: [
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["裁判員の参加する刑事裁判に関する法律"],
+                                                },
+                                            ],
                                         },
                                         {
                                             tag: "__Parentheses",
@@ -4335,7 +4383,13 @@ describe("Test detectDeclarations", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}",
                     value: "平成二十八年法律第百三号",
                 },
-                children: ["官民データ活用推進基本法"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["官民データ活用推進基本法"],
+                    },
+                ],
             },
         ];
         const expectedErrorMessages: string[] = [];
@@ -4410,7 +4464,13 @@ describe("Test detectDeclarations", () => {
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}",
                                                 value: "平成二十八年法律第百三号",
                                             },
-                                            children: ["官民データ活用推進基本法"],
+                                            children: [
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["官民データ活用推進基本法"],
+                                                },
+                                            ],
                                         },
                                         {
                                             tag: "__Parentheses",
@@ -4473,6 +4533,317 @@ describe("Test detectDeclarations", () => {
         assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
 
         // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
+        assert.deepStrictEqual(
+            inputElToBeModified.json(true),
+            expectedModifiedInput,
+        );
+    });
+
+    it("Success case: lawRef", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const inputElToBeModified = loadEL({
+            tag: "Subitem1",
+            attr: {},
+            children: [
+                {
+                    tag: "Subitem1Title",
+                    attr: {},
+                    children: ["イ"],
+                },
+                {
+                    tag: "Subitem1Sentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: [
+                                "この法律において",
+                                {
+                                    tag: "Ruby",
+                                    attr: {},
+                                    children: [
+                                        "へ",
+                                        {
+                                            tag: "Rt",
+                                            attr: {},
+                                            children: ["ヽ"],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "Ruby",
+                                    attr: {},
+                                    children: [
+                                        "き",
+                                        {
+                                            tag: "Rt",
+                                            attr: {},
+                                            children: ["ヽ"],
+                                        },
+                                    ],
+                                },
+                                "地教育振興法（昭和二十九年法律第百四十三号）に規定する人工知能関連技術。",
+                            ],
+                        },
+                    ],
+                },
+            ],
+        }) as std.Subitem1;
+        addSentenceChildrenControls(inputElToBeModified);
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_8_16",
+                    type: "LawName",
+                    name: "へき地教育振興法",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":31},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":16}}",
+                    value: "昭和二十九年法律第百四十三号",
+                },
+                children: [
+                    {
+                        tag: "Ruby",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["へ"],
+                            },
+                            {
+                                tag: "Rt",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["ヽ"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "Ruby",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["き"],
+                            },
+                            {
+                                tag: "Rt",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["ヽ"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["地教育振興法"],
+                    },
+                ],
+            },
+        ];
+        const expectedErrorMessages: string[] = [];
+        const expectedModifiedInput = {
+            tag: "Subitem1",
+            attr: {},
+            children: [
+                {
+                    tag: "Subitem1Title",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "__Text",
+                            attr: {},
+                            children: ["イ"],
+                        },
+                    ],
+                },
+                {
+                    tag: "Subitem1Sentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PointerRanges",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "____PointerRange",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "____Pointer",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____PF",
+                                                            attr: {
+                                                                relPos: "HERE",
+                                                                targetType: "Law",
+                                                                name: "この法律",
+                                                            },
+                                                            children: ["この法律"],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["において"],
+                                },
+                                {
+                                    tag: "____LawRef",
+                                    attr: {
+                                        includingDeclarationID: "decl-sentence_0-text_8_16",
+                                    },
+                                    children: [
+                                        {
+                                            tag: "____Declaration",
+                                            attr: {
+                                                declarationID: "decl-sentence_0-text_8_16",
+                                                type: "LawName",
+                                                name: "へき地教育振興法",
+                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":31},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":16}}",
+                                                value: "昭和二十九年法律第百四十三号",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "Ruby",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "__Text",
+                                                            attr: {},
+                                                            children: ["へ"],
+                                                        },
+                                                        {
+                                                            tag: "Rt",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "__Text",
+                                                                    attr: {},
+                                                                    children: ["ヽ"],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "Ruby",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "__Text",
+                                                            attr: {},
+                                                            children: ["き"],
+                                                        },
+                                                        {
+                                                            tag: "Rt",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "__Text",
+                                                                    attr: {},
+                                                                    children: ["ヽ"],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["地教育振興法"],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            tag: "__Parentheses",
+                                            attr: {
+                                                type: "round",
+                                                depth: "1",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "__PStart",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["（"],
+                                                },
+                                                {
+                                                    tag: "__PContent",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "____LawNum",
+                                                            attr: {},
+                                                            children: ["昭和二十九年法律第百四十三号"],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "__PEnd",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["）"],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["に規定する人工知能関連技術。"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+
+        // console.log(JSON.stringify(result.value.declarations.values().map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            result.value.declarations.values().map(r => r.json(true)),
+            expected,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
         assert.deepStrictEqual(
             inputElToBeModified.json(true),
             expectedModifiedInput,

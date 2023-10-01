@@ -1,3 +1,4 @@
+import * as std from "../../../law/std";
 import { __Parentheses, __Text, ____LawNum, ____PointerRanges } from "../../../node/el/controls";
 import { initialEnv } from "../env";
 import factory from "../factory";
@@ -100,18 +101,31 @@ export const $lawNum: WithErrorRule<LawRefInfo> = factory
     ;
 
 export const $lawRef: WithErrorRule<{
-    lawNameCandidate: __Text,
+    lawNameCandidates: (std.Ruby | std.Sup | std.Sub | __Text)[],
     lawRefInfo: LawRefInfo & {lawRefParentheses: __Parentheses},
 }> = factory
     .withName("lawRef")
     .sequence(s => s
         .and(r => r
-            .oneMatch(({ item }) => {
-                if (
-                    (item instanceof __Text)
-                ) { return item; } else { return null; }
-            })
-        , "lawNameCandidate")
+            .oneOrMore(r => r
+                .choice(c => c
+                    .or(r => r
+                        .oneMatch(({ item }) => {
+                            if (
+                                (item instanceof __Text)
+                            ) { return item; } else { return null; }
+                        })
+                    )
+                    .or(r => r
+                        .oneMatch(({ item }) => {
+                            if (
+                                (std.isRuby(item) || std.isSup(item) || std.isSub(item))
+                            ) { return item; } else { return null; }
+                        })
+                    )
+                )
+            )
+        , "lawNameCandidates")
         .and(r => r
             .oneMatch(({ item }) => {
                 if (
@@ -135,9 +149,9 @@ export const $lawRef: WithErrorRule<{
                 } else { return null; }
             })
         , "lawRefInfo")
-        .action(({ lawNameCandidate, lawRefInfo }) => {
+        .action(({ lawNameCandidates, lawRefInfo }) => {
             const value = {
-                lawNameCandidate,
+                lawNameCandidates,
                 lawRefInfo: lawRefInfo.value,
             };
             return { value, errors: [...lawRefInfo.errors] };

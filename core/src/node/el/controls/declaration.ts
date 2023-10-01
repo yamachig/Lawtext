@@ -1,4 +1,5 @@
 import { EL } from "../";
+import * as std from "../../../law/std";
 import { SentenceTextRange } from "../../container/sentenceEnv";
 
 
@@ -6,6 +7,7 @@ export interface DeclarationOptions {
     declarationID: string,
     type: string,
     name: string,
+    children: (std.Ruby | std.Sup | std.Sub | std.__EL | string)[],
     value: string | null,
     scope: SentenceTextRange[],
     nameSentenceTextRange: SentenceTextRange,
@@ -23,7 +25,7 @@ export class ____Declaration extends EL {
         scope: string,
         nameSentenceTextRange: string,
     };
-    public override children: [string];
+    public override children: (std.Ruby | std.Sup | std.Sub | std.__EL | string)[];
 
     private scopeCache: [str: string, value: SentenceTextRange[]] | null = null;
     public get scope(): SentenceTextRange[] {
@@ -52,7 +54,7 @@ export class ____Declaration extends EL {
     constructor(options: DeclarationOptions) {
         super("____Declaration", {}, [], options.range);
 
-        const { declarationID: id, type, name, value, scope, nameSentenceTextRange } = options;
+        const { declarationID: id, type, name, value, scope, nameSentenceTextRange, children } = options;
 
         this.attr = {
             declarationID: id,
@@ -63,6 +65,6 @@ export class ____Declaration extends EL {
         };
         if (value !== null) this.attr.value = value;
 
-        this.children = [name];
+        this.children = children;
     }
 }

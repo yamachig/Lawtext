@@ -108,6 +108,7 @@ export const processNameList = (
                     scope: scope,
                     nameSentenceTextRange,
                     range: nameChild.content.range,
+                    children: [name],
                 });
                 declarations.push(declaration);
 
@@ -153,6 +154,7 @@ export const processNameList = (
                         nameSentence.range[0],
                         nameSentence.range[0] + name.length,
                     ] : null,
+                    children: [name],
                 });
                 declarations.push(declaration);
 
