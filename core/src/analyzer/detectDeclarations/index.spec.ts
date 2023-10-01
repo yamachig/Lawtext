@@ -4843,7 +4843,401 @@ describe("Test detectDeclarations", () => {
 
         assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
 
-        console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
+        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
+        assert.deepStrictEqual(
+            inputElToBeModified.json(true),
+            expectedModifiedInput,
+        );
+    });
+
+    it("Success case: lawRef", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const inputElToBeModified = loadEL({
+            tag: "Subitem1",
+            attr: {},
+            children: [
+                {
+                    tag: "Subitem1Title",
+                    attr: {},
+                    children: ["イ"],
+                },
+                {
+                    tag: "Subitem1Sentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: [
+                                "公営住宅法（昭和二十六年法律第百九十三号）第八条第一項又は激",
+                                {
+                                    tag: "Ruby",
+                                    attr: {},
+                                    children: [
+                                        "甚",
+                                        {
+                                            tag: "Rt",
+                                            attr: {},
+                                            children: ["じん"],
+                                        },
+                                    ],
+                                },
+                                "災害に対処するための特別の財政援助等に関する法律（昭和三十七年法律第百五十号）第二十二条第一項の規定による国の補助を受けて",
+                            ],
+                        },
+                    ],
+                },
+            ],
+        }) as std.Subitem1;
+        addSentenceChildrenControls(inputElToBeModified);
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_29_55",
+                    type: "LawName",
+                    name: "激甚災害に対処するための特別の財政援助等に関する法律",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":69},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":29},\"end\":{\"sentenceIndex\":0,\"textOffset\":55}}",
+                    value: "昭和三十七年法律第百五十号",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["激"],
+                    },
+                    {
+                        tag: "Ruby",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["甚"],
+                            },
+                            {
+                                tag: "Rt",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["じん"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["災害に対処するための特別の財政援助等に関する法律"],
+                    },
+                ],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_0_5",
+                    type: "LawName",
+                    name: "公営住宅法",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":20},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":5}}",
+                    value: "昭和二十六年法律第百九十三号",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["公営住宅法"],
+                    },
+                ],
+            },
+        ];
+        const expectedErrorMessages: string[] = [];
+        const expectedModifiedInput = {
+            tag: "Subitem1",
+            attr: {},
+            children: [
+                {
+                    tag: "Subitem1Title",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "__Text",
+                            attr: {},
+                            children: ["イ"],
+                        },
+                    ],
+                },
+                {
+                    tag: "Subitem1Sentence",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "Sentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____LawRef",
+                                    attr: {
+                                        includingDeclarationID: "decl-sentence_0-text_0_5",
+                                    },
+                                    children: [
+                                        {
+                                            tag: "____Declaration",
+                                            attr: {
+                                                declarationID: "decl-sentence_0-text_0_5",
+                                                type: "LawName",
+                                                name: "公営住宅法",
+                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":20},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":5}}",
+                                                value: "昭和二十六年法律第百九十三号",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["公営住宅法"],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            tag: "__Parentheses",
+                                            attr: {
+                                                type: "round",
+                                                depth: "1",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "__PStart",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["（"],
+                                                },
+                                                {
+                                                    tag: "__PContent",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "____LawNum",
+                                                            attr: {},
+                                                            children: ["昭和二十六年法律第百九十三号"],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "__PEnd",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["）"],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "____PointerRanges",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "____PointerRange",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "____Pointer",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____PF",
+                                                            attr: {
+                                                                relPos: "NAMED",
+                                                                targetType: "Article",
+                                                                name: "第八条",
+                                                                num: "8",
+                                                            },
+                                                            children: ["第八条"],
+                                                        },
+                                                        {
+                                                            tag: "____PF",
+                                                            attr: {
+                                                                relPos: "NAMED",
+                                                                targetType: "Paragraph",
+                                                                name: "第一項",
+                                                                num: "1",
+                                                            },
+                                                            children: ["第一項"],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["又は"],
+                                },
+                                {
+                                    tag: "____LawRef",
+                                    attr: {
+                                        includingDeclarationID: "decl-sentence_0-text_29_55",
+                                    },
+                                    children: [
+                                        {
+                                            tag: "____Declaration",
+                                            attr: {
+                                                declarationID: "decl-sentence_0-text_29_55",
+                                                type: "LawName",
+                                                name: "激甚災害に対処するための特別の財政援助等に関する法律",
+                                                scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":69},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
+                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":29},\"end\":{\"sentenceIndex\":0,\"textOffset\":55}}",
+                                                value: "昭和三十七年法律第百五十号",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["激"],
+                                                },
+                                                {
+                                                    tag: "Ruby",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "__Text",
+                                                            attr: {},
+                                                            children: ["甚"],
+                                                        },
+                                                        {
+                                                            tag: "Rt",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "__Text",
+                                                                    attr: {},
+                                                                    children: ["じん"],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "__Text",
+                                                    attr: {},
+                                                    children: ["災害に対処するための特別の財政援助等に関する法律"],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            tag: "__Parentheses",
+                                            attr: {
+                                                type: "round",
+                                                depth: "1",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "__PStart",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["（"],
+                                                },
+                                                {
+                                                    tag: "__PContent",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "____LawNum",
+                                                            attr: {},
+                                                            children: ["昭和三十七年法律第百五十号"],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "__PEnd",
+                                                    attr: {
+                                                        type: "round",
+                                                    },
+                                                    children: ["）"],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "____PointerRanges",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "____PointerRange",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "____Pointer",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____PF",
+                                                            attr: {
+                                                                relPos: "NAMED",
+                                                                targetType: "Article",
+                                                                name: "第二十二条",
+                                                                num: "22",
+                                                            },
+                                                            children: ["第二十二条"],
+                                                        },
+                                                        {
+                                                            tag: "____PF",
+                                                            attr: {
+                                                                relPos: "NAMED",
+                                                                targetType: "Paragraph",
+                                                                name: "第一項",
+                                                                num: "1",
+                                                            },
+                                                            children: ["第一項"],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                {
+                                    tag: "__Text",
+                                    attr: {},
+                                    children: ["の規定による国の補助を受けて"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+
+        // console.log(JSON.stringify(result.value.declarations.values().map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            result.value.declarations.values().map(r => r.json(true)),
+            expected,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
         assert.deepStrictEqual(
             inputElToBeModified.json(true),
             expectedModifiedInput,

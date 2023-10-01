@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
 import { isSub, __EL } from "../../../law/std";
-import { ParenthesesType, __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____LawNum } from "../../../node/el/controls";
+import { ParenthesesType, __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____Declaration, ____LawNum } from "../../../node/el/controls";
 import { EL } from "../../../node/el";
 import { assertNever } from "../../../util";
 import { factory } from "../factory";
@@ -24,6 +24,8 @@ export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): st
             runs.push(/* $$$$$$ */el.children.map(c => typeof c === "string" ? c : c.outerXML()).join("")/* $$$$$$ */);
         } else if (el instanceof __Parentheses) {
             runs.push(/* $$$$$$ */[el.start.text(), ...sentenceChildrenToString(el.content.children), el.end.text()].join("")/* $$$$$$ */);
+        } else if (el instanceof ____Declaration) {
+            runs.push(/* $$$$$$ */[...sentenceChildrenToString(el.children)].join("")/* $$$$$$ */);
         } else if (el.isControl) {
             runs.push(/* $$$$$$ */el.text().replace(/\r|\n/g, "")/* $$$$$$ */);
 

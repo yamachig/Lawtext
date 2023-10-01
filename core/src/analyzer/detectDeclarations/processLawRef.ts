@@ -272,7 +272,7 @@ export const processLawRef = (
                         replacedCount,
                         ...((std.isRuby(lawNameStartEL) || candidateStartRestLength === 0) ? [] : [
                             new __Text(
-                                lawNameStartEL.text().slice(0, lawNameStartEL.text().length - lawNameLength),
+                                lawNameStartEL.text().slice(0, candidateStartRestLength),
                                 lawNameStartEL.range && [
                                     lawNameStartEL.range[0],
                                     lawNameStartEL.range[0] + candidateStartRestLength,
