@@ -557,10 +557,11 @@ export const LawCoverageInfoDetail: React.FC<{
                     {lawCoverage.originalLaw && (
                         <div>
                             <h3 className="text-muted">Original XML</h3>
-                            <div style={{ width: "7rem", marginBottom: "1em" }}>
+                            <div className="d-flex flex-row align-items-center" style={{ marginBottom: "1em" }}>
                                 <LawCoverageInfoCard
                                     status={convertStatus(getOriginalLawStatus(lawCoverage))}
                                     date={lawCoverage.updateDate}
+                                    requiredms={lawCoverage.originalLaw.ok?.requiredms}
                                 />
                             </div>
                             {"error" in lawCoverage.originalLaw.info && (
@@ -572,10 +573,11 @@ export const LawCoverageInfoDetail: React.FC<{
                     {lawCoverage.renderedHTML && (
                         <div>
                             <h3 className="text-muted">Rendered HTML</h3>
-                            <div style={{ width: "7rem", marginBottom: "1em" }}>
+                            <div className="d-flex flex-row align-items-center" style={{ marginBottom: "1em" }}>
                                 <LawCoverageInfoCard
                                     status={convertStatus(getRenderedHTMLStatus(lawCoverage))}
                                     date={lawCoverage.updateDate}
+                                    requiredms={lawCoverage.renderedHTML.ok?.requiredms}
                                 />
                             </div>
                             {"error" in lawCoverage.renderedHTML.info && (
@@ -587,10 +589,11 @@ export const LawCoverageInfoDetail: React.FC<{
                     {lawCoverage.renderedDocx && (
                         <div>
                             <h3 className="text-muted">Rendered Docx</h3>
-                            <div style={{ width: "7rem", marginBottom: "1em" }}>
+                            <div className="d-flex flex-row align-items-center" style={{ marginBottom: "1em" }}>
                                 <LawCoverageInfoCard
                                     status={convertStatus(getRenderedDocxStatus(lawCoverage))}
                                     date={lawCoverage.updateDate}
+                                    requiredms={lawCoverage.renderedDocx.ok?.requiredms}
                                 />
                             </div>
                             {"error" in lawCoverage.renderedDocx.info && (
@@ -602,10 +605,11 @@ export const LawCoverageInfoDetail: React.FC<{
                     {lawCoverage.renderedLawtext && (
                         <div>
                             <h3 className="text-muted">Rendered Lawtext</h3>
-                            <div style={{ width: "7rem", marginBottom: "1em" }}>
+                            <div className="d-flex flex-row align-items-center" style={{ marginBottom: "1em" }}>
                                 <LawCoverageInfoCard
                                     status={convertStatus(getRenderedLawtextStatus(lawCoverage))}
                                     date={lawCoverage.updateDate}
+                                    requiredms={lawCoverage.renderedLawtext.ok?.requiredms}
                                 />
                             </div>
                             {"error" in lawCoverage.renderedLawtext.info && (
@@ -617,10 +621,11 @@ export const LawCoverageInfoDetail: React.FC<{
                     {lawCoverage.parsedLaw && (
                         <div>
                             <h3 className="text-muted">Parsed XML</h3>
-                            <div style={{ width: "7rem", marginBottom: "1em" }}>
+                            <div className="d-flex flex-row align-items-center" style={{ marginBottom: "1em" }}>
                                 <LawCoverageInfoCard
                                     status={convertStatus(getParsedLawStatus(lawCoverage))}
                                     date={lawCoverage.updateDate}
+                                    requiredms={lawCoverage.parsedLaw.ok?.requiredms}
                                 />
                             </div>
                             {("error" in lawCoverage.parsedLaw.info) && (Boolean(lawCoverage.parsedLaw.info.error)) && (
@@ -632,10 +637,11 @@ export const LawCoverageInfoDetail: React.FC<{
                     {lawCoverage.lawDiff ? (
                         <div>
                             <h3 className="text-muted">Difference</h3>
-                            <div style={{ width: "7rem", marginBottom: "1em" }}>
+                            <div className="d-flex flex-row align-items-center" style={{ marginBottom: "1em" }}>
                                 <LawCoverageInfoCard
                                     status={convertStatus(getLawDiffStatus(lawCoverage))}
                                     date={lawCoverage.updateDate}
+                                    requiredms={lawCoverage.lawDiff.ok?.requiredms}
                                 />
                             </div>
                             {"error" in lawCoverage.lawDiff.info && (

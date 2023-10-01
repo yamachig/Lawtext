@@ -67,51 +67,61 @@ const ErrorTag = styled(BaseTag)`
 export const LawCoverageInfoCard: React.FC<{
     status: LawCoverageInfoCardStatus;
     date: Date;
+    requiredms?: Map<string, number> | Record<string, number>;
     header?: JSX.Element;
     body?: JSX.Element;
 }> = props => {
-    const Tag =
+    const BadgeTag =
             props.status === LawCoverageInfoCardStatus.NULL ? NullTag :
                 props.status === LawCoverageInfoCardStatus.SUCCESS ? SuccessTag :
                     props.status === LawCoverageInfoCardStatus.WARNING ? WarningTag :
                         props.status === LawCoverageInfoCardStatus.ERROR ? ErrorTag :
                             assertNever(props.status);
+    const requiredms = (
+        (props.requiredms instanceof Map)
+            ? Array.from(props.requiredms.entries())
+            : Object.entries(props.requiredms ?? {})
+    );
 
     return (
-        <Tag className="d-flex flex-column" style={{ flex: "0 0 4rem" }}>
-            {props.header && (
-                <div className="header">
-                    {props.header}
-                </div>
-            )}
-            {(props.status !== LawCoverageInfoCardStatus.NULL || props.body) && (
-                <div className="body d-flex flex-column">
-                    {props.status !== LawCoverageInfoCardStatus.NULL && (
-                        <>
-                            {props.status === LawCoverageInfoCardStatus.SUCCESS && (
-                                <span style={{ color: "#28a745" }}>
-                                    <FontAwesomeIcon icon="check-circle" />
+        <>
+            <BadgeTag className="d-flex flex-column" style={{ flex: "0 0 4rem" }}>
+                {props.header && (
+                    <div className="header">
+                        {props.header}
+                    </div>
+                )}
+                {(props.status !== LawCoverageInfoCardStatus.NULL) && (
+                    <div className="body d-flex flex-column">
+                        {props.status === LawCoverageInfoCardStatus.SUCCESS && (
+                            <span style={{ color: "#28a745" }}>
+                                <FontAwesomeIcon icon="check-circle" />
                                             &nbsp;OK
-                                </span>
-                            )}
-                            {props.status === LawCoverageInfoCardStatus.WARNING && (
-                                <span>
-                                    <FontAwesomeIcon icon="exclamation-triangle" />
+                            </span>
+                        )}
+                        {props.status === LawCoverageInfoCardStatus.WARNING && (
+                            <span>
+                                <FontAwesomeIcon icon="exclamation-triangle" />
                                             &nbsp;Wn
-                                </span>
-                            )}
-                            {props.status === LawCoverageInfoCardStatus.ERROR && (
-                                <span>
-                                    <FontAwesomeIcon icon="times" />
+                            </span>
+                        )}
+                        {props.status === LawCoverageInfoCardStatus.ERROR && (
+                            <span>
+                                <FontAwesomeIcon icon="times" />
                                             &nbsp;Err
-                                </span>
-                            )}
-                        </>
-                    )}
-                    {props.body}
-                </div>
-            )}
-        </Tag>
+                            </span>
+                        )}
+                    </div>
+                )}
+            </BadgeTag>
+            {(requiredms.map(([key, ms], i) => (
+                <small key={i} style={{ marginLeft: "0.5em" }} className="text-muted">
+                    {key}:
+                    <strong>{ms}</strong>ms;
+                </small>
+            ))) ?? null}
+            {props.body ?? null}
+        </>
     );
 };
 

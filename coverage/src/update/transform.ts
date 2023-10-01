@@ -269,13 +269,13 @@ export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string,
         requiredms.set("lawDiff", lap.lapms());
 
         const origDOM = domParser.parseFromString(origXML);
-        requiredms.set("parseLawtext", lap.lapms());
+        requiredms.set("parseOrigXML", lap.lapms());
 
         const parsedDOM = domParser.parseFromString(parsedXML);
-        requiredms.set("parseLawtext", lap.lapms());
+        requiredms.set("parseParsedXML", lap.lapms());
 
         const diffData = law_diff.makeDiffData(d, origDOM, parsedDOM);
-        requiredms.set("parseLawtext", lap.lapms());
+        requiredms.set("makeDiffData", lap.lapms());
 
         let slicedDiffData = diffData;
 
