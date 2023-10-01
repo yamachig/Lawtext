@@ -13,7 +13,7 @@ import $any, { anyToLines } from "./$any";
 import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
 import { columnsOrSentencesToSentencesArray } from "./columnsOrSentences";
 import parseCST from "../../cst/parse";
-import { otherLineControl } from "../../cst/rules/$otherLine";
+import { ignoreTitleControl } from "../../cst/rules/$otherLine";
 
 /**
  * The renderer for note-like item ({@link std.NoteLike | NoteLike}). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.
@@ -40,7 +40,7 @@ export const noteLikeToLines = (noteLike: std.NoteLike, indentTexts: string[]): 
             const parsedLines = parseCST(lineText);
             if (parsedLines.value[0].type !== LineType.OTH) {
                 line.controls.push(new Control(
-                    otherLineControl,
+                    ignoreTitleControl,
                     null,
                     "",
                     null,

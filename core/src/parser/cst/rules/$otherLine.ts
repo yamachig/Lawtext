@@ -2,7 +2,7 @@ import factory from "../factory";
 import $indents from "./$indents";
 import { OtherLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
-import $columnsOrSentences from "./$sentencesArray";
+import $sentencesArray from "./$sentencesArray";
 import { WithErrorRule } from "../util";
 import { Control, Sentences } from "../../../node/cst/inline";
 import $xml from "./$xml";
@@ -11,7 +11,7 @@ import * as std from "../../../law/std";
 import { EL } from "../../../node/el";
 
 export const keepLeadingSpacesControl = ":keep-leading-spaces:";
-export const otherLineControl = ":ignore-title:";
+export const ignoreTitleControl = ":ignore-title:";
 
 /**
  * The parser rule for {@link OtherLine} that represents a line of other types. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/cst/rules/$otherLine.spec.ts) for examples.
@@ -82,7 +82,7 @@ export const $otherLine: WithErrorRule<OtherLine> = factory
                             };
                         })
                     )
-                    .or(() => $columnsOrSentences)
+                    .or(() => $sentencesArray)
                 )
             )
         , "columns")

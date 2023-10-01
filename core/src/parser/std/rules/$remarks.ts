@@ -7,11 +7,14 @@ import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
 import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
 import { Control, Sentences } from "../../../node/cst/inline";
-import { assertNever } from "../../../util";
+import { assertNever, omit } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
 import { rangeOfELs } from "../../../node/el";
-import { keepLeadingSpacesControl } from "../../cst/rules/$otherLine";
+import { keepLeadingSpacesControl, ignoreTitleControl } from "../../cst/rules/$otherLine";
+import parseCST from "../../cst/parse";
+import { mergeAdjacentTextsWithString } from "../../cst/util";
+import { __Text } from "../../../node/el/controls";
 
 export const remarksControl = ":remarks:";
 export const remarksLabelPtn = /^(?:備\s*考|注)\s*$/;
@@ -51,9 +54,9 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
-    for (const child of remarks.children) {
-        if (child.tag === "RemarksLabel") continue;
+    const restChildren = remarks.children.filter(c => c.tag !== "RemarksLabel") as Exclude<std.Remarks["children"][number], std.RemarksLabel>[];
 
+    for (const child of restChildren) {
         if (child.tag === "Sentence") {
             const line = new OtherLine({
                 range: null,
@@ -69,6 +72,20 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
                 ],
                 lineEndText: CST.EOL,
             });
+            const lineText = sentencesArrayToString(line.sentencesArray);
+            try {
+                const parsedLines = parseCST(lineText);
+                if (parsedLines.value[0].type !== LineType.OTH) {
+                    line.controls.push(new Control(
+                        ignoreTitleControl,
+                        null,
+                        "",
+                        null,
+                    ));
+                }
+            } catch (e) {
+                //
+            }
             // eslint-disable-next-line no-irregular-whitespace
             if (/^[ 　\t]+/.test(child.text())) {
                 line.controls.push(new Control(
@@ -85,6 +102,7 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
         }
         else { assertNever(child); }
     }
+
 
     return lines;
 };
@@ -109,8 +127,22 @@ const $remarksChildrenBlock = makeIndentBlockWithCaptureRule(
                         item.type === LineType.OTH
                         && item.line.sentencesArray.length > 0
                     ) {
+                        const sentenceChildren: std.Sentence["children"] = [];
+                        for (const sentences of item.line.sentencesArray) {
+                            sentenceChildren.push(new __Text(sentences.leadingSpace, sentences.leadingSpaceRange));
+                            for (const sentence of sentences.sentences) {
+                                sentenceChildren.push(...sentence.children);
+                            }
+                        }
+
+                        const sentence = newStdEL(
+                            "Sentence",
+                            omit(item.line.sentencesArray[0].sentences[0].attr, "Function", "Num"),
+                            mergeAdjacentTextsWithString(sentenceChildren),
+                            item.line.sentencesArrayRange,
+                        );
                         return {
-                            value: item.line.sentencesArray.flat().map(ss => ss.sentences).flat(),
+                            value: [sentence],
                             errors: [],
                         };
                     } else {
