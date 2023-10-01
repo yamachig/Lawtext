@@ -6,7 +6,7 @@ import CST from "../toCSTSettings";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { assertNever, Diff, NotImplementedError } from "../../../util";
 import { AttrEntries, AttrEntry, Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
-import { captionControl, isSingleParentheses, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
+import { $optBNK_INDENT, captionControl, isSingleParentheses, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
 import factory, { VirtualLineRuleFactory } from "../factory";
 import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine } from "../util";
@@ -24,6 +24,7 @@ import { circledDigitChars, parseNamedNum } from "../../../law/num";
 import addSentenceChildrenControls from "../../addSentenceChildrenControls";
 
 const reOldParagraphNum = new RegExp(`^(?:○[0123456789０１２３４５６７８９]+|[${circledDigitChars}])`);
+const reAmendingText = /.*?の一部を次のように(?:改正す|改め)る。$/;
 
 interface ParagraphItemToLinesOptions {
     firstArticleParagraphArticleTitle?: (string | SentenceChildEL)[],
@@ -275,7 +276,14 @@ export const paragraphItemToLines = (
             lines.push(...listOrSublistToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "AmendProvision") {
-            lines.push(...amendProvisionToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
+            const lastText = sentencesArray.slice(-1)[0]
+                ?.sentences.slice(-1)[0]
+                ?.text() ?? "";
+            lines.push(...amendProvisionToLines(
+                child,
+                [...indentTexts, CST.INDENT],
+                { withControl: !reAmendingText.test(lastText) },
+            )); /* >>>> INDENT >>>> */
 
         } else if (child.tag === "Class") {
             throw new NotImplementedError(child.tag);
@@ -354,14 +362,38 @@ export const $autoParagraphItemChildrenOuter: WithErrorRule<
         .and(r => r
             .choice(c => c
                 .orSequence(s => s
-                    .andOmit(r => r.assert(({ firstParagraphItemLine }) => {
-                        const lastText = firstParagraphItemLine.line
-                            .sentencesArray.slice(-1)[0]
-                            ?.sentences.slice(-1)[0]
-                            ?.text() ?? "";
-                        const m = /.*?の一部を次のように(?:改正す|改め)る。$/.exec(lastText);
-                        return m !== null;
-                    }))
+                    .andOmit(r => r
+                        .choice(c => c
+                            .or(r => r
+                                .assert(({ firstParagraphItemLine }) => {
+                                    const lastText = firstParagraphItemLine.line
+                                        .sentencesArray.slice(-1)[0]
+                                        ?.sentences.slice(-1)[0]
+                                        ?.text() ?? "";
+                                    return reAmendingText.test(lastText);
+                                })
+                            )
+                            .or(r => r
+                                .nextIs(r => r
+                                    .sequence(s => s
+                                        .andOmit(() => $optBNK_INDENT)
+                                        .and(r => r
+                                            .oneMatch(({ item }) => {
+                                                if (
+                                                    item.type === LineType.OTH
+                                                    && item.line.controls.some(c => c.control === ":amend-provision:")
+                                                ) {
+                                                    return item;
+                                                } else {
+                                                    return null;
+                                                }
+                                            })
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
                     .and(() => $amendProvisionsBlock, "block")
                     .action(({ block }) => {
                         return {

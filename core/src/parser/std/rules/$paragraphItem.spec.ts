@@ -2288,6 +2288,143 @@ describe("Test $paragraphItem and paragraphItemToLines", () => {
     it("Success case", () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
+第十三条　法の一部を次のように。
+  :amend-provision:第十七条に次の一項を加える。
+    # ⑤　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+第十三条　法の一部を次のように。
+  :amend-provision:第十七条に次の一項を加える。
+    # ⑤　命令等　内閣又は行政機関が定める次に掲げるものをいう。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Article",
+            attr: {
+                Num: "13",
+            },
+            children: [
+                {
+                    tag: "ArticleTitle",
+                    attr: {},
+                    children: ["第十三条"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        Num: "1",
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["法の一部を次のように。"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "AmendProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "AmendProvisionSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["第十七条に次の一項を加える。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "NewProvision",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Paragraph",
+                                            attr: {
+                                                OldNum: "true",
+                                                Num: "5",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ParagraphNum",
+                                                    attr: {},
+                                                    children: []
+                                                },
+                                                {
+                                                    tag: "ParagraphSentence",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "Column",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {},
+                                                                    children: ["命令等"]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            tag: "Column",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Sentence",
+                                                                    attr: {},
+                                                                    children: ["内閣又は行政機関が定める次に掲げるものをいう。"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $article.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = articleToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
 :anonym-paragraph:
   一　この省令は、令和三年四月一日から施行する。
   二　この省令の施行の際現に存する在外職員が居住している住宅において使用する冷蔵庫及びレンジの賃借料については、当該冷蔵庫及びレンジの賃借に係る契約の期間の満了までの間は、なお従前の例による。
