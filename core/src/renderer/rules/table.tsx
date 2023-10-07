@@ -119,11 +119,13 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
                 </div>
             ));
         } else if (el.children.every(std.isSentence)) {
-            blocks.push((
-                <div>
-                    <HTMLColumnsOrSentencesRun els={el.children} {...{ htmlOptions }} />
-                </div>
-            ));
+            for (const child of el.children) {
+                blocks.push((
+                    <div>
+                        <HTMLColumnsOrSentencesRun els={[child]} {...{ htmlOptions }} />
+                    </div>
+                ));
+            }
         } else {
             for (const child of el.children) {
 
@@ -358,11 +360,13 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
                 </w.p>
             ));
         } else if (el.children.every(std.isSentence)) {
-            blocks.push((
-                <w.p>
-                    <DOCXColumnsOrSentencesRun els={el.children} {...{ docxOptions }} />
-                </w.p>
-            ));
+            for (const child of el.children) {
+                blocks.push((
+                    <w.p>
+                        <DOCXColumnsOrSentencesRun els={[child]} {...{ docxOptions }} />
+                    </w.p>
+                ));
+            }
         } else {
             for (const child of el.children) {
 

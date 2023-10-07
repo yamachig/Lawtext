@@ -220,6 +220,80 @@ ${rendered}
         await promisify(fs.writeFile)(tempParsedHtml, html);
         console.log(`      Saved html: ${tempParsedHtml}`);
     });
+
+
+    it("Success case", async () => {
+        const input = loadEL({
+            tag: "Table",
+            attr: {},
+            children: [
+                {
+                    tag: "TableRow",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "TableColumn",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["次に掲げる額の合計額"],
+                                },
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["ロ　消滅会社等の株主等に対して交付する存続株式会社等の社債、新株予約権又は新株予約権付社債の帳簿価額の合計額"],
+                                },
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["ハ　消滅会社等の株主等に対して交付する存続株式会社等の株式等以外の財産の帳簿価額の合計額"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        }) as std.Table;
+        const expectedHTML = /*html*/`\
+<table class="table indent-0">
+  <tbody>
+    <tr class="table-row">
+      <td class="table-column">
+        <div>次に掲げる額の合計額</div>
+        <div>ロ　消滅会社等の株主等に対して交付する存続株式会社等の社債、新株予約権又は新株予約権付社債の帳簿価額の合計額</div>
+        <div>ハ　消滅会社等の株主等に対して交付する存続株式会社等の株式等以外の財産の帳簿価額の合計額</div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
+        const element = <HTMLTable el={input} indent={0} htmlOptions={{}} />;
+        const rendered = renderToStaticMarkup(element);
+        const formatted = formatXML(rendered, { collapseContent: true });
+        assert.strictEqual(
+            formatted,
+            expectedHTML,
+        );
+        const html = /*html*/`\
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+${htmlCSS}
+</style>
+</head>
+<body>
+${rendered}
+</body>
+</html>
+`;
+        const tempParsedHtml = path.join(tempDir, "renderer.table.html");
+        await promisify(fs.writeFile)(tempParsedHtml, html);
+        console.log(`      Saved html: ${tempParsedHtml}`);
+    });
 });
 
 describe("Test DOCX table", () => {
@@ -450,6 +524,81 @@ describe("Test DOCX table", () => {
       <w:p>
         <w:r>
           <w:t>２．２</w:t>
+        </w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
+</w:tbl>
+`;
+        const element = <DOCXTable el={input} indent={0} docxOptions={{}} />;
+        const rendered = renderToStaticMarkup(element);
+        const formatted = formatXML(rendered, { collapseContent: true });
+        assert.strictEqual(
+            formatted,
+            expectedDOCX,
+        );
+        const u8 = await renderDocxAsync(element);
+        const tempParsedDocx = path.join(tempDir, "renderer.table.docx");
+        fs.writeFileSync(tempParsedDocx, u8);
+        console.log(`      Saved docx: ${tempParsedDocx}`);
+    });
+
+
+    it("Success case", async () => {
+        const input = loadEL({
+            tag: "Table",
+            attr: {},
+            children: [
+                {
+                    tag: "TableRow",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "TableColumn",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["次に掲げる額の合計額"],
+                                },
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["ロ　消滅会社等の株主等に対して交付する存続株式会社等の社債、新株予約権又は新株予約権付社債の帳簿価額の合計額"],
+                                },
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["ハ　消滅会社等の株主等に対して交付する存続株式会社等の株式等以外の財産の帳簿価額の合計額"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        }) as std.Table;
+        const expectedDOCX = /*xml*/`\
+<w:tbl>
+  <w:tblPr>
+    <w:tblStyle w:val="IndentTable0"></w:tblStyle>
+  </w:tblPr>
+  <w:tr>
+    <w:tc>
+      <w:tcPr></w:tcPr>
+      <w:p>
+        <w:r>
+          <w:t>次に掲げる額の合計額</w:t>
+        </w:r>
+      </w:p>
+      <w:p>
+        <w:r>
+          <w:t>ロ　消滅会社等の株主等に対して交付する存続株式会社等の社債、新株予約権又は新株予約権付社債の帳簿価額の合計額</w:t>
+        </w:r>
+      </w:p>
+      <w:p>
+        <w:r>
+          <w:t>ハ　消滅会社等の株主等に対して交付する存続株式会社等の株式等以外の財産の帳簿価額の合計額</w:t>
         </w:r>
       </w:p>
     </w:tc>
