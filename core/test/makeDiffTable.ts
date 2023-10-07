@@ -1,4 +1,4 @@
-import { DiffStatus, DiffTableItemData, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffNoDiffData, LawDiffResult, LawDiffType, makeDiffData, ProblemStatus, TagType } from "../src/diff/law_diff";
+import { DiffStatus, DiffTableItemData, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffNoDiffData, LawDiffResultItemData, LawDiffType, ProblemStatus, TagType } from "../src/diff/law_diff";
 import { TERMC } from "../src/util/term";
 import * as util from "../src/util";
 
@@ -230,11 +230,9 @@ const makeElementNoDiffTable = (ditem: LawDiffNoDiffData) => {
     return table;
 };
 
-export const makeDiffTable = (diff: LawDiffResult<string>, origDOM: Node, parsedDOM: Node) => {
+export const makeDiffTable = (diffData: LawDiffResultItemData[]) => {
 
     const table: string[][] = [];
-
-    const diffData = makeDiffData(diff, origDOM, parsedDOM);
 
     for (const ditem of diffData) {
         if (ditem.type === LawDiffType.ElementMismatch) {

@@ -2,21 +2,25 @@ import chai from "chai";
 import { it } from "mocha";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { lawDiff, LawDiffMode, ProblemStatus } from "../src/diff/law_diff";
+import { lawDiff, LawDiffMode, makeDiffData, ProblemStatus } from "../src/diff/law_diff";
 import { TERMC, toTableText } from "../src/util/term";
-import * as util from "../src/util";
 import renderAndParse from "./renderAndParse";
 import makeDiffTable from "./makeDiffTable";
 import { assertLoader } from "./prepare_test";
 
 const LIMIT_WIDTH = 34;
+const MAX_DIFF_LENGTH = 100;
 
 describe("Test Renderes", () => {
 
     const lawNums = [
         "平成五年法律第八十八号",
         "平成十一年法律第百二十七号",
-        ...(process.env.TEST_RENDERERS_LAWNUMS ?? "").split(/[\s,;]+/),
+        ...(
+            process.env.TEST_RENDERERS_LAWNUMS
+                ? process.env.TEST_RENDERERS_LAWNUMS.split(/[\s,;]+/)
+                : []
+        ),
     ];
     // lawNums.splice(0, lawNums.length);
 
@@ -32,17 +36,21 @@ describe("Test Renderes", () => {
             if (!renderAndParseResult) return;
             const { origEL, parsedEL, origDOM, parsedDOM, tempOrigXml, tempRenderedLawtext, tempRenderedHTML, tempRenderedDocx, tempParsedXml } = renderAndParseResult;
 
-            const diff = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.WarningAsNoDiff);
+            const diff = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.NoProblemAsNoDiff);
+            const diffData = makeDiffData(diff, origDOM, parsedDOM);
 
-            const table = makeDiffTable(diff, origDOM, parsedDOM);
+            let slicedDiffData = diffData;
+            if (diffData.length > MAX_DIFF_LENGTH) {
+                const iSerious = Math.max(diffData.findIndex(dd => dd.mostSeriousStatus === diff.mostSeriousStatus), 0);
+                const iStart = Math.min(iSerious, diffData.length - MAX_DIFF_LENGTH);
+                slicedDiffData = diffData.slice(iStart, iStart + MAX_DIFF_LENGTH);
+            }
 
-            if (diff.mostSeriousStatus !== ProblemStatus.NoProblem) {
+            const table = makeDiffTable(slicedDiffData);
+
+            if (diff.mostSeriousStatus > ProblemStatus.Warning) {
                 const legend = `Legend: Error(${TERMC.YELLOW}*Change${TERMC.DEFAULT}, ${TERMC.GREEN}+Add${TERMC.DEFAULT}, ${TERMC.MAGENTA}-Remove${TERMC.DEFAULT}), ${TERMC.CYAN}Warning${TERMC.DEFAULT}, ${TERMC.BLUE}NoProblem${TERMC.DEFAULT}`;
-                const mssStr = (diff.mostSeriousStatus === ProblemStatus.Error)
-                    ? `${TERMC.RED}Error${TERMC.DEFAULT}`
-                    : (diff.mostSeriousStatus === ProblemStatus.Warning)
-                        ? `${TERMC.CYAN}Warning${TERMC.DEFAULT}`
-                        : util.assertNever(diff.mostSeriousStatus);
+                const mssStr = `${TERMC.RED}Error${TERMC.DEFAULT}`;
                 const msg = [
                     legend,
                     `Original XML: "${tempOrigXml}"`,
