@@ -190,18 +190,32 @@ export const toVirtualLines = (lines: Line[]) => {
             }
 
             // If the current line is `TableColumnLine` and it indicates that it is NOT a first column of the table line, search for the preceding first line and adopt the indent depth of the first line.
+            // If the current line is a child of `TableColumnLine` with `multilineIndicator` keep the indent depth.
             if (line.type === LineType.TBL && line.firstColumnIndicator === "") {
                 for (let currentOffset = i - 1; currentOffset >= 0; currentOffset--) {
                     const prevLine = lines[currentOffset];
                     if (prevLine.type === LineType.BNK) continue;
-                    if (
-                        (prevLine.type === LineType.TBL && prevLine.firstColumnIndicator === "")
-                        || (prevLine.indentTexts.length > line.indentTexts.length)
-                    ) continue;
-                    if (
-                        prevLine.type === LineType.TBL && prevLine.firstColumnIndicator === "*"
-                    ) {
-                        currentDepth = prevLine.indentTexts.length;
+                    if (prevLine.indentTexts.length > line.indentTexts.length) continue;
+
+                    if (prevLine.type === LineType.TBL) {
+                        if (
+                            (prevLine.multilineIndicator !== "") &&
+                            (
+                                (
+                                    (prevLine.firstColumnIndicator === "") &&
+                                    (line.indentTexts.length - prevLine.indentTexts.length >= 1)
+                                )
+                                || (
+                                    (prevLine.firstColumnIndicator === "*") &&
+                                    (line.indentTexts.length - prevLine.indentTexts.length >= 2)
+                                )
+                            )
+                        ) break;
+                        if (prevLine.firstColumnIndicator === "") continue;
+                        if (prevLine.firstColumnIndicator === "*") {
+                            currentDepth = prevLine.indentTexts.length;
+                            break;
+                        }
                     }
                     break;
                 }

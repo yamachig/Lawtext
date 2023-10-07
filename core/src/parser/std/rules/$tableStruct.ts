@@ -16,6 +16,8 @@ import $article from "./$article";
 import $articleGroup from "./$articleGroup";
 import { $requireControlParagraphItem } from "./$paragraphItem";
 import $figStruct from "./$figStruct";
+import { mergeAdjacentTextsWithString } from "../../cst/util";
+import { __Text } from "../../../node/el/controls";
 
 
 /**
@@ -61,7 +63,32 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
                 if (cell.children.every(isColumn)) {
                     cellLine.sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
                 } else if (cell.children.every(isSentence)) {
-                    cellLine.sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
+                    if (cell.children.length === 1) {
+                        cellLine.sentencesArray.push(...columnsOrSentencesToSentencesArray(cell.children));
+                    } else {
+                        cellLine.multilineIndicator = "|";
+                        if (cellLine.attrEntries.length > 0) {
+                            cellLine.attrEntries.slice(-1)[0].trailingSpace = " ";
+                        }
+                        for (const child of cell.children) {
+                            const sentencesArray = columnsOrSentencesToSentencesArray([child]);
+                            if (sentencesArray[0].attrEntries.length > 0) {
+                                sentencesArray[0].attrEntries.slice(-1)[0].trailingSpace = " ";
+                            }
+                            lines.push(new TableColumnLine({
+                                range: null,
+                                indentTexts: childrenIndentTexts,
+                                firstColumnIndicator: "",
+                                midIndicatorsSpace: "",
+                                columnIndicator: "-",
+                                midSpace: " ",
+                                attrEntries: [],
+                                multilineIndicator: "",
+                                sentencesArray,
+                                lineEndText: CST.EOL,
+                            }));
+                        }
+                    }
                 } else {
                     cellLine.multilineIndicator = "|";
                     if (cellLine.attrEntries.length > 0) {
@@ -159,6 +186,35 @@ const $tableCellChildrenBlock = makeDoubleIndentBlockWithCaptureRule(
             .or(r => r
                 .oneMatch(({ item }) => {
                     if (
+                        item.type === LineType.TBL
+                        && item.line.firstColumnIndicator === ""
+                    ) {
+                        return {
+                            value: [
+                                newStdEL(
+                                    "Sentence",
+                                    Object.fromEntries(item.line.attrEntries.map(e => e.entry)),
+                                    mergeAdjacentTextsWithString(
+                                        item.line.sentencesArray
+                                            .map(sa => [
+                                                new __Text(sa.leadingSpace, sa.leadingSpaceRange),
+                                                ...sa.sentences.map(s => s.children).flat(),
+                                            ])
+                                            .flat()
+                                    ),
+                                    item.line.sentencesArrayRange,
+                                )
+                            ],
+                            errors: [],
+                        };
+                    } else {
+                        return null;
+                    }
+                })
+            )
+            .or(r => r
+                .oneMatch(({ item }) => {
+                    if (
                         item.type === LineType.OTH
                     ) {
                         return {
@@ -222,13 +278,21 @@ const $table: WithErrorRule<std.Table> = factory
                                 //         )
                                 //     )
                                 // )
-                                .action(({ block }) => ({
-                                    value: block.value.map(v => v.value).flat(),
-                                    errors: [
-                                        ...block.value.map(v => v.errors).flat(),
-                                        ...block.errors,
-                                    ]
-                                }))
+                                .action(({ block }) => {
+                                    const children = block.value.map(v => v.value).flat();
+                                    if (children.every(isSentence)) {
+                                        for (const [i, s] of children.entries()) {
+                                            if (!("Num" in s.attr)) s.attr.Num = (i + 1).toString();
+                                        }
+                                    }
+                                    return {
+                                        value: block.value.map(v => v.value).flat(),
+                                        errors: [
+                                            ...block.value.map(v => v.errors).flat(),
+                                            ...block.errors,
+                                        ]
+                                    };
+                                })
                             )
                         )
                     )
