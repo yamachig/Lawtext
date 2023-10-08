@@ -54,9 +54,10 @@ export const mergeAdjacentTextsWithString = <T extends SentenceChildEL>(inline: 
             && (typeof item === "string" || item.tag === "__Text")
         ) {
             const itemText = typeof item === "string" ? item : item.text();
+            const itemRange = typeof item === "string" ? (lastItem.range ? [lastItem.range[1], lastItem.range[1] + itemText.length] : null) : item.range;
             const replacedTail = new __Text(
                 lastItem.text() + itemText,
-                (lastItem.range ? [lastItem.range[0], lastItem.range[1] + itemText.length] : null)
+                ((lastItem.range && itemRange) ? [lastItem.range[0], itemRange[1]] : null)
             );
             result.splice(-1, 1);
             result.push(replacedTail);

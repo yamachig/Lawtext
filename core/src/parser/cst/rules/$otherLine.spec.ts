@@ -415,6 +415,68 @@ describe("Test $otherLine", () => {
         }
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+    :remarks:[LineBreak="true"]
+
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 33,
+        } as const;
+        const expectedText = `\
+    :remarks:[LineBreak="true"]
+`;
+        const expectedValue = {
+            type: LineType.OTH,
+            indentTexts: ["  ", "  "] as string[],
+            controls: [
+                {
+                    control: ":remarks:",
+                    controlRange: [4, 13],
+                    trailingSpace: "",
+                    trailingSpaceRange: [13, 13],
+                }
+            ] as Controls,
+            lineEndText: `
+`,
+        } as const;
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                leadingSpaceRange: [13, 13] as [number, number],
+                attrEntries: [
+                    {
+                        entry: [
+                            "LineBreak",
+                            "true",
+                        ] as [string, string],
+                        entryRange: [13, 31] as [number, number],
+                        entryText: "[LineBreak=\"true\"]",
+                        trailingSpace: "",
+                        trailingSpaceRange: [31, 31] as [number, number],
+                    }
+                ],
+                sentences: [],
+            },
+        ];
+        const result = $lines.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value[0], expectedValue);
+            assert.strictEqual(result.value.value[0].text(), expectedText);
+            assert.deepStrictEqual(
+                (result.value.value[0] as {sentencesArray: SentencesArray}).sentencesArray.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
+        }
+    });
+
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;

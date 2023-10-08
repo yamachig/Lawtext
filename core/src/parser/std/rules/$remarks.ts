@@ -6,7 +6,7 @@ import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { ErrorMessage } from "../../cst/error";
 import $paragraphItem, { paragraphItemToLines } from "./$paragraphItem";
-import { Control, Sentences } from "../../../node/cst/inline";
+import { AttrEntry, Control, Sentences } from "../../../node/cst/inline";
 import { assertNever, omit } from "../../../util";
 import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
@@ -25,9 +25,9 @@ export const remarksLabelPtn = /^(?:備\s*考|注)\s*$/;
 export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Line[] => {
     const lines: Line[] = [];
 
-    const remarksLabelSentenceChildren = (
-        remarks.children.find(el => el.tag === "RemarksLabel") as std.RemarksLabel | undefined
-    )?.children;
+    const remarksLabel = remarks.children.find(el => el.tag === "RemarksLabel") as std.RemarksLabel | undefined;
+
+    const remarksLabelSentenceChildren = remarksLabel?.children;
     const controls = remarksLabelSentenceChildren && remarksLabelPtn.exec(sentenceChildrenToString(remarksLabelSentenceChildren)) ? [] : [
         new Control(
             remarksControl,
@@ -37,20 +37,35 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
         ),
     ];
 
+    const remarksLabelSentences = new Sentences(
+        "",
+        null,
+        [],
+        [newStdEL("Sentence", {}, remarksLabelSentenceChildren)]
+    );
+
     lines.push(new OtherLine({
         range: null,
         indentTexts,
         controls,
-        sentencesArray: remarksLabelSentenceChildren ? [
-            new Sentences(
-                "",
-                null,
-                [],
-                [newStdEL("Sentence", {}, remarksLabelSentenceChildren)]
-            )
-        ] : [],
+        sentencesArray: remarksLabelSentenceChildren ? [remarksLabelSentences] : [],
         lineEndText: CST.EOL,
     }));
+
+    if (remarksLabel) {
+        for (const [name, value] of Object.entries(remarksLabel.attr)) {
+            if ((std.defaultAttrs[remarksLabel.tag] as Record<string, string>)[name] === value) continue;
+            remarksLabelSentences.attrEntries.push(
+                new AttrEntry(
+                    `[${name}="${value}"]`,
+                    [name, value],
+                    null,
+                    "",
+                    null,
+                )
+            );
+        }
+    }
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
@@ -171,7 +186,10 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                         )
                         || (
                             item.line.sentencesArray.length > 0
-                            && remarksLabelPtn.exec(sentencesArrayToString(item.line.sentencesArray))
+                            && remarksLabelPtn.exec(sentencesArrayToString(
+                                item.line.sentencesArray,
+                                true,
+                            ))
                         )
                     )
                 ) {
@@ -189,9 +207,10 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
             const errors: ErrorMessage[] = [];
 
             const remarksLabelSentenceChildren = forceSentencesArrayToSentenceChildren(labelLine.line.sentencesArray);
-            const remarksLabel = remarksLabelSentenceChildren.length > 0 ? newStdEL(
+            const attrEntries = labelLine.line.sentencesArray[0]?.attrEntries ?? [];
+            const remarksLabel = ((remarksLabelSentenceChildren.length > 0) || attrEntries.length > 0) ? newStdEL(
                 "RemarksLabel",
-                {},
+                Object.fromEntries(attrEntries.map(attrEntry => attrEntry.entry)),
                 remarksLabelSentenceChildren,
                 labelLine.line.sentencesArrayRange,
             ) : null;

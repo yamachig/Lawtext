@@ -442,8 +442,8 @@ export class ArticleLine extends IndentsLine<LineType.ART> {
     public get sentencesArrayRange(): [number, number] | null {
         if (this.sentencesArray.length > 0) {
             const ranges = this.sentencesArray.flat().map(ss => [
-                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
                 ss.leadingSpaceRange,
+                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
                 ...ss.sentences.map(s => s.range),
             ]).flat().filter(r => r !== null) as [start: number, end: number][];
             if (ranges.length === 0) return null;
@@ -508,8 +508,8 @@ export class ParagraphItemLine<TTag extends (typeof paragraphItemTags)[number] |
     public get sentencesArrayRange(): [number, number] | null {
         if (this.sentencesArray.length > 0) {
             const ranges = this.sentencesArray.flat().map(ss => [
-                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
                 ss.leadingSpaceRange,
+                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
                 ...ss.sentences.map(s => s.range),
             ]).flat().filter(r => r !== null) as [start: number, end: number][];
             if (ranges.length === 0) return null;
@@ -622,8 +622,8 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
     public get sentencesArrayRange(): [number, number] | null {
         if (this.sentencesArray.length > 0) {
             const ranges = this.sentencesArray.flat().map(ss => [
-                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
                 ss.leadingSpaceRange,
+                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
                 ...ss.sentences.map(s => s.range),
             ]).flat().filter(r => r !== null) as [start: number, end: number][];
             if (ranges.length === 0) return null;
@@ -671,8 +671,8 @@ export class OtherLine extends WithControlsLine<LineType.OTH> {
     public get sentencesArrayRange(): [number, number] | null {
         if (this.sentencesArray.length > 0) {
             const ranges = this.sentencesArray.flat().map(ss => [
-                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
                 ss.leadingSpaceRange,
+                ...ss.attrEntries.map(e => [e.entryRange, e.trailingSpaceRange]).flat(),
                 ...ss.sentences.map(s => s.range),
             ]).flat().filter(r => r !== null) as [start: number, end: number][];
             if (ranges.length === 0) return null;

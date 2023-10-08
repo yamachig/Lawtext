@@ -9,6 +9,7 @@ import $xml from "./$xml";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { EL } from "../../../node/el";
+import $squareAttr from "./$squareAttr";
 
 export const keepLeadingSpacesControl = ":keep-leading-spaces:";
 export const ignoreTitleControl = ":ignore-title:";
@@ -83,6 +84,45 @@ export const $otherLine: WithErrorRule<OtherLine> = factory
                         })
                     )
                     .or(() => $sentencesArray)
+                    .orSequence(s => s
+                        .and(r => r
+                            .oneOrMore(r => r
+                                .sequence(s => s
+                                    .and(() => $squareAttr, "entry")
+                                    .and(() => $_, "trailingSpace")
+                                    .action(({ entry, trailingSpace, range }) => {
+                                        const r = range();
+                                        entry.value.trailingSpace = trailingSpace;
+                                        if (entry.value.entryRange) {
+                                            entry.value.trailingSpaceRange = [
+                                                entry.value.entryRange[1],
+                                                r[1],
+                                            ];
+                                        }
+                                        return {
+                                            value: entry.value,
+                                            errors: entry.errors,
+                                        };
+                                    })
+                                )
+                            )
+                        , "attrEntries")
+                        .action(({ attrEntries, range }) => {
+                            const r = range();
+                            const errors = [...attrEntries.map(e => e.errors).flat()];
+                            return {
+                                value: [
+                                    new Sentences(
+                                        "",
+                                        [r[0], r[0]],
+                                        attrEntries.map(e => e.value).flat(),
+                                        [],
+                                    )
+                                ],
+                                errors,
+                            };
+                        })
+                    )
                 )
             )
         , "columns")

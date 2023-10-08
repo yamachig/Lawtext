@@ -12,14 +12,17 @@ import { ErrorMessage } from "../error";
 
 export const sentencesArrayToString = (
     sentencesArray: SentencesArray,
+    withoutAttrs = false,
 ): string => {
     const runs: string[] = [];
 
     for (const sentences of sentencesArray) {
         runs.push(sentences.leadingSpace);
-        for (const attrEntry of sentences.attrEntries) {
-            if ((std.defaultAttrs.Sentence as Record<string, string>)[attrEntry.entry[0]] === attrEntry.entry[1]) continue;
-            runs.push(attrEntry.entryText + attrEntry.trailingSpace);
+        if (!withoutAttrs) {
+            for (const attrEntry of sentences.attrEntries) {
+                if ((std.defaultAttrs.Sentence as Record<string, string>)[attrEntry.entry[0]] === attrEntry.entry[1]) continue;
+                runs.push(attrEntry.entryText + attrEntry.trailingSpace);
+            }
         }
         for (const sentence of sentences.sentences) {
             runs.push(sentenceChildrenToString(sentence.children));
@@ -36,11 +39,13 @@ export const forceSentencesArrayToSentenceChildren = (
 ): SentenceChildEL[] => {
     return mergeAdjacentTexts(
         sentencesArray
-            .flat()
-            .map(ss => ({ ls: new __Text(ss.leadingSpace, ss.leadingSpaceRange), ss: ss.sentences }))
-            .map(({ ls, ss }) => [
-                ls,
-                ...ss.map(s => s.children as SentenceChildEL[]).flat(),
+            .map(sentences => [
+                ...(
+                    (sentences.leadingSpace !== "")
+                        ? [new __Text(sentences.leadingSpace, sentences.leadingSpaceRange)]
+                        : []
+                ),
+                ...sentences.sentences.map(s => s.children as SentenceChildEL[]).flat(),
             ])
             .flat()
     );
