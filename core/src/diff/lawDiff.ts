@@ -417,12 +417,12 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
 
     const origRetItems: LawDiffResultItem<string>[] = [];
 
-    for (const origDRow of origDRows) {
+    for (const [origDRowI, origDRow] of origDRows.entries()) {
         const origOldIndex = origDRow.oldItem && origDRow.oldItem.index;
         const origNewIndex = origDRow.newItem && origDRow.newItem.index;
 
-        const [oldEL /**/] = origOldIndex ? origOldELs[origOldIndex] : [null, null];
-        const [newEL /**/] = origNewIndex ? origNewELs[origNewIndex] : [null, null];
+        const [oldEL, oldTT] = origOldIndex ? origOldELs[origOldIndex] : [null, null];
+        const [newEL, newTT] = origNewIndex ? origNewELs[origNewIndex] : [null, null];
 
         const isWarningChangeEL = warningChangeELsList.some(els => {
             const oldIsFragment = !oldEL || 0 <= els.oldELs.indexOf(oldEL);
@@ -451,9 +451,9 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
             if (r && (
                 (lawDiffMode === LawDiffMode.NoProblemAsNoDiff
                 && ProblemStatus.NoProblem < r.mostSeriousStatus) ||
-            (lawDiffMode === LawDiffMode.WarningAsNoDiff
-                && ProblemStatus.Warning < r.mostSeriousStatus) ||
-            (lawDiffMode === LawDiffMode.DiffAll)
+                (lawDiffMode === LawDiffMode.WarningAsNoDiff
+                    && ProblemStatus.Warning < r.mostSeriousStatus) ||
+                (lawDiffMode === LawDiffMode.DiffAll)
             )) {
                 origRetItems.push(r);
             } else {
@@ -464,10 +464,73 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                 });
             }
 
-        } else if (origDRow.status === DiffStatus.Change) {
-            const r = detectWarningChangeELs(origDRow, origOldELs, origNewELs);
+        } else if (
+            (origDRow.status === DiffStatus.Change) ||
+            (origDRow.status === DiffStatus.Remove) ||
+            (origDRow.status === DiffStatus.Add)
+        ) {
 
-            if (r) {
+            let origDRowToDetect: DiffTableRow<string> | null = null;
+
+            if (origDRow.status === DiffStatus.Change) {
+                origDRowToDetect = origDRow;
+
+            } else if ((origDRow.status === DiffStatus.Remove) && (oldTT === TagType.Open)) {
+                let origDRowIClose: number | null = null;
+                let origDRowIText: number | null = null;
+                let noChangeMiddle = true;
+                const maxD = 2 * (oldEL.closeIndex - oldEL.index);
+                for (let i = origDRowI + 1; i < Math.min(origDRows.length, origDRowI + maxD + 1); i++) {
+                    const row = origDRows[i];
+                    if ((row.status === DiffStatus.Remove) && (row.oldItem.index === oldEL.closeIndex)) {
+                        origDRowIClose = i;
+                        break;
+                    }
+                    if (row.status !== DiffStatus.NoChange) {
+                        noChangeMiddle = false;
+                        break;
+                    }
+                    if (
+                        (origOldELs[row.oldItem.index][1] === TagType.Text) &&
+                        (origNewELs[row.newItem.index][1] === TagType.Text)
+                    ) {
+                        origDRowIText = i;
+                    }
+                }
+                if (noChangeMiddle && (origDRowIClose !== null) && (origDRowIText !== null) && (origDRowIClose - origDRowI >= 2)) {
+                    origDRowToDetect = origDRows[origDRowIText];
+                }
+
+            } else if ((origDRow.status === DiffStatus.Add) && (newTT === TagType.Open)) {
+                let origDRowIClose: number | null = null;
+                let origDRowIText: number | null = null;
+                let noChangeMiddle = true;
+                const maxD = 2 * (newEL.closeIndex - newEL.index);
+                for (let i = origDRowI + 1; i < Math.min(origDRows.length, origDRowI + maxD + 1); i++) {
+                    const row = origDRows[i];
+                    if ((row.status === DiffStatus.Add) && (row.newItem.index === newEL.closeIndex)) {
+                        origDRowIClose = i;
+                        break;
+                    }
+                    if (row.status !== DiffStatus.NoChange) {
+                        noChangeMiddle = false;
+                        break;
+                    }
+                    if (
+                        (origNewELs[row.newItem.index][1] === TagType.Text) &&
+                        (origOldELs[row.oldItem.index][1] === TagType.Text)
+                    ) {
+                        origDRowIText = i;
+                    }
+                }
+                if (noChangeMiddle && (origDRowIClose !== null) && (origDRowIText !== null) && (origDRowIClose - origDRowI >= 2)) {
+                    origDRowToDetect = origDRows[origDRowIText];
+                }
+            }
+
+            const r = origDRowToDetect && detectWarningChangeELs(origDRowToDetect, origOldELs, origNewELs);
+
+            if (origDRowToDetect && r) {
 
                 // process future LawDiff
                 warningChangeELsList.push(r);
@@ -478,17 +541,16 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                     const firstOldELIndex = origOldELs.findIndex(([el]) => el === r.oldELs[0]);
                     const firstNewELIndex = origNewELs.findIndex(([el]) => el === r.newELs[0]);
 
-
                     if (
-                        (origDRow.oldItem && (firstOldELIndex < origDRow.oldItem.index)) &&
-                        (origDRow.newItem && (firstNewELIndex < origDRow.newItem.index))
+                        (origDRowToDetect.oldItem && (firstOldELIndex < origDRowToDetect.oldItem.index)) &&
+                        (origDRowToDetect.newItem && (firstNewELIndex < origDRowToDetect.newItem.index))
                     ) {
 
                         // Max rollback length of LawDiff[]
                         // (length of LawDiff[] <= 2 * (length of ComparableEL[]))
                         const maxDI = 2 * Math.max(
-                            (origDRow.oldItem.index - firstOldELIndex),
-                            (origDRow.newItem.index - firstNewELIndex),
+                            (origDRowToDetect.oldItem.index - firstOldELIndex),
+                            (origDRowToDetect.newItem.index - firstNewELIndex),
                         );
 
                         for (let i = origRetItems.length - 1; i >= (origRetItems.length - 1 - maxDI); i--) {
@@ -536,43 +598,43 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                 }
 
             } else {
-                origRetItems.push({
-                    type: LawDiffType.ElementMismatch,
-                    mostSeriousStatus: ProblemStatus.Error,
-                    diffTable: [origDRow],
-                });
-            }
+                if (origDRow.status === DiffStatus.Change) {
+                    origRetItems.push({
+                        type: LawDiffType.ElementMismatch,
+                        mostSeriousStatus: ProblemStatus.Error,
+                        diffTable: [origDRow],
+                    });
+                } else if (origDRow.status === DiffStatus.Remove) {
+                    if (oldEL && (warnEmptyAddRemoveTags as string[]).includes(oldEL.tag)) {
+                        origRetItems.push({
+                            type: LawDiffType.ElementMismatch,
+                            mostSeriousStatus: ProblemStatus.Warning,
+                            diffTable: [origDRow],
+                        });
 
-        } else if (origDRow.status === DiffStatus.Add) {
-            if (newEL && (warnEmptyAddRemoveTags as string[]).includes(newEL.tag)) {
-                origRetItems.push({
-                    type: LawDiffType.ElementMismatch,
-                    mostSeriousStatus: ProblemStatus.Warning,
-                    diffTable: [origDRow],
-                });
+                    } else {
+                        origRetItems.push({
+                            type: LawDiffType.ElementMismatch,
+                            mostSeriousStatus: ProblemStatus.Error,
+                            diffTable: [origDRow],
+                        });
+                    }
+                } else if (origDRow.status === DiffStatus.Add) {
+                    if (newEL && (warnEmptyAddRemoveTags as string[]).includes(newEL.tag)) {
+                        origRetItems.push({
+                            type: LawDiffType.ElementMismatch,
+                            mostSeriousStatus: ProblemStatus.Warning,
+                            diffTable: [origDRow],
+                        });
 
-            } else {
-                origRetItems.push({
-                    type: LawDiffType.ElementMismatch,
-                    mostSeriousStatus: ProblemStatus.Error,
-                    diffTable: [origDRow],
-                });
-            }
-
-        } else if (origDRow.status === DiffStatus.Remove) {
-            if (oldEL && (warnEmptyAddRemoveTags as string[]).includes(oldEL.tag)) {
-                origRetItems.push({
-                    type: LawDiffType.ElementMismatch,
-                    mostSeriousStatus: ProblemStatus.Warning,
-                    diffTable: [origDRow],
-                });
-
-            } else {
-                origRetItems.push({
-                    type: LawDiffType.ElementMismatch,
-                    mostSeriousStatus: ProblemStatus.Error,
-                    diffTable: [origDRow],
-                });
+                    } else {
+                        origRetItems.push({
+                            type: LawDiffType.ElementMismatch,
+                            mostSeriousStatus: ProblemStatus.Error,
+                            diffTable: [origDRow],
+                        });
+                    }
+                }
             }
 
         } else { throw util.assertNever(origDRow); }
@@ -739,15 +801,6 @@ const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[Compa
             const oldSentencesJoinText = oldSentences?.map(el => el.text).join("") ?? null;
             const newSentencesJoinText = newSentences?.map(el => el.text).join("") ?? null;
 
-            if (oldSentences && newSentences && (oldSentencesJoinText === newSentencesJoinText)) {
-                return {
-                    oldELs: ([] as ComparableEL[])
-                        .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
-                    newELs: ([] as ComparableEL[])
-                        .concat(...newSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
-                };
-            }
-
             const [oldColumns, newColumns] = [oldSentence, newSentence].map(sentence => {
                 if (!sentence.parent) return null;
                 if (sentence.parent.tag !== "Column") return null;
@@ -789,6 +842,15 @@ const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[Compa
                 return {
                     oldELs: ([] as ComparableEL[])
                         .concat(...oldColumns.map(el => Array.from(el.allList()).map(([e]) => e))),
+                    newELs: ([] as ComparableEL[])
+                        .concat(...newSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
+                };
+            }
+
+            if (oldSentences && newSentences && (oldSentencesJoinText === newSentencesJoinText)) {
+                return {
+                    oldELs: ([] as ComparableEL[])
+                        .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
                     newELs: ([] as ComparableEL[])
                         .concat(...newSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
                 };
