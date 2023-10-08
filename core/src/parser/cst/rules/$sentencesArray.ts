@@ -26,7 +26,9 @@ export const sentencesArrayToString = (
         }
     }
 
-    return runs.join("");
+    // eslint-disable-next-line no-irregular-whitespace
+    return runs.join("").replace(/[ 　\t]$/, c => `&#x${c.codePointAt(0)?.toString(16)};`);
+
 };
 
 export const forceSentencesArrayToSentenceChildren = (

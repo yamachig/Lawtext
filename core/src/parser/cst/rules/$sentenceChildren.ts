@@ -96,6 +96,8 @@ export default $sentenceChildren;
 
 const reLawNumLike = new RegExp(`^${ptnLawNumLike}`);
 
+const reCharRef = /^&#(\d+|x[\da-fA-F]+);/;
+
 export const $inlineToken = factory
     .withName("inlineToken")
     .choice(c => c
@@ -105,6 +107,18 @@ export const $inlineToken = factory
                 value: new __Text(text, range()),
                 errors: [],
             }))
+        )
+        .orSequence(s => s
+            .and(r => r.regExpObj(reCharRef), "charRef")
+            .action(({ charRef, range }) => {
+                const intStr = charRef[1].toLowerCase();
+                const isHex = intStr.startsWith("x");
+                const int = parseInt(intStr.slice(isHex ? 1 : 0), isHex ? 16 : 10);
+                return {
+                    value: new __Text(String.fromCharCode(int), range()),
+                    errors: [],
+                };
+            })
         )
         .orSequence(s => s
             .and(r => r.regExp(reLawNumLike), "text")
@@ -117,7 +131,7 @@ export const $inlineToken = factory
     )
     ;
 
-const rePeriodSentenceTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}])[^\r\n<>()（）[\\]［］{}｛｝「」 　\t。])+`);
+const rePeriodSentenceTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}])[^\r\n&<>()（）[\\]［］{}｛｝「」 　\t。])+`);
 
 export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
     .withName("PERIOD_SENTENCE_FRAGMENT")
@@ -130,7 +144,7 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                             .or(r => r.regExp(reSuppressPointerRanges))
                             .or(r => r.regExp(rePeriodSentenceTextChars))
                             .or(() => $inlineToken)
-                            .or(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」 　\t。]/))
+                            .or(r => r.regExp(/^[^\r\n&<>()（）[\]［］{}｛｝「」 　\t。]/))
                             .or(() => ANY_PARENTHESES_INLINE)
                             .or(() => $MISMATCH_END_PARENTHESIS),
                         )
@@ -193,7 +207,7 @@ export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES_WITHOUT_TOPLEVE
                 .choice(c => c
                     .orSequence(s => s
                         .and(r => r
-                            .regExp(/^(?:(?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」])+/)
+                            .regExp(/^(?:(?![ 　\t]*\r?\n)[^\r\n&<>()（）[\]［］{}｛｝「」])+/)
                         , "plain")
                         .action(({ plain, range }) => {
                             return {
@@ -214,7 +228,7 @@ export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES_WITHOUT_TOPLEVE
     )
 ;
 
-const reOutsideParenthesesTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}]|[ 　\t]*\r?\n)[^\r\n<>()（）[\\]［］{}｛｝「」])+`);
+const reOutsideParenthesesTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}]|[ 　\t]*\r?\n)[^\r\n&<>()（）[\\]［］{}｛｝「」])+`);
 
 export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<SentenceChildEL[]> = factory
     .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES")
@@ -224,7 +238,7 @@ export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<
                 .choice(c => c
                     .or(r => r.regExp(reOutsideParenthesesTextChars))
                     .or(() => $inlineToken)
-                    .or(r => r.regExp(/^(?![ 　\t]*\r?\n)[^\r\n<>()（）[\]［］{}｛｝「」]/))
+                    .or(r => r.regExp(/^(?![ 　\t]*\r?\n)[^\r\n&<>()（）[\]［］{}｛｝「」]/))
                 )
             )
         , "target")
@@ -336,7 +350,7 @@ export const ANY_PARENTHESES_INLINE: WithErrorRule<SentenceChildEL> = factory
     )
 ;
 
-const reParenthesesInlineTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}])[^\r\n<>()（）[\\]［］{}｛｝「」])+`);
+const reParenthesesInlineTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}])[^\r\n&<>()（）[\\]［］{}｛｝「」])+`);
 
 export const makeParenthesesInline = (
     parenthesisType: ParenthesesType,
@@ -364,7 +378,7 @@ export const makeParenthesesInline = (
                                 .choice(c => c
                                     .or(r => r.regExp(reParenthesesInlineTextChars))
                                     .or(() => $inlineToken)
-                                    .or(r => r.regExp(/^[^\r\n<>()（）[\]［］{}｛｝「」]/))
+                                    .or(r => r.regExp(/^[^\r\n&<>()（）[\]［］{}｛｝「」]/))
                                     .or(() => ANY_PARENTHESES_INLINE)
                                     .or(r => r
                                         .sequence(c => c
