@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as law_diff from "lawtext/dist/src/diff/law_diff";
+import * as lawDiff from "lawtext/dist/src/diff/lawDiff";
 import { assertNever } from "lawtext/dist/src/util";
 import * as React from "react";
 import styled from "styled-components";
@@ -19,9 +19,9 @@ function* zipLongest<T extends unknown[][]>(lists: T, defaultValues: ZipItem<T>)
 }
 
 
-const itemToSpans = (item: Partial<law_diff.DiffTableItemData>) => {
+const itemToSpans = (item: Partial<lawDiff.DiffTableItemData>) => {
     const ret: JSX.Element[] = [];
-    if (item.type === law_diff.TagType.Open || item.type === law_diff.TagType.Empty) {
+    if (item.type === lawDiff.TagType.Open || item.type === lawDiff.TagType.Empty) {
         if (item.attr && item.attr.length) {
             const attr = item.attr;
             ret.push(
@@ -42,7 +42,7 @@ const itemToSpans = (item: Partial<law_diff.DiffTableItemData>) => {
             );
             ret.push(
                 <span key={ret.length}>
-                    <span>{item.type === law_diff.TagType.Empty ? "/" : ""}&gt;</span>
+                    <span>{item.type === lawDiff.TagType.Empty ? "/" : ""}&gt;</span>
                 </span>,
             );
         } else {
@@ -50,12 +50,12 @@ const itemToSpans = (item: Partial<law_diff.DiffTableItemData>) => {
                 <span key={ret.length}>
                     <span>&lt;</span>
                     <span>{item.tag}</span>
-                    <span>{item.type === law_diff.TagType.Empty ? "&nbsp;/" : ""}&gt;</span>
+                    <span>{item.type === lawDiff.TagType.Empty ? "&nbsp;/" : ""}&gt;</span>
                 </span>,
             );
         }
 
-    } else if (item.type === law_diff.TagType.Close) {
+    } else if (item.type === lawDiff.TagType.Close) {
         ret.push(
             <span key={ret.length}>
                 <span>&lt;/</span>
@@ -64,7 +64,7 @@ const itemToSpans = (item: Partial<law_diff.DiffTableItemData>) => {
             </span>,
         );
 
-    } else if (item.type === law_diff.TagType.Text) {
+    } else if (item.type === lawDiff.TagType.Text) {
         ret.push(
             <span key={ret.length}>{item.text}</span>,
         );
@@ -77,16 +77,16 @@ const itemToSpans = (item: Partial<law_diff.DiffTableItemData>) => {
     return ret;
 };
 
-const makeElementMismatchTable = (ditem: law_diff.LawDiffElementMismatchData) => {
+const makeElementMismatchTable = (ditem: lawDiff.LawDiffElementMismatchData) => {
     const table: Row[] = [];
     for (const drow of ditem.diffTable) {
         const oldItem = drow.oldItem;
         const newItem = drow.newItem;
         const ColorSpan =
-                drow.status === law_diff.DiffStatus.NoChange ? NoProblemColorSpan
-                    : drow.status === law_diff.DiffStatus.Change ? ErrorColorSpan
-                        : drow.status === law_diff.DiffStatus.Add ? AddColorSpan
-                            : drow.status === law_diff.DiffStatus.Remove ? RemoveColorSpan
+                drow.status === lawDiff.DiffStatus.NoChange ? NoProblemColorSpan
+                    : drow.status === lawDiff.DiffStatus.Change ? ErrorColorSpan
+                        : drow.status === lawDiff.DiffStatus.Add ? AddColorSpan
+                            : drow.status === lawDiff.DiffStatus.Remove ? RemoveColorSpan
                                 : assertNever(drow);
         const lists: [JSX.Element[], JSX.Element[], JSX.Element[], JSX.Element[]] = [
             (
@@ -120,15 +120,15 @@ const makeElementMismatchTable = (ditem: law_diff.LawDiffElementMismatchData) =>
     return table;
 };
 
-const makeElementChangeTable = (ditem: law_diff.LawDiffElementChangeData) => {
+const makeElementChangeTable = (ditem: lawDiff.LawDiffElementChangeData) => {
     const table: Row[] = [];
     const oldItem = ditem.oldItem;
     const newItem = ditem.newItem;
 
     const PosColorSpan =
-            ditem.mostSeriousStatus === law_diff.ProblemStatus.NoProblem ? NoProblemColorSpan
-                : ditem.mostSeriousStatus === law_diff.ProblemStatus.Warning ? WarningColorSpan
-                    : ditem.mostSeriousStatus === law_diff.ProblemStatus.Error ? ErrorColorSpan
+            ditem.mostSeriousStatus === lawDiff.ProblemStatus.NoProblem ? NoProblemColorSpan
+                : ditem.mostSeriousStatus === lawDiff.ProblemStatus.Warning ? WarningColorSpan
+                    : ditem.mostSeriousStatus === lawDiff.ProblemStatus.Error ? ErrorColorSpan
                         : assertNever(ditem.mostSeriousStatus);
     table.push({
         type: RowType.NoProblem,
@@ -171,14 +171,14 @@ const makeElementChangeTable = (ditem: law_diff.LawDiffElementChangeData) => {
 
     for (const [key, status] of ditem.changedKeys) {
         const ColorSpan =
-                status === law_diff.ProblemStatus.NoProblem ? NoProblemColorSpan
-                    : status === law_diff.ProblemStatus.Warning ? WarningColorSpan
-                        : status === law_diff.ProblemStatus.Error ? ErrorColorSpan
+                status === lawDiff.ProblemStatus.NoProblem ? NoProblemColorSpan
+                    : status === lawDiff.ProblemStatus.Warning ? WarningColorSpan
+                        : status === lawDiff.ProblemStatus.Error ? ErrorColorSpan
                             : assertNever(status);
         const rowType =
-                status === law_diff.ProblemStatus.NoProblem ? RowType.NoProblem
-                    : status === law_diff.ProblemStatus.Warning ? RowType.Warning
-                        : status === law_diff.ProblemStatus.Error ? RowType.Error
+                status === lawDiff.ProblemStatus.NoProblem ? RowType.NoProblem
+                    : status === lawDiff.ProblemStatus.Warning ? RowType.Warning
+                        : status === lawDiff.ProblemStatus.Error ? RowType.Error
                             : assertNever(status);
         table.push({
             type: rowType,
@@ -203,14 +203,14 @@ const makeElementChangeTable = (ditem: law_diff.LawDiffElementChangeData) => {
 
     for (const [key, status] of ditem.removedKeys) {
         const ColorSpan =
-                status === law_diff.ProblemStatus.NoProblem ? NoProblemColorSpan
-                    : status === law_diff.ProblemStatus.Warning ? WarningColorSpan
-                        : status === law_diff.ProblemStatus.Error ? RemoveColorSpan
+                status === lawDiff.ProblemStatus.NoProblem ? NoProblemColorSpan
+                    : status === lawDiff.ProblemStatus.Warning ? WarningColorSpan
+                        : status === lawDiff.ProblemStatus.Error ? RemoveColorSpan
                             : assertNever(status);
         const rowType =
-                status === law_diff.ProblemStatus.NoProblem ? RowType.NoProblem
-                    : status === law_diff.ProblemStatus.Warning ? RowType.Warning
-                        : status === law_diff.ProblemStatus.Error ? RowType.Remove
+                status === lawDiff.ProblemStatus.NoProblem ? RowType.NoProblem
+                    : status === lawDiff.ProblemStatus.Warning ? RowType.Warning
+                        : status === lawDiff.ProblemStatus.Error ? RowType.Remove
                             : assertNever(status);
         table.push({
             type: rowType,
@@ -230,14 +230,14 @@ const makeElementChangeTable = (ditem: law_diff.LawDiffElementChangeData) => {
 
     for (const [key, status] of ditem.addedKeys) {
         const ColorSpan =
-                status === law_diff.ProblemStatus.NoProblem ? NoProblemColorSpan
-                    : status === law_diff.ProblemStatus.Warning ? WarningColorSpan
-                        : status === law_diff.ProblemStatus.Error ? AddColorSpan
+                status === lawDiff.ProblemStatus.NoProblem ? NoProblemColorSpan
+                    : status === lawDiff.ProblemStatus.Warning ? WarningColorSpan
+                        : status === lawDiff.ProblemStatus.Error ? AddColorSpan
                             : assertNever(status);
         const rowType =
-                status === law_diff.ProblemStatus.NoProblem ? RowType.NoProblem
-                    : status === law_diff.ProblemStatus.Warning ? RowType.Warning
-                        : status === law_diff.ProblemStatus.Error ? RowType.Add
+                status === lawDiff.ProblemStatus.NoProblem ? RowType.NoProblem
+                    : status === lawDiff.ProblemStatus.Warning ? RowType.Warning
+                        : status === lawDiff.ProblemStatus.Error ? RowType.Add
                             : assertNever(status);
         table.push({
             type: rowType,
@@ -260,11 +260,11 @@ const makeElementChangeTable = (ditem: law_diff.LawDiffElementChangeData) => {
         cols: [
             <span key={0} />,
             <NoProblemColorSpan key={0}>
-                <span>{oldItem.type === law_diff.TagType.Empty ? "/" : ""}&gt;</span>
+                <span>{oldItem.type === lawDiff.TagType.Empty ? "/" : ""}&gt;</span>
             </NoProblemColorSpan>,
             <span key={0} />,
             <NoProblemColorSpan key={0}>
-                <span>{newItem.type === law_diff.TagType.Empty ? "/" : ""}&gt;</span>
+                <span>{newItem.type === lawDiff.TagType.Empty ? "/" : ""}&gt;</span>
             </NoProblemColorSpan>,
         ],
     });
@@ -274,17 +274,17 @@ const makeElementChangeTable = (ditem: law_diff.LawDiffElementChangeData) => {
 
 const NO_DIFF_SHOW_LINES = 3;
 
-const makeElementNoDiffTable = (ditem: law_diff.LawDiffNoDiffData) => {
+const makeElementNoDiffTable = (ditem: lawDiff.LawDiffNoDiffData) => {
     const table: Row[] = [];
     for (const [i, drow] of ditem.diffTable.entries()) {
         if (i < NO_DIFF_SHOW_LINES || ditem.diffTable.length - NO_DIFF_SHOW_LINES <= i) {
             const oldItem = drow.oldItem;
             const newItem = drow.newItem;
             const ColorSpan =
-                    drow.status === law_diff.DiffStatus.NoChange ? NoProblemColorSpan
-                        : drow.status === law_diff.DiffStatus.Change ? ErrorColorSpan
-                            : drow.status === law_diff.DiffStatus.Add ? AddColorSpan
-                                : drow.status === law_diff.DiffStatus.Remove ? RemoveColorSpan
+                    drow.status === lawDiff.DiffStatus.NoChange ? NoProblemColorSpan
+                        : drow.status === lawDiff.DiffStatus.Change ? ErrorColorSpan
+                            : drow.status === lawDiff.DiffStatus.Add ? AddColorSpan
+                                : drow.status === lawDiff.DiffStatus.Remove ? RemoveColorSpan
                                     : assertNever(drow);
             const lists: [JSX.Element[], JSX.Element[], JSX.Element[], JSX.Element[]] = [
                 (
@@ -468,13 +468,13 @@ const LawDiffResultItems: React.FC<{lawCoverage: LawCoverage}> = props => {
     const table: Row[] = [];
 
     for (const ditem of props.lawCoverage.lawDiff?.ok?.result.items ?? []) {
-        if (ditem.type === law_diff.LawDiffType.ElementMismatch) {
+        if (ditem.type === lawDiff.LawDiffType.ElementMismatch) {
             table.push(...makeElementMismatchTable(ditem));
 
-        } else if (ditem.type === law_diff.LawDiffType.ElementChange) {
+        } else if (ditem.type === lawDiff.LawDiffType.ElementChange) {
             table.push(...makeElementChangeTable(ditem));
 
-        } else if (ditem.type === law_diff.LawDiffType.NoDiff) {
+        } else if (ditem.type === lawDiff.LawDiffType.NoDiff) {
             table.push(...makeElementNoDiffTable(ditem));
 
         } else { throw assertNever(ditem); }

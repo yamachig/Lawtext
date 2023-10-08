@@ -1,6 +1,6 @@
 // import formatXML from "xml-formatter";
 import { DOMParser } from "@xmldom/xmldom";
-import * as law_diff from "lawtext/dist/src/diff/law_diff";
+import * as lawDiff from "lawtext/dist/src/diff/lawDiff";
 import { parse } from "lawtext/dist/src/parser/lawtext";
 import * as analyzer from "lawtext/dist/src/analyzer";
 import { renderDocxAsync, renderHTML, renderLawtext } from "lawtext/dist/src/renderer";
@@ -265,7 +265,7 @@ export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string,
         const parsedJson = parsedEL.json(false);
         requiredms.set("parsedELToJson", lap.lapms());
 
-        const d = law_diff.lawDiff(origJson, parsedJson, law_diff.LawDiffMode.NoProblemAsNoDiff);
+        const d = lawDiff.lawDiff(origJson, parsedJson, lawDiff.LawDiffMode.NoProblemAsNoDiff);
         requiredms.set("lawDiff", lap.lapms());
 
         const origDOM = domParser.parseFromString(origXML);
@@ -274,7 +274,7 @@ export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string,
         const parsedDOM = domParser.parseFromString(parsedXML);
         requiredms.set("parseParsedXML", lap.lapms());
 
-        const diffData = law_diff.makeDiffData(d, origDOM, parsedDOM);
+        const diffData = lawDiff.makeDiffData(d, origDOM, parsedDOM);
         requiredms.set("makeDiffData", lap.lapms());
 
         let slicedDiffData = diffData;

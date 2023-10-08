@@ -1,4 +1,4 @@
-import * as law_diff from "lawtext/dist/src/diff/law_diff";
+import * as lawDiff from "lawtext/dist/src/diff/lawDiff";
 import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 
 export enum Era {
@@ -143,9 +143,9 @@ export interface LawCoverage extends BaseLawInfo {
 
     lawDiff: {
         ok: {
-            mostSeriousStatus: law_diff.ProblemStatus,
+            mostSeriousStatus: lawDiff.ProblemStatus,
             result: {
-                items: law_diff.LawDiffResultItemData[],
+                items: lawDiff.LawDiffResultItemData[],
                 totalCount: number,
             },
             requiredms: Map<string, number>,

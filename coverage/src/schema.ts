@@ -1,4 +1,4 @@
-import * as law_diff from "lawtext/dist/src/diff/law_diff";
+import * as lawDiff from "lawtext/dist/src/diff/lawDiff";
 import mongoose from "mongoose";
 import { Era, LawCoverage, LawType } from "./lawCoverage";
 
@@ -114,7 +114,7 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
                 type: new mongoose.Schema<DeNull<DeNull<LawCoverage["lawDiff"]>["ok"]>>({
                     mostSeriousStatus: {
                         type: Number,
-                        enum: Object.values(law_diff.ProblemStatus),
+                        enum: Object.values(lawDiff.ProblemStatus),
                         required: true,
                     },
                     result: {

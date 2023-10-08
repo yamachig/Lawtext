@@ -1,5 +1,5 @@
 import { LawCoverage, LawCoverageCounts, toSortString } from "../../lawCoverage";
-import { ComparableEL, TagType } from "lawtext/dist/src/diff/law_diff";
+import { ComparableEL, TagType } from "lawtext/dist/src/diff/lawDiff";
 import { EL } from "lawtext/dist/src/node/el";
 import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
 import React from "react";

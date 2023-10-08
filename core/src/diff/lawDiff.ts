@@ -1,7 +1,7 @@
 import * as xpath from "xpath";
 import { JsonEL } from "../node/el/jsonEL";
 import * as util from "../util";
-import { compare, EditTable } from "./edit_table";
+import { compare, EditTable } from "./editTable";
 import * as std from "../law/std";
 
 export enum TagType {

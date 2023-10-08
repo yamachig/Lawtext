@@ -2,7 +2,7 @@ import chai from "chai";
 import { it } from "mocha";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { lawDiff, LawDiffMode, makeDiffData, ProblemStatus } from "../src/diff/law_diff";
+import { lawDiff, LawDiffMode, makeDiffData, ProblemStatus } from "../src/diff/lawDiff";
 import { TERMC, toTableText } from "../src/util/term";
 import renderAndParse from "./renderAndParse";
 import makeDiffTable from "./makeDiffTable";

@@ -1,5 +1,5 @@
 import { ConnectionInfo } from "../connection";
-import { ProblemStatus } from "lawtext/dist/src/diff/law_diff";
+import { ProblemStatus } from "lawtext/dist/src/diff/lawDiff";
 import { OriginalLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus, LawCoverageCounts } from "../lawCoverage";
 
 
