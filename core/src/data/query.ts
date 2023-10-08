@@ -1,4 +1,4 @@
-import { fetchLawData } from "../elaws_api";
+import { fetchLawData } from "../elawsApi";
 import { assertNever } from "../util";
 import { EL } from "../node/el";
 import { LawInfo } from "./lawinfo";

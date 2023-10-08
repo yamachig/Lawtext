@@ -5,7 +5,7 @@ import { parse } from "../parser/lawtext";
 import { EL } from "../node/el";
 import { ErrorMessage } from "../parser/cst/error";
 import { LawXMLStruct } from "./loaders/common";
-import { ElawsLawData } from "../elaws_api";
+import { ElawsLawData } from "../elawsApi";
 import { xmlToEL } from "../node/el/xmlToEL";
 import addSentenceChildrenControls from "../parser/addSentenceChildrenControls";
 

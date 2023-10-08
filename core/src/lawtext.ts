@@ -10,7 +10,7 @@ import * as std from "./law/std";
 import { assertNever } from "./util";
 import formatXML from "./util/formatXml";
 import { VirtualLine } from "./parser/std/virtualLine";
-import { fetchLawData } from "./elaws_api";
+import { fetchLawData } from "./elawsApi";
 
 export const intypeChoices = ["fromext", "lawtext", "xml", "json"] as const;
 export const outtypeChoices = ["fromext", "lawtext", "xml", "json", "html", "htmlfragment", "docx"] as const;

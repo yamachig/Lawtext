@@ -1,6 +1,6 @@
 import { LawInfosStruct, lawInfosToByLawnumAndID, Loader } from "./common";
 import { BaseLawInfo, LawInfo } from "../lawinfo";
-import { fetchLawNameList, fetchLawData, ElawsLawData } from "../../elaws_api";
+import { fetchLawNameList, fetchLawData, ElawsLawData } from "../../elawsApi";
 
 const fetchBaseLawInfosFromElaws = async (): Promise<BaseLawInfo[]> => {
     const lawNameList = await fetchLawNameList();

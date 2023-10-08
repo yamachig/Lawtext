@@ -1,5 +1,5 @@
 
-import { fetchPartialLaw } from "lawtext/dist/src/elaws_api";
+import { fetchPartialLaw } from "lawtext/dist/src/elawsApi";
 import * as std from "lawtext/dist/src/law/std";
 import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
 import addSentenceChildrenControls from "lawtext/dist/src/parser/addSentenceChildrenControls";

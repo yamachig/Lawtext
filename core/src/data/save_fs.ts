@@ -1,6 +1,6 @@
 import Zip from "node-stream-zip";
 import path from "path";
-import { allXMLZipURL } from "../elaws_api";
+import { allXMLZipURL } from "../elawsApi";
 import os from "os";
 import fs from "fs";
 import { fetch } from "../util/node-fetch";
