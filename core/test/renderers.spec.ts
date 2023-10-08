@@ -9,7 +9,7 @@ import makeDiffTable from "./makeDiffTable";
 import { assertLoader } from "./prepare_test";
 
 const LIMIT_WIDTH = 34;
-const MAX_DIFF_LENGTH = 100;
+const MAX_DIFF_LENGTH = 20;
 
 describe("Test Renderes", () => {
 

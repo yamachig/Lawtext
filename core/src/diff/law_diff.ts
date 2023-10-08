@@ -413,7 +413,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
 
     }
 
-    const fragmentELsList: FragmentElements[] = [];
+    const warningChangeELsList: Exclude<ReturnType<typeof detectWarningChangeELs>, null>[] = [];
 
     const origRetItems: LawDiffResultItem<string>[] = [];
 
@@ -424,13 +424,13 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
         const [oldEL /**/] = origOldIndex ? origOldELs[origOldIndex] : [null, null];
         const [newEL /**/] = origNewIndex ? origNewELs[origNewIndex] : [null, null];
 
-        const isFragment = fragmentELsList.some(els => {
+        const isWarningChangeEL = warningChangeELsList.some(els => {
             const oldIsFragment = !oldEL || 0 <= els.oldELs.indexOf(oldEL);
             const newIsFragment = !newEL || 0 <= els.newELs.indexOf(newEL);
             return oldIsFragment && newIsFragment;
         });
 
-        if (origDRow.status !== DiffStatus.NoChange && isFragment) {
+        if (origDRow.status !== DiffStatus.NoChange && isWarningChangeEL) {
             if (lawDiffMode === LawDiffMode.WarningAsNoDiff) {
                 origRetItems.push({
                     type: LawDiffType.NoDiff,
@@ -467,10 +467,10 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
             }
 
         } else if (origDRow.status === DiffStatus.Change) {
-            const r = detectFragments(origDRow, origOldELs, origNewELs);
+            const r = detectWarningChangeELs(origDRow, origOldELs, origNewELs);
 
             if (r) {
-                fragmentELsList.push(r);
+                warningChangeELsList.push(r);
 
                 const firstNewELIndex = origNewELs.findIndex(([el]) => el === r.newELs[0]);
                 if (origDRow.newItem && (firstNewELIndex < origDRow.newItem.index)) {
@@ -682,12 +682,10 @@ const processNoChange = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
     return null;
 };
 
-interface FragmentElements {
+const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>): {
     oldELs: ComparableEL[];
     newELs: ComparableEL[];
-}
-
-const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL, TagType]>, newELs: Array<[ComparableEL, TagType]>): FragmentElements | null => {
+} | null => {
     if (!dRow.oldItem || !dRow.newItem) return null;
     const oldIndex = dRow.oldItem.index;
     const newIndex = dRow.newItem.index;
@@ -838,6 +836,27 @@ const detectFragments = (dRow: DiffTableRow<string>, oldELs: Array<[ComparableEL
                         .concat(...newTitles.map(el => Array.from(el.allList()).map(([e ]) => e))),
                 };
             }
+        }
+    } else if (
+        (oldTT === TagType.Open || oldTT === TagType.Empty) &&
+        (newTT === TagType.Open || newTT === TagType.Empty)
+    ) {
+
+        if (
+            (oldEL.tag === newEL.tag) &&
+            (std.paragraphItemSentenceTags as readonly string[]).includes(oldEL.tag) &&
+            [oldEL, newEL].every(oldnewEL => (
+                (oldnewEL.children.length === 0) ||
+                (oldnewEL.children.every(c => (c.tag === "Sentence") && (c.children.length === 0)))
+            ))
+        ) {
+            const retMap = (oldnewEL: ComparableEL) => (
+                Array.from(oldnewEL.allList()).map(([e]) => e)
+            );
+            return {
+                oldELs: retMap(oldEL),
+                newELs: retMap(newEL),
+            };
         }
     }
     return null;
