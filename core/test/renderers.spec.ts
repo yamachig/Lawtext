@@ -6,7 +6,7 @@ import { lawDiff, LawDiffMode, makeDiffData, ProblemStatus } from "../src/diff/l
 import { TERMC, toTableText } from "../src/util/term";
 import renderAndParse from "./renderAndParse";
 import makeDiffTable from "./makeDiffTable";
-import { assertLoader } from "./prepare_test";
+import { assertLoader } from "./prepareTest";
 
 const LIMIT_WIDTH = 34;
 const MAX_DIFF_LENGTH = 20;

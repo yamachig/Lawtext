@@ -1,4 +1,4 @@
-import { __loader } from "./prepare_test";
+import { __loader } from "./prepareTest";
 
 if (!__loader) {
     describe("Assert loader", () => {

@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { LawIDActCategory, LawIDCabinetOrderEffect, LawIDStructAct, LawIDStructCabinetOrder, LawIDStructConstitution, LawIDStructDajokanFukoku, LawIDStructDajokanFutatsu, LawIDStructDajokanTasshi, LawIDStructImperialOrder, LawIDStructJinji, LawIDStructMinisterialOrdinance, LawIDStructPrimeMinisterDecision, LawIDStructRule, LawIDType, parseLawID } from "./lawID";
 import { Era } from "./std";
-import { assertLoader } from "../../test/prepare_test";
+import { assertLoader } from "../../test/prepareTest";
 import { LawInfo } from "../data/lawinfo";
 
 

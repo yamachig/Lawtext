@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { assertLoader } from "../../test/prepare_test";
+import { assertLoader } from "../../test/prepareTest";
 import { LawInfo } from "../data/lawinfo";
 import { LawIDType, parseLawID } from "./lawID";
 import { ptnLawNum, ptnLawNumLike, lawNumLikeToLawNum, parseLawNum } from "./lawNum";
