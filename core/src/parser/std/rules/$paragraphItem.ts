@@ -3,7 +3,7 @@ import { ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine } 
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
-import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
+import $sentenceChildren, { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
 import { assertNever, Diff, NotImplementedError } from "../../../util";
 import { AttrEntries, AttrEntry, Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
 import { $optBNK_INDENT, captionControl, isSingleParentheses, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
@@ -21,7 +21,7 @@ import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
 import { paragraphItemTitleMatch, paragraphItemTitleRule, unknownParagraphItemTitleMatch } from "../../cst/rules/$paragraphItemLine";
 import { anonymParagraphItemControls, autoTagControls, paragraphItemControls } from "../../cst/rules/$tagControl";
 import { circledDigitChars, parseNamedNum } from "../../../law/num";
-import addSentenceChildrenControls from "../../addSentenceChildrenControls";
+import { initialEnv } from "../../cst/env";
 
 const reOldParagraphNum = new RegExp(`^(?:○[0123456789０１２３４５６７８９]+|[${circledDigitChars}])`);
 const reAmendingText = /.*?の一部を次のように(?:改正す|改め)る。$/;
@@ -85,9 +85,12 @@ export const paragraphItemToLines = (
 
     if (ParagraphCaption.length > 0) {
         const newIndentTexts = [...indentTexts, CST.INDENT];
-
-        const captionSentence = std.newStdEL("Sentence", {}, [sentenceChildrenToString(ParagraphCaption)]);
-        addSentenceChildrenControls(captionSentence);
+        const captionString = sentenceChildrenToString(ParagraphCaption);
+        const result = $sentenceChildren.match(0, captionString, initialEnv({}));
+        if (!result.ok) {
+            const message = `addControls: Error: ${captionString}`;
+            throw new Error(message);
+        }
         const line = new OtherLine({
             range: null,
             indentTexts: newIndentTexts,
@@ -97,7 +100,7 @@ export const paragraphItemToLines = (
                     "",
                     null,
                     [],
-                    [captionSentence]
+                    [std.newStdEL("Sentence", {}, result.value.value)],
                 ),
             ],
             lineEndText: CST.EOL,

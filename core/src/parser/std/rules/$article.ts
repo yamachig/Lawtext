@@ -13,8 +13,8 @@ import $paragraphItem, { $autoParagraphItemChildrenOuter, paragraphItemFromAuto,
 import $supplNote, { supplNoteToLines } from "./$supplNote";
 import { rangeOfELs } from "../../../node/el";
 import { parseNamedNum } from "../../../law/num";
-import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import addSentenceChildrenControls from "../../addSentenceChildrenControls";
+import $sentenceChildren, { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
+import { initialEnv } from "../../cst/env";
 
 /**
  * The renderer for {@link std.Article}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$article.spec.ts) for examples.
@@ -46,8 +46,12 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
 
     if (ArticleCaption.length > 0) {
         const newIndentTexts = [...indentTexts, CST.INDENT];
-        const captionSentence = std.newStdEL("Sentence", {}, [sentenceChildrenToString(ArticleCaption)]);
-        addSentenceChildrenControls(captionSentence);
+        const captionString = sentenceChildrenToString(ArticleCaption);
+        const result = $sentenceChildren.match(0, captionString, initialEnv({}));
+        if (!result.ok) {
+            const message = `addControls: Error: ${captionString}`;
+            throw new Error(message);
+        }
         const line = new OtherLine({
             range: null,
             indentTexts: newIndentTexts,
@@ -57,7 +61,7 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
                     "",
                     null,
                     [],
-                    [captionSentence]
+                    [newStdEL("Sentence", {}, result.value.value)],
                 )
             ],
             lineEndText: CST.EOL,
