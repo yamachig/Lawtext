@@ -797,11 +797,11 @@ const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[Compa
                     const p = sentence.parent;
                     if (!p) return [sentence];
                     const ret: ComparableEL[] = [];
-                    for (let i = p.children.indexOf(sentence); i < p.children.length; i++) {
+                    for (let i = 0; i < p.children.length; i++) {
                         if (p.children[i].tag === sentence.tag) ret.push(p.children[i]);
                         else break;
                     }
-                    return ret;
+                    return ret.includes(sentence) ? ret : [];
                 });
 
                 const newColumn = newEL.parent.parent;
@@ -810,11 +810,11 @@ const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[Compa
                     const p = column.parent;
                     if (!p) return [column];
                     const ret: ComparableEL[] = [];
-                    for (let i = p.children.indexOf(column); i < p.children.length; i++) {
+                    for (let i = 0; i < p.children.length; i++) {
                         if (p.children[i].tag === column.tag) ret.push(p.children[i]);
                         else break;
                     }
-                    return ret;
+                    return ret.includes(column) ? ret : [];
                 });
 
                 const oldJoinText = oldSentences.map(el => el.text).join("");
