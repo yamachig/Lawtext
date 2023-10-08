@@ -722,112 +722,76 @@ const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[Compa
             oldEL.parent.tag === "Sentence" && newEL.parent.tag === "Sentence"
         ) {
 
-            {
-                // Join Sentence elements
+            const oldSentence = oldEL.parent;
+            const newSentence = newEL.parent;
 
-                const oldSentence = oldEL.parent;
-                const newSentence = newEL.parent;
-
-                const [oldSentences, newSentences] = [oldSentence, newSentence].map(sentence => {
-                    const p = sentence.parent;
-                    if (!p) return [sentence];
-                    const ret: ComparableEL[] = [];
-                    for (let i = p.children.indexOf(sentence); i < p.children.length; i++) {
-                        if (p.children[i].tag === sentence.tag) ret.push(p.children[i]);
-                        else break;
-                    }
-                    return ret;
-                });
-
-                const oldJoinText = oldSentences.map(el => el.text).join("");
-                const newJoinText = newSentences.map(el => el.text).join("");
-                if (oldJoinText === newJoinText) {
-                    return {
-                        oldELs: ([] as ComparableEL[])
-                            .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e ]) => e))),
-                        newELs: ([] as ComparableEL[])
-                            .concat(...newSentences.map(el => Array.from(el.allList()).map(([e ]) => e))),
-                    };
+            const [oldSentences, newSentences] = [oldSentence, newSentence].map(sentence => {
+                const p = sentence.parent;
+                if (!p) return [sentence];
+                const ret: ComparableEL[] = [];
+                for (const child of p.children) {
+                    if (child.tag === sentence.tag) ret.push(child);
+                    else break;
                 }
+                return ret.includes(sentence) ? ret : null;
+            });
+
+            const oldSentencesJoinText = oldSentences?.map(el => el.text).join("") ?? null;
+            const newSentencesJoinText = newSentences?.map(el => el.text).join("") ?? null;
+
+            if (oldSentences && newSentences && (oldSentencesJoinText === newSentencesJoinText)) {
+                return {
+                    oldELs: ([] as ComparableEL[])
+                        .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
+                    newELs: ([] as ComparableEL[])
+                        .concat(...newSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
+                };
             }
 
-            if (
-                oldEL.parent.parent && newEL.parent.parent &&
-                oldEL.parent.parent.tag === "Column" && newEL.parent.parent.tag === "Column" &&
-                oldEL.parent.parent.children.every(el => el.tag === "Sentence") &&
-                newEL.parent.parent.children.every(el => el.tag === "Sentence")
-            ) {
-                // Join Column elements
+            const [oldColumns, newColumns] = [oldSentence, newSentence].map(sentence => {
+                if (!sentence.parent) return null;
+                if (sentence.parent.tag !== "Column") return null;
+                const column = sentence.parent;
+                if (!column.children.every(el => el.tag === "Sentence")) return null;
 
-                const oldColumn = oldEL.parent.parent;
-                const newColumn = newEL.parent.parent;
-
-                const [oldColumns, newColumns] = [oldColumn, newColumn].map(column => {
-                    const p = column.parent;
-                    if (!p) return [column];
-                    const ret: ComparableEL[] = [];
-                    for (let i = p.children.indexOf(column); i < p.children.length; i++) {
-                        if (p.children[i].tag === column.tag) ret.push(p.children[i]);
-                        else break;
-                    }
-                    return ret;
-                });
-                const oldJoinText = oldColumns.map(el => el.children.map(ch => ch.text).join("")).join("　");
-                const newJoinText = newColumns.map(el => el.children.map(ch => ch.text).join("")).join("　");
-                if (oldJoinText === newJoinText) {
-                    return {
-                        oldELs: ([] as ComparableEL[])
-                            .concat(...oldColumns.map(el => Array.from(el.allList()).map(([e ]) => e))),
-                        newELs: ([] as ComparableEL[])
-                            .concat(...newColumns.map(el => Array.from(el.allList()).map(([e ]) => e))),
-                    };
+                const p = column.parent;
+                if (!p) return [column];
+                const ret: ComparableEL[] = [];
+                for (const child of p.children) {
+                    if (child.tag === column.tag) ret.push(child);
+                    else break;
                 }
+                return ret.includes(column) ? ret : null;
+            });
+
+            const oldColumnsJoinText = oldColumns?.map(el => el.children.map(ch => ch.text).join("")).join("　") ?? null;
+            const newColumnsJoinText = newColumns?.map(el => el.children.map(ch => ch.text).join("")).join("　") ?? null;
+
+            if (oldColumns && newColumns && (oldColumnsJoinText === newColumnsJoinText)) {
+                return {
+                    oldELs: ([] as ComparableEL[])
+                        .concat(...oldColumns.map(el => Array.from(el.allList()).map(([e]) => e))),
+                    newELs: ([] as ComparableEL[])
+                        .concat(...newColumns.map(el => Array.from(el.allList()).map(([e]) => e))),
+                };
             }
 
-            if (
-                newEL.parent.parent &&
-                newEL.parent.parent.tag === "Column" &&
-                newEL.parent.parent.children.every(el => el.tag === "Sentence")
-            ) {
-                // Join old Sentence elements and new Column elements
+            if (oldSentences && newColumns && (oldSentencesJoinText === newColumnsJoinText)) {
+                return {
+                    oldELs: ([] as ComparableEL[])
+                        .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
+                    newELs: ([] as ComparableEL[])
+                        .concat(...newColumns.map(el => Array.from(el.allList()).map(([e]) => e))),
+                };
+            }
 
-                const oldSentence = oldEL.parent;
-
-                const [oldSentences] = [oldSentence].map(sentence => {
-                    const p = sentence.parent;
-                    if (!p) return [sentence];
-                    const ret: ComparableEL[] = [];
-                    for (let i = 0; i < p.children.length; i++) {
-                        if (p.children[i].tag === sentence.tag) ret.push(p.children[i]);
-                        else break;
-                    }
-                    return ret.includes(sentence) ? ret : [];
-                });
-
-                const newColumn = newEL.parent.parent;
-
-                const [newColumns] = [newColumn].map(column => {
-                    const p = column.parent;
-                    if (!p) return [column];
-                    const ret: ComparableEL[] = [];
-                    for (let i = 0; i < p.children.length; i++) {
-                        if (p.children[i].tag === column.tag) ret.push(p.children[i]);
-                        else break;
-                    }
-                    return ret.includes(column) ? ret : [];
-                });
-
-                const oldJoinText = oldSentences.map(el => el.text).join("");
-                const newJoinText = newColumns.map(el => el.children.map(ch => ch.text).join("")).join("　");
-
-                if (oldJoinText === newJoinText) {
-                    return {
-                        oldELs: ([] as ComparableEL[])
-                            .concat(...oldSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
-                        newELs: ([] as ComparableEL[])
-                            .concat(...newColumns.map(el => Array.from(el.allList()).map(([e]) => e))),
-                    };
-                }
+            if (oldColumns && newSentences && (oldColumnsJoinText === newSentencesJoinText)) {
+                return {
+                    oldELs: ([] as ComparableEL[])
+                        .concat(...oldColumns.map(el => Array.from(el.allList()).map(([e]) => e))),
+                    newELs: ([] as ComparableEL[])
+                        .concat(...newSentences.map(el => Array.from(el.allList()).map(([e]) => e))),
+                };
             }
         }
 
