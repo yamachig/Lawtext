@@ -423,4 +423,197 @@ describe("Test $article and articleToLines", () => {
         );
     });
 
+    it("Success case", () => {
+    /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+  （定義）
+第二条
+２　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+  （定義）
+第二条
+２　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Article",
+            attr: {
+                Num: "2",
+            },
+            children: [
+                {
+                    tag: "ArticleCaption",
+                    attr: {},
+                    children: ["（定義）"]
+                },
+                {
+                    tag: "ArticleTitle",
+                    attr: {},
+                    children: ["第二条"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        Num: "2",
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: ["２"]
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。"]
+                                }
+                            ]
+                        },
+                    ]
+                },
+            ],
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => $article.match(0, vlines, env),
+            el => articleToLines(el, []),
+        );
+    });
+
+    it("Success case", () => {
+    /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+  （定義）
+第二条
+  一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
+２　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+  （定義）
+第二条
+  一　法令　法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。
+２　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Article",
+            attr: {
+                Num: "2",
+            },
+            children: [
+                {
+                    tag: "ArticleCaption",
+                    attr: {},
+                    children: ["（定義）"]
+                },
+                {
+                    tag: "ArticleTitle",
+                    attr: {},
+                    children: ["第二条"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        Num: "1",
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "Item",
+                            attr: {
+                                Num: "1",
+                            },
+                            children: [
+                                {
+                                    tag: "ItemTitle",
+                                    attr: {},
+                                    children: ["一"]
+                                },
+                                {
+                                    tag: "ItemSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Column",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: ["法令"]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            tag: "Column",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: ["法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。"]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                    ]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        Num: "2",
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: ["２"]
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。"]
+                                }
+                            ]
+                        },
+                    ]
+                },
+            ],
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => $article.match(0, vlines, env),
+            el => articleToLines(el, []),
+        );
+    });
+
 });

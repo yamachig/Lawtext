@@ -143,6 +143,8 @@ const warnEmptyAddRemoveTags: std.StdELTag[] = [
     ...std.supplProvisionAppdxItemTitleTags,
 ];
 
+const warnNoTextAddRemoveTags: std.StdELTag[] = ["Paragraph"];
+
 export class ComparableEL implements JsonEL {
     public tag = "";
     public attr: { [key: string]: string | undefined } = {};
@@ -472,6 +474,8 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
             (origDRow.status === DiffStatus.Add)
         ) {
 
+            let allRemoveMiddle = false;
+            let allAddMiddle = false;
             let origDRowToDetect: DiffTableRow<string> | null = null;
 
             if (origDRow.status === DiffStatus.Change) {
@@ -481,6 +485,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                 let origDRowIClose: number | null = null;
                 let origDRowIText: number | null = null;
                 let noChangeMiddle = true;
+                allRemoveMiddle = true;
                 const maxD = 2 * (oldEL.closeIndex - oldEL.index);
                 for (let i = origDRowI + 1; i < Math.min(origDRows.length, origDRowI + maxD + 1); i++) {
                     const row = origDRows[i];
@@ -490,9 +495,13 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                     }
                     if (row.status !== DiffStatus.NoChange) {
                         noChangeMiddle = false;
-                        break;
+                    }
+                    if (row.status !== DiffStatus.Remove) {
+                        allRemoveMiddle = false;
                     }
                     if (
+                        row.oldItem && row.newItem &&
+                        (origDRowIText === null) &&
                         (origOldELs[row.oldItem.index][1] === TagType.Text) &&
                         (origNewELs[row.newItem.index][1] === TagType.Text)
                     ) {
@@ -507,6 +516,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                 let origDRowIClose: number | null = null;
                 let origDRowIText: number | null = null;
                 let noChangeMiddle = true;
+                allAddMiddle = true;
                 const maxD = 2 * (newEL.closeIndex - newEL.index);
                 for (let i = origDRowI + 1; i < Math.min(origDRows.length, origDRowI + maxD + 1); i++) {
                     const row = origDRows[i];
@@ -516,9 +526,13 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                     }
                     if (row.status !== DiffStatus.NoChange) {
                         noChangeMiddle = false;
-                        break;
+                    }
+                    if (row.status !== DiffStatus.Add) {
+                        allAddMiddle = false;
                     }
                     if (
+                        row.oldItem && row.newItem &&
+                        (origDRowIText === null) &&
                         (origNewELs[row.newItem.index][1] === TagType.Text) &&
                         (origOldELs[row.oldItem.index][1] === TagType.Text)
                     ) {
@@ -585,19 +599,19 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                 }
 
                 // process current LawDiff
-                if (lawDiffMode === LawDiffMode.WarningAsNoDiff) {
-                    origRetItems.push({
-                        type: LawDiffType.NoDiff,
-                        mostSeriousStatus: ProblemStatus.NoProblem,
-                        diffTable: [origDRow],
-                    });
-                } else {
-                    origRetItems.push({
-                        type: LawDiffType.ElementMismatch,
-                        mostSeriousStatus: ProblemStatus.Warning,
-                        diffTable: [origDRow],
-                    });
-                }
+                origRetItems.push((
+                    (lawDiffMode === LawDiffMode.WarningAsNoDiff)
+                        ? {
+                            type: LawDiffType.NoDiff,
+                            mostSeriousStatus: ProblemStatus.NoProblem,
+                            diffTable: [origDRow],
+                        }
+                        : {
+                            type: LawDiffType.ElementMismatch,
+                            mostSeriousStatus: ProblemStatus.Warning,
+                            diffTable: [origDRow],
+                        }
+                ));
 
             } else {
                 if (origDRow.status === DiffStatus.Change) {
@@ -608,11 +622,47 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                     });
                 } else if (origDRow.status === DiffStatus.Remove) {
                     if (oldEL && (warnEmptyAddRemoveTags as string[]).includes(oldEL.tag)) {
-                        origRetItems.push({
-                            type: LawDiffType.ElementMismatch,
-                            mostSeriousStatus: ProblemStatus.Warning,
-                            diffTable: [origDRow],
+                        origRetItems.push((
+                            (lawDiffMode === LawDiffMode.WarningAsNoDiff)
+                                ? {
+                                    type: LawDiffType.NoDiff,
+                                    mostSeriousStatus: ProblemStatus.NoProblem,
+                                    diffTable: [origDRow],
+                                }
+                                : {
+                                    type: LawDiffType.ElementMismatch,
+                                    mostSeriousStatus: ProblemStatus.Warning,
+                                    diffTable: [origDRow],
+                                }
+                        ));
+
+                    } else if (
+                        oldEL &&
+                        allRemoveMiddle &&
+                        (warnNoTextAddRemoveTags as string[]).includes(oldEL.tag) &&
+                        origOldELs.slice(oldEL.index, oldEL.closeIndex + 1).every(([, tt]) => (tt !== TagType.Text))
+                    ) {
+
+                        // process future LawDiff
+                        warningChangeELsList.push({
+                            oldELs: origOldELs.slice(oldEL.index, oldEL.closeIndex + 1).map(([el]) => el),
+                            newELs: [],
                         });
+
+                        // process current LawDiff
+                        origRetItems.push((
+                            (lawDiffMode === LawDiffMode.WarningAsNoDiff)
+                                ? {
+                                    type: LawDiffType.NoDiff,
+                                    mostSeriousStatus: ProblemStatus.NoProblem,
+                                    diffTable: [origDRow],
+                                }
+                                : {
+                                    type: LawDiffType.ElementMismatch,
+                                    mostSeriousStatus: ProblemStatus.Warning,
+                                    diffTable: [origDRow],
+                                }
+                        ));
 
                     } else {
                         origRetItems.push({
@@ -621,13 +671,50 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                             diffTable: [origDRow],
                         });
                     }
+
                 } else if (origDRow.status === DiffStatus.Add) {
                     if (newEL && (warnEmptyAddRemoveTags as string[]).includes(newEL.tag)) {
-                        origRetItems.push({
-                            type: LawDiffType.ElementMismatch,
-                            mostSeriousStatus: ProblemStatus.Warning,
-                            diffTable: [origDRow],
+                        origRetItems.push((
+                            (lawDiffMode === LawDiffMode.WarningAsNoDiff)
+                                ? {
+                                    type: LawDiffType.NoDiff,
+                                    mostSeriousStatus: ProblemStatus.NoProblem,
+                                    diffTable: [origDRow],
+                                }
+                                : {
+                                    type: LawDiffType.ElementMismatch,
+                                    mostSeriousStatus: ProblemStatus.Warning,
+                                    diffTable: [origDRow],
+                                }
+                        ));
+
+                    } else if (
+                        newEL &&
+                        allAddMiddle &&
+                        (warnNoTextAddRemoveTags as string[]).includes(newEL.tag) &&
+                        origNewELs.slice(newEL.index, newEL.closeIndex + 1).every(([, tt]) => (tt !== TagType.Text))
+                    ) {
+
+                        // process future LawDiff
+                        warningChangeELsList.push({
+                            oldELs: [],
+                            newELs: origNewELs.slice(newEL.index, newEL.closeIndex + 1).map(([el]) => el),
                         });
+
+                        // process current LawDiff
+                        origRetItems.push((
+                            (lawDiffMode === LawDiffMode.WarningAsNoDiff)
+                                ? {
+                                    type: LawDiffType.NoDiff,
+                                    mostSeriousStatus: ProblemStatus.NoProblem,
+                                    diffTable: [origDRow],
+                                }
+                                : {
+                                    type: LawDiffType.ElementMismatch,
+                                    mostSeriousStatus: ProblemStatus.Warning,
+                                    diffTable: [origDRow],
+                                }
+                        ));
 
                     } else {
                         origRetItems.push({

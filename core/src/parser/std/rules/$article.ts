@@ -77,6 +77,16 @@ export const articleToLines = (el: std.Article, indentTexts: string[]): Line[] =
         lines.push(line);
     }
 
+    if (
+        (Paragraphs.length > 0) &&
+
+        // Paragraphs[0] has ParagraphNum
+        ((Paragraphs[0].children.find(std.isParagraphNum)?.text() ?? "") !== "")
+    ) {
+        // Add an empty Paragraph at the beginning
+        Paragraphs.unshift(newStdEL("Paragraph"));
+    }
+
     for (let i = 0; i < Paragraphs.length; i++) {
         const Paragraph = Paragraphs[i];
         const paragraphLines = paragraphItemToLines(
@@ -185,30 +195,32 @@ export const $article: WithErrorRule<std.Article> = factory
                 if (num) article.attr.Num = num;
             }
 
-            const firstParagraph = newStdEL("Paragraph");
-            // firstParagraph.attr.OldStyle = "false";
+            if ((firstParagraphItemLine.line.sentencesArray.length > 0) || firstAutoParagraphChildren) {
+                const firstParagraph = newStdEL("Paragraph");
+                // firstParagraph.attr.OldStyle = "false";
 
-            const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
-            firstParagraph.children.push(newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null));
-            firstParagraph.children.push(
-                newStdEL(
-                    "ParagraphSentence",
-                    {},
-                    sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
-                    sentencesArrayRange,
-                )
-            );
+                const sentencesArrayRange = firstParagraphItemLine.line.sentencesArrayRange;
+                firstParagraph.children.push(newStdEL("ParagraphNum", {}, [], sentencesArrayRange ? [sentencesArrayRange[0], sentencesArrayRange[0]] : null));
+                firstParagraph.children.push(
+                    newStdEL(
+                        "ParagraphSentence",
+                        {},
+                        sentencesArrayToColumnsOrSentences(firstParagraphItemLine.line.sentencesArray),
+                        sentencesArrayRange,
+                    )
+                );
 
-            if (firstAutoParagraphChildren) {
-                firstParagraph.children.push(...(firstAutoParagraphChildren.value as std.Paragraph["children"]));
-            }
+                if (firstAutoParagraphChildren) {
+                    firstParagraph.children.push(...(firstAutoParagraphChildren.value as std.Paragraph["children"]));
+                }
 
-            firstParagraph.range = rangeOfELs(firstParagraph.children);
+                firstParagraph.range = rangeOfELs(firstParagraph.children);
 
-            {
-                const paragraph = paragraphItemFromAuto("Paragraph", firstParagraph) as std.Paragraph;
-                paragraph.attr.Num = "1";
-                article.children.push(paragraph);
+                {
+                    const paragraph = paragraphItemFromAuto("Paragraph", firstParagraph) as std.Paragraph;
+                    paragraph.attr.Num = "1";
+                    article.children.push(paragraph);
+                }
             }
 
             article.children.push(...otherParagraphs.map((p, i) => {
