@@ -509,27 +509,35 @@ export const $SQUARE_PARENTHESES_INLINE: WithErrorRule<__Parentheses> = factory
                                 .or(r => r
                                     .sequence(c => c
                                         .and(r => r
-                                            .asSlice(r => r
-                                                .choice(c => c
-                                                    .or(r => r
-                                                        .oneOrMore(r => r.regExp(/^[^\r\n<>「」]/)),
-                                                    )
-                                                    .or(() => $SQUARE_PARENTHESES_INLINE),
-                                                ),
+                                            .choice(c => c
+                                                .orSequence(s => s
+                                                    .and(r => r
+                                                        .asSlice(r => r
+                                                            .oneOrMore(r => r.regExp(/^[^\r\n<>「」]/))
+                                                        )
+                                                    , "text")
+                                                    .action(({ text, range }) => {
+                                                        return {
+                                                            value: new __Text(text, range()),
+                                                            errors: [],
+                                                        };
+                                                    })
+                                                )
+                                                .or(() => $SQUARE_PARENTHESES_INLINE),
                                             )
-                                        , "text")
-                                        .action(({ text, range }) => {
-                                            return {
-                                                value: new __Text(text, range()),
-                                                errors: [],
-                                            };
-                                        })
+                                        )
                                     )
                                 ),
                             ),
                         )
                     , "value")
-                    .action(({ value, range }) => ({ value, range: range() }))
+                    .action(({ value, range }) => {
+                        return {
+                            value: value.map(v => v.value),
+                            errors: value.map(v => v.errors).flat(),
+                            range: range(),
+                        };
+                    })
                 )
             , "content")
             .and(r => r
@@ -550,14 +558,14 @@ export const $SQUARE_PARENTHESES_INLINE: WithErrorRule<__Parentheses> = factory
                         depth: state.parenthesesDepth + 1,
                         start: start.text,
                         end: end.text,
-                        content: content.value.map(c => c.value as SentenceChildEL),
+                        content: content.value as SentenceChildEL[],
                         range: {
                             start: start.range,
                             end: end.range,
                             content: content.range,
                         },
                     }),
-                    errors: content.value.map(c => c.errors).flat(),
+                    errors: content.errors,
                 };
             })
         )
