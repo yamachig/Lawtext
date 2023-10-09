@@ -394,6 +394,138 @@ describe("Test $paragraphItemLine", () => {
         }
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = `\
+  十　南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。
+
+`;
+        const expectedResult = {
+            ok: true,
+            nextOffset: 110,
+        } as const;
+        const expectedText = `\
+  十　南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。
+`;
+        const expectedValue = {
+            type: LineType.PIT,
+            indentTexts: ["  "] as string[],
+            mainTag: null,
+            controls: [] as Controls,
+            title: "十",
+            midSpace: "　",
+            lineEndText: `
+`,
+        } as const;
+        const expectedColumns = [
+            {
+                leadingSpace: "",
+                leadingSpaceRange: [
+                    4,
+                    4
+                ] as [number, number],
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["南極"]
+                            },
+                            {
+                                tag: "Ruby",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["哺"]
+                                    },
+                                    {
+                                        tag: "Rt",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "__Text",
+                                                attr: {},
+                                                children: ["ほ"]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["乳類"]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                leadingSpace: "　",
+                leadingSpaceRange: [
+                    32,
+                    33
+                ] as [number, number],
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "Ruby",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["哺"]
+                                    },
+                                    {
+                                        tag: "Rt",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "__Text",
+                                                attr: {},
+                                                children: ["ほ"]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。"]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+        const result = $paragraphItemLine.abstract().match(offset, target, env);
+        assert.deepInclude(matchResultToJson(result), expectedResult);
+        if (result.ok) {
+            assert.deepInclude(result.value.value, expectedValue);
+            assert.strictEqual(result.value.value.text(), expectedText);
+            assert.deepStrictEqual(
+                result.value.value.sentencesArray.map(c => ({
+                    ...c,
+                    sentences: c.sentences.map(s => s.json(true))
+                })),
+                expectedColumns,
+            );
+        }
+    });
+
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */
         const offset = 0;

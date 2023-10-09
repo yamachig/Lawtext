@@ -616,4 +616,151 @@ describe("Test $article and articleToLines", () => {
         );
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+  （定義）
+第三条　この法律において、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。
+  十　南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+  （定義）
+第三条　この法律において、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。
+  十　南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Article",
+            attr: {
+                Num: "3",
+            },
+            children: [
+                {
+                    tag: "ArticleCaption",
+                    attr: {},
+                    children: ["（定義）"]
+                },
+                {
+                    tag: "ArticleTitle",
+                    attr: {},
+                    children: ["第三条"]
+                },
+                {
+                    tag: "Paragraph",
+                    attr: {
+                        Num: "1",
+                    },
+                    children: [
+                        {
+                            tag: "ParagraphNum",
+                            attr: {},
+                            children: []
+                        },
+                        {
+                            tag: "ParagraphSentence",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Sentence",
+                                    attr: {},
+                                    children: ["この法律において、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "Item",
+                            attr: {
+                                Num: "10"
+                            },
+                            children: [
+                                {
+                                    tag: "ItemTitle",
+                                    attr: {},
+                                    children: ["十"]
+                                },
+                                {
+                                    tag: "ItemSentence",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Column",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: [
+                                                        "南極",
+                                                        {
+                                                            tag: "Ruby",
+                                                            attr: {},
+                                                            children: [
+                                                                "哺",
+                                                                {
+                                                                    tag: "Rt",
+                                                                    attr: {},
+                                                                    children: ["ほ"]
+                                                                }
+                                                            ]
+                                                        },
+                                                        "乳類"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            tag: "Column",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "Sentence",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "Ruby",
+                                                            attr: {},
+                                                            children: [
+                                                                "哺",
+                                                                {
+                                                                    tag: "Rt",
+                                                                    attr: {},
+                                                                    children: ["ほ"]
+                                                                }
+                                                            ]
+                                                        },
+                                                        "乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                    ]
+                },
+            ],
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $article.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = articleToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
+
 });

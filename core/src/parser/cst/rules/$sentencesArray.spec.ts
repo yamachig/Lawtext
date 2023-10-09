@@ -347,6 +347,124 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
         assert.strictEqual(text, expectedRendered);
     });
 
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const target = `\
+南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。
+`;
+        const expectedRendered = `\
+南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。`;
+        const expectedCST = [
+            {
+                leadingSpace: "",
+                leadingSpaceRange: [
+                    0,
+                    0
+                ] as [number, number],
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["南極"]
+                            },
+                            {
+                                tag: "Ruby",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["哺"]
+                                    },
+                                    {
+                                        tag: "Rt",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "__Text",
+                                                attr: {},
+                                                children: ["ほ"]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["乳類"]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                leadingSpace: "　",
+                leadingSpaceRange: [
+                    28,
+                    29
+                ] as [number, number],
+                attrEntries: [],
+                sentences: [
+                    {
+                        tag: "Sentence",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "Ruby",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["哺"]
+                                    },
+                                    {
+                                        tag: "Rt",
+                                        attr: {},
+                                        children: [
+                                            {
+                                                tag: "__Text",
+                                                attr: {},
+                                                children: ["ほ"]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。"]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+        const expectedErrors: ErrorMessage[] = [];
+
+        const result = $sentencesArray.abstract().match(0, target, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+            // console.log(JSON.stringify(result.value.value.map(col => ({ ...col, sentences: col.sentences.map(s => s.json(true)) })), undefined, 2));
+            assert.deepStrictEqual(result.value.value.map(col => ({ ...col, sentences: col.sentences.map(s => s.json(true)) })), expectedCST);
+            assert.deepStrictEqual(result.value.errors, expectedErrors);
+        }
+
+        const text = sentencesArrayToString(
+            expectedCST.map(col =>
+                ({ ...col, sentences: col.sentences.map(loadEL) as std.Sentence[] })
+            )
+        );
+        assert.strictEqual(text, expectedRendered);
+    });
+
 
     it("Fail case", () => {
         /* eslint-disable no-irregular-whitespace */

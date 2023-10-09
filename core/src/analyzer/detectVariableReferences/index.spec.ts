@@ -119,7 +119,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
                     value: "内閣又は行政機関が定める次に掲げるものをいう。",
                 },
-                children: ["命令等"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["命令等"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -440,7 +446,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":2}}",
                     value: "法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。",
                 },
-                children: ["法令"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["法令"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -463,7 +475,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":5,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":2}}",
                     value: "行政庁の処分その他公権力の行使に当たる行為をいう。",
                 },
-                children: ["処分"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["処分"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -475,7 +493,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":7,\"textOffset\":0},\"end\":{\"sentenceIndex\":7,\"textOffset\":2}}",
                     value: "法令に基づき、行政庁の許可、認可、免許その他の自己に対し何らかの利益を付与する処分（以下「許認可等」という。）を求める行為であって、当該行為に対して行政庁が諾否の応答をすべきこととされているものをいう。",
                 },
-                children: ["申請"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["申請"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -498,7 +522,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":9,\"textOffset\":0},\"end\":{\"sentenceIndex\":9,\"textOffset\":5}}",
                     value: "行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。",
                 },
-                children: ["不利益処分"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["不利益処分"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -510,7 +540,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":16,\"textOffset\":0},\"end\":{\"sentenceIndex\":16,\"textOffset\":4}}",
                     value: "次に掲げる機関をいう。",
                 },
-                children: ["行政機関"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["行政機関"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -558,7 +594,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":20,\"textOffset\":0},\"end\":{\"sentenceIndex\":20,\"textOffset\":4}}",
                     value: "行政機関がその任務又は所掌事務の範囲内において一定の行政目的を実現するため特定の者に一定の作為又は不作為を求める指導、勧告、助言その他の行為であって処分に該当しないものをいう。",
                 },
-                children: ["行政指導"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["行政指導"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -570,7 +612,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":22,\"textOffset\":0},\"end\":{\"sentenceIndex\":22,\"textOffset\":2}}",
                     value: "行政庁に対し一定の事項の通知をする行為（申請に該当するものを除く。）であって、法令により直接に当該通知が義務付けられているもの（自己の期待する一定の法律上の効果を発生させるためには当該通知をすべきこととされているものを含む。）をいう。",
                 },
-                children: ["届出"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["届出"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -582,7 +630,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":24,\"textOffset\":0},\"end\":{\"sentenceIndex\":24,\"textOffset\":3}}",
                     value: "内閣又は行政機関が定める次に掲げるものをいう。",
                 },
-                children: ["命令等"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["命令等"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -1055,7 +1109,13 @@ describe("Test detectVariableReferences", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
                     value: "内閣又は行政機関が定める次に掲げるものをいう。",
                 },
-                children: ["命令等"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["命令等"],
+                    },
+                ],
             },
         ];
 

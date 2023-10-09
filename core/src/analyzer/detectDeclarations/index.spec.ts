@@ -789,7 +789,13 @@ describe("Test detectDeclarations", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":2}}",
                     value: "法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。",
                 },
-                children: ["法令"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["法令"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -801,7 +807,13 @@ describe("Test detectDeclarations", () => {
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":2}}",
                     value: "行政庁の処分その他公権力の行使に当たる行為をいう。",
                 },
-                children: ["処分"],
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["処分"],
+                    },
+                ],
             },
             {
                 tag: "____Declaration",
@@ -974,7 +986,13 @@ describe("Test detectDeclarations", () => {
                                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":2}}",
                                                                                         value: "法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。",
                                                                                     },
-                                                                                    children: ["法令"],
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["法令"],
+                                                                                        },
+                                                                                    ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -1163,7 +1181,13 @@ describe("Test detectDeclarations", () => {
                                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":2}}",
                                                                                         value: "行政庁の処分その他公権力の行使に当たる行為をいう。",
                                                                                     },
-                                                                                    children: ["処分"],
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["処分"],
+                                                                                        },
+                                                                                    ],
                                                                                 },
                                                                             ],
                                                                         },
@@ -2132,6 +2156,337 @@ describe("Test detectDeclarations", () => {
                                                                             tag: "__Text",
                                                                             attr: {},
                                                                             children: ["但し、受信のみを目的とするものを含まない。"],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const expectedErrorMessages: string[] = [];
+
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+
+        // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsResult.value.declarations.values().map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        // console.log(JSON.stringify(inputElToBeModified.json(true), null, 2));
+        assert.deepStrictEqual(
+            inputElToBeModified.json(true),
+            expectedModifiedInput,
+        );
+
+        assert.deepStrictEqual(declarationsResult.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （定義）
+第三条　この法律において、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。
+  十　南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_1-text_0_5",
+                    type: "Keyword",
+                    name: "南極哺乳類",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":5}}",
+                    value: "哺乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["南極"],
+                    },
+                    {
+                        tag: "Ruby",
+                        attr: {},
+                        children: [
+                            {
+                                tag: "__Text",
+                                attr: {},
+                                children: ["哺"],
+                            },
+                            {
+                                tag: "Rt",
+                                attr: {},
+                                children: [
+                                    {
+                                        tag: "__Text",
+                                        attr: {},
+                                        children: ["ほ"],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["乳類"],
+                    },
+                ],
+            },
+        ] ;
+
+        const expectedModifiedInput = {
+            tag: "Law",
+            attr: {
+                Lang: "ja",
+            },
+            children: [
+                {
+                    tag: "LawBody",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "MainProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Article",
+                                    attr: {
+                                        Num: "3",
+                                    },
+                                    children: [
+                                        {
+                                            tag: "ArticleCaption",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "__Parentheses",
+                                                    attr: {
+                                                        type: "round",
+                                                        depth: "1",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "__PStart",
+                                                            attr: {
+                                                                type: "round",
+                                                            },
+                                                            children: ["（"],
+                                                        },
+                                                        {
+                                                            tag: "__PContent",
+                                                            attr: {
+                                                                type: "round",
+                                                            },
+                                                            children: [
+                                                                {
+                                                                    tag: "__Text",
+                                                                    attr: {},
+                                                                    children: ["定義"],
+                                                                },
+                                                            ],
+                                                        },
+                                                        {
+                                                            tag: "__PEnd",
+                                                            attr: {
+                                                                type: "round",
+                                                            },
+                                                            children: ["）"],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        {
+                                            tag: "ArticleTitle",
+                                            attr: {},
+                                            children: ["第三条"],
+                                        },
+                                        {
+                                            tag: "Paragraph",
+                                            attr: {
+                                                Num: "1",
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ParagraphNum",
+                                                    attr: {},
+                                                    children: [],
+                                                },
+                                                {
+                                                    tag: "ParagraphSentence",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "Sentence",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "____PointerRanges",
+                                                                    attr: {
+                                                                        targetContainerIDRanges: "[{\"from\":\"container-Law\"}]",
+                                                                    },
+                                                                    children: [
+                                                                        {
+                                                                            tag: "____PointerRange",
+                                                                            attr: {},
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "____Pointer",
+                                                                                    attr: {},
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "____PF",
+                                                                                            attr: {
+                                                                                                relPos: "HERE",
+                                                                                                targetType: "Law",
+                                                                                                name: "この法律",
+                                                                                            },
+                                                                                            children: ["この法律"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                                {
+                                                                    tag: "__Text",
+                                                                    attr: {},
+                                                                    children: ["において、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                {
+                                                    tag: "Item",
+                                                    attr: {
+                                                        Num: "10",
+                                                    },
+                                                    children: [
+                                                        {
+                                                            tag: "ItemTitle",
+                                                            attr: {},
+                                                            children: ["十"],
+                                                        },
+                                                        {
+                                                            tag: "ItemSentence",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "Column",
+                                                                    attr: {},
+                                                                    children: [
+                                                                        {
+                                                                            tag: "Sentence",
+                                                                            attr: {},
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "____Declaration",
+                                                                                    attr: {
+                                                                                        declarationID: "decl-sentence_1-text_0_5",
+                                                                                        type: "Keyword",
+                                                                                        name: "南極哺乳類",
+                                                                                        scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                                                                                        nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":5}}",
+                                                                                        value: "哺乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。",
+                                                                                    },
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["南極"],
+                                                                                        },
+                                                                                        {
+                                                                                            tag: "Ruby",
+                                                                                            attr: {},
+                                                                                            children: [
+                                                                                                {
+                                                                                                    tag: "__Text",
+                                                                                                    attr: {},
+                                                                                                    children: ["哺"],
+                                                                                                },
+                                                                                                {
+                                                                                                    tag: "Rt",
+                                                                                                    attr: {},
+                                                                                                    children: [
+                                                                                                        {
+                                                                                                            tag: "__Text",
+                                                                                                            attr: {},
+                                                                                                            children: ["ほ"],
+                                                                                                        },
+                                                                                                    ],
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                        {
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["乳類"],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                                {
+                                                                    tag: "Column",
+                                                                    attr: {},
+                                                                    children: [
+                                                                        {
+                                                                            tag: "Sentence",
+                                                                            attr: {},
+                                                                            children: [
+                                                                                {
+                                                                                    tag: "Ruby",
+                                                                                    attr: {},
+                                                                                    children: [
+                                                                                        {
+                                                                                            tag: "__Text",
+                                                                                            attr: {},
+                                                                                            children: ["哺"],
+                                                                                        },
+                                                                                        {
+                                                                                            tag: "Rt",
+                                                                                            attr: {},
+                                                                                            children: [
+                                                                                                {
+                                                                                                    tag: "__Text",
+                                                                                                    attr: {},
+                                                                                                    children: ["ほ"],
+                                                                                                },
+                                                                                            ],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                {
+                                                                                    tag: "__Text",
+                                                                                    attr: {},
+                                                                                    children: ["乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。"],
+                                                                                },
+                                                                            ],
                                                                         },
                                                                     ],
                                                                 },

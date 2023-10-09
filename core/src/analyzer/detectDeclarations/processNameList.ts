@@ -121,14 +121,15 @@ export const processNameList = (
             } else if (paragraphItemSentence.children.every(std.isColumn)) {
                 if (paragraphItemSentence.children.length !== 2) continue;
                 const [nameColumn, defColumn] = paragraphItemSentence.children;
+
                 if (nameColumn.children.length !== 1) continue;
                 const nameSentence = nameColumn.children[0];
                 if (!std.isSentence(nameSentence)) continue;
 
-                const name = nameSentence.text();
-
                 const nameSentenceEnv = sentenceEnvsStruct.sentenceEnvByEL.get(nameSentence);
                 if (!nameSentenceEnv) continue;
+
+                const name = nameSentenceEnv.text;
 
                 const nameSentenceTextRange: SentenceTextRange = {
                     start: {
@@ -147,20 +148,17 @@ export const processNameList = (
                     declarationID,
                     type: "Keyword",
                     name,
-                    value: defColumn.text(),
+                    value: defColumn.children.map(c => sentenceEnvsStruct.sentenceEnvByEL.get(c as std.Sentence)?.text ?? "").join(""),
                     scope: scope,
                     nameSentenceTextRange,
-                    range: nameSentence.range ? [
-                        nameSentence.range[0],
-                        nameSentence.range[0] + name.length,
-                    ] : null,
-                    children: [name],
+                    range: nameSentence.range,
+                    children: ([...nameSentence.children] as (string | std.Ruby | std.Sup | std.Sub | std.__EL)[]),
                 });
                 declarations.push(declaration);
 
                 nameSentence.children.splice(
                     0,
-                    1,
+                    nameSentence.children.length,
                     declaration,
                 );
             }
