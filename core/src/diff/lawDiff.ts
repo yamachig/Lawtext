@@ -134,6 +134,7 @@ const warningAttrKey = new Set([
     "AmendmentId",
     "AmendmentNum",
     "Id",
+    "Extract",
 ]);
 
 const warnEmptyAddRemoveTags: std.StdELTag[] = [

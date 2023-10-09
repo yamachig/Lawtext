@@ -347,13 +347,15 @@ export const $law: WithErrorRule<std.Law> = factory
             const lawBody = newStdEL("LawBody");
             law.children.push(lawBody);
 
-            if (lawTitleLines) {
-                lawBody.children.push(newStdEL(
-                    "LawTitle",
-                    {},
-                    forceSentencesArrayToSentenceChildren(lawTitleLines.value.lawNameLine.line.sentencesArray),
-                    lawTitleLines.value.lawNameLine.virtualRange,
-                ));
+            const lawTitle = lawTitleLines && newStdEL(
+                "LawTitle",
+                {},
+                forceSentencesArrayToSentenceChildren(lawTitleLines.value.lawNameLine.line.sentencesArray),
+                lawTitleLines.value.lawNameLine.virtualRange,
+            );
+
+            if (lawTitle) {
+                lawBody.children.push(lawTitle);
             }
 
             lawBody.children.push(...enactStatements.map(v => v.value));
@@ -376,6 +378,9 @@ export const $law: WithErrorRule<std.Law> = factory
                     Object.assign(lastChild.attr, { ...mainProvision.value.attr, ...lastChild.attr });
                 } else {
                     lawBody.children.push(mainProvision.value);
+                    if (lawTitle && /\s+抄\s*$/.test(lawTitle.text())) {
+                        mainProvision.value.attr.Extract = "true";
+                    }
                 }
                 errors.push(...mainProvision.errors);
                 for (const errorLine of errorLines) {

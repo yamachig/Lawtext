@@ -11,13 +11,15 @@ import { range } from "lawtext/dist/src/util";
 import { UpdateArgs } from "./args";
 import { getToProcessLawInfos } from "./getLawInfos";
 import os from "os";
+import prand from "pure-rand";
 
 class ProgressBar {
     public bar: Bar;
     public constructor() {
         this.bar = new Bar(
             {
-                format: "[{bar}] {percentage}% | {message}",
+                format: "[{bar}] {percentage}% | ETR: {eta_formatted} | {message}",
+                etaBuffer: 1000,
             }, Presets.rect,
         );
     }
@@ -129,9 +131,14 @@ const updateSerial = async (args: UpdateArgs, lawInfos: LawInfo[], db: Connectio
 
 const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
 
-    const lawInfos = await getToProcessLawInfos(args, db, loader);
+    const origLawInfos = await getToProcessLawInfos(args, db, loader);
 
-    if (lawInfos.length === 0 || args.dryRun) return;
+    if (origLawInfos.length === 0 || args.dryRun) return;
+
+    const randGen = prand.xoroshiro128plus(origLawInfos.length);
+    const lawInfosWithRand = origLawInfos.map(l => [randGen.unsafeNext(), l] as const);
+    lawInfosWithRand.sort((a, b) => a[0] - b[0]);
+    const lawInfos = lawInfosWithRand.map(([, l]) => l);
 
     const workers_count = Math.min(
         parseInt(process.env.MAX_WORKERS ?? "8"),
