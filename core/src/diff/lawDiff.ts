@@ -889,8 +889,10 @@ const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[Compa
                 return ret.includes(sentence) ? ret : null;
             });
 
-            const oldSentencesJoinText = oldSentences?.map(el => el.text).join("") ?? null;
-            const newSentencesJoinText = newSentences?.map(el => el.text).join("") ?? null;
+            // eslint-disable-next-line no-irregular-whitespace
+            const oldSentencesJoinText = oldSentences?.map(el => el.text).join("").replace(/　／/g, "　") ?? null;
+            // eslint-disable-next-line no-irregular-whitespace
+            const newSentencesJoinText = newSentences?.map(el => el.text).join("").replace(/　／/g, "　") ?? null;
 
             const [oldColumns, newColumns] = [oldSentence, newSentence].map(sentence => {
                 if (!sentence.parent) return null;
