@@ -224,22 +224,30 @@ export class ComparableEL implements JsonEL {
     }
 }
 
-const truncateTags: std.StdELTag[] = [
-    "ArticleCaption",
-    "TOCLabel",
-    ...std.tocItemTags,
-    ...std.paragraphItemTags,
-    ...std.listOrSublistTags,
-    "TableColumn",
-    ...std.noteLikeTags,
-    "FigStruct",
-    ...std.appdxItemTitleTags,
-    ...std.supplProvisionAppdxItemTitleTags,
-    "RelatedArticleNum",
-    "Remarks",
+const truncateTagsList: std.StdELTag[][] = [
+    [
+        "ArticleCaption",
+        "TOCLabel",
+        ...std.tocItemTags,
+        ...std.paragraphItemTags,
+        ...std.listOrSublistTags,
+        "TableColumn",
+        ...std.noteLikeTags,
+        "FigStruct",
+        ...std.appdxItemTitleTags,
+        ...std.supplProvisionAppdxItemTitleTags,
+        "RelatedArticleNum",
+        "Remarks",
+    ],
+    [
+        ...std.paragraphItemSentenceTags,
+        ...std.paragraphItemTags.filter(tag => !["Paragraph", "Item"].includes(tag)),
+        "ListSentence",
+        "TableColumn",
+    ],
 ];
 
-const truncateELs = (els: [ComparableEL, TagType][]) => {
+const truncateELs = (els: [ComparableEL, TagType][], truncateTags: std.StdELTag[]) => {
     const ret: [ComparableEL, TagType][] = [];
     let closeIndex: number | null = null;
     for (const [el, tagType] of els) {
@@ -281,23 +289,18 @@ export enum LawDiffMode {
     WarningAsNoDiff = "WarningAsNoDiff",
 }
 
-export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll): LawDiffResult<string> => {
+const chopELs = (oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][], truncateTags: std.StdELTag[]) => {
 
-    const oldRoot = new ComparableEL(oldJson);
-    const origOldELs = [...oldRoot.allList()];
-    if (!origOldELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
-
-    const newRoot = new ComparableEL(newJson);
-    const origNewELs = [...newRoot.allList()];
-    if (!origNewELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
-
-    const trOldELs = truncateELs(origOldELs);
-    const trNewELs = truncateELs(origNewELs);
+    const trOldELs = truncateELs(oldELs, truncateTags);
+    const trNewELs = truncateELs(newELs, truncateTags);
     const [trOldTexts, trNewTexts] = [trOldELs, trNewELs].map(elsToTexts);
     const trTextEdit = tuneEditTable(compare(trOldTexts, trNewTexts), trOldELs, trNewELs);
     const trDiff = collapseChange(trTextEdit);
 
-    const origDRows: DiffTableRow<string>[] = [];
+    const rangesList: {
+        oldELsRange: [number, number],
+        newELsRange: [number, number],
+    }[] = [];
 
     for (let trI = 0; trI < trDiff.length; trI++) {
         const trDRow = trDiff[trI];
@@ -306,7 +309,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
         if (trDRow.oldItem) {
             const [el, type] = trOldELs[trDRow.oldItem.index];
             oldELsRange[0] = (trI === 0) ? 0 : (type === TagType.Close ? el.closeIndex : el.index);
-            oldELsRange[1] = origOldELs.length;
+            oldELsRange[1] = oldELs.length;
             for (let trII = trI + 1; trII < trDiff.length; trII++) {
                 const nextTrDRow = trDiff[trII];
                 if (!nextTrDRow.oldItem) continue;
@@ -320,7 +323,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
         if (trDRow.newItem) {
             const [el, type] = trNewELs[trDRow.newItem.index];
             newELsRange[0] = (trI === 0) ? 0 : (type === TagType.Close ? el.closeIndex : el.index);
-            newELsRange[1] = origNewELs.length;
+            newELsRange[1] = newELs.length;
             for (let trII = trI + 1; trII < trDiff.length; trII++) {
                 const nextTrDRow = trDiff[trII];
                 if (!nextTrDRow.newItem) continue;
@@ -330,93 +333,101 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
             }
         }
 
-        if ((oldELsRange[1] - oldELsRange[0] <= 1) && (newELsRange[1] - newELsRange[0] <= 1)) {
-            const origDRow = {
-                ...trDRow,
-                oldItem: (
-                    trDRow.oldItem
-                        ? {
-                            ...trDRow.oldItem,
-                            index: trOldELs[trDRow.oldItem.index][0].index,
-                        }
-                        : null
-                ),
-                newItem: (
-                    trDRow.newItem
-                        ? {
-                            ...trDRow.newItem,
-                            index: trNewELs[trDRow.newItem.index][0].index,
-                        }
-                        : null
-                ),
-            } as typeof trDRow;
-            origDRows.push(origDRow);
+        rangesList.push({ oldELsRange, newELsRange });
+    }
 
-        } else {
+    return rangesList;
+};
 
-            const partOldELs = origOldELs.slice(...oldELsRange);
-            const partNewELs = origNewELs.slice(...newELsRange);
+export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMode = LawDiffMode.DiffAll): LawDiffResult<string> => {
 
-            const [oldTexts, newTexts] = [partOldELs, partNewELs].map(elsToTexts);
+    const oldRoot = new ComparableEL(oldJson);
+    const origOldELs = [...oldRoot.allList()];
+    if (!origOldELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
 
-            let editTable: EditTable<string> | null = null;
-            try {
-                editTable = compare(oldTexts, newTexts);
-            } catch (e) { /**/ }
+    const newRoot = new ComparableEL(newJson);
+    const origNewELs = [...newRoot.allList()];
+    if (!origNewELs.every(([el, tt], i) => tt === TagType.Close ? el.closeIndex === i : el.index === i)) throw new Error("never");
+    const [origOldTexts, origNewTexts] = [origOldELs, origNewELs].map(elsToTexts);
 
-            if (editTable) {
-                const partTextEdit = tuneEditTable(editTable, partOldELs, partNewELs);
-                const partDiff = collapseChange(partTextEdit);
+    const rangesList = chopELs(origOldELs, origNewELs, truncateTagsList[0]).map(r => ({ ...r, chopCount: 1 }));
 
-                for (const partDRow of partDiff) {
-                    const origDRow = {
-                        ...partDRow,
-                        oldItem: (
-                            partDRow.oldItem
-                                ? {
-                                    ...partDRow.oldItem,
-                                    index: partDRow.oldItem.index + oldELsRange[0],
-                                }
-                                : null
-                        ),
-                        newItem: (
-                            partDRow.newItem
-                                ? {
-                                    ...partDRow.newItem,
-                                    index: partDRow.newItem.index + newELsRange[0],
-                                }
-                                : null
-                        ),
-                    } as typeof partDRow;
-                    origDRows.push(origDRow);
-                }
-            } else {
-                const maxLength = Math.max(partOldELs.length, partNewELs.length);
-                for (let i = 0; i < maxLength; i++) {
-                    const origDRow: DiffTableRow<string> = {
-                        status: DiffStatus.Change,
-                        oldItem: (
-                            (i < partOldELs.length)
-                                ? {
-                                    index: partOldELs[i][0].index,
-                                    value: oldTexts[i],
-                                }
-                                : null
-                        ),
-                        newItem: (
-                            (i < partNewELs.length)
-                                ? {
-                                    index: partNewELs[i][0].index,
-                                    value: newTexts[i],
-                                }
-                                : null
-                        ),
-                    };
-                    origDRows.push(origDRow);
-                }
+    const origDRows: DiffTableRow<string>[] = [];
+
+    for (let rangesListI = 0; rangesListI < rangesList.length; rangesListI++) {
+
+        const { oldELsRange, newELsRange, chopCount } = rangesList[rangesListI];
+
+        const partOldELs = origOldELs.slice(...oldELsRange);
+        const partNewELs = origNewELs.slice(...newELsRange);
+        const partOldTexts = origOldTexts.slice(...oldELsRange);
+        const partNewTexts = origNewTexts.slice(...newELsRange);
+
+        let editTable: EditTable<string> | null = null;
+        try {
+            editTable = compare(partOldTexts, partNewTexts);
+        } catch (e) {
+            if (chopCount + 1 < truncateTagsList.length) {
+                try {
+                    const rangesListL2 = chopELs(partOldELs, partNewELs, truncateTagsList[chopCount + 1]).map(r => ({ ...r, chopCount: chopCount + 1 }));
+                    rangesList.splice(rangesListI, 1, ...rangesListL2);
+                    rangesListI--;
+                    continue;
+                } catch (e) { /**/ }
             }
         }
 
+        if (editTable) {
+            const partTextEdit = tuneEditTable(editTable, partOldELs, partNewELs);
+            const partDiff = collapseChange(partTextEdit);
+
+            for (const partDRow of partDiff) {
+                const origDRow = {
+                    ...partDRow,
+                    oldItem: (
+                        partDRow.oldItem
+                            ? {
+                                ...partDRow.oldItem,
+                                index: partDRow.oldItem.index + oldELsRange[0],
+                            }
+                            : null
+                    ),
+                    newItem: (
+                        partDRow.newItem
+                            ? {
+                                ...partDRow.newItem,
+                                index: partDRow.newItem.index + newELsRange[0],
+                            }
+                            : null
+                    ),
+                } as typeof partDRow;
+                origDRows.push(origDRow);
+            }
+        } else {
+            const maxLength = Math.max(partOldELs.length, partNewELs.length);
+            for (let i = 0; i < maxLength; i++) {
+                const origDRow: DiffTableRow<string> = {
+                    status: DiffStatus.Change,
+                    oldItem: (
+                        (i < partOldELs.length)
+                            ? {
+                                index: partOldELs[i][0].index,
+                                value: partOldTexts[i],
+                            }
+                            : null
+                    ),
+                    newItem: (
+                        (i < partNewELs.length)
+                            ? {
+                                index: partNewELs[i][0].index,
+                                value: partNewTexts[i],
+                            }
+                            : null
+                    ),
+                };
+                origDRows.push(origDRow);
+            }
+        }
     }
 
     const warningChangeELsList: Exclude<ReturnType<typeof detectWarningChangeELs>, null>[] = [];
