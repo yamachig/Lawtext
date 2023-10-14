@@ -413,6 +413,7 @@ const PosCol = styled.td`
 
 const ValCol = styled.td`
         flex: 1 1 50%;
+        min-width: 15rem;
     `;
 
 const LawCoverageInfoDetailTag = styled.div`
