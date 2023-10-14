@@ -948,7 +948,12 @@ const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[Compa
 
         if (
             oldEL.parent && newEL.parent &&
-            oldEL.parent.tag === "AppdxTableTitle" && newEL.parent.tag === "AppdxTableTitle"
+            [oldEL.parent, newEL.parent].every(oldNewELParent => (
+                ([
+                    ...std.appdxItemTitleTags,
+                    ...std.supplProvisionAppdxItemTitleTags,
+                ] as string[]).includes(oldNewELParent.tag)
+            ))
         ) {
             const oldP = oldEL.parent;
             const newP = newEL.parent;
@@ -958,7 +963,13 @@ const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[Compa
                 if (!p) return [el];
                 const ret: ComparableEL[] = [];
                 for (let i = p.children.indexOf(el); i < p.children.length; i++) {
-                    if (p.children[i].tag === "AppdxTableTitle" || p.children[i].tag === "RelatedArticleNum") ret.push(p.children[i]);
+                    if (
+                        ([
+                            ...std.appdxItemTitleTags,
+                            ...std.supplProvisionAppdxItemTitleTags,
+                        ] as string[]).includes(p.children[i].tag) ||
+                        p.children[i].tag === "RelatedArticleNum"
+                    ) ret.push(p.children[i]);
                     else break;
                 }
                 return ret;
