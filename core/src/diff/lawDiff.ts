@@ -398,7 +398,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                         oldItem: (
                             (i < partOldELs.length)
                                 ? {
-                                    index: i,
+                                    index: partOldELs[i][0].index,
                                     value: oldTexts[i],
                                 }
                                 : null
@@ -406,7 +406,7 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
                         newItem: (
                             (i < partNewELs.length)
                                 ? {
-                                    index: i,
+                                    index: partNewELs[i][0].index,
                                     value: newTexts[i],
                                 }
                                 : null
@@ -765,8 +765,8 @@ export const lawDiff = (oldJson: JsonEL, newJson: JsonEL, lawDiffMode: LawDiffMo
 
     emitNoDiff();
 
-    for (const { mostSeriousStatus } of ret.items) {
-        ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, mostSeriousStatus);
+    for (const retItem of ret.items) {
+        ret.mostSeriousStatus = Math.max(ret.mostSeriousStatus, retItem.mostSeriousStatus);
     }
 
     return ret;
