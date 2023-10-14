@@ -139,6 +139,8 @@ const warningAttrKey = new Set([
 
 const warnEmptyAddRemoveTags: std.StdELTag[] = [
     "Sentence",
+    "ArticleCaption",
+    "ParagraphCaption",
     ...std.appdxItemTitleTags,
     ...std.supplProvisionAppdxItemTitleTags,
 ];
