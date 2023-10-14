@@ -72,7 +72,7 @@ export const amendProvisionToLines = (
             }));
 
         } else if (isNewProvision(child)) {
-            for (const cc of child.children) {
+            for (const [cci, cc] of child.children.entries()) {
                 if (isArticle(cc)) {
                     lines.push(...articleToLines(cc, newProvisionsIndentTexts));
                 } else if (std.isParagraphItem(cc)) {
@@ -81,7 +81,11 @@ export const amendProvisionToLines = (
                     lines.push(...listOrSublistToLines(cc, newProvisionsIndentTexts));
                 } else if (isTableStruct(cc)) {
                     lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
-                    lines.push(...tableStructToLines(cc, newProvisionsIndentTexts));
+                    const withControl = (
+                        (0 <= (cci - 1) && isTableStruct((child.children[cci - 1]))) ||
+                        ((cci + 1) < child.children.length && isTableStruct((child.children[cci + 1])))
+                    );
+                    lines.push(...tableStructToLines(cc, newProvisionsIndentTexts, { withControl }));
                 } else if (isFigStruct(cc)) {
                     lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
                     lines.push(...figStructToLines(cc, newProvisionsIndentTexts));

@@ -51,7 +51,7 @@ export const anyToLines = (any: (std.StdEL | std.__EL | string), indentTexts: st
     else if (std.isPreamble(any)) { return preambleToLines(any, indentTexts); }
     else if (std.isRemarks(any)) { return remarksToLines(any, indentTexts); }
     else if (std.isTable(any)) { return tableToLines(any, indentTexts); }
-    else if (std.isTableStruct(any)) { return tableStructToLines(any, indentTexts); }
+    else if (std.isTableStruct(any)) { return tableStructToLines(any, indentTexts, { withControl: true }); }
     else if (std.isColumn(any) || std.isSentence(any)) {
         lines.push(new OtherLine({
             range: null,

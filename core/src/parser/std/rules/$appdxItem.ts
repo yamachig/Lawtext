@@ -66,7 +66,7 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
-    for (const child of appdxItem.children) {
+    for (const [ci, child] of appdxItem.children.entries()) {
         if (isAppdxItemTitle(child)) continue;
         if (isRelatedArticleNum(child)) continue;
 
@@ -83,7 +83,11 @@ export const appdxItemToLines = (appdxItem: std.AppdxItem, indentTexts: string[]
             lines.push(...paragraphItemToLines(child, childrenIndentTexts));
             lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isTableStruct(child)) {
-            lines.push(...tableStructToLines(child, childrenIndentTexts));
+            const withControl = (
+                (0 <= (ci - 1) && isTableStruct((appdxItem.children[ci - 1]))) ||
+                ((ci + 1) < appdxItem.children.length && isTableStruct((appdxItem.children[ci + 1])))
+            );
+            lines.push(...tableStructToLines(child, childrenIndentTexts, { withControl }));
             lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
         } else if (isArithFormula(child)) {
             lines.push(...arithFormulaToLines(child, childrenIndentTexts));

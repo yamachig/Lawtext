@@ -108,18 +108,32 @@ export const tableToLines = (table: std.Table, indentTexts: string[]): Line[] =>
     return lines;
 };
 
+interface tableStructToLinesOptions {
+    withControl?: boolean,
+}
 
 /**
  * The renderer for {@link std.TableStruct}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$tableStruct.spec.ts) for examples.
  */
-export const tableStructToLines = (tableStruct: std.TableStruct, indentTexts: string[]): Line[] => {
+export const tableStructToLines = (
+    tableStruct: std.TableStruct,
+    indentTexts: string[],
+    options?: tableStructToLinesOptions,
+): Line[] => {
+    const {
+        withControl,
+    } = {
+        withControl: false,
+        ...options,
+    };
+
     const lines: Line[] = [];
 
     const tableStructTitleSentenceChildren = (
         tableStruct.children.find(el => el.tag === "TableStructTitle") as std.TableStructTitle | undefined
     )?.children;
 
-    const requireControl = Boolean(tableStructTitleSentenceChildren) || tableStruct.children.length !== 1 || tableStruct.children[0].tag !== "Table";
+    const requireControl = withControl || Boolean(tableStructTitleSentenceChildren) || tableStruct.children.length !== 1 || tableStruct.children[0].tag !== "Table";
 
     if (requireControl) {
 

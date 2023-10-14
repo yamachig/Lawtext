@@ -250,7 +250,7 @@ export const paragraphItemToLines = (
         }));
     }
 
-    for (const child of Children) {
+    for (const [ci, child] of Children.entries()) {
         if (std.isParagraphItem(child)) {
             lines.push(...paragraphItemToLines(
                 child,
@@ -262,7 +262,11 @@ export const paragraphItemToLines = (
 
         } else if (child.tag === "TableStruct") {
             lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
-            lines.push(...tableStructToLines(child, [...indentTexts, CST.INDENT])); /* >>>> INDENT >>>> */
+            const withControl = (
+                (0 <= (ci - 1) && std.isTableStruct((Children[ci - 1]))) ||
+                ((ci + 1) < Children.length && std.isTableStruct((Children[ci + 1])))
+            );
+            lines.push(...tableStructToLines(child, [...indentTexts, CST.INDENT], { withControl })); /* >>>> INDENT >>>> */
             lines.push(new BlankLine({ range: null, lineEndText: CST.EOL }));
 
         } else if (child.tag === "FigStruct") {

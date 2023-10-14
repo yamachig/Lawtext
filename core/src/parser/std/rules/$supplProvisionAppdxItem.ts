@@ -61,14 +61,18 @@ export const supplProvisionAppdxItemToLines = (supplProvisionAppdxItem: std.Supp
 
     const childrenIndentTexts = [...indentTexts, CST.INDENT];
 
-    for (const child of supplProvisionAppdxItem.children) {
+    for (const [ci, child] of supplProvisionAppdxItem.children.entries()) {
         if (isSupplProvisionAppdxItemTitle(child)) continue;
         if (isRelatedArticleNum(child)) continue;
 
         if (isNoteLikeStruct(child)) {
             lines.push(...noteLikeStructToLines(child, childrenIndentTexts));
         } else if (isTableStruct(child)) {
-            lines.push(...tableStructToLines(child, childrenIndentTexts));
+            const withControl = (
+                (0 <= (ci - 1) && isTableStruct((supplProvisionAppdxItem.children[ci - 1]))) ||
+                ((ci + 1) < supplProvisionAppdxItem.children.length && isTableStruct((supplProvisionAppdxItem.children[ci + 1])))
+            );
+            lines.push(...tableStructToLines(child, childrenIndentTexts, { withControl }));
         } else if (isArithFormula(child)) {
             lines.push(...arithFormulaToLines(child, childrenIndentTexts));
         }
