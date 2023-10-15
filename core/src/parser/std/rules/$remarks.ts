@@ -188,7 +188,9 @@ export const $remarks: WithErrorRule<std.Remarks> = factory
                             item.line.sentencesArray.length > 0
                             && remarksLabelPtn.exec(sentencesArrayToString(
                                 item.line.sentencesArray,
-                                true,
+                                {
+                                    withoutAttrs: true,
+                                },
                             ))
                         )
                     )

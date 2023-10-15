@@ -9,12 +9,25 @@ import * as std from "../../../law/std";
 import $squareAttr from "./$squareAttr";
 import { ErrorMessage } from "../error";
 
+export interface SentencesArrayToStringOptions {
+    withoutAttrs?: boolean;
+    escapeLeadingSpaces?: boolean;
+}
 
 export const sentencesArrayToString = (
     sentencesArray: SentencesArray,
-    withoutAttrs = false,
+    options?: SentencesArrayToStringOptions,
 ): string => {
     const runs: string[] = [];
+
+    const {
+        withoutAttrs,
+        escapeLeadingSpaces,
+    } = {
+        withoutAttrs: false,
+        escapeLeadingSpaces: false,
+        ...options,
+    };
 
     for (const sentences of sentencesArray) {
         runs.push(sentences.leadingSpace);
@@ -30,8 +43,14 @@ export const sentencesArrayToString = (
     }
 
     // eslint-disable-next-line no-irregular-whitespace
-    return runs.join("").replace(/[ 　\t]$/, c => `&#x${c.codePointAt(0)?.toString(16)};`);
+    const trailingSpacesEscaped = runs.join("").replace(/[ 　\t]+$/g, s => Array.from(s).map(c => `&#x${c.codePointAt(0)?.toString(16)};`).join(""));
 
+    if (escapeLeadingSpaces) {
+        // eslint-disable-next-line no-irregular-whitespace
+        return trailingSpacesEscaped.replace(/^[ 　\t]+/g, s => Array.from(s).map(c => `&#x${c.codePointAt(0)?.toString(16)};`).join(""));
+    } else {
+        return trailingSpacesEscaped;
+    }
 };
 
 export const forceSentencesArrayToSentenceChildren = (

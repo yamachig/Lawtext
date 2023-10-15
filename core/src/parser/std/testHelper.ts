@@ -126,7 +126,12 @@ export const assertELVaridity = (el: EL | string, lawtext?: string, testGap?: bo
         if (el instanceof __Text && el.range) {
             assert.strictEqual(
                 el.text(),
-                lawtext.slice(el.range[0], el.range[1]),
+                lawtext.slice(el.range[0], el.range[1]).replace(/&#(\d+|x[\da-fA-F]+);/g, (...m) => {
+                    const intStr = m[1].toLowerCase();
+                    const isHex = intStr.startsWith("x");
+                    const int = parseInt(intStr.slice(isHex ? 1 : 0), isHex ? 16 : 10);
+                    return String.fromCharCode(int);
+                }),
                 `${el.tag} has mismatch text: range: ${JSON.stringify(el.range)}`,
             );
         }

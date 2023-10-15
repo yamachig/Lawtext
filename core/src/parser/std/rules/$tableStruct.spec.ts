@@ -1100,4 +1100,74 @@ describe("Test $tableStruct and tableStructToLines", () => {
             el => tableStructToLines(el, []),
         );
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+* - &#x3000;項
+  - 種名
+
+# 別表第二　外国旅行の旅費（第三十五条―第三十七条、第三十九条、第四十条、第四十一条関係）
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+* - &#x3000;項
+  - 種名
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "TableStruct",
+            attr: {},
+            children: [
+                {
+                    tag: "Table",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "TableRow",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "TableColumn",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["　項"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "TableColumn",
+                                    attr: {},
+                                    children: [
+                                        {
+                                            tag: "Sentence",
+                                            attr: {},
+                                            children: ["種名"]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $tableStruct.match(0, vlines, env);
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => tableStructToLines(el, []),
+        );
+    });
 });

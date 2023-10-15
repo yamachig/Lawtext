@@ -643,7 +643,7 @@ export class TableColumnLine extends IndentsLine<LineType.TBL> {
         ret.push([this.midSpaceRange, this.midSpace, "MidSpace"]);
         ret.push(...this.attrEntriesRangeTexts());
         ret.push([this.multilineIndicatorRange, this.multilineIndicator, "MultilineIndicator"]);
-        ret.push([this.sentencesArrayRange, sentencesArrayToString(this.sentencesArray), "SentencesArray"]);
+        ret.push([this.sentencesArrayRange, sentencesArrayToString(this.sentencesArray, { escapeLeadingSpaces: true }), "SentencesArray"]);
         ret.push([this.lineEndTextRange(), this.lineEndText, "LineEnd"]);
         return ret;
     }
