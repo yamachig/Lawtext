@@ -168,7 +168,7 @@ export class ComparableEL implements JsonEL {
         } else {
             this.tag = el.tag;
             this.attr = el.attr;
-            this.children = el.children.map(child => {
+            this.children = el.children.filter(c => c !== "").map(child => {
                 const ret = new ComparableEL(child, this, this.nextIndex);
                 this.nextIndex = ret.nextIndex;
                 return ret;
