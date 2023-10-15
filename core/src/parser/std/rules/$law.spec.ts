@@ -1117,4 +1117,130 @@ describe("Test $law and lawToLines", () => {
             },
         );
     });
+
+    it("Success with errors case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtextWithMarker = `\
+[LawType="Act"]
+出入国管理及び難民認定法
+（昭和二十六年政令第三百十九号）
+
+:enact-statement:内閣は、ポツダム宣言の受諾に伴い発する命令に関する件（昭和二十年勅令第五百四十二号）に基き、この政令を制定する。
+
+  （目的）
+第一条　出入国管理及び難民認定法は、本邦に入国し、又は本邦から出国する全ての人の出入国及び本邦に在留する全ての外国人の在留の公正な管理を図るとともに、難民の認定手続を整備することを目的とする。
+`;
+        const expectedErrorMessages: string[] = [];
+        const expectedRendered = `\
+[LawType="Act"]
+出入国管理及び難民認定法
+（昭和二十六年政令第三百十九号）
+
+:enact-statement:内閣は、ポツダム宣言の受諾に伴い発する命令に関する件（昭和二十年勅令第五百四十二号）に基き、この政令を制定する。
+
+  （目的）
+第一条　出入国管理及び難民認定法は、本邦に入国し、又は本邦から出国する全ての人の出入国及び本邦に在留する全ての外国人の在留の公正な管理を図るとともに、難民の認定手続を整備することを目的とする。
+`.replace(/\r?\n/g, "\r\n");
+        const expectedValue = {
+            tag: "Law",
+            attr: {
+                Lang: "ja",
+                Era: "Showa",
+                Year: "26",
+                LawType: "Act",
+                Num: "319"
+            },
+            children: [
+                {
+                    tag: "LawNum",
+                    attr: {},
+                    children: ["昭和二十六年政令第三百十九号"]
+                },
+                {
+                    tag: "LawBody",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "LawTitle",
+                            attr: {},
+                            children: ["出入国管理及び難民認定法"]
+                        },
+                        {
+                            tag: "EnactStatement",
+                            attr: {},
+                            children: ["内閣は、ポツダム宣言の受諾に伴い発する命令に関する件（昭和二十年勅令第五百四十二号）に基き、この政令を制定する。"]
+                        },
+                        {
+                            tag: "MainProvision",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "Article",
+                                    attr: {
+                                        Num: "1"
+                                    },
+                                    children: [
+                                        {
+                                            tag: "ArticleCaption",
+                                            attr: {},
+                                            children: ["（目的）"]
+                                        },
+                                        {
+                                            tag: "ArticleTitle",
+                                            attr: {},
+                                            children: ["第一条"]
+                                        },
+                                        {
+                                            tag: "Paragraph",
+                                            attr: {
+                                                Num: "1"
+                                            },
+                                            children: [
+                                                {
+                                                    tag: "ParagraphNum",
+                                                    attr: {},
+                                                    children: []
+                                                },
+                                                {
+                                                    tag: "ParagraphSentence",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "Sentence",
+                                                            attr: {},
+                                                            children: ["出入国管理及び難民認定法は、本邦に入国し、又は本邦から出国する全ての人の出入国及び本邦に在留する全ての外国人の在留の公正な管理を図るとともに、難民の認定手続を整備することを目的とする。"]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        testLawtextToStd(
+            lawtextWithMarker,
+            expectedRendered,
+            expectedValue,
+            expectedErrorMessages,
+            (vlines, env) => {
+                const result = $law.match(0, vlines, env);
+                // console.log(JSON.stringify(vlines, null, 2));
+                // if (result.ok) console.log(JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__parsed.json", JSON.stringify(result.value.value.json(false), undefined, 2));
+                // if (result.ok) writeFileSync("out__expected.json", JSON.stringify(expectedValue, undefined, 2));
+                return result;
+            },
+            el => {
+                const lines = lawToLines(el, []);
+                // console.log(JSON.stringify(lines, null, 2));
+                return lines;
+            },
+        );
+    });
 });

@@ -4,7 +4,7 @@ import { $blankLine, isSingleParentheses, WithErrorRule } from "../util";
 import * as std from "../../../law/std";
 import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
 import { isAppdxItem, isEnactStatement, isLawBody, isLawNum, isLawTitle, isMainProvision, isPreamble, isSupplProvision, isTOC, newStdEL } from "../../../law/std";
-import { Control, Sentences } from "../../../node/cst/inline";
+import { AttrEntry, Control, Sentences } from "../../../node/cst/inline";
 import CST from "../toCSTSettings";
 import { assertNever } from "../../../util";
 import $toc, { tocToLines } from "./$toc";
@@ -27,6 +27,44 @@ export const lawToLines = (law: std.Law, indentTexts: string[]): Line[] => {
     const lawNum = law.children.find(isLawNum);
     const lawBody = law.children.find(isLawBody);
     const lawTitle = lawBody?.children.find(isLawTitle);
+
+    const lawAttr: Record<string, string> = {};
+
+    const { LawType: lawTypeFromLawNum } = parseLawNum(lawNum?.text() ?? "");
+    if (law.attr.LawType && law.attr.LawType !== lawTypeFromLawNum) {
+        lawAttr.LawType = law.attr.LawType;
+    }
+
+    const attrEntries: AttrEntry[] = [];
+    for (const [name, value] of Object.entries(lawAttr)) {
+        if ((std.defaultAttrs[law.tag] as Record<string, string>)[name] === value) continue;
+        attrEntries.push(
+            new AttrEntry(
+                `[${name}="${value}"]`,
+                [name, value],
+                null,
+                "",
+                null,
+            )
+        );
+    }
+
+    if (attrEntries.length !== 0){
+        lines.push(new OtherLine({
+            range: null,
+            indentTexts,
+            controls: [],
+            sentencesArray: [
+                new Sentences(
+                    "",
+                    null,
+                    attrEntries,
+                    []
+                )
+            ],
+            lineEndText: CST.EOL,
+        }));
+    }
 
     if (lawTitle) {
         lines.push(new OtherLine({
@@ -227,6 +265,35 @@ export const $law: WithErrorRule<std.Law> = factory
     .withName("Law")
     .sequence(s => s
         .and(r => r
+            .sequence(s => s
+                .and(r => r
+                    .zeroOrMore(r => r
+                        .sequence(s => s
+                            .and(r => r
+                                .oneMatch(({ item }) => {
+                                    if (
+                                        item.type === LineType.OTH
+                                        && item.line.type === LineType.OTH
+                                        && item.virtualIndentDepth === 0
+                                        && item.line.controls.length === 0
+                                        && item.line.sentencesArray.length === 1
+                                        && item.line.sentencesArray[0].sentences.length === 0
+                                        && item.line.sentencesArray[0].attrEntries.length !== 0
+                                    ) {
+                                        return item.line.sentencesArray[0].attrEntries;
+                                    } else {
+                                        return null;
+                                    }
+                                })
+                            )
+                            .andOmit(r => r.zeroOrMore(() => $blankLine))
+                        )
+                    )
+                , "attrEntriesList")
+                .action(({ attrEntriesList }) => Object.fromEntries(attrEntriesList.map(ae => ae.map(a => a.entry)).flat()))
+            )
+        , "lawAttr")
+        .and(r => r
             .zeroOrOne(r => r
                 .sequence(s => s
                     .and(() => $lawTitleLines)
@@ -316,7 +383,7 @@ export const $law: WithErrorRule<std.Law> = factory
                 )
             )
         , "notCapturedErrorLines")
-        .action(({ lawTitleLines, enactStatements, toc, preambles, mainProvisionAndErrors, supplOrAppdxItemAndErrors, notCapturedErrorLines }) => {
+        .action(({ lawAttr, lawTitleLines, enactStatements, toc, preambles, mainProvisionAndErrors, supplOrAppdxItemAndErrors, notCapturedErrorLines }) => {
             const errors: ErrorMessage[] = [];
 
             const law = newStdEL(
@@ -346,6 +413,8 @@ export const $law: WithErrorRule<std.Law> = factory
 
             const lawBody = newStdEL("LawBody");
             law.children.push(lawBody);
+
+            Object.assign(law.attr, lawAttr);
 
             const lawTitle = lawTitleLines && newStdEL(
                 "LawTitle",
