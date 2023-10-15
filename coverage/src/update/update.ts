@@ -5,6 +5,7 @@ import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { Era, LawCoverage, LawType } from "../lawCoverage";
 import { ConnectionInfo } from "../connection";
 import { getLawDiff, getOriginalLaw, getParsedLaw, getRenderedDocx, getRenderedHTML, getRenderedLawtext } from "./transform";
+import { pick } from "lawtext/dist/src/util";
 
 
 export const update = async (lawInfo: BaseLawInfo, maxDiffLength: number, db: ConnectionInfo, loader: Loader) => {
@@ -30,7 +31,7 @@ export const update = async (lawInfo: BaseLawInfo, maxDiffLength: number, db: Co
         : { parsedEL: null, parsedXML: null, parsedLaw: null };
 
     const { lawDiff } = (origXML && origEL && parsedXML && parsedEL)
-        ? await getLawDiff(origXML, origEL, parsedXML, parsedEL, maxDiffLength)
+        ? await getLawDiff(origXML, origEL, parsedXML, parsedEL, maxDiffLength, pick(lawInfo, "LawID", "LawNum", "LawTitle"))
         : { lawDiff: null };
 
     const lawNumStruct = lawNumStructFromXML ?? parseLawNum(lawInfo.LawNum);

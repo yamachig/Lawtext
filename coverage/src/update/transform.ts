@@ -252,7 +252,7 @@ export const getParsedLaw = async (lawtext: string): Promise<{
 };
 
 
-export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsedEL: EL, max_diff_length: number): Promise<{
+export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string, parsedEL: EL, max_diff_length: number, errorContext: unknown): Promise<{
     lawDiff: DeNull<LawCoverage["lawDiff"]>,
 }> => {
     try {
@@ -265,7 +265,10 @@ export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string,
         const parsedJson = parsedEL.json(false);
         requiredms.set("parsedELToJson", lap.lapms());
 
-        const d = lawDiff.lawDiff(origJson, parsedJson, lawDiff.LawDiffMode.NoProblemAsNoDiff);
+        const d = lawDiff.lawDiff(origJson, parsedJson, {
+            lawDiffMode: lawDiff.LawDiffMode.NoProblemAsNoDiff,
+            errorContext,
+        });
         requiredms.set("lawDiff", lap.lapms());
 
         const origDOM = domParser.parseFromString(origXML);

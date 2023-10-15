@@ -7,7 +7,7 @@ import { fetch } from "../node-fetch";
 import { connect, ConnectionInfo } from "../connection";
 import config from "../config";
 import { Worker } from "worker_threads";
-import { range } from "lawtext/dist/src/util";
+import { pick, range } from "lawtext/dist/src/util";
 import { UpdateArgs } from "./args";
 import { getToProcessLawInfos } from "./getLawInfos";
 import os from "os";
@@ -133,7 +133,14 @@ const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
 
     const origLawInfos = await getToProcessLawInfos(args, db, loader);
 
-    if (origLawInfos.length === 0 || args.dryRun) return;
+    if (origLawInfos.length === 0) return;
+
+    if (args.dryRun && origLawInfos.length <= 20) {
+        for (const lawInfo of origLawInfos) {
+            console.log(pick(lawInfo, "LawID", "LawNum", "LawTitle"));
+        }
+        return;
+    }
 
     const randGen = prand.xoroshiro128plus(origLawInfos.length);
     const lawInfosWithRand = origLawInfos.map(l => [randGen.unsafeNext(), l] as const);

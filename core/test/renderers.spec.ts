@@ -36,7 +36,14 @@ describe("Test Renderes", () => {
             if (!renderAndParseResult) return;
             const { origEL, parsedEL, origDOM, parsedDOM, tempOrigXml, tempRenderedLawtext, tempRenderedHTML, tempRenderedDocx, tempParsedXml } = renderAndParseResult;
 
-            const diff = lawDiff(origEL.json(false), (parsedEL.json(false)), LawDiffMode.NoProblemAsNoDiff);
+            const diff = lawDiff(
+                origEL.json(false),
+                (parsedEL.json(false)),
+                {
+                    lawDiffMode: LawDiffMode.NoProblemAsNoDiff,
+                    errorContext: lawNum,
+                },
+            );
             const diffData = makeDiffData(diff, origDOM, parsedDOM);
 
             let slicedDiffData = diffData;
