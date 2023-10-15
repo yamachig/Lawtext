@@ -383,27 +383,34 @@ export const $tocSupplProvision: WithErrorRule<std.TOCSupplProvision> = factory
             const children: (std.TOCSupplProvision["children"][number] | std.TOCArticleGroup)[] = [];
             const errors: ErrorMessage[] = [];
 
+            const amendLawNumParentheses = new __Parentheses({
+                start: headLine.line.openParen,
+                content: [new __Text(headLine.line.amendLawNum, headLine.line.amendLawNumRange)],
+                end: headLine.line.closeParen,
+                type: "round",
+                range: (
+                    (headLine.line.openParenRange && headLine.line.amendLawNumRange && headLine.line.closeParenRange)
+                        ? {
+                            start: headLine.line.openParenRange,
+                            content: headLine.line.amendLawNumRange,
+                            end: headLine.line.closeParenRange,
+                        }
+                        : null
+                ),
+                depth: 0,
+            });
+
             const inline = mergeAdjacentTexts([
                 new __Text(headLine.line.title, headLine.line.titleRange),
-                new __Parentheses({
-                    start: headLine.line.openParen,
-                    content: [new __Text(headLine.line.amendLawNum, headLine.line.amendLawNumRange)],
-                    end: headLine.line.closeParen,
-                    type: "round",
-                    range: (
-                        (headLine.line.openParenRange && headLine.line.amendLawNumRange && headLine.line.closeParenRange)
-                            ? {
-                                start: headLine.line.openParenRange,
-                                content: headLine.line.amendLawNumRange,
-                                end: headLine.line.closeParenRange,
-                            }
-                            : null
-                    ),
-                    depth: 0,
-                }),
+                ...(
+                    (amendLawNumParentheses.text() === "")
+                        ? []
+                        : [amendLawNumParentheses]
+                ),
                 new __Text(headLine.line.extractText, headLine.line.extractTextRange),
             ]);
             const lastItem = inline.length > 0 ? inline[inline.length - 1] : null;
+
             const [title, articleRangeSentenceChildren] = (
                 lastItem instanceof __Parentheses
                     && lastItem.attr.type === "round"

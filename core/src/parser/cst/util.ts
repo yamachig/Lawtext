@@ -70,7 +70,7 @@ export const mergeAdjacentTextsWithString = <T extends SentenceChildEL>(inline: 
             result.push(item);
         }
     }
-    return result;
+    return result.filter(r => !((r instanceof __Text) && r.children[0] === ""));
 };
 
 export const separateTrailingSpaces = <T extends SentenceChildEL>(inline: (string | T)[]): { inline: (T | __Text)[], spaces: string} => {

@@ -1143,6 +1143,42 @@ const detectWarningChangeELs = (dRow: DiffTableRow<string>, oldELs: Array<[Compa
                 };
             }
         }
+
+        // if (
+        //     oldEL.parent && newEL.parent &&
+        //     [oldEL.parent, newEL.parent].every(oldNewELParent => (
+        //         (["SupplProvisionLabel"] as string[]).includes(oldNewELParent.tag)
+        //     ))
+        // ) {
+        //     const oldP = oldEL.parent;
+        //     const newP = newEL.parent;
+
+        //     const [oldTitles, newTitles] = [oldP, newP].map(el => {
+        //         const p = el.parent;
+        //         if (!p) return [el];
+        //         const ret: ComparableEL[] = [];
+        //         for (let i = p.children.indexOf(el); i < p.children.length; i++) {
+        //             if (
+        //                 (["SupplProvisionLabel"] as string[]).includes(p.children[i].tag) ||
+        //                 p.children[i].tag === "ArticleRange"
+        //             ) ret.push(p.children[i]);
+        //             else break;
+        //         }
+        //         return ret;
+        //     });
+        //     const oldJoinText = oldTitles.map(el => el.text).join("");
+        //     const newJoinText = newTitles.map(el => el.text).join("");
+        //     if (oldJoinText === newJoinText) {
+        //         return {
+        //             oldELs: ([] as ComparableEL[])
+        //                 .concat(...oldTitles.map(el => Array.from(el.allList()).map(([e ]) => e))),
+        //             newELs: ([] as ComparableEL[])
+        //                 .concat(...newTitles.map(el => Array.from(el.allList()).map(([e ]) => e))),
+        //         };
+        //     }
+        // }
+
+
     } else if (
         (oldTT === TagType.Open || oldTT === TagType.Empty) &&
         (newTT === TagType.Open || newTT === TagType.Empty)
