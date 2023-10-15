@@ -296,7 +296,13 @@ export enum LawDiffMode {
     WarningAsNoDiff = "WarningAsNoDiff",
 }
 
-const chopELs = (oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagType][], truncateTags: std.StdELTag[]) => {
+const chopELs = (
+    oldELs: [ComparableEL, TagType][],
+    newELs: [ComparableEL, TagType][],
+    truncateTags: std.StdELTag[],
+    nextOldEmptyIndex: number,
+    nextNewEmptyIndex: number,
+) => {
 
     const trOldELs = truncateELs(oldELs, truncateTags);
     const trNewELs = truncateELs(newELs, truncateTags);
@@ -308,9 +314,6 @@ const chopELs = (oldELs: [ComparableEL, TagType][], newELs: [ComparableEL, TagTy
         oldELsRange: [number, number],
         newELsRange: [number, number],
     }[] = [];
-
-    let nextOldEmptyIndex = oldELs[0][0].openIndex;
-    let nextNewEmptyIndex = newELs[0][0].openIndex;
 
     for (let trI = 0; trI < trDiff.length; trI++) {
         const trDRow = trDiff[trI];
@@ -373,6 +376,9 @@ const getDiffTableRows = (origOldELs: [ComparableEL, TagType][], origNewELs: [Co
         },
     ];
 
+    let nextOldEmptyIndex = origOldELs[0][0].openIndex;
+    let nextNewEmptyIndex = origNewELs[0][0].openIndex;
+
     for (let rangesListI = 0; rangesListI < rangesList.length; rangesListI++) {
 
         const { oldELsRange, newELsRange, truncateTagsListIndex } = rangesList[rangesListI];
@@ -392,6 +398,8 @@ const getDiffTableRows = (origOldELs: [ComparableEL, TagType][], origNewELs: [Co
                         partOldELs,
                         partNewELs,
                         truncateTagsList[truncateTagsListIndex + 1],
+                        nextOldEmptyIndex,
+                        nextNewEmptyIndex,
                     ).map(r => ({ ...r, truncateTagsListIndex: truncateTagsListIndex + 1 }));
 
 
@@ -433,6 +441,9 @@ const getDiffTableRows = (origOldELs: [ComparableEL, TagType][], origNewELs: [Co
                 }
             }
         }
+
+        nextOldEmptyIndex = oldELsRange[1];
+        nextNewEmptyIndex = newELsRange[1];
 
         if (editTable) {
             const partTextEdit = tuneEditTable(editTable, partOldELs, partNewELs);
@@ -1181,6 +1192,8 @@ const tuneEditTable = <T, O extends {tag: string}>(table: EditTable<T>, oldELs: 
                 const [moveIndex /**/] = moveItem;
                 const [moveEL, moveTT] = oldELs[moveIndex];
                 if (moveTT !== TagType.Open) break;
+
+                if ((startPos - count) < 0) break;
 
                 const [oi, ni] = table[startPos - count];
                 if (!oi || !ni) break;

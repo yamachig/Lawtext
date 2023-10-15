@@ -17,7 +17,15 @@ const run = async (): Promise<void> => {
         try {
             await update(lawInfo, maxDiffLength, db, loader);
         } catch (e) {
-            parentPort?.postMessage({ error: true, message: e, lawInfo });
+            parentPort?.postMessage({
+                error: true,
+                message: {
+                    message: (e as Error).message ?? "",
+                    name: (e as Error).name ?? "",
+                    stack: (e as Error).stack ?? "",
+                },
+                lawInfo,
+            });
             return;
         }
         parentPort?.postMessage({ finished: true });

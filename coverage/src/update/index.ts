@@ -52,7 +52,7 @@ const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_cou
             if (code !== 0) reject(new Error("Worker stopped with error"));
         });
         worker.once("message", msg => {
-            if (!msg.ready) console.error(`[${new Date().toISOString()}] Unknown message from worker: ${JSON.stringify(msg)}`);
+            if (!msg.ready) console.error(`\n[${new Date().toISOString()}] Unknown message from worker: ${JSON.stringify(msg)}`);
             resolve([workerIndex, worker]);
         });
     }))));
@@ -72,10 +72,16 @@ const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_cou
         worker.postMessage({ lawInfo });
         worker.once("message", msg => {
             if (msg.error) {
-                console.error(`[${new Date().toISOString()}] Error in updateParallel.runWorker: ${JSON.stringify(msg, undefined, 2)}`);
+                console.error(`\n[${new Date().toISOString()}] Error in updateParallel.runWorker: ${JSON.stringify(msg, undefined, 2)}`);
+                const stack = msg.message?.stack ?? undefined;
+                if (typeof stack === "string") {
+                    for (const l of stack.split("\n")) {
+                        console.error(l);
+                    }
+                }
                 resolve();
             } else {
-                if (!msg.finished) console.error(`[${new Date().toISOString()}] Unknown message from worker: ${JSON.stringify(msg)}`);
+                if (!msg.finished) console.error(`\n[${new Date().toISOString()}] Unknown message from worker: ${JSON.stringify(msg)}`);
                 resolve();
             }
         });

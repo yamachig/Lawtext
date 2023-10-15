@@ -6,7 +6,7 @@
 import * as yargs from "yargs";
 import update from "../src/update";
 
-const DEFAULT_MAX_DIFF_LENGTH = 100;
+const DEFAULT_MAX_DIFF_LENGTH = 40;
 
 if (typeof require !== "undefined" && require.main === module) {
     process.on("unhandledRejection", (listener) => {
