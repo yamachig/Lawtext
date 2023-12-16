@@ -1,29 +1,17 @@
 Lawtext: Manageable plain text format and utility tools for laws
 ========================================================================
 
-<div style="display: flex; flex-direction: row; gap: 1em; flex-wrap: wrap;">
-
-<div style="flex: 1 1 20em;">
-
 ## 法令を読む / Browsing laws
+
+[試してみる / Try it](https://yamachig.github.io/lawtext-app/#/v1:405AC0000000088)
 
 [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/167990468-37af141e-88f2-4a6e-9413-18116f1c55d2.gif)](https://yamachig.github.io/lawtext-app/#/v1:405AC0000000088)
 
-<div style="text-align: center;"><a href="https://yamachig.github.io/lawtext-app/#/v1:405AC0000000088" style="display: inline-block; border: 1px solid currentColor; padding: 0.5em;border-radius: 0.5em;" target="_blank" rel="noopener">試してみる / Try it</a></div>
-
-</div>
-
-<div style="flex: 1 1 20em;">
-
 ## 法令を編集する / Editing laws
 
+[試してみる / Try it](#try-vscode-extension)
+
 [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](#try-vscode-extension)
-
-<div style="text-align: center;"><a href="#try-vscode-extension" style="display: inline-block; border: 1px solid currentColor; padding: 0.5em;border-radius: 0.5em;" target="_blank" rel="noopener">試してみる / Try it</a></div>
-
-</div>
-
-</div>
 
 
 ------------
