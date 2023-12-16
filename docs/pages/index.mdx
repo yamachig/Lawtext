@@ -59,7 +59,7 @@ import Image from "next/image"
 
 ## 概要 / Summary
 
-**Lawtext** は、法令標準XMLとの間で相互変換可能な法令のプレーンテキストフォーマットです。読みやすく、人の手により編集しやすいように設計されています。
+**Lawtext** は、法令標準XMLとの間で相互変換可能な法令のプレーンテキストフォーマットです。読みやすく、人の手により編集しやすいように設計されています。また、Lawtext、法令標準XML、法令APIに対応した法令ビューア、編集ツールも提供しています。
 
 Lawtextを用いると、既存のソースコード管理ツールを法令管理にそのまま活用することができます。また、法令標準XMLを使用する高度な法令管理ツールと共存することができます。これにより、法令文書のオープン化を容易にし、編集作業をより安全にし、法令執務の創造性を高めることができます。
 
@@ -67,7 +67,7 @@ Lawtextを用いると、既存のソースコード管理ツールを法令管�
 
 ------------
 
-**Lawtext** is a human-readable/editable plain text format designed for Japanese laws.
+**Lawtext** is a human-readable/editable plain text format designed for Japanese laws. It comes with a viewer and editing tool compatible with Lawtext, standard law XML, and e-LAWS API.
 
 Lawtext works efficiently with existing source code management tools to make law text management open, safe, and creative.
 
@@ -164,15 +164,21 @@ It parses Lawtext and standard law XML (from a local file or e-LAWS API) and sho
 
 ------------
 
-<a id="try-vscode-extension"></a>
+<a id="lawtext-vscode-extension"></a>
 
-## Visual Studio Code 拡張機能を試す / Try the Visual Studio Code extension
+## Lawtext VSCode 拡張機能 / Lawtext VSCode extension
 
+Lawtext-appと同様の法令文書解析機能を備えた法令編集ツールです。括弧の強調や定義語・条項参照をVisual Studio Codeのコード編集機能として提供します。
+
+The Lawtext VSCode extension is an editing tool providing the same syntax analyzer as Lawtext-app, with parentheses and keywords/clauses highlighting features as code editing features in Visual Studio Code.
 
 [![vscode-screenshot1](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)](https://user-images.githubusercontent.com/26037044/164368148-aef50430-c994-4a53-b1fc-d26471860e29.gif)
 
+<a id="try-vscode-extension"></a>
 
-- [こちらのリンク (github.dev)](https://github.dev/yamachig/vscode-lawtext-sample) から数クリックでお試しいただけます。（GitHubアカウントが必要です。リンク先でアカウントを作成できます。） / You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required. You can create one on the linked page.)
+### Lawtext VSCode 拡張機能を試す / Try the Lawtext VSCode extension
+
+- [こちらのリンク (github.dev)](https://github.dev/yamachig/vscode-lawtext-sample) からすぐにお試しいただけます。（GitHubアカウントが必要です。リンク先でアカウントを作成できます。） / You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required. You can create one on the linked page.)
 
 - もしくは、[vscode.dev](https://vscode.dev/) にて [Lawtext拡張機能](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) をインストールし、[サンプルLawtext](https://yamachig.github.io/lawtext-app/#/(sample)) を開くことでもお試しいただけます / Otherwise, you can visit [vscode.dev](https://vscode.dev/), install [Lawtext extension](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) and open the [sample Lawtext](https://yamachig.github.io/lawtext-app/#/(sample)).
 
