@@ -15,6 +15,7 @@ const withNextra = nextra({
 
 const config = {
     ...baseConfig,
+    output: "export",
     experimental: {
         webpackBuildWorker: true,
         esmExternals: false,

@@ -63,10 +63,6 @@ jobs:
         run: npx next build
         working-directory: ./docs
 
-      - name: Static HTML export with Next.js
-        run: npx next export
-        working-directory: ./docs
-
       - name: Build core bundles
         run: npm run build-bundles:prod -- --output-path="../docs/out/static/lawtext_bundles"
         working-directory: ./core
