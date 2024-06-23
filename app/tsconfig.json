@@ -42,9 +42,4 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
     },
-    // "include": [
-    //     "src/**/*",
-    //     "test/**/*",
-    //     "bin/**/*",
-    // ],
 }

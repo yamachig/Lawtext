@@ -79,14 +79,26 @@ describe("Test lawNum", () => {
                     [LawIDType.PrimeMinisterDecision]: LawIDType.Rule,
                 }[parsedLawID.type]) ||
                 (
-                    (parsedLawNum.Num === null) &&
-                    !["", "0", "1"].includes((
+                    (parsedLawNum.Num === null) && (
                         (
-                            (parsedLawID.type === LawIDType.Constitution) || (parsedLawID.type === LawIDType.PrimeMinisterDecision)
+                            parsedLawID.type === LawIDType.Constitution
+                            && !/^(?:明治|大正|昭和|平成|令和)[一二三四五六七八九十百千]+年憲法$/.test(lawInfo.LawNum)
                         )
-                            ? ""
-                            : parsedLawID.num
-                    ))
+                        || (
+                            parsedLawID.type === LawIDType.PrimeMinisterDecision
+                            && !/^(?:明治|大正|昭和|平成|令和)[一二三四五六七八九十百千]+年[一二三四五六七八九十]+月[一二三四五六七八九十]+日内閣総理大臣決定$/.test(lawInfo.LawNum)
+                        )
+                        || (
+                            parsedLawID.type === LawIDType.ImperialOrder
+                            && !/^(?:明治|大正|昭和|平成|令和)[一二三四五六七八九十百千]+年勅令$/.test(lawInfo.LawNum)
+                        )
+                        || (
+                            parsedLawID.type !== LawIDType.Constitution
+                            && parsedLawID.type !== LawIDType.PrimeMinisterDecision
+                            && parsedLawID.type !== LawIDType.ImperialOrder
+                            && !["", "0", "1"].includes(parsedLawID.num)
+                        )
+                    )
                 ) ||
                 (
                     (parsedLawNum.Num !== null) &&
@@ -103,9 +115,9 @@ describe("Test lawNum", () => {
         if (failedLawInfos.length !== 0) {
             assert.strictEqual(failedLawInfos.map(l => ({
                 origLawNum: l.LawNum,
-                LawNum: parseLawNum(l.LawNum),
+                parsedLawNum: parseLawNum(l.LawNum),
                 origLawID: l.LawID,
-                LawID: parseLawID(l.LawID),
+                parsedLawID: parseLawID(l.LawID),
             })), []);
         }
     });

@@ -1,5 +1,4 @@
 import { EL } from "../../node/el";
-import { Diff } from "../../util";
 
 /**
  * StdEL: a special type of {@link EL} (implements `JsonEL`) that complies with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
@@ -2481,8 +2480,20 @@ export const newStdEL = <
     return new EL(tag, attr, children, range) as StdELType<TName>;
 };
 
-export const isStdEL = <TTag extends StdELTag | undefined>(obj: EL | string, tag?: TTag | TTag[]): obj is (TTag extends undefined ? StdEL : StdELType<Diff<TTag, undefined>>) => {
+export const isStdEL = <
+        TTag extends StdELTag = never,
+    >(
+        obj: unknown,
+        tag?: TTag | TTag[],
+    ):
+        obj is (
+            (typeof tag) extends undefined
+                ? StdEL
+                : StdELType<TTag>
+        ) => {
     if (typeof obj === "string") {
+        return false;
+    } else if (!(obj instanceof EL)) {
         return false;
     } else if (tag === undefined) {
         return (stdELTags as readonly string[]).includes(obj.tag);
@@ -2494,5 +2505,5 @@ export const isStdEL = <TTag extends StdELTag | undefined>(obj: EL | string, tag
 };
 
 export const makeIsStdEL = <TTag extends StdELTag>(tag: TTag | TTag[]) =>
-    (obj: EL | string): obj is StdELType<TTag> =>
+    (obj: unknown): obj is StdELType<TTag> =>
         isStdEL(obj, tag);

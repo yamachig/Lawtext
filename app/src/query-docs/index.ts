@@ -20,7 +20,6 @@ const prepareTempIncludes = async (dir: string, tempIncludesDir: string, relpath
                 for (const line of text.replace(/\/\*\s*\[\s*md-ignore-start\s*\]\*\/.*?\/\*\s*\[\s*md-ignore-end\s*\]\*\//g, "").split(/\r?\n/)) {
                     const mIgnore = /\/\/\s*\[\s*md-ignore\s*\]/.exec(line);
                     if (mIgnore) continue;
-                    if (mIgnore) continue;
                     const m = /^(\s*)\/\/\s*\[\s*md\s*\](.*)$/.exec(line);
                     if (m) {
                         lines.push(m[2]);
@@ -46,13 +45,9 @@ const prepareTempIncludes = async (dir: string, tempIncludesDir: string, relpath
 };
 
 export const generateDocs = async (targetDir: string): Promise<void> => {
-    const app = new Application();
-    app.options.addReader(new TypeDocReader());
-    app.options.addReader(new TSConfigReader());
-
     const tempIncludesDir = path.join(__dirname, "./temp-includes");
 
-    app.bootstrap({
+    const app = await Application.bootstrap({
         entryPoints: [path.join(__dirname, "../globals/")],
         entryPointStrategy: "expand",
         // excludePrivate: true,
@@ -60,15 +55,19 @@ export const generateDocs = async (targetDir: string): Promise<void> => {
         // excludeInternal: true,
         excludeNotDocumented: true,
         name: "Lawtext query",
-        readme: path.join(__dirname, "./src/readme.md"),
-        includes: tempIncludesDir,
+        readme: path.join(tempIncludesDir, "readme.md"),
+        // projectDocuments: [`${tempIncludesDir}/**/*`],
         out: targetDir,
-    });
+        sourceLinkExternal: true,
+    }, [
+        new TypeDocReader(),
+        new TSConfigReader(),
+    ]);
 
-    const project = app.convert();
+    const project = await app.convert();
     if (!project) throw new Error("Error on typedoc.Application.convert()");
 
-    if (await promisify(fs.exists)(tempIncludesDir)) await promisify(fs.rmdir)(tempIncludesDir, { recursive: true });
+    if (await promisify(fs.exists)(tempIncludesDir)) await promisify(fs.rm)(tempIncludesDir, { recursive: true });
     await fsExtra.ensureDir(tempIncludesDir);
     await prepareTempIncludes(path.join(__dirname, "./src"), tempIncludesDir);
 

@@ -14,7 +14,7 @@ export const useAfterMountTasks = (origSetState: OrigSetLawtextAppPageState) => 
         status.tasks.push(func);
     }, [status]);
 
-    const checkTaskTimer = React.useRef<NodeJS.Timer>();
+    const checkTaskTimer = React.useRef<NodeJS.Timeout>();
 
     const checkTaskInner = React.useCallback(() => {
 

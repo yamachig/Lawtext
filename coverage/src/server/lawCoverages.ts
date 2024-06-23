@@ -8,12 +8,12 @@ export class LawCoveragesManager {
     public constructor(
         public db: ConnectionInfo,
     ) {
-        this.db.lawCoverage.watch().once("change", async () => {
-            await this.closeCursor();
-            this.lawCoveragesCache = null;
-            this.countsCache = null;
-            console.log(`[${new Date().toISOString()}] LawCoveragesManager.slice() change detected: cursor closed and cache cleared.`);
-        });
+        // this.db.lawCoverage.watch().once("change", async () => {
+        //     await this.closeCursor();
+        //     this.lawCoveragesCache = null;
+        //     this.countsCache = null;
+        //     console.log(`[${new Date().toISOString()}] LawCoveragesManager.slice() change detected: cursor closed and cache cleared.`);
+        // });
     }
 
     protected sort: [key:SortKey, direction:SortDirection][] = [];
