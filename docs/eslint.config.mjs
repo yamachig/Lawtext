@@ -2,12 +2,12 @@ import globals from "globals";
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import react from "eslint-plugin-react";
-import next from "next/core-web-vitals"
+import next from "@next/eslint-plugin-next";
 import reactHooks from "eslint-plugin-react-hooks";
 
 export default tseslint.config(
     {
-        ignores: ["dist/**/*"],
+        ignores: [".next/**/*"],
     },
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
@@ -29,6 +29,7 @@ export default tseslint.config(
         plugins: {
             react,
             "react-hooks": reactHooks,
+            next,
         },
 
         settings: {
