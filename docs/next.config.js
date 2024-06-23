@@ -16,7 +16,9 @@ const withNextra = nextra({
 const config = {
     ...baseConfig,
     experimental: {
+        webpackBuildWorker: true,
         esmExternals: false,
+        serverSourceMaps: false,
         ...(
             process.env.GITHUB_ACTION
                 ? {}
@@ -26,10 +28,27 @@ const config = {
                 }
         ),
     },
+
+    productionBrowserSourceMaps: false,
+
     images: {
         unoptimized: true,
     },
+
     trailingSlash: true,
+
+    webpack: (
+        config,
+        { dev },
+    ) => {
+        if (config.cache && !dev) {
+            config.cache = Object.freeze({
+                type: "memory",
+            });
+            config.cache.maxMemoryGenerations = 0;
+        }
+        return config;
+    },
 };
 module.exports = withNextra(config);
 
