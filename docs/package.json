@@ -2,7 +2,7 @@
   "scripts": {
     "dev": "npx concurrently -n core,docs \"npx typedoc --options core-typedoc.json --watch --preserveWatchOutput\" \"next dev\"",
     "typedoc": "npx typedoc --options core-typedoc.json",
-    "build": "npm run typedoc && next build",
+    "build": "npm run typedoc && node --max_old_space_size=8192 node_modules/next/dist/bin/next build",
     "build-core-bundles": "pushd \"../core\" && ((npm run build-bundles:prod -- --output-path=\"../docs/out/static/lawtext_bundles\") & popd)",
     "start": "next start",
     "lint": "next lint",
@@ -20,7 +20,7 @@
     "typedoc-plugin-markdown": "^4.1.0"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^14.2.4",
+    "@next/eslint-plugin-next": "^13.5.6",
     "@types/node": "^20.14.8",
     "@types/react": "^18.3.3",
     "concurrently": "^8.2.2",
