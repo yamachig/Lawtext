@@ -53,13 +53,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      # - name: Build library documentation
-      #   run: npx typedoc --options core-typedoc.json
-      #   working-directory: ./docs
+      - name: Build library documentation
+        run: npx typedoc --options core-typedoc.json
+        working-directory: ./docs
 
       - name: Build with Next.js
         env:
-          NODE_OPTIONS: "--max_old_space_size=8192"
+          NODE_OPTIONS: "--max_old_space_size=10240"
         run: npx next build
         working-directory: ./docs
 
