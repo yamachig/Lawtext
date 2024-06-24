@@ -1,8 +1,7 @@
 {
   "scripts": {
     "dev": "npx concurrently -n core,docs \"npx typedoc --options core-typedoc.json --watch --preserveWatchOutput\" \"next dev\"",
-    "typedoc": "npx typedoc --options core-typedoc.json",
-    "build": "npm run typedoc && node --max_old_space_size=8192 node_modules/next/dist/bin/next build",
+    "build": "npm run core-docs && next build",
     "build-core-bundles": "pushd \"../core\" && ((npm run build-bundles:prod -- --output-path=\"../docs/out/static/lawtext_bundles\") & popd)",
     "start": "next start",
     "lint": "next lint",

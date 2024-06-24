@@ -59,7 +59,7 @@ jobs:
 
       - name: Build with Next.js
         env:
-          NODE_OPTIONS: "--max_old_space_size=10240"
+          NODE_OPTIONS: "--max_old_space_size=8192"
         run: npx next build
         working-directory: ./docs
 

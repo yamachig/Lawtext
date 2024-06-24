@@ -8,9 +8,9 @@ title: Lawtext syntax
 
 Please refer to the comments in the source code referred from the following documents for the detailed syntax of Lawtext.
 
-- [The library documentation for `Line`](/lib/core/modules/core_src_node_cst_line#line) describes the types of [`Line`](/technical/parsing#line)s and links to the codes that contain the actual syntax definition by [`generic-parser`](https://github.com/yamachig/generic-parser) to convert a Lawtext string to a sequence of `Line`s.
-- [The library documentation for `VirtualLine`](/lib/core/modules/core_src_parser_std_virtualLine#virtualline) describes the types of [`VirtualLine`](/technical/parsing#virtualline)s and the steps to convert a sequence of `Line`s to `VirtualLine`s.
-- [The library documentation for `$law`](/lib/core/modules/core_src_parser_std_rules__law#law) is the entry point of the parser that converts a sequence of `VirtualLine`s to [`StdEL` (`JsonEL`)](/technical/intermediate-data#stdel). It contains the actual syntax definition by [`generic-parser`](https://github.com/yamachig/generic-parser), and you can follow the defined rule to find syntax definitions for other element types.
+- [The library documentation for `Line`](../lib/core/src/node/cst/line/README.mdx#line) describes the types of [`Line`](../technical/parsing.mdx#line)s and links to the codes that contain the actual syntax definition by [`generic-parser`](https://github.com/yamachig/generic-parser) to convert a Lawtext string to a sequence of `Line`s.
+- [The library documentation for `VirtualLine`](../lib/core/src/parser/std/virtualLine/README.mdx#virtualline) describes the types of [`VirtualLine`](../technical/parsing.mdx#virtualline)s and the steps to convert a sequence of `Line`s to `VirtualLine`s.
+- [The library documentation for `$law`](../lib/core/src/parser/std/rules/$law/README.mdx#law) is the entry point of the parser that converts a sequence of `VirtualLine`s to [`StdEL` (`JsonEL`)](../technical/intermediate-data.mdx#stdel). It contains the actual syntax definition by [`generic-parser`](https://github.com/yamachig/generic-parser), and you can follow the defined rule to find syntax definitions for other element types.
 
 ## How to try
 
@@ -49,7 +49,7 @@ Hint: run `console.log(lawtext.run.help)` to show the help.
 
 ### Try using the CLI
 
-Please see [CLI usage](/cli) and run CLI with a `lawtext` input and `json` output with `controlel` option (and `virtuallinesout` option when running in Node.js) to get the parsed `VirtualLine`s and the parsed `StdEL` (`JsonEL`) representation.
+Please see [CLI usage](../cli.mdx) and run CLI with a `lawtext` input and `json` output with `controlel` option (and `virtuallinesout` option when running in Node.js) to get the parsed `VirtualLine`s and the parsed `StdEL` (`JsonEL`) representation.
 
 ### Try using the Visual Studio Code extension
 

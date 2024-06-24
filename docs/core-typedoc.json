@@ -2,12 +2,14 @@
   "tsconfig": "../core/tsconfig.json",
   "entryPoints": ["../core/src/"],
   "basePath": "../",
-  "exclude": ["../core/src/util/node-fetch/*", "**/*.spec.ts"],
+  "exclude": ["../core/src/util/node-fetch/*", "**/*.spec.ts", "**/*.spec.tsx"],
   "entryPointStrategy": "expand",
   "useTsLinkResolution": true,
   "name": "Lawtext core references",
   "plugin": ["typedoc-plugin-markdown"],
   "cleanOutputDir": true,
   "readme": "none",
-  "out": "pages/lib/core"
+  "fileExtension": ".mdx",
+  "membersWithOwnFile": ["Class", "Interface"],
+  "out": "pages/lib"
 }
