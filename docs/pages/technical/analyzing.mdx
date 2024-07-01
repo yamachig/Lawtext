@@ -32,7 +32,7 @@ Such as `平成五年法律第八十八号` (meaning "Act No. 88 of November 12,
 
 Pointers in this context are the terms that reference a particular clause, such as`第一条` (meaning "Article 1") and `前項` (meaning "the preceding Article"). Ranges of pointers ("pointer ranges") are generalized forms of pointers like `第三十九条及び第四十一条から前条まで` (meaning "Articles 39 and 41 through the preceding Article").
 
-The parser rule is defined at [`$pointerRanges`](../lib/core/src/parser/cst/rules/$pointerRanges/README.mdx#pointerranges). The detected pointers will be resolved to refer to the actual clauses later.
+The parser rule is defined at [`$pointerRanges`](../lib/core/src/parser/cst/rules/$pointerRanges/README.mdx#pointerranges). The detected pointers will be resolved later to refer to the actual clauses.
 
 ## Pointer resolution
 
@@ -80,7 +80,7 @@ Inline naming is a type of term definition that occurs in the middle of a senten
 
 ### Inline naming without square brackets
 
-In the other cases, the inline naming does not accompany a pair of square brackets. In this case, although the existence of the declaration itself is obvious by a sentence with round parentheses, detection of the exact binding name (exact text of the identifier) is not self-evident, or exactly speaking, requires analysis of semantics or meaning of natural language.
+In the other cases, the inline naming does not accompany a pair of square brackets. In this case, although the existence of the declaration itself is evident by a sentence with round parentheses, detection of the exact binding name (exact text of the identifier) is not self-evident, or exactly speaking, requires analysis of semantics or meaning of natural language.
 
 An example of an inline naming without square brackets is below.
 
@@ -166,7 +166,7 @@ Please see [CLI usage](../cli.mdx) and run CLI with `analyze` and `controlel` op
 
 ### Try using the Visual Studio Code extension
 
-- You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (GitHub account is required. You can create one on the linked page.)
+- You can try the extension at [github.dev](https://github.dev/yamachig/vscode-lawtext-sample) with a few clicks. (A GitHub account is required. You can create one on the linked page.)
 
 - Otherwise, you can visit [vscode.dev](https://vscode.dev/), install [Lawtext extension](https://marketplace.visualstudio.com/items?itemName=yamachi.lawtext) and ope
 n the [sample Lawtext](https://yamachig.github.io/lawtext-app/#/(sample)).
