@@ -23,7 +23,7 @@
         "build:bin": "npx webpack --mode development --color --config ./webpack-configs/bin.ts",
         "serve": "npx webpack serve --env DEV_SERVER=1 --mode development --color --config ./webpack-configs/client.ts",
         "serve:prod": "npx webpack serve --env DEV_SERVER=1 --mode production --color --config ./webpack-configs/client.ts",
-        "test": "npm run build:test && mocha --delay --timeout 60000 --reporter mochawesome ./dist-test/bundle.js & start ./mochawesome-report/mochawesome.html",
+        "test": "npm run build:test && mocha --delay --timeout 60000 --reporter mochawesome ./dist-test/bundle.js",
         "watch": "npx webpack --watch --mode development --color --config ./webpack-configs/client.ts",
         "query-docs": "npx --trace-deprecation ts-node src/query-docs/index.ts --target-dir \"dist-dev/query-docs\"",
         "query-docs:prod": "npx --trace-deprecation ts-node src/query-docs/index.ts --target-dir \"dist-prod/query-docs\""

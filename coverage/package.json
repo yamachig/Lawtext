@@ -20,9 +20,9 @@
         "watch": "npx tsc --watch",
         "update": "node --enable-source-maps dist/bin/update.js",
         "start": "nodemon --enable-source-maps dist/bin/server.js ./dist-dev/client/",
-        "build-client": "npx webpack --mode development --color --config ./dist/webpack-configs/client.js",
-        "watch-client": "npx webpack --watch --progress --mode development --color --config ./dist/webpack-configs/client.js",
-        "build-client:prod": "npx webpack --mode production --color --config ./dist/webpack-configs/client.js"
+        "build-client": "npx tsc && npx webpack --mode development --color --config ./dist/webpack-configs/client.js",
+        "watch-client": "npx tsc && npx webpack --watch --progress --mode development --color --config ./dist/webpack-configs/client.js",
+        "build-client:prod": "npx tsc && npx webpack --mode production --color --config ./dist/webpack-configs/client.js"
     },
     "devDependencies": {
         "@types/bootstrap": "^5.2.10",
