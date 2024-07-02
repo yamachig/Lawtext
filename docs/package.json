@@ -2,12 +2,12 @@
   "scripts": {
     "dev": "npx concurrently -n core,docs \"npx typedoc --options core-typedoc.json --watch --preserveWatchOutput\" \"next dev\"",
     "build": "npm run core-docs && next build",
-    "build-core-bundles": "pushd \"../core\" && ((npm run build-bundles:prod -- --output-path=\"../docs/out/static/lawtext_bundles\") & popd)",
+    "build-core-bundles": "cd \"../core\" && npm run build-bundles:prod -- --output-path=\"../docs/out/static/lawtext_bundles\"",
     "start": "next start",
     "lint": "next lint",
     "core-docs-watch": "npx typedoc --options core-typedoc.json --watch",
     "core-docs": "npx typedoc --options core-typedoc.json",
-    "export": "next export && npm run build-core-bundles"
+    "export": "npm run build && npm run build-core-bundles"
   },
   "dependencies": {
     "next": "^14.2.4",

@@ -16,21 +16,9 @@ const withNextra = nextra({
 const config = {
     ...baseConfig,
     output: "export",
-    experimental: {
-        ...(
-            process.env.GITHUB_ACTION
-                ? {}
-                : {
-                    workerThreads: false,
-                    cpus: 1,
-                }
-        ),
-    },
-
     images: {
         unoptimized: true,
     },
-
     trailingSlash: true,
 };
 module.exports = withNextra(config);
