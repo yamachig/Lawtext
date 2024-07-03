@@ -5,14 +5,12 @@ import * as std from "../../law/std";
 import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision";
 import { renderToStaticMarkup } from "../common";
 import { renderDocxAsync } from "../common/docx";
-import os from "os";
 import path from "path";
 import fs from "fs";
 import formatXML from "../../util/formatXml";
 import htmlCSS from "./htmlCSS";
 import { promisify } from "util";
-
-const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
+import ensureTempTestDir from "../../../test/ensureTempTestDir";
 
 describe("Test HTML amendProvision", () => {
     /* eslint-disable no-irregular-whitespace */
@@ -122,7 +120,7 @@ ${rendered}
 </body>
 </html>
 `;
-        const tempParsedHtml = path.join(tempDir, "renderer.amendProvision.html");
+        const tempParsedHtml = path.join(ensureTempTestDir(), "renderer.amendProvision.html");
         await promisify(fs.writeFile)(tempParsedHtml, html);
         console.log(`      Saved html: ${tempParsedHtml}`);
     });
@@ -234,7 +232,7 @@ describe("Test DOCX amendProvision", () => {
             expectedDOCX,
         );
         const u8 = await renderDocxAsync(element);
-        const tempParsedDocx = path.join(tempDir, "renderer.amendProvision.docx");
+        const tempParsedDocx = path.join(ensureTempTestDir(), "renderer.amendProvision.docx");
         fs.writeFileSync(tempParsedDocx, u8);
         console.log(`      Saved docx: ${tempParsedDocx}`);
     });

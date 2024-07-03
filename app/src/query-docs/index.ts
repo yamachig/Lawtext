@@ -47,6 +47,10 @@ const prepareTempIncludes = async (dir: string, tempIncludesDir: string, relpath
 export const generateDocs = async (targetDir: string): Promise<void> => {
     const tempIncludesDir = path.join(__dirname, "./temp-includes");
 
+    if (await promisify(fs.exists)(tempIncludesDir)) await promisify(fs.rm)(tempIncludesDir, { recursive: true });
+    await fsExtra.ensureDir(tempIncludesDir);
+    await prepareTempIncludes(path.join(__dirname, "./src"), tempIncludesDir);
+
     const app = await Application.bootstrap({
         entryPoints: [path.join(__dirname, "../globals/")],
         entryPointStrategy: "expand",
@@ -66,10 +70,6 @@ export const generateDocs = async (targetDir: string): Promise<void> => {
 
     const project = await app.convert();
     if (!project) throw new Error("Error on typedoc.Application.convert()");
-
-    if (await promisify(fs.exists)(tempIncludesDir)) await promisify(fs.rm)(tempIncludesDir, { recursive: true });
-    await fsExtra.ensureDir(tempIncludesDir);
-    await prepareTempIncludes(path.join(__dirname, "./src"), tempIncludesDir);
 
     await app.generateDocs(project, app.options.getValue("out"));
 };

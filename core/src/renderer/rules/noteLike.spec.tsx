@@ -5,14 +5,12 @@ import * as std from "../../law/std";
 import { DOCXNoteLike, HTMLNoteLike } from "./noteLike";
 import { renderToStaticMarkup } from "../common";
 import { renderDocxAsync } from "../common/docx";
-import os from "os";
+import ensureTempTestDir from "../../../test/ensureTempTestDir";
 import path from "path";
 import fs from "fs";
 import formatXML from "../../util/formatXml";
 import htmlCSS from "./htmlCSS";
 import { promisify } from "util";
-
-const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 describe("Test HTML noteLike", () => {
     /* eslint-disable no-irregular-whitespace */
@@ -210,7 +208,7 @@ ${rendered}
 </body>
 </html>
 `;
-        const tempParsedHtml = path.join(tempDir, "renderer.noteLike.html");
+        const tempParsedHtml = path.join(ensureTempTestDir(), "renderer.noteLike.html");
         await promisify(fs.writeFile)(tempParsedHtml, html);
         console.log(`      Saved html: ${tempParsedHtml}`);
     });
@@ -439,7 +437,7 @@ describe("Test DOCX noteLike", () => {
             expectedDOCX,
         );
         const u8 = await renderDocxAsync(element);
-        const tempParsedDocx = path.join(tempDir, "renderer.noteLike.docx");
+        const tempParsedDocx = path.join(ensureTempTestDir(), "renderer.noteLike.docx");
         fs.writeFileSync(tempParsedDocx, u8);
         console.log(`      Saved docx: ${tempParsedDocx}`);
     });

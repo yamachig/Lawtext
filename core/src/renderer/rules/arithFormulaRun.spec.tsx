@@ -9,11 +9,9 @@ import htmlCSS from "./htmlCSS";
 import path from "path";
 import { promisify } from "util";
 import fs from "fs";
-import os from "os";
+import ensureTempTestDir from "../../../test/ensureTempTestDir";
 import { renderDocxAsync, w } from "../common/docx";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
-
-const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 describe("Test HTML arithFormulaRun", () => {
     /* eslint-disable no-irregular-whitespace */
@@ -55,7 +53,7 @@ ${rendered}
 </body>
 </html>
 `;
-        const tempParsedHtml = path.join(tempDir, "renderer.arithFormulaRun-1.html");
+        const tempParsedHtml = path.join(ensureTempTestDir(), "renderer.arithFormulaRun-1.html");
         await promisify(fs.writeFile)(tempParsedHtml, html);
         console.log(`      Saved html: ${tempParsedHtml}`);
     });
@@ -141,7 +139,7 @@ ${rendered}
 </body>
 </html>
 `;
-        const tempParsedHtml = path.join(tempDir, "renderer.arithFormulaRun-2.html");
+        const tempParsedHtml = path.join(ensureTempTestDir(), "renderer.arithFormulaRun-2.html");
         await promisify(fs.writeFile)(tempParsedHtml, html);
         console.log(`      Saved html: ${tempParsedHtml}`);
     });
@@ -177,7 +175,7 @@ describe("Test DOCX arithFormulaRun", () => {
             expectedDOCX,
         );
         const u8 = await renderDocxAsync(<w.p>{element}</w.p>);
-        const tempParsedDocx = path.join(tempDir, "renderer.arithFormulaRun-1.docx");
+        const tempParsedDocx = path.join(ensureTempTestDir(), "renderer.arithFormulaRun-1.docx");
         fs.writeFileSync(tempParsedDocx, u8);
         console.log(`      Saved docx: ${tempParsedDocx}`);
     });
@@ -310,7 +308,7 @@ describe("Test DOCX arithFormulaRun", () => {
             expectedDOCX,
         );
         const u8 = await renderDocxAsync(<w.p>{element}</w.p>);
-        const tempParsedDocx = path.join(tempDir, "renderer.arithFormulaRun-2.docx");
+        const tempParsedDocx = path.join(ensureTempTestDir(), "renderer.arithFormulaRun-2.docx");
         fs.writeFileSync(tempParsedDocx, u8);
         console.log(`      Saved docx: ${tempParsedDocx}`);
     });

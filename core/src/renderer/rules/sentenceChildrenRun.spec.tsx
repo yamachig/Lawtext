@@ -9,10 +9,8 @@ import htmlCSS from "./htmlCSS";
 import path from "path";
 import { promisify } from "util";
 import fs from "fs";
-import os from "os";
+import ensureTempTestDir from "../../../test/ensureTempTestDir";
 import { renderDocxAsync, w } from "../common/docx";
-
-const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 describe("Test HTML sentenceChildrenRun", () => {
     /* eslint-disable no-irregular-whitespace */
@@ -117,7 +115,7 @@ ${rendered}
 </body>
 </html>
 `;
-        const tempParsedHtml = path.join(tempDir, "renderer.sentenceChildrenRun.html");
+        const tempParsedHtml = path.join(ensureTempTestDir(), "renderer.sentenceChildrenRun.html");
         await promisify(fs.writeFile)(tempParsedHtml, html);
         console.log(`      Saved html: ${tempParsedHtml}`);
     });
@@ -240,7 +238,7 @@ describe("Test DOCX sentenceChildrenRun", () => {
             expectedDOCX,
         );
         const u8 = await renderDocxAsync(<w.p>{element}</w.p>);
-        const tempParsedDocx = path.join(tempDir, "renderer.sentenceChildrenRun.docx");
+        const tempParsedDocx = path.join(ensureTempTestDir(), "renderer.sentenceChildrenRun.docx");
         fs.writeFileSync(tempParsedDocx, u8);
         console.log(`      Saved docx: ${tempParsedDocx}`);
     });

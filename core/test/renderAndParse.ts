@@ -1,7 +1,5 @@
 import chai from "chai";
 import fs from "fs";
-import fsExtra from "fs-extra";
-import os from "os";
 import path from "path";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -18,25 +16,22 @@ import { outerXML } from "../src/node/el/elToXML";
 import { Loader } from "../src/data/loaders/common";
 import { getMemorizedStringOffsetToPos } from "generic-parser";
 import { lawNumLikeToLawNum } from "../src/law/lawNum";
+import ensureTempTestDir from "./ensureTempTestDir";
 
 const domParser = new xmldom.DOMParser();
 
-const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
-
 const renderAndParse = async (loader: Loader, lawNum: string) => {
-
 
     const lawInfo = await loader.getLawInfoByLawNum(lawNumLikeToLawNum(lawNum));
     if (lawInfo === null) throw Error("LawInfo not found");
     const { xml: origXML } = await loader.loadLawXMLStructByInfo(lawInfo);
     if (origXML === null) throw new Error(`XML cannot be fetched: ${lawInfo.LawID}`);
-    console.log(`${TERMC.CYAN}Temporary directory: "${tempDir}"${TERMC.DEFAULT}`);
-    const tempOrigXml = path.join(tempDir, `${lawInfo.LawID}.orig.xml`);
-    const tempRenderedLawtext = path.join(tempDir, `${lawInfo.LawID}.rendered.law.txt`);
-    const tempRenderedHTML = path.join(tempDir, `${lawInfo.LawID}.rendered.html`);
-    const tempRenderedDocx = path.join(tempDir, `${lawInfo.LawID}.rendered.docx`);
-    const tempParsedXml = path.join(tempDir, `${lawInfo.LawID}.parsed.xml`);
-    await promisify(fsExtra.ensureDir)(tempDir);
+    console.log(`${TERMC.CYAN}Temporary directory: "${ensureTempTestDir()}"${TERMC.DEFAULT}`);
+    const tempOrigXml = path.join(ensureTempTestDir(), `${lawInfo.LawID}.orig.xml`);
+    const tempRenderedLawtext = path.join(ensureTempTestDir(), `${lawInfo.LawID}.rendered.law.txt`);
+    const tempRenderedHTML = path.join(ensureTempTestDir(), `${lawInfo.LawID}.rendered.html`);
+    const tempRenderedDocx = path.join(ensureTempTestDir(), `${lawInfo.LawID}.rendered.docx`);
+    const tempParsedXml = path.join(ensureTempTestDir(), `${lawInfo.LawID}.parsed.xml`);
 
     const origDOM = domParser.parseFromString(origXML);
     await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });

@@ -5,14 +5,12 @@ import * as std from "../../law/std";
 import { DOCXList, HTMLList } from "./list";
 import { renderToStaticMarkup } from "../common";
 import { renderDocxAsync } from "../common/docx";
-import os from "os";
+import ensureTempTestDir from "../../../test/ensureTempTestDir";
 import path from "path";
 import fs from "fs";
 import formatXML from "../../util/formatXml";
 import htmlCSS from "./htmlCSS";
 import { promisify } from "util";
-
-const tempDir = path.join(os.tmpdir(), "lawtext_core_test");
 
 describe("Test HTML list", () => {
     /* eslint-disable no-irregular-whitespace */
@@ -81,7 +79,7 @@ ${rendered}
 </body>
 </html>
 `;
-        const tempParsedHtml = path.join(tempDir, "renderer.list.html");
+        const tempParsedHtml = path.join(ensureTempTestDir(), "renderer.list.html");
         await promisify(fs.writeFile)(tempParsedHtml, html);
         console.log(`      Saved html: ${tempParsedHtml}`);
     });
@@ -151,7 +149,7 @@ describe("Test DOCX list", () => {
             expectedDOCX,
         );
         const u8 = await renderDocxAsync(element);
-        const tempParsedDocx = path.join(tempDir, "renderer.list.docx");
+        const tempParsedDocx = path.join(ensureTempTestDir(), "renderer.list.docx");
         fs.writeFileSync(tempParsedDocx, u8);
         console.log(`      Saved docx: ${tempParsedDocx}`);
     });
