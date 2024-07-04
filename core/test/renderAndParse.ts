@@ -17,6 +17,7 @@ import { Loader } from "../src/data/loaders/common";
 import { getMemorizedStringOffsetToPos } from "generic-parser";
 import { lawNumLikeToLawNum } from "../src/law/lawNum";
 import ensureTempTestDir from "./ensureTempTestDir";
+import FigDataManager from "../src/renderer/common/docx/FigDataManager";
 
 const domParser = new xmldom.DOMParser();
 
@@ -24,7 +25,8 @@ const renderAndParse = async (loader: Loader, lawNum: string) => {
 
     const lawInfo = await loader.getLawInfoByLawNum(lawNumLikeToLawNum(lawNum));
     if (lawInfo === null) throw Error("LawInfo not found");
-    const { xml: origXML } = await loader.loadLawXMLStructByInfo(lawInfo);
+    const lawXMLStruct = await loader.loadLawXMLStructByInfo(lawInfo);
+    const { xml: origXML } = lawXMLStruct;
     if (origXML === null) throw new Error(`XML cannot be fetched: ${lawInfo.LawID}`);
     console.log(`${TERMC.CYAN}Temporary directory: "${ensureTempTestDir()}"${TERMC.DEFAULT}`);
     const tempOrigXml = path.join(ensureTempTestDir(), `${lawInfo.LawID}.orig.xml`);
@@ -51,7 +53,9 @@ const renderAndParse = async (loader: Loader, lawNum: string) => {
     }
 
     const html = renderHTML(origEL);
-    const docx = await renderDocxAsync(origEL);
+
+    const figDataManager = await FigDataManager.create(lawXMLStruct, origEL);
+    const docx = await renderDocxAsync(origEL, { figDataManager });
 
     await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });
     await promisify(fs.writeFile)(tempRenderedHTML, html, { encoding: "utf-8" });

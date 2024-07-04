@@ -27,6 +27,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             alias: {
                 "@appsrc": path.resolve(rootDir, "./src"),
                 "node-fetch": false,
+                "fs": false,
                 "cli-progress": false,
             },
             fallback: {

@@ -125,7 +125,6 @@ export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRu
                     </w.rPr>
                     <w.t>{el.text()}</w.t>
                 </w.r>);
-                runs.push(<sub>{el.text()}</sub>);
 
             } else if (el.tag === "Sup") {
                 runs.push(<w.r>
@@ -134,7 +133,6 @@ export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRu
                     </w.rPr>
                     <w.t>{el.text()}</w.t>
                 </w.r>);
-                runs.push(<sub>{el.text()}</sub>);
 
             } else if (el.tag === "QuoteStruct") {
                 runs.push(<DOCXQuoteStructRun el={el} {...{ docxOptions }} />);

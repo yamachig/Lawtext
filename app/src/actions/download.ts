@@ -2,9 +2,11 @@ import * as std from "lawtext/dist/src/law/std";
 import { EL } from "lawtext/dist/src/node/el";
 import * as renderer from "lawtext/dist/src/renderer";
 import render_lawtext from "lawtext/dist/src/renderer/lawtext";
+import FigDataManager from "lawtext/dist/src/renderer/common/docx/FigDataManager";
 import { saveAs } from "file-saver";
 import { getLawTitleWithNum } from "@appsrc/law_util";
 import { newStdEL } from "lawtext/dist/src/law/std";
+import { LawData } from "../lawdata/common";
 
 
 interface SelectionRange {
@@ -205,15 +207,17 @@ const getLawRange = (origLaw: EL, range: SelectionRange) => {
 };
 
 export const downloadDocx = async (
-    law: std.Law,
+    lawData: LawData,
     downloadSelection: boolean,
 ): Promise<void> => {
     const range = downloadSelection ? tobeDownloadedRange() : null;
-    if (range) {
-        law = getLawRange(law, range) as std.Law;
-    }
+    const law = range ? getLawRange(lawData.el, range) as std.Law : lawData.el;
 
-    const buffer = await renderer.renderDocxAsync(law);
+    const figDataManager = ("lawXMLStruct" in lawData && lawData.lawXMLStruct)
+        ? await FigDataManager.create(lawData.lawXMLStruct, law)
+        : undefined;
+
+    const buffer = await renderer.renderDocxAsync(law, { figDataManager });
     const blob = new Blob(
         [buffer],
         { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },

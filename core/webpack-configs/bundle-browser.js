@@ -25,6 +25,7 @@ module.exports = (env, argv) => {
             extensions: [".ts", ".tsx", ".js", ".json"],
             alias: {
                 "node-fetch": false,
+                "fs": false,
             },
             fallback: {
                 "path": require.resolve("path-browserify"),

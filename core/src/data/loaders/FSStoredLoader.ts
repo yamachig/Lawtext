@@ -50,6 +50,7 @@ export class FSStoredLawXML extends LawXMLStruct {
         const _url = await this.getPictFileOrBlobURL(src);
         if (!_url) return null;
         const { url, type } = _url;
+        if (!fs.existsSync(url)) return null;
         const buf = await promisify(fs.readFile)(url);
         if (!buf) return null;
         return { buf, type };

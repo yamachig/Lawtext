@@ -51,13 +51,13 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
 
     const downloadDocxAllClick = () => {
         if (origState.law) {
-            downloadDocx(origState.law.el, false);
+            downloadDocx(origState.law, false);
         }
     };
 
     const downloadDocxSelectionClick = () => {
         if (origState.law) {
-            downloadDocx(origState.law.el, true);
+            downloadDocx(origState.law, true);
         }
     };
 

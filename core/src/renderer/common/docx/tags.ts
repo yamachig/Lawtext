@@ -950,3 +950,19 @@ for (const key of wpsTags) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (wps as any)[key] = makeComponentWithTag(`wps:${key}`);
 }
+
+const picTags = [
+    "cNvPr",
+    "cNvPicPr",
+    "nvPicPr",
+    "blipFill",
+    "spPr",
+    "pic",
+] as const;
+
+export const pic = {} as {[key in (typeof picTags)[number]]: ComponentWithTag<`pic:${key}`> };
+
+for (const key of picTags) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (pic as any)[key] = makeComponentWithTag(`pic:${key}`);
+}

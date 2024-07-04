@@ -3,7 +3,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import { HTMLLaw } from "lawtext/dist/src/renderer/rules/law";
 import { LawtextAppPageStateStruct, OrigSetLawtextAppPageState } from "../LawtextAppPageState";
 import { LawData } from "@appsrc/lawdata/common";
-import { HTMLOptions, GetFigData } from "lawtext/dist/src/renderer/common/html";
+import { HTMLOptions, HTMLGetFigData } from "lawtext/dist/src/renderer/common/html";
 import htmlCSS from "lawtext/dist/src/renderer/rules/htmlCSS";
 import { LawViewOptions } from "./common";
 import { WrapLawComponent } from "./LawWrapper";
@@ -118,7 +118,7 @@ const LawDataComponent: React.FC<{
 
     const getFigData = useCallback((src: string) => {
         return lawData.pictURL.get(src) ?? null;
-    }, [lawData]) as GetFigData;
+    }, [lawData]) as HTMLGetFigData;
 
     const options: LawViewOptions = useMemo(() => ({
         onError,

@@ -2,11 +2,28 @@ import React from "react";
 
 export const DOCXMargin = "　";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface DOCXFigData {
+    rId: string,
+    name: string,
+    fileName: string,
+    id: number,
+    cx: number,
+    cy: number,
+    blob: {
+        buf: ArrayBuffer;
+        type: string;
+    },
+}
+
+export interface DOCXFigDataManager {
+    getFigData(src: string): DOCXFigData | null;
+    getFigDataItems(): [src: string, figData: DOCXFigData][];
+}
+
 export interface DOCXOptions {
+    figDataManager?: DOCXFigDataManager;
 }
 export interface DOCXComponentProps {
-    // eslint-disable-next-line @typescript-eslint/ban-types
     docxOptions: DOCXOptions;
 }
 
@@ -34,3 +51,29 @@ export function makeComponentWithTag <TTag extends string>(tag: TTag): Component
     return func;
 }
 
+const RelationshipsTag = makeComponentWithTag("Relationships");
+const Relationship = makeComponentWithTag("Relationship");
+
+export const Relationships: React.FC<{relationships: {Id: string, Type: string, Target: string}[]}> = props => (
+    <RelationshipsTag xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+        {props.relationships.map((r, key) => <Relationship {...r} key={key}/>)}
+    </RelationshipsTag>
+);
+
+const TypesTag = makeComponentWithTag("Types");
+const Default = makeComponentWithTag("Default");
+const Override = makeComponentWithTag("Override");
+
+export const Types: React.FC<{
+    types: (
+        {tag: "Default", Extension: string, ContentType: string} |
+        {tag: "Override", PartName: string, ContentType: string}
+    )[],
+}> = props => (
+    <TypesTag xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+        {props.types.map((type, key) => type.tag === "Default"
+            ? <Default key={key} Extension={type.Extension} ContentType={type.ContentType} />
+            : <Override key={key} PartName={type.PartName} ContentType={type.ContentType}/>,
+        )}
+    </TypesTag>
+);

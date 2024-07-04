@@ -10,21 +10,21 @@ export type WrapperComponentProps = {
     ChildComponent: React.ComponentType<HTMLComponentProps>;
 };
 
-export interface FigData {
+export interface HTMLFigData {
     url: string,
     type: string,
 }
 
-export type GetFigData = (
+export type HTMLGetFigData = (
      (src: string) =>
-        | FigData
+        | HTMLFigData
         | null
 );
 
 export interface HTMLOptions {
     WrapComponent?: React.FC<WrapperComponentProps>;
     renderControlEL?: boolean;
-    getFigData?: GetFigData;
+    getFigData?: HTMLGetFigData;
     renderPDFAsLink?: boolean;
     annotateLawtextRange?: boolean;
     options?: object;

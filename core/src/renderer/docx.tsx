@@ -13,7 +13,8 @@ export const renderDocxAsync = (elOrJsonEL: JsonEL | EL, docxOptions?: DOCXOptio
     const element = std.isLaw(el)
         ? <DOCXLaw el={el} indent={0} docxOptions={docxOptions ?? {}} />
         : <DOCXAnyELs els={[el as std.StdEL | std.__EL]} indent={0} docxOptions={docxOptions ?? {}}/>;
-    return innerRenderDocxAsync(element);
+
+    return innerRenderDocxAsync(element, docxOptions);
 };
 
 export default renderDocxAsync;

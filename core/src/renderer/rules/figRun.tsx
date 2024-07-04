@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
-import { elProps, FigData, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
-import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
+import { elProps, HTMLFigData, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import { DOCXComponentProps, DOCXFigData, w, wp, a, pic, wrapDOCXComponent } from "../common/docx";
 import { NotImplementedError } from "../../util";
 
 
@@ -44,7 +44,7 @@ export const HTMLFigRun = wrapHTMLComponent("HTMLFigRun", ((props: HTMLComponent
     }
 }));
 
-export const HTMLFigRunWithFigData = (props: HTMLComponentProps & FigRunProps & { figData: FigData, fig: std.Fig }) => {
+export const HTMLFigRunWithFigData = (props: HTMLComponentProps & FigRunProps & { figData: HTMLFigData, fig: std.Fig }) => {
 
     const { el, figData, htmlOptions, fig } = props;
     const { renderPDFAsLink } = htmlOptions;
@@ -73,11 +73,82 @@ export const HTMLFigRunWithFigData = (props: HTMLComponentProps & FigRunProps & 
 
 export const DOCXFigRun = wrapDOCXComponent("DOCXFigRun", ((props: DOCXComponentProps & FigRunProps) => {
 
-    const { el } = props;
+    const { el, docxOptions } = props;
+    const { figDataManager } = docxOptions;
+
+    if (el.children.length > 0) {
+        throw new NotImplementedError(el.outerXML());
+    }
+
+    if (figDataManager) {
+        const figData = figDataManager.getFigData(el.attr.src);
+        return figData === null ? (
+            <w.r>
+                <w.t>{el.attr.src}</w.t>
+            </w.r>
+        ) : (
+            <DOCXFigRunWithFigData {...props} figData={figData} fig={el} />
+        );
+    } else {
+        return (
+            <w.r>
+                <w.t>{el.attr.src}</w.t>
+            </w.r>
+        );
+    }
+}));
+
+export const DOCXFigRunWithFigData = (props: DOCXComponentProps & FigRunProps & { figData: DOCXFigData, fig: std.Fig }) => {
+
+    const { el, figData } = props;
 
     return (
-        <w.r>
-            <w.t>{el.attr.src}</w.t>
-        </w.r>
+        figData.blob.type.startsWith("image/")
+            ? (
+                <w.r>
+                    <w.drawing>
+                        <wp.inline>
+                            <wp.extent cx={figData.cx} cy={figData.cy} />
+                            <wp.effectExtent l="0" t="0" r="0" b="0" />
+                            <wp.docPr id={figData.id} name={figData.name} />
+                            <a.graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+                                <a.graphicData
+                                    uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                                    <pic.pic
+                                        xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                                        <pic.nvPicPr>
+                                            <pic.cNvPr id={figData.id} name={figData.name} />
+                                            <pic.cNvPicPr>
+                                                <a.picLocks noChangeAspect="1" noChangeArrowheads="1" />
+                                            </pic.cNvPicPr>
+                                        </pic.nvPicPr>
+                                        <pic.blipFill>
+                                            <a.blip r:embed={figData.rId} />
+                                            <a.srcRect />
+                                            <a.stretch>
+                                                <a.fillRect />
+                                            </a.stretch>
+                                        </pic.blipFill>
+                                        <pic.spPr>
+                                            <a.xfrm>
+                                                <a.off x="0" y="0" />
+                                                <a.ext cx={figData.cx} cy={figData.cy} />
+                                            </a.xfrm>
+                                            <a.prstGeom prst="rect">
+                                                <a.avLst />
+                                            </a.prstGeom>
+                                        </pic.spPr>
+                                    </pic.pic>
+                                </a.graphicData>
+                            </a.graphic>
+                        </wp.inline>
+                    </w.drawing>
+                </w.r>
+            )
+            : (
+                <w.r>
+                    <w.t>{el.attr.src}</w.t>
+                </w.r>
+            )
     );
-}));
+};
