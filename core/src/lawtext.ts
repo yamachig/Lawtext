@@ -11,6 +11,7 @@ import { assertNever } from "./util";
 import formatXML from "./util/formatXml";
 import { VirtualLine } from "./parser/std/virtualLine";
 import { fetchLawData } from "./elawsApi";
+import FigDataManager from "./renderer/common/docx/FigDataManager";
 
 export const intypeChoices = ["fromext", "lawtext", "xml", "json"] as const;
 export const outtypeChoices = ["fromext", "lawtext", "xml", "json", "html", "htmlfragment", "docx"] as const;
@@ -71,9 +72,12 @@ export const run = async (args: RunArgs) => {
     const ret: Partial<RunResult> = {};
 
     let law: std.Law;
+    let figDataManager: FigDataManager | undefined = undefined;
     if ("elaws" in input) {
         const lawData = await fetchLawData(input.elaws);
+
         law = xmlToEL(lawData.xml) as std.Law;
+        figDataManager = await FigDataManager.create(lawData, law);
         if (analyze) {
             addSentenceChildrenControls(law);
         }
@@ -114,7 +118,7 @@ export const run = async (args: RunArgs) => {
 
     for (const outtype of new Set(outtypes)) {
         if (outtype === "docx") {
-            const u8 = await renderer.renderDocxAsync(law.json());
+            const u8 = await renderer.renderDocxAsync(law.json(), { figDataManager });
             ret[outtype] = u8;
         } else if (outtype === "lawtext") {
             const outtext = renderLawtext(law);
