@@ -15,6 +15,7 @@ import { w } from "../common/docx/tags";
 import FigDataManager from "../common/docx/FigDataManager";
 import { decodeBase64 } from "../../util";
 import { DOCXOptions } from "../common/docx/component";
+import { unzip } from "../../util/zip";
 
 describe("Test HTML figRun", () => {
     /* eslint-disable no-irregular-whitespace */
@@ -161,6 +162,11 @@ describe("Test DOCX figRun", () => {
             expectedDOCX,
         );
         const u8 = await renderDocxAsync(<w.p>{element}</w.p>, docxOptions);
+
+        const paths = ["word/media/image.jpg"];
+        const zipData = await unzip(u8, { filter: file => paths.includes(file.name) } );
+        assert.hasAllKeys(zipData, paths);
+
         const tempParsedDocx = path.join(ensureTempTestDir(), "renderer.figRun.image.docx");
         fs.writeFileSync(tempParsedDocx, u8);
         console.log(`      Saved docx: ${tempParsedDocx}`);
@@ -214,6 +220,11 @@ describe("Test DOCX figRun", () => {
             expectedDOCX,
         );
         const u8 = await renderDocxAsync(<w.p>{element}</w.p>, docxOptions);
+
+        const paths = ["word/embeddings/object.pdf.bin", "word/media/pdfIcon.emf"];
+        const zipData = await unzip(u8, { filter: file => paths.includes(file.name) } );
+        assert.hasAllKeys(zipData, paths);
+
         const tempParsedDocx = path.join(ensureTempTestDir(), "renderer.figRun.object.docx");
         fs.writeFileSync(tempParsedDocx, u8);
         console.log(`      Saved docx: ${tempParsedDocx}`);
