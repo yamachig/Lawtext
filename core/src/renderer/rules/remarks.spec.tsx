@@ -4,7 +4,7 @@ import loadEL from "../../node/el/loadEL";
 import * as std from "../../law/std";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
 import { renderToStaticMarkup } from "../common";
-import { renderDocxAsync } from "../common/docx";
+import { renderDocxAsync } from "../common/docx/file";
 import ensureTempTestDir from "../../../test/ensureTempTestDir";
 import path from "path";
 import fs from "fs";

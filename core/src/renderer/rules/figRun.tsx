@@ -1,7 +1,8 @@
 import React from "react";
 import * as std from "../../law/std";
 import { elProps, HTMLFigData, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
-import { DOCXComponentProps, DOCXFigData, w, wp, a, pic, o, v, wrapDOCXComponent, DOCXFigDataManager } from "../common/docx";
+import { DOCXComponentProps, DOCXFigData, wrapDOCXComponent, DOCXFigDataManager } from "../common/docx/component";
+import { w, wp, a, pic, o, v } from "../common/docx/tags";
 import { NotImplementedError } from "../../util";
 
 

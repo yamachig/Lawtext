@@ -3,7 +3,8 @@ import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
-import { DOCXComponentProps, w, wrapDOCXComponent } from "../common/docx";
+import { DOCXComponentProps, wrapDOCXComponent } from "../common/docx/component";
+import { w } from "../common/docx/tags";
 import { DOCXAnyELs, HTMLAnyELs } from "./any";
 import { withKey } from "../common";
 

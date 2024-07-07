@@ -1,7 +1,8 @@
 import React from "react";
 import * as std from "../../law/std";
 import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
-import { DOCXComponentProps, wrapDOCXComponent, w } from "../common/docx";
+import { DOCXComponentProps, wrapDOCXComponent } from "../common/docx/component";
+import { w } from "../common/docx/tags";
 import { DOCXAnyELsToBlocks, HTMLAnyELsToBlocks } from "./any";
 import TextBoxRun from "../common/docx/TextBoxRun";
 import { withKey } from "../common";

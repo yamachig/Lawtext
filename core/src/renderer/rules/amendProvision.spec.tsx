@@ -4,7 +4,7 @@ import loadEL from "../../node/el/loadEL";
 import * as std from "../../law/std";
 import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision";
 import { renderToStaticMarkup } from "../common";
-import { renderDocxAsync } from "../common/docx";
+import { renderDocxAsync } from "../common/docx/file";
 import path from "path";
 import fs from "fs";
 import formatXML from "../../util/formatXml";

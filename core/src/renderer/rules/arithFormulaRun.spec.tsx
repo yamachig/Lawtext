@@ -10,7 +10,8 @@ import path from "path";
 import { promisify } from "util";
 import fs from "fs";
 import ensureTempTestDir from "../../../test/ensureTempTestDir";
-import { renderDocxAsync, w } from "../common/docx";
+import { renderDocxAsync } from "../common/docx/file";
+import { w } from "../common/docx/tags";
 import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
 
 describe("Test HTML arithFormulaRun", () => {

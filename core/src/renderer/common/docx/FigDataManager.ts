@@ -20,9 +20,7 @@ export class FigDataManager implements DOCXFigDataManager {
         fileName: "pdfIcon.emf",
     };
     constructor(
-        public lawXMLStruct: LawXMLStruct,
         public figDataMap: Map<string, DOCXFigData>,
-        public subsetLaw: EL,
     ) { }
     static async create(lawXMLStruct: LawXMLStruct, subsetLaw: EL) {
         const figDataMap: Map<string, DOCXFigData> = new Map();
@@ -54,7 +52,7 @@ export class FigDataManager implements DOCXFigDataManager {
                 //
             }
         }
-        return new FigDataManager(lawXMLStruct, figDataMap, subsetLaw);
+        return new FigDataManager(figDataMap);
     }
     getFigData(src: string): DOCXFigData | null {
         return this.figDataMap.get(src) ?? null;
