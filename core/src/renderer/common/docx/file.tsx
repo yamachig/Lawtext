@@ -1,12 +1,12 @@
 import React from "react";
-import JSZip from "jszip";
 import { renderToStaticMarkup } from "..";
 import { w } from "./tags";
 import styles from "./styles";
 import { DOCXOptions, Relationships, Types } from "./component";
 import { makePDFOLE } from "./ole";
+import { AsyncZippable, zip } from "../../../util/zip";
 
-export const renderDocxAsync = (bodyEL: JSX.Element, docxOptions?: DOCXOptions): Promise<Uint8Array | Buffer> => {
+export const renderDocxAsync = async (bodyEL: JSX.Element, docxOptions?: DOCXOptions): Promise<Uint8Array | Buffer> => {
 
     const media: {Id: string, Type: string, fileName: string, buf: ArrayBuffer}[] = [];
     const embeddings: {Id: string, Type: string, fileName: string, buf: ArrayBuffer}[] = [];
@@ -62,11 +62,9 @@ export const renderDocxAsync = (bodyEL: JSX.Element, docxOptions?: DOCXOptions):
         </w.document>
     );
 
-    const zip = new JSZip();
+    const zipData: AsyncZippable = {};
 
-    zip.file(
-        "[Content_Types].xml",
-        /*xml*/`\
+    zipData["[Content_Types].xml"] = /*xml*/`\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 ${renderToStaticMarkup(<Types types={[
         { tag: "Override", PartName: "/word/document.xml", ContentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml" },
@@ -79,20 +77,14 @@ ${renderToStaticMarkup(<Types types={[
             ContentType: type,
         }))),
     ]} />)}
-`,
-    );
+`;
 
-    zip.file(
-        "_rels/.rels",
-        /*xml*/`\
+    zipData["_rels/.rels"] = /*xml*/`\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 ${renderToStaticMarkup(<Relationships relationships={[{ Id: "rId1", Type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument", Target: "word/document.xml" }]} />)}
-`,
-    );
+`;
 
-    zip.file(
-        "word/_rels/document.xml.rels",
-        /*xml*/`\
+    zipData["word/_rels/document.xml.rels"] = /*xml*/`\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 ${renderToStaticMarkup(<Relationships
         relationships={[
@@ -110,36 +102,27 @@ ${renderToStaticMarkup(<Relationships
             }))),
         ]}
     />)}
-`,
-    );
+`;
 
     for (const m of media) {
-        zip.file(`word/media/${m.fileName}`, m.buf);
+        zipData[`word/media/${m.fileName}`] = m.buf;
     }
 
     for (const m of embeddings) {
-        zip.file(`word/embeddings/${m.fileName}`, m.buf);
+        zipData[`word/embeddings/${m.fileName}`] = m.buf;
     }
 
-    zip.file(
-        "word/document.xml",
-        /*xml*/`\
+    zipData["word/document.xml"] = /*xml*/`\
 <?xml version="1.0" encoding="utf-8"?>
 ${renderToStaticMarkup(document)}
-`,
-    );
+`;
 
-    zip.file(
-        "word/styles.xml",
-        /*xml*/`\
+    zipData["word/styles.xml"] = /*xml*/`\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 ${renderToStaticMarkup(styles)}
-`,
-    );
+`;
 
-    zip.file(
-        "word/settings.xml",
-        /*xml*/`\
+    zipData["word/settings.xml"] = /*xml*/`\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 ${renderToStaticMarkup((
         <w.settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
@@ -148,14 +131,9 @@ ${renderToStaticMarkup((
             </w.compat>
         </w.settings>
     ))}
-`,
-    );
+`;
 
-    return zip.generateAsync({
-        type: JSZip.support.nodebuffer ? "nodebuffer" : "uint8array",
-        compression: "DEFLATE",
-        compressionOptions: {
-            level: 9,
-        },
-    });
+    const zipBuf = await zip(zipData, { level: 9 });
+
+    return zipBuf;
 };

@@ -29,6 +29,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 "node-fetch": false,
                 "fs": false,
                 "cli-progress": false,
+                "string_decoder": false,
             },
             fallback: {
                 "path": require.resolve("path-browserify"),

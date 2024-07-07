@@ -93,7 +93,6 @@
         "hash.js": "^1.1.7",
         "iconv-lite": "^0.6.3",
         "js-levenshtein": "^1.1.6",
-        "jszip": "^3.10.1",
         "lawtext": "file:../core",
         "node-fetch": "^3.3.2",
         "react": "^18.3.1",

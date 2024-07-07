@@ -10,9 +10,9 @@ import webpackConfigFn from "../../webpack-configs/client";
 import { Loader } from "lawtext/dist/src/data/loaders/common";
 import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 import { getOriginalLaw, getParsedLaw, getRenderedLawtext } from "../update/transform";
-import JSZip from "jszip";
 import { LawCoveragesManager } from "./lawCoverages";
 import { fromSortStirng } from "../lawCoverage";
+import { AsyncZippable, zip } from "lawtext/dist/src/util/zip";
 
 
 const asyncMiddleware = (fn: express.RequestHandler): express.RequestHandler =>
@@ -119,19 +119,16 @@ app.get(
             ? await getParsedLaw(lawtext)
             : { parsedXML: null };
 
-        const zip = new JSZip();
-        if (origXML) zip.file("origXML.xml", origXML);
-        if (lawtext) zip.file("lawtext.law.txt", lawtext);
-        if (parsedXML) zip.file("parsedXML.xml", parsedXML);
+        const zipData: AsyncZippable = {};
+        if (origXML) zipData["origXML.xml"] = origXML;
+        if (lawtext) zipData["lawtext.law.txt"] = lawtext;
+        if (parsedXML) zipData["parsedXML.xml"] = parsedXML;
 
         response.contentType("application/zip");
 
-        await new Promise((resolve, reject) => {
-            zip.generateNodeStream({ type: "nodebuffer", streamFiles: true })
-                .pipe(response)
-                .on("finish", resolve)
-                .on("error", reject);
-        });
+        const zipBuf = await zip(zipData, { level: 9 });
+
+        response.write(zipBuf);
     }),
 );
 

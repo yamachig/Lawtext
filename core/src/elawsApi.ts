@@ -1,8 +1,8 @@
-import JSZip from "jszip";
 import path from "path";
 import { LawXMLStruct } from "./data/loaders/common";
 import { decodeBase64, pictMimeDict } from "./util";
 import { fetch as nodeFetch } from "./util/node-fetch";
+import { unzip } from "./util/zip";
 const fetch: typeof window.fetch = (global["fetch"]) || (global["window"] && window.fetch) || nodeFetch;
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;
@@ -123,9 +123,9 @@ export class ElawsLawData extends LawXMLStruct {
         if (!this.imageData) return null;
         if (!this._pict) {
             this._pict = new Map();
-            const zip = await JSZip.loadAsync(this.imageData);
-            for (const relPath in zip.files) {
-                const buf = await zip.files[relPath].async("arraybuffer");
+            const zipData = await unzip(this.imageData);
+            for (const relPath in zipData) {
+                const buf = zipData[relPath];
                 const ext = path.extname(relPath) as keyof typeof pictMimeDict;
                 const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
                 // const blob = new Blob([buf], { type });
