@@ -3,6 +3,7 @@ import React from "react";
 export const DOCXMargin = "　";
 
 export interface DOCXFigData {
+    isEmbeddedPDF: boolean,
     rId: string,
     name: string,
     fileName: string,
@@ -18,6 +19,11 @@ export interface DOCXFigData {
 export interface DOCXFigDataManager {
     getFigData(src: string): DOCXFigData | null;
     getFigDataItems(): [src: string, figData: DOCXFigData][];
+    pdfIcon: {
+        rId: string;
+        buf: ArrayBuffer;
+        fileName: string,
+    };
 }
 
 export interface DOCXOptions {

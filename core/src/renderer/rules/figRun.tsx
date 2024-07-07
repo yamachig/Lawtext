@@ -1,7 +1,7 @@
 import React from "react";
 import * as std from "../../law/std";
 import { elProps, HTMLFigData, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
-import { DOCXComponentProps, DOCXFigData, w, wp, a, pic, wrapDOCXComponent } from "../common/docx";
+import { DOCXComponentProps, DOCXFigData, w, wp, a, pic, o, v, wrapDOCXComponent, DOCXFigDataManager } from "../common/docx";
 import { NotImplementedError } from "../../util";
 
 
@@ -87,7 +87,7 @@ export const DOCXFigRun = wrapDOCXComponent("DOCXFigRun", ((props: DOCXComponent
                 <w.t>{el.attr.src}</w.t>
             </w.r>
         ) : (
-            <DOCXFigRunWithFigData {...props} figData={figData} fig={el} />
+            <DOCXFigRunWithFigData {...props} figData={figData} fig={el} figDataManager={figDataManager} />
         );
     } else {
         return (
@@ -98,57 +98,70 @@ export const DOCXFigRun = wrapDOCXComponent("DOCXFigRun", ((props: DOCXComponent
     }
 }));
 
-export const DOCXFigRunWithFigData = (props: DOCXComponentProps & FigRunProps & { figData: DOCXFigData, fig: std.Fig }) => {
+export const DOCXFigRunWithFigData = (props: DOCXComponentProps & FigRunProps & { figData: DOCXFigData, fig: std.Fig, figDataManager: DOCXFigDataManager }) => {
 
-    const { el, figData } = props;
+    const { el, figData, figDataManager } = props;
 
-    return (
-        figData.blob.type.startsWith("image/")
-            ? (
-                <w.r>
-                    <w.drawing>
-                        <wp.inline>
-                            <wp.extent cx={figData.cx} cy={figData.cy} />
-                            <wp.effectExtent l="0" t="0" r="0" b="0" />
-                            <wp.docPr id={figData.id} name={figData.name} />
-                            <a.graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-                                <a.graphicData
-                                    uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
-                                    <pic.pic
-                                        xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
-                                        <pic.nvPicPr>
-                                            <pic.cNvPr id={figData.id} name={figData.name} />
-                                            <pic.cNvPicPr>
-                                                <a.picLocks noChangeAspect="1" noChangeArrowheads="1" />
-                                            </pic.cNvPicPr>
-                                        </pic.nvPicPr>
-                                        <pic.blipFill>
-                                            <a.blip r:embed={figData.rId} />
-                                            <a.srcRect />
-                                            <a.stretch>
-                                                <a.fillRect />
-                                            </a.stretch>
-                                        </pic.blipFill>
-                                        <pic.spPr>
-                                            <a.xfrm>
-                                                <a.off x="0" y="0" />
-                                                <a.ext cx={figData.cx} cy={figData.cy} />
-                                            </a.xfrm>
-                                            <a.prstGeom prst="rect">
-                                                <a.avLst />
-                                            </a.prstGeom>
-                                        </pic.spPr>
-                                    </pic.pic>
-                                </a.graphicData>
-                            </a.graphic>
-                        </wp.inline>
-                    </w.drawing>
-                </w.r>
-            )
-            : (
-                <w.r>
-                    <w.t>{el.attr.src}</w.t>
-                </w.r>
-            )
-    );
+    if (figData.blob.type.startsWith("image/")) {
+        return (
+            <w.r>
+                <w.drawing>
+                    <wp.inline>
+                        <wp.extent cx={figData.cx} cy={figData.cy} />
+                        <wp.effectExtent l="0" t="0" r="0" b="0" />
+                        <wp.docPr id={figData.id} name={figData.name} />
+                        <a.graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+                            <a.graphicData
+                                uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                                <pic.pic
+                                    xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                                    <pic.nvPicPr>
+                                        <pic.cNvPr id={figData.id} name={figData.name} />
+                                        <pic.cNvPicPr>
+                                            <a.picLocks noChangeAspect="1" noChangeArrowheads="1" />
+                                        </pic.cNvPicPr>
+                                    </pic.nvPicPr>
+                                    <pic.blipFill>
+                                        <a.blip r:embed={figData.rId} />
+                                        <a.srcRect />
+                                        <a.stretch>
+                                            <a.fillRect />
+                                        </a.stretch>
+                                    </pic.blipFill>
+                                    <pic.spPr>
+                                        <a.xfrm>
+                                            <a.off x="0" y="0" />
+                                            <a.ext cx={figData.cx} cy={figData.cy} />
+                                        </a.xfrm>
+                                        <a.prstGeom prst="rect">
+                                            <a.avLst />
+                                        </a.prstGeom>
+                                    </pic.spPr>
+                                </pic.pic>
+                            </a.graphicData>
+                        </a.graphic>
+                    </wp.inline>
+                </w.drawing>
+            </w.r>
+        );
+    } else if (figData.blob.type === "application/pdf") {
+        //"width:39pt;height:51pt"
+        return (<w.r>
+            <w.object>
+                <v.shape id={`icon_${figData.id}`} style={{ width: "39pt", height: "51pt" }}>
+                    <v.imagedata r:id={figDataManager.pdfIcon.rId} o:title="" />
+                </v.shape>
+                <o.OLEObject Type="Embed" ProgID="Acrobat.Document.DC" ShapeID={`icon_${figData.id}`}
+                    DrawAspect="Icon" ObjectID={figData.id} r:id={figData.rId} />
+            </w.object>
+        </w.r>
+
+        );
+    } else {
+        return (
+            <w.r>
+                <w.t>{el.attr.src}</w.t>
+            </w.r>
+        );
+    }
 };

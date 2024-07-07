@@ -966,3 +966,27 @@ for (const key of picTags) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (pic as any)[key] = makeComponentWithTag(`pic:${key}`);
 }
+
+const oTags = [
+    "OLEObject",
+    //
+] as const;
+
+export const o = {} as {[key in (typeof oTags)[number]]: ComponentWithTag<`o:${key}`> };
+
+for (const key of oTags) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (o as any)[key] = makeComponentWithTag(`o:${key}`);
+}
+
+const vTags = [
+    "imagedata",
+    "shape",
+] as const;
+
+export const v = {} as {[key in (typeof vTags)[number]]: ComponentWithTag<`v:${key}`> };
+
+for (const key of vTags) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (v as any)[key] = makeComponentWithTag(`v:${key}`);
+}

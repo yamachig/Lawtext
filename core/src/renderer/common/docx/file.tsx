@@ -4,22 +4,43 @@ import { renderToStaticMarkup } from "..";
 import { w } from "./tags";
 import styles from "./styles";
 import { DOCXOptions, Relationships, Types } from "./component";
+import { makePDFOLE } from "./ole";
 
 export const renderDocxAsync = (bodyEL: JSX.Element, docxOptions?: DOCXOptions): Promise<Uint8Array | Buffer> => {
 
     const media: {Id: string, Type: string, fileName: string, buf: ArrayBuffer}[] = [];
+    const embeddings: {Id: string, Type: string, fileName: string, buf: ArrayBuffer}[] = [];
     const types = new Map<string, string>();
 
     const figDataManager = docxOptions?.figDataManager;
     if (figDataManager) {
         for (const [, figData] of figDataManager.getFigDataItems()) {
-            media.push({
-                Id: figData.rId,
-                Type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-                fileName: figData.fileName,
-                buf: figData.blob.buf,
-            });
-            types.set(figData.fileName.split(".").slice(-1)[0], figData.blob.type);
+            if (figData.isEmbeddedPDF) {
+                embeddings.push({
+                    Id: figData.rId,
+                    Type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
+                    fileName: `${figData.fileName}.bin`,
+                    buf: makePDFOLE(figData.blob.buf),
+                });
+                types.set("bin", "application/vnd.openxmlformats-officedocument.oleObject");
+                if (!media.find(m => m.Id === figDataManager.pdfIcon.rId)) {
+                    media.push({
+                        Id: figDataManager.pdfIcon.rId,
+                        Type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+                        fileName: figDataManager.pdfIcon.fileName,
+                        buf: figDataManager.pdfIcon.buf,
+                    });
+                    types.set("emf", "image/x-emf");
+                }
+            } else {
+                media.push({
+                    Id: figData.rId,
+                    Type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+                    fileName: figData.fileName,
+                    buf: figData.blob.buf,
+                });
+                types.set(figData.fileName.split(".").slice(-1)[0], figData.blob.type);
+            }
         }
     }
 
@@ -32,8 +53,8 @@ export const renderDocxAsync = (bodyEL: JSX.Element, docxOptions?: DOCXOptions):
             xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
             xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
             xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-
-        //   xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:v="urn:schemas-microsoft-com:vml"
         >
             <w.body>
                 {bodyEL}
@@ -82,6 +103,11 @@ ${renderToStaticMarkup(<Relationships
                 Type: m.Type,
                 Target: `media/${m.fileName}`,
             }))),
+            ...(embeddings.map(m => ({
+                Id: m.Id,
+                Type: m.Type,
+                Target: `embeddings/${m.fileName}`,
+            }))),
         ]}
     />)}
 `,
@@ -89,6 +115,10 @@ ${renderToStaticMarkup(<Relationships
 
     for (const m of media) {
         zip.file(`word/media/${m.fileName}`, m.buf);
+    }
+
+    for (const m of embeddings) {
+        zip.file(`word/embeddings/${m.fileName}`, m.buf);
     }
 
     zip.file(
