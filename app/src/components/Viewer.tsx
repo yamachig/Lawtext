@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
-import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
+import type { LawtextAppPageStateStruct } from "./LawtextAppPageState";
 import { LawView } from "./LawView";
-import { ResolvedType } from "lawtext/dist/src/util";
+import type { ResolvedType } from "lawtext/dist/src/util";
 import { saveListJson } from "@appsrc/lawdata/saveListJson";
 import { ensureFetch, storedLoader } from "@appsrc/lawdata/loaders";
 import { openFile } from "@appsrc/actions/openFile";

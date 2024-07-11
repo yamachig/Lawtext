@@ -1,8 +1,8 @@
 import React, { } from "react";
 import styled from "styled-components";
 import { ErrorCatcher } from "./ErrorCatcher";
-import { WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
-import { LawViewOptions } from "./common";
+import type { WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
+import type { LawViewOptions } from "./common";
 import { EL } from "lawtext/dist/src/node/el";
 import * as std from "lawtext/dist/src/law/std";
 import { containerInfoOf } from "../../actions/download";

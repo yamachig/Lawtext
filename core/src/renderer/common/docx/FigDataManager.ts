@@ -1,9 +1,10 @@
-import { LawXMLStruct } from "../../../data/loaders/common";
+import type { LawXMLStruct } from "../../../data/loaders/common";
 import { imageSize } from "image-size";
-import { DOCXFigData, DOCXFigDataManager } from "./component";
+import type { DOCXFigData, DOCXFigDataManager, DOCXFigEmbedFile, DOCXFigImageFile } from "./component";
 import * as std from "../../../law/std";
-import { EL } from "../../../node/el";
+import type { EL } from "../../../node/el";
 import { decodeBase64 } from "../../../util";
+import { getPdfjs } from "./getPdfjs";
 
 function *iterateFig(el: EL): IterableIterator<std.Fig> {
     if (std.isFig(el)) yield el;
@@ -11,6 +12,61 @@ function *iterateFig(el: EL): IterableIterator<std.Fig> {
         if (typeof c === "string") continue;
         yield* iterateFig(c);
     }
+}
+
+const createCanvas = async (width: number, height: number) => {
+    return (
+        global.OffscreenCanvas
+            ? new OffscreenCanvas(width, height)
+            : (new (await import("canvas")).Canvas(width, height))
+    );
+};
+
+export const pdfToPNG = async (pdfData: ArrayBuffer) => {
+    const pdfjs = await getPdfjs();
+    const pngs: {buf: ArrayBuffer, width: number, height: number, pageNumber: number}[] = [];
+    const pdfTask = pdfjs.getDocument({ data: pdfData.slice(0) });
+    const pdf = await pdfTask.promise;
+    for (let i = 0; i < pdf.numPages; i++) {
+        const page = await pdf.getPage(i + 1);
+        const viewport = page.getViewport({ scale: 3 });
+        const canvas = await createCanvas(viewport.width, viewport.height);
+        const context = canvas.getContext("2d");
+        if (!context) {
+            console.error("pdfToPNG: Unexpected empty context");
+            continue;
+        }
+        await page.render({
+            canvasContext: context as unknown as CanvasRenderingContext2D,
+            viewport,
+            background: "white",
+        }).promise;
+
+        const buf = (
+            ("convertToBlob" in canvas)
+                ? await (await canvas.convertToBlob()).arrayBuffer()
+                : canvas.toBuffer()
+        );
+
+        pngs.push({
+            buf,
+            width: canvas.width,
+            height: canvas.height,
+            pageNumber: i + 1,
+        });
+
+    }
+    return pngs;
+};
+
+export const pdfPageCXMax = 5364000;
+export const pdfPageCYMax = 8000000;
+
+export interface FigDataManagerOptions {
+    lawXMLStruct: LawXMLStruct,
+    subsetLaw: EL,
+    figPDFType?: "srcText" | "embed" | "render" | "embedAndRender",
+    onProgress?: (info: {current: number, length: number, item: string}) => unknown,
 }
 
 export class FigDataManager implements DOCXFigDataManager {
@@ -22,34 +78,100 @@ export class FigDataManager implements DOCXFigDataManager {
     constructor(
         public figDataMap: Map<string, DOCXFigData>,
     ) { }
-    static async create(lawXMLStruct: LawXMLStruct, subsetLaw: EL) {
+    static async create(options: FigDataManagerOptions) {
+        const {
+            lawXMLStruct,
+            subsetLaw,
+            figPDFType,
+            onProgress,
+        } = {
+            figPDFType: "embed" as const,
+            ...options,
+        };
+        let counter = 0;
         const figDataMap: Map<string, DOCXFigData> = new Map();
-        for (const el of iterateFig(subsetLaw)) {
+        const figs = [...iterateFig(subsetLaw)];
+        for (const [current, el] of figs.entries()) {
+            if (onProgress) onProgress({ current, length: figs.length, item: el.attr.src });
             const src = el.attr.src;
             const blob = await lawXMLStruct.getPictBlob(src);
             if (!blob) continue;
-            const size = (() => {
-                try {
-                    return imageSize(new Uint8Array(blob.buf));
-                } catch {
-                    return null;
+
+            if (blob.type === "application/pdf") {
+                const file: DOCXFigEmbedFile | null = (
+                    (figPDFType === "embed" || figPDFType === "embedAndRender")
+                        ? {
+                            id: 1000000 + counter,
+                            rId: `fig${counter + 1}`,
+                            name: src.split("/").slice(-1)[0],
+                            blob,
+                        }
+                        : null
+                );
+                counter++;
+                const pages: DOCXFigImageFile[] | null = (
+                    (figPDFType === "render" || figPDFType === "embedAndRender")
+                        ? (await pdfToPNG(blob.buf)).map(({ buf, width, height, pageNumber }, i) => {
+                            const cScale = Math.min(
+                                (Math.min(width * 9525, pdfPageCXMax) / (width * 9525)),
+                                (Math.min(height * 9525, pdfPageCYMax) / (height * 9525)),
+                            );
+                            return {
+                                id: 1000000 + counter + i,
+                                rId: `fig${counter + 1 + i}`,
+                                cx: Math.round(width * 9525 * cScale),
+                                cy: Math.round(height * 9525 * cScale),
+                                name: `${src.split("/").slice(-1)[0]}.page${pageNumber}.png`,
+                                blob: {
+                                    buf,
+                                    type: "image/png",
+                                },
+                            };
+                        })
+                        : null
+                );
+
+                if (pages)counter += pages.length;
+
+                if (file) {
+                    if (pages) {
+                        figDataMap.set(src, { src, type: "embeddedAndRenderedPDF", file, pages });
+                    } else {
+                        figDataMap.set(src, { src, type: "embeddedPDF", file });
+                    }
+                } else {
+                    if (pages) {
+                        figDataMap.set(src, { src, type: "renderedPDF", pages });
+                    } else {
+                        console.error("FigDataManager.create: Unexpected empty file and pages");
+                    }
                 }
-            })();
-            try {
-                const isEmbeddedPDF = blob.type === "application/pdf";
-                const figData: DOCXFigData = {
-                    isEmbeddedPDF,
-                    id: 1000000 + figDataMap.size,
-                    rId: `fig${figDataMap.size + 1}`,
-                    cx: (size?.width ?? 100) * 9525,
-                    cy: (size?.height ?? 141) * 9525,
-                    name: src,
-                    fileName: src.split("/").slice(-1)[0],
-                    blob,
-                };
-                figDataMap.set(src, figData);
-            } catch {
-                //
+
+            } else {
+                const size = (() => {
+                    try {
+                        return imageSize(new Uint8Array(blob.buf));
+                    } catch {
+                        return null;
+                    }
+                })();
+                try {
+                    figDataMap.set(src, {
+                        type: "image",
+                        src,
+                        image: {
+                            id: 1000000 + counter,
+                            rId: `fig${counter + 1}`,
+                            cx: (size?.width ?? 100) * 9525,
+                            cy: (size?.height ?? 141) * 9525,
+                            name: src.split("/").slice(-1)[0],
+                            blob,
+                        },
+                    });
+                    counter++;
+                } catch {
+                    //
+                }
             }
         }
         return new FigDataManager(figDataMap);

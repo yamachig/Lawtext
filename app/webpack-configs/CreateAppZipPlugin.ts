@@ -21,13 +21,13 @@ export default class CreateAppZipPlugin {
             const ignore = [
                 "data",
                 relAppPath,
-            ].map(p => path.join(compiler.outputPath, p));
+            ].map(p => path.join(compiler.outputPath + "-local", p));
 
             console.info(`Creating ${relAppPath} ...`);
 
             const zipData: AsyncZippable = {};
-            for await (const file of iterDirTree(compiler.outputPath, ignore)) {
-                const relPath = path.relative(compiler.outputPath, file);
+            for await (const file of iterDirTree(compiler.outputPath + "-local", ignore)) {
+                const relPath = path.relative(compiler.outputPath + "-local", file);
                 const buf = await promisify(fs.readFile)(file);
                 console.info(`   Add ${relPath} (${buf.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} bytes) ...`);
                 zipData[relPath] = buf;

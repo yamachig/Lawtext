@@ -3,37 +3,41 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
 import webpack from "webpack";
-import nodeExternals from "webpack-node-externals";
 import WatchMessagePlugin from "./WatchMessagePlugin";
+import QueryDocsPlugin from "./QueryDocsPlugin";
 
 const rootDir = path.dirname(__dirname);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration => {
+    const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev") + "-local");
     const config: webpack.Configuration = {
-        target: "node",
-        entry: ["./test/setup.ts", "./test/components.tsx"],
+        entry: {
+            index: [
+                path.resolve(rootDir, "./src/polyfills.ts"),
+                path.resolve(rootDir, "./src/index.tsx"),
+            ],
+            "pdf.worker": "../core/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs",
+        },
         output: {
-            filename: "bundle.js",
-            path: path.resolve(rootDir, "dist-test"),
-            clean: true,
+            filename: "bundle.[name].js",
+            path: distDir,
+            clean: argv.mode === "production",
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
             alias: {
                 "@appsrc": path.resolve(rootDir, "./src"),
+                "node-fetch": false,
+                "canvas": false,
+                "fs": false,
+                "cli-progress": false,
+                "string_decoder": false,
             },
             fallback: {
                 "path": require.resolve("path-browserify"),
+                "buffer": require.resolve("buffer/"),
             },
         },
-        externals: [
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            nodeExternals() as any,
-            "react",
-            "react-dom",
-        ],
-        node: false,
 
         optimization: {
             minimizer: [new CssMinimizerPlugin()],
@@ -41,6 +45,11 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
 
         module: {
             rules: [
+                // {
+                //     test: /\.(?:jsx?|tsx?)$/,
+                //     enforce: "pre",
+                //     use: ["source-map-loader"],
+                // },
                 { test: /\.tsx?$/, loader: "ts-loader" },
                 {
                     test: /\.html$/,
@@ -74,6 +83,9 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
 
         plugins: [
+            new webpack.ProvidePlugin({
+                Buffer: ["buffer", "Buffer"],
+            }),
             new WatchMessagePlugin(),
             new MiniCssExtractPlugin({
                 filename: "[name].css",
@@ -83,6 +95,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 template: path.resolve(rootDir, "./src/index.html"),
                 filename: "index.html",
             }),
+            new QueryDocsPlugin(),
         ],
 
         watchOptions: {

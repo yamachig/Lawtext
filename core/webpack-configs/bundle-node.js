@@ -25,6 +25,10 @@ module.exports = (env, argv) => {
         externals: [nodeExternals()],
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
+            alias: {
+                "canvas": false,
+                "pdfjs-dist": false,
+            },
             fallback: {
                 "path": require.resolve("path-browserify"),
             },

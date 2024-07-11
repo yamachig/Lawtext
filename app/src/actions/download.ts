@@ -2,11 +2,12 @@ import * as std from "lawtext/dist/src/law/std";
 import { EL } from "lawtext/dist/src/node/el";
 import * as renderer from "lawtext/dist/src/renderer";
 import render_lawtext from "lawtext/dist/src/renderer/lawtext";
+import type { FigDataManagerOptions } from "lawtext/dist/src/renderer/common/docx/FigDataManager";
 import FigDataManager from "lawtext/dist/src/renderer/common/docx/FigDataManager";
 import { saveAs } from "file-saver";
 import { getLawTitleWithNum } from "@appsrc/law_util";
 import { newStdEL } from "lawtext/dist/src/law/std";
-import { LawData } from "../lawdata/common";
+import type { LawData } from "../lawdata/common";
 
 
 interface SelectionRange {
@@ -209,13 +210,26 @@ const getLawRange = (origLaw: EL, range: SelectionRange) => {
 export const downloadDocx = async (
     lawData: LawData,
     downloadSelection: boolean,
+    figPDFType: FigDataManagerOptions["figPDFType"],
+    onMessage?: (message: string | null) => void,
 ): Promise<void> => {
     const range = downloadSelection ? tobeDownloadedRange() : null;
     const law = range ? getLawRange(lawData.el, range) as std.Law : lawData.el;
 
     const figDataManager = ("lawXMLStruct" in lawData && lawData.lawXMLStruct)
-        ? await FigDataManager.create(lawData.lawXMLStruct, law)
+        ? await FigDataManager.create({
+            lawXMLStruct: lawData.lawXMLStruct,
+            subsetLaw: law,
+            figPDFType,
+            ...(onMessage ? {
+                onProgress: (info) => {
+                    onMessage(`Wordファイル準備中: 添付画像を処理しています (${info.current + 1} / ${info.length})`);
+                },
+            } : {}),
+        })
         : undefined;
+
+    if (onMessage) onMessage(null);
 
     const buffer = await renderer.renderDocxAsync(law, { figDataManager });
     const blob = new Blob(

@@ -2,11 +2,9 @@ import React from "react";
 
 export const DOCXMargin = "　";
 
-export interface DOCXFigData {
-    isEmbeddedPDF: boolean,
+export interface DOCXFigImageFile {
     rId: string,
     name: string,
-    fileName: string,
     id: number,
     cx: number,
     cy: number,
@@ -15,6 +13,43 @@ export interface DOCXFigData {
         type: string;
     },
 }
+
+export interface DOCXFigEmbedFile {
+    rId: string,
+    name: string,
+    id: number,
+    blob: {
+        buf: ArrayBuffer;
+        type: string;
+    },
+}
+
+export interface DOCXFigDataBase {
+    src: string,
+}
+
+export interface DOCXFigDataImage extends DOCXFigDataBase {
+    type: "image",
+    image: DOCXFigImageFile,
+}
+
+export interface DOCXFigDataEmbeddedPDF extends DOCXFigDataBase {
+    type: "embeddedPDF",
+    file: DOCXFigEmbedFile,
+}
+
+export interface DOCXFigDataRenderedPDF extends DOCXFigDataBase {
+    type: "renderedPDF",
+    pages: DOCXFigImageFile[],
+}
+
+export interface DOCXFigDataEmbeddedAndRenderedPDF extends DOCXFigDataBase {
+    type: "embeddedAndRenderedPDF",
+    file: DOCXFigEmbedFile,
+    pages: DOCXFigImageFile[],
+}
+
+export type DOCXFigData = DOCXFigDataImage | DOCXFigDataEmbeddedPDF | DOCXFigDataRenderedPDF |DOCXFigDataEmbeddedAndRenderedPDF;
 
 export interface DOCXFigDataManager {
     getFigData(src: string): DOCXFigData | null;

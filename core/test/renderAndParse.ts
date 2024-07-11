@@ -54,7 +54,7 @@ const renderAndParse = async (loader: Loader, lawNum: string) => {
 
     const html = renderHTML(origEL);
 
-    const figDataManager = await FigDataManager.create(lawXMLStruct, origEL);
+    const figDataManager = await FigDataManager.create({ lawXMLStruct, subsetLaw: origEL });
     const docx = await renderDocxAsync(origEL, { figDataManager });
 
     await promisify(fs.writeFile)(tempRenderedLawtext, lawtext, { encoding: "utf-8" });

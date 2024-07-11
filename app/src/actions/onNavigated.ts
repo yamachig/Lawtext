@@ -1,11 +1,13 @@
-import { OrigSetLawtextAppPageState } from "../components/LawtextAppPageState";
+import type { OrigSetLawtextAppPageState } from "../components/LawtextAppPageState";
 import * as util from "lawtext/dist/src/util";
-import { LawDataResult, Timing, toLawData } from "lawtext/dist/src/data/lawdata";
+import type { LawDataResult } from "lawtext/dist/src/data/lawdata";
+import { Timing, toLawData } from "lawtext/dist/src/data/lawdata";
 import { navigateLawData } from "@appsrc/lawdata/navigateLawData";
 import { downloadLawtext } from "./download";
 import { getLawTitleWithNum } from "@appsrc/law_util";
 import { showErrorModal } from "./showErrorModal";
-import { LawDataProps } from "@appsrc/lawdata/common";
+import type { LawDataProps } from "@appsrc/lawdata/common";
+import getOnMessage from "./getOnMessage";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const sampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml").default;
@@ -32,20 +34,11 @@ export const onNavigated = async (
         }
     }
 
-    const onMessage = (message: string) => {
-        origSetState(s => ({
-            ...s,
-            viewerMessages: {
-                ...s.viewerMessages,
-                loadingLaw: message,
-            },
-        }));
-        console.log(message);
-    };
+    const { onMessage, setStateAndMessage } = getOnMessage({ key: "loadingLaw", origSetState });
 
     if (!pathStr) {
         console.log("onNavigated: detected the top page.");
-        origSetState(s => {
+        setStateAndMessage(s => {
             // const { law: oldLaw } = s;
             // if (oldLaw && ("xml" in oldLaw)) {
             //     oldLaw.lawXMLStruct?.clean();
@@ -55,13 +48,12 @@ export const onNavigated = async (
                 navigatedPath: pathStr,
                 law: null,
                 loadingLaw: false,
-                viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
             };
-        });
+        }, null);
         return;
     }
 
-    origSetState(s => {
+    setStateAndMessage(s => {
         // const { law: oldLaw } = s;
         // if (oldLaw && ("xml" in oldLaw)) {
         //     oldLaw.lawXMLStruct?.clean();
@@ -71,12 +63,8 @@ export const onNavigated = async (
             navigatedPath: pathStr,
             law: null,
             loadingLaw: true,
-            viewerMessages: {
-                ...s.viewerMessages,
-                loadingLaw: "法令を読み込んでいます...",
-            },
         };
-    });
+    }, "法令を読み込んでいます...");
 
     const toDownloadSample = (pathStr.startsWith("(sample)"));
     let lawDataResult: LawDataResult<LawDataProps>;
@@ -99,12 +87,11 @@ export const onNavigated = async (
         if ("redirectPath" in navigateLawDataResult) {
             const redirectPath = navigateLawDataResult.redirectPath;
             console.log(`onNavigated: redirecting to the new path: "${redirectPath}"`);
-            origSetState(s => ({
+            setStateAndMessage(s => ({
                 ...s,
                 law: null,
                 loadingLaw: false,
-                viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
-            }));
+            }), null);
             location.hash = "/" + redirectPath;
             return;
         } else {
@@ -127,12 +114,11 @@ export const onNavigated = async (
             pre.outerHTML,
         );
 
-        origSetState(s => ({
+        setStateAndMessage(s => ({
             ...s,
             law: null,
             loadingLaw: false,
-            viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
-        }));
+        }), null);
 
         return;
     }
@@ -153,7 +139,7 @@ export const onNavigated = async (
     await util.wait(30);
     const start = new Date();
 
-    origSetState(s => {
+    setStateAndMessage(s => {
         // const { law: oldLaw } = s;
         // if (oldLaw && ("xml" in oldLaw)) {
         //     oldLaw.lawXMLStruct?.clean();
@@ -164,7 +150,7 @@ export const onNavigated = async (
             loadingLaw: false,
             viewerMessages: util.omit(s.viewerMessages, "loadingLaw"),
         };
-    });
+    }, null);
 
     timing.updateComponents = (new Date()).getTime() - start.getTime();
 

@@ -1,9 +1,11 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import type { HTMLComponentProps } from "../common/html";
+import { elProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXComponentProps, wrapDOCXComponent } from "../common/docx/component";
+import type { DOCXComponentProps } from "../common/docx/component";
+import { wrapDOCXComponent } from "../common/docx/component";
 import { w } from "../common/docx/tags";
 import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
@@ -117,11 +119,26 @@ export const DOCXAppdxItem = wrapDOCXComponent("DOCXAppdxItem", ((props: DOCXCom
 
     const RelatedArticleNum = (el.children as (typeof el.children)[number][]).find(std.isRelatedArticleNum);
 
+    const hasFig = Boolean(el.children.find((c =>
+        (std.isTableStruct(c) || std.isFigStruct(c) || std.isNoteLikeStruct(c))
+        && c.children.length !== 0
+        && (
+            std.isFig(c.children[0])
+            || (
+                std.isNoteLike(c.children[0])
+                && c.children[0].children.length !== 0
+                && std.isFig(c.children[0].children[0])
+            )
+        )
+    )));
+
     if (AppdxItemTitle || RelatedArticleNum) {
         blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
+                    {hasFig && <w.keepNext/>}
+                    {hasFig && <w.keepLines/>}
                 </w.pPr>
                 {(AppdxItemTitle !== undefined) && (
                     <DOCXSentenceChildrenRun els={AppdxItemTitle.children} emphasis={true} {...{ docxOptions }} />

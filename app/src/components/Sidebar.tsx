@@ -2,14 +2,16 @@ import React from "react";
 import styled from "styled-components";
 import * as std from "lawtext/dist/src/law/std";
 import { assertNever } from "lawtext/dist/src/util";
-import { EL } from "lawtext/dist/src/node/el";
-import { LawtextAppPageStateStruct } from "./LawtextAppPageState";
-import { downloadDocx, downloadLawtext, downloadXml } from "@appsrc/actions/download";
+import type { EL } from "lawtext/dist/src/node/el";
+import type { LawtextAppPageStateStruct } from "./LawtextAppPageState";
+import { downloadDocx as origDownloadDocx, downloadLawtext, downloadXml } from "../actions/download";
 import { openFile } from "@appsrc/actions/openFile";
 import { scrollToLawAnchor } from "@appsrc/actions/scroll";
-import { Container } from "lawtext/dist/src/node/container";
+import type { Container } from "lawtext/dist/src/node/container";
 import makePath from "lawtext/dist/src/path/v1/make";
-import { NavigateFunction } from "react-router-dom";
+import type { NavigateFunction } from "react-router-dom";
+import getOnMessage from "../actions/getOnMessage";
+import type { FigDataManagerOptions } from "lawtext/dist/src/renderer/common/docx/FigDataManager";
 
 
 const SidebarH1 = styled.h1`
@@ -24,9 +26,11 @@ const SidebarHeadDiv = styled.div`
 `;
 
 const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
-    const { origState, navigate } = props;
+    const { origState, navigate, origSetState } = props;
 
     const [editingKey, setEditingKey] = React.useState("");
+
+    const { onMessage: onDownloadMessage } = React.useMemo(() => getOnMessage({ key: "download", origSetState }), [origSetState]);
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -49,15 +53,9 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
         }
     };
 
-    const downloadDocxAllClick = () => {
+    const downloadDocx = (downloadSelection: boolean, figPDFType: FigDataManagerOptions["figPDFType"]) => {
         if (origState.law) {
-            downloadDocx(origState.law, false);
-        }
-    };
-
-    const downloadDocxSelectionClick = () => {
-        if (origState.law) {
-            downloadDocx(origState.law, true);
+            origDownloadDocx(origState.law, downloadSelection, figPDFType, onDownloadMessage);
         }
     };
 
@@ -125,13 +123,18 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                             保存：
                         </span>
                         <div>
-                            <span className="btn-group btn-group-sm">
-                                <button
-                                    onClick={downloadDocxAllClick}
-                                    className="btn btn-outline-primary"
-                                >
-                                    Word
-                                </button>
+                            <span className="btn-group btn-group-sm" role="group">
+                                <div className="btn-group btn-group-sm" role="group">
+                                    <button className="btn btn-outline-primary" onClick={() => downloadDocx(false, "render")}>Word</button>
+                                    <button type="button" className="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" style={{ padding: "0 3px" }}/>
+                                    <div className="dropdown-menu">
+                                        <h6 className="dropdown-header">添付PDF（様式など）がある場合のWord出力方式を選択してください：</h6>
+                                        <button className="dropdown-item" onClick={() => downloadDocx(false, "render")}>デフォルト：添付PDFファイルを画像化してWord出力</button>
+                                        <div className="dropdown-divider"></div>
+                                        <button className="dropdown-item" onClick={() => downloadDocx(false, "embed")}>添付PDFファイルを埋め込んでWord出力</button>
+                                        <button className="dropdown-item" onClick={() => downloadDocx(false, "embedAndRender")}>添付PDFファイルを埋め込み＋画像化してWord出力</button>
+                                    </div>
+                                </div>
                                 <button
                                     onClick={downloadLawtextClick}
                                     className="btn btn-outline-primary"
@@ -146,13 +149,17 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                 </button>
                             </span>
                             <span className="btn-group btn-group-sm" style={{ marginTop: "0.2rem" }}>
-                                <button
-                                    onClick={downloadDocxSelectionClick}
-                                    className="btn btn-outline-primary"
-                                    style={{ padding: "0 8px" }}
-                                >
-                                    Word（選択した条のみ）
-                                </button>
+                                <div className="btn-group btn-group-sm" role="group">
+                                    <button type="button" className="btn btn-outline-primary" style={{ padding: "0 8px" }} onClick={() => downloadDocx(true, "render")}>Word（選択した条のみ）</button>
+                                    <button type="button" className="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" style={{ padding: "0 8px" }}/>
+                                    <div className="dropdown-menu">
+                                        <h6 className="dropdown-header">添付PDF（様式など）がある場合のWord出力方式を選択してください：</h6>
+                                        <button className="dropdown-item" onClick={() => downloadDocx(true, "render")}>デフォルト：添付PDFを画像化してWord出力</button>
+                                        <div className="dropdown-divider"></div>
+                                        <button className="dropdown-item" onClick={() => downloadDocx(true, "embed")}>添付PDFを埋め込んでWord出力</button>
+                                        <button className="dropdown-item" onClick={() => downloadDocx(true, "embedAndRender")}>添付PDFを埋め込み＋画像化してWord出力</button>
+                                    </div>
+                                </div>
                             </span>
                         </div >
                     </div >

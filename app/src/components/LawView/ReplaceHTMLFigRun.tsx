@@ -1,7 +1,7 @@
 import React, { } from "react";
 import styled from "styled-components";
-import { HTMLFigData, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
-import * as std from "lawtext/dist/src/law/std";
+import type { HTMLFigData, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
+import type * as std from "lawtext/dist/src/law/std";
 import { NotImplementedError } from "lawtext/dist/src/util";
 import { useObserved } from "../useObserved";
 
@@ -26,7 +26,7 @@ export const ReplaceHTMLFigRun: React.FC<WrapperComponentProps> = props => {
 
     if (figData && figData.type.includes("pdf")) {
         return (
-            <PDFRun figData={figData} />
+            <PDFRun figData={figData} src={el.attr.src} />
         );
     } else {
         return (
@@ -44,8 +44,8 @@ height: 80vh;
 border: 1px solid gray;
 `;
 
-export const PDFRun: React.FC<{figData: HTMLFigData}> = props => {
-    const { figData } = props;
+export const PDFRun: React.FC<{figData: HTMLFigData, src: string}> = props => {
+    const { figData, src } = props;
 
     const { observed, observedRef } = useObserved();
 
@@ -56,7 +56,7 @@ export const PDFRun: React.FC<{figData: HTMLFigData}> = props => {
                     <iframe className="fig-iframe" src={figData.url} />
                 )
                 : (
-                    <FigIframeDummy>[{figData.url}]</FigIframeDummy>
+                    <FigIframeDummy>[{src}]</FigIframeDummy>
                 )}
         </span>
     );

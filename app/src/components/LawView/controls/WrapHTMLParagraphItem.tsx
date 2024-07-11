@@ -1,9 +1,9 @@
 
 import React from "react";
-import { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
-import { ParagraphItemProps, HTMLParagraphItem } from "lawtext/dist/src/renderer/rules/paragraphItem";
+import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
+import type { ParagraphItemProps, HTMLParagraphItem } from "lawtext/dist/src/renderer/rules/paragraphItem";
 import { createGlobalStyle } from "styled-components";
-import { LawViewOptions } from "../common";
+import type { LawViewOptions } from "../common";
 import makePath from "lawtext/dist/src/path/v1/make";
 import { isArticleTitle } from "lawtext/dist/src/law/std";
 
@@ -69,7 +69,7 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
     };
 
     return <div className="paragraph-item-menu">
-        <div className="btn-group dropstart">
+        <div className="btn-group dropdown">
             <button className="btn btn-sm btn-outline-secondary paragraph-item-menu-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             </button>
             <ul className="dropdown-menu">

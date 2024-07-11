@@ -21,6 +21,8 @@ MANIFEST
 /dist
 /dist-dev
 /dist-prod
+/dist-dev-local
+/dist-prod-local
 /dist-test
 /dist-bin
 /test/lawdata

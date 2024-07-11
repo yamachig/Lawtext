@@ -26,6 +26,8 @@ module.exports = (env, argv) => {
             alias: {
                 "node-fetch": false,
                 "fs": false,
+                "canvas": false,
+                "pdfjs-dist": false,
             },
             fallback: {
                 "path": require.resolve("path-browserify"),

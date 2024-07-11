@@ -10,19 +10,22 @@ import { storeTempLaw } from "@appsrc/actions/temp_law";
 import { omit } from "lawtext/dist/src/util";
 
 
+const ViewerFlexDiv = styled.div`
+    display: flex;
+    height: 100vh;
+`;
+
 const SideBarDiv = styled.div`
-    position: fixed;
-    width: 280px;
-    top: 0;
-    bottom: 0;
-    left: 0;
+    flex: 0 0 280px;
+    max-width: 280px;
     background-color: rgb(243, 243, 243);
 
     display: flex;
 `;
 
 const ViewerDiv = styled.div`
-    margin-left: 280px;
+    flex: 1 1 auto;
+    overflow-y: scroll;
 `;
 
 const HiddenInput = styled.input`
@@ -78,13 +81,15 @@ export const LawtextAppPage: React.FC = () => {
                 onChange={inputChanged}
             />
 
-            <SideBarDiv>
-                <Sidebar {...stateStruct} />
-            </SideBarDiv>
+            <ViewerFlexDiv>
+                <SideBarDiv>
+                    <Sidebar {...stateStruct} />
+                </SideBarDiv>
 
-            <ViewerDiv>
-                <Viewer {...stateStruct} />
-            </ViewerDiv>
+                <ViewerDiv className="law-anchor-scroll-box">
+                    <Viewer {...stateStruct} />
+                </ViewerDiv>
+            </ViewerFlexDiv>
 
             <div
                 className="modal fade"

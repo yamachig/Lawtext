@@ -85,6 +85,8 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 "node_modules",
                 "dist-dev",
                 "dist-prod",
+                "dist-dev-local",
+                "dist-prod-local",
                 "dist-test",
                 "dist-bin",
             ],

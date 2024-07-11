@@ -127,6 +127,7 @@ export default tseslint.config(
             "@typescript-eslint/no-unused-vars": ["error"],
 
             "@typescript-eslint/type-annotation-spacing": "error",
+            "@typescript-eslint/consistent-type-imports": "error",
             "tsdoc/syntax": "warn",
 
             "react-hooks/rules-of-hooks": "error",

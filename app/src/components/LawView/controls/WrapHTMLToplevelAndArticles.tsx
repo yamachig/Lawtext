@@ -1,8 +1,8 @@
 
 import React from "react";
-import { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
+import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
 import { createGlobalStyle } from "styled-components";
-import { LawViewOptions } from "../common";
+import type { LawViewOptions } from "../common";
 import makePath from "lawtext/dist/src/path/v1/make";
 import * as std from "lawtext/dist/src/law/std";
 
@@ -54,7 +54,7 @@ export const HTMLToplevelAndArticlesMenu: React.FC<HTMLComponentProps & { el: st
     };
 
     return <div className="toplevel-and-articles-menu">
-        <div className="btn-group dropstart">
+        <div className="btn-group dropdown">
             <button className="btn btn-sm btn-outline-secondary toplevel-and-articles-menu-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             </button>
             <ul className="dropdown-menu">

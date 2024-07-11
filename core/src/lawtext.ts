@@ -1,15 +1,16 @@
 import { parse } from "./parser/lawtext";
 import * as renderer from "./renderer";
 import renderLawtext from "./renderer/lawtext";
-import { Analysis, analyze as analyzeEL } from "./analyzer";
+import type { Analysis } from "./analyzer";
+import { analyze as analyzeEL } from "./analyzer";
 import loadEL from "./node/el/loadEL";
 import { xmlToEL } from "./node/el/xmlToEL";
-import { JsonEL } from "./node/el/jsonEL";
+import type { JsonEL } from "./node/el/jsonEL";
 import addSentenceChildrenControls from "./parser/addSentenceChildrenControls";
-import * as std from "./law/std";
+import type * as std from "./law/std";
 import { assertNever } from "./util";
 import formatXML from "./util/formatXml";
-import { VirtualLine } from "./parser/std/virtualLine";
+import type { VirtualLine } from "./parser/std/virtualLine";
 import { fetchLawData } from "./elawsApi";
 import FigDataManager from "./renderer/common/docx/FigDataManager";
 
@@ -77,7 +78,7 @@ export const run = async (args: RunArgs) => {
         const lawData = await fetchLawData(input.elaws);
 
         law = xmlToEL(lawData.xml) as std.Law;
-        figDataManager = await FigDataManager.create(lawData, law);
+        figDataManager = await FigDataManager.create({ lawXMLStruct: lawData, subsetLaw: law, figPDFType: "embed" });
         if (analyze) {
             addSentenceChildrenControls(law);
         }

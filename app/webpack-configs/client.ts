@@ -7,18 +7,22 @@ import webpack_dev_server from "webpack-dev-server";
 import WatchMessagePlugin from "./WatchMessagePlugin";
 import CreateAppZipPlugin from "./CreateAppZipPlugin";
 import QueryDocsPlugin from "./QueryDocsPlugin";
+import { cpSync } from "fs";
 
 const rootDir = path.dirname(__dirname);
 
 export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration & { devServer: webpack_dev_server.Configuration } => {
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev"));
     const config: webpack.Configuration & { devServer: webpack_dev_server.Configuration } = {
-        entry: [
-            path.resolve(rootDir, "./src/polyfills.ts"),
-            path.resolve(rootDir, "./src/index.tsx"),
-        ],
+        entry: {
+            index: [
+                path.resolve(rootDir, "./src/polyfills.ts"),
+                path.resolve(rootDir, "./src/index.tsx"),
+            ],
+            ...(env.DEV_SERVER ? { "pdf.worker": "../core/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs" } : {}),
+        },
         output: {
-            filename: "bundle.js",
+            filename: "bundle.[name].js",
             path: env.DEV_SERVER ? "/" : distDir,
             clean: argv.mode === "production",
         },
@@ -27,9 +31,12 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             alias: {
                 "@appsrc": path.resolve(rootDir, "./src"),
                 "node-fetch": false,
+                "canvas": false,
                 "fs": false,
                 "cli-progress": false,
                 "string_decoder": false,
+                ...(env.DEV_SERVER ? {} : { "pdfjs-dist": false }),
+
             },
             fallback: {
                 "path": require.resolve("path-browserify"),
@@ -107,6 +114,14 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             }),
             ...(env.DEV_SERVER ? [] : [new QueryDocsPlugin()]),
             ...(env.DEV_SERVER ? [] : [new CreateAppZipPlugin()]),
+            new (class {
+                public apply(compiler: webpack.Compiler): void {
+                    compiler.hooks.afterEmit.tapPromise("CopyPDFjsPlugin", async () => {
+                        const targetDir = path.join(compiler.outputPath, "pdfjs");
+                        cpSync("../core/node_modules/pdfjs-dist/build/", targetDir, { recursive: true });
+                    });
+                }
+            })(),
         ],
 
         watchOptions: {
@@ -114,6 +129,8 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 "node_modules",
                 "dist-dev",
                 "dist-prod",
+                "dist-dev-local",
+                "dist-prod-local",
                 "dist-test",
                 "dist-bin",
             ],

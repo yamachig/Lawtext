@@ -1,8 +1,8 @@
 @import "~bootstrap/scss/bootstrap.scss";
 
-// html,body {
-//     scroll-behavior: smooth;
-// }
+.law-anchor-scroll-box {
+    scroll-behavior: smooth;
+}
 
 .blink-once {
     animation: fadeBackground 3s;

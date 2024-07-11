@@ -15,12 +15,24 @@ export const renderDocxAsync = async (bodyEL: JSX.Element, docxOptions?: DOCXOpt
     const figDataManager = docxOptions?.figDataManager;
     if (figDataManager) {
         for (const [, figData] of figDataManager.getFigDataItems()) {
-            if (figData.isEmbeddedPDF) {
+
+            if ("image" in figData) {
+                media.push({
+                    Id: figData.image.rId,
+                    Type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+                    fileName: figData.image.name,
+                    buf: figData.image.blob.buf,
+                });
+                types.set(figData.image.name.split(".").slice(-1)[0], figData.image.blob.type);
+
+            }
+
+            if ("file" in figData) {
                 embeddings.push({
-                    Id: figData.rId,
+                    Id: figData.file.rId,
                     Type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
-                    fileName: `${figData.fileName}.bin`,
-                    buf: makePDFOLE(figData.blob.buf),
+                    fileName: `${figData.file.name}.bin`,
+                    buf: makePDFOLE(figData.file.blob.buf),
                 });
                 types.set("bin", "application/vnd.openxmlformats-officedocument.oleObject");
                 if (!media.find(m => m.Id === figDataManager.pdfIcon.rId)) {
@@ -32,14 +44,18 @@ export const renderDocxAsync = async (bodyEL: JSX.Element, docxOptions?: DOCXOpt
                     });
                     types.set("emf", "image/x-emf");
                 }
-            } else {
-                media.push({
-                    Id: figData.rId,
-                    Type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-                    fileName: figData.fileName,
-                    buf: figData.blob.buf,
-                });
-                types.set(figData.fileName.split(".").slice(-1)[0], figData.blob.type);
+            }
+
+            if ("pages" in figData) {
+                for (const page of figData.pages) {
+                    media.push({
+                        Id: page.rId,
+                        Type: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+                        fileName: page.name,
+                        buf: page.blob.buf,
+                    });
+                    types.set(page.name.split(".").slice(-1)[0], page.blob.type);
+                }
             }
         }
     }

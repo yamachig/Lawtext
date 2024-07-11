@@ -1,9 +1,11 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import type { HTMLComponentProps } from "../common/html";
+import { elProps, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXComponentProps, wrapDOCXComponent } from "../common/docx/component";
+import type { DOCXComponentProps } from "../common/docx/component";
+import { wrapDOCXComponent } from "../common/docx/component";
 import { w } from "../common/docx/tags";
 import { DOCXTable, HTMLTable } from "./table";
 import { DOCXRemarks, HTMLRemarks } from "./remarks";
@@ -112,11 +114,15 @@ export const DOCXItemStruct = wrapDOCXComponent("DOCXItemStruct", ((props: DOCXC
         || std.isStyleStructTitle(el)
     )) as std.TableStructTitle | std.FigStructTitle | std.NoteStructTitle | std.FormatStructTitle | std.StyleStructTitle | undefined;
 
+    const hasFig = Boolean(el.children.find(c => std.isFig(c) || (std.isNoteLike(c) && c.children.length !== 0 && std.isFig(c.children[0]))));
+
     if (ItemStructTitle) {
         blocks.push((
             <w.p>
                 <w.pPr>
                     <w.pStyle w:val={`Indent${indent}`}/>
+                    {hasFig && <w.keepNext/>}
+                    {hasFig && <w.keepLines/>}
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={ItemStructTitle.children} emphasis={true} {...{ docxOptions }} />
             </w.p>
