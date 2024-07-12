@@ -7,7 +7,9 @@ import type webpack_dev_server from "webpack-dev-server";
 import WatchMessagePlugin from "./WatchMessagePlugin";
 import CreateAppZipPlugin from "./CreateAppZipPlugin";
 import QueryDocsPlugin from "./QueryDocsPlugin";
-import { cpSync } from "fs";
+import fs from "fs";
+import { ensureDirSync } from "fs-extra";
+import TerserPlugin from "terser-webpack-plugin";
 
 const rootDir = path.dirname(__dirname);
 
@@ -56,7 +58,10 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
 
         optimization: {
-            minimizer: [new CssMinimizerPlugin()],
+            minimizer: [
+                new CssMinimizerPlugin(),
+                new TerserPlugin(),
+            ],
         },
 
         module: {
@@ -118,7 +123,17 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                     public apply(compiler: webpack.Compiler): void {
                         compiler.hooks.afterEmit.tapPromise("CopyPDFjsPlugin", async () => {
                             const targetDir = path.join(compiler.outputPath, "pdfjs");
-                            cpSync("../core/node_modules/pdfjs-dist/build/", targetDir, { recursive: true });
+                            ensureDirSync(targetDir);
+                            const sourceDir = "../core/node_modules/pdfjs-dist/build/";
+                            if (argv.mode === "production") {
+                                fs.copyFileSync(path.join(sourceDir, "pdf.min.mjs"), path.join(targetDir, "pdf.min.mjs"));
+                                fs.copyFileSync(path.join(sourceDir, "pdf.worker.min.mjs"), path.join(targetDir, "pdf.worker.min.mjs"));
+                            } else {
+                                fs.copyFileSync(path.join(sourceDir, "pdf.mjs"), path.join(targetDir, "pdf.mjs"));
+                                fs.copyFileSync(path.join(sourceDir, "pdf.mjs.map"), path.join(targetDir, "pdf.mjs.map"));
+                                fs.copyFileSync(path.join(sourceDir, "pdf.worker.mjs"), path.join(targetDir, "pdf.worker.mjs"));
+                                fs.copyFileSync(path.join(sourceDir, "pdf.worker.mjs.map"), path.join(targetDir, "pdf.worker.mjs.map"));
+                            }
                         });
                     }
                 })(),

@@ -139,7 +139,7 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                             onClick={() => downloadDocx(false, "render")}
                                         >
                                             デフォルト：添付PDFファイルを画像化してWord出力<br/>
-                                            <small className="text-muted">Wordファイルをそのまま表示したり印刷するのに適しています。画像化に時間が掛かります。</small>
+                                            <small className="text-muted">Wordファイルとして表示したり印刷するのに適しています。画像化に時間が掛かります。</small>
                                         </button>
                                         <div className="dropdown-divider"></div>
                                         <button
@@ -147,7 +147,7 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                             onClick={() => downloadDocx(false, "embed")}
                                         >
                                             添付PDFファイルを埋め込んでWord出力<br/>
-                                            <small className="text-muted">画像化を行わないため高速で、画質が劣化しません。埋め込まれたPDFはダブルクリックで表示できます。</small>
+                                            <small className="text-muted">元のPDFのまま埋め込み、画像化を行わないため高速です。埋め込まれたPDFはダブルクリックで開けます。</small>
                                         </button>
                                         <button
                                             className="dropdown-item"
@@ -189,7 +189,7 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                             onClick={() => downloadDocx(true, "render")}
                                         >
                                             デフォルト：添付PDFファイルを画像化してWord出力<br/>
-                                            <small className="text-muted">Wordファイルをそのまま表示したり印刷するのに適しています。画像化に時間が掛かります。</small>
+                                            <small className="text-muted">Wordファイルとして表示したり印刷するのに適しています。画像化に時間が掛かります。</small>
                                         </button>
                                         <div className="dropdown-divider"></div>
                                         <button
@@ -197,7 +197,7 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                             onClick={() => downloadDocx(true, "embed")}
                                         >
                                             添付PDFファイルを埋め込んでWord出力<br/>
-                                            <small className="text-muted">画像化を行わないため高速で、画質が劣化しません。埋め込まれたPDFはダブルクリックで表示できます。</small>
+                                            <small className="text-muted">元のPDFのまま埋め込み、画像化を行わないため高速です。埋め込まれたPDFはダブルクリックで開けます。</small>
                                         </button>
                                         <button
                                             className="dropdown-item"
