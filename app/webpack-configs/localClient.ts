@@ -5,7 +5,6 @@ import path from "path";
 import webpack from "webpack";
 import WatchMessagePlugin from "./WatchMessagePlugin";
 import QueryDocsPlugin from "./QueryDocsPlugin";
-import TerserPlugin from "terser-webpack-plugin";
 
 const rootDir = path.dirname(__dirname);
 
@@ -38,10 +37,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
 
         optimization: {
-            minimizer: [
-                new CssMinimizerPlugin(),
-                new TerserPlugin(),
-            ],
+            minimizer: [new CssMinimizerPlugin()],
         },
 
         module: {
