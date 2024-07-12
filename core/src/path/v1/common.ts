@@ -1,5 +1,6 @@
-import { LawIDStruct } from "../../law/lawID";
-import { articlesContainerTags, toplevelContainerTags } from "../../node/container";
+import type { LawIDStruct } from "../../law/lawID";
+import type { articlesContainerTags } from "../../node/container";
+import { toplevelContainerTags } from "../../node/container";
 import * as std from "../../law/std";
 
 // e.g. `405AC0000000088`, `405AC0000000088_20240401_504AC0100000052`

@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { matchResultToJson } from "generic-parser/lib/core";
 import { initialEnv } from "../env";
-import { ErrorMessage } from "../error";
+import type { ErrorMessage } from "../error";
 import $articleGroupNum from "./$articleGroupNum";
 
 const env = initialEnv({});

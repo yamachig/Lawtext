@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $otherLine from "./$otherLine";
-import { SentencesArray, Controls } from "../../../node/cst/inline";
+import type { SentencesArray, Controls } from "../../../node/cst/inline";
 import { matchResultToJson } from "generic-parser/lib/core";
 import $lines from "./$lines";
 

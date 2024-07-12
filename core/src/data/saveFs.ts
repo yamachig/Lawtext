@@ -6,7 +6,7 @@ import fs from "fs";
 import { fetch } from "../util/node-fetch";
 import fsExtra from "fs-extra";
 import { promisify } from "util";
-import { FSStoredLoader } from "./loaders/FSStoredLoader";
+import type { FSStoredLoader } from "./loaders/FSStoredLoader";
 
 export const download = async (
     loader: FSStoredLoader,

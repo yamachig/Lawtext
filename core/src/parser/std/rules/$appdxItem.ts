@@ -1,10 +1,13 @@
 import { factory } from "../factory";
-import { AppdxItemHeadLine, BlankLine, Line, LineType } from "../../../node/cst/line";
-import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
-import { isAppdxItemTitle, newStdEL, appdxItemTags, appdxItemTitleTags, StdELType, isRelatedArticleNum, isRemarks, isFigStruct, isTableStruct, isNoteLikeStruct, isArithFormula, isParagraphItem } from "../../../law/std";
+import type { Line } from "../../../node/cst/line";
+import { AppdxItemHeadLine, BlankLine, LineType } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule } from "../util";
+import type { StdELType } from "../../../law/std";
+import { isAppdxItemTitle, newStdEL, appdxItemTags, appdxItemTitleTags, isRelatedArticleNum, isRemarks, isFigStruct, isTableStruct, isNoteLikeStruct, isArithFormula, isParagraphItem } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
-import { ErrorMessage } from "../../cst/error";
+import type { ErrorMessage } from "../../cst/error";
 import { mergeAdjacentTextsWithString } from "../../cst/util";
 import { Control } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";

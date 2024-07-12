@@ -1,11 +1,11 @@
 // import formatXML from "xml-formatter";
 // import * as law_diff from "lawtext/dist/src/diff/law_diff";
-import { Loader } from "lawtext/dist/src/data/loaders/common";
-import mongoose from "mongoose";
-import { LawInfo } from "lawtext/dist/src/data/lawinfo";
-import { LawCoverage } from "../lawCoverage";
-import { ConnectionInfo } from "../connection";
-import { UpdateArgs } from "./args";
+import type { Loader } from "lawtext/dist/src/data/loaders/common";
+import type mongoose from "mongoose";
+import type { LawInfo } from "lawtext/dist/src/data/lawinfo";
+import type { LawCoverage } from "../lawCoverage";
+import type { ConnectionInfo } from "../connection";
+import type { UpdateArgs } from "./args";
 
 
 export const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo) => {

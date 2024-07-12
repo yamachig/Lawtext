@@ -4,9 +4,11 @@ import { assertNever } from "lawtext/dist/src/util";
 import * as React from "react";
 import styled from "styled-components";
 import LawCoverageInfoCard, { LawCoverageInfoCardStatus } from "./LawCoverageInfoCard";
-import { LawtextDashboardPageStateStruct, useDetailLawCoverageStruct } from "./LawtextDashboardPageState";
-import { LawCoverage } from "../../lawCoverage";
-import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedHTMLStatus, getRenderedDocxStatus, getRenderedLawtextStatus, OriginalLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus } from "./FilterInfo";
+import type { LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState";
+import { useDetailLawCoverageStruct } from "./LawtextDashboardPageState";
+import type { LawCoverage } from "../../lawCoverage";
+import type { OriginalLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus } from "./FilterInfo";
+import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedHTMLStatus, getRenderedDocxStatus, getRenderedLawtextStatus } from "./FilterInfo";
 
 
 type ZipItem<T extends unknown[][]> = { [I in keyof T]: T[I] extends Array<infer U> ? U : never };

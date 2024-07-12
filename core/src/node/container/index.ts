@@ -1,4 +1,4 @@
-import { EL } from "../el";
+import type { EL } from "../el";
 import * as std from "../../law/std";
 
 export enum ContainerType {

@@ -1,8 +1,8 @@
 import { assert } from "chai";
 import { initialEnv } from "../env";
-import * as std from "../../../law/std";
+import type * as std from "../../../law/std";
 import $sentencesArray, { sentencesArrayToString } from "./$sentencesArray";
-import { ErrorMessage } from "../error";
+import type { ErrorMessage } from "../error";
 import loadEL from "../../../node/el/loadEL";
 import { matchResultToJson } from "generic-parser/lib/core";
 
@@ -16,8 +16,8 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
 不利益処分　行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。　
     イ　事実上の行為及び事実上の行為をするに当たりその範囲、時期等を明らかにするために法令上必要とされている手続としての処分
 `;
-        const expectedRendered = `\
-不利益処分　行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。`;
+        const expectedRendered = "\
+不利益処分　行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。";
         const expectedCST = [
             {
                 leadingSpace: "",
@@ -95,8 +95,8 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
         const target = `\
 旧酒税法の規定により甘味果実酒又はスピリッツとされていたもののうち、新酒税法の規定により果実酒又はブランデーとして分類される酒類につき旧酒税法の規定により製造免許等を受けていた者は、平成三十年四月一日に、新酒税法の規定により果実酒（新酒税法第三条第十三号ホに掲げるものに限る。）又はブランデー（同条第十六号に規定するブランデーのうち、旧酒税法第三条第二十号に規定するスピリッツに該当するものに限る。）の製造免許等を受けたものとみなす。
 `;
-        const expectedRendered = `\
-旧酒税法の規定により甘味果実酒又はスピリッツとされていたもののうち、新酒税法の規定により果実酒又はブランデーとして分類される酒類につき旧酒税法の規定により製造免許等を受けていた者は、平成三十年四月一日に、新酒税法の規定により果実酒（新酒税法第三条第十三号ホに掲げるものに限る。）又はブランデー（同条第十六号に規定するブランデーのうち、旧酒税法第三条第二十号に規定するスピリッツに該当するものに限る。）の製造免許等を受けたものとみなす。`;
+        const expectedRendered = "\
+旧酒税法の規定により甘味果実酒又はスピリッツとされていたもののうち、新酒税法の規定により果実酒又はブランデーとして分類される酒類につき旧酒税法の規定により製造免許等を受けていた者は、平成三十年四月一日に、新酒税法の規定により果実酒（新酒税法第三条第十三号ホに掲げるものに限る。）又はブランデー（同条第十六号に規定するブランデーのうち、旧酒税法第三条第二十号に規定するスピリッツに該当するものに限る。）の製造免許等を受けたものとみなす。";
         const expectedCST = [
             {
                 leadingSpace: "",
@@ -352,8 +352,8 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
         const target = `\
 南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。
 `;
-        const expectedRendered = `\
-南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。`;
+        const expectedRendered = "\
+南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。";
         const expectedCST = [
             {
                 leadingSpace: "",

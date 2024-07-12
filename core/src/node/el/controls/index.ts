@@ -1,4 +1,4 @@
-import { EL } from "..";
+import type { EL } from "..";
 import { __Text } from "./text";
 import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __PContent, __PEnd, __PStart } from "./parentheses";
 import { ____Declaration } from "./declaration";

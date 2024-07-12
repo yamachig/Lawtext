@@ -1,4 +1,4 @@
-import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
+import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { storedLoader } from "./loaders";
 
 

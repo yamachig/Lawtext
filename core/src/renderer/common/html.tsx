@@ -1,5 +1,5 @@
 import React from "react";
-import { EL } from "../../node/el";
+import type { EL } from "../../node/el";
 
 // eslint-disable-next-line no-irregular-whitespace
 export const HTMLMarginSpan: React.FC<React.HTMLAttributes<HTMLSpanElement>> = props => <span {...props}>　</span>;

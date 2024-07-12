@@ -1,13 +1,14 @@
 import { parseNamedNum } from "../../law/num";
 import { lawNumLikeToLawNum } from "../../law/lawNum";
-import * as std from "../../law/std";
-import { SentenceEnv } from "../../node/container/sentenceEnv";
-import { __Parentheses, ____LawNum, ____Pointer, ____PointerRanges } from "../../node/el/controls";
+import type * as std from "../../law/std";
+import type { SentenceEnv } from "../../node/container/sentenceEnv";
+import type { ____Pointer } from "../../node/el/controls";
+import { __Parentheses, ____LawNum, ____PointerRanges } from "../../node/el/controls";
 import { PointerEnv } from "../../node/pointerEnv";
-import { ErrorMessage } from "../../parser/cst/error";
-import { WithErrorValue } from "../../parser/std/util";
+import type { ErrorMessage } from "../../parser/cst/error";
+import type { WithErrorValue } from "../../parser/std/util";
 import { isIgnoreAnalysis } from "../common";
-import { SentenceEnvsStruct } from "../getSentenceEnvs";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs";
 
 
 const getPointerEnvsForEL = (

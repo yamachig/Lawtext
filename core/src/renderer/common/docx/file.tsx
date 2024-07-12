@@ -2,9 +2,11 @@ import React from "react";
 import { renderToStaticMarkup } from "..";
 import { w } from "./tags";
 import styles from "./styles";
-import { DOCXOptions, Relationships, Types } from "./component";
+import type { DOCXOptions } from "./component";
+import { Relationships, Types } from "./component";
 import { makePDFOLE } from "./ole";
-import { AsyncZippable, zip } from "../../../util/zip";
+import type { AsyncZippable } from "../../../util/zip";
+import { zip } from "../../../util/zip";
 
 export const renderDocxAsync = async (bodyEL: JSX.Element, docxOptions?: DOCXOptions): Promise<Uint8Array | Buffer> => {
 

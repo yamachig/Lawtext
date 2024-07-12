@@ -1,6 +1,6 @@
 import { EL } from "../";
-import * as std from "../../../law/std";
-import { SentenceTextRange } from "../../container/sentenceEnv";
+import type * as std from "../../../law/std";
+import type { SentenceTextRange } from "../../container/sentenceEnv";
 
 
 export interface DeclarationOptions {

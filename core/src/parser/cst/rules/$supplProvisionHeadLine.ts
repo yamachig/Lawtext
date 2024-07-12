@@ -2,7 +2,7 @@ import factory from "../factory";
 import $indents from "./$indents";
 import { SupplProvisionHeadLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
-import { WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
 import { Control } from "../../../node/cst/inline";
 
 // eslint-disable-next-line no-irregular-whitespace

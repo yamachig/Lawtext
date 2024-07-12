@@ -1,10 +1,10 @@
 import { fetchLawData } from "../elawsApi";
 import { assertNever } from "../util";
-import { EL } from "../node/el";
+import type { EL } from "../node/el";
 import { LawInfo } from "./lawinfo";
-import { Loader } from "./loaders/common";
+import type { Loader } from "./loaders/common";
 import { FetchElawsLoader } from "./loaders/FetchElawsLoader";
-import { WorkersPool } from "./workersPool";
+import type { WorkersPool } from "./workersPool";
 import { elementToEL } from "../node/el/xmlToEL";
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;

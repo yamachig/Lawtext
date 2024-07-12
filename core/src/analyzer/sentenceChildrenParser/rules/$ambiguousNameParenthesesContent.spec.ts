@@ -1,9 +1,9 @@
 import { assert } from "chai";
 import loadEL from "../../../node/el/loadEL";
 import { initialEnv } from "../env";
-import * as std from "../../../law/std";
+import type * as std from "../../../law/std";
 import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
-import { SentenceChildEL } from "../../../node/cst/inline";
+import type { SentenceChildEL } from "../../../node/cst/inline";
 import $ambiguousNameParenthesesContent from "./$ambiguousNameParenthesesContent";
 
 const env = initialEnv({ target: "" });

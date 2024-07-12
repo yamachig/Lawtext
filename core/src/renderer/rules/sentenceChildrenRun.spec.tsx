@@ -2,7 +2,7 @@ import React from "react";
 import { assert } from "chai";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import loadEL from "../../node/el/loadEL";
-import * as std from "../../law/std";
+import type * as std from "../../law/std";
 import { renderToStaticMarkup } from "../common";
 import formatXML from "../../util/formatXml";
 import htmlCSS from "./htmlCSS";

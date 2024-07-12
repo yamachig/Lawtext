@@ -3,7 +3,7 @@ import $indents from "./$indents";
 import { OtherLine } from "../../../node/cst/line";
 import { $_, $_EOL } from "./lexical";
 import $sentencesArray from "./$sentencesArray";
-import { WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
 import { Control, Sentences } from "../../../node/cst/inline";
 import $xml from "./$xml";
 import { newStdEL } from "../../../law/std";

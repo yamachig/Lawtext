@@ -1,10 +1,11 @@
 
 import React, { Fragment } from "react";
 import * as std from "lawtext/dist/src/law/std";
-import { HTMLComponentProps, HTMLMarginSpan } from "lawtext/dist/src/renderer/common/html";
+import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html";
+import { HTMLMarginSpan } from "lawtext/dist/src/renderer/common/html";
 import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
 import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any";
-import { LawViewOptions } from "../common";
+import type { LawViewOptions } from "../common";
 import { EL } from "lawtext/dist/src/node/el";
 import { NotImplementedError } from "lawtext/dist/src/util";
 

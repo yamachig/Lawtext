@@ -1,6 +1,6 @@
 
-import { SentenceTextRange } from "../../node/container/sentenceEnv";
-import { ____Declaration } from "../../node/el/controls/declaration";
+import type { SentenceTextRange } from "../../node/container/sentenceEnv";
+import type { ____Declaration } from "../../node/el/controls/declaration";
 
 
 export class Declarations {

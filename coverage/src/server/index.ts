@@ -2,17 +2,19 @@
 import express from "express";
 // import path from "path";
 import config from "../config";
-import { connect, ConnectionInfo } from "../connection";
+import type { ConnectionInfo } from "../connection";
+import { connect } from "../connection";
 // import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackConfigFn from "../../webpack-configs/client";
 // import webpack from "webpack";
 // import WebpackDevServer from "webpack-dev-server";
-import { Loader } from "lawtext/dist/src/data/loaders/common";
+import type { Loader } from "lawtext/dist/src/data/loaders/common";
 import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 import { getOriginalLaw, getParsedLaw, getRenderedLawtext } from "../update/transform";
 import { LawCoveragesManager } from "./lawCoverages";
 import { fromSortStirng } from "../lawCoverage";
-import { AsyncZippable, zip } from "lawtext/dist/src/util/zip";
+import type { AsyncZippable } from "lawtext/dist/src/util/zip";
+import { zip } from "lawtext/dist/src/util/zip";
 
 
 const asyncMiddleware = (fn: express.RequestHandler): express.RequestHandler =>

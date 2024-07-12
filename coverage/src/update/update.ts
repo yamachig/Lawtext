@@ -1,9 +1,9 @@
 // import formatXML from "xml-formatter";
-import { Loader } from "lawtext/dist/src/data/loaders/common";
+import type { Loader } from "lawtext/dist/src/data/loaders/common";
 import { parseLawNum } from "lawtext/dist/src/law/lawNum";
-import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
-import { Era, LawCoverage, LawType } from "../lawCoverage";
-import { ConnectionInfo } from "../connection";
+import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
+import type { Era, LawCoverage, LawType } from "../lawCoverage";
+import type { ConnectionInfo } from "../connection";
 import { getLawDiff, getOriginalLaw, getParsedLaw, getRenderedDocx, getRenderedHTML, getRenderedLawtext } from "./transform";
 import { pick } from "lawtext/dist/src/util";
 

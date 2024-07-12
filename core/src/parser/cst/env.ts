@@ -1,4 +1,5 @@
-import { getMemorizedStringOffsetToPos, MatchFail, MatchContext, StringPos, BaseEnv } from "generic-parser/lib/core";
+import type { MatchFail, MatchContext, StringPos, BaseEnv } from "generic-parser/lib/core";
+import { getMemorizedStringOffsetToPos } from "generic-parser/lib/core";
 
 export interface Env extends BaseEnv<string, StringPos> {
     currentIndentDepth: number;

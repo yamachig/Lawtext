@@ -1,6 +1,6 @@
 import { AttrEntry } from "../../../node/cst/inline";
 import { factory } from "../factory";
-import { ValueRule, WithErrorRule } from "../util";
+import type { ValueRule, WithErrorRule } from "../util";
 
 export const makeSquareAttrRule = (lazyNameRule: (f: typeof factory) => ValueRule<string>): WithErrorRule<AttrEntry> => {
     return factory

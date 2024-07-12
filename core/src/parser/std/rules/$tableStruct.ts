@@ -1,6 +1,8 @@
 import { factory } from "../factory";
-import { BlankLine, Line, LineType, OtherLine, TableColumnLine } from "../../../node/cst/line";
-import { $blankLine, makeDoubleIndentBlockWithCaptureRule, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
+import type { Line } from "../../../node/cst/line";
+import { BlankLine, LineType, OtherLine, TableColumnLine } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
+import { $blankLine, makeDoubleIndentBlockWithCaptureRule, makeIndentBlockWithCaptureRule } from "../util";
 import { isColumn, isSentence, isTableColumn, isTableHeaderColumn, isTableHeaderRow, isTableRow, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";

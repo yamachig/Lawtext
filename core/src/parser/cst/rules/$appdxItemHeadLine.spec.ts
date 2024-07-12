@@ -1,8 +1,8 @@
 import { assert } from "chai";
 import { matchResultToJson } from "generic-parser/lib/core";
-import { Controls } from "../../../node/cst/inline";
+import type { Controls } from "../../../node/cst/inline";
 import { LineType } from "../../../node/cst/line";
-import { JsonEL } from "../../../node/el/jsonEL";
+import type { JsonEL } from "../../../node/el/jsonEL";
 import { initialEnv } from "../env";
 import $appdxItemHeadLine from "./$appdxItemHeadLine";
 

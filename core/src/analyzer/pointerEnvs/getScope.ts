@@ -1,8 +1,9 @@
 import { assertNever } from "../../util";
-import { Container } from "../../node/container";
+import type { Container } from "../../node/container";
 import { ____PointerRanges } from "../../node/el/controls/pointer";
-import { __Text, RangeInfo } from "../../node/el/controls";
-import { PointerEnvsStruct } from "./getPointerEnvs";
+import type { RangeInfo } from "../../node/el/controls";
+import { __Text } from "../../node/el/controls";
+import type { PointerEnvsStruct } from "./getPointerEnvs";
 
 
 interface ObjRangeInfo {

@@ -1,5 +1,5 @@
 import { containerTags, Container, ContainerType } from "../node/container";
-import { EL } from "../node/el";
+import type { EL } from "../node/el";
 import { isIgnoreAnalysis } from "./common";
 import { isSentenceLike, SentenceEnv } from "../node/container/sentenceEnv";
 import * as std from "../law/std";

@@ -1,6 +1,6 @@
 import factory from "../factory";
 import { kanjiDigits } from "./lexical";
-import { WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
 import { circledDigitChars, irohaChars } from "../../../law/num";
 
 const reStdParagraphNum = new RegExp(`^(?:○?[0123456789０１２３４５６７８９]+|[${circledDigitChars}])`);

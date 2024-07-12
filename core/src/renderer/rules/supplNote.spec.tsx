@@ -1,7 +1,7 @@
 import React from "react";
 import { assert } from "chai";
 import loadEL from "../../node/el/loadEL";
-import * as std from "../../law/std";
+import type * as std from "../../law/std";
 import { DOCXSupplNote, HTMLSupplNote } from "./supplNote";
 import { renderToStaticMarkup } from "../common";
 import { renderDocxAsync } from "../common/docx/file";

@@ -1,10 +1,10 @@
 import { getMemorizedStringOffsetToPos } from "generic-parser";
-import { MatchContext } from "generic-parser/lib/core";
-import { Line } from "../../node/cst/line";
+import type { MatchContext } from "generic-parser/lib/core";
+import type { Line } from "../../node/cst/line";
 import { initialEnv } from "./env";
 import factory from "./factory";
 import $lines from "./rules/$lines";
-import { WithErrorRule } from "./util";
+import type { WithErrorRule } from "./util";
 
 const makeMatchContextString = (context: MatchContext, target: string): string => {
     const { offset, prevRule, prevContext } = context;

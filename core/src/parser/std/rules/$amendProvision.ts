@@ -1,9 +1,11 @@
 import { factory } from "../factory";
-import { BlankLine, Line, LineType, OtherLine } from "../../../node/cst/line";
-import { makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
+import type { Line } from "../../../node/cst/line";
+import { BlankLine, LineType, OtherLine } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
+import { makeIndentBlockWithCaptureRule } from "../util";
 import { isAmendProvision, isAmendProvisionSentence, isAppdxItem, isArticle, isArticleGroup, isArticleGroupTitle, isFigStruct, isLawTitle, isList, isNewProvision, isNoteLikeStruct, isPreamble, isRemarks, isSupplNote, isSupplProvisionAppdxItem, isTableStruct, isTOC, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
-import { ErrorMessage } from "../../cst/error";
+import type { ErrorMessage } from "../../cst/error";
 import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { Control, Sentences } from "../../../node/cst/inline";

@@ -1,6 +1,6 @@
 import * as std from "../law/std";
 import { isControl, isStdEL } from "../law/std";
-import { EL } from "../node/el";
+import type { EL } from "../node/el";
 import { anyToLines } from "../parser/std/rules/$any";
 import { lawToLines } from "../parser/std/rules/$law";
 import { NotImplementedError } from "../util";

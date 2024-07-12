@@ -1,5 +1,5 @@
-import * as std from "lawtext/dist/src/law/std";
-import { LawInfo } from "lawtext/dist/src/data/lawinfo";
+import type * as std from "lawtext/dist/src/law/std";
+import type { LawInfo } from "lawtext/dist/src/data/lawinfo";
 
 export const traceTitles = (el: Element, _titles: string[] = []): string[] => {
     const titles: string[] = [..._titles];

@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { initialEnv as cstInitialEnv } from "../../cst/env";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import $sentencesArray, { sentencesArrayToString } from "../../cst/rules/$sentencesArray";
-import * as std from "../../../law/std";
+import type * as std from "../../../law/std";
 import loadEL from "../../../node/el/loadEL";
 
 const cstEnv = cstInitialEnv({});
@@ -15,8 +15,8 @@ describe("Test sentencesArrayToColumnsOrSentences and columnsOrSentencesToSenten
 不利益処分　行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。　
     イ　事実上の行為及び事実上の行為をするに当たりその範囲、時期等を明らかにするために法令上必要とされている手続としての処分
 `;
-        const expectedRendered = `\
-不利益処分　行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。`;
+        const expectedRendered = "\
+不利益処分　行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。";
         const expectedSTD = [
             {
                 tag: "Column",
@@ -89,8 +89,8 @@ describe("Test sentencesArrayToColumnsOrSentences and columnsOrSentencesToSenten
 行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。　
     イ　事実上の行為及び事実上の行為をするに当たりその範囲、時期等を明らかにするために法令上必要とされている手続としての処分
 `;
-        const expectedRendered = `\
-行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。`;
+        const expectedRendered = "\
+行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。";
         const expectedSTD = [
             {
                 tag: "Sentence",

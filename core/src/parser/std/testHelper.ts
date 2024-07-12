@@ -1,15 +1,17 @@
 import { assert } from "chai";
-import { MatchResult } from "generic-parser/lib/core";
+import type { MatchResult } from "generic-parser/lib/core";
 import { isLawNum, isLawTitle } from "../../law/std";
 import { __Text } from "../../node/el/controls";
-import { Line } from "../../node/cst/line";
+import type { Line } from "../../node/cst/line";
 import { EL, rangeOfELs } from "../../node/el";
-import { ErrorMessage } from "../cst/error";
+import type { ErrorMessage } from "../cst/error";
 import parse from "../cst/parse";
-import { Env, initialEnv } from "./env";
-import { toVirtualLines, VirtualLine } from "./virtualLine";
+import type { Env } from "./env";
+import { initialEnv } from "./env";
+import type { VirtualLine } from "./virtualLine";
+import { toVirtualLines } from "./virtualLine";
 import loadEL from "../../node/el/loadEL";
-import { JsonEL } from "../../node/el/jsonEL";
+import type { JsonEL } from "../../node/el/jsonEL";
 
 
 export const testLawtextToStd = <

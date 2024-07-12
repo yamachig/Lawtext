@@ -4,11 +4,11 @@ import * as lawDiff from "lawtext/dist/src/diff/lawDiff";
 import { parse } from "lawtext/dist/src/parser/lawtext";
 import * as analyzer from "lawtext/dist/src/analyzer";
 import { renderDocxAsync, renderHTML, renderLawtext } from "lawtext/dist/src/renderer";
-import { Loader } from "lawtext/dist/src/data/loaders/common";
-import { EL } from "lawtext/dist/src/node/el";
-import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
-import { Era, LawCoverage, LawType } from "../lawCoverage";
-import { Law } from "lawtext/dist/src/law/std";
+import type { Loader } from "lawtext/dist/src/data/loaders/common";
+import type { EL } from "lawtext/dist/src/node/el";
+import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
+import type { Era, LawCoverage, LawType } from "../lawCoverage";
+import type { Law } from "lawtext/dist/src/law/std";
 import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
 import { getMemorizedStringOffsetToPos } from "generic-parser";
 

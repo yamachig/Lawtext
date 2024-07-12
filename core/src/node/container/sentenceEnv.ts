@@ -1,9 +1,11 @@
-import { Container, ContainerType } from ".";
+import type { Container } from ".";
+import { ContainerType } from ".";
 import { isIgnoreAnalysis } from "../../analyzer/common";
-import { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
+import type { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
 import * as std from "../../law/std";
-import { EL } from "../el";
-import { RangeInfo, __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, __Text, ____Declaration, ____LawNum, ____Pointer, ____VarRef } from "../el/controls";
+import type { EL } from "../el";
+import type { RangeInfo, __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, ____Declaration, ____LawNum, ____Pointer, ____VarRef } from "../el/controls";
+import { __Text } from "../el/controls";
 
 export interface SentenceTextPos {
     sentenceIndex: number,

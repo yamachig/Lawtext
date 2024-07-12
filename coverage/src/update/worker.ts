@@ -1,6 +1,6 @@
 // import formatXML from "xml-formatter";
 import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
-import { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
+import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
 import { connect } from "../connection";
 import config from "../config";
 import { isMainThread, workerData, parentPort } from "worker_threads";

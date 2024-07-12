@@ -1,5 +1,5 @@
 import React from "react";
-import { LawData } from "@appsrc/lawdata/common";
+import type { LawData } from "@appsrc/lawdata/common";
 import { useNavigate, useParams } from "react-router-dom";
 
 export interface BaseLawtextAppPageState {

@@ -1,4 +1,4 @@
-import { LawCoverage } from "../../lawCoverage";
+import type { LawCoverage } from "../../lawCoverage";
 import { ProblemStatus } from "lawtext/dist/src/diff/lawDiff";
 import { assertNever } from "lawtext/dist/src/util";
 

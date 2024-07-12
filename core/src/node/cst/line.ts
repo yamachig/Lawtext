@@ -1,8 +1,8 @@
-import { appdxItemTags, articleGroupTags, paragraphItemTags, supplProvisionAppdxItemTags } from "../../law/std";
+import type { appdxItemTags, articleGroupTags, paragraphItemTags, supplProvisionAppdxItemTags } from "../../law/std";
 import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
 import { sentencesArrayToString } from "../../parser/cst/rules/$sentencesArray";
 import { rangeOfELs } from "../el";
-import { AttrEntries, SentencesArray, Controls, SentenceChildEL } from "./inline";
+import type { AttrEntries, SentencesArray, Controls, SentenceChildEL } from "./inline";
 
 /**
  * Line: the unit of a CST of the parsed lawtext.

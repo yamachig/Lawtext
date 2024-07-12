@@ -1,4 +1,5 @@
-import { ComponentWithTag, makeComponentWithTag } from "./component";
+import type { ComponentWithTag } from "./component";
+import { makeComponentWithTag } from "./component";
 
 
 const wTags = [

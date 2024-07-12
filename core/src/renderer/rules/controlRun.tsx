@@ -1,10 +1,11 @@
 
 import React from "react";
-import * as std from "../../law/std";
-import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
+import type * as std from "../../law/std";
+import type { HTMLComponentProps } from "../common/html";
+import { elProps, wrapHTMLComponent } from "../common/html";
 import { HTMLSentenceChildrenRun } from "../../renderer/rules/sentenceChildrenRun";
 import { NotImplementedError } from "../../util";
-import { SentenceChildEL } from "../../node/cst/inline";
+import type { SentenceChildEL } from "../../node/cst/inline";
 import { withKey } from "../common";
 
 

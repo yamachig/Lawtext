@@ -1,7 +1,7 @@
-import { Container } from "../../node/container";
+import type { Container } from "../../node/container";
 import { ErrorMessage } from "../../parser/cst/error";
 import { assertNever } from "../../util";
-import { PathFragment } from "./common";
+import type { PathFragment } from "./common";
 
 
 export interface LocateSuccess {

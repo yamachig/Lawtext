@@ -1,12 +1,14 @@
 /* eslint-disable no-irregular-whitespace */
-import { isSub, __EL } from "../../../law/std";
-import { ParenthesesType, __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____Declaration, ____LawNum } from "../../../node/el/controls";
+import type { __EL } from "../../../law/std";
+import { isSub } from "../../../law/std";
+import type { ParenthesesType } from "../../../node/el/controls";
+import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____Declaration, ____LawNum } from "../../../node/el/controls";
 import { EL } from "../../../node/el";
 import { assertNever } from "../../../util";
 import { factory } from "../factory";
-import { ValueRule, WithErrorRule } from "../util";
+import type { ValueRule, WithErrorRule } from "../util";
 import { $_EOL, $__ } from "./lexical";
-import { SentenceChildEL } from "../../../node/cst/inline";
+import type { SentenceChildEL } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $xml from "./$xml";
 import $pointerRanges, { pointerRangesCandidateChars, reSuppressPointerRanges } from "./$pointerRanges";

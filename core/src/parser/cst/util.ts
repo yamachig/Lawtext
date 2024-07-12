@@ -1,9 +1,9 @@
-import { Rule, Empty } from "generic-parser/lib/core";
+import type { Rule, Empty } from "generic-parser/lib/core";
 import { __Text } from "../../node/el/controls";
-import { SentenceChildEL } from "../../node/cst/inline";
+import type { SentenceChildEL } from "../../node/cst/inline";
 import { EL } from "../../node/el";
-import { Env } from "./env";
-import { ErrorMessage } from "./error";
+import type { Env } from "./env";
+import type { ErrorMessage } from "./error";
 
 export type ValueRule<TValue> = Rule<string, TValue, Env, Empty>
 export type WithErrorValue<TValue> = { value: TValue, errors: ErrorMessage[] }

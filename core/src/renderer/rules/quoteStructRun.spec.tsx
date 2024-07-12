@@ -2,7 +2,7 @@ import React from "react";
 import { assert } from "chai";
 import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun";
 import loadEL from "../../node/el/loadEL";
-import * as std from "../../law/std";
+import type * as std from "../../law/std";
 import { renderToStaticMarkup } from "../common";
 import formatXML from "../../util/formatXml";
 import htmlCSS from "./htmlCSS";

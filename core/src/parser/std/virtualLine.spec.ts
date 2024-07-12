@@ -1,7 +1,8 @@
 import { assert } from "chai";
 import { LineType } from "../../node/cst/line";
 import { parse } from "../cst/parse";
-import { toVirtualLines, VirtualLineType, VirtualOnlyLineType as VirtualL } from "./virtualLine";
+import type { VirtualLineType } from "./virtualLine";
+import { toVirtualLines, VirtualOnlyLineType as VirtualL } from "./virtualLine";
 
 describe("Test virtualLine", () => {
 

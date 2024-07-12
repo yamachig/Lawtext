@@ -1,8 +1,9 @@
 import { factory } from "../factory";
-import { Line, LineType, OtherLine } from "../../../node/cst/line";
-import { WithErrorRule } from "../util";
+import type { Line } from "../../../node/cst/line";
+import { LineType, OtherLine } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
 import { newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
+import type * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { Control, Sentences } from "../../../node/cst/inline";
 import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";

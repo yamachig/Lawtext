@@ -1,15 +1,17 @@
 
-import * as std from "../../law/std";
-import { Declarations } from "../common/declarations";
+import type * as std from "../../law/std";
+import type { Declarations } from "../common/declarations";
 import { ____VarRef } from "../../node/el/controls/varRef";
-import { SentenceEnvsStruct } from "../getSentenceEnvs";
-import { __Parentheses, __Text, ____Declaration, ____LawRef, ____PointerRanges } from "../../node/el/controls";
-import { WithErrorValue } from "../../parser/std/util";
-import { SentenceChildEL } from "../../node/cst/inline";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs";
+import type { ____Declaration, ____LawRef } from "../../node/el/controls";
+import { __Parentheses, __Text, ____PointerRanges } from "../../node/el/controls";
+import type { WithErrorValue } from "../../parser/std/util";
+import type { SentenceChildEL } from "../../node/cst/inline";
 import { ErrorMessage } from "../../parser/cst/error";
-import { isSentenceText, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import { isSentenceText } from "../../node/container/sentenceEnv";
 import { isIgnoreAnalysis } from "../common";
-import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
+import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 import { lawNumLikeToLawNum } from "../../law/lawNum";
 
 export const matchVariableReferences = (

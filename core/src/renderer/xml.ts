@@ -1,5 +1,5 @@
-import { EL } from "../node/el";
-import { JsonEL } from "../node/el/jsonEL";
+import type { EL } from "../node/el";
+import type { JsonEL } from "../node/el/jsonEL";
 import loadEL from "../node/el/loadEL";
 import formatXML from "../util/formatXml";
 

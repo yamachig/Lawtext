@@ -1,9 +1,11 @@
 import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { HTMLComponentProps, wrapHTMLComponent, HTMLMarginSpan, elProps } from "../common/html";
+import type { HTMLComponentProps } from "../common/html";
+import { wrapHTMLComponent, HTMLMarginSpan, elProps } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXComponentProps, wrapDOCXComponent, DOCXMargin } from "../common/docx/component";
+import type { DOCXComponentProps } from "../common/docx/component";
+import { wrapDOCXComponent, DOCXMargin } from "../common/docx/component";
 import { w } from "../common/docx/tags";
 import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
 import { DOCXArticle, HTMLArticle } from "./article";

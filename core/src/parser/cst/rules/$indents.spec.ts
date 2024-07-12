@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { initialEnv } from "../env";
-import { ErrorMessage } from "../error";
+import type { ErrorMessage } from "../error";
 import $indents from "./$indents";
 
 const env = initialEnv({});

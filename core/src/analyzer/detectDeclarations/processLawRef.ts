@@ -2,18 +2,19 @@
 // @ts-ignore
 import sha512 from "hash.js/lib/hash/sha/512";
 import { LAWNUM_TABLE, KEY_LENGTH } from "../../law/lawNumTable";
-import { WithErrorValue } from "../../parser/std/util";
+import type { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { __Text, ____Declaration, ____LawRef, ____PointerRanges } from "../../node/el/controls";
 import { ContainerType } from "../../node/container";
 import $lawRef from "../sentenceChildrenParser/rules/$lawRef";
 import { initialEnv } from "../sentenceChildrenParser/env";
-import { SentenceChildEL } from "../../node/cst/inline";
-import { toSentenceTextRanges, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import type { SentenceChildEL } from "../../node/cst/inline";
+import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import { toSentenceTextRanges } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
-import { SentenceEnvsStruct } from "../getSentenceEnvs";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs";
 import getScope from "../pointerEnvs/getScope";
-import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
+import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 import { lawNumLikeToLawNum } from "../../law/lawNum";
 
 export const getLawNameLength = (lawNum: string): number | null => {

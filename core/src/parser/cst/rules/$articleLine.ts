@@ -5,7 +5,7 @@ import { $__, $_EOL } from "./lexical";
 import $articleTitle from "./$articleTitle";
 import $columnsOrSentences from "./$sentencesArray";
 import makeRangesRule from "./makeRangesRule";
-import { WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
 
 const { $ranges: $articleRanges } = makeRangesRule(() => $articleTitle);
 

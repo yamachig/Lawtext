@@ -1,4 +1,5 @@
-import { DiffStatus, DiffTableItemData, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffNoDiffData, LawDiffResultItemData, LawDiffType, ProblemStatus, TagType } from "../src/diff/lawDiff";
+import type { DiffTableItemData, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffNoDiffData, LawDiffResultItemData } from "../src/diff/lawDiff";
+import { DiffStatus, LawDiffType, ProblemStatus, TagType } from "../src/diff/lawDiff";
 import { TERMC } from "../src/util/term";
 import * as util from "../src/util";
 

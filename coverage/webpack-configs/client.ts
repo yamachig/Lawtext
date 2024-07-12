@@ -3,8 +3,8 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
 import fs from "fs";
-import webpack from "webpack";
-import webpack_dev_server from "webpack-dev-server";
+import type webpack from "webpack";
+import type webpack_dev_server from "webpack-dev-server";
 import WatchMessagePlugin from "./WatchMessagePlugin";
 
 let rootDir = path.dirname(__dirname);

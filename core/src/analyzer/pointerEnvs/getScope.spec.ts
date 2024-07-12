@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { JsonEL } from "../../node/el/jsonEL";
+import type { JsonEL } from "../../node/el/jsonEL";
 import getSentenceEnvs from "../getSentenceEnvs";
 import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";

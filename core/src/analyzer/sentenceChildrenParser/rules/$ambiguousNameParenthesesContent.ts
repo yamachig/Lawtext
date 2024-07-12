@@ -1,8 +1,8 @@
 // import * as std from "../../../law/std";
-import { SentenceChildEL } from "../../../node/cst/inline";
+import type { SentenceChildEL } from "../../../node/cst/inline";
 import { __Text, ____PointerRanges } from "../../../node/el/controls";
 import factory from "../factory";
-import { WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
 
 export const $ambiguousNameParenthesesContent: WithErrorRule<{
     valueELs: SentenceChildEL[],

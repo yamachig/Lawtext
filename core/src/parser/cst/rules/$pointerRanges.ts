@@ -1,14 +1,16 @@
 /* eslint-disable no-irregular-whitespace */
 import { typeCharsMap } from "../../../law/std/helpers";
 import { irohaChars, parseKanjiNum } from "../../../law/num";
-import { SentenceChildEL } from "../../../node/cst/inline";
-import { RelPos, __Parentheses, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
-import { ErrorMessage } from "../error";
+import type { SentenceChildEL } from "../../../node/cst/inline";
+import type { __Parentheses } from "../../../node/el/controls";
+import { RelPos, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
+import type { ErrorMessage } from "../error";
 import { factory } from "../factory";
 import { $kanjiDigits, arabicDigits, kanjiDigits, romanDigits } from "./lexical";
-import makeRangesRule, { RangeMaker, RangesMaker } from "./makeRangesRule";
+import type { RangeMaker, RangesMaker } from "./makeRangesRule";
+import makeRangesRule from "./makeRangesRule";
 import { $ROUND_PARENTHESES_INLINE } from "./$sentenceChildren";
-import { WithErrorRule, WithErrorValue } from "../util";
+import type { WithErrorRule, WithErrorValue } from "../util";
 
 const makeRange: RangeMaker<
     WithErrorValue<____Pointer>,

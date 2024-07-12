@@ -1,16 +1,16 @@
-import { SentenceEnvsStruct } from "../getSentenceEnvs";
-import * as std from "../../law/std";
-import { ErrorMessage } from "../../parser/cst/error";
-import { WithErrorValue } from "../../parser/std/util";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs";
+import type * as std from "../../law/std";
+import type { ErrorMessage } from "../../parser/cst/error";
+import type { WithErrorValue } from "../../parser/std/util";
 import { processNameInline } from "./processNameInline";
-import { ____Declaration, ____LawRef } from "../../node/el/controls";
-import { SentenceEnv } from "../../node/container/sentenceEnv";
+import type { ____Declaration, ____LawRef } from "../../node/el/controls";
+import type { SentenceEnv } from "../../node/container/sentenceEnv";
 import { processLawRef } from "./processLawRef";
 import { isIgnoreAnalysis } from "../common";
 import { processNameList } from "./processNameList";
 import { Declarations } from "../common/declarations";
 import { processAmbiguousNameInline } from "./processAmbiguousNameInline";
-import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
+import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
 
 export const detectDeclarationsByEL = (

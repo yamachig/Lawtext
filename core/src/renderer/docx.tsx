@@ -1,12 +1,12 @@
 import React from "react";
-import { EL } from "../node/el";
+import type { EL } from "../node/el";
 import * as std from "../law/std";
 import { DOCXLaw } from "./rules/law";
 import { renderDocxAsync as innerRenderDocxAsync } from "./common/docx/file";
-import { DOCXOptions } from "./common/docx/component";
+import type { DOCXOptions } from "./common/docx/component";
 import { DOCXAnyELs } from "./rules/any";
 import loadEL from "../node/el/loadEL";
-import { JsonEL } from "../node/el/jsonEL";
+import type { JsonEL } from "../node/el/jsonEL";
 
 
 export const renderDocxAsync = (elOrJsonEL: JsonEL | EL, docxOptions?: DOCXOptions): Promise<Uint8Array | Buffer> => {

@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import * as std from "../../law/std";
-import { JsonEL } from "../../node/el/jsonEL";
+import type * as std from "../../law/std";
+import type { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
 import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
 import getSentenceEnvs from "../getSentenceEnvs";

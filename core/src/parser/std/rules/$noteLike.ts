@@ -1,10 +1,13 @@
 import { factory } from "../factory";
-import { Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
-import { isNoteLike, isNoteLikeStructTitle, newStdEL, noteLikeStructTags, noteLikeStructTitleTags, StdELType } from "../../../law/std";
+import type { Line } from "../../../node/cst/line";
+import { LineType, OtherLine } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule } from "../util";
+import type { StdELType } from "../../../law/std";
+import { isNoteLike, isNoteLikeStructTitle, newStdEL, noteLikeStructTags, noteLikeStructTitleTags } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
-import { ErrorMessage } from "../../cst/error";
+import type { ErrorMessage } from "../../cst/error";
 import { Control, Sentences } from "../../../node/cst/inline";
 import { rangeOfELs } from "../../../node/el";
 import { assertNever } from "../../../util";

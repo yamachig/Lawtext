@@ -1,6 +1,8 @@
 import { factory } from "../factory";
-import { BlankLine, Line, LineType, SupplProvisionHeadLine } from "../../../node/cst/line";
-import { $blankLine, WithErrorRule } from "../util";
+import type { Line } from "../../../node/cst/line";
+import { BlankLine, LineType, SupplProvisionHeadLine } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
+import { $blankLine } from "../util";
 import { isArticle, isArticleGroup, isParagraph, isParagraphItem, isParagraphItemTitle, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";

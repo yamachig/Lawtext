@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { matchResultToJson } from "generic-parser/lib/core";
-import { AttrEntries } from "../../../node/cst/inline";
+import type { AttrEntries } from "../../../node/cst/inline";
 import { LineType } from "../../../node/cst/line";
 import { initialEnv } from "../env";
 import $tableColumnLine from "./$tableColumnLine";

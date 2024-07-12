@@ -1,6 +1,6 @@
 
 import mongoose from "mongoose";
-import { LawCoverage } from "./lawCoverage";
+import type { LawCoverage } from "./lawCoverage";
 import { lawCoverageSchema } from "./schema";
 
 export interface ConnectionInfo {

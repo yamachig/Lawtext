@@ -1,12 +1,14 @@
-import getSentenceEnvs, { SentenceEnvsStruct } from "./getSentenceEnvs";
+import type { SentenceEnvsStruct } from "./getSentenceEnvs";
+import getSentenceEnvs from "./getSentenceEnvs";
 import detectVariableReferences from "./detectVariableReferences";
-import { Declarations } from "./common/declarations";
-import { ____VarRef } from "../node/el/controls/varRef";
-import * as std from "../law/std";
-import { ErrorMessage } from "../parser/cst/error";
+import type { Declarations } from "./common/declarations";
+import type { ____VarRef } from "../node/el/controls/varRef";
+import type * as std from "../law/std";
+import type { ErrorMessage } from "../parser/cst/error";
 import detectDeclarations from "./detectDeclarations";
-import { ____PointerRanges } from "../node/el/controls";
-import getPointerEnvs, { PointerEnvsStruct } from "./pointerEnvs/getPointerEnvs";
+import type { ____PointerRanges } from "../node/el/controls";
+import type { PointerEnvsStruct } from "./pointerEnvs/getPointerEnvs";
+import getPointerEnvs from "./pointerEnvs/getPointerEnvs";
 import getScope from "./pointerEnvs/getScope";
 
 

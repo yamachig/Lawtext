@@ -1,7 +1,7 @@
-import * as std from "../../law/std";
+import type * as std from "../../law/std";
 import { isControl } from "../../law/std";
-import { Diff } from "../../util";
-import { EL } from "../el";
+import type { Diff } from "../../util";
+import type { EL } from "../el";
 
 export class Control {
     public constructor(

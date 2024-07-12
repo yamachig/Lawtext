@@ -1,6 +1,6 @@
 import { EL } from "..";
-import * as std from "../../../law/std";
-import { SentenceChildEL } from "../../cst/inline";
+import type * as std from "../../../law/std";
+import type { SentenceChildEL } from "../../cst/inline";
 import { __Parentheses } from "./parentheses";
 
 export enum RelPos {

@@ -1,5 +1,6 @@
-import { URL } from "url";
-import { Worker, WorkerOptions } from "worker_threads";
+import type { URL } from "url";
+import type { WorkerOptions } from "worker_threads";
+import { Worker } from "worker_threads";
 import { range } from "../util";
 
 

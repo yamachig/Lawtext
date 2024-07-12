@@ -3,14 +3,15 @@ import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren
 import $indents from "./$indents";
 import { SupplProvisionAppdxItemHeadLine } from "../../../node/cst/line";
 import { $_EOL } from "./lexical";
-import { mergeAdjacentTexts, WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
+import { mergeAdjacentTexts } from "../util";
 import { __Parentheses } from "../../../node/el/controls";
 import { $autoTagControl, $supplProvisionAppdxControl, $supplProvisionAppdxStyleControl, $supplProvisionAppdxTableControl } from "./$tagControl";
-import { ChoiceRule } from "generic-parser/lib/rules/choice";
-import { ErrorMessage } from "../error";
-import { Control } from "../../../node/cst/inline";
-import { supplProvisionAppdxItemTags } from "../../../law/std";
-import { Env } from "../env";
+import type { ChoiceRule } from "generic-parser/lib/rules/choice";
+import type { ErrorMessage } from "../error";
+import type { Control } from "../../../node/cst/inline";
+import type { supplProvisionAppdxItemTags } from "../../../law/std";
+import type { Env } from "../env";
 
 export const supplProvisionAppdxItemTitlePtns = [
     ["SupplProvisionAppdx", /^[付附]則[付附]録/],

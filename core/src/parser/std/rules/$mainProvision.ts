@@ -1,6 +1,8 @@
 import { factory } from "../factory";
-import { BlankLine, Line } from "../../../node/cst/line";
-import { $blankLine, WithErrorRule } from "../util";
+import type { Line } from "../../../node/cst/line";
+import { BlankLine } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
+import { $blankLine } from "../util";
 import { isArticle, isArticleGroup, isParagraph, isParagraphItem, isParagraphItemTitle, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";

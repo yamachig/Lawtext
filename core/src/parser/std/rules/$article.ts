@@ -1,11 +1,14 @@
-import { Line, LineType, OtherLine } from "../../../node/cst/line";
+import type { Line } from "../../../node/cst/line";
+import { LineType, OtherLine } from "../../../node/cst/line";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
 import CST from "../toCSTSettings";
 import { assertNever } from "../../../util";
-import { Control, SentenceChildEL, Sentences } from "../../../node/cst/inline";
-import { WithErrorRule, captionControl, isSingleParentheses } from "../util";
+import type { SentenceChildEL } from "../../../node/cst/inline";
+import { Control, Sentences } from "../../../node/cst/inline";
+import type { WithErrorRule } from "../util";
+import { captionControl, isSingleParentheses } from "../util";
 import factory from "../factory";
 import { VirtualOnlyLineType } from "../virtualLine";
 import { $blankLine } from "../util";

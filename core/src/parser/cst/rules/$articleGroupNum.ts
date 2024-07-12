@@ -1,5 +1,5 @@
 import factory from "../factory";
-import { WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
 import { $arabicDigits, $kanjiDigits } from "./lexical";
 
 

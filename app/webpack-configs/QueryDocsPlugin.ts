@@ -1,4 +1,4 @@
-import webpack from "webpack";
+import type webpack from "webpack";
 import path from "path";
 import { generateDocs } from "../src/query-docs";
 

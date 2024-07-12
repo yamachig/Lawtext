@@ -3,12 +3,12 @@ import chai from "chai";
 import { it } from "mocha";
 import ReactDOMServer from "react-dom/server";
 import { analyze } from "lawtext/dist/src/analyzer";
-import * as std from "lawtext/dist/src/law/std";
+import type * as std from "lawtext/dist/src/law/std";
 import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
 import { LawView } from "@appsrc/components/LawView";
 import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
 import path from "path";
-import { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "../src/components/LawtextAppPageState";
+import type { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "../src/components/LawtextAppPageState";
 
 import dotenv from "dotenv";
 dotenv.config();

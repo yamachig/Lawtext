@@ -1,11 +1,14 @@
-import { LawCoverage } from "../../lawCoverage";
+import type { LawCoverage } from "../../lawCoverage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import styled from "styled-components";
 import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedHTMLStatus, getRenderedDocxStatus, getRenderedLawtextStatus, LawDiffStatus, OriginalLawStatus, ParsedLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, SortDirection, SortKey } from "./FilterInfo";
 import LawCoverageInfoCard from "./LawCoverageInfoCard";
-import { LawCoveragesStruct, LawtextDashboardPageStateStruct, useLawCoverageCounts, useLawCoveragesStruct } from "./LawtextDashboardPageState";
+import type { LawCoveragesStruct, LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState";
+import { useLawCoverageCounts, useLawCoveragesStruct } from "./LawtextDashboardPageState";
 import { convertStatus } from "./MainPanel";
+import type {
+    DragEndEvent } from "@dnd-kit/core";
 import {
     DndContext,
     closestCenter,
@@ -13,7 +16,6 @@ import {
     PointerSensor,
     useSensor,
     useSensors,
-    DragEndEvent,
 } from "@dnd-kit/core";
 import {
     arrayMove,
@@ -22,7 +24,8 @@ import {
     sortableKeyboardCoordinates,
     useSortable,
 } from "@dnd-kit/sortable";
-import { CSS, Transform } from "@dnd-kit/utilities";
+import type { Transform } from "@dnd-kit/utilities";
+import { CSS } from "@dnd-kit/utilities";
 
 interface FilterInfoSortItemProps {
     sort: (

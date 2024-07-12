@@ -1,4 +1,5 @@
-import { AttrEntry, Sentences, SentencesArray } from "../../../node/cst/inline";
+import type { SentencesArray } from "../../../node/cst/inline";
+import { AttrEntry, Sentences } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { assertNever, NotImplementedError } from "../../../util";

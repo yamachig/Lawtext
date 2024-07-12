@@ -1,10 +1,10 @@
 
 import React from "react";
-import { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html";
+import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html";
 import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
 import styled from "styled-components";
-import { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
-import { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration";
+import type { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
+import type { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration";
 
 
 const DeclarationSpan = styled.span`

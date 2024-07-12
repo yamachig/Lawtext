@@ -2,7 +2,7 @@ import * as std from "../../../law/std";
 import { __Parentheses, __Text, ____LawNum, ____PointerRanges } from "../../../node/el/controls";
 import { initialEnv } from "../env";
 import factory from "../factory";
-import { WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
 
 interface LawRefInfo {
     lawNum: ____LawNum,

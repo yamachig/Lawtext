@@ -1,4 +1,5 @@
-import { AppdxItemHeadLine, ArticleGroupHeadLine, ArticleLine, BlankLine, Line, LineType, OtherLine, ParagraphItemLine, SupplProvisionAppdxItemHeadLine, SupplProvisionHeadLine, TableColumnLine, TOCHeadLine } from "../../node/cst/line";
+import type { AppdxItemHeadLine, ArticleGroupHeadLine, ArticleLine, BlankLine, Line, OtherLine, ParagraphItemLine, SupplProvisionAppdxItemHeadLine, SupplProvisionHeadLine, TableColumnLine, TOCHeadLine } from "../../node/cst/line";
+import { LineType } from "../../node/cst/line";
 import { captionControl, isSingleParentheses } from "./util";
 
 /**

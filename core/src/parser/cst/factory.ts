@@ -1,5 +1,5 @@
 import { RuleFactory } from "generic-parser/lib/rules/factory";
-import { Env } from "./env";
+import type { Env } from "./env";
 
 export const factory = new RuleFactory<string, Env>();
 

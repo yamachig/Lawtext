@@ -9,8 +9,8 @@ import $articleLine from "./$articleLine";
 import $paragraphItemLine from "./$paragraphItemLine";
 import $tableColumnLine from "./$tableColumnLine";
 import $otherLine from "./$otherLine";
-import { WithErrorRule } from "../util";
-import { Line } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
+import type { Line } from "../../../node/cst/line";
 
 export const $lines: WithErrorRule<Line[]> = factory.withName("lines")
     .sequence(s => s

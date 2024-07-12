@@ -1,10 +1,10 @@
 
 import React from "react";
-import { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
+import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
 import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
-import { HTMLControlRunProps } from "lawtext/dist/src/renderer/rules/controlRun";
-import { LawViewOptions } from "../common";
-import { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
+import type { HTMLControlRunProps } from "lawtext/dist/src/renderer/rules/controlRun";
+import type { LawViewOptions } from "../common";
+import type { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
 import { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration";
 import { ____LawNum, ____Pointer, ____VarRef } from "lawtext/dist/src/node/el/controls";
 import Declaration from "./Declaration";

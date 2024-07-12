@@ -1,9 +1,11 @@
-import { ArticleGroupHeadLine, BlankLine, Line, LineType } from "../../../node/cst/line";
+import type { Line } from "../../../node/cst/line";
+import { ArticleGroupHeadLine, BlankLine, LineType } from "../../../node/cst/line";
 import { newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import CST from "../toCSTSettings";
-import { assertNever, Diff, range } from "../../../util";
-import { WithErrorRule } from "../util";
+import type { Diff } from "../../../util";
+import { assertNever, range } from "../../../util";
+import type { WithErrorRule } from "../util";
 import factory from "../factory";
 import { $blankLine, $indentBlock } from "../util";
 import { paragraphItemToLines } from "./$paragraphItem";

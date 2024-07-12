@@ -1,14 +1,15 @@
-import { WithErrorValue } from "../../parser/std/util";
+import type { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { ____Declaration } from "../../node/el/controls";
 import $nameInline from "../sentenceChildrenParser/rules/$nameInline";
 import { initialEnv } from "../sentenceChildrenParser/env";
-import { SentenceChildEL } from "../../node/cst/inline";
-import { toSentenceTextRanges, SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
-import * as std from "../../law/std";
-import { SentenceEnvsStruct } from "../getSentenceEnvs";
+import type { SentenceChildEL } from "../../node/cst/inline";
+import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import { toSentenceTextRanges } from "../../node/container/sentenceEnv";
+import type * as std from "../../law/std";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs";
 import getScope from "../pointerEnvs/getScope";
-import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
+import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
 export const processNameInline = (
     elToBeModified: std.StdEL | std.__EL,

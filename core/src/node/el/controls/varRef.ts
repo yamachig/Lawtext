@@ -1,5 +1,5 @@
 import { EL } from "..";
-import { SentenceTextRange } from "../../container/sentenceEnv";
+import type { SentenceTextRange } from "../../container/sentenceEnv";
 
 
 export interface VarRefOptions {

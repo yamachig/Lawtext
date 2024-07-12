@@ -1,6 +1,6 @@
-import { LawCoverage, LawCoverageCounts, SortDirection, SortKey } from "../lawCoverage";
-import { ConnectionInfo } from "../connection";
-import mongoose from "mongoose";
+import type { LawCoverage, LawCoverageCounts, SortDirection, SortKey } from "../lawCoverage";
+import type { ConnectionInfo } from "../connection";
+import type mongoose from "mongoose";
 import { sortedLawCoverages } from "./sort";
 import { countLawCoverages } from "./count";
 

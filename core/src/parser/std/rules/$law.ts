@@ -1,8 +1,10 @@
 import { factory } from "../factory";
-import { BlankLine, Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, isSingleParentheses, WithErrorRule } from "../util";
+import type { Line } from "../../../node/cst/line";
+import { BlankLine, LineType, OtherLine } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
+import { $blankLine, isSingleParentheses } from "../util";
 import * as std from "../../../law/std";
-import { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
+import type { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
 import { isAppdxItem, isEnactStatement, isLawBody, isLawNum, isLawTitle, isMainProvision, isPreamble, isSupplProvision, isTOC, newStdEL } from "../../../law/std";
 import { AttrEntry, Control, Sentences } from "../../../node/cst/inline";
 import CST from "../toCSTSettings";

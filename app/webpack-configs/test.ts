@@ -2,7 +2,7 @@ import HtmlWebPackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
-import webpack from "webpack";
+import type webpack from "webpack";
 import nodeExternals from "webpack-node-externals";
 import WatchMessagePlugin from "./WatchMessagePlugin";
 

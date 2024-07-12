@@ -2,10 +2,12 @@ import React from "react";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
 import { withKey } from "../common";
-import { DOCXComponentProps, DOCXMargin, wrapDOCXComponent } from "../common/docx/component";
+import type { DOCXComponentProps } from "../common/docx/component";
+import { DOCXMargin, wrapDOCXComponent } from "../common/docx/component";
 import { w } from "../common/docx/tags";
 import TextBoxRun from "../common/docx/TextBoxRun";
-import { elProps, HTMLComponentProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
+import type { HTMLComponentProps } from "../common/html";
+import { elProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
 import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
 import { DOCXTable, HTMLTable } from "./table";
 

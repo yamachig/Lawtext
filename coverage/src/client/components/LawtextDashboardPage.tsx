@@ -1,6 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
-import { LawtextDashboardPageStateStruct, useLawtextDashboardPageState } from "./LawtextDashboardPageState";
+import type { LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState";
+import { useLawtextDashboardPageState } from "./LawtextDashboardPageState";
 import MainPanel from "./MainPanel";
 import SidePanel from "./SidePanel";
 

@@ -1,5 +1,5 @@
 import * as std from "../../law/std";
-import { EL } from "../../node/el";
+import type { EL } from "../../node/el";
 
 // export const ignoreAnalysisTags = [
 //     "QuoteStruct",

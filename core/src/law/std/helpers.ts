@@ -1,5 +1,5 @@
-import { EL } from "../../node/el";
-import * as std from "./stdEL";
+import type { EL } from "../../node/el";
+import type * as std from "./stdEL";
 
 export enum Era {
     Meiji = "Meiji",

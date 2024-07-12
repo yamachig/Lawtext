@@ -1,7 +1,9 @@
 import React from "react";
-import * as std from "../../law/std";
-import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
-import { DOCXComponentProps, wrapDOCXComponent } from "../common/docx/component";
+import type * as std from "../../law/std";
+import type { HTMLComponentProps } from "../common/html";
+import { elProps, wrapHTMLComponent } from "../common/html";
+import type { DOCXComponentProps } from "../common/docx/component";
+import { wrapDOCXComponent } from "../common/docx/component";
 import { DOCXAnyELs, HTMLAnyELs } from "./any";
 
 

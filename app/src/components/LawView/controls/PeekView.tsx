@@ -1,10 +1,10 @@
 
 import React from "react";
-import { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html";
+import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html";
 import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
 import styled from "styled-components";
 import { em } from "../common";
-import { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
+import type { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
 
 
 const PeekViewSpan = styled.span`

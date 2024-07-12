@@ -1,12 +1,15 @@
-import { Line, LineType, TableColumnLine } from "../../../node/cst/line";
+import type { Line } from "../../../node/cst/line";
+import { LineType, TableColumnLine } from "../../../node/cst/line";
 import { isListOrSublist, isListOrSublistSentence, newStdEL } from "../../../law/std";
 import * as std from "../../../law/std";
 import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule } from "../util";
 import factory from "../factory";
-import { ErrorMessage } from "../../cst/error";
+import type { ErrorMessage } from "../../cst/error";
 import CST from "../toCSTSettings";
-import { assertNever, Diff } from "../../../util";
+import type { Diff } from "../../../util";
+import { assertNever } from "../../../util";
 import { rangeOfELs } from "../../../node/el";
 
 /**

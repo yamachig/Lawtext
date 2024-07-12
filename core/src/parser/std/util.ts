@@ -1,11 +1,13 @@
-import { Rule, Empty } from "generic-parser/lib/core";
+import type { Rule, Empty } from "generic-parser/lib/core";
 import { __Parentheses } from "../../node/el/controls";
-import { SentencesArray } from "../../node/cst/inline";
-import { Line, LineType } from "../../node/cst/line";
+import type { SentencesArray } from "../../node/cst/inline";
+import type { Line } from "../../node/cst/line";
+import { LineType } from "../../node/cst/line";
 import { ErrorMessage } from "../cst/error";
-import { Env } from "./env";
+import type { Env } from "./env";
 import factory from "./factory";
-import { Dedent, Indent, isVirtualLine, PhysicalLine, VirtualLine, VirtualOnlyLineType } from "./virtualLine";
+import type { Dedent, Indent, PhysicalLine, VirtualLine } from "./virtualLine";
+import { isVirtualLine, VirtualOnlyLineType } from "./virtualLine";
 
 export type ValueRule<TValue> = Rule<VirtualLine[], TValue, Env, Empty>
 export type WithErrorValue<TValue> = { value: TValue, errors: ErrorMessage[] }

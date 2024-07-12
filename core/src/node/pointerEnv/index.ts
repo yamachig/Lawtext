@@ -1,8 +1,10 @@
 import { assertNever } from "../../util";
-import { getContainerType, Container, ContainerType } from "../container";
-import { SentenceEnv } from "../container/sentenceEnv";
+import type { Container } from "../container";
+import { getContainerType, ContainerType } from "../container";
+import type { SentenceEnv } from "../container/sentenceEnv";
 import { EL } from "../el";
-import { RelPos, ____PF, ____Pointer } from "../el/controls";
+import type { ____PF, ____Pointer } from "../el/controls";
+import { RelPos } from "../el/controls";
 
 export interface InternalLocatedInfo {
     type: "internal",

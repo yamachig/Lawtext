@@ -3,11 +3,13 @@ import { __Text } from "../../../node/el/controls";
 import { factory } from "../factory";
 import $sentenceChildren, { $PERIOD_SENTENCE_FRAGMENT, sentenceChildrenToString } from "./$sentenceChildren";
 import { $_, $__ } from "./lexical";
-import { mergeAdjacentTexts, WithErrorRule } from "../util";
-import { SentenceChildEL, Sentences, SentencesArray } from "../../../node/cst/inline";
+import type { WithErrorRule } from "../util";
+import { mergeAdjacentTexts } from "../util";
+import type { SentenceChildEL, SentencesArray } from "../../../node/cst/inline";
+import { Sentences } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $squareAttr from "./$squareAttr";
-import { ErrorMessage } from "../error";
+import type { ErrorMessage } from "../error";
 
 export interface SentencesArrayToStringOptions {
     withoutAttrs?: boolean;

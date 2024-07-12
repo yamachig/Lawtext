@@ -3,14 +3,15 @@ import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren
 import $indents from "./$indents";
 import { AppdxItemHeadLine } from "../../../node/cst/line";
 import { $_EOL } from "./lexical";
-import { mergeAdjacentTexts, WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
+import { mergeAdjacentTexts } from "../util";
 import { __Parentheses } from "../../../node/el/controls";
 import { $appdxControl, $appdxFigControl, $appdxFormatControl, $appdxNoteControl, $appdxStyleControl, $appdxTableControl, $autoTagControl } from "./$tagControl";
-import { ChoiceRule } from "generic-parser/lib/rules/choice";
-import { Env } from "../env";
-import { ErrorMessage } from "../error";
-import { Control } from "../../../node/cst/inline";
-import { appdxItemTags } from "../../../law/std";
+import type { ChoiceRule } from "generic-parser/lib/rules/choice";
+import type { Env } from "../env";
+import type { ErrorMessage } from "../error";
+import type { Control } from "../../../node/cst/inline";
+import type { appdxItemTags } from "../../../law/std";
 
 export const appdxItemTitlePtns = [
     ["AppdxFig", /^[別付附]?図/],

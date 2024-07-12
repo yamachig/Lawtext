@@ -5,9 +5,9 @@ import { HTMLLaw } from "./rules/law";
 import htmlCSS from "./rules/htmlCSS";
 import { renderToStaticMarkup } from "./common";
 import { HTMLAnyELs } from "./rules/any";
-import { HTMLOptions } from "./common/html";
+import type { HTMLOptions } from "./common/html";
 import loadEL from "../node/el/loadEL";
-import { JsonEL } from "../node/el/jsonEL";
+import type { JsonEL } from "../node/el/jsonEL";
 
 export const renderHTML = (elOrJsonEL: JsonEL | EL, htmlOptions?: HTMLOptions): string => {
     const rendered = renderHTMLfragment(elOrJsonEL, htmlOptions);

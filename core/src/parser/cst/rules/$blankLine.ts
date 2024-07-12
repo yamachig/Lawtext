@@ -1,6 +1,6 @@
 import factory from "../factory";
 import { BlankLine } from "../../../node/cst/line";
-import { WithErrorRule } from "../util";
+import type { WithErrorRule } from "../util";
 
 /**
  * The parser rule for {@link BlankLine} that represents a blank line. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/cst/rules/$blankLine.spec.ts) for examples.

@@ -1,11 +1,13 @@
 import { factory } from "../factory";
-import { Line, LineType, OtherLine } from "../../../node/cst/line";
-import { $blankLine, makeIndentBlockWithCaptureRule, WithErrorRule } from "../util";
+import type { Line } from "../../../node/cst/line";
+import { LineType, OtherLine } from "../../../node/cst/line";
+import type { WithErrorRule } from "../util";
+import { $blankLine, makeIndentBlockWithCaptureRule } from "../util";
 import { isParagraph, isParagraphItemTitle, newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
+import type * as std from "../../../law/std";
 import CST from "../toCSTSettings";
 import { Control } from "../../../node/cst/inline";
-import { ErrorMessage } from "../../cst/error";
+import type { ErrorMessage } from "../../cst/error";
 import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
 import { rangeOfELs } from "../../../node/el";
 

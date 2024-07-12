@@ -1,13 +1,15 @@
 
 import React from "react";
-import { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
+import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
 import { withKey } from "lawtext/dist/src/renderer/common";
 import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
-import { LawViewOptions } from "../common";
-import { ____PF, ____Pointer } from "lawtext/dist/src/node/el/controls";
+import type { LawViewOptions } from "../common";
+import type { ____Pointer } from "lawtext/dist/src/node/el/controls";
+import { ____PF } from "lawtext/dist/src/node/el/controls";
 import PeekView from "./PeekView";
 import ContainersView from "./ContainersView";
-import ElawsPartialLawView, { ElawsPartialLawViewProps } from "./ElawsPartialLawView";
+import type { ElawsPartialLawViewProps } from "./ElawsPartialLawView";
+import ElawsPartialLawView from "./ElawsPartialLawView";
 
 
 export interface ____PointerProps { el: ____Pointer, wrapperProps: WrapperComponentProps }

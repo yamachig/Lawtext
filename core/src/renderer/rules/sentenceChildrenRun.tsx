@@ -1,9 +1,11 @@
 import React from "react";
-import { SentenceChildEL } from "../../node/cst/inline";
+import type { SentenceChildEL } from "../../node/cst/inline";
 import * as std from "../../law/std";
 import { assertNever } from "../../util";
-import { elProps, HTMLComponentProps, wrapHTMLComponent } from "../common/html";
-import { DOCXComponentProps, wrapDOCXComponent } from "../common/docx/component";
+import type { HTMLComponentProps } from "../common/html";
+import { elProps, wrapHTMLComponent } from "../common/html";
+import type { DOCXComponentProps } from "../common/docx/component";
+import { wrapDOCXComponent } from "../common/docx/component";
 import { w } from "../common/docx/tags";
 import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
 import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun";

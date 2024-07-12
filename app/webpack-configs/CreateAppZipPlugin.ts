@@ -1,9 +1,10 @@
-import webpack from "webpack";
+import type webpack from "webpack";
 import fs from "fs";
 import { promisify } from "util";
 import path from "path";
 import fsExtra from "fs-extra";
-import { AsyncZippable, zip } from "lawtext/dist/src/util/zip";
+import type { AsyncZippable } from "lawtext/dist/src/util/zip";
+import { zip } from "lawtext/dist/src/util/zip";
 
 async function *iterDirTree(dir: string, ignore: string[] = []): AsyncGenerator<string> {
     for (const item of await promisify(fs.readdir)(dir, { withFileTypes: true })) {

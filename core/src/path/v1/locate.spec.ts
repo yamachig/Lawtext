@@ -3,7 +3,8 @@ import { assert } from "chai";
 import getSentenceEnvs from "../../analyzer/getSentenceEnvs";
 import xmlToEL from "../../node/el/xmlToEL";
 import { omit } from "../../util";
-import locate, { LocateFail, LocateResult } from "./locate";
+import type { LocateFail, LocateResult } from "./locate";
+import locate from "./locate";
 import parse from "./parse";
 
 const xml1 = `\

@@ -1,14 +1,15 @@
-import { WithErrorValue } from "../../parser/std/util";
+import type { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { __Parentheses, __Text, ____Declaration } from "../../node/el/controls";
 import $nameListHead from "../sentenceChildrenParser/rules/$nameListHead";
 import { initialEnv } from "../sentenceChildrenParser/env";
-import { SentenceChildEL } from "../../node/cst/inline";
-import { SentenceEnv, SentenceTextRange, toSentenceTextRanges } from "../../node/container/sentenceEnv";
+import type { SentenceChildEL } from "../../node/cst/inline";
+import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
+import { toSentenceTextRanges } from "../../node/container/sentenceEnv";
 import * as std from "../../law/std";
-import { SentenceEnvsStruct } from "../getSentenceEnvs";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs";
 import getScope from "../pointerEnvs/getScope";
-import { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
+import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
 export const processNameList = (
     headSentenceEnv: SentenceEnv,

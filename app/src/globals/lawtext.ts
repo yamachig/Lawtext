@@ -7,9 +7,9 @@ import * as temp_law from "@appsrc/actions/temp_law";
 import * as coreQuery from "./coreQuery";
 import * as law_util from "@appsrc/law_util";
 import { elawsLoader, storedLoader } from "@appsrc/lawdata/loaders";
-import { LawInfo } from "lawtext/dist/src/data/lawinfo";
+import type { LawInfo } from "lawtext/dist/src/data/lawinfo";
 import * as _lawUtil from "lawtext/dist/src/law/std";
-import { Loader } from "lawtext/dist/src/data/loaders/common";
+import type { Loader } from "lawtext/dist/src/data/loaders/common";
 
 /**
  * `lawtext.law.lawUtil` モジュールの内容。

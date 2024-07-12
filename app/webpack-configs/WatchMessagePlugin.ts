@@ -1,4 +1,4 @@
-import webpack from "webpack";
+import type webpack from "webpack";
 
 export default class WatchMessagePlugin {
     public apply(compiler: webpack.Compiler): void {

@@ -5,13 +5,14 @@ https://github.com/chrisbottin/xml-formatter/blob/05c192bb41663316f88f9d721ced31
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import parser, {
+import type {
     XmlParserElementNode,
     XmlParserNode,
     XmlParserProcessingInstructionNode,
     XmlParserDocumentChildNode,
     XmlParserElementChildNode,
 } from "xml-parser-xo";
+import parser from "xml-parser-xo";
 
 const trim = (str: string) => {
     return str.replace(/^[ \r\n\t\v]+|[ \r\n\t\v]+$/g, "");
@@ -139,7 +140,7 @@ const processElementNode = (node: XmlParserElementNode, state: XMLFormatterState
             let containsTextNodesWithLineBreaks = false;
             let containsNonTextNodes = false;
 
-            nodeChildren.forEach(function (child: XmlParserElementChildNode, index: number) {
+            nodeChildren.forEach((child: XmlParserElementChildNode, index: number) => {
                 if (child.type === "Text") {
                     if (child.content.includes("\n")) {
                         containsTextNodesWithLineBreaks = true;
@@ -165,7 +166,7 @@ const processElementNode = (node: XmlParserElementNode, state: XMLFormatterState
             }
         }
 
-        nodeChildren.forEach(function (child: XmlParserElementChildNode) {
+        nodeChildren.forEach((child: XmlParserElementChildNode) => {
             processNode(child, state, preserveSpace || nodePreserveSpace);
         });
 
@@ -185,7 +186,7 @@ const processElementNode = (node: XmlParserElementNode, state: XMLFormatterState
 };
 
 const processAttributes = (state: XMLFormatterState, attributes: Record<string, string>) => {
-    Object.keys(attributes).forEach(function (attr) {
+    Object.keys(attributes).forEach((attr) => {
         const escaped = attributes[attr].replace(/"/g, "&quot;");
         appendContent(state, " " + attr + "=\"" + escaped + "\"");
     });
@@ -216,7 +217,7 @@ export const formatXML = (xml: string, _options: Partial<XMLFormatterOptions> = 
         processProcessingInstruction(parsedXml.declaration, state);
     }
 
-    parsedXml.children.forEach(function (child: XmlParserDocumentChildNode) {
+    parsedXml.children.forEach((child: XmlParserDocumentChildNode) => {
         processNode(child, state, false);
     });
 
