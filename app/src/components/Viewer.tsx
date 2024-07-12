@@ -21,7 +21,14 @@ const ViewerMessages: React.FC<{messages: Record<string, string>}> = props => {
     return (
         <ViewerMessagesDiv>
             {Object.entries(props.messages).map(([key, message]) => (
-                <span className="badge bg-secondary" key={key}><span className="spinner-border" style={{ width: "1em", height: "1em" }} role="status"/> {message}</span>
+                <div key={key}>
+                    <span className="badge bg-secondary" style={{ display: "inline-flex", alignItems: "start" }}>
+                        <span className="spinner-border" style={{ width: "1em", height: "1em" }} role="status"/>
+                        <span style={{ display: "inline-block", textAlign: "right", marginLeft: "0.25em" }}>
+                            {message.split("\n").map((line, i) => <div key={i}>{line}</div>)}
+                        </span>
+                    </span>
+                </div>
             ))}
         </ViewerMessagesDiv>
     );

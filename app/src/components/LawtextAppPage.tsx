@@ -25,7 +25,7 @@ const SideBarDiv = styled.div`
 
 const ViewerDiv = styled.div`
     flex: 1 1 auto;
-    overflow-y: scroll;
+    overflow-y: auto;
 `;
 
 const HiddenInput = styled.input`

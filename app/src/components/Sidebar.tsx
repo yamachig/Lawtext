@@ -30,8 +30,6 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
 
     const [editingKey, setEditingKey] = React.useState("");
 
-    const { onMessage: onDownloadMessage } = React.useMemo(() => getOnMessage({ key: "download", origSetState }), [origSetState]);
-
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         navigate(`/${editingKey.replace("/", "")}`);
@@ -55,7 +53,12 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
 
     const downloadDocx = (downloadSelection: boolean, figPDFType: FigDataManagerOptions["figPDFType"]) => {
         if (origState.law) {
-            origDownloadDocx(origState.law, downloadSelection, figPDFType, onDownloadMessage);
+            origDownloadDocx({
+                lawData: origState.law,
+                downloadSelection,
+                figPDFType,
+                onMessage: getOnMessage({ key: `download-${new Date().toISOString()}`, origSetState }).onMessage,
+            });
         }
     };
 
@@ -128,11 +131,36 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                     <button className="btn btn-outline-primary" onClick={() => downloadDocx(false, "render")}>Word</button>
                                     <button type="button" className="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" style={{ padding: "0 3px" }}/>
                                     <div className="dropdown-menu">
-                                        <h6 className="dropdown-header">添付PDF（様式など）がある場合のWord出力方式を選択してください：</h6>
-                                        <button className="dropdown-item" onClick={() => downloadDocx(false, "render")}>デフォルト：添付PDFファイルを画像化してWord出力</button>
+                                        <h6 className="dropdown-header">
+                                            添付PDF（様式など）がある場合のWord出力方式を選択してください：
+                                        </h6>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => downloadDocx(false, "render")}
+                                        >
+                                            デフォルト：添付PDFファイルを画像化してWord出力<br/>
+                                            <small className="text-muted">Wordファイルをそのまま表示したり印刷するのに適しています。画像化に時間が掛かります。</small>
+                                        </button>
                                         <div className="dropdown-divider"></div>
-                                        <button className="dropdown-item" onClick={() => downloadDocx(false, "embed")}>添付PDFファイルを埋め込んでWord出力</button>
-                                        <button className="dropdown-item" onClick={() => downloadDocx(false, "embedAndRender")}>添付PDFファイルを埋め込み＋画像化してWord出力</button>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => downloadDocx(false, "embed")}
+                                        >
+                                            添付PDFファイルを埋め込んでWord出力<br/>
+                                            <small className="text-muted">画像化を行わないため高速で、画質が劣化しません。埋め込まれたPDFはダブルクリックで表示できます。</small>
+                                        </button>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => downloadDocx(false, "embedAndRender")}
+                                        >
+                                            添付PDFファイルを埋め込み＋画像化してWord出力
+                                        </button>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => downloadDocx(false, "srcText")}
+                                        >
+                                            添付PDFファイルを含めずWord出力
+                                        </button>
                                     </div>
                                 </div>
                                 <button
@@ -153,11 +181,36 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                     <button type="button" className="btn btn-outline-primary" style={{ padding: "0 8px" }} onClick={() => downloadDocx(true, "render")}>Word（選択した条のみ）</button>
                                     <button type="button" className="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" style={{ padding: "0 8px" }}/>
                                     <div className="dropdown-menu">
-                                        <h6 className="dropdown-header">添付PDF（様式など）がある場合のWord出力方式を選択してください：</h6>
-                                        <button className="dropdown-item" onClick={() => downloadDocx(true, "render")}>デフォルト：添付PDFを画像化してWord出力</button>
+                                        <h6 className="dropdown-header">
+                                            添付PDF（様式など）がある場合のWord出力方式を選択してください：
+                                        </h6>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => downloadDocx(true, "render")}
+                                        >
+                                            デフォルト：添付PDFファイルを画像化してWord出力<br/>
+                                            <small className="text-muted">Wordファイルをそのまま表示したり印刷するのに適しています。画像化に時間が掛かります。</small>
+                                        </button>
                                         <div className="dropdown-divider"></div>
-                                        <button className="dropdown-item" onClick={() => downloadDocx(true, "embed")}>添付PDFを埋め込んでWord出力</button>
-                                        <button className="dropdown-item" onClick={() => downloadDocx(true, "embedAndRender")}>添付PDFを埋め込み＋画像化してWord出力</button>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => downloadDocx(true, "embed")}
+                                        >
+                                            添付PDFファイルを埋め込んでWord出力<br/>
+                                            <small className="text-muted">画像化を行わないため高速で、画質が劣化しません。埋め込まれたPDFはダブルクリックで表示できます。</small>
+                                        </button>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => downloadDocx(true, "embedAndRender")}
+                                        >
+                                            添付PDFファイルを埋め込み＋画像化してWord出力
+                                        </button>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => downloadDocx(true, "srcText")}
+                                        >
+                                            添付PDFファイルを含めずWord出力
+                                        </button>
                                     </div>
                                 </div>
                             </span>

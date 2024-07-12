@@ -12,10 +12,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev") + "-local");
     const config: webpack.Configuration = {
         entry: {
-            index: [
-                path.resolve(rootDir, "./src/polyfills.ts"),
-                path.resolve(rootDir, "./src/index.tsx"),
-            ],
+            index: [path.resolve(rootDir, "./src/index.tsx")],
             "pdf.worker": "../core/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs",
         },
         output: {

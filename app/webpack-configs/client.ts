@@ -3,7 +3,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
 import webpack from "webpack";
-import webpack_dev_server from "webpack-dev-server";
+import type webpack_dev_server from "webpack-dev-server";
 import WatchMessagePlugin from "./WatchMessagePlugin";
 import CreateAppZipPlugin from "./CreateAppZipPlugin";
 import QueryDocsPlugin from "./QueryDocsPlugin";
@@ -15,10 +15,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev"));
     const config: webpack.Configuration & { devServer: webpack_dev_server.Configuration } = {
         entry: {
-            index: [
-                path.resolve(rootDir, "./src/polyfills.ts"),
-                path.resolve(rootDir, "./src/index.tsx"),
-            ],
+            index: [path.resolve(rootDir, "./src/index.tsx")],
             ...(env.DEV_SERVER ? { "pdf.worker": "../core/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs" } : {}),
         },
         output: {
@@ -40,7 +37,9 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             },
             fallback: {
                 "path": require.resolve("path-browserify"),
-                "buffer": require.resolve("buffer/"),
+                ...(env.DEV_SERVER ? {
+                    "buffer": require.resolve("buffer/"),
+                } : {}),
             },
         },
 
@@ -114,14 +113,16 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             }),
             ...(env.DEV_SERVER ? [] : [new QueryDocsPlugin()]),
             ...(env.DEV_SERVER ? [] : [new CreateAppZipPlugin()]),
-            new (class {
-                public apply(compiler: webpack.Compiler): void {
-                    compiler.hooks.afterEmit.tapPromise("CopyPDFjsPlugin", async () => {
-                        const targetDir = path.join(compiler.outputPath, "pdfjs");
-                        cpSync("../core/node_modules/pdfjs-dist/build/", targetDir, { recursive: true });
-                    });
-                }
-            })(),
+            ...(env.DEV_SERVER ? [] : [
+                new (class {
+                    public apply(compiler: webpack.Compiler): void {
+                        compiler.hooks.afterEmit.tapPromise("CopyPDFjsPlugin", async () => {
+                            const targetDir = path.join(compiler.outputPath, "pdfjs");
+                            cpSync("../core/node_modules/pdfjs-dist/build/", targetDir, { recursive: true });
+                        });
+                    }
+                })(),
+            ]),
         ],
 
         watchOptions: {

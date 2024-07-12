@@ -207,14 +207,42 @@ const getLawRange = (origLaw: EL, range: SelectionRange) => {
     return law;
 };
 
-export const downloadDocx = async (
+export const downloadDocx = async (options: {
     lawData: LawData,
     downloadSelection: boolean,
     figPDFType: FigDataManagerOptions["figPDFType"],
     onMessage?: (message: string | null) => void,
-): Promise<void> => {
+    longTimeSeconds?: number,
+}): Promise<void> => {
+    const { lawData, downloadSelection, figPDFType, onMessage, longTimeSeconds } = {
+        longTimeSeconds: 5,
+        ...options,
+    };
     const range = downloadSelection ? tobeDownloadedRange() : null;
     const law = range ? getLawRange(lawData.el, range) as std.Law : lawData.el;
+
+    let longTimeMessage = "";
+    let lastInfo = {
+        current: 0,
+        length: 1,
+        item: "",
+    };
+
+    const longTimeTimer = setTimeout(() => {
+        longTimeMessage = "（処理に時間が掛かっています。Word保存メニューの\n「▼」から添付PDFの処理方法を変更できます）";
+    }, longTimeSeconds * 1000);
+
+    const updateMessage = (info?: {
+        current: number;
+        length: number;
+        item: string;
+    }) => {
+        if (info) lastInfo = info;
+        if (onMessage) {
+            const message = `Wordファイル準備中: 添付PDFを処理しています (${lastInfo.current + 1} / ${lastInfo.length})`;
+            onMessage(`${message}${longTimeMessage ? "\n" + longTimeMessage : ""}`);
+        }
+    };
 
     const figDataManager = ("lawXMLStruct" in lawData && lawData.lawXMLStruct)
         ? await FigDataManager.create({
@@ -222,13 +250,12 @@ export const downloadDocx = async (
             subsetLaw: law,
             figPDFType,
             ...(onMessage ? {
-                onProgress: (info) => {
-                    onMessage(`Wordファイル準備中: 添付画像を処理しています (${info.current + 1} / ${info.length})`);
-                },
+                onProgress: updateMessage,
             } : {}),
         })
         : undefined;
 
+    clearTimeout(longTimeTimer);
     if (onMessage) onMessage(null);
 
     const buffer = await renderer.renderDocxAsync(law, { figDataManager });
