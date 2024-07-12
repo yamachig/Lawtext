@@ -22,7 +22,7 @@ module.exports = (env, argv) => {
                 type: "umd",
             },
         },
-        externals: [nodeExternals()],
+        // externals: [nodeExternals()],
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
             alias: {

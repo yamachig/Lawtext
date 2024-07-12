@@ -1,6 +1,6 @@
-import iconv from "iconv-lite";
-import { csvTextToLawInfos, jsonTextToLawInfos, LawInfosStruct, LawXMLStruct, Loader } from "./common";
-import { BaseLawInfo } from "../lawinfo";
+import type { LawInfosStruct } from "./common";
+import { csvTextToLawInfos, jsonTextToLawInfos, LawXMLStruct, Loader } from "./common";
+import type { BaseLawInfo } from "../lawinfo";
 import * as data_paths from "../paths";
 import path from "path";
 import { fetch as nodeFetch } from "../../util/node-fetch";
@@ -29,7 +29,8 @@ const fetchSjisText = async (textPath: string) => {
             return null;
         }
         const buf = await res.arrayBuffer();
-        return iconv.decode(Buffer.from(buf), "Shift_JIS");
+        const decoder = new TextDecoder("shift-jis");
+        return decoder.decode(buf);
     } catch (e) {
         console.log(e);
         return null;

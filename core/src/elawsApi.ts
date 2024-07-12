@@ -115,7 +115,7 @@ export class ElawsLawData extends LawXMLStruct {
         const _buf = await this.getPictBlob(src);
         if (!_buf) return null;
         const { buf, type } = _buf;
-        const url = `data:${type};base64,${Buffer.from(buf).toString("base64")}`;
+        const url = `data:${type};base64,${btoa(new Uint8Array(buf).reduce((s, c) => s + String.fromCharCode(c), ""))}`;
         // this.blobURLs.push(url);
         return { url, type };
     }

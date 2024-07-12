@@ -31,12 +31,7 @@ export const omit = <T, K extends keyof T>(obj: T, ...keys: K[]): Omit<T, K> => 
 };
 
 export const decodeBase64 = (base64: string): Uint8Array => {
-    const binary = Buffer.from(base64, "base64");
-    const buf = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-        buf[i] = binary[i];
-    }
-    return buf;
+    return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 };
 export class NotImplementedError extends Error {
     constructor(message: string) {

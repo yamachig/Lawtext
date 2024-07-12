@@ -1,6 +1,7 @@
-import iconv from "iconv-lite";
-import { csvTextToLawInfos, jsonTextToLawInfos, LawInfosStruct, LawXMLStruct, Loader } from "./common";
-import { BaseLawInfo } from "../lawinfo";
+
+import type { LawInfosStruct } from "./common";
+import { csvTextToLawInfos, jsonTextToLawInfos, LawXMLStruct, Loader } from "./common";
+import type { BaseLawInfo } from "../lawinfo";
 import * as data_paths from "../paths";
 import { promisify } from "util";
 import fs from "fs";
@@ -20,7 +21,8 @@ const readText = async (textPath: string) => {
 const readSjisText = async (textPath: string) => {
     try {
         const buf = await promisify(fs.readFile)(textPath);
-        return iconv.decode(Buffer.from(buf), "Shift_JIS");
+        const decoder = new TextDecoder("shift-jis");
+        return decoder.decode(buf);
     } catch (e) {
         console.log(e);
         return null;
