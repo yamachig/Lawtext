@@ -14,7 +14,9 @@
   "author": "yamachi",
   "main": "./dist/src/main.js",
   "types": "./dist/src/main.d.ts",
-  "bin": "./dist/src/main.js",
+  "bin": {
+    "lawtext": "dist/src/main.js"
+  },
   "directories": {
     "test": "test"
   },
