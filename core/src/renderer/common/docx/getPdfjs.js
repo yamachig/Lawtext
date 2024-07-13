@@ -23,7 +23,7 @@ const getPdfjs = async () => {
         pdfjs.GlobalWorkerOptions.workerSrc = "./pdf.worker.min.mjs";
     } catch {
         try {
-            void await eval("import(\"./pdfjs/pdf.worker.min.mjs\")");
+            void await eval("import(\"./pdfjs/pdf.worker.mjs\")");
         } catch {
             try {
                 void await eval("import(\"pdfjs-dist/legacy/build/pdf.worker.mjs\")");

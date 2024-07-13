@@ -12,7 +12,9 @@ import { assertNever } from "./util";
 import formatXML from "./util/formatXml";
 import type { VirtualLine } from "./parser/std/virtualLine";
 import { fetchLawData } from "./elawsApi";
+import type { figPDFTypes } from "./renderer/common/docx/FigDataManager";
 import FigDataManager from "./renderer/common/docx/FigDataManager";
+import { getPdfjs } from "./renderer/common/docx/getPdfjs";
 
 export const intypeChoices = ["fromext", "lawtext", "xml", "json"] as const;
 export const outtypeChoices = ["fromext", "lawtext", "xml", "json", "html", "htmlfragment", "docx"] as const;
@@ -23,6 +25,7 @@ export interface RunArgs {
     analyze: boolean;
     format: boolean;
     controlel: boolean;
+    figpdf: (typeof figPDFTypes)[number],
 }
 
 export const runHelp = `\
@@ -35,6 +38,9 @@ options:
         # For \`elaws\` input, specify lawID or lawNum to be requested to e-LAWS API.
     outtypes: ("lawtext" | "xml" | "json" | "html" | "htmlfragment" | "docx")[]
         # Specify the output types.
+    figpdf: "srcText" | "embed" | "render" | "embedAndRender" [default: "embed"]
+        # (Only applicable for the combination of \`elaws\` input and \`docx\` output.)
+        # Specify how to process embedded PDF files.
     analyze: boolean [default: false]
         # If true, conduct the analysis process.
     format: boolean [default: false]
@@ -65,6 +71,7 @@ export const run = async (args: RunArgs) => {
     const {
         input,
         outtypes,
+        figpdf = "embed",
         analyze = false,
         format = false,
         controlel = false,
@@ -78,7 +85,17 @@ export const run = async (args: RunArgs) => {
         const lawData = await fetchLawData(input.elaws);
 
         law = xmlToEL(lawData.xml) as std.Law;
-        figDataManager = await FigDataManager.create({ lawXMLStruct: lawData, subsetLaw: law, figPDFType: "embed" });
+        if (figpdf === "render" || figpdf === "embedAndRender") {
+            try {
+                await getPdfjs();
+            } catch {
+                throw new Error(`\
+PDF.js not found.
+If you are using the Lawtext CLI prebuilt: As the current limitation of the prebuilt "lawtext_cli.js", it cannot render PDF. Please run Lawtext CLI as an NPM package like: "npx lawtext"
+`);
+            }
+        }
+        figDataManager = await FigDataManager.create({ lawXMLStruct: lawData, subsetLaw: law, figPDFType: figpdf });
         if (analyze) {
             addSentenceChildrenControls(law);
         }

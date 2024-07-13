@@ -62,10 +62,12 @@ export const pdfToPNG = async (pdfData: ArrayBuffer) => {
 export const pdfPageCXMax = 5364000;
 export const pdfPageCYMax = 8000000;
 
+export const figPDFTypes = ["srcText", "embed", "render", "embedAndRender"] as const;
+
 export interface FigDataManagerOptions {
     lawXMLStruct: LawXMLStruct,
     subsetLaw: EL,
-    figPDFType?: "srcText" | "embed" | "render" | "embedAndRender",
+    figPDFType?: (typeof figPDFTypes)[number],
     onProgress?: (info: {current: number, length: number, item: string}) => unknown,
 }
 
@@ -90,87 +92,92 @@ export class FigDataManager implements DOCXFigDataManager {
         };
         let counter = 0;
         const figDataMap: Map<string, DOCXFigData> = new Map();
-        const figs = [...iterateFig(subsetLaw)];
-        for (const [current, el] of figs.entries()) {
-            if (onProgress) onProgress({ current, length: figs.length, item: el.attr.src });
-            const src = el.attr.src;
-            const blob = await lawXMLStruct.getPictBlob(src);
-            if (!blob) continue;
 
-            if (blob.type === "application/pdf") {
-                const file: DOCXFigEmbedFile | null = (
-                    (figPDFType === "embed" || figPDFType === "embedAndRender")
-                        ? {
-                            id: 1000000 + counter,
-                            rId: `fig${counter + 1}`,
-                            name: src.split("/").slice(-1)[0],
-                            blob,
-                        }
-                        : null
-                );
-                counter++;
-                const pages: DOCXFigImageFile[] | null = (
-                    (figPDFType === "render" || figPDFType === "embedAndRender")
-                        ? (await pdfToPNG(blob.buf)).map(({ buf, width, height, pageNumber }, i) => {
-                            const cScale = Math.min(
-                                (Math.min(width * 9525, pdfPageCXMax) / (width * 9525)),
-                                (Math.min(height * 9525, pdfPageCYMax) / (height * 9525)),
-                            );
-                            return {
-                                id: 1000000 + counter + i,
-                                rId: `fig${counter + 1 + i}`,
-                                cx: Math.round(width * 9525 * cScale),
-                                cy: Math.round(height * 9525 * cScale),
-                                name: `${src.split("/").slice(-1)[0]}.page${pageNumber}.png`,
-                                blob: {
-                                    buf,
-                                    type: "image/png",
-                                },
-                            };
-                        })
-                        : null
-                );
+        if (figPDFType === "srcText") {
+            //
+        } else {
+            const figs = [...iterateFig(subsetLaw)];
+            for (const [current, el] of figs.entries()) {
+                if (onProgress) onProgress({ current, length: figs.length, item: el.attr.src });
+                const src = el.attr.src;
+                const blob = await lawXMLStruct.getPictBlob(src);
+                if (!blob) continue;
 
-                if (pages)counter += pages.length;
-
-                if (file) {
-                    if (pages) {
-                        figDataMap.set(src, { src, type: "embeddedAndRenderedPDF", file, pages });
-                    } else {
-                        figDataMap.set(src, { src, type: "embeddedPDF", file });
-                    }
-                } else {
-                    if (pages) {
-                        figDataMap.set(src, { src, type: "renderedPDF", pages });
-                    } else {
-                        console.error("FigDataManager.create: Unexpected empty file and pages");
-                    }
-                }
-
-            } else {
-                const size = (() => {
-                    try {
-                        return imageSize(new Uint8Array(blob.buf));
-                    } catch {
-                        return null;
-                    }
-                })();
-                try {
-                    figDataMap.set(src, {
-                        type: "image",
-                        src,
-                        image: {
-                            id: 1000000 + counter,
-                            rId: `fig${counter + 1}`,
-                            cx: (size?.width ?? 100) * 9525,
-                            cy: (size?.height ?? 141) * 9525,
-                            name: src.split("/").slice(-1)[0],
-                            blob,
-                        },
-                    });
+                if (blob.type === "application/pdf") {
+                    const file: DOCXFigEmbedFile | null = (
+                        (figPDFType === "embed" || figPDFType === "embedAndRender")
+                            ? {
+                                id: 1000000 + counter,
+                                rId: `fig${counter + 1}`,
+                                name: src.split("/").slice(-1)[0],
+                                blob,
+                            }
+                            : null
+                    );
                     counter++;
-                } catch {
-                    //
+                    const pages: DOCXFigImageFile[] | null = (
+                        (figPDFType === "render" || figPDFType === "embedAndRender")
+                            ? (await pdfToPNG(blob.buf)).map(({ buf, width, height, pageNumber }, i) => {
+                                const cScale = Math.min(
+                                    (Math.min(width * 9525, pdfPageCXMax) / (width * 9525)),
+                                    (Math.min(height * 9525, pdfPageCYMax) / (height * 9525)),
+                                );
+                                return {
+                                    id: 1000000 + counter + i,
+                                    rId: `fig${counter + 1 + i}`,
+                                    cx: Math.round(width * 9525 * cScale),
+                                    cy: Math.round(height * 9525 * cScale),
+                                    name: `${src.split("/").slice(-1)[0]}.page${pageNumber}.png`,
+                                    blob: {
+                                        buf,
+                                        type: "image/png",
+                                    },
+                                };
+                            })
+                            : null
+                    );
+
+                    if (pages)counter += pages.length;
+
+                    if (file) {
+                        if (pages) {
+                            figDataMap.set(src, { src, type: "embeddedAndRenderedPDF", file, pages });
+                        } else {
+                            figDataMap.set(src, { src, type: "embeddedPDF", file });
+                        }
+                    } else {
+                        if (pages) {
+                            figDataMap.set(src, { src, type: "renderedPDF", pages });
+                        } else {
+                            console.error("FigDataManager.create: Unexpected empty file and pages");
+                        }
+                    }
+
+                } else {
+                    const size = (() => {
+                        try {
+                            return imageSize(new Uint8Array(blob.buf));
+                        } catch {
+                            return null;
+                        }
+                    })();
+                    try {
+                        figDataMap.set(src, {
+                            type: "image",
+                            src,
+                            image: {
+                                id: 1000000 + counter,
+                                rId: `fig${counter + 1}`,
+                                cx: (size?.width ?? 100) * 9525,
+                                cy: (size?.height ?? 141) * 9525,
+                                name: src.split("/").slice(-1)[0],
+                                blob,
+                            },
+                        });
+                        counter++;
+                    } catch {
+                        //
+                    }
                 }
             }
         }

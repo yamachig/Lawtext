@@ -4,6 +4,7 @@ import yargs from "yargs";
 import * as lawtext from "./lawtext";
 import * as fs from "fs";
 import { assertNever } from "./util";
+import { figPDFTypes } from "./renderer/common/docx/FigDataManager";
 
 export { run } from "./lawtext";
 
@@ -14,6 +15,7 @@ export interface RunCLIArgs {
     virtuallinesout: string | null;
     intype: (typeof lawtext.intypeChoices)[number];
     outtype: (typeof lawtext.outtypeChoices)[number];
+    figpdf: Lowercase<(typeof figPDFTypes)[number]>;
     analyze: boolean;
     format: boolean;
     controlel: boolean;
@@ -26,6 +28,7 @@ export const defaultRunCLIArgs = {
     virtuallinesout: null,
     intype: "fromext" as const,
     outtype: "fromext" as const,
+    figpdf: "embed" as const,
     analyze: false,
     format: false,
     controlel: false,
@@ -39,6 +42,7 @@ export const runCLI = async (args: RunCLIArgs) => {
         virtuallinesout,
         intype: origIntype,
         outtype: origOuttype,
+        figpdf: origFigpdf,
         analyze,
         format,
         controlel,
@@ -49,6 +53,7 @@ export const runCLI = async (args: RunCLIArgs) => {
 
     let intype: Exclude<RunCLIArgs["intype"], "fromext">;
     let outtype: Exclude<RunCLIArgs["outtype"], "fromext">;
+    let figpdf: (typeof figPDFTypes)[number] | null = null;
 
     if (origIntype === "fromext") {
         if (!input) {
@@ -94,6 +99,14 @@ export const runCLI = async (args: RunCLIArgs) => {
         outtype = origOuttype;
     }
 
+    for (const t of figPDFTypes) {
+        if (t.toLowerCase() === origFigpdf.toLowerCase()) {
+            figpdf = t;
+            break;
+        }
+    }
+    if (!figpdf) throw new Error("Cannot recognize the type specified for \"--figpdf\".");
+
     if (analysisout && !analyze) {
         console.error("Warning: \"--analysisout\" has no effect without \"--analyze\".");
     }
@@ -121,6 +134,7 @@ export const runCLI = async (args: RunCLIArgs) => {
     const result = await lawtext.run({
         input: runInput,
         outtypes: [outtype],
+        figpdf,
         analyze,
         format,
         controlel,
@@ -217,6 +231,12 @@ export const main = async (): Promise<void> => {
             choices: lawtext.outtypeChoices,
             default: defaultRunCLIArgs.outtype,
             description: "Type of output. Set \"fromext\" to guess from the extension of \"--outfile\"",
+        })
+        .option("figpdf", {
+            alias: "fp",
+            choices: figPDFTypes.map(t => t.toLowerCase()) as Lowercase<(typeof figPDFTypes)[number]>[],
+            default: defaultRunCLIArgs.figpdf,
+            description: "How to process embedded PDF files. (Only applicable for the combination of `elaws` input and `docx` output.)",
         })
         .option("analyze", {
             alias: "an",

@@ -15,7 +15,7 @@ module.exports = (env, argv) => {
         mode: (argv.mode === "development") ? "development" : "production",
         entry: [path.resolve(rootDir, "./src/main.ts")],
         output: {
-            filename: "node/lawtext.js",
+            filename: "node/lawtext_cli.js",
             path: distDir,
             library: {
                 name: "lawtext",
