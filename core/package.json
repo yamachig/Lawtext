@@ -26,7 +26,7 @@
     "watch": "node --trace-deprecation --trace-warnings bin/build/ && tsc --watch",
     "build-bundles": "webpack --mode=development --config ./webpack-configs/bundles.js",
     "build-bundles:prod": "webpack --mode=production --config ./webpack-configs/bundles.js",
-    "prepare": "npm run build",
+    "prepare": "rm -r ./dist && npm run build",
     "lawtext": "node ./dist/src/main.js",
     "test": "node --max_old_space_size=8192 ./dist/test/prepareTest.js && npx mocha"
   },

@@ -20,6 +20,8 @@ tsconfig.tsbuildinfo
 cache.sqlite
 MANIFEST
 /dist-dev
+/dist-bundle-dev
+/dist-bundle-prod
 /src/renderer/templates.js
 /src/law/lawNumTable.ts
 /test/lawdata
