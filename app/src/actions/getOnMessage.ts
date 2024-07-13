@@ -20,7 +20,7 @@ export const getOnMessage = (options: {key: string, origSetState: OrigSetLawtext
                     viewerMessages: util.omit(s.viewerMessages, key),
                 }
         ));
-        if (message !== null) console.log({ key, message });
+        console.log({ key, message, date: new Date() });
     };
 
     const setStateAndMessage = (state: React.SetStateAction<BaseLawtextAppPageState>, message: string | null) => {
@@ -39,7 +39,7 @@ export const getOnMessage = (options: {key: string, origSetState: OrigSetLawtext
                         viewerMessages: util.omit(s.viewerMessages, key),
                     }
             );
-            if (message !== null) console.log({ key, message });
+            console.log({ key, message, date: new Date() });
 
             if (typeof state === "function") {
                 return state(sWithMessage);
