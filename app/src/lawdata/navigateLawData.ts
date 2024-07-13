@@ -7,7 +7,7 @@ import type { LawDataResult, Timing } from "lawtext/dist/src/data/lawdata";
 import { toLawData } from "lawtext/dist/src/data/lawdata";
 import { lawNumLikeToLawNum, ptnLawNumLike } from "lawtext/dist/src/law/lawNum";
 import parsePath from "lawtext/dist/src/path/v1/parse";
-import { parseLawID } from "lawtext/dist/src/law/lawID";
+import { parseLawIDOrLawRevID } from "lawtext/dist/src/law/lawID";
 
 export const navigateLawData = async (
     pathStr: string,
@@ -65,7 +65,7 @@ export const navigateLawData = async (
         }
 
         const reLawNumLike = new RegExp(`^(?:${ptnLawNumLike})$`);
-        if (lawID === null && parseLawID(firstPart)) {
+        if (lawID === null && parseLawIDOrLawRevID(firstPart)) {
             lawID = firstPart;
 
         } else if (reLawNumLike.test(firstPart)) {

@@ -266,7 +266,6 @@ export type LawIDStruct =
     | LawIDStructPrimeMinisterDecision
     ;
 
-
 export const parseLawID = (text: string): LawIDStruct | null => {
     for (const type of lawIDTypes) {
         const re = reLawID[type];
@@ -359,4 +358,28 @@ export const parseLawID = (text: string): LawIDStruct | null => {
     }
 
     return null;
+};
+
+export interface LawRevIDStruct {
+    law: LawIDStruct,
+    date: string,
+    amendLaw: LawIDStruct | null,
+}
+
+export const parseLawIDOrLawRevID = (text: string): LawRevIDStruct | LawIDStruct | null => {
+
+    const parts = text.split("_");
+    if (parts.length === 1) {
+        return parseLawID(parts[0]);
+    } else if (parts.length === 3) {
+        const law = parseLawID(parts[0]);
+        if (!law) return null;
+        const date = parts[1];
+        if (!/^\d{8}$/.test(date)) return null;
+        const amendLaw = parseLawID(parts[2]);
+        if (!amendLaw && (parts[2] !== "000000000000000")) return null;
+        return { law, date, amendLaw };
+    } else {
+        return null;
+    }
 };
