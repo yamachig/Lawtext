@@ -268,6 +268,19 @@ export const processLawRef = (
 
                     const pointerRangesIndex = i + lawNameCandidateStartIndex + replacedCount;
 
+                    if (
+                        (pointerRangesIndex < elToBeModified.children.length)
+                        && (elToBeModified.children[pointerRangesIndex] instanceof ____PointerRanges)
+                    )
+                    {
+                        const pointerRanges = elToBeModified.children[pointerRangesIndex] as ____PointerRanges;
+                        const firstPointer = pointerRanges.ranges()[0].pointers()[0];
+                        const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
+                        if (pointerEnv) {
+                            pointerEnv.directLawNum = lawNumLikeToLawNum(lawNumText);
+                        }
+                    }
+
                     elToBeModified.children.splice(
                         i + lawNameCandidateStartIndex,
                         replacedCount,
@@ -283,19 +296,6 @@ export const processLawRef = (
                         lawRef,
                     );
                     i += (replacedCount - 1);
-
-                    if (
-                        (pointerRangesIndex < elToBeModified.children.length)
-                        && (elToBeModified.children[pointerRangesIndex] instanceof ____PointerRanges)
-                    )
-                    {
-                        const pointerRanges = elToBeModified.children[pointerRangesIndex] as ____PointerRanges;
-                        const firstPointer = pointerRanges.ranges()[0].pointers()[0];
-                        const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
-                        if (pointerEnv) {
-                            pointerEnv.directLawNum = lawNumLikeToLawNum(lawNumText);
-                        }
-                    }
                 }
 
             }
