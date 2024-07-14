@@ -4,6 +4,7 @@ import tseslint from "typescript-eslint";
 import tsdoc from "eslint-plugin-tsdoc";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
+import stylisticJs from "@stylistic/eslint-plugin-js";
 
 export default tseslint.config(
     {
@@ -30,6 +31,7 @@ export default tseslint.config(
             tsdoc,
             react,
             "react-hooks": reactHooks,
+            "@stylistic/js": stylisticJs,
         },
 
         settings: {
@@ -115,6 +117,8 @@ export default tseslint.config(
             "eol-last": ["error", "always"],
             "keyword-spacing": "error",
 
+            "@stylistic/js/quote-props": ["error", "as-needed"],
+
             "no-implicit-coercion": "error",
 
             "@typescript-eslint/no-misused-promises": [
@@ -129,7 +133,7 @@ export default tseslint.config(
             "@typescript-eslint/type-annotation-spacing": "error",
             "@typescript-eslint/consistent-type-imports": [
                 "error", {
-                    "disallowTypeAnnotations": false,
+                    disallowTypeAnnotations: false,
                 },
             ],
             "tsdoc/syntax": "warn",
