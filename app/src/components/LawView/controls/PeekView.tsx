@@ -11,7 +11,7 @@ const PeekViewSpan = styled.span`
 `;
 
 const PeekViewTextSpan = styled.span`
-    border-bottom: 1px solid rgba(127, 127, 127, 0.3);
+    border-bottom: 1px solid rgba(127, 127, 127, 0.5);
     cursor: pointer;
     transition: background-color 0.3s, border-bottom-color 0.3s;
 `;
