@@ -80,6 +80,15 @@ describe("Test getPointerEnvs", () => {
                             },
                             children: ["第二項"],
                         },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "EACH",
+                                targetType: "Item",
+                                name: "各号",
+                            },
+                            children: ["各号"],
+                        },
                     ],
                 },
                 located: {
@@ -93,13 +102,22 @@ describe("Test getPointerEnvs", () => {
                             text: "第二項",
                             containers: ["container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]"],
                         },
+                        {
+                            text: "各号",
+                            containers: [
+                                "container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[1][num=1]",
+                                "container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]",
+                                "container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[3][num=3]",
+                                "container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[4][num=4]",
+                            ],
+                        },
                     ],
                 },
                 directLawNum: null,
                 namingParent: null,
                 namingChildren: ["第二号"],
                 seriesPrev: null,
-                seriesNext: null,
+                seriesNext: "第二号",
             },
             {
                 pointer: {
@@ -128,9 +146,9 @@ describe("Test getPointerEnvs", () => {
                     ],
                 },
                 directLawNum: null,
-                namingParent: "第二十四条の二第二項",
+                namingParent: "第二十四条の二第二項各号",
                 namingChildren: [],
-                seriesPrev: null,
+                seriesPrev: "第二十四条の二第二項各号",
                 seriesNext: null,
             },
         ];
@@ -278,7 +296,7 @@ describe("Test getPointerEnvs", () => {
                 namingParent: "第七十五条第一項",
                 namingChildren: ["第四号", "第五項"],
                 seriesPrev: "第七十五条第一項",
-                seriesNext: null,
+                seriesNext: "第四号",
             },
             {
                 pointer: {
@@ -309,7 +327,7 @@ describe("Test getPointerEnvs", () => {
                 directLawNum: null,
                 namingParent: "第七十六条第四項",
                 namingChildren: [],
-                seriesPrev: null,
+                seriesPrev: "第七十六条第四項",
                 seriesNext: "第五項",
             },
             {
@@ -342,7 +360,7 @@ describe("Test getPointerEnvs", () => {
                 namingParent: "第七十六条第四項",
                 namingChildren: ["第五号"],
                 seriesPrev: "第四号",
-                seriesNext: null,
+                seriesNext: "第五号",
             },
             {
                 pointer: {
@@ -373,7 +391,7 @@ describe("Test getPointerEnvs", () => {
                 directLawNum: null,
                 namingParent: "第五項",
                 namingChildren: [],
-                seriesPrev: null,
+                seriesPrev: "第五項",
                 seriesNext: null,
             },
         ];
@@ -623,7 +641,7 @@ describe("Test getPointerEnvs", () => {
                     "第四項",
                 ],
                 seriesPrev: "第三十九条第一項",
-                seriesNext: null,
+                seriesNext: "前条",
             },
             {
                 pointer: {
@@ -653,7 +671,7 @@ describe("Test getPointerEnvs", () => {
                 directLawNum: null,
                 namingParent: "第四十三条第一項",
                 namingChildren: [],
-                seriesPrev: null,
+                seriesPrev: "第四十三条第一項",
                 seriesNext: "第四項",
             },
             {
@@ -689,7 +707,7 @@ describe("Test getPointerEnvs", () => {
                     "第五項",
                 ],
                 seriesPrev: "前条",
-                seriesNext: null,
+                seriesNext: "前条",
             },
             {
                 pointer: {
@@ -719,7 +737,7 @@ describe("Test getPointerEnvs", () => {
                 directLawNum: null,
                 namingParent: "第四項",
                 namingChildren: [],
-                seriesPrev: null,
+                seriesPrev: "第四項",
                 seriesNext: "第五項",
             },
             {
@@ -889,9 +907,9 @@ describe("Test getPointerEnvs", () => {
                 },
                 directLawNum: null,
                 namingParent: null,
-                namingChildren: ["同条第三項後段"],
+                namingChildren: [],
                 seriesPrev: null,
-                seriesNext: null,
+                seriesNext: "同条第三項後段",
             },
             {
                 pointer: {
@@ -942,9 +960,9 @@ describe("Test getPointerEnvs", () => {
                     ],
                 },
                 directLawNum: null,
-                namingParent: "前条第一項",
+                namingParent: null,
                 namingChildren: [],
-                seriesPrev: null,
+                seriesPrev: "前条第一項",
                 seriesNext: null,
             },
         ];

@@ -1322,7 +1322,7 @@ describe("Test getScope", () => {
             {
                 tag: "____PointerRanges",
                 attr: {
-                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]\"}]",
+                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[1][num=1]\",\"exclude\":[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"}]},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\",\"exclude\":[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"}]},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[3][num=3]\",\"exclude\":[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"}]},{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[4][num=4]\",\"exclude\":[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"}]}]",
                 },
                 children: [
                     {
@@ -1352,6 +1352,81 @@ describe("Test getScope", () => {
                                             num: "2",
                                         },
                                         children: ["第二項"],
+                                    },
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "EACH",
+                                            targetType: "Item",
+                                            name: "各号",
+                                        },
+                                        children: ["各号"],
+                                    },
+                                ],
+                            },
+                            {
+                                tag: "__Parentheses",
+                                attr: {
+                                    type: "round",
+                                    depth: "1",
+                                },
+                                children: [
+                                    {
+                                        tag: "__PStart",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: ["（"],
+                                    },
+                                    {
+                                        tag: "__PContent",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: [
+                                            {
+                                                tag: "____PointerRanges",
+                                                attr: {
+                                                    targetContainerIDRanges: "[{\"from\":\"container-Law-MainProvision[1]-Article[1][num=24_2]-Paragraph[2][num=2]-Item[2][num=2]\"}]",
+                                                },
+                                                children: [
+                                                    {
+                                                        tag: "____PointerRange",
+                                                        attr: {},
+                                                        children: [
+                                                            {
+                                                                tag: "____Pointer",
+                                                                attr: {},
+                                                                children: [
+                                                                    {
+                                                                        tag: "____PF",
+                                                                        attr: {
+                                                                            relPos: "NAMED",
+                                                                            targetType: "Item",
+                                                                            name: "第二号",
+                                                                            num: "2",
+                                                                        },
+                                                                        children: ["第二号"],
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                            {
+                                                tag: "__Text",
+                                                attr: {},
+                                                children: ["を除く。"],
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        tag: "__PEnd",
+                                        attr: {
+                                            type: "round",
+                                        },
+                                        children: ["）"],
                                     },
                                 ],
                             },
@@ -1389,8 +1464,7 @@ describe("Test getScope", () => {
                     },
                 ],
             },
-        ]
-          ;
+        ];
         const expectedErrorMessages: string[] = [];
 
         [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));

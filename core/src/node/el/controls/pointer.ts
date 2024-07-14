@@ -9,6 +9,7 @@ export enum RelPos {
     NEXT = "NEXT",
     SAME = "SAME",
     NAMED = "NAMED",
+    EACH = "EACH",
 }
 
 export const isRelPos = (object: unknown): object is RelPos => {

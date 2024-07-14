@@ -3,7 +3,7 @@ import { lawNumLikeToLawNum } from "../../law/lawNum";
 import type * as std from "../../law/std";
 import type { SentenceEnv } from "../../node/container/sentenceEnv";
 import type { ____Pointer } from "../../node/el/controls";
-import { __Parentheses, ____LawNum, ____PointerRanges } from "../../node/el/controls";
+import { ____LawNum, ____PointerRanges } from "../../node/el/controls";
 import { PointerEnv } from "../../node/pointerEnv";
 import type { ErrorMessage } from "../../parser/cst/error";
 import type { WithErrorValue } from "../../parser/std/util";
@@ -45,12 +45,12 @@ const getPointerEnvsForEL = (
         //     -> "第五項" referes to "第七十六条第五項"
         // Not the case:
         //     "第三十八条の二十一第一項の規定は第二項の規定による" at "第四条の二第五項"
-        //     -> "第二項" referes to "第四条の二第二項" because "第二項" is not included in the previous PointerRanges.
+        //     -> "第二項" referes to "第四条の二第二項" because "第二項" is not included in the previous PointerRanges object.
         //
         // If a naming parent is given, the given naming parent is inherited.
         // e.g.
-        //     "第二十四条の二第二項各号（第二号を除く。）のいずれかに該当するに至つたとき"
-        //     -> "第二号" referes to "第二十四条の二第二項第二号" because the Parentheses gives the naming parent.
+        //     "第七十五条第一項又は第七十六条第四項（第四号を除く。）若しくは第五項（第五号を除く。）"
+        //     -> "第四号" referes to "第七十六条第四項第四号" because the modifierParentheses gives the naming parent.
         let pointerRangesNamingParent = namingParent;
 
         for (const [iRange, pointerRange] of pointerRanges.ranges().entries()) {
@@ -93,11 +93,15 @@ const getPointerEnvsForEL = (
             {
                 const modifierParentheses = pointerRange.modifierParentheses();
                 if (modifierParentheses) {
+                    // // modifierParentheses establishes a new naming context.
+                    // // e.g.
+                    // //     "第二十四条の二第二項各号（第二号を除く。）のいずれかに該当するに至つたとき"
+                    // //     -> "第二号" referes to "第二十四条の二第二項第二号"
                     const result = getPointerEnvsForEL(
                         modifierParentheses,
                         null,
                         sentenceEnv,
-                        lastPointerEnv,
+                        lastPointerEnv ?? prevPointerEnv,
                         pointerRangesNamingParent,
                     );
                     if (result){
@@ -126,13 +130,6 @@ const getPointerEnvsForEL = (
                 continue;
             }
 
-
-            // A Parentheses establishes a new naming context.
-            // e.g.
-            //     "第二十四条の二第二項各号（第二号を除く。）のいずれかに該当するに至つたとき"
-            //     -> "第二号" referes to "第二十四条の二第二項第二号"
-            const parenthesesNamingParent = ((child instanceof __Parentheses) && lastPointerEnv) ? lastPointerEnv : namingParent;
-
             const result = getPointerEnvsForEL(
                 child as std.StdEL | std.__EL,
                 (
@@ -141,9 +138,10 @@ const getPointerEnvsForEL = (
                         : null
                 ),
                 sentenceEnv,
-                lastPointerEnv,
-                parenthesesNamingParent,
+                lastPointerEnv ?? prevPointerEnv,
+                namingParent,
             );
+
             if (result){
                 if (!firstPointerEnv) firstPointerEnv = result.value.firstPointerEnv;
                 lastPointerEnv = result.value.lastPointerEnv;

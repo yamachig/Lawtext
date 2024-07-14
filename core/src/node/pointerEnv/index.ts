@@ -444,31 +444,50 @@ export class PointerEnv {
                     }
                 }
             }
+
+        } else if (fragments[0].attr.relPos === RelPos.EACH) {
+            // e.g.: "各号"
+
+            // console.warn(`Not located ${this.pointer.text()}`);
+            return;
         }
         else { throw assertNever(fragments[0].attr.relPos); }
     }
 }
 
 
-const locateContainerFromParent = (parentContainer: Container, fragment: ____PF) => {
-    return parentContainer.find(
-        c =>
-            (
+const locateContainersFromParent = (parentContainer: Container, fragment: ____PF) => {
+    if (fragment.attr.relPos === RelPos.EACH) {
+        return [
+            ...parentContainer.findAll((
+                c =>
+                    (
+                        (fragment.attr.relPos === RelPos.EACH)
+                    && (c.el.tag === fragment.attr.targetType)
+                    )
+            )),
+        ];
+    } else {
+        const container = parentContainer.find((
+            c =>
                 (
-                    (c.el.tag === fragment.attr.targetType)
+                    (
+                        (c.el.tag === fragment.attr.targetType)
                     || (
                         (fragment.attr.targetType === "SUBITEM")
                         && (/^Subitem\d+$/.exec(c.el.tag) !== null)
                     )
-                )
+                    )
                 && ((c.num ?? null) === fragment.attr.num)
-            )
+                )
             || (
                 (fragment.attr.targetType === "PROVISO")
                 && (c.el.tag === "Sentence")
                 && (c.el.attr.Function === "proviso")
-            ),
-    );
+            )
+        ));
+        return container ? [container] : [];
+    }
 };
 
 
@@ -492,11 +511,11 @@ const locateContainersForFragments = (
         locatedContainersForFragments.push({ fragment: fragments[0], containers: [parentContainer] });
 
         for (const fragment of fragments.slice(1)) {
-            const container = locateContainerFromParent(parentContainer, fragment);
+            const containers = locateContainersFromParent(parentContainer, fragment);
 
-            if (container) {
-                locatedContainersForFragments.push({ fragment, containers: [container] });
-                parentContainer = container;
+            if (containers.length > 0) {
+                locatedContainersForFragments.push({ fragment, containers });
+                parentContainer = containers[0]; // containers is an Array only if fragment.attr.relPos === RelPos.EACH
             } else {
                 break;
             }

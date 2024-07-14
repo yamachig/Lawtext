@@ -358,6 +358,19 @@ export const $secondaryOnlyPointerFragment = factory
             })
             )
         )
+        .or(r => r
+            .action(r => r
+                .seqEqual("各号")
+            , (({ text, range }) => {
+                return new ____PF({
+                    relPos: RelPos.EACH,
+                    targetType: "Item",
+                    name: text(),
+                    range: range(),
+                });
+            })
+            )
+        )
     )
     ;
 

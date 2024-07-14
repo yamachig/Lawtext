@@ -1631,4 +1631,170 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （国の機関等に対する処分等の適用除外）
+第四条　「参照先」
+２・３　
+４　（略）
+  一～五　（略）
+  六　国の機関相互間の関係について定める命令等並びに地方自治法（昭和二十二年法律第六十七号）第二編第十一章に規定する国と普通地方公共団体との関係及び普通地方公共団体相互間の関係その他の国と地方公共団体との関係及び地方公共団体相互間の関係について定める命令等（第一項の規定によりこの法律の規定を適用しないこととされる処分に係る命令等を含む。）
+  七　（略）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_3-text_23_28",
+                    type: "LawName",
+                    name: "地方自治法",
+                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":42},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":3,\"textOffset\":28}}",
+                    value: "昭和二十二年法律第六十七号",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["地方自治法"],
+                    },
+                ],
+            },
+        ];
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Part",
+                                name: "第二編",
+                                num: "2",
+                            },
+                            children: ["第二編"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Chapter",
+                                name: "第十一章",
+                                num: "11",
+                            },
+                            children: ["第十一章"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawNum: "昭和二十二年法律第六十七号",
+                    fqPrefixFragments: [],
+                },
+                directLawNum: "昭和二十二年法律第六十七号",
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: "第一項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第一項",
+                            containers: ["container-Law-MainProvision[1]-Article[1][num=4]-Paragraph[1][num=1]"],
+                        },
+                    ],
+                },
+                directLawNum: null,
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: "第二編第十一章",
+                seriesNext: "この法律",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "HERE",
+                                targetType: "Law",
+                                name: "この法律",
+                            },
+                            children: ["この法律"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "この法律",
+                            containers: ["container-Law"],
+                        },
+                    ],
+                },
+                directLawNum: null,
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: "第一項",
+                seriesNext: null,
+            },
+        ];
+
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        // console.log(JSON.stringify([...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

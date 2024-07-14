@@ -1297,4 +1297,128 @@ describe("Test $pointerRanges", () => {
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = "第二十四条の二第五項各号（第二号を除く。）のいずれかに該当するに至つたとき。";
+        const expectedErrorMessages: string[] = [];
+
+        const expectedPointerRanges = {
+            tag: "____PointerRanges",
+            attr: {},
+            children: [
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "Article",
+                                        name: "第二十四条の二"
+                                    },
+                                    children: ["第二十四条の二"]
+                                },
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "Paragraph",
+                                        name: "第五項"
+                                    },
+                                    children: ["第五項"]
+                                },
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "EACH",
+                                        targetType: "Item",
+                                        name: "各号"
+                                    },
+                                    children: ["各号"]
+                                }
+                            ]
+                        },
+                        {
+                            tag: "__Parentheses",
+                            attr: {
+                                type: "round",
+                                depth: "1"
+                            },
+                            children: [
+                                {
+                                    tag: "__PStart",
+                                    attr: {
+                                        type: "round"
+                                    },
+                                    children: ["（"]
+                                },
+                                {
+                                    tag: "__PContent",
+                                    attr: {
+                                        type: "round"
+                                    },
+                                    children: [
+                                        {
+                                            tag: "____PointerRanges",
+                                            attr: {},
+                                            children: [
+                                                {
+                                                    tag: "____PointerRange",
+                                                    attr: {},
+                                                    children: [
+                                                        {
+                                                            tag: "____Pointer",
+                                                            attr: {},
+                                                            children: [
+                                                                {
+                                                                    tag: "____PF",
+                                                                    attr: {
+                                                                        relPos: "NAMED",
+                                                                        targetType: "Item",
+                                                                        name: "第二号"
+                                                                    },
+                                                                    children: ["第二号"]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            tag: "__Text",
+                                            attr: {},
+                                            children: ["を除く。"]
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: "__PEnd",
+                                    attr: {
+                                        type: "round"
+                                    },
+                                    children: ["）"]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const result = $pointerRanges.abstract().match(offset, target, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
+            assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
+        }
+    });
 });
