@@ -3,7 +3,8 @@ import type * as std from "../../law/std";
 import type { ErrorMessage } from "../../parser/cst/error";
 import type { WithErrorValue } from "../../parser/std/util";
 import { processNameInline } from "./processNameInline";
-import type { ____Declaration, ____LawRef } from "../../node/el/controls";
+import type { ____Declaration } from "../../node/el/controls";
+import { ____LawRef } from "../../node/el/controls";
 import type { SentenceEnv } from "../../node/container/sentenceEnv";
 import { processLawRef } from "./processLawRef";
 import { isIgnoreAnalysis } from "../common";
@@ -60,6 +61,9 @@ export const detectDeclarationsByEL = (
             continue;
 
         } else if (isIgnoreAnalysis(child)) {
+            continue;
+
+        } else if (child instanceof ____LawRef) {
             continue;
 
         } else {
@@ -143,7 +147,9 @@ export const detectDeclarations = (
         if (result){
             for (const declaration of result.value.declarations) declarations.add(declaration);
             for (const lawRef of result.value.lawRefs) {
-                lawRefByDeclarationID.set(lawRef.attr.includingDeclarationID, lawRef);
+                if (lawRef.attr.includingDeclarationID) {
+                    lawRefByDeclarationID.set(lawRef.attr.includingDeclarationID, lawRef);
+                }
             }
             errors.push(...result.errors);
         }

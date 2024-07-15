@@ -12,7 +12,6 @@ import type { SentenceEnv, SentenceTextRange } from "../../node/container/senten
 import { isSentenceText } from "../../node/container/sentenceEnv";
 import { isIgnoreAnalysis } from "../common";
 import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
-import { lawNumLikeToLawNum } from "../../law/lawNum";
 
 export const matchVariableReferences = (
     textEL: __Text,
@@ -174,7 +173,7 @@ export const detectVariableReferencesOfEL = (
                     const lastNewItem = match.value.newItems[match.value.newItems.length - 1];
                     if (lastNewItem instanceof ____VarRef) {
                         const declaration = declarations.get(lastNewItem.attr.declarationID);
-                        if (declaration.attr.type === "LawName") {
+                        if (declaration.attr.type === "LawTitle") {
                             const pointerRangesIndex = childIndex + match.value.newItems.length;
 
                             if (
@@ -185,8 +184,9 @@ export const detectVariableReferencesOfEL = (
                                 const pointerRanges = elToBeModified.children[pointerRangesIndex] as ____PointerRanges;
                                 const firstPointer = pointerRanges.ranges()[0].pointers()[0];
                                 const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
-                                if (pointerEnv && declaration.attr.value) {
-                                    pointerEnv.directLawNum = lawNumLikeToLawNum(declaration.attr.value);
+                                const lawRef = lawRefByDeclarationID.get(declaration.attr.declarationID);
+                                if (pointerEnv && declaration.attr.value && lawRef) {
+                                    pointerEnv.prependedLawRef = lawRef;
                                 }
                             }
                         }

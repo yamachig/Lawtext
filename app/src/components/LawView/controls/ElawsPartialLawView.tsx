@@ -8,10 +8,16 @@ import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any";
 import React from "react";
 
 
-export interface ElawsPartialLawViewProps { lawNum: string, article?: string, paragraph?: string, appdxTable?: string }
+export interface ElawsPartialLawViewProps {
+    lawTitle?: string,
+    lawNum: string,
+    article?: string,
+    paragraph?: string,
+    appdxTable?: string,
+}
 
 export const ElawsPartialLawView = (props: HTMLComponentProps & ElawsPartialLawViewProps) => {
-    const { lawNum, article, paragraph, appdxTable, htmlOptions } = props;
+    const { lawTitle, lawNum, article, paragraph, appdxTable, htmlOptions } = props;
 
     const [{ loading, el }, setState] = React.useState({ loading: true, el: (null as std.StdEL | null) });
 
@@ -31,10 +37,17 @@ export const ElawsPartialLawView = (props: HTMLComponentProps & ElawsPartialLawV
                     paragraphNum.children.unshift(`${article}／`);
                 }
             }
-            addSentenceChildrenControls(el);
-            setState({ loading: false, el });
+            const law = std.newStdEL("Law", {}, [
+                std.newStdEL("LawNum", {}, [lawNum]),
+                std.newStdEL("LawBody", {}, [
+                    ...(lawTitle ? [std.newStdEL("LawTitle", {}, [lawTitle])] : []),
+                    std.newStdEL("MainProvision", {}, [el]),
+                ]),
+            ]);
+            addSentenceChildrenControls(law);
+            setState({ loading: false, el: law });
         })();
-    }, [appdxTable, article, lawNum, paragraph]);
+    }, [appdxTable, article, lawNum, lawTitle, paragraph]);
 
     if (loading) {
         return <div className="text-secondary"><span className="spinner-border" style={{ width: "1em", height: "1em" }}role="status"/> e-Gov法令APIから法令データを取得しています...</div>;

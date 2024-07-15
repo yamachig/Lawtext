@@ -1,9 +1,9 @@
 import { parseNamedNum } from "../../law/num";
-import { lawNumLikeToLawNum } from "../../law/lawNum";
+// import { lawNumLikeToLawNum } from "../../law/lawNum";
 import type * as std from "../../law/std";
 import type { SentenceEnv } from "../../node/container/sentenceEnv";
 import type { ____Pointer } from "../../node/el/controls";
-import { ____LawNum, ____PointerRanges } from "../../node/el/controls";
+import { ____PointerRanges } from "../../node/el/controls";
 import { PointerEnv } from "../../node/pointerEnv";
 import type { ErrorMessage } from "../../parser/cst/error";
 import type { WithErrorValue } from "../../parser/std/util";
@@ -13,7 +13,6 @@ import type { SentenceEnvsStruct } from "../getSentenceEnvs";
 
 const getPointerEnvsForEL = (
     el: std.StdEL | std.__EL,
-    prevLawNum: ____LawNum | null,
     sentenceEnv: SentenceEnv,
     __prevPointerEnv: PointerEnv | null,
     __namingParent: PointerEnv | null,
@@ -53,9 +52,9 @@ const getPointerEnvsForEL = (
         //     -> "第四号" referes to "第七十六条第四項第四号" because the modifierParentheses gives the naming parent.
         let pointerRangesNamingParent = namingParent;
 
-        for (const [iRange, pointerRange] of pointerRanges.ranges().entries()) {
+        for (const pointerRange of pointerRanges.ranges()) {
 
-            for (const [iPointer, pointer] of pointerRange.pointers().entries()) {
+            for (const pointer of pointerRange.pointers()) {
 
                 const fragments = pointer.fragments();
                 for (const fragment of fragments) {
@@ -67,10 +66,6 @@ const getPointerEnvsForEL = (
                     pointer,
                     sentenceEnv,
                 });
-
-                if (prevLawNum && iRange === 0 && iPointer === 0) {
-                    pointerEnv.directLawNum = lawNumLikeToLawNum(prevLawNum.text());
-                }
 
                 if (pointerRangesNamingParent) {
                     pointerEnv.namingParent = pointerRangesNamingParent;
@@ -99,7 +94,6 @@ const getPointerEnvsForEL = (
                     // //     -> "第二号" referes to "第二十四条の二第二項第二号"
                     const result = getPointerEnvsForEL(
                         modifierParentheses,
-                        null,
                         sentenceEnv,
                         lastPointerEnv ?? prevPointerEnv,
                         pointerRangesNamingParent,
@@ -122,7 +116,7 @@ const getPointerEnvsForEL = (
 
     } else {
 
-        for (const [i, child] of el.children.entries()) {
+        for (const child of el.children) {
             if (typeof child === "string") {
                 continue;
 
@@ -132,11 +126,6 @@ const getPointerEnvsForEL = (
 
             const result = getPointerEnvsForEL(
                 child as std.StdEL | std.__EL,
-                (
-                    ((i > 0) && (el.children[i - 1] instanceof ____LawNum))
-                        ? (el.children[i - 1] as ____LawNum)
-                        : null
-                ),
                 sentenceEnv,
                 lastPointerEnv ?? prevPointerEnv,
                 namingParent,
@@ -194,7 +183,6 @@ export const getPointerEnvs = (sentenceEnvsStruct: SentenceEnvsStruct): WithErro
 
         const result = getPointerEnvsForEL(
             sentenceEnv.el,
-            null,
             sentenceEnv,
             prevPointerEnv,
             null,

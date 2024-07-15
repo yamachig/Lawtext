@@ -1,9 +1,9 @@
-import { assertNever } from "../../util";
+import { assertNever, pick } from "../../util";
 import type { Container } from "../container";
 import { getContainerType, ContainerType } from "../container";
 import type { SentenceEnv } from "../container/sentenceEnv";
 import { EL } from "../el";
-import type { ____PF, ____Pointer } from "../el/controls";
+import type { ____LawRef, ____PF, ____Pointer } from "../el/controls";
 import { RelPos } from "../el/controls";
 
 export interface InternalLocatedInfo {
@@ -16,7 +16,7 @@ export interface InternalLocatedInfo {
 
 export interface ExternalLocatedInfo {
     type: "external",
-    lawNum: string,
+    lawRef: ____LawRef,
     fqPrefixFragments: ____PF[],
     skipSameCount: number,
 }
@@ -24,7 +24,7 @@ export interface ExternalLocatedInfo {
 export type LocatedInfo = InternalLocatedInfo | ExternalLocatedInfo;
 
 export class PointerEnv {
-    public directLawNum: string | null = null;
+    public prependedLawRef: ____LawRef | null = null;
 
     public namingParent: PointerEnv | null = null;
     public namingChildren: PointerEnv[] = [];
@@ -62,10 +62,11 @@ export class PointerEnv {
                         ? {
                             ...this.located,
                             fqPrefixFragments: this.located.fqPrefixFragments.map(f => f.text()),
+                            lawRef: this.located.lawRef && pick(this.located.lawRef.attr, "suggestedLawTitle", "lawNum"),
                         }
                         : null
             ),
-            directLawNum: this.directLawNum,
+            prependedLawRef: this.prependedLawRef && pick(this.prependedLawRef.attr, "suggestedLawTitle", "lawNum"),
             namingParent: this.namingParent ? this.namingParent.pointer.text() : null,
             namingChildren: this.namingChildren.map(c => c.pointer.text()),
             seriesPrev: this.seriesPrev ? this.seriesPrev.pointer.text() : null,
@@ -107,7 +108,7 @@ export class PointerEnv {
                 const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex + skipSameCount);
                 this.located = {
                     type: "external",
-                    lawNum: prev.lawNum,
+                    lawRef: prev.lawRef,
                     fqPrefixFragments,
                     skipSameCount,
                 };
@@ -250,11 +251,11 @@ export class PointerEnv {
             if (getContainerType(fragments[0].attr.targetType) === ContainerType.TOPLEVEL) {
                 // e.g.: "附則", "別表第二"
 
-                if (this.directLawNum) {
+                if (this.prependedLawRef) {
                     // e.g. "電波法別表第一"
                     this.located = {
                         type: "external",
-                        lawNum: this.directLawNum,
+                        lawRef: this.prependedLawRef,
                         fqPrefixFragments: [],
                         skipSameCount: 0,
                     };
@@ -288,7 +289,7 @@ export class PointerEnv {
             } else if (fragments[0].attr.targetType === "SUBITEM") {
                 // e.g. "イ"
 
-                // Assuming no directLawNum
+                // Assuming no prependedLawRef
 
                 let located = false;
 
@@ -310,7 +311,7 @@ export class PointerEnv {
                         const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex);
                         this.located = {
                             type: "external",
-                            lawNum: prev.lawNum,
+                            lawRef: prev.lawRef,
                             fqPrefixFragments,
                             skipSameCount: 0,
                         };
@@ -370,11 +371,11 @@ export class PointerEnv {
 
             } else {
 
-                if (this.directLawNum) {
+                if (this.prependedLawRef) {
                     // e.g. "行政手続法第二条"
                     this.located = {
                         type: "external",
-                        lawNum: this.directLawNum,
+                        lawRef: this.prependedLawRef,
                         fqPrefixFragments: [],
                         skipSameCount: 0,
                     };
@@ -400,7 +401,7 @@ export class PointerEnv {
                         const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex);
                         this.located = {
                             type: "external",
-                            lawNum: prev.lawNum,
+                            lawRef: prev.lawRef,
                             fqPrefixFragments,
                             skipSameCount: 0,
                         };

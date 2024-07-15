@@ -270,7 +270,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_43_49",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "通則法改正法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
@@ -279,7 +279,7 @@ describe("Test detectDeclarations", () => {
                 children: ["通則法改正法"],
             },
         ] ;
-        const expectedErrorMessages: string[] = [];
+        const expectedErrorMessages: string[] = ["Could not find lawTitleLength"];
         const expectedModifiedInput = {
             tag: "Subitem1",
             attr: {},
@@ -339,6 +339,7 @@ describe("Test detectDeclarations", () => {
                                     tag: "____LawRef",
                                     attr: {
                                         includingDeclarationID: "decl-sentence_0-text_43_49",
+                                        lawNum: "平成二十六年法律第六十六号",
                                     },
                                     children: [
                                         {
@@ -395,7 +396,7 @@ describe("Test detectDeclarations", () => {
                                                                             tag: "____Declaration",
                                                                             attr: {
                                                                                 declarationID: "decl-sentence_0-text_43_49",
-                                                                                type: "LawName",
+                                                                                type: "LawTitle",
                                                                                 name: "通則法改正法",
                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
@@ -495,7 +496,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_23_28",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "地方自治法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":42},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
@@ -543,13 +544,15 @@ describe("Test detectDeclarations", () => {
                                     tag: "____LawRef",
                                     attr: {
                                         includingDeclarationID: "decl-sentence_0-text_23_28",
+                                        lawNum: "昭和二十二年法律第六十七号",
+                                        suggestedLawTitle: "地方自治法",
                                     },
                                     children: [
                                         {
                                             tag: "____Declaration",
                                             attr: {
                                                 declarationID: "decl-sentence_0-text_23_28",
-                                                type: "LawName",
+                                                type: "LawTitle",
                                                 name: "地方自治法",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":42},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
@@ -1299,7 +1302,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_38_39",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":40},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
@@ -1427,14 +1430,21 @@ describe("Test detectDeclarations", () => {
                                                                 {
                                                                     tag: "__Text",
                                                                     attr: {},
-                                                                    children: ["において使用する用語は、臨床研究法"],
+                                                                    children: ["において使用する用語は、"],
                                                                 },
                                                                 {
                                                                     tag: "____LawRef",
                                                                     attr: {
                                                                         includingDeclarationID: "decl-sentence_0-text_38_39",
+                                                                        lawNum: "平成二十九年法律第十六号",
+                                                                        suggestedLawTitle: "臨床研究法",
                                                                     },
                                                                     children: [
+                                                                        {
+                                                                            tag: "__Text",
+                                                                            attr: {},
+                                                                            children: ["臨床研究法"],
+                                                                        },
                                                                         {
                                                                             tag: "__Parentheses",
                                                                             attr: {
@@ -1489,7 +1499,7 @@ describe("Test detectDeclarations", () => {
                                                                                                             tag: "____Declaration",
                                                                                                             attr: {
                                                                                                                 declarationID: "decl-sentence_0-text_38_39",
-                                                                                                                type: "LawName",
+                                                                                                                type: "LawTitle",
                                                                                                                 name: "法",
                                                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":40},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
@@ -2542,7 +2552,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_84_91",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "国家行政組織法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
@@ -2560,7 +2570,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_41_47",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "内閣府設置法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
@@ -2671,13 +2681,15 @@ describe("Test detectDeclarations", () => {
                                                                     tag: "____LawRef",
                                                                     attr: {
                                                                         includingDeclarationID: "decl-sentence_0-text_41_47",
+                                                                        lawNum: "平成十一年法律第八十九号",
+                                                                        suggestedLawTitle: "内閣府設置法",
                                                                     },
                                                                     children: [
                                                                         {
                                                                             tag: "____Declaration",
                                                                             attr: {
                                                                                 declarationID: "decl-sentence_0-text_41_47",
-                                                                                type: "LawName",
+                                                                                type: "LawTitle",
                                                                                 name: "内閣府設置法",
                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
@@ -2803,13 +2815,15 @@ describe("Test detectDeclarations", () => {
                                                                     tag: "____LawRef",
                                                                     attr: {
                                                                         includingDeclarationID: "decl-sentence_0-text_84_91",
+                                                                        lawNum: "昭和二十三年法律第百二十号",
+                                                                        suggestedLawTitle: "国家行政組織法",
                                                                     },
                                                                     children: [
                                                                         {
                                                                             tag: "____Declaration",
                                                                             attr: {
                                                                                 declarationID: "decl-sentence_0-text_84_91",
-                                                                                type: "LawName",
+                                                                                type: "LawTitle",
                                                                                 name: "国家行政組織法",
                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
@@ -4525,7 +4539,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_3_21",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "裁判員の参加する刑事裁判に関する法律",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":3},\"end\":{\"sentenceIndex\":0,\"textOffset\":21}}",
@@ -4573,13 +4587,15 @@ describe("Test detectDeclarations", () => {
                                     tag: "____LawRef",
                                     attr: {
                                         includingDeclarationID: "decl-sentence_0-text_3_21",
+                                        lawNum: "平成１６年法律第６３号",
+                                        suggestedLawTitle: "裁判員の参加する刑事裁判に関する法律",
                                     },
                                     children: [
                                         {
                                             tag: "____Declaration",
                                             attr: {
                                                 declarationID: "decl-sentence_0-text_3_21",
-                                                type: "LawName",
+                                                type: "LawTitle",
                                                 name: "裁判員の参加する刑事裁判に関する法律",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":3},\"end\":{\"sentenceIndex\":0,\"textOffset\":21}}",
@@ -4732,7 +4748,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_8_20",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "官民データ活用推進基本法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}",
@@ -4807,13 +4823,15 @@ describe("Test detectDeclarations", () => {
                                     tag: "____LawRef",
                                     attr: {
                                         includingDeclarationID: "decl-sentence_0-text_8_20",
+                                        lawNum: "平成二十八年法律第百三号",
+                                        suggestedLawTitle: "官民データ活用推進基本法",
                                     },
                                     children: [
                                         {
                                             tag: "____Declaration",
                                             attr: {
                                                 declarationID: "decl-sentence_0-text_8_20",
-                                                type: "LawName",
+                                                type: "LawTitle",
                                                 name: "官民データ活用推進基本法",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}",
@@ -4955,7 +4973,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_8_16",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "へき地教育振興法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":31},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":16}}",
@@ -5074,13 +5092,15 @@ describe("Test detectDeclarations", () => {
                                     tag: "____LawRef",
                                     attr: {
                                         includingDeclarationID: "decl-sentence_0-text_8_16",
+                                        lawNum: "昭和二十九年法律第百四十三号",
+                                        suggestedLawTitle: "へき地教育振興法",
                                     },
                                     children: [
                                         {
                                             tag: "____Declaration",
                                             attr: {
                                                 declarationID: "decl-sentence_0-text_8_16",
-                                                type: "LawName",
+                                                type: "LawTitle",
                                                 name: "へき地教育振興法",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":31},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":16}}",
@@ -5254,7 +5274,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_29_55",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "激甚災害に対処するための特別の財政援助等に関する法律",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":69},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":29},\"end\":{\"sentenceIndex\":0,\"textOffset\":55}}",
@@ -5299,7 +5319,7 @@ describe("Test detectDeclarations", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_0_5",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "公営住宅法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":20},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":5}}",
@@ -5342,13 +5362,15 @@ describe("Test detectDeclarations", () => {
                                     tag: "____LawRef",
                                     attr: {
                                         includingDeclarationID: "decl-sentence_0-text_0_5",
+                                        lawNum: "昭和二十六年法律第百九十三号",
+                                        suggestedLawTitle: "公営住宅法",
                                     },
                                     children: [
                                         {
                                             tag: "____Declaration",
                                             attr: {
                                                 declarationID: "decl-sentence_0-text_0_5",
-                                                type: "LawName",
+                                                type: "LawTitle",
                                                 name: "公営住宅法",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":20},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":5}}",
@@ -5447,13 +5469,15 @@ describe("Test detectDeclarations", () => {
                                     tag: "____LawRef",
                                     attr: {
                                         includingDeclarationID: "decl-sentence_0-text_29_55",
+                                        lawNum: "昭和三十七年法律第百五十号",
+                                        suggestedLawTitle: "激甚災害に対処するための特別の財政援助等に関する法律",
                                     },
                                     children: [
                                         {
                                             tag: "____Declaration",
                                             attr: {
                                                 declarationID: "decl-sentence_0-text_29_55",
-                                                type: "LawName",
+                                                type: "LawTitle",
                                                 name: "激甚災害に対処するための特別の財政援助等に関する法律",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":69},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":29},\"end\":{\"sentenceIndex\":0,\"textOffset\":55}}",

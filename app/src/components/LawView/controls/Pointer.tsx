@@ -23,7 +23,7 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
     if (pointerEnv && pointerEnv.located) {
         const runs: JSX.Element[] = [];
         if (pointerEnv.located.type === "external") {
-            const lawNum = pointerEnv.located.lawNum;
+            const lawNum = pointerEnv.located.lawRef.attr.lawNum;
             if (!lawNum) {
                 return <ChildComponent {...childProps} />;
             }
@@ -67,6 +67,7 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
                         runs.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);
                     } else {
                         const elawsPartialLawViewProps: ElawsPartialLawViewProps = {
+                            lawTitle: pointerEnv.located.lawRef.attr.suggestedLawTitle,
                             lawNum,
                             article,
                             paragraph,

@@ -101,7 +101,7 @@ export const $lawNum: WithErrorRule<LawRefInfo> = factory
     ;
 
 export const $lawRef: WithErrorRule<{
-    lawNameCandidates: (std.Ruby | std.Sup | std.Sub | __Text)[],
+    lawTitleCandidates: (std.Ruby | std.Sup | std.Sub | __Text)[],
     lawRefInfo: LawRefInfo & {lawRefParentheses: __Parentheses},
 }> = factory
     .withName("lawRef")
@@ -125,7 +125,7 @@ export const $lawRef: WithErrorRule<{
                     )
                 )
             )
-        , "lawNameCandidates")
+        , "lawTitleCandidates")
         .and(r => r
             .oneMatch(({ item }) => {
                 if (
@@ -149,9 +149,9 @@ export const $lawRef: WithErrorRule<{
                 } else { return null; }
             })
         , "lawRefInfo")
-        .action(({ lawNameCandidates, lawRefInfo }) => {
+        .action(({ lawTitleCandidates, lawRefInfo }) => {
             const value = {
-                lawNameCandidates,
+                lawTitleCandidates,
                 lawRefInfo: lawRefInfo.value,
             };
             return { value, errors: [...lawRefInfo.errors] };

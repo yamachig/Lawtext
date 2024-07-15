@@ -210,7 +210,7 @@ describe("Test detectVariableReferences", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_1-text_21_23",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "旧法",
                     scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":24},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":21},\"end\":{\"sentenceIndex\":1,\"textOffset\":23}}",
@@ -318,7 +318,7 @@ describe("Test detectVariableReferences", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_3-text_21_23",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "旧法",
                     scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":24},\"end\":{\"sentenceIndex\":10,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":21},\"end\":{\"sentenceIndex\":3,\"textOffset\":23}}",
@@ -552,7 +552,7 @@ describe("Test detectVariableReferences", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_18-text_41_47",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "内閣府設置法",
                     scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":60},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":41},\"end\":{\"sentenceIndex\":18,\"textOffset\":47}}",
@@ -570,7 +570,7 @@ describe("Test detectVariableReferences", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_18-text_84_91",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "国家行政組織法",
                     scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":105},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":84},\"end\":{\"sentenceIndex\":18,\"textOffset\":91}}",
@@ -1301,7 +1301,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_41_47",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "内閣府設置法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
@@ -1319,7 +1319,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_84_91",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "国家行政組織法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
@@ -1365,11 +1365,17 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "平成十一年法律第八十九号",
+                    lawRef: {
+                        suggestedLawTitle: "内閣府設置法",
+                        lawNum: "平成十一年法律第八十九号",
+                    },
                     fqPrefixFragments: [],
                     skipSameCount: 0,
                 },
-                directLawNum: "平成十一年法律第八十九号",
+                prependedLawRef: {
+                    suggestedLawTitle: "内閣府設置法",
+                    lawNum: "平成十一年法律第八十九号",
+                },
                 namingParent: null,
                 namingChildren: ["第二項"],
                 seriesPrev: null,
@@ -1394,11 +1400,14 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "平成十一年法律第八十九号",
+                    lawRef: {
+                        suggestedLawTitle: "内閣府設置法",
+                        lawNum: "平成十一年法律第八十九号",
+                    },
                     fqPrefixFragments: ["第四十九条"],
                     skipSameCount: 0,
                 },
-                directLawNum: null,
+                prependedLawRef: null,
                 namingParent: "第四十九条第一項",
                 namingChildren: [],
                 seriesPrev: "第四十九条第一項",
@@ -1433,11 +1442,17 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "昭和二十三年法律第百二十号",
+                    lawRef: {
+                        suggestedLawTitle: "国家行政組織法",
+                        lawNum: "昭和二十三年法律第百二十号",
+                    },
                     fqPrefixFragments: [],
                     skipSameCount: 0,
                 },
-                directLawNum: "昭和二十三年法律第百二十号",
+                prependedLawRef: {
+                    suggestedLawTitle: "国家行政組織法",
+                    lawNum: "昭和二十三年法律第百二十号",
+                },
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: "第二項",
@@ -1497,7 +1512,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_4_10",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "国家公務員法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":24},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":4},\"end\":{\"sentenceIndex\":0,\"textOffset\":10}}",
@@ -1515,7 +1530,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_0-text_43_49",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "地方公務員法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":65},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
@@ -1561,11 +1576,17 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "昭和二十二年法律第百二十号",
+                    lawRef: {
+                        suggestedLawTitle: "国家公務員法",
+                        lawNum: "昭和二十二年法律第百二十号",
+                    },
                     fqPrefixFragments: [],
                     skipSameCount: 0,
                 },
-                directLawNum: "昭和二十二年法律第百二十号",
+                prependedLawRef: {
+                    suggestedLawTitle: "国家公務員法",
+                    lawNum: "昭和二十二年法律第百二十号",
+                },
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: null,
@@ -1600,11 +1621,17 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "昭和二十五年法律第二百六十一号",
+                    lawRef: {
+                        suggestedLawTitle: "地方公務員法",
+                        lawNum: "昭和二十五年法律第二百六十一号",
+                    },
                     fqPrefixFragments: [],
                     skipSameCount: 0,
                 },
-                directLawNum: "昭和二十五年法律第二百六十一号",
+                prependedLawRef: {
+                    suggestedLawTitle: "地方公務員法",
+                    lawNum: "昭和二十五年法律第二百六十一号",
+                },
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: "第二条第一項",
@@ -1659,7 +1686,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_3-text_23_28",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "地方自治法",
                     scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":42},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":3,\"textOffset\":28}}",
@@ -1705,11 +1732,17 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "昭和二十二年法律第六十七号",
+                    lawRef: {
+                        suggestedLawTitle: "地方自治法",
+                        lawNum: "昭和二十二年法律第六十七号",
+                    },
                     fqPrefixFragments: [],
                     skipSameCount: 0,
                 },
-                directLawNum: "昭和二十二年法律第六十七号",
+                prependedLawRef: {
+                    suggestedLawTitle: "地方自治法",
+                    lawNum: "昭和二十二年法律第六十七号",
+                },
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: null,
@@ -1741,7 +1774,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                         },
                     ],
                 },
-                directLawNum: null,
+                prependedLawRef: null,
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: "第二編第十一章",
@@ -1772,7 +1805,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                         },
                     ],
                 },
-                directLawNum: null,
+                prependedLawRef: null,
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: "第一項",
@@ -1825,7 +1858,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_2-text_8_20",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "出入国管理及び難民認定法",
                     scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":35},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":8},\"end\":{\"sentenceIndex\":2,\"textOffset\":20}}",
@@ -1871,11 +1904,17 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "昭和二十六年政令第三百十九号",
+                    lawRef: {
+                        suggestedLawTitle: "出入国管理及び難民認定法",
+                        lawNum: "昭和二十六年政令第三百十九号",
+                    },
                     fqPrefixFragments: [],
                     skipSameCount: 0,
                 },
-                directLawNum: "昭和二十六年政令第三百十九号",
+                prependedLawRef: {
+                    suggestedLawTitle: "出入国管理及び難民認定法",
+                    lawNum: "昭和二十六年政令第三百十九号",
+                },
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: null,
@@ -1909,11 +1948,14 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "昭和二十六年政令第三百十九号",
+                    lawRef: {
+                        suggestedLawTitle: "出入国管理及び難民認定法",
+                        lawNum: "昭和二十六年政令第三百十九号",
+                    },
                     fqPrefixFragments: ["第六十一条の二"],
                     skipSameCount: 1,
                 },
-                directLawNum: null,
+                prependedLawRef: null,
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: "第六十一条の二第一項",
@@ -1972,7 +2014,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 tag: "____Declaration",
                 attr: {
                     declarationID: "decl-sentence_6-text_43_46",
-                    type: "LawName",
+                    type: "LawTitle",
                     name: "放送法",
                     scope: "[{\"start\":{\"sentenceIndex\":6,\"textOffset\":61},\"end\":{\"sentenceIndex\":12,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":6,\"textOffset\":43},\"end\":{\"sentenceIndex\":6,\"textOffset\":46}}",
@@ -2018,11 +2060,17 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "昭和二十五年法律第百三十二号",
+                    lawRef: {
+                        suggestedLawTitle: "放送法",
+                        lawNum: "昭和二十五年法律第百三十二号",
+                    },
                     fqPrefixFragments: [],
                     skipSameCount: 0,
                 },
-                directLawNum: "昭和二十五年法律第百三十二号",
+                prependedLawRef: {
+                    suggestedLawTitle: "放送法",
+                    lawNum: "昭和二十五年法律第百三十二号",
+                },
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: null,
@@ -2055,14 +2103,17 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "昭和二十五年法律第百三十二号",
+                    lawRef: {
+                        suggestedLawTitle: "放送法",
+                        lawNum: "昭和二十五年法律第百三十二号",
+                    },
                     fqPrefixFragments: [
                         "第九十三条",
                         "第一項",
                     ],
                     skipSameCount: 1,
                 },
-                directLawNum: null,
+                prependedLawRef: null,
                 namingParent: null,
                 namingChildren: ["第四号"],
                 seriesPrev: "第九十三条第一項",
@@ -2087,17 +2138,129 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 },
                 located: {
                     type: "external",
-                    lawNum: "昭和二十五年法律第百三十二号",
+                    lawRef: {
+                        suggestedLawTitle: "放送法",
+                        lawNum: "昭和二十五年法律第百三十二号",
+                    },
                     fqPrefixFragments: [
                         "第九十三条",
                         "第一項",
                     ],
                     skipSameCount: 0,
                 },
-                directLawNum: null,
+                prependedLawRef: null,
                 namingParent: "同項各号",
                 namingChildren: [],
                 seriesPrev: "同項各号",
+                seriesNext: null,
+            },
+        ];
+
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        // console.log(JSON.stringify([...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （この法律の目的及び効力）
+第一条　（略）
+②　この法律は、もつぱら日本国憲法第七十三条にいう官吏に関する事務を掌理する基準を定めるものである。
+③～⑤　（略）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [];
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "HERE",
+                                targetType: "Law",
+                                name: "この法律",
+                            },
+                            children: ["この法律"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "この法律",
+                            containers: ["container-Law"],
+                        },
+                    ],
+                },
+                prependedLawRef: null,
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: "第七十三条",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第七十三条",
+                                num: "73",
+                            },
+                            children: ["第七十三条"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: {
+                        suggestedLawTitle: "日本国憲法",
+                        lawNum: "昭和二十一年憲法",
+                    },
+                    fqPrefixFragments: [],
+                    skipSameCount: 0,
+                },
+                prependedLawRef: {
+                    suggestedLawTitle: "日本国憲法",
+                    lawNum: "昭和二十一年憲法",
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: "この法律",
                 seriesNext: null,
             },
         ];

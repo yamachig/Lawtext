@@ -68,15 +68,14 @@ describe("Test $lawRef", () => {
                     children: ["」"]
                 }
             ]
-        }
-          ;
+        };
 
         const result = $lawRef.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
 
             // console.log(JSON.stringify(result.value.value.lawNameCandidate.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.lawNameCandidates.map(c => c.json(true)), expectedLawNameCandidates);
+            assert.deepStrictEqual(result.value.value.lawTitleCandidates.map(c => c.json(true)), expectedLawNameCandidates);
 
             // console.log(JSON.stringify(result.value.value.lawRefInfo.lawNum.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.lawRefInfo.lawNum.json(true), expectedLawNum);
@@ -115,14 +114,14 @@ describe("Test $lawRef", () => {
             tag: "____LawNum",
             attr: {},
             children: ["昭和二十二年法律第六十七号"]
-        } ;
+        };
 
         const result = $lawRef.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
 
             // console.log(JSON.stringify(result.value.value.lawNameCandidate.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.lawNameCandidates.map(c => c.json(true)), expectedLawNameCandidates);
+            assert.deepStrictEqual(result.value.value.lawTitleCandidates.map(c => c.json(true)), expectedLawNameCandidates);
 
             // console.log(JSON.stringify(result.value.value.lawRefInfo.lawNum.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.lawRefInfo.lawNum.json(true), expectedLawNum);
@@ -155,19 +154,95 @@ describe("Test $lawRef", () => {
             tag: "____LawNum",
             attr: {},
             children: ["平成１６年法律第６３号"]
-        } ;
+        };
 
         const result = $lawRef.abstract().match(0, input, env);
         assert.isTrue(result.ok);
         if (result.ok) {
 
             // console.log(JSON.stringify(result.value.value.lawNameCandidate.json(true), undefined, 2));
-            assert.deepStrictEqual(result.value.value.lawNameCandidates.map(c => c.json(true)), expectedLawNameCandidates);
+            assert.deepStrictEqual(result.value.value.lawTitleCandidates.map(c => c.json(true)), expectedLawNameCandidates);
 
             // console.log(JSON.stringify(result.value.value.lawRefInfo.lawNum.json(true), undefined, 2));
             assert.deepStrictEqual(result.value.value.lawRefInfo.lawNum.json(true), expectedLawNum);
 
             assert.deepStrictEqual(result.value.value.lawRefInfo.aliasInfo, null);
+
+            assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const origEL = loadEL({
+            tag: "Sentence",
+            attr: {},
+            children: ["別に定めるもののほか、電気通信事業法（昭和五十九年法律第八十六号。以下「法」という。）の規定を施行するために必要とする事項及び法の委任に基づく事項を定めることを目的とする。"],
+        }) as std.Sentence;
+        addSentenceChildrenControls(origEL);
+        const input = origEL.children as SentenceChildEL[];
+        // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
+        const expectedErrorMessages: string[] = [];
+        const expectedLawNameCandidates = [
+            {
+                tag: "__Text",
+                attr: {},
+                children: ["別に定めるもののほか、電気通信事業法"]
+            }
+        ];
+        const expectedLawNum = {
+            tag: "____LawNum",
+            attr: {},
+            children: ["昭和五十九年法律第八十六号"]
+        };
+        const expectedNameSquareParentheses = {
+            tag: "__Parentheses",
+            attr: {
+                type: "square",
+                depth: "2"
+            },
+            children: [
+                {
+                    tag: "__PStart",
+                    attr: {
+                        type: "square"
+                    },
+                    children: ["「"]
+                },
+                {
+                    tag: "__PContent",
+                    attr: {
+                        type: "square"
+                    },
+                    children: [
+                        {
+                            tag: "__Text",
+                            attr: {},
+                            children: ["法"]
+                        }
+                    ]
+                },
+                {
+                    tag: "__PEnd",
+                    attr: {
+                        type: "square"
+                    },
+                    children: ["」"]
+                }
+            ]
+        };
+
+        const result = $lawRef.abstract().match(0, input, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+
+            // console.log(JSON.stringify(result.value.value.lawNameCandidate.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.lawTitleCandidates.map(c => c.json(true)), expectedLawNameCandidates);
+
+            // console.log(JSON.stringify(result.value.value.lawRefInfo.lawNum.json(true), undefined, 2));
+            assert.deepStrictEqual(result.value.value.lawRefInfo.lawNum.json(true), expectedLawNum);
+
+            assert.deepStrictEqual(result.value.value.lawRefInfo.aliasInfo?.nameSquareParentheses.json(true), expectedNameSquareParentheses);
 
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
