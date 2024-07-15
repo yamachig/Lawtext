@@ -1367,6 +1367,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     type: "external",
                     lawNum: "平成十一年法律第八十九号",
                     fqPrefixFragments: [],
+                    skipSameCount: 0,
                 },
                 directLawNum: "平成十一年法律第八十九号",
                 namingParent: null,
@@ -1395,6 +1396,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     type: "external",
                     lawNum: "平成十一年法律第八十九号",
                     fqPrefixFragments: ["第四十九条"],
+                    skipSameCount: 0,
                 },
                 directLawNum: null,
                 namingParent: "第四十九条第一項",
@@ -1433,6 +1435,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     type: "external",
                     lawNum: "昭和二十三年法律第百二十号",
                     fqPrefixFragments: [],
+                    skipSameCount: 0,
                 },
                 directLawNum: "昭和二十三年法律第百二十号",
                 namingParent: null,
@@ -1560,6 +1563,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     type: "external",
                     lawNum: "昭和二十二年法律第百二十号",
                     fqPrefixFragments: [],
+                    skipSameCount: 0,
                 },
                 directLawNum: "昭和二十二年法律第百二十号",
                 namingParent: null,
@@ -1598,6 +1602,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     type: "external",
                     lawNum: "昭和二十五年法律第二百六十一号",
                     fqPrefixFragments: [],
+                    skipSameCount: 0,
                 },
                 directLawNum: "昭和二十五年法律第二百六十一号",
                 namingParent: null,
@@ -1702,6 +1707,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     type: "external",
                     lawNum: "昭和二十二年法律第六十七号",
                     fqPrefixFragments: [],
+                    skipSameCount: 0,
                 },
                 directLawNum: "昭和二十二年法律第六十七号",
                 namingParent: null,
@@ -1770,6 +1776,328 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: "第一項",
+                seriesNext: null,
+            },
+        ];
+
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        // console.log(JSON.stringify([...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （適用除外）
+第三条　（略）
+  一～九　（略）
+  十　外国人の出入国、出入国管理及び難民認定法（昭和二十六年政令第三百十九号）第六十一条の二第一項に規定する難民の認定、同条第二項に規定する補完的保護対象者の認定又は帰化に関する処分及び行政指導
+  十一～十六　（略）
+２・３　（略）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_2-text_8_20",
+                    type: "LawName",
+                    name: "出入国管理及び難民認定法",
+                    scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":35},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":8},\"end\":{\"sentenceIndex\":2,\"textOffset\":20}}",
+                    value: "昭和二十六年政令第三百十九号",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["出入国管理及び難民認定法"],
+                    },
+                ],
+            },
+        ];
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第六十一条の二",
+                                num: "61_2",
+                            },
+                            children: ["第六十一条の二"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawNum: "昭和二十六年政令第三百十九号",
+                    fqPrefixFragments: [],
+                    skipSameCount: 0,
+                },
+                directLawNum: "昭和二十六年政令第三百十九号",
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: "同条第二項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "SAME",
+                                targetType: "Article",
+                                name: "同条",
+                            },
+                            children: ["同条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第二項",
+                                num: "2",
+                            },
+                            children: ["第二項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawNum: "昭和二十六年政令第三百十九号",
+                    fqPrefixFragments: ["第六十一条の二"],
+                    skipSameCount: 1,
+                },
+                directLawNum: null,
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: "第六十一条の二第一項",
+                seriesNext: null,
+            },
+        ];
+
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        // console.log(JSON.stringify([...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （申請の審査）
+第七条　（略）
+２　（略）
+  一　（略）
+  二　（略）
+  三　（略）
+  四　（略）
+  五　他人の地上基幹放送の業務の用に供する無線局のうち、地上基幹放送の業務を行うことについて放送法（昭和二十五年法律第百三十二号）第九十三条第一項の規定により認定を受けようとする者の当該業務に用いられる無線局にあつては、当該認定を受けようとする者が同項各号（第四号を除く。）に掲げる要件のいずれにも該当すること。
+  六　（略）
+  七　（略）
+  八　（略）
+３～６　（略）
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_6-text_43_46",
+                    type: "LawName",
+                    name: "放送法",
+                    scope: "[{\"start\":{\"sentenceIndex\":6,\"textOffset\":61},\"end\":{\"sentenceIndex\":12,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":6,\"textOffset\":43},\"end\":{\"sentenceIndex\":6,\"textOffset\":46}}",
+                    value: "昭和二十五年法律第百三十二号",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["放送法"],
+                    },
+                ],
+            },
+        ];
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第九十三条",
+                                num: "93",
+                            },
+                            children: ["第九十三条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawNum: "昭和二十五年法律第百三十二号",
+                    fqPrefixFragments: [],
+                    skipSameCount: 0,
+                },
+                directLawNum: "昭和二十五年法律第百三十二号",
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: "同項各号",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "SAME",
+                                targetType: "Paragraph",
+                                name: "同項",
+                            },
+                            children: ["同項"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "EACH",
+                                targetType: "Item",
+                                name: "各号",
+                            },
+                            children: ["各号"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawNum: "昭和二十五年法律第百三十二号",
+                    fqPrefixFragments: [
+                        "第九十三条",
+                        "第一項",
+                    ],
+                    skipSameCount: 1,
+                },
+                directLawNum: null,
+                namingParent: null,
+                namingChildren: ["第四号"],
+                seriesPrev: "第九十三条第一項",
+                seriesNext: "第四号",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Item",
+                                name: "第四号",
+                                num: "4",
+                            },
+                            children: ["第四号"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawNum: "昭和二十五年法律第百三十二号",
+                    fqPrefixFragments: [
+                        "第九十三条",
+                        "第一項",
+                    ],
+                    skipSameCount: 0,
+                },
+                directLawNum: null,
+                namingParent: "同項各号",
+                namingChildren: [],
+                seriesPrev: "同項各号",
                 seriesNext: null,
             },
         ];

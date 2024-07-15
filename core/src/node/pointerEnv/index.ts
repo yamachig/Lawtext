@@ -18,6 +18,7 @@ export interface ExternalLocatedInfo {
     type: "external",
     lawNum: string,
     fqPrefixFragments: ____PF[],
+    skipSameCount: number,
 }
 
 export type LocatedInfo = InternalLocatedInfo | ExternalLocatedInfo;
@@ -93,12 +94,22 @@ export class PointerEnv {
                 // console.warn(`Not located ${this.seriesPrev.pointer.text()}`);
                 return;
             } else if (prev.type === "external") {
-                const fqDupIndex = prev.fqPrefixFragments.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
-                const fqPrefixFragments = (fqDupIndex < 0) ? prev.fqPrefixFragments : prev.fqPrefixFragments.slice(0, fqDupIndex);
+
+                const prevFragments = prevEnv.pointer.fragments();
+
+                const fqPrefixCandidate = [
+                    ...prev.fqPrefixFragments,
+                    ...prevFragments.slice(prev.skipSameCount),
+                ];
+
+                const skipSameCount = 1;
+                const fqDupIndex = fqPrefixCandidate.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
+                const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex + skipSameCount);
                 this.located = {
                     type: "external",
                     lawNum: prev.lawNum,
                     fqPrefixFragments,
+                    skipSameCount,
                 };
             } else if (prev.type === "internal") {
                 const container = (
@@ -245,6 +256,7 @@ export class PointerEnv {
                         type: "external",
                         lawNum: this.directLawNum,
                         fqPrefixFragments: [],
+                        skipSameCount: 0,
                     };
 
                 } else {
@@ -286,13 +298,21 @@ export class PointerEnv {
                 if (prev) {
 
                     if (prev.type === "external") {
-                        const prevFQPrefixFragments = prev.fqPrefixFragments;
-                        const fqDupIndex = prevFQPrefixFragments.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
-                        const fqPrefixFragments = (fqDupIndex < 0) ? prevFQPrefixFragments : prevFQPrefixFragments.slice(0, fqDupIndex);
+
+                        const prevFragments = this.namingParent?.pointer.fragments() ?? [];
+
+                        const fqPrefixCandidate = [
+                            ...prev.fqPrefixFragments,
+                            ...prevFragments.slice(prev.skipSameCount),
+                        ];
+
+                        const fqDupIndex = fqPrefixCandidate.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
+                        const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex);
                         this.located = {
                             type: "external",
                             lawNum: prev.lawNum,
                             fqPrefixFragments,
+                            skipSameCount: 0,
                         };
                         located = true;
 
@@ -356,6 +376,7 @@ export class PointerEnv {
                         type: "external",
                         lawNum: this.directLawNum,
                         fqPrefixFragments: [],
+                        skipSameCount: 0,
                     };
 
                 } else {
@@ -368,13 +389,20 @@ export class PointerEnv {
                     if (prev?.type === "external") {
                         // e.g. "行政手続法第二条" -> "第三条"
 
-                        const prevFQFragments = [...prev.fqPrefixFragments, ...(this.namingParent?.pointer.fragments() ?? [])];
-                        const fqDupIndex = prevFQFragments.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
-                        const fqPrefixFragments = (fqDupIndex < 0) ? prevFQFragments : prevFQFragments.slice(0, fqDupIndex);
+                        const prevFragments = this.namingParent?.pointer.fragments() ?? [];
+
+                        const fqPrefixCandidate = [
+                            ...prev.fqPrefixFragments,
+                            ...prevFragments.slice(prev.skipSameCount),
+                        ];
+
+                        const fqDupIndex = fqPrefixCandidate.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
+                        const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex);
                         this.located = {
                             type: "external",
                             lawNum: prev.lawNum,
                             fqPrefixFragments,
+                            skipSameCount: 0,
                         };
                         located = true;
 

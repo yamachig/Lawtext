@@ -30,7 +30,7 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
             let article: string|undefined = undefined;
             let paragraph: string|undefined = undefined;
             let appdxTable: string|undefined = undefined;
-            for (const prefix of pointerEnv.located.fqPrefixFragments) {
+            for (const prefix of pointerEnv.located.fqPrefixFragments.slice(0, pointerEnv.located.fqPrefixFragments.length - pointerEnv.located.skipSameCount)) {
                 article = (
                     prefix.attr.targetType === "Article" ? prefix.attr.name : undefined
                 ) ?? article;
@@ -41,16 +41,27 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
                     prefix.attr.targetType === "AppdxTable" ? prefix.attr.name : undefined
                 ) ?? appdxTable;
             }
+            let pfIndex = -1;
             for (const child of el.children) {
                 if (child instanceof ____PF) {
+                    pfIndex++;
+                    const prefixOrChild = (
+                        (pfIndex < pointerEnv.located.skipSameCount)
+                            ? (pointerEnv.located.fqPrefixFragments[
+                                pointerEnv.located.fqPrefixFragments.length
+                                - pointerEnv.located.skipSameCount
+                                + pfIndex
+                            ])
+                            : child
+                    );
                     article = (
-                        child.attr.targetType === "Article" ? child.attr.name : undefined
+                        prefixOrChild.attr.targetType === "Article" ? prefixOrChild.attr.name : undefined
                     ) ?? article;
                     paragraph = (
-                        child.attr.targetType === "Paragraph" ? child.attr.name : undefined
+                        prefixOrChild.attr.targetType === "Paragraph" ? prefixOrChild.attr.name : undefined
                     ) ?? paragraph;
                     appdxTable = (
-                        child.attr.targetType === "AppdxTable" ? child.attr.name : undefined
+                        prefixOrChild.attr.targetType === "AppdxTable" ? prefixOrChild.attr.name : undefined
                     ) ?? appdxTable;
                     if (!article && !paragraph && !appdxTable) {
                         runs.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);

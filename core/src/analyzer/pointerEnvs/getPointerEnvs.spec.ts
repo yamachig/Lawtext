@@ -823,6 +823,7 @@ describe("Test getPointerEnvs", () => {
                     type: "external",
                     lawNum: "昭和二十一年憲法",
                     fqPrefixFragments: [],
+                    skipSameCount: 0,
                 },
                 directLawNum: "昭和二十一年憲法",
                 namingParent: null,
