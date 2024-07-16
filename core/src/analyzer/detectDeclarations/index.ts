@@ -150,6 +150,10 @@ export const detectDeclarations = (
                 if (lawRef.attr.includingDeclarationID) {
                     lawRefByDeclarationID.set(lawRef.attr.includingDeclarationID, lawRef);
                 }
+                sentenceEnv.addPointerLike({
+                    textRange: sentenceEnv.textRageOfEL(lawRef),
+                    pointerLike: lawRef,
+                });
             }
             errors.push(...result.errors);
         }

@@ -175,11 +175,14 @@ export const getPointerEnvs = (sentenceEnvsStruct: SentenceEnvsStruct): WithErro
     //     "第二十条第一項から第三項まで、第六項及び第九項の規定は、認定開設者について準用する。" + "この場合において、同条第六項中"
     //     -> "同条第六項" referes to "第二十条第六項"
     let prevPointerEnv: PointerEnv | null = null;
-    const prevContainerID: string | null = null;
+    let prevContainerID: string | null = null;
 
     for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
         const containerID = sentenceEnv.container.containerID;
-        if (containerID !== prevContainerID) prevPointerEnv = null;
+        if (containerID !== prevContainerID) {
+            prevPointerEnv = null;
+            prevContainerID = containerID;
+        }
 
         const result = getPointerEnvsForEL(
             sentenceEnv.el,
@@ -188,8 +191,12 @@ export const getPointerEnvs = (sentenceEnvsStruct: SentenceEnvsStruct): WithErro
             null,
         );
         if (result){
-            for (const [k, v] of result.value.pointerEnvByEL) {
-                pointerEnvByEL.set(k, v);
+            for (const [k, pointerEnv] of result.value.pointerEnvByEL) {
+                pointerEnvByEL.set(k, pointerEnv);
+                sentenceEnv.addPointerLike({
+                    textRange: sentenceEnv.textRageOfEL(pointerEnv.pointer),
+                    pointerLike: pointerEnv,
+                });
             }
             rootPointerEnvs.push(result.value.firstPointerEnv);
             pointerRangesList.push(...result.value.pointerRangesList);

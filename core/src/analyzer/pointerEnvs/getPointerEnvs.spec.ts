@@ -1145,7 +1145,7 @@ describe("Test getPointerEnvs", () => {
                 namingParent: "第１４８条",
                 namingChildren: [],
                 seriesPrev: "第１４８条",
-                seriesNext: null,
+                seriesNext: "第１４９条第１項",
             },
             {
                 pointer: {
@@ -1190,7 +1190,7 @@ describe("Test getPointerEnvs", () => {
                 prependedLawRef: null,
                 namingParent: null,
                 namingChildren: [],
-                seriesPrev: null,
+                seriesPrev: "第１４９条（捜索調書）第１項",
                 seriesNext: null,
             },
         ];

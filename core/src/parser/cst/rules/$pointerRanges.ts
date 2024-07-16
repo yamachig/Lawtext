@@ -270,7 +270,7 @@ export const $firstOnlyPointerFragment = factory
             .action(r => r
                 .sequence(c => c
                     .and(r => r.seqEqual("同"))
-                    .and(r => r.regExp(/^[編章節款目章条項号表]/), "type_char")
+                    .and(r => r.regExp(/^[法編章節款目章条項号表]/), "type_char")
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({

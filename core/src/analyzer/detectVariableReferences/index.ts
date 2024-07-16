@@ -266,6 +266,16 @@ export const detectVariableReferences = (
             pointerEnvsStruct,
         );
         if (result){
+            for (const varRef of result.value.varRefs) {
+                const lawRef = lawRefByDeclarationID.get(varRef.attr.declarationID);
+                if (lawRef) {
+                    sentenceEnv.addPointerLike({
+                        textRange: sentenceEnv.textRageOfEL(varRef),
+                        pointerLike: [varRef, lawRef],
+                    });
+                }
+            }
+
             varRefs.push(...result.value.varRefs);
             errors.push(...result.errors);
         }

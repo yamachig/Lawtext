@@ -4,8 +4,9 @@ import { isIgnoreAnalysis } from "../../analyzer/common";
 import type { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
 import * as std from "../../law/std";
 import type { EL } from "../el";
-import type { RangeInfo, __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, ____Declaration, ____LawNum, ____Pointer, ____VarRef } from "../el/controls";
+import type { RangeInfo, __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, ____Declaration, ____LawNum, ____LawRef, ____Pointer, ____VarRef } from "../el/controls";
 import { __Text } from "../el/controls";
+import type { PointerEnv } from "../pointerEnv";
 
 export interface SentenceTextPos {
     sentenceIndex: number,
@@ -342,15 +343,42 @@ export interface SentenceEnvOptions {
     container: Container,
 }
 
+export type PointerLike = PointerEnv | ____LawRef | [____VarRef, ____LawRef];
+
 export class SentenceEnv {
     public readonly index: number;
     public readonly el: SentenceLike;
     public lawType: string;
     public parentELs: EL[];
     public container: Container;
-    private _text: string;
 
+    private _text: string;
     public get text(): string { return this._text; }
+
+    private _pointerLikes: {
+        textRange: [number, number] | null,
+        pointerLike: PointerLike,
+    }[] = [];
+    public get pointerLikes(): Readonly<SentenceEnv["_pointerLikes"]> {
+        return this._pointerLikes;
+    }
+    public addPointerLike(pointerLike: {
+        textRange: [number, number] | null,
+        pointerLike: PointerLike,
+    }) {
+        if (pointerLike.textRange) {
+            for (let i = this._pointerLikes.length - 1; 0 <= i; i--) {
+                const iRange = this._pointerLikes[i].textRange;
+                if (iRange && iRange[0] < pointerLike.textRange[0]) {
+                    this._pointerLikes.splice(i + 1, 0, pointerLike);
+                    return;
+                }
+            }
+            this._pointerLikes.unshift(pointerLike);
+        } else {
+            this._pointerLikes.push(pointerLike);
+        }
+    }
 
     constructor(options: SentenceEnvOptions) {
         const { index, el, lawType, parentELs, container } = options;

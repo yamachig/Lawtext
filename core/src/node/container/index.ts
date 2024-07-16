@@ -1,5 +1,6 @@
 import type { EL } from "../el";
 import * as std from "../../law/std";
+import type { SentenceEnv } from "./sentenceEnv";
 
 export enum ContainerType {
     ROOT = "ROOT",
@@ -20,7 +21,6 @@ export const sentencesContainerTags = [
     "Table",
     "TableRow",
     "TableColumn",
-    "Sentence",
 ] as const;
 
 export const containerTags = [
@@ -49,6 +49,7 @@ export interface ContainerOptions {
     name: string | null,
     num: string | null,
     sentenceRange?: [number, number], // half open
+    allSentenceEnvs: SentenceEnv[],
     // parent?: Container | null,
     // children?: Container[],
     // subParent?: Container | null,
@@ -70,6 +71,7 @@ export class Container {
     public children: Container[] = [];
     public subParent: Container | null = null; // skips ARTICLES
     public subChildren: Container[] = []; // skips ARTICLES
+    public allSentenceEnvs: SentenceEnv[];
 
     constructor(options: ContainerOptions) {
         const {
@@ -79,6 +81,7 @@ export class Container {
             num,
             containerID = `container-${currentID}-tag_${el.tag}-type_${type}`,
             sentenceRange = [NaN, NaN],
+            allSentenceEnvs,
             // parent = null,
             // children = [],
             // subParent = null,
@@ -92,6 +95,7 @@ export class Container {
         this.name = name;
         this.num = num;
         this.sentenceRange = sentenceRange;
+        this.allSentenceEnvs = allSentenceEnvs;
         // this.parent = parent;
         // this.children = children;
         // this.subParent = subParent;

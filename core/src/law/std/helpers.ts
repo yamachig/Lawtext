@@ -1,3 +1,4 @@
+/* eslint-disable @stylistic/js/quote-props */
 import type { EL } from "../../node/el";
 import type * as std from "./stdEL";
 
@@ -119,6 +120,7 @@ export const listTags = ["List", "Sublist1", "Sublist2", "Sublist3"] as const;
 
 
 export const typeCharsMap = {
+    "法": "Law",
     "編": "Part", "章": "Chapter", "節": "Section", "款": "Subsection", "目": "Division",
     "条": "Article", "項": "Paragraph", "号": "Item",
     "則": "SupplProvision",

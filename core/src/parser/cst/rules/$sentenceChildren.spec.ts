@@ -513,11 +513,6 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
 同法第四十六条中「技術基準（」とあるのは";
         const expectedCST = [
             {
-                tag: "__Text",
-                attr: {},
-                children: ["同法"]
-            },
-            {
                 tag: "____PointerRanges",
                 attr: {},
                 children: [
@@ -529,6 +524,15 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                 tag: "____Pointer",
                                 attr: {},
                                 children: [
+                                    {
+                                        tag: "____PF",
+                                        attr: {
+                                            relPos: "SAME",
+                                            targetType: "Law",
+                                            name: "同法"
+                                        },
+                                        children: ["同法"]
+                                    },
                                     {
                                         tag: "____PF",
                                         attr: {

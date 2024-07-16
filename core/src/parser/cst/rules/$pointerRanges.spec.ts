@@ -1421,4 +1421,82 @@ describe("Test $pointerRanges", () => {
             assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
         }
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = "第九十九条の十二若しくは同法第百七十八条に規定する意見の聴取の手続を主宰する。";
+        const expectedErrorMessages: string[] = [];
+
+        const expectedPointerRanges = {
+            tag: "____PointerRanges",
+            attr: {},
+            children: [
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "Article",
+                                        name: "第九十九条の十二"
+                                    },
+                                    children: ["第九十九条の十二"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    tag: "__Text",
+                    attr: {},
+                    children: ["若しくは"]
+                },
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "SAME",
+                                        targetType: "Law",
+                                        name: "同法"
+                                    },
+                                    children: ["同法"]
+                                },
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "Article",
+                                        name: "第百七十八条"
+                                    },
+                                    children: ["第百七十八条"]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const result = $pointerRanges.abstract().match(offset, target, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
+            assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
+        }
+    });
 });

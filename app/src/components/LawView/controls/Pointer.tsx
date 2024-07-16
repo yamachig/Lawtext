@@ -10,6 +10,8 @@ import PeekView from "./PeekView";
 import ContainersView from "./ContainersView";
 import type { ElawsPartialLawViewProps } from "./ElawsPartialLawView";
 import ElawsPartialLawView from "./ElawsPartialLawView";
+import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any";
+import * as std from "lawtext/dist/src/law/std";
 
 
 export interface ____PointerProps { el: ____Pointer, wrapperProps: WrapperComponentProps }
@@ -47,11 +49,7 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
                     pfIndex++;
                     const prefixOrChild = (
                         (pfIndex < pointerEnv.located.skipSameCount)
-                            ? (pointerEnv.located.fqPrefixFragments[
-                                pointerEnv.located.fqPrefixFragments.length
-                                - pointerEnv.located.skipSameCount
-                                + pfIndex
-                            ])
+                            ? pointerEnv.located.fqPrefixFragments.find(f => f.attr.targetType === child.attr.targetType) ?? child
                             : child
                     );
                     article = (
@@ -63,9 +61,17 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
                     appdxTable = (
                         prefixOrChild.attr.targetType === "AppdxTable" ? prefixOrChild.attr.name : undefined
                     ) ?? appdxTable;
-                    if (!article && !paragraph && !appdxTable) {
-                        runs.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);
-                    } else {
+                    if (child.attr.targetType === "Law") {
+                        const lawTitle = pointerEnv.located.lawRef.attr.suggestedLawTitle;
+                        const law = std.newStdEL("Law", {}, [
+                            std.newStdEL("LawNum", {}, [lawNum]),
+                            std.newStdEL("LawBody", {}, [...(lawTitle ? [std.newStdEL("LawTitle", {}, [lawTitle])] : [])]),
+                        ]);
+                        const ChildComponent: React.FC<HTMLComponentProps> = props => {
+                            return <HTMLAnyELs els={[law]} indent={0} htmlOptions={props.htmlOptions} />;
+                        };
+                        return <PeekView ChildComponent={ChildComponent} sentenceChildren={child.children} {...{ htmlOptions }} />;
+                    } else if (article || paragraph || appdxTable) {
                         const elawsPartialLawViewProps: ElawsPartialLawViewProps = {
                             lawTitle: pointerEnv.located.lawRef.attr.suggestedLawTitle,
                             lawNum,
@@ -77,6 +83,9 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
                             return <ElawsPartialLawView {...elawsPartialLawViewProps} {...{ htmlOptions: props.htmlOptions }} />;
                         };
                         runs.push(<PeekView ChildComponent={ChildComponent} sentenceChildren={child.children} {...{ htmlOptions }} />);
+
+                    } else {
+                        runs.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);
                     }
                 } else {
                     runs.push(<HTMLSentenceChildrenRun els={[child]} {...{ htmlOptions }} />);

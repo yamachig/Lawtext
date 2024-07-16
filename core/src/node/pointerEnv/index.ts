@@ -1,9 +1,10 @@
 import { assertNever, pick } from "../../util";
 import type { Container } from "../container";
 import { getContainerType, ContainerType } from "../container";
-import type { SentenceEnv } from "../container/sentenceEnv";
+import type { PointerLike, SentenceEnv } from "../container/sentenceEnv";
 import { EL } from "../el";
-import type { ____LawRef, ____PF, ____Pointer } from "../el/controls";
+import type { ____PF, ____Pointer } from "../el/controls";
+import { ____LawRef } from "../el/controls";
 import { RelPos } from "../el/controls";
 
 export interface InternalLocatedInfo {
@@ -82,53 +83,102 @@ export class PointerEnv {
         if ((fragments[0].attr.relPos === RelPos.SAME)) {
             // e.g.: "同条"
 
-            const prevEnv = this.seriesPrev ?? this.namingParent;
+            const currentTextRange = this.sentenceEnv.textRageOfEL(this.pointer);
+            const sameTargetType = fragments[0].attr.targetType;
+            let referredPointerLike: PointerLike | null = null;
 
-            if (!prevEnv) {
+            const processPointerLike = (pointerLike: PointerLike) => {
+                if (pointerLike instanceof PointerEnv) {
+                    if (sameTargetType !== "Law" && pointerLike.pointer.fragments().some(f => f.attr.targetType === sameTargetType)) {
+                        return pointerLike;
+                    }
+                } else if (Array.isArray(pointerLike) || pointerLike instanceof ____LawRef) {
+                    if (sameTargetType === "Law") {
+                        return pointerLike;
+                    }
+                } else { throw assertNever(pointerLike); }
+                return null;
+            };
+
+            if (currentTextRange) {
+                for (const { pointerLike, textRange } of this.sentenceEnv.pointerLikes.toReversed()) {
+                    if (!textRange || textRange[1] <= currentTextRange[0]) {
+                        referredPointerLike = processPointerLike(pointerLike);
+                        if (referredPointerLike) break;
+                    }
+                }
+            }
+
+            if (!referredPointerLike) {
+                const sentenceEnvs = this.sentenceEnv.container.allSentenceEnvs.slice(this.sentenceEnv.container.sentenceRange[0], this.sentenceEnv.index);
+                loop: for (const sentenceEnv of sentenceEnvs.toReversed()) {
+                    for (const { pointerLike } of sentenceEnv.pointerLikes.toReversed()) {
+                        referredPointerLike = processPointerLike(pointerLike);
+                        if (referredPointerLike) break loop;
+                    }
+                }
+            }
+
+            if (!referredPointerLike) {
                 // console.warn(`No seriesPrev and namingParent for ${this.pointer.text()}`);
                 return;
             }
 
-            prevEnv.locate(force);
-            const prev = prevEnv.located;
-            if (!prev) {
-                // console.warn(`Not located ${this.seriesPrev.pointer.text()}`);
-                return;
-            } else if (prev.type === "external") {
+            if (referredPointerLike instanceof PointerEnv) {
+                const referredEnv = referredPointerLike;
+                referredEnv.locate(force);
+                const prev = referredEnv.located;
+                if (!prev) {
+                    // console.warn(`Not located ${this.seriesPrev.pointer.text()}`);
+                    return;
+                } else if (prev.type === "external") {
 
-                const prevFragments = prevEnv.pointer.fragments();
+                    const prevFragments = referredEnv.pointer.fragments();
 
-                const fqPrefixCandidate = [
-                    ...prev.fqPrefixFragments,
-                    ...prevFragments.slice(prev.skipSameCount),
-                ];
+                    const fqPrefixCandidate = [
+                        ...prev.fqPrefixFragments,
+                        ...prevFragments.slice(prev.skipSameCount),
+                    ];
 
-                const skipSameCount = 1;
-                const fqDupIndex = fqPrefixCandidate.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
-                const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex + skipSameCount);
+                    const skipSameCount = 1;
+                    const fqDupIndex = fqPrefixCandidate.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
+                    const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex + skipSameCount);
+                    this.located = {
+                        type: "external",
+                        lawRef: prev.lawRef,
+                        fqPrefixFragments,
+                        skipSameCount,
+                    };
+                } else if (prev.type === "internal") {
+                    const container = (
+                        prev.fragments.slice().reverse()
+                            .find(f => f.containers.length > 0)
+                            ?.containers.slice(-1)[0]
+                            ?.thisOrClosest(c => c.el.tag === fragments[0].attr.targetType)
+                    ) ?? null;
+                    if (!container) {
+                        // console.warn(`Not located ${this.pointer.text()}`);
+                        return;
+                    }
+                    this.located = {
+                        type: "internal",
+                        fragments: locateContainersForFragments([container], fragments),
+                    };
+                }
+                else { throw assertNever(prev); }
+
+            } else if (Array.isArray(referredPointerLike) || referredPointerLike instanceof ____LawRef) {
+                const lawRef = Array.isArray(referredPointerLike) ? referredPointerLike[1] : referredPointerLike;
+
                 this.located = {
                     type: "external",
-                    lawRef: prev.lawRef,
-                    fqPrefixFragments,
-                    skipSameCount,
+                    lawRef,
+                    fqPrefixFragments: [],
+                    skipSameCount: 1,
                 };
-            } else if (prev.type === "internal") {
-                const container = (
-                    prev.fragments.slice().reverse()
-                        .find(f => f.containers.length > 0)
-                        ?.containers.slice(-1)[0]
-                        ?.thisOrClosest(c => c.el.tag === fragments[0].attr.targetType)
-                ) ?? null;
-                if (!container) {
-                    // console.warn(`Not located ${this.pointer.text()}`);
-                    return;
-                }
-                this.located = {
-                    type: "internal",
-                    fragments: locateContainersForFragments([container], fragments),
-                };
-            }
-            else { throw assertNever(prev); }
+
+            } else { throw assertNever(referredPointerLike); }
+
 
         } else if (fragments[0].attr.relPos === RelPos.HERE) {
             // e.g.: "この条"

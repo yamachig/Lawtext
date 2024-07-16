@@ -21,11 +21,11 @@ const loader = new FSStoredLoader(dataPath);
 
 const renderAllLaws = async () => {
 
-    const pickedLawNum = "平成二十六年政令第三百九十四号";
+    const pickedLawNums = ["平成二十六年政令第三百九十四号"];
 
     const { lawInfos } = await loader.loadLawInfosStruct();
 
-    for (const { LawNum: lawNum, LawTitle: lawTitle } of lawInfos.filter(o => o.LawNum === pickedLawNum)) {
+    for (const { LawNum: lawNum, LawTitle: lawTitle } of lawInfos.filter(o => pickedLawNums.includes(o.LawNum))) {
 
         it(`${lawTitle}（${lawNum}）`, async () => {
 

@@ -29,6 +29,7 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
         el,
         name: null,
         num: null,
+        allSentenceEnvs: sentenceEnvs,
     });
 
     const extract = (el: EL, prevContainer: Container | null, prevParentELs: EL[]) => {
@@ -70,7 +71,13 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
                     || ((std.isParagraph(el) && "1") || null)
                 );
                 const containerID = prevContainer ? `${prevContainer.containerID}-${el.tag}[${prevContainer.children.filter(c => c.el.tag === el.tag).length + 1}]${num ? "[num=" + num + "]" : ""}` : `container-${el.tag}`;
-                container = new Container({ el, name, num, containerID });
+                container = new Container({
+                    el,
+                    name,
+                    num,
+                    containerID,
+                    allSentenceEnvs: sentenceEnvs,
+                });
                 if (prevContainer) prevContainer.addChild(container);
                 containers.set(container.containerID, container);
                 containersByEL.set(el, container);
