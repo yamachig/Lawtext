@@ -23,7 +23,12 @@ export const ElawsPartialLawView = (props: HTMLComponentProps & ElawsPartialLawV
 
     React.useEffect(() => {
         (async () => {
-            const xml = await fetchPartialLaw({ lawNum, article, paragraph, appdxTable });
+            const xml = await fetchPartialLaw({
+                lawNum,
+                article: article?.replace("ノ", "の"),
+                paragraph,
+                appdxTable,
+            });
             const el = xmlToEL(xml) as std.StdEL;
             if (std.isParagraph(el)) {
                 let paragraphNum = el.children.find(std.isParagraphNum);
