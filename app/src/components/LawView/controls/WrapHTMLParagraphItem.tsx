@@ -6,6 +6,8 @@ import { createGlobalStyle } from "styled-components";
 import type { LawViewOptions } from "../common";
 import makePath from "lawtext/dist/src/path/v1/make";
 import { isArticleTitle } from "lawtext/dist/src/law/std";
+import * as std from "lawtext/dist/src/law/std";
+import { digitsToKanjiNum } from "lawtext/dist/src/law/num";
 
 export const HTMLParagraphItemMenuCSS = createGlobalStyle/*css*/`
 .paragraph-item-menu {
@@ -42,7 +44,7 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
     let articleTitle: string | null = null;
 
     const articleContainer = container.parentsSub(c => c.el.tag === "Article").next().value;
-    if (articleContainer) {
+    if (articleContainer && articleContainer.children.find(pc => std.isParagraph(pc.el)) === container) {
         const article = articleContainer.el;
         articlePath = makePath(articleContainer);
         articleTitle = article.children.find(isArticleTitle)?.text() ?? "この条";
@@ -68,11 +70,97 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
         return false;
     };
 
+    const containerStack = container.linealAscendant(c => {
+        if (std.isParagraph(c.el)) {
+            const paragraphNum = c.el.children.find(std.isParagraphNum);
+            if (!c.parent) return true;
+            if (
+                (std.isArticle(c.parent.el) || std.isMainProvision(c.parent.el) || std.isSupplProvision(c.parent.el)) &&
+                c.parent.children.filter(pc => std.isParagraph(pc.el)).length === 1 &&
+                paragraphNum && paragraphNum.text() === ""
+            ) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    });
+
+    const names: string[] = [];
+    let lawTitleAndNum = "";
+
+    for (const c of containerStack) {
+        if (std.isLaw(c.el)) {
+            const lawTitle = c.el.children.find(std.isLawBody)?.children.find(std.isLawTitle);
+            const lawNum = c.el.children.find(std.isLawNum);
+            if (lawTitle && lawNum) {
+                lawTitleAndNum = `${lawTitle.text()}（${lawNum.text()}）`;
+            } else if (lawTitle) {
+                lawTitleAndNum = lawTitle.text();
+            } else if (lawNum) {
+                lawTitleAndNum = lawNum.text();
+            }
+
+        } else if (std.isSupplProvision(c.el)) {
+            if (!c.el.attr.AmendLawNum) {
+                const supplProvisionLabel = c.el.children
+                    .find(std.isSupplProvisionLabel);
+                if (supplProvisionLabel) names.push(supplProvisionLabel.text()?.replace(/\s/g, ""));
+            }
+
+        } else if (std.isArticle(c.el)) {
+            const articleTitle = c.el.children
+                .find(std.isArticleTitle);
+            if (articleTitle) names.push(articleTitle.text());
+
+        } else if (std.isParagraph(c.el)) {
+            names.push(`第${digitsToKanjiNum(c.el.attr.Num, "non-positional")}項`);
+
+        } else if (std.isItem(c.el)) {
+            const itemTitle = (c.el.children as std.StdEL[])
+                .find(std.isParagraphItemTitle);
+            if (itemTitle) {
+                const itemTitleText = itemTitle.text();
+                const dividerPos = itemTitleText.search(/[のノ]/);
+                if (dividerPos >= 0) {
+                    names.push(`第${itemTitleText.slice(0, dividerPos)}号${itemTitleText.slice(dividerPos)}`);
+                } else {
+                    names.push(`第${itemTitleText}号`);
+                }
+            }
+
+        } else if (std.isParagraphItem(c.el)) {
+            const itemTitle = (c.el.children as std.StdEL[])
+                .find(std.isParagraphItemTitle);
+            if (itemTitle) names.push(itemTitle.text());
+
+        } else {
+            continue;
+        }
+    }
+
+    const name = names.join("");
+
+    const onClickCopyName: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+        navigator.clipboard.writeText(`${lawTitleAndNum}${name}`);
+        e.preventDefault();
+        return false;
+    };
+
+    const onClickCopyArticleTitle: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+        navigator.clipboard.writeText(`${lawTitleAndNum}${articleTitle}`);
+        e.preventDefault();
+        return false;
+    };
+
     return <div className="paragraph-item-menu">
         <div className="btn-group dropdown">
             <button className="btn btn-sm btn-outline-secondary paragraph-item-menu-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             </button>
             <ul className="dropdown-menu">
+                <li><h6 className="dropdown-header">{name}</h6></li>
                 {path && (
                     <li>
                         <a
@@ -82,7 +170,16 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
                         >この項目へのリンクをコピー</a>
                     </li>
                 )}
-                {articlePath && (
+                <li>
+                    <a
+                        className="dropdown-item lh-1"
+                        href={`#/${options.firstPart}/${path}`}
+                        onClick={onClickCopyName}
+                    >名称をコピー：<br/><small style={{ whiteSpace: "normal" }} className="text-muted">「{lawTitleAndNum}{name}」</small></a>
+                </li>
+                {articlePath && (articleTitle !== name) && (<>
+                    <li><hr className="dropdown-divider"/></li>
+                    <li><h6 className="dropdown-header">{articleTitle}</h6></li>
                     <li>
                         <a
                             className="dropdown-item"
@@ -90,7 +187,14 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
                             onClick={onClickArticleLink}
                         >{articleTitle}へのリンクをコピー</a>
                     </li>
-                )}
+                    <li>
+                        <a
+                            className="dropdown-item lh-1"
+                            href={`#/${options.firstPart}/${path}`}
+                            onClick={onClickCopyArticleTitle}
+                        >名称をコピー：<br/><small style={{ whiteSpace: "normal" }} className="text-muted">「{lawTitleAndNum}{articleTitle}」</small></a>
+                    </li>
+                </>)}
             </ul>
         </div>
     </div>;

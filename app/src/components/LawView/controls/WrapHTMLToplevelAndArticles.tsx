@@ -5,6 +5,8 @@ import { createGlobalStyle } from "styled-components";
 import type { LawViewOptions } from "../common";
 import makePath from "lawtext/dist/src/path/v1/make";
 import * as std from "lawtext/dist/src/law/std";
+import { initialEnv } from "lawtext/dist/src/parser/cst/env";
+import $articleGroupNum from "lawtext/dist/src/parser/cst/rules/$articleGroupNum";
 
 export const HTMLToplevelAndArticlesMenuCSS = createGlobalStyle/*css*/`
 .toplevel-and-articles-wrap {
@@ -45,10 +47,61 @@ export const HTMLToplevelAndArticlesMenu: React.FC<HTMLComponentProps & { el: st
     if (!container) return null;
 
     const path = makePath(container);
-    const title = (container.el.children.find(el => std.isArticleGroupTitle(el) || std.isAppdxItemTitle(el) || std.isSupplProvisionLabel(el)) as (std.ArticleGroupTitle | std.AppdxItemTitle | std.SupplProvisionLabel | undefined))?.text() ?? "この項目";
 
     const onClickLink: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
         navigator.clipboard.writeText(`${location.protocol}//${location.host}${location.pathname}#/${options.firstPart}/${path}`);
+        e.preventDefault();
+        return false;
+    };
+
+    const containerStack = container.linealAscendant();
+
+    const names: string[] = [];
+    let lawTitleAndNum = "";
+
+    for (const c of containerStack) {
+        if (std.isLaw(c.el)) {
+            const lawTitle = c.el.children.find(std.isLawBody)?.children.find(std.isLawTitle);
+            const lawNum = c.el.children.find(std.isLawNum);
+            if (lawTitle && lawNum) {
+                lawTitleAndNum = `${lawTitle.text()}（${lawNum.text()}）`;
+            } else if (lawTitle) {
+                lawTitleAndNum = lawTitle.text();
+            } else if (lawNum) {
+                lawTitleAndNum = lawNum.text();
+            }
+
+        } else if (std.isArticleGroup(container.el) && std.isArticleGroup(c.el)) {
+            const articleGroupTitle = (c.el.children as (typeof c.el.children)[number][])
+                .find(std.isArticleGroupTitle);
+            const title = articleGroupTitle?.text() ?? "";
+
+            const env = initialEnv({});
+
+            const result = $articleGroupNum.match(
+                0,
+                title,
+                env,
+            );
+
+            if (result.ok) names.push(result.value.value.text);
+
+        } else if (std.isSupplProvision(c.el)) {
+            if (!c.el.attr.AmendLawNum) {
+                const supplProvisionLabel = c.el.children
+                    .find(std.isSupplProvisionLabel);
+                if (supplProvisionLabel) names.push(supplProvisionLabel.text()?.replace(/\s/g, ""));
+            }
+
+        } else {
+            continue;
+        }
+    }
+
+    const name = names.join("");
+
+    const onClickCopyName: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+        navigator.clipboard.writeText(`${lawTitleAndNum}${name}`);
         e.preventDefault();
         return false;
     };
@@ -58,15 +111,23 @@ export const HTMLToplevelAndArticlesMenu: React.FC<HTMLComponentProps & { el: st
             <button className="btn btn-sm btn-outline-secondary toplevel-and-articles-menu-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             </button>
             <ul className="dropdown-menu">
+                <li><h6 className="dropdown-header">{name}</h6></li>
                 {path && (
                     <li>
                         <a
                             className="dropdown-item"
                             href={`#/${options.firstPart}/${path}`}
                             onClick={onClickLink}
-                        >{title}へのリンクをコピー</a>
+                        >この項目へのリンクをコピー</a>
                     </li>
                 )}
+                <li>
+                    <a
+                        className="dropdown-item lh-1"
+                        href={`#/${options.firstPart}/${path}`}
+                        onClick={onClickCopyName}
+                    >名称をコピー：<br/><small style={{ whiteSpace: "normal" }} className="text-muted">「{lawTitleAndNum}{name}」</small></a>
+                </li>
             </ul>
         </div>
     </div>;
