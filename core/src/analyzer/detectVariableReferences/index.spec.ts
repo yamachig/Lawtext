@@ -3556,4 +3556,71 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+      附　則
+
+  （施行期日）
+１　この法律は、公布の日から起算して一年を超えない範囲内において政令で定める日から施行する。
+
+  （経過措置）
+２　この法律の施行前に第十五条第一項又は第三十条の規定による通知に相当する行為がされた場合においては、当該通知に相当する行為に係る不利益処分の手続に関しては、第三章の規定にかかわらず、なお従前の例による。
+
+３　この法律の施行前に、届出その他政令で定める行為（以下「届出等」という。）がされた後一定期間内に限りすることができることとされている不利益処分に係る当該届出等がされた場合においては、当該不利益処分に係る手続に関しては、第三章の規定にかかわらず、なお従前の例による。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_2-text_27_30",
+                    type: "Keyword",
+                    name: "届出等",
+                    scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":31},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":27},\"end\":{\"sentenceIndex\":2,\"textOffset\":30}}",
+                },
+                children: ["届出等"],
+            },
+        ];
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "届出等",
+                    declarationID: "decl-sentence_2-text_27_30",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":75},\"end\":{\"sentenceIndex\":2,\"textOffset\":78}}",
+                },
+                children: ["届出等"],
+            },
+        ];
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            varRefs.map(r => r.json(true)),
+            expected,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });

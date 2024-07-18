@@ -28,14 +28,39 @@ export const matchVariableReferences = (
 
     const found: [[offsetStart: number, offsetEnd: number], ____Declaration][] = [];
 
+    const textRange = sentenceEnv.textRageOfEL(textEL) ?? [0, 0];
+
     {
         let ramainingText = textEL.text();
         for (const declaration of declarations.values()) {
             for (;;) {
                 const nameOffset = ramainingText.indexOf(declaration.attr.name);
                 if (nameOffset < 0) break;
-                found.push([[nameOffset, nameOffset + declaration.attr.name.length], declaration]);
-                ramainingText = ramainingText.slice(0, nameOffset) + "　".repeat(declaration.attr.name.length) + ramainingText.slice(nameOffset + declaration.attr.name.length);
+
+                const foundTextRange = {
+                    start: textRange[0] + nameOffset,
+                    end: textRange[0] + nameOffset + declaration.attr.name.length,
+                };
+                if (declaration.scope.some(scopeRange => (
+                    (
+                        (scopeRange.start.sentenceIndex < sentenceEnv.index)
+                        || (
+                            (scopeRange.start.sentenceIndex === sentenceEnv.index)
+                            && (scopeRange.start.textOffset <= foundTextRange.start)
+                        )
+                    )
+                    && (
+                        (sentenceEnv.index < scopeRange.end.sentenceIndex)
+                        || (
+                            (sentenceEnv.index === scopeRange.end.sentenceIndex)
+                            && (foundTextRange.end <= scopeRange.end.textOffset)
+                        )
+                    )
+                ))) {
+                    found.push([[nameOffset, nameOffset + declaration.attr.name.length], declaration]);
+                    ramainingText = ramainingText.slice(0, nameOffset) + "　".repeat(declaration.attr.name.length) + ramainingText.slice(nameOffset + declaration.attr.name.length);
+                }
+
             }
         }
     }
@@ -45,7 +70,6 @@ export const matchVariableReferences = (
     found.sort(([a], [b]) => ((a[0] - b[0]) || (a[1] - b[1]) ));
 
     const text = textEL.text();
-    const textRange = sentenceEnv.textRageOfEL(textEL);
 
     const newItems: SentenceChildEL[] = [];
     const varRefs: ____VarRef[] = [];
@@ -156,7 +180,7 @@ export const detectVariableReferencesOfEL = (
                     sentenceIndex: sentenceEnv.index,
                     textOffset: textRange[1],
                 },
-            });
+            }, true);
 
             {
                 const match = matchVariableReferences(child, sentenceEnv, filteredDeclarations);
@@ -221,7 +245,7 @@ export const detectVariableReferencesOfEL = (
                     sentenceIndex: sentenceEnv.index,
                     textOffset: textRange[1],
                 },
-            });
+            }, true);
 
             const newResult = detectVariableReferencesOfEL(child as std.StdEL | std.__EL, sentenceEnv, filteredDeclarations, lawRefByDeclarationID, pointerEnvsStruct);
             varRefs.push(...newResult.value.varRefs);
@@ -261,10 +285,11 @@ export const detectVariableReferences = (
                     sentenceIndex: sentenceEnv.index + 1,
                     textOffset: 0,
                 },
-            }),
+            }, true),
             lawRefByDeclarationID,
             pointerEnvsStruct,
         );
+
         if (result){
             for (const varRef of result.value.varRefs) {
                 const lawRef = lawRefByDeclarationID.get(varRef.attr.declarationID);

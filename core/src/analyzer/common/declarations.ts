@@ -6,28 +6,51 @@ import type { ____Declaration } from "../../node/el/controls/declaration";
 export class Declarations {
     public db: Map<string, ____Declaration> = new Map();
 
-    public filterByRange(sentenceTextRange: SentenceTextRange): Declarations {
+    public filterByRange(sentenceTextRange: SentenceTextRange, includePartialOverlap: boolean): Declarations {
         const declarations = new Declarations();
         for (const declaration of this.db.values()) {
-            if (
-                declaration.scope.some(range => (
-                    (
-                        (range.start.sentenceIndex < sentenceTextRange.start.sentenceIndex)
-                        || (
-                            (range.start.sentenceIndex === sentenceTextRange.start.sentenceIndex)
-                            && (range.start.textOffset <= sentenceTextRange.start.textOffset)
+            if (includePartialOverlap) {
+                if (
+                    declaration.scope.some(scopeRange => (
+                        (
+                            (scopeRange.start.sentenceIndex < sentenceTextRange.end.sentenceIndex)
+                            || (
+                                (scopeRange.start.sentenceIndex === sentenceTextRange.end.sentenceIndex)
+                                && (scopeRange.start.textOffset < sentenceTextRange.end.textOffset)
+                            )
                         )
-                    )
-                    && (
-                        (sentenceTextRange.end.sentenceIndex < range.end.sentenceIndex)
-                        || (
-                            (sentenceTextRange.end.sentenceIndex === range.end.sentenceIndex)
-                            && (sentenceTextRange.end.textOffset <= range.end.textOffset)
+                        && (
+                            (sentenceTextRange.start.sentenceIndex < scopeRange.end.sentenceIndex)
+                            || (
+                                (sentenceTextRange.start.sentenceIndex === scopeRange.end.sentenceIndex)
+                                && (sentenceTextRange.start.textOffset < scopeRange.end.textOffset)
+                            )
                         )
-                    )
-                ))
-            ) {
-                declarations.add(declaration);
+                    ))
+                ) {
+                    declarations.add(declaration);
+                }
+            } else {
+                if (
+                    declaration.scope.some(scopeRange => (
+                        (
+                            (scopeRange.start.sentenceIndex < sentenceTextRange.start.sentenceIndex)
+                            || (
+                                (scopeRange.start.sentenceIndex === sentenceTextRange.start.sentenceIndex)
+                                && (scopeRange.start.textOffset <= sentenceTextRange.start.textOffset)
+                            )
+                        )
+                        && (
+                            (sentenceTextRange.end.sentenceIndex < scopeRange.end.sentenceIndex)
+                            || (
+                                (sentenceTextRange.end.sentenceIndex === scopeRange.end.sentenceIndex)
+                                && (sentenceTextRange.end.textOffset <= scopeRange.end.textOffset)
+                            )
+                        )
+                    ))
+                ) {
+                    declarations.add(declaration);
+                }
             }
         }
         return declarations;

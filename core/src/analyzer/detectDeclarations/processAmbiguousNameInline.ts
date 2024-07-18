@@ -271,7 +271,7 @@ export const findFilteredAmbiguousNameInline = (
                 sentenceIndex: info.sentenceEnv.index,
                 textOffset: nameCandidateLastOffset ?? 0,
             },
-        });
+        }, true);
 
         for (const declaration of currentDeclarations.values()) {
             if (info.nameCandidates.size === 0) continue;
