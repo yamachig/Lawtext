@@ -54,7 +54,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             // lazy: true,
             liveReload: false,
             // filename: "bundle.js",
-            port: 8081,
+            port: env.DEV_SERVER_PORT ? Number(env.DEV_SERVER_PORT) : 8081,
         },
 
         optimization: {

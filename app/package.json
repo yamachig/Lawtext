@@ -29,6 +29,7 @@
         "query-docs:prod": "npx --trace-deprecation ts-node src/query-docs/index.ts --target-dir \"dist-prod/query-docs\""
     },
     "devDependencies": {
+        "@playwright/test": "^1.45.2",
         "@types/bootstrap": "^5.2.10",
         "@types/chai": "^4.3.16",
         "@types/file-saver": "^2.0.7",

@@ -27,4 +27,6 @@ MANIFEST
 /dist-bin
 /test/lawdata
 mochawesome-report
+playwright-report
+playwright-results
 /src/query-docs/temp-includes

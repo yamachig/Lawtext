@@ -126,10 +126,10 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                             保存：
                         </span>
                         <div>
-                            <span className="btn-group btn-group-sm" role="group">
+                            <span className="btn-group btn-group-sm" role="group" title="Wordファイルを保存">
                                 <div className="btn-group btn-group-sm" role="group">
                                     <button className="btn btn-outline-primary" onClick={() => downloadDocx(false, "render")}>Word</button>
-                                    <button type="button" className="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" style={{ padding: "0 3px" }}/>
+                                    <button type="button" className="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" style={{ padding: "0 3px" }} title="Wordファイルを保存：出力方式を選択"/>
                                     <div className="dropdown-menu">
                                         <h6 className="dropdown-header">
                                             添付PDF（様式など）がある場合のWord出力方式を選択してください：
@@ -176,10 +176,10 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                     法令XML
                                 </button>
                             </span>
-                            <span className="btn-group btn-group-sm" style={{ marginTop: "0.2rem" }}>
+                            <span className="btn-group btn-group-sm" style={{ marginTop: "0.2rem" }} title="Wordファイルを保存（選択した条のみ）">
                                 <div className="btn-group btn-group-sm" role="group">
                                     <button type="button" className="btn btn-outline-primary" style={{ padding: "0 8px" }} onClick={() => downloadDocx(true, "render")}>Word（選択した条のみ）</button>
-                                    <button type="button" className="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" style={{ padding: "0 8px" }}/>
+                                    <button type="button" className="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" style={{ padding: "0 8px" }} title="Wordファイルを保存（選択した条のみ）：出力方式を選択"/>
                                     <div className="dropdown-menu">
                                         <h6 className="dropdown-header">
                                             添付PDF（様式など）がある場合のWord出力方式を選択してください：
