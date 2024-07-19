@@ -655,7 +655,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_27-text_0_4",
                     type: "Keyword",
                     name: "審査基準",
-                    scope: "[{\"start\":{\"sentenceIndex\":27,\"textOffset\":4},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":27,\"textOffset\":62},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":27,\"textOffset\":0},\"end\":{\"sentenceIndex\":27,\"textOffset\":4}}",
                 },
                 children: ["審査基準"],
@@ -666,7 +666,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_28-text_0_4",
                     type: "Keyword",
                     name: "処分基準",
-                    scope: "[{\"start\":{\"sentenceIndex\":28,\"textOffset\":4},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":28,\"textOffset\":72},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":0},\"end\":{\"sentenceIndex\":28,\"textOffset\":4}}",
                 },
                 children: ["処分基準"],
@@ -677,13 +677,12 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_29-text_0_6",
                     type: "Keyword",
                     name: "行政指導指針",
-                    scope: "[{\"start\":{\"sentenceIndex\":29,\"textOffset\":6},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":29,\"textOffset\":85},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":29,\"textOffset\":0},\"end\":{\"sentenceIndex\":29,\"textOffset\":6}}",
                 },
                 children: ["行政指導指針"],
             },
-        ]
-;
+        ];
 
         const expected: JsonEL[] = [
             {
@@ -1210,7 +1209,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_4-text_51_57",
                     type: "Keyword",
                     name: "実験等無線局",
-                    scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":57},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":124},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":4,\"textOffset\":57}}",
                 },
                 children: ["実験等無線局"],
@@ -1503,7 +1502,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_0-text_0_3",
                     type: "Keyword",
                     name: "公務員",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":3},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":91},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":3}}",
                 },
                 children: ["公務員"],
@@ -3598,6 +3597,102 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     refSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":75},\"end\":{\"sentenceIndex\":2,\"textOffset\":78}}",
                 },
                 children: ["届出等"],
+            },
+        ];
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            varRefs.map(r => r.json(true)),
+            expected,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+第三条　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
+  九　公務員（国家公務員法（昭和二十二年法律第百二十号）第二条第一項に規定する国家公務員及び地方公務員法（昭和二十五年法律第二百六十一号）第三条第一項に規定する地方公務員をいう。以下同じ。）又は公務員であった者に対してその職務又は身分に関してされる処分及び行政指導
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_1-text_0_3",
+                    type: "Keyword",
+                    name: "公務員",
+                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":91},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
+                },
+                children: ["公務員"],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_1-text_4_10",
+                    type: "LawTitle",
+                    name: "国家公務員法",
+                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":24},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":4},\"end\":{\"sentenceIndex\":1,\"textOffset\":10}}",
+                    value: "昭和二十二年法律第百二十号",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["国家公務員法"],
+                    },
+                ],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_1-text_43_49",
+                    type: "LawTitle",
+                    name: "地方公務員法",
+                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":65},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":43},\"end\":{\"sentenceIndex\":1,\"textOffset\":49}}",
+                    value: "昭和二十五年法律第二百六十一号",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["地方公務員法"],
+                    },
+                ],
+            },
+        ];
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "公務員",
+                    declarationID: "decl-sentence_1-text_0_3",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":94},\"end\":{\"sentenceIndex\":1,\"textOffset\":97}}",
+                },
+                children: ["公務員"],
             },
         ];
         const expectedErrorMessages: string[] = [];

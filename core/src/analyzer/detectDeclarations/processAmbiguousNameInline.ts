@@ -27,6 +27,7 @@ interface AmbiguousNameCandidateInfo {
     afterNameParentheses: __Parentheses,
     following: boolean,
     pointerRanges: ____PointerRanges | null,
+    valueELs: SentenceChildEL[],
     sentenceEnv: SentenceEnv,
 }
 
@@ -57,7 +58,7 @@ export const findAmbiguousNameCandidateInfos = (
         );
         if (!result.ok) continue;
 
-        const { following, pointerRanges } = result.value.value;
+        const { following, pointerRanges, valueELs } = result.value.value;
 
         if (pointerRanges) getScope(pointerRanges, pointerEnvsStruct);
 
@@ -66,6 +67,7 @@ export const findAmbiguousNameCandidateInfos = (
             nameCandidateEL,
             following,
             pointerRanges,
+            valueELs,
             afterNameParentheses: parentheses,
             sentenceEnv,
         });
@@ -116,7 +118,7 @@ export const findFilteredAmbiguousNameInline = (
         for (const info of result.value) {
             const followingStartPos = info.following ? {
                 sentenceIndex: sentenceEnv.index,
-                textOffset: sentenceEnv.textRageOfEL(info.nameCandidateEL)?.[1] ?? 0,
+                textOffset: sentenceEnv.textRageOfEL(info.valueELs[info.valueELs.length - 1])?.[1] ?? 0,
             } : null;
 
             const scope = toSentenceTextRanges(
