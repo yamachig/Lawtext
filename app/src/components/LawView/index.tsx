@@ -18,10 +18,19 @@ import { HTMLToplevelAndArticlesMenuCSS } from "./controls/WrapHTMLToplevelAndAr
 
 
 const GlobalStyle = createGlobalStyle`
+
+div.paragraph-item-decoration-left-border {
+    @media (max-width: 767.98px) {
+        margin-left: -0.7em;
+    }
+}
 `;
 
 const LawViewDiv = styled.div`
     padding: 2rem 3rem 10rem 3rem;
+    @media (max-width: 767.98px) {
+        padding: 4rem 1.5rem 10rem 1.5rem;
+    }
 `;
 
 export const LawView: React.FC<LawtextAppPageStateStruct> = props => {

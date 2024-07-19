@@ -1,8 +1,13 @@
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+
+export default () => [
+    `\
 <!DOCTYPE html>
 <!--
 MIT License
 
-Copyright (c) 2017-2024 yamachi
+Copyright (c) 2017-${new Date().getFullYear()} yamachi
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +27,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
-<html lang="ja">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Lawtext</title>
-    </head>
-    <body>
-        <div id="root"></div>
-    </body>
-</html>
+`,
+    renderToStaticMarkup((
+        <html lang="ja">
+            <head>
+                <meta charSet="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <title>Lawtext</title>
+            </head>
+            <body>
+                <div id="root"></div>
+            </body>
+        </html>
+    )),
+].join("");

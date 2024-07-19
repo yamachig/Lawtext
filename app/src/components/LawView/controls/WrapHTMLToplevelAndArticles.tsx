@@ -16,6 +16,9 @@ export const HTMLToplevelAndArticlesMenuCSS = createGlobalStyle/*css*/`
 .toplevel-and-articles-menu {
     position: absolute;
     margin-left: -1.5em;
+    @media (max-width: 767.98px) {
+        margin-left: -1.2em;
+    }
     margin-top: -0.15em;
 }
 

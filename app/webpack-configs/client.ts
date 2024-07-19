@@ -113,7 +113,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 chunkFilename: "[id].css",
             }),
             new HtmlWebPackPlugin({
-                template: path.resolve(rootDir, "./src/index.html"),
+                template: path.resolve(rootDir, "./src/index.html.tsx"),
                 filename: "index.html",
             }),
             ...(env.DEV_SERVER ? [] : [new QueryDocsPlugin()]),

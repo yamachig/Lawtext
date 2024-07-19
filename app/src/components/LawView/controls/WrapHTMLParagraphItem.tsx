@@ -12,6 +12,9 @@ import { digitsToKanjiNum } from "lawtext/dist/src/law/num";
 export const HTMLParagraphItemMenuCSS = createGlobalStyle/*css*/`
 .paragraph-item-menu {
     margin-left: -1.5em;
+    @media (max-width: 767.98px) {
+        margin-left: -1.2em;
+    }
     margin-top: -0.15em;
 }
 

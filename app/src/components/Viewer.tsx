@@ -14,7 +14,11 @@ const ViewerMessagesDiv = styled.div`
     top: 1rem;
     right: 1rem;
     bottom: 0;
-    z-index: 100;
+    @media (max-width: 767.98px) {
+        top: 0.1rem;
+        right: 0.1rem;
+    }
+    z-index: 2000;
 `;
 
 const ViewerMessages: React.FC<{messages: Record<string, string>}> = props => {
@@ -36,12 +40,6 @@ const ViewerMessages: React.FC<{messages: Record<string, string>}> = props => {
 
 
 const ViewerWelcomeDiv = styled.div`
-    /* position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 280px; */
-    z-index: 100;
     min-height: 100vh;
     padding: 3em 0;
 
@@ -193,7 +191,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
 
             <div className="text-muted" style={{ alignSelf: "center", maxWidth: "500px" }}>
                 <div className="container-fluid">
-                    <div style={{ alignSelf: "center" }}>
+                    <div style={{ textAlign: "center" }}>
                         <a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">
                             GitHub
                         </a>
@@ -201,6 +199,9 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                         <a href="https://yamachig.github.io/Lawtext/" target="_blank" rel="noreferrer">
                             Docs
                         </a>
+                    </div>
+                    <div className="d-md-none" style={{ textAlign: "center" }}>
+                        &copy; 2017-{new Date().getFullYear()} yamachi
                     </div>
                 </div>
             </div>
