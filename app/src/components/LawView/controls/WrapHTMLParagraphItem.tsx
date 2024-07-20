@@ -54,11 +54,11 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
     }
 
     const path = (
-        articlePath
+        articleContainer
         && container.el.tag === "Paragraph"
         && container.subParent?.subChildren.filter(c => c.el.tag === "Paragraph").length === 1
     )
-        ? null
+        ? makePath(articleContainer)
         : makePath(container);
 
     const onClickParagraphItemLink: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
@@ -193,7 +193,7 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
                     <li>
                         <a
                             className="dropdown-item lh-1"
-                            href={`#/${options.firstPart}/${path}`}
+                            href={`#/${options.firstPart}/${articlePath}`}
                             onClick={onClickCopyArticleTitle}
                         >名称をコピー：<br/><small style={{ whiteSpace: "normal" }} className="text-muted">「{lawTitleAndNum}{articleTitle}」</small></a>
                     </li>
