@@ -32,8 +32,6 @@ export interface LocateOptions {
 }
 
 export class PointerEnv {
-    public prependedLawRef: ____LawRef | null = null;
-
     public namingParent: PointerEnv | null = null;
     public namingChildren: PointerEnv[] = [];
 
@@ -74,7 +72,6 @@ export class PointerEnv {
                         }
                         : null
             ),
-            prependedLawRef: this.prependedLawRef && pick(this.prependedLawRef.attr, "suggestedLawTitle", "lawNum"),
             namingParent: this.namingParent ? this.namingParent.pointer.text() : null,
             namingChildren: this.namingChildren.map(c => c.pointer.text()),
             seriesPrev: this.seriesPrev ? this.seriesPrev.pointer.text() : null,

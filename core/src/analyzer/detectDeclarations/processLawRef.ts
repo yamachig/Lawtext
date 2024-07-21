@@ -4,7 +4,7 @@ import sha512 from "hash.js/lib/hash/sha/512";
 import { LAWNUM_TABLE, KEY_LENGTH } from "../../law/lawNumTable";
 import type { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
-import { __Text, ____Declaration, ____LawNum, ____LawRef, ____PointerRanges } from "../../node/el/controls";
+import { __Text, ____Declaration, ____LawNum, ____LawRef } from "../../node/el/controls";
 import { ContainerType } from "../../node/container";
 import $lawRef from "../sentenceChildrenParser/rules/$lawRef";
 import { initialEnv } from "../sentenceChildrenParser/env";
@@ -149,23 +149,6 @@ export const processLawRef = (
     const lawRefs: ____LawRef[] = [];
 
     for (let i = 0; i < elToBeModified.children.length; i++) {
-
-        if (
-            (0 <= i - 1)
-            && (i < elToBeModified.children.length)
-            && (elToBeModified.children[i - 1] instanceof ____LawRef)
-            && (elToBeModified.children[i] instanceof ____PointerRanges)
-        ) {
-            // process prependedLawRef for e.g. "国家行政組織法（昭和二十三年法律第百二十号）第三条第二項"
-            const lawRef = elToBeModified.children[i - 1] as ____LawRef;
-            const pointerRanges = elToBeModified.children[i] as ____PointerRanges;
-            const firstPointer = pointerRanges.ranges()[0].pointers()[0];
-            const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
-            if (pointerEnv) {
-                pointerEnv.prependedLawRef = lawRef;
-            }
-
-        }
 
         if (elToBeModified.children[i] instanceof ____LawNum) {
             // e.g. "...日本国憲法..."
