@@ -105,12 +105,27 @@ export class PointerEnv {
                 const prevEL = parentEL.children[i];
                 if (prevEL instanceof __Parentheses) {
                     continue;
-                } else if (prevEL instanceof ____LawRef) {
-                    prependedLawRef = prevEL;
-                } else if (prevEL instanceof ____VarRef) {
-                    const lawRef = lawRefByDeclarationID.get(prevEL.attr.declarationID);
-                    if (lawRef) {
-                        prependedLawRef = lawRef;
+                } else if (typeof prevEL !== "string") {
+                    let targetEL: EL | null = prevEL;
+                    while (targetEL) {
+                        if (targetEL instanceof ____LawRef) {
+                            prependedLawRef = targetEL;
+                        } else if (targetEL instanceof ____VarRef) {
+                            const lawRef = lawRefByDeclarationID.get(targetEL.attr.declarationID);
+                            if (lawRef) {
+                                prependedLawRef = lawRef;
+                            } else {
+                                const declaration = declarations.get(targetEL.attr.declarationID);
+                                if (declaration && declaration.value) {
+                                    const end = declaration.value.sentenceTextRange.end;
+                                    const dSentence = sentenceEnvs[end.sentenceIndex - (end.textOffset === 0 ? 1 : 0)];
+                                    const valueEL = dSentence.sentenceTextAt(end.textOffset === 0 ? dSentence.text.length - 1 : 0);
+                                    targetEL = valueEL;
+                                    continue;
+                                }
+                            }
+                        }
+                        break;
                     }
                 }
                 break;

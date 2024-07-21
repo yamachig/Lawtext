@@ -436,4 +436,16 @@ export class SentenceEnv {
             return null;
         }
     }
+
+    public sentenceTextAt(targetOffset: number): SentenceText | null {
+        let offset = 0;
+        for (const sentenceText of enumerateSentenceTexts(this.el)) {
+            const length = textOfSentenceText(sentenceText).length;
+            if (offset <= targetOffset && targetOffset < offset + length) {
+                return sentenceText;
+            }
+            offset += length;
+        }
+        return null;
+    }
 }

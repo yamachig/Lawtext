@@ -4030,4 +4030,311 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+行政手続法施行令
+（平成六年政令第二百六十五号）
+
+:enact-statement:内閣は、行政手続法（平成五年法律第八十八号）第四条第二項第二号（略）の規定に基づき、この政令を制定する。
+
+  （申請に対する処分及び不利益処分に関する規定の適用が除外される法人）
+第一条　行政手続法（以下「法」という。）第四条第二項第二号の政令で定める
+
+  （不利益処分をしようとする場合の手続を要しない処分）
+第二条　法第十三条第二項第五号の政令で定める処分は、次に掲げる処分とする。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_0-text_4_9",
+                    type: "LawTitle",
+                    name: "行政手続法",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":21},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":4},\"end\":{\"sentenceIndex\":0,\"textOffset\":9}}",
+                    value: "{\"isCandidate\":false,\"text\":\"平成五年法律第八十八号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":10},\"end\":{\"sentenceIndex\":0,\"textOffset\":21}}}",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["行政手続法"],
+                    },
+                ],
+            },
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_1-text_9_10",
+                    type: "Keyword",
+                    name: "法",
+                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":11},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":9},\"end\":{\"sentenceIndex\":1,\"textOffset\":10}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":8}}}",
+                },
+                children: ["法"],
+            },
+        ];
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "行政手続法",
+                    declarationID: "decl-sentence_0-text_4_9",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":5}}",
+                },
+                children: ["行政手続法"],
+            },
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "法",
+                    declarationID: "decl-sentence_1-text_9_10",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":1}}",
+                },
+                children: ["法"],
+            },
+        ];
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第四条",
+                                num: "4",
+                            },
+                            children: ["第四条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第二項",
+                                num: "2",
+                            },
+                            children: ["第二項"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Item",
+                                name: "第二号",
+                                num: "2",
+                            },
+                            children: ["第二号"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: {
+                        suggestedLawTitle: "行政手続法",
+                        lawNum: "平成五年法律第八十八号",
+                    },
+                    fqPrefixFragments: [],
+                    skipSameCount: 0,
+                },
+                prependedLawRef: {
+                    suggestedLawTitle: "行政手続法",
+                    lawNum: "平成五年法律第八十八号",
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: "この政令",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "HERE",
+                                targetType: "Law",
+                                name: "この政令",
+                            },
+                            children: ["この政令"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "この政令",
+                            containers: ["container-Law"],
+                        },
+                    ],
+                },
+                prependedLawRef: null,
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: "第四条第二項第二号",
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第四条",
+                                num: "4",
+                            },
+                            children: ["第四条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第二項",
+                                num: "2",
+                            },
+                            children: ["第二項"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Item",
+                                name: "第二号",
+                                num: "2",
+                            },
+                            children: ["第二号"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: {
+                        suggestedLawTitle: "行政手続法",
+                        lawNum: "平成五年法律第八十八号",
+                    },
+                    fqPrefixFragments: [],
+                    skipSameCount: 0,
+                },
+                prependedLawRef: {
+                    suggestedLawTitle: "行政手続法",
+                    lawNum: "平成五年法律第八十八号",
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第十三条",
+                                num: "13",
+                            },
+                            children: ["第十三条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第二項",
+                                num: "2",
+                            },
+                            children: ["第二項"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Item",
+                                name: "第五号",
+                                num: "5",
+                            },
+                            children: ["第五号"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: {
+                        suggestedLawTitle: "行政手続法",
+                        lawNum: "平成五年法律第八十八号",
+                    },
+                    fqPrefixFragments: [],
+                    skipSameCount: 0,
+                },
+                prependedLawRef: null,
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+        ];
+
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            varRefs.map(r => r.json(true)),
+            expected,
+        );
+
+        // console.log(JSON.stringify([...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
 });
