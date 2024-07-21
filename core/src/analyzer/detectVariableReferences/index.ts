@@ -3,7 +3,8 @@ import type * as std from "../../law/std";
 import type { Declarations } from "../common/declarations";
 import { ____VarRef } from "../../node/el/controls/varRef";
 import type { SentenceEnvsStruct } from "../getSentenceEnvs";
-import type { ____Declaration, ____LawRef } from "../../node/el/controls";
+import type { ____LawRef } from "../../node/el/controls";
+import { ____Declaration } from "../../node/el/controls";
 import { __Parentheses, __Text, ____PointerRanges } from "../../node/el/controls";
 import type { WithErrorValue } from "../../parser/std/util";
 import type { SentenceChildEL } from "../../node/cst/inline";
@@ -198,21 +199,30 @@ export const detectVariableReferencesOfEL = (
                     if (lastNewItem instanceof ____VarRef) {
                         const declaration = declarations.get(lastNewItem.attr.declarationID);
                         if (declaration.attr.type === "LawTitle") {
-                            const pointerRangesIndex = childIndex + match.value.newItems.length;
+                            const nextItemIndex = childIndex + match.value.newItems.length;
 
-                            if (
-                                (pointerRangesIndex < elToBeModified.children.length)
-                            && (elToBeModified.children[pointerRangesIndex] instanceof ____PointerRanges)
-                            )
-                            {
-                                const pointerRanges = elToBeModified.children[pointerRangesIndex] as ____PointerRanges;
-                                const firstPointer = pointerRanges.ranges()[0].pointers()[0];
-                                const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
-                                const lawRef = lawRefByDeclarationID.get(declaration.attr.declarationID);
-                                if (pointerEnv && declaration.attr.value && lawRef) {
-                                    pointerEnv.prependedLawRef = lawRef;
+                            for (let i = nextItemIndex; i < elToBeModified.children.length; i++) {
+                                const item = elToBeModified.children[i];
+                                if (item instanceof ____PointerRanges) {
+                                    const firstPointer = item.ranges()[0].pointers()[0];
+                                    const pointerEnv = pointerEnvsStruct.pointerEnvByEL.get(firstPointer);
+                                    const lawRef = lawRefByDeclarationID.get(declaration.attr.declarationID);
+                                    if (pointerEnv && declaration.attr.value && lawRef) {
+                                        pointerEnv.prependedLawRef = lawRef;
+                                    }
+                                } else if (
+                                    (item instanceof __Parentheses)
+                                    || (
+                                        (item instanceof ____Declaration)
+                                        && (item.children.length === 1)
+                                        && (item.children[0] instanceof __Parentheses)
+                                    )
+                                ) {
+                                    continue;
                                 }
+                                break;
                             }
+
                         }
                     }
 

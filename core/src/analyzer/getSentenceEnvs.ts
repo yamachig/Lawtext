@@ -36,7 +36,7 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
 
         if (isIgnoreAnalysis(el)) return;
 
-        if (isSentenceLike(el)) {
+        if (isSentenceLike(el) && !(containerTags as readonly string[]).includes(el.tag)) {
             const container = prevContainer ?? rootContainer ?? dummyRootContainer;
             if (!rootContainer) rootContainer = container;
             const sentenceEnv = new SentenceEnv({
@@ -82,6 +82,18 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
                 containers.set(container.containerID, container);
                 containersByEL.set(el, container);
                 if (!rootContainer) rootContainer = container;
+
+                if (isSentenceLike(el)) {
+                    const sentenceEnv = new SentenceEnv({
+                        index: sentenceEnvs.length,
+                        el,
+                        lawType,
+                        parentELs: [...prevParentELs],
+                        container,
+                    });
+                    sentenceEnvs.push(sentenceEnv);
+                    sentenceEnvByEL.set(el, sentenceEnv);
+                }
             }
 
             const startSentenceIndex = sentenceEnvs.length;

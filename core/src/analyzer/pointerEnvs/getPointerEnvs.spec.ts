@@ -157,7 +157,7 @@ describe("Test getPointerEnvs", () => {
         const expectedErrorMessages: string[] = [];
 
         const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -400,7 +400,7 @@ describe("Test getPointerEnvs", () => {
         const expectedErrorMessages: string[] = [];
 
         const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -514,7 +514,7 @@ describe("Test getPointerEnvs", () => {
         const expectedErrorMessages: string[] = [];
 
         const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -778,7 +778,7 @@ describe("Test getPointerEnvs", () => {
         const expectedErrorMessages: string[] = [];
 
         const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -832,7 +832,7 @@ describe("Test getPointerEnvs", () => {
         const expectedErrorMessages: string[] = [];
 
         const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -967,7 +967,7 @@ describe("Test getPointerEnvs", () => {
         const expectedErrorMessages: string[] = [];
 
         const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -1199,7 +1199,7 @@ describe("Test getPointerEnvs", () => {
         const expectedErrorMessages: string[] = [];
 
         const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate());
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(

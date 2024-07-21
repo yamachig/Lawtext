@@ -90,7 +90,19 @@ export const processNameInline = (
                 declarationID,
                 type: "Keyword",
                 name,
-                value: null,
+                value: {
+                    isCandidate: true,
+                    sentenceTextRange: {
+                        start: {
+                            sentenceIndex: sentenceEnv.index,
+                            textOffset: 0,
+                        },
+                        end: {
+                            sentenceIndex: sentenceEnv.index,
+                            textOffset: sentenceEnv.textRageOfEL(pointerRanges ?? nameSquareParentheses)?.[0] ?? 0,
+                        },
+                    },
+                },
                 scope: scope,
                 nameSentenceTextRange,
                 range: nameSquareParentheses.content.range,

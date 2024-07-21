@@ -328,9 +328,11 @@ export function *enumerateSentenceTexts(el: EL): Iterable<SentenceText> {
 
 export type SentenceLike = (
     | std.Sentence
+    | std.EnactStatement
+    | std.TableHeaderColumn
 );
 
-export const sentenceLikeTags = ["Sentence"] as const;
+export const sentenceLikeTags = ["Sentence", "EnactStatement", "TableHeaderColumn"] as const;
 
 export const isSentenceLike = (el: EL | string): el is SentenceLike =>
     typeof el !== "string" && (sentenceLikeTags as readonly string[]).includes(el.tag);
@@ -352,6 +354,8 @@ export class SentenceEnv {
     public parentELs: EL[];
     public container: Container;
 
+    private parentOfEL = new Map<EL, EL>();
+
     private _text: string;
     public get text(): string { return this._text; }
 
@@ -362,6 +366,7 @@ export class SentenceEnv {
     public get pointerLikes(): Readonly<SentenceEnv["_pointerLikes"]> {
         return this._pointerLikes;
     }
+
     public addPointerLike(pointerLike: {
         textRange: [number, number] | null,
         pointerLike: PointerLike,
@@ -390,6 +395,15 @@ export class SentenceEnv {
         this.container = container;
 
         this._text = [...enumerateSentenceTexts(el)].map(textOfSentenceText).join("");
+
+        const setParentOfChildELs = (el: EL) => {
+            for (const c of el.children) {
+                if (typeof c === "string") continue;
+                this.parentOfEL.set(c, el);
+                setParentOfChildELs(c);
+            }
+        };
+        setParentOfChildELs(this.el);
     }
 
     public textRageOfEL(el: EL): [number, number] | null {

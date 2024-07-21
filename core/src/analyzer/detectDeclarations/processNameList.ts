@@ -101,11 +101,20 @@ export const processNameList = (
 
                 const declarationID = `decl-sentence_${sentenceEnv.index}-text_${nameSentenceTextRange.start.textOffset}_${nameSentenceTextRange.end.textOffset}`;
 
+                const valueTextRange = [
+                    nameChild.text().length + afterNameMatch[0].length,
+                    sentence.text().length - lastMatch[0].length,
+                ] as const;
+
                 const declaration = new ____Declaration({
                     declarationID,
                     type: "Keyword",
                     name,
-                    value: sentence.text().slice(nameChild.text().length + afterNameMatch[0].length, -lastMatch[0].length),
+                    value: {
+                        isCandidate: false,
+                        text: sentence.text().slice(...valueTextRange),
+                        sentenceTextRange: ((start, end) => ({ start: { sentenceIndex: sentenceEnv.index, textOffset: start }, end: { sentenceIndex: sentenceEnv.index, textOffset: end } }))(...valueTextRange),
+                    },
                     scope: scope,
                     nameSentenceTextRange,
                     range: nameChild.content.range,
@@ -145,11 +154,28 @@ export const processNameList = (
 
                 const declarationID = `decl-sentence_${nameSentenceEnv.index}-text_${nameSentenceTextRange.start.textOffset}_${nameSentenceTextRange.end.textOffset}`;
 
+                const valueSentenceEnvs = defColumn.children.map(c => sentenceEnvsStruct.sentenceEnvByEL.get(c as std.Sentence)).filter(s => s) as SentenceEnv[];
+
+                const lastMatch = /をいう。$/.exec(defColumn.text());
+
                 const declaration = new ____Declaration({
                     declarationID,
                     type: "Keyword",
                     name,
-                    value: defColumn.children.map(c => sentenceEnvsStruct.sentenceEnvByEL.get(c as std.Sentence)?.text ?? "").join(""),
+                    value: {
+                        isCandidate: false,
+                        text: valueSentenceEnvs.map(s => s.text).join().slice(0, lastMatch ? -lastMatch[0].length : undefined),
+                        sentenceTextRange: {
+                            start: {
+                                sentenceIndex: valueSentenceEnvs[0].index,
+                                textOffset: 0,
+                            },
+                            end: {
+                                sentenceIndex: valueSentenceEnvs[valueSentenceEnvs.length - 1].index,
+                                textOffset: valueSentenceEnvs[valueSentenceEnvs.length - 1].text.length - (lastMatch ? lastMatch[0].length : 0),
+                            },
+                        },
+                    },
                     scope: scope,
                     nameSentenceTextRange,
                     range: nameSentence.range,

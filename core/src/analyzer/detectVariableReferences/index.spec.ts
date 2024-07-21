@@ -39,6 +39,7 @@ describe("Test detectVariableReferences", () => {
                     name: "当事者等",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":63},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":6,\"textOffset\":0},\"end\":{\"sentenceIndex\":7,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":58},\"end\":{\"sentenceIndex\":0,\"textOffset\":62}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":40}}}",
                 },
                 children: ["当事者等"],
             },
@@ -117,7 +118,7 @@ describe("Test detectVariableReferences", () => {
                     name: "命令等",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":8,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
-                    value: "内閣又は行政機関が定める次に掲げるものをいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"内閣又は行政機関が定める次に掲げるもの\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":19}}}",
                 },
                 children: [
                     {
@@ -135,6 +136,7 @@ describe("Test detectVariableReferences", () => {
                     name: "命令",
                     scope: "[{\"start\":{\"sentenceIndex\":5,\"textOffset\":0},\"end\":{\"sentenceIndex\":8,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":36},\"end\":{\"sentenceIndex\":3,\"textOffset\":38}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":24}}}",
                 },
                 children: ["命令"],
             },
@@ -214,7 +216,7 @@ describe("Test detectVariableReferences", () => {
                     name: "旧法",
                     scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":24},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":21},\"end\":{\"sentenceIndex\":1,\"textOffset\":23}}",
-                    value: "大正四年法律第二十六号",
+                    value: "{\"isCandidate\":false,\"text\":\"大正四年法律第二十六号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":6},\"end\":{\"sentenceIndex\":1,\"textOffset\":17}}}",
                 },
                 children: ["旧法"],
             },
@@ -310,7 +312,7 @@ describe("Test detectVariableReferences", () => {
                     name: "無線局",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":10,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":4}}",
-                    value: "無線設備及び無線設備の操作を行う者の総体",
+                    value: "{\"isCandidate\":false,\"text\":\"無線設備及び無線設備の操作を行う者の総体\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":8},\"end\":{\"sentenceIndex\":1,\"textOffset\":28}}}",
                 },
                 children: ["無線局"],
             },
@@ -322,7 +324,7 @@ describe("Test detectVariableReferences", () => {
                     name: "旧法",
                     scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":24},\"end\":{\"sentenceIndex\":10,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":21},\"end\":{\"sentenceIndex\":3,\"textOffset\":23}}",
-                    value: "大正四年法律第二十六号",
+                    value: "{\"isCandidate\":false,\"text\":\"大正四年法律第二十六号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":3,\"textOffset\":6},\"end\":{\"sentenceIndex\":3,\"textOffset\":17}}}",
                 },
                 children: ["旧法"],
             },
@@ -433,6 +435,7 @@ describe("Test detectVariableReferences", () => {
                     name: "透明性",
                     scope: "[]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":70},\"end\":{\"sentenceIndex\":0,\"textOffset\":73}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":74},\"end\":{\"sentenceIndex\":0,\"textOffset\":114}}}",
                 },
                 children: ["透明性"],
             },
@@ -444,7 +447,7 @@ describe("Test detectVariableReferences", () => {
                     name: "法令",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":2}}",
-                    value: "法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":4,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":56}}}",
                 },
                 children: [
                     {
@@ -462,6 +465,7 @@ describe("Test detectVariableReferences", () => {
                     name: "規則",
                     scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":48},\"end\":{\"sentenceIndex\":4,\"textOffset\":50}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":4,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":47}}}",
                 },
                 children: ["規則"],
             },
@@ -473,7 +477,7 @@ describe("Test detectVariableReferences", () => {
                     name: "処分",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":5,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":2}}",
-                    value: "行政庁の処分その他公権力の行使に当たる行為をいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"行政庁の処分その他公権力の行使に当たる行為\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":6,\"textOffset\":0},\"end\":{\"sentenceIndex\":6,\"textOffset\":21}}}",
                 },
                 children: [
                     {
@@ -491,7 +495,7 @@ describe("Test detectVariableReferences", () => {
                     name: "申請",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":7,\"textOffset\":0},\"end\":{\"sentenceIndex\":7,\"textOffset\":2}}",
-                    value: "法令に基づき、行政庁の許可、認可、免許その他の自己に対し何らかの利益を付与する処分（以下「許認可等」という。）を求める行為であって、当該行為に対して行政庁が諾否の応答をすべきこととされているものをいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"法令に基づき、行政庁の許可、認可、免許その他の自己に対し何らかの利益を付与する処分（以下「許認可等」という。）を求める行為であって、当該行為に対して行政庁が諾否の応答をすべきこととされているもの\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":8,\"textOffset\":0},\"end\":{\"sentenceIndex\":8,\"textOffset\":97}}}",
                 },
                 children: [
                     {
@@ -509,6 +513,7 @@ describe("Test detectVariableReferences", () => {
                     name: "許認可等",
                     scope: "[{\"start\":{\"sentenceIndex\":8,\"textOffset\":50},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":8,\"textOffset\":45},\"end\":{\"sentenceIndex\":8,\"textOffset\":49}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":8,\"textOffset\":0},\"end\":{\"sentenceIndex\":8,\"textOffset\":44}}}",
                 },
                 children: ["許認可等"],
             },
@@ -520,7 +525,7 @@ describe("Test detectVariableReferences", () => {
                     name: "不利益処分",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":9,\"textOffset\":0},\"end\":{\"sentenceIndex\":9,\"textOffset\":5}}",
-                    value: "行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。ただし、次のいずれかに該当するものを除く。",
+                    value: "{\"isCandidate\":false,\"text\":\"行政庁が、法令に基づき、特定の者を名あて人として、直接に、これに義務を課し、又はその権利を制限する処分をいう。,ただし、次のいずれかに該当するものを除く。\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":10,\"textOffset\":0},\"end\":{\"sentenceIndex\":11,\"textOffset\":21}}}",
                 },
                 children: [
                     {
@@ -538,7 +543,7 @@ describe("Test detectVariableReferences", () => {
                     name: "行政機関",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":16,\"textOffset\":0},\"end\":{\"sentenceIndex\":16,\"textOffset\":4}}",
-                    value: "次に掲げる機関をいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"次に掲げる機関\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":17,\"textOffset\":0},\"end\":{\"sentenceIndex\":17,\"textOffset\":7}}}",
                 },
                 children: [
                     {
@@ -556,7 +561,7 @@ describe("Test detectVariableReferences", () => {
                     name: "内閣府設置法",
                     scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":60},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":41},\"end\":{\"sentenceIndex\":18,\"textOffset\":47}}",
-                    value: "平成十一年法律第八十九号",
+                    value: "{\"isCandidate\":false,\"text\":\"平成十一年法律第八十九号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":18,\"textOffset\":48},\"end\":{\"sentenceIndex\":18,\"textOffset\":60}}}",
                 },
                 children: [
                     {
@@ -574,7 +579,7 @@ describe("Test detectVariableReferences", () => {
                     name: "国家行政組織法",
                     scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":105},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":84},\"end\":{\"sentenceIndex\":18,\"textOffset\":91}}",
-                    value: "昭和二十三年法律第百二十号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十三年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":18,\"textOffset\":92},\"end\":{\"sentenceIndex\":18,\"textOffset\":105}}}",
                 },
                 children: [
                     {
@@ -592,7 +597,7 @@ describe("Test detectVariableReferences", () => {
                     name: "行政指導",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":20,\"textOffset\":0},\"end\":{\"sentenceIndex\":20,\"textOffset\":4}}",
-                    value: "行政機関がその任務又は所掌事務の範囲内において一定の行政目的を実現するため特定の者に一定の作為又は不作為を求める指導、勧告、助言その他の行為であって処分に該当しないものをいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"行政機関がその任務又は所掌事務の範囲内において一定の行政目的を実現するため特定の者に一定の作為又は不作為を求める指導、勧告、助言その他の行為であって処分に該当しないもの\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":21,\"textOffset\":0},\"end\":{\"sentenceIndex\":21,\"textOffset\":84}}}",
                 },
                 children: [
                     {
@@ -610,7 +615,7 @@ describe("Test detectVariableReferences", () => {
                     name: "届出",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":22,\"textOffset\":0},\"end\":{\"sentenceIndex\":22,\"textOffset\":2}}",
-                    value: "行政庁に対し一定の事項の通知をする行為（申請に該当するものを除く。）であって、法令により直接に当該通知が義務付けられているもの（自己の期待する一定の法律上の効果を発生させるためには当該通知をすべきこととされているものを含む。）をいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"行政庁に対し一定の事項の通知をする行為（申請に該当するものを除く。）であって、法令により直接に当該通知が義務付けられているもの（自己の期待する一定の法律上の効果を発生させるためには当該通知をすべきこととされているものを含む。）\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":23,\"textOffset\":0},\"end\":{\"sentenceIndex\":23,\"textOffset\":113}}}",
                 },
                 children: [
                     {
@@ -628,7 +633,7 @@ describe("Test detectVariableReferences", () => {
                     name: "命令等",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":24,\"textOffset\":0},\"end\":{\"sentenceIndex\":24,\"textOffset\":3}}",
-                    value: "内閣又は行政機関が定める次に掲げるものをいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"内閣又は行政機関が定める次に掲げるもの\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":25,\"textOffset\":0},\"end\":{\"sentenceIndex\":25,\"textOffset\":19}}}",
                 },
                 children: [
                     {
@@ -646,6 +651,7 @@ describe("Test detectVariableReferences", () => {
                     name: "命令",
                     scope: "[]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":26,\"textOffset\":36},\"end\":{\"sentenceIndex\":26,\"textOffset\":38}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":26,\"textOffset\":0},\"end\":{\"sentenceIndex\":26,\"textOffset\":24}}}",
                 },
                 children: ["命令"],
             },
@@ -657,6 +663,7 @@ describe("Test detectVariableReferences", () => {
                     name: "審査基準",
                     scope: "[{\"start\":{\"sentenceIndex\":27,\"textOffset\":62},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":27,\"textOffset\":0},\"end\":{\"sentenceIndex\":27,\"textOffset\":4}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":27,\"textOffset\":5},\"end\":{\"sentenceIndex\":27,\"textOffset\":62}}}",
                 },
                 children: ["審査基準"],
             },
@@ -668,6 +675,7 @@ describe("Test detectVariableReferences", () => {
                     name: "処分基準",
                     scope: "[{\"start\":{\"sentenceIndex\":28,\"textOffset\":72},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":28,\"textOffset\":0},\"end\":{\"sentenceIndex\":28,\"textOffset\":4}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":28,\"textOffset\":5},\"end\":{\"sentenceIndex\":28,\"textOffset\":72}}}",
                 },
                 children: ["処分基準"],
             },
@@ -679,6 +687,7 @@ describe("Test detectVariableReferences", () => {
                     name: "行政指導指針",
                     scope: "[{\"start\":{\"sentenceIndex\":29,\"textOffset\":85},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":29,\"textOffset\":0},\"end\":{\"sentenceIndex\":29,\"textOffset\":6}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":29,\"textOffset\":7},\"end\":{\"sentenceIndex\":29,\"textOffset\":85}}}",
                 },
                 children: ["行政指導指針"],
             },
@@ -1106,7 +1115,7 @@ describe("Test detectVariableReferences", () => {
                     name: "命令等",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}},{\"start\":{\"sentenceIndex\":5,\"textOffset\":0},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
-                    value: "内閣又は行政機関が定める次に掲げるものをいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"内閣又は行政機関が定める次に掲げるもの\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":19}}}",
                 },
                 children: [
                     {
@@ -1199,7 +1208,7 @@ describe("Test detectVariableReferences", () => {
                     name: "無線局",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":4}}",
-                    value: "無線設備及び無線設備の操作を行う者の総体",
+                    value: "{\"isCandidate\":false,\"text\":\"無線設備及び無線設備の操作を行う者の総体\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":8},\"end\":{\"sentenceIndex\":1,\"textOffset\":28}}}",
                 },
                 children: ["無線局"],
             },
@@ -1211,6 +1220,7 @@ describe("Test detectVariableReferences", () => {
                     name: "実験等無線局",
                     scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":124},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":4,\"textOffset\":57}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":4,\"textOffset\":58},\"end\":{\"sentenceIndex\":4,\"textOffset\":124}}}",
                 },
                 children: ["実験等無線局"],
             },
@@ -1304,7 +1314,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "内閣府設置法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
-                    value: "平成十一年法律第八十九号",
+                    value: "{\"isCandidate\":false,\"text\":\"平成十一年法律第八十九号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":48},\"end\":{\"sentenceIndex\":0,\"textOffset\":60}}}",
                 },
                 children: [
                     {
@@ -1322,7 +1332,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "国家行政組織法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
-                    value: "昭和二十三年法律第百二十号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十三年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":92},\"end\":{\"sentenceIndex\":0,\"textOffset\":105}}}",
                 },
                 children: [
                     {
@@ -1504,6 +1514,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "公務員",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":91},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":3}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":4},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}}",
                 },
                 children: ["公務員"],
             },
@@ -1515,7 +1526,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "国家公務員法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":24},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":4},\"end\":{\"sentenceIndex\":0,\"textOffset\":10}}",
-                    value: "昭和二十二年法律第百二十号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十二年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":11},\"end\":{\"sentenceIndex\":0,\"textOffset\":24}}}",
                 },
                 children: [
                     {
@@ -1533,7 +1544,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "地方公務員法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":65},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
-                    value: "昭和二十五年法律第二百六十一号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第二百六十一号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":0,\"textOffset\":65}}}",
                 },
                 children: [
                     {
@@ -1689,7 +1700,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "地方自治法",
                     scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":42},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":3,\"textOffset\":28}}",
-                    value: "昭和二十二年法律第六十七号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十二年法律第六十七号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":3,\"textOffset\":29},\"end\":{\"sentenceIndex\":3,\"textOffset\":42}}}",
                 },
                 children: [
                     {
@@ -1861,7 +1872,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "出入国管理及び難民認定法",
                     scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":35},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":8},\"end\":{\"sentenceIndex\":2,\"textOffset\":20}}",
-                    value: "昭和二十六年政令第三百十九号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十六年政令第三百十九号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":21},\"end\":{\"sentenceIndex\":2,\"textOffset\":35}}}",
                 },
                 children: [
                     {
@@ -2017,7 +2028,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "放送法",
                     scope: "[{\"start\":{\"sentenceIndex\":6,\"textOffset\":61},\"end\":{\"sentenceIndex\":12,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":6,\"textOffset\":43},\"end\":{\"sentenceIndex\":6,\"textOffset\":46}}",
-                    value: "昭和二十五年法律第百三十二号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第百三十二号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":6,\"textOffset\":47},\"end\":{\"sentenceIndex\":6,\"textOffset\":61}}}",
                 },
                 children: [
                     {
@@ -2316,7 +2327,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "放送法",
                     scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":5},\"end\":{\"sentenceIndex\":3,\"textOffset\":8}}",
-                    value: "昭和二十五年法律第百三十二号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第百三十二号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":3,\"textOffset\":9},\"end\":{\"sentenceIndex\":3,\"textOffset\":23}}}",
                 },
                 children: [
                     {
@@ -2682,7 +2693,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "放送法",
                     scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":10,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":5},\"end\":{\"sentenceIndex\":3,\"textOffset\":8}}",
-                    value: "昭和二十五年法律第百三十二号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第百三十二号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":3,\"textOffset\":9},\"end\":{\"sentenceIndex\":3,\"textOffset\":23}}}",
                 },
                 children: [
                     {
@@ -3583,6 +3594,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "届出等",
                     scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":31},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":27},\"end\":{\"sentenceIndex\":2,\"textOffset\":30}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":26}}}",
                 },
                 children: ["届出等"],
             },
@@ -3643,6 +3655,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "公務員",
                     scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":91},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":4},\"end\":{\"sentenceIndex\":1,\"textOffset\":91}}}",
                 },
                 children: ["公務員"],
             },
@@ -3654,7 +3667,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "国家公務員法",
                     scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":24},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":4},\"end\":{\"sentenceIndex\":1,\"textOffset\":10}}",
-                    value: "昭和二十二年法律第百二十号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十二年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":11},\"end\":{\"sentenceIndex\":1,\"textOffset\":24}}}",
                 },
                 children: [
                     {
@@ -3672,7 +3685,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     name: "地方公務員法",
                     scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":65},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":43},\"end\":{\"sentenceIndex\":1,\"textOffset\":49}}",
-                    value: "昭和二十五年法律第二百六十一号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第二百六十一号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":65}}}",
                 },
                 children: [
                     {
@@ -3695,6 +3708,147 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 children: ["公務員"],
             },
         ];
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NEXT",
+                                targetType: "Chapter",
+                                name: "次章",
+                            },
+                            children: ["次章"],
+                        },
+                    ],
+                },
+                located: null,
+                prependedLawRef: null,
+                namingParent: null,
+                namingChildren: ["第四章の二"],
+                seriesPrev: null,
+                seriesNext: "第四章の二",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Chapter",
+                                name: "第四章の二",
+                                num: "4_2",
+                            },
+                            children: ["第四章の二"],
+                        },
+                    ],
+                },
+                located: null,
+                prependedLawRef: null,
+                namingParent: "次章",
+                namingChildren: [],
+                seriesPrev: "次章",
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第二条",
+                                num: "2",
+                            },
+                            children: ["第二条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: {
+                        suggestedLawTitle: "国家公務員法",
+                        lawNum: "昭和二十二年法律第百二十号",
+                    },
+                    fqPrefixFragments: [],
+                    skipSameCount: 0,
+                },
+                prependedLawRef: {
+                    suggestedLawTitle: "国家公務員法",
+                    lawNum: "昭和二十二年法律第百二十号",
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: "第三条第一項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第三条",
+                                num: "3",
+                            },
+                            children: ["第三条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: {
+                        suggestedLawTitle: "地方公務員法",
+                        lawNum: "昭和二十五年法律第二百六十一号",
+                    },
+                    fqPrefixFragments: [],
+                    skipSameCount: 0,
+                },
+                prependedLawRef: {
+                    suggestedLawTitle: "地方公務員法",
+                    lawNum: "昭和二十五年法律第二百六十一号",
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: "第二条第一項",
+                seriesNext: null,
+            },
+        ];
+
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
@@ -3712,6 +3866,12 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assert.deepStrictEqual(
             varRefs.map(r => r.json(true)),
             expected,
+        );
+
+        // console.log(JSON.stringify([...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
         );
 
         assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);

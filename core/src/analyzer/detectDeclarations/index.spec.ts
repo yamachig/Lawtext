@@ -45,6 +45,7 @@ describe("Test detectDeclarations", () => {
                 attr: {
                     declarationID: "decl-sentence_0-text_36_38",
                     type: "Keyword",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":24}}}",
                     name: "命令",
                     scope: "[]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":36},\"end\":{\"sentenceIndex\":0,\"textOffset\":38}}",
@@ -176,6 +177,7 @@ describe("Test detectDeclarations", () => {
                                                                         name: "命令",
                                                                         scope: "[]",
                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":36},\"end\":{\"sentenceIndex\":0,\"textOffset\":38}}",
+                                                                        value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":24}}}",
                                                                     },
                                                                     children: ["命令"],
                                                                 },
@@ -274,7 +276,7 @@ describe("Test detectDeclarations", () => {
                     name: "通則法改正法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
-                    value: "平成二十六年法律第六十六号",
+                    value: "{\"isCandidate\":false,\"text\":\"平成二十六年法律第六十六号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":26},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}}",
                 },
                 children: ["通則法改正法"],
             },
@@ -400,7 +402,7 @@ describe("Test detectDeclarations", () => {
                                                                                 name: "通則法改正法",
                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
-                                                                                value: "平成二十六年法律第六十六号",
+                                                                                value: "{\"isCandidate\":false,\"text\":\"平成二十六年法律第六十六号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":26},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}}",
                                                                             },
                                                                             children: ["通則法改正法"],
                                                                         },
@@ -500,7 +502,7 @@ describe("Test detectDeclarations", () => {
                     name: "地方自治法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":42},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
-                    value: "昭和二十二年法律第六十七号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十二年法律第六十七号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":29},\"end\":{\"sentenceIndex\":0,\"textOffset\":42}}}",
                 },
                 children: [
                     {
@@ -556,7 +558,7 @@ describe("Test detectDeclarations", () => {
                                                 name: "地方自治法",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":42},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":23},\"end\":{\"sentenceIndex\":0,\"textOffset\":28}}",
-                                                value: "昭和二十二年法律第六十七号",
+                                                value: "{\"isCandidate\":false,\"text\":\"昭和二十二年法律第六十七号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":29},\"end\":{\"sentenceIndex\":0,\"textOffset\":42}}}",
                                             },
                                             children: [
                                                 {
@@ -790,7 +792,7 @@ describe("Test detectDeclarations", () => {
                     name: "法令",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":2}}",
-                    value: "法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":56}}}",
                 },
                 children: [
                     {
@@ -808,7 +810,7 @@ describe("Test detectDeclarations", () => {
                     name: "処分",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":2}}",
-                    value: "行政庁の処分その他公権力の行使に当たる行為をいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"行政庁の処分その他公権力の行使に当たる行為\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":4,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":21}}}",
                 },
                 children: [
                     {
@@ -826,6 +828,7 @@ describe("Test detectDeclarations", () => {
                     name: "規則",
                     scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":51},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":48},\"end\":{\"sentenceIndex\":2,\"textOffset\":50}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":47}}}",
                 },
                 children: ["規則"],
             },
@@ -987,7 +990,7 @@ describe("Test detectDeclarations", () => {
                                                                                         name: "法令",
                                                                                         scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":2}}",
-                                                                                        value: "法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）をいう。",
+                                                                                        value: "{\"isCandidate\":false,\"text\":\"法律、法律に基づく命令（告示を含む。）、条例及び地方公共団体の執行機関の規則（規程を含む。以下「規則」という。）\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":56}}}",
                                                                                     },
                                                                                     children: [
                                                                                         {
@@ -1108,6 +1111,7 @@ describe("Test detectDeclarations", () => {
                                                                                                                         name: "規則",
                                                                                                                         scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":51},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                                                                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":48},\"end\":{\"sentenceIndex\":2,\"textOffset\":50}}",
+                                                                                                                        value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":47}}}",
                                                                                                                     },
                                                                                                                     children: ["規則"],
                                                                                                                 },
@@ -1182,7 +1186,7 @@ describe("Test detectDeclarations", () => {
                                                                                         name: "処分",
                                                                                         scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":2}}",
-                                                                                        value: "行政庁の処分その他公権力の行使に当たる行為をいう。",
+                                                                                        value: "{\"isCandidate\":false,\"text\":\"行政庁の処分その他公権力の行使に当たる行為\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":4,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":21}}}",
                                                                                     },
                                                                                     children: [
                                                                                         {
@@ -1271,7 +1275,7 @@ describe("Test detectDeclarations", () => {
                     name: "多施設共同研究",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":1},\"end\":{\"sentenceIndex\":2,\"textOffset\":8}}",
-                    value: "一の臨床研究の計画書（以下「研究計画書」という。）に基づき複数の実施医療機関において実施される臨床研究",
+                    value: "{\"isCandidate\":false,\"text\":\"一の臨床研究の計画書（以下「研究計画書」という。）に基づき複数の実施医療機関において実施される臨床研究\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":12},\"end\":{\"sentenceIndex\":2,\"textOffset\":63}}}",
                 },
                 children: ["多施設共同研究"],
             },
@@ -1283,7 +1287,7 @@ describe("Test detectDeclarations", () => {
                     name: "実施医療機関",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":7}}",
-                    value: "臨床研究が実施される医療機関",
+                    value: "{\"isCandidate\":false,\"text\":\"臨床研究が実施される医療機関\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":11},\"end\":{\"sentenceIndex\":1,\"textOffset\":25}}}",
                 },
                 children: ["実施医療機関"],
             },
@@ -1295,6 +1299,7 @@ describe("Test detectDeclarations", () => {
                     name: "研究計画書",
                     scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":32},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":26},\"end\":{\"sentenceIndex\":2,\"textOffset\":31}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":25}}}",
                 },
                 children: ["研究計画書"],
             },
@@ -1306,7 +1311,7 @@ describe("Test detectDeclarations", () => {
                     name: "法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":40},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
-                    value: "平成二十九年法律第十六号",
+                    value: "{\"isCandidate\":false,\"text\":\"平成二十九年法律第十六号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":22},\"end\":{\"sentenceIndex\":0,\"textOffset\":34}}}",
                 },
                 children: ["法"],
             },
@@ -1503,7 +1508,7 @@ describe("Test detectDeclarations", () => {
                                                                                                                 name: "法",
                                                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":40},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":38},\"end\":{\"sentenceIndex\":0,\"textOffset\":39}}",
-                                                                                                                value: "平成二十九年法律第十六号",
+                                                                                                                value: "{\"isCandidate\":false,\"text\":\"平成二十九年法律第十六号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":22},\"end\":{\"sentenceIndex\":0,\"textOffset\":34}}}",
                                                                                                             },
                                                                                                             children: ["法"],
                                                                                                         },
@@ -1592,7 +1597,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 name: "実施医療機関",
                                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":7}}",
-                                                                                                value: "臨床研究が実施される医療機関",
+                                                                                                value: "{\"isCandidate\":false,\"text\":\"臨床研究が実施される医療機関\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":11},\"end\":{\"sentenceIndex\":1,\"textOffset\":25}}}",
                                                                                             },
                                                                                             children: ["実施医療機関"],
                                                                                         },
@@ -1665,7 +1670,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 name: "多施設共同研究",
                                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":1},\"end\":{\"sentenceIndex\":2,\"textOffset\":8}}",
-                                                                                                value: "一の臨床研究の計画書（以下「研究計画書」という。）に基づき複数の実施医療機関において実施される臨床研究",
+                                                                                                value: "{\"isCandidate\":false,\"text\":\"一の臨床研究の計画書（以下「研究計画書」という。）に基づき複数の実施医療機関において実施される臨床研究\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":12},\"end\":{\"sentenceIndex\":2,\"textOffset\":63}}}",
                                                                                             },
                                                                                             children: ["多施設共同研究"],
                                                                                         },
@@ -1738,6 +1743,7 @@ describe("Test detectDeclarations", () => {
                                                                                                                 name: "研究計画書",
                                                                                                                 scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":32},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":26},\"end\":{\"sentenceIndex\":2,\"textOffset\":31}}",
+                                                                                                                value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":25}}}",
                                                                                                             },
                                                                                                             children: ["研究計画書"],
                                                                                                         },
@@ -1833,7 +1839,7 @@ describe("Test detectDeclarations", () => {
                     name: "無線局",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":1},\"end\":{\"sentenceIndex\":2,\"textOffset\":4}}",
-                    value: "無線設備及び無線設備の操作を行う者の総体",
+                    value: "{\"isCandidate\":false,\"text\":\"無線設備及び無線設備の操作を行う者の総体\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":8},\"end\":{\"sentenceIndex\":2,\"textOffset\":28}}}",
                 },
                 children: ["無線局"],
             },
@@ -1845,7 +1851,7 @@ describe("Test detectDeclarations", () => {
                     name: "電波",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
-                    value: "三百万メガヘルツ以下の周波数の電磁波",
+                    value: "{\"isCandidate\":false,\"text\":\"三百万メガヘルツ以下の周波数の電磁波\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":7},\"end\":{\"sentenceIndex\":1,\"textOffset\":25}}}",
                 },
                 children: ["電波"],
             },
@@ -2057,7 +2063,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 name: "電波",
                                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":3}}",
-                                                                                                value: "三百万メガヘルツ以下の周波数の電磁波",
+                                                                                                value: "{\"isCandidate\":false,\"text\":\"三百万メガヘルツ以下の周波数の電磁波\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":7},\"end\":{\"sentenceIndex\":1,\"textOffset\":25}}}",
                                                                                             },
                                                                                             children: ["電波"],
                                                                                         },
@@ -2133,7 +2139,7 @@ describe("Test detectDeclarations", () => {
                                                                                                 name: "無線局",
                                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":4,\"textOffset\":0}}]",
                                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":1},\"end\":{\"sentenceIndex\":2,\"textOffset\":4}}",
-                                                                                                value: "無線設備及び無線設備の操作を行う者の総体",
+                                                                                                value: "{\"isCandidate\":false,\"text\":\"無線設備及び無線設備の操作を行う者の総体\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":8},\"end\":{\"sentenceIndex\":2,\"textOffset\":28}}}",
                                                                                             },
                                                                                             children: ["無線局"],
                                                                                         },
@@ -2226,7 +2232,7 @@ describe("Test detectDeclarations", () => {
                     name: "南極哺乳類",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":5}}",
-                    value: "哺乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。",
+                    value: "{\"isCandidate\":false,\"text\":\"哺乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":49}}}",
                 },
                 children: [
                     {
@@ -2420,7 +2426,7 @@ describe("Test detectDeclarations", () => {
                                                                                         name: "南極哺乳類",
                                                                                         scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":0},\"end\":{\"sentenceIndex\":1,\"textOffset\":5}}",
-                                                                                        value: "哺乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。",
+                                                                                        value: "{\"isCandidate\":false,\"text\":\"哺乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":2,\"textOffset\":49}}}",
                                                                                     },
                                                                                     children: [
                                                                                         {
@@ -2556,7 +2562,7 @@ describe("Test detectDeclarations", () => {
                     name: "国家行政組織法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
-                    value: "昭和二十三年法律第百二十号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十三年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":92},\"end\":{\"sentenceIndex\":0,\"textOffset\":105}}}",
                 },
                 children: [
                     {
@@ -2574,7 +2580,7 @@ describe("Test detectDeclarations", () => {
                     name: "内閣府設置法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
-                    value: "平成十一年法律第八十九号",
+                    value: "{\"isCandidate\":false,\"text\":\"平成十一年法律第八十九号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":48},\"end\":{\"sentenceIndex\":0,\"textOffset\":60}}}",
                 },
                 children: [
                     {
@@ -2693,7 +2699,7 @@ describe("Test detectDeclarations", () => {
                                                                                 name: "内閣府設置法",
                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
-                                                                                value: "平成十一年法律第八十九号",
+                                                                                value: "{\"isCandidate\":false,\"text\":\"平成十一年法律第八十九号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":48},\"end\":{\"sentenceIndex\":0,\"textOffset\":60}}}",
                                                                             },
                                                                             children: [
                                                                                 {
@@ -2827,7 +2833,7 @@ describe("Test detectDeclarations", () => {
                                                                                 name: "国家行政組織法",
                                                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
-                                                                                value: "昭和二十三年法律第百二十号",
+                                                                                value: "{\"isCandidate\":false,\"text\":\"昭和二十三年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":92},\"end\":{\"sentenceIndex\":0,\"textOffset\":105}}}",
                                                                             },
                                                                             children: [
                                                                                 {
@@ -2981,6 +2987,7 @@ describe("Test detectDeclarations", () => {
                     name: "透明性",
                     scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":70},\"end\":{\"sentenceIndex\":0,\"textOffset\":73}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":74},\"end\":{\"sentenceIndex\":0,\"textOffset\":114}}}",
                 },
                 children: ["透明性"],
             },
@@ -3132,6 +3139,7 @@ describe("Test detectDeclarations", () => {
                                                                         name: "透明性",
                                                                         scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":0},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":70},\"end\":{\"sentenceIndex\":0,\"textOffset\":73}}",
+                                                                        value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":74},\"end\":{\"sentenceIndex\":0,\"textOffset\":114}}}",
                                                                     },
                                                                     children: ["透明性"],
                                                                 },
@@ -3560,6 +3568,7 @@ describe("Test detectDeclarations", () => {
                     name: "実験等無線局",
                     scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":124},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":4,\"textOffset\":57}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":4,\"textOffset\":58},\"end\":{\"sentenceIndex\":4,\"textOffset\":124}}}",
                 },
                 children: ["実験等無線局"],
             },
@@ -3571,7 +3580,7 @@ describe("Test detectDeclarations", () => {
                     name: "無線局",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":4}}",
-                    value: "無線設備及び無線設備の操作を行う者の総体",
+                    value: "{\"isCandidate\":false,\"text\":\"無線設備及び無線設備の操作を行う者の総体\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":8},\"end\":{\"sentenceIndex\":1,\"textOffset\":28}}}",
                 },
                 children: ["無線局"],
             },
@@ -3782,7 +3791,7 @@ describe("Test detectDeclarations", () => {
                                                                                                         name: "無線局",
                                                                                                         scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
                                                                                                         nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":1},\"end\":{\"sentenceIndex\":1,\"textOffset\":4}}",
-                                                                                                        value: "無線設備及び無線設備の操作を行う者の総体",
+                                                                                                        value: "{\"isCandidate\":false,\"text\":\"無線設備及び無線設備の操作を行う者の総体\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":8},\"end\":{\"sentenceIndex\":1,\"textOffset\":28}}}",
                                                                                                     },
                                                                                                     children: ["無線局"],
                                                                                                 },
@@ -3960,6 +3969,7 @@ describe("Test detectDeclarations", () => {
                                                                                 name: "実験等無線局",
                                                                                 scope: "[{\"start\":{\"sentenceIndex\":4,\"textOffset\":124},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
                                                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":4,\"textOffset\":51},\"end\":{\"sentenceIndex\":4,\"textOffset\":57}}",
+                                                                                value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":4,\"textOffset\":58},\"end\":{\"sentenceIndex\":4,\"textOffset\":124}}}",
                                                                             },
                                                                             children: ["実験等無線局"],
                                                                         },
@@ -4484,6 +4494,7 @@ describe("Test detectDeclarations", () => {
                     name: "命令等の案",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":27},\"end\":{\"sentenceIndex\":0,\"textOffset\":32}}",
+                    value: "{\"isCandidate\":true,\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":0,\"textOffset\":60}}}",
                 },
                 children: ["命令等の案"],
             },
@@ -4543,7 +4554,7 @@ describe("Test detectDeclarations", () => {
                     name: "裁判員の参加する刑事裁判に関する法律",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":3},\"end\":{\"sentenceIndex\":0,\"textOffset\":21}}",
-                    value: "平成１６年法律第６３号",
+                    value: "{\"isCandidate\":false,\"text\":\"平成１６年法律第６３号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":22},\"end\":{\"sentenceIndex\":0,\"textOffset\":33}}}",
                 },
                 children: [
                     {
@@ -4598,8 +4609,7 @@ describe("Test detectDeclarations", () => {
                                                 type: "LawTitle",
                                                 name: "裁判員の参加する刑事裁判に関する法律",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
-                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":3},\"end\":{\"sentenceIndex\":0,\"textOffset\":21}}",
-                                                value: "平成１６年法律第６３号",
+                                                nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":3},\"end\":{\"sentenceIndex\":0,\"textOffset\":21}}", value: "{\"isCandidate\":false,\"text\":\"平成１６年法律第６３号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":22},\"end\":{\"sentenceIndex\":0,\"textOffset\":33}}}",
                                             },
                                             children: [
                                                 {
@@ -4752,7 +4762,7 @@ describe("Test detectDeclarations", () => {
                     name: "官民データ活用推進基本法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}",
-                    value: "平成二十八年法律第百三号",
+                    value: "{\"isCandidate\":false,\"text\":\"平成二十八年法律第百三号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":21},\"end\":{\"sentenceIndex\":0,\"textOffset\":33}}}",
                 },
                 children: [
                     {
@@ -4835,7 +4845,7 @@ describe("Test detectDeclarations", () => {
                                                 name: "官民データ活用推進基本法",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":33},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}",
-                                                value: "平成二十八年法律第百三号",
+                                                value: "{\"isCandidate\":false,\"text\":\"平成二十八年法律第百三号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":21},\"end\":{\"sentenceIndex\":0,\"textOffset\":33}}}",
                                             },
                                             children: [
                                                 {
@@ -4977,7 +4987,7 @@ describe("Test detectDeclarations", () => {
                     name: "へき地教育振興法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":31},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":16}}",
-                    value: "昭和二十九年法律第百四十三号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十九年法律第百四十三号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":17},\"end\":{\"sentenceIndex\":0,\"textOffset\":31}}}",
                 },
                 children: [
                     {
@@ -5104,7 +5114,7 @@ describe("Test detectDeclarations", () => {
                                                 name: "へき地教育振興法",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":31},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":8},\"end\":{\"sentenceIndex\":0,\"textOffset\":16}}",
-                                                value: "昭和二十九年法律第百四十三号",
+                                                value: "{\"isCandidate\":false,\"text\":\"昭和二十九年法律第百四十三号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":17},\"end\":{\"sentenceIndex\":0,\"textOffset\":31}}}",
                                             },
                                             children: [
                                                 {
@@ -5278,7 +5288,7 @@ describe("Test detectDeclarations", () => {
                     name: "激甚災害に対処するための特別の財政援助等に関する法律",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":69},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":29},\"end\":{\"sentenceIndex\":0,\"textOffset\":55}}",
-                    value: "昭和三十七年法律第百五十号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和三十七年法律第百五十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":56},\"end\":{\"sentenceIndex\":0,\"textOffset\":69}}}",
                 },
                 children: [
                     {
@@ -5323,7 +5333,7 @@ describe("Test detectDeclarations", () => {
                     name: "公営住宅法",
                     scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":20},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":5}}",
-                    value: "昭和二十六年法律第百九十三号",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和二十六年法律第百九十三号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":6},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}}",
                 },
                 children: [
                     {
@@ -5374,7 +5384,7 @@ describe("Test detectDeclarations", () => {
                                                 name: "公営住宅法",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":20},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":0},\"end\":{\"sentenceIndex\":0,\"textOffset\":5}}",
-                                                value: "昭和二十六年法律第百九十三号",
+                                                value: "{\"isCandidate\":false,\"text\":\"昭和二十六年法律第百九十三号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":6},\"end\":{\"sentenceIndex\":0,\"textOffset\":20}}}",
                                             },
                                             children: [
                                                 {
@@ -5481,7 +5491,7 @@ describe("Test detectDeclarations", () => {
                                                 name: "激甚災害に対処するための特別の財政援助等に関する法律",
                                                 scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":69},\"end\":{\"sentenceIndex\":null,\"textOffset\":0}}]",
                                                 nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":29},\"end\":{\"sentenceIndex\":0,\"textOffset\":55}}",
-                                                value: "昭和三十七年法律第百五十号",
+                                                value: "{\"isCandidate\":false,\"text\":\"昭和三十七年法律第百五十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":56},\"end\":{\"sentenceIndex\":0,\"textOffset\":69}}}",
                                             },
                                             children: [
                                                 {

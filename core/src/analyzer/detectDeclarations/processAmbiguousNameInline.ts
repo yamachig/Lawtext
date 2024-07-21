@@ -12,6 +12,7 @@ import type { Declarations } from "../common/declarations";
 import $ambiguousNameParenthesesContent from "../sentenceChildrenParser/rules/$ambiguousNameParenthesesContent";
 import getScope from "../pointerEnvs/getScope";
 import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
+import type { EL } from "../../node/el";
 
 // Characters other than Hiragana's, spaces, and punctuations.
 const ptnNameChar = "(?!(?:\\s|[。、]))[^ぁ-ゟ]";
@@ -400,7 +401,7 @@ export const processAmbiguousNameInline = (
         };
     }
 
-    for (const { scope, pointerRanges, sentenceEnv, name, nameCandidateEL, elToBeModified } of filteredNameInfos.value) {
+    for (const { scope, pointerRanges, sentenceEnv, name, nameCandidateEL, elToBeModified, valueELs } of filteredNameInfos.value) {
 
         if (scope.length === 0) {
             errors.push(new ErrorMessage(
@@ -451,7 +452,19 @@ export const processAmbiguousNameInline = (
             declarationID,
             type: "Keyword",
             name,
-            value: null,
+            value: {
+                isCandidate: true,
+                sentenceTextRange: {
+                    start: {
+                        sentenceIndex: sentenceEnv.index,
+                        textOffset: sentenceEnv.textRageOfEL(valueELs[0] as EL)?.[0] ?? 0,
+                    },
+                    end: {
+                        sentenceIndex: sentenceEnv.index,
+                        textOffset: sentenceEnv.textRageOfEL(valueELs[valueELs.length - 1] as EL)?.[1] ?? 0,
+                    },
+                },
+            },
             scope: scope,
             nameSentenceTextRange,
             range: nameCandidateEL.range ? [

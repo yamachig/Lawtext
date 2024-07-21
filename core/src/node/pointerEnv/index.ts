@@ -3,7 +3,7 @@ import type { Container } from "../container";
 import { getContainerType, ContainerType } from "../container";
 import type { PointerLike, SentenceEnv } from "../container/sentenceEnv";
 import { EL } from "../el";
-import type { ____PF, ____Pointer } from "../el/controls";
+import type { ____Declaration, ____PF, ____Pointer } from "../el/controls";
 import { ____LawRef } from "../el/controls";
 import { RelPos } from "../el/controls";
 
@@ -75,7 +75,19 @@ export class PointerEnv {
         };
     }
 
-    public locate(force = false) {
+    public locate(
+        options: {
+            force?: boolean,
+            declarations: Map<string, ____Declaration>,
+        },
+    ) {
+        const {
+            force,
+            declarations,
+        } = {
+            force: false,
+            ...options,
+        };
         if (this.located && !force) return;
 
         const fragments = this.pointer.fragments();
@@ -126,7 +138,7 @@ export class PointerEnv {
 
             if (referredPointerLike instanceof PointerEnv) {
                 const referredEnv = referredPointerLike;
-                referredEnv.locate(force);
+                referredEnv.locate({ force, declarations });
                 const prev = referredEnv.located;
                 if (!prev) {
                     // console.warn(`Not located ${this.seriesPrev.pointer.text()}`);
@@ -343,7 +355,7 @@ export class PointerEnv {
 
                 let located = false;
 
-                if (this.namingParent) this.namingParent.locate(force);
+                if (this.namingParent) this.namingParent.locate({ force, declarations });
                 const prev = this.namingParent?.located;
 
                 if (prev) {
@@ -434,7 +446,7 @@ export class PointerEnv {
                     // e.g. "第二条"
                     let located = false;
 
-                    if (this.namingParent) this.namingParent.locate(force);
+                    if (this.namingParent) this.namingParent.locate({ force, declarations });
                     const prev = this.namingParent?.located;
 
                     if (prev?.type === "external") {
