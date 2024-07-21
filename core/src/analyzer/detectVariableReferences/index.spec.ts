@@ -69,7 +69,15 @@ describe("Test detectVariableReferences", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -166,7 +174,15 @@ describe("Test detectVariableReferences", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -236,7 +252,15 @@ describe("Test detectVariableReferences", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -371,7 +395,15 @@ describe("Test detectVariableReferences", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1067,7 +1099,15 @@ describe("Test detectVariableReferences", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1151,7 +1191,15 @@ describe("Test detectVariableReferences", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1270,7 +1318,15 @@ describe("Test detectVariableReferences", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1473,7 +1529,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1653,7 +1717,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1826,7 +1898,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -1976,7 +2056,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -2169,7 +2257,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -2278,7 +2374,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -2643,7 +2747,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -2908,7 +3020,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -3312,7 +3432,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -3546,7 +3674,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -3614,7 +3750,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
@@ -3852,7 +3996,15 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const expectedErrorMessages: string[] = [];
 
         const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
-        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope(pointerRanges, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
 
         const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
         // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));

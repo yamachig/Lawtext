@@ -248,7 +248,7 @@ export const processLawRef = (
 
             const { nameSquareParentheses, following, pointerRanges } = aliasInfo;
 
-            if (pointerRanges) getScope(pointerRanges, pointerEnvsStruct);
+            if (pointerRanges) getScope({ pointerRangesToBeModified: pointerRanges, pointerEnvsStruct });
 
             const aliasName = nameSquareParentheses.content.text();
 

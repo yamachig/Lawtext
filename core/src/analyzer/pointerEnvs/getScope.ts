@@ -1,9 +1,10 @@
 import { assertNever } from "../../util";
 import type { Container } from "../../node/container";
 import { ____PointerRanges } from "../../node/el/controls/pointer";
-import type { ____Declaration, RangeInfo } from "../../node/el/controls";
+import type { RangeInfo } from "../../node/el/controls";
 import { __Text } from "../../node/el/controls";
 import type { PointerEnvsStruct } from "./getPointerEnvs";
+import type { LocateOptions } from "../../node/pointerEnv";
 
 
 interface ObjRangeInfo {
@@ -20,14 +21,19 @@ const objRangeInfoToRangeInfo = (obj: ObjRangeInfo): RangeInfo => {
     };
 };
 
-const getScopeInfoOfPointerRanges = (
+const getScopeInfoOfPointerRanges = (options: {
     pointerRanges: ____PointerRanges,
     pointerEnvsStruct: PointerEnvsStruct,
-    declarations: Map<string, ____Declaration>,
-    force = false,
-): {
+    locateOptions: LocateOptions,
+}): {
     ranges: ObjRangeInfo[],
 } => {
+
+    const {
+        pointerRanges,
+        pointerEnvsStruct,
+        locateOptions,
+    } = options;
 
     const ranges: ObjRangeInfo[] = [];
     const pointerRangeList = pointerRanges.ranges();
@@ -39,7 +45,7 @@ const getScopeInfoOfPointerRanges = (
             // console.warn(`fromPointer not found: ${JSON.stringify(fromPointer.json(true), null, 2)}`);
             continue;
         }
-        from.locate({ force, declarations });
+        from.locate(locateOptions);
         if (!from.located) {
             // console.warn(`fromPointer not located: ${JSON.stringify(from.json(), null, 2)}`);
             continue;
@@ -65,7 +71,7 @@ const getScopeInfoOfPointerRanges = (
                 // console.warn(`toPointer not found: ${JSON.stringify(toPointer.json(true), null, 2)}`);
                 continue;
             }
-            to.locate({ force, declarations });
+            to.locate(locateOptions);
             if (!to.located) {
                 // console.warn(`toPointer not located: ${JSON.stringify(to.json(), null, 2)}`);
                 continue;
@@ -91,7 +97,7 @@ const getScopeInfoOfPointerRanges = (
             if (pContent.children.length === 2) {
                 const [exRanges, exText] = pContent.children;
                 if (exRanges instanceof ____PointerRanges && exText instanceof __Text && exText.text() === "を除く。") {
-                    range.exclude = getScopeInfoOfPointerRanges(exRanges, pointerEnvsStruct, declarations, force).ranges;
+                    range.exclude = getScopeInfoOfPointerRanges({ pointerRanges: exRanges, pointerEnvsStruct, locateOptions }).ranges;
                 }
             }
         }
@@ -103,21 +109,34 @@ const getScopeInfoOfPointerRanges = (
     return { ranges };
 };
 
-export const getScope = (
+export const getScope = (options: {
     pointerRangesToBeModified: ____PointerRanges,
     pointerEnvsStruct: PointerEnvsStruct,
-    declarations: Map<string, ____Declaration> = new Map(),
-    force = false,
-): {
+    locateOptions?: LocateOptions,
+}): {
     ranges: readonly RangeInfo[],
 } => {
-    if (!force) {
+    const {
+        pointerRangesToBeModified,
+        pointerEnvsStruct,
+        locateOptions,
+    } = {
+        locateOptions: {
+            declarations: new Map(),
+            sentenceEnvs: [],
+            lawRefByDeclarationID: new Map(),
+            force: false,
+        },
+        ...options,
+    };
+
+    if (!locateOptions.force) {
         const ret = pointerRangesToBeModified.targetContainerIDRanges;
         if (ret.length > 0) return { ranges: ret };
     }
 
     const rangeInfos: RangeInfo[] = [];
-    const { ranges } = getScopeInfoOfPointerRanges(pointerRangesToBeModified, pointerEnvsStruct, declarations, force);
+    const { ranges } = getScopeInfoOfPointerRanges({ pointerRanges: pointerRangesToBeModified, pointerEnvsStruct, locateOptions });
 
     const fromToSet = new Set<string>();
     const pushRangeInfo = (options: {from: string, to?: string, exclude?: RangeInfo[]}) => {

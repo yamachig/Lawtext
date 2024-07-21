@@ -174,7 +174,10 @@ describe("Test getScope", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(sentenceEnvsStruct.sentenceEnvs.map(s => s.text), null, 2));
         assert.deepStrictEqual(
@@ -437,7 +440,10 @@ describe("Test getScope", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -675,7 +681,10 @@ describe("Test getScope", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1077,7 +1086,10 @@ describe("Test getScope", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1138,7 +1150,10 @@ describe("Test getScope", () => {
           ;
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1258,7 +1273,10 @@ describe("Test getScope", () => {
 ;
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1467,7 +1485,10 @@ describe("Test getScope", () => {
         ];
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1825,7 +1846,10 @@ describe("Test getScope", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1923,7 +1947,10 @@ describe("Test getScope", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -2017,7 +2044,10 @@ describe("Test getScope", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -2107,7 +2137,10 @@ describe("Test getScope", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
+        [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope({
+            pointerRangesToBeModified: r,
+            pointerEnvsStruct: getPointerEnvsResult.value,
+        }));
 
         // console.log(JSON.stringify(getPointerEnvsResult.value.pointerRangesList.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(

@@ -40,7 +40,16 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
 
     // Locate remaining PointerRanges. This time, the remaining PointerRanges are located considering LawRef's and VarRef's for laws.
     for (const pointerRanges of pointerEnvsStruct.pointerRangesList) {
-        getScope(pointerRanges, pointerEnvsStruct, declarations.db, true);
+        getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+                lawRefByDeclarationID,
+                force: true,
+            },
+        });
     }
 
     return {

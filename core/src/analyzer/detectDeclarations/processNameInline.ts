@@ -34,7 +34,7 @@ export const processNameInline = (
         if (result.ok) {
             const { nameSquareParentheses, following, pointerRanges } = result.value.value;
 
-            if (pointerRanges) getScope(pointerRanges, pointerEnvsStruct);
+            if (pointerRanges) getScope({ pointerRangesToBeModified: pointerRanges, pointerEnvsStruct });
 
             errors.push(...result.value.errors);
 

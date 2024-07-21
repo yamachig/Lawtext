@@ -31,7 +31,7 @@ export const processNameList = (
     if (result.ok) {
         const { pointerRanges } = result.value.value;
 
-        if (pointerRanges) getScope(pointerRanges, pointerEnvsStruct);
+        if (pointerRanges) getScope({ pointerRangesToBeModified: pointerRanges, pointerEnvsStruct });
 
         const scope = toSentenceTextRanges(
             pointerRanges.targetContainerIDRanges,

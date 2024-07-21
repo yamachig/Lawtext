@@ -4,7 +4,7 @@ import { getContainerType, ContainerType } from "../container";
 import type { PointerLike, SentenceEnv } from "../container/sentenceEnv";
 import { EL } from "../el";
 import type { ____Declaration, ____PF, ____Pointer } from "../el/controls";
-import { ____LawRef } from "../el/controls";
+import { ____LawRef, ____VarRef, __Parentheses } from "../el/controls";
 import { RelPos } from "../el/controls";
 
 export interface InternalLocatedInfo {
@@ -23,6 +23,13 @@ export interface ExternalLocatedInfo {
 }
 
 export type LocatedInfo = InternalLocatedInfo | ExternalLocatedInfo;
+
+export interface LocateOptions {
+    force?: boolean,
+    declarations: Map<string, ____Declaration>,
+    sentenceEnvs: SentenceEnv[],
+    lawRefByDeclarationID: Map<string, ____LawRef>,
+}
 
 export class PointerEnv {
     public prependedLawRef: ____LawRef | null = null;
@@ -75,20 +82,40 @@ export class PointerEnv {
         };
     }
 
-    public locate(
-        options: {
-            force?: boolean,
-            declarations: Map<string, ____Declaration>,
-        },
-    ) {
+    public locate(options: LocateOptions) {
         const {
             force,
             declarations,
+            lawRefByDeclarationID,
+            sentenceEnvs,
         } = {
             force: false,
             ...options,
         };
         if (this.located && !force) return;
+
+
+        const pointerRange = this.sentenceEnv.parentOfEL.get(this.pointer);
+        const pointerRanges = pointerRange && pointerRange.children.indexOf(this.pointer) === 0 && this.sentenceEnv.parentOfEL.get(pointerRange);
+        const parentEL = pointerRanges && pointerRanges.children.indexOf(pointerRange) === 0 && this.sentenceEnv.parentOfEL.get(pointerRanges);
+
+        let prependedLawRef: ____LawRef | null = null;
+        if (parentEL) {
+            for (let i = parentEL.children.indexOf(pointerRanges) - 1; 0 <= i; i--) {
+                const prevEL = parentEL.children[i];
+                if (prevEL instanceof __Parentheses) {
+                    continue;
+                } else if (prevEL instanceof ____LawRef) {
+                    prependedLawRef = prevEL;
+                } else if (prevEL instanceof ____VarRef) {
+                    const lawRef = lawRefByDeclarationID.get(prevEL.attr.declarationID);
+                    if (lawRef) {
+                        prependedLawRef = lawRef;
+                    }
+                }
+                break;
+            }
+        }
 
         const fragments = this.pointer.fragments();
 
@@ -138,7 +165,7 @@ export class PointerEnv {
 
             if (referredPointerLike instanceof PointerEnv) {
                 const referredEnv = referredPointerLike;
-                referredEnv.locate({ force, declarations });
+                referredEnv.locate(options);
                 const prev = referredEnv.located;
                 if (!prev) {
                     // console.warn(`Not located ${this.seriesPrev.pointer.text()}`);
@@ -313,11 +340,11 @@ export class PointerEnv {
             if (getContainerType(fragments[0].attr.targetType) === ContainerType.TOPLEVEL) {
                 // e.g.: "附則", "別表第二"
 
-                if (this.prependedLawRef) {
+                if (prependedLawRef) {
                     // e.g. "電波法別表第一"
                     this.located = {
                         type: "external",
-                        lawRef: this.prependedLawRef,
+                        lawRef: prependedLawRef,
                         fqPrefixFragments: [],
                         skipSameCount: 0,
                     };
@@ -355,7 +382,7 @@ export class PointerEnv {
 
                 let located = false;
 
-                if (this.namingParent) this.namingParent.locate({ force, declarations });
+                if (this.namingParent) this.namingParent.locate(options);
                 const prev = this.namingParent?.located;
 
                 if (prev) {
@@ -433,11 +460,11 @@ export class PointerEnv {
 
             } else {
 
-                if (this.prependedLawRef) {
+                if (prependedLawRef) {
                     // e.g. "行政手続法第二条"
                     this.located = {
                         type: "external",
-                        lawRef: this.prependedLawRef,
+                        lawRef: prependedLawRef,
                         fqPrefixFragments: [],
                         skipSameCount: 0,
                     };
@@ -446,7 +473,7 @@ export class PointerEnv {
                     // e.g. "第二条"
                     let located = false;
 
-                    if (this.namingParent) this.namingParent.locate({ force, declarations });
+                    if (this.namingParent) this.namingParent.locate(options);
                     const prev = this.namingParent?.located;
 
                     if (prev?.type === "external") {

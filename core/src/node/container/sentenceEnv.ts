@@ -354,7 +354,7 @@ export class SentenceEnv {
     public parentELs: EL[];
     public container: Container;
 
-    private parentOfEL = new Map<EL, EL>();
+    public readonly parentOfEL = new Map<EL, EL>();
 
     private _text: string;
     public get text(): string { return this._text; }
@@ -436,14 +436,4 @@ export class SentenceEnv {
             return null;
         }
     }
-
-    // public with(options: Partial<SentenceEnvOptions>): SentenceEnv {
-    //     const {
-    //         el = this.el,
-    //         lawType = this.lawType,
-    //         parentELs = this.parentELs,
-    //         container = this.container,
-    //     } = options;
-    //     return new SentenceEnv({ el, lawType, parentELs, container });
-    // }
 }

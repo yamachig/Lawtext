@@ -61,7 +61,7 @@ export const findAmbiguousNameCandidateInfos = (
 
         const { following, pointerRanges, valueELs } = result.value.value;
 
-        if (pointerRanges) getScope(pointerRanges, pointerEnvsStruct);
+        if (pointerRanges) getScope({ pointerRangesToBeModified: pointerRanges, pointerEnvsStruct });
 
         ambiguousNameCandidateInfos.push({
             elToBeModified,
