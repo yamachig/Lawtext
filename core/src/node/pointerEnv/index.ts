@@ -552,6 +552,7 @@ export class PointerEnv {
                                 scopeContainer.children.find(func)
                                 ?? scopeContainer.findAncestorChildren(func)
                                 ?? scopeContainer.findAncestorChildrenSub(func)
+                                ?? scopeContainer.linealAscendant()[0].children.find(c => c.el.tag === "MainProvision")?.subChildren.find(func)
                                 ?? null
                             );
 
