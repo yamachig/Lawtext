@@ -548,11 +548,13 @@ export class PointerEnv {
                                 (c.el.tag === fragments[0].attr.targetType)
                                 && ((c.num || null) === fragments[0].attr.num)
                             );
+                            const mpContainer = scopeContainer.linealAscendant()[0].children.find(c => c.el.tag === "MainProvision");
                             const container = (
                                 scopeContainer.children.find(func)
                                 ?? scopeContainer.findAncestorChildren(func)
                                 ?? scopeContainer.findAncestorChildrenSub(func)
-                                ?? scopeContainer.linealAscendant()[0].children.find(c => c.el.tag === "MainProvision")?.subChildren.find(func)
+                                ?? mpContainer?.children.find(func)
+                                ?? mpContainer?.subChildren.find(func)
                                 ?? null
                             );
 
