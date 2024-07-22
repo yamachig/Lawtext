@@ -32,15 +32,19 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
             let article: string|undefined = undefined;
             let paragraph: string|undefined = undefined;
             let appdxTable: string|undefined = undefined;
+            let startsWithNotSupported = false;
             for (const prefix of pointerEnv.located.fqPrefixFragments.slice(0, pointerEnv.located.fqPrefixFragments.length - pointerEnv.located.skipSameCount)) {
+                if (!["Law", "Article", "Paragraph", "AppdxTable"].includes(prefix.attr.targetType)) {
+                    startsWithNotSupported = true;
+                }
                 article = (
-                    prefix.attr.targetType === "Article" ? prefix.attr.name : undefined
+                    (!startsWithNotSupported && prefix.attr.targetType === "Article") ? prefix.attr.name : undefined
                 ) ?? article;
                 paragraph = (
-                    prefix.attr.targetType === "Paragraph" ? prefix.attr.name : undefined
+                    (!startsWithNotSupported && prefix.attr.targetType === "Paragraph") ? prefix.attr.name : undefined
                 ) ?? paragraph;
                 appdxTable = (
-                    prefix.attr.targetType === "AppdxTable" ? prefix.attr.name : undefined
+                    (!startsWithNotSupported && prefix.attr.targetType === "AppdxTable") ? prefix.attr.name : undefined
                 ) ?? appdxTable;
             }
             let pfIndex = -1;
@@ -52,15 +56,20 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
                             ? pointerEnv.located.fqPrefixFragments.find(f => f.attr.targetType === child.attr.targetType) ?? child
                             : child
                     );
+                    if (!["Law", "Article", "Paragraph", "AppdxTable"].includes(prefixOrChild.attr.targetType)) {
+                        startsWithNotSupported = true;
+                    }
+
                     article = (
-                        prefixOrChild.attr.targetType === "Article" ? prefixOrChild.attr.name : undefined
+                        (!startsWithNotSupported && prefixOrChild.attr.targetType === "Article") ? prefixOrChild.attr.name : undefined
                     ) ?? article;
                     paragraph = (
-                        prefixOrChild.attr.targetType === "Paragraph" ? prefixOrChild.attr.name : undefined
+                        (!startsWithNotSupported && prefixOrChild.attr.targetType === "Paragraph") ? prefixOrChild.attr.name : undefined
                     ) ?? paragraph;
                     appdxTable = (
-                        prefixOrChild.attr.targetType === "AppdxTable" ? prefixOrChild.attr.name : undefined
+                        (!startsWithNotSupported && prefixOrChild.attr.targetType === "AppdxTable") ? prefixOrChild.attr.name : undefined
                     ) ?? appdxTable;
+
                     if (child.attr.targetType === "Law") {
                         const lawTitle = pointerEnv.located.lawRef.attr.suggestedLawTitle;
                         const law = std.newStdEL("Law", {}, [
