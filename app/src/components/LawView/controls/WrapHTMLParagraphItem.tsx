@@ -113,6 +113,18 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
                 if (supplProvisionLabel) names.push(supplProvisionLabel.text()?.replace(/\s/g, ""));
             }
 
+        } else if (std.isAppdxItem(c.el)) {
+            const appdxItemTitle = (c.el.children as (typeof c.el.children)[number][])
+                .find(std.isAppdxItemTitle);
+            const title = appdxItemTitle?.text() ?? "";
+            names.push(title);
+
+        } else if (std.isSupplProvisionAppdxItem(c.el)) {
+            const supplProvisionAppdxItemTitle = (c.el.children as (typeof c.el.children)[number][])
+                .find(std.isSupplProvisionAppdxItemTitle);
+            const title = supplProvisionAppdxItemTitle?.text() ?? "";
+            names.push(title);
+
         } else if (std.isArticle(c.el)) {
             const articleTitle = c.el.children
                 .find(std.isArticleTitle);
