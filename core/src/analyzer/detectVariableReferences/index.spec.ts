@@ -591,7 +591,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_18-text_41_47",
                     type: "LawTitle",
                     name: "内閣府設置法",
-                    scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":60},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":60},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":41},\"end\":{\"sentenceIndex\":18,\"textOffset\":47}}",
                     value: "{\"isCandidate\":false,\"text\":\"平成十一年法律第八十九号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":18,\"textOffset\":48},\"end\":{\"sentenceIndex\":18,\"textOffset\":60}}}",
                 },
@@ -609,7 +609,7 @@ describe("Test detectVariableReferences", () => {
                     declarationID: "decl-sentence_18-text_84_91",
                     type: "LawTitle",
                     name: "国家行政組織法",
-                    scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":105},\"end\":{\"sentenceIndex\":31,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":18,\"textOffset\":105},\"end\":{\"sentenceIndex\":30,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":18,\"textOffset\":84},\"end\":{\"sentenceIndex\":18,\"textOffset\":91}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十三年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":18,\"textOffset\":92},\"end\":{\"sentenceIndex\":18,\"textOffset\":105}}}",
                 },
@@ -1368,7 +1368,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_0-text_41_47",
                     type: "LawTitle",
                     name: "内閣府設置法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":60},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":41},\"end\":{\"sentenceIndex\":0,\"textOffset\":47}}",
                     value: "{\"isCandidate\":false,\"text\":\"平成十一年法律第八十九号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":48},\"end\":{\"sentenceIndex\":0,\"textOffset\":60}}}",
                 },
@@ -1386,7 +1386,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_0-text_84_91",
                     type: "LawTitle",
                     name: "国家行政組織法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":105},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":84},\"end\":{\"sentenceIndex\":0,\"textOffset\":91}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十三年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":92},\"end\":{\"sentenceIndex\":0,\"textOffset\":105}}}",
                 },
@@ -1579,7 +1579,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_0-text_4_10",
                     type: "LawTitle",
                     name: "国家公務員法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":24},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":24},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":4},\"end\":{\"sentenceIndex\":0,\"textOffset\":10}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十二年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":11},\"end\":{\"sentenceIndex\":0,\"textOffset\":24}}}",
                 },
@@ -1597,7 +1597,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_0-text_43_49",
                     type: "LawTitle",
                     name: "地方公務員法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":65},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":65},\"end\":{\"sentenceIndex\":1,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":43},\"end\":{\"sentenceIndex\":0,\"textOffset\":49}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第二百六十一号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":50},\"end\":{\"sentenceIndex\":0,\"textOffset\":65}}}",
                 },
@@ -1753,7 +1753,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_3-text_23_28",
                     type: "LawTitle",
                     name: "地方自治法",
-                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":42},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":42},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":3,\"textOffset\":28}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十二年法律第六十七号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":3,\"textOffset\":29},\"end\":{\"sentenceIndex\":3,\"textOffset\":42}}}",
                 },
@@ -1927,7 +1927,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_2-text_8_20",
                     type: "LawTitle",
                     name: "出入国管理及び難民認定法",
-                    scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":35},\"end\":{\"sentenceIndex\":6,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":2,\"textOffset\":35},\"end\":{\"sentenceIndex\":5,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":2,\"textOffset\":8},\"end\":{\"sentenceIndex\":2,\"textOffset\":20}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十六年政令第三百十九号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":2,\"textOffset\":21},\"end\":{\"sentenceIndex\":2,\"textOffset\":35}}}",
                 },
@@ -2086,7 +2086,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_6-text_43_46",
                     type: "LawTitle",
                     name: "放送法",
-                    scope: "[{\"start\":{\"sentenceIndex\":6,\"textOffset\":61},\"end\":{\"sentenceIndex\":12,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":6,\"textOffset\":61},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":6,\"textOffset\":43},\"end\":{\"sentenceIndex\":6,\"textOffset\":46}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第百三十二号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":6,\"textOffset\":47},\"end\":{\"sentenceIndex\":6,\"textOffset\":61}}}",
                 },
@@ -2390,7 +2390,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_3-text_5_8",
                     type: "LawTitle",
                     name: "放送法",
-                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":8,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":5},\"end\":{\"sentenceIndex\":3,\"textOffset\":8}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第百三十二号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":3,\"textOffset\":9},\"end\":{\"sentenceIndex\":3,\"textOffset\":23}}}",
                 },
@@ -2754,7 +2754,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_3-text_5_8",
                     type: "LawTitle",
                     name: "放送法",
-                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":10,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":23},\"end\":{\"sentenceIndex\":9,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":5},\"end\":{\"sentenceIndex\":3,\"textOffset\":8}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第百三十二号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":3,\"textOffset\":9},\"end\":{\"sentenceIndex\":3,\"textOffset\":23}}}",
                 },
@@ -3740,7 +3740,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_1-text_4_10",
                     type: "LawTitle",
                     name: "国家公務員法",
-                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":24},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":24},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":4},\"end\":{\"sentenceIndex\":1,\"textOffset\":10}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十二年法律第百二十号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":11},\"end\":{\"sentenceIndex\":1,\"textOffset\":24}}}",
                 },
@@ -3758,7 +3758,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_1-text_43_49",
                     type: "LawTitle",
                     name: "地方公務員法",
-                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":65},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":1,\"textOffset\":65},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":1,\"textOffset\":43},\"end\":{\"sentenceIndex\":1,\"textOffset\":49}}",
                     value: "{\"isCandidate\":false,\"text\":\"昭和二十五年法律第二百六十一号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":1,\"textOffset\":50},\"end\":{\"sentenceIndex\":1,\"textOffset\":65}}}",
                 },
@@ -3978,7 +3978,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                     declarationID: "decl-sentence_0-text_4_9",
                     type: "LawTitle",
                     name: "行政手続法",
-                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":21},\"end\":{\"sentenceIndex\":2,\"textOffset\":0}}]",
+                    scope: "[{\"start\":{\"sentenceIndex\":0,\"textOffset\":21},\"end\":{\"sentenceIndex\":3,\"textOffset\":0}}]",
                     nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":0,\"textOffset\":4},\"end\":{\"sentenceIndex\":0,\"textOffset\":9}}",
                     value: "{\"isCandidate\":false,\"text\":\"平成五年法律第八十八号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":0,\"textOffset\":10},\"end\":{\"sentenceIndex\":0,\"textOffset\":21}}}",
                 },
@@ -4207,6 +4207,241 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
                 namingParent: null,
                 namingChildren: [],
                 seriesPrev: null,
+                seriesNext: null,
+            },
+        ];
+
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
+                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            varRefs.map(r => r.json(true)),
+            expected,
+        );
+
+        // console.log(JSON.stringify([...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+      第二章　無線局の免許等
+
+        第一節　無線局の免許
+
+  （欠格事由）
+第五条　（略）
+２　（略）
+  一・二　（略）
+  三　船舶の無線局（船舶に開設する無線局のうち、電気通信業務（電気通信事業法（昭和五十九年法律第八十六号）（略）に規定する電気通信業務をいう。（略））を行うことを目的とするもの以外のもの（略））
+  四～九　（略）
+３～６　（略）
+
+  （電気通信紛争処理委員会によるあつせん及び仲裁）
+第二十七条の三十八　免許等を受けて無線局（電気通信業務その他の総務省令で定める業務を行うことを目的とするものに限る。（略））を開設し、（略）
+２～６　（略）
+
+      附　則　抄
+
+  （無線従事者に関する経過規定）
+５　（略）
+
+  （この法律の施行前になした処分等）
+９　第五項又は（略）に規定するものの外、（略）
+
+  （電報の事業に関する経過措置）
+１３　電気通信事業法附則第五条第一項の規定により電報の事業が電気通信事業とみなされる間は、第二十七条の三十八第一項、（略）に規定する電気通信業務には、当該電報の事業に係る業務が含まれるものとする。
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [
+            {
+                tag: "____Declaration",
+                attr: {
+                    declarationID: "decl-sentence_3-text_28_35",
+                    type: "LawTitle",
+                    name: "電気通信事業法",
+                    scope: "[{\"start\":{\"sentenceIndex\":3,\"textOffset\":49},\"end\":{\"sentenceIndex\":11,\"textOffset\":0}}]",
+                    nameSentenceTextRange: "{\"start\":{\"sentenceIndex\":3,\"textOffset\":28},\"end\":{\"sentenceIndex\":3,\"textOffset\":35}}",
+                    value: "{\"isCandidate\":false,\"text\":\"昭和五十九年法律第八十六号\",\"sentenceTextRange\":{\"start\":{\"sentenceIndex\":3,\"textOffset\":36},\"end\":{\"sentenceIndex\":3,\"textOffset\":49}}}",
+                },
+                children: [
+                    {
+                        tag: "__Text",
+                        attr: {},
+                        children: ["電気通信事業法"],
+                    },
+                ],
+            },
+        ];
+
+        const expected: JsonEL[] = [
+            {
+                tag: "____VarRef",
+                attr: {
+                    refName: "電気通信事業法",
+                    declarationID: "decl-sentence_3-text_28_35",
+                    refSentenceTextRange: "{\"start\":{\"sentenceIndex\":10,\"textOffset\":0},\"end\":{\"sentenceIndex\":10,\"textOffset\":7}}",
+                },
+                children: ["電気通信事業法"],
+            },
+        ];
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第五項",
+                                num: "5",
+                            },
+                            children: ["第五項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第五項",
+                            containers: ["container-Law-SupplProvision[1]-Paragraph[1][num=5]"],
+                        },
+                    ],
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "SupplProvision",
+                                name: "附則",
+                            },
+                            children: ["附則"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第五条",
+                                num: "5",
+                            },
+                            children: ["第五条"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "external",
+                    lawRef: {
+                        suggestedLawTitle: "電気通信事業法",
+                        lawNum: "昭和五十九年法律第八十六号",
+                    },
+                    fqPrefixFragments: [],
+                    skipSameCount: 0,
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: "第二十七条の三十八第一項",
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Article",
+                                name: "第二十七条の三十八",
+                                num: "27_38",
+                            },
+                            children: ["第二十七条の三十八"],
+                        },
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "Paragraph",
+                                name: "第一項",
+                                num: "1",
+                            },
+                            children: ["第一項"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "第二十七条の三十八",
+                            containers: ["container-Law-MainProvision[1]-Chapter[1][num=2]-Section[1][num=1]-Article[2][num=27_38]"],
+                        },
+                        {
+                            text: "第一項",
+                            containers: ["container-Law-MainProvision[1]-Chapter[1][num=2]-Section[1][num=1]-Article[2][num=27_38]-Paragraph[1][num=1]"],
+                        },
+                    ],
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: "附則第五条第一項",
                 seriesNext: null,
             },
         ];

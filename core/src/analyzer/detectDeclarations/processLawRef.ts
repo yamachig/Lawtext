@@ -5,7 +5,6 @@ import { LAWNUM_TABLE, KEY_LENGTH } from "../../law/lawNumTable";
 import type { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { __Text, ____Declaration, ____LawNum, ____LawRef } from "../../node/el/controls";
-import { ContainerType } from "../../node/container";
 import $lawRef from "../sentenceChildrenParser/rules/$lawRef";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import type { SentenceChildEL } from "../../node/cst/inline";
@@ -323,7 +322,7 @@ export const processLawRef = (
                         textOffset: sentenceEnv.textRageOfEL(lawNum)?.[1] ?? 0,
                     },
                     end: {
-                        sentenceIndex: (sentenceEnv.container.thisOrClosest(p => p.type === ContainerType.TOPLEVEL || p.type === ContainerType.ROOT)?.sentenceRange[1] ?? Number.NaN) + 1,
+                        sentenceIndex: sentenceEnvsStruct.rootContainer.sentenceRange[1],
                         textOffset: 0,
                     },
                 },
