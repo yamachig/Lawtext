@@ -13,7 +13,7 @@ export const rootContainerTags = ["Law"] as const;
 
 export const toplevelContainerTags = ["EnactStatement", "Preamble", "MainProvision", "SupplProvision", ...std.appdxItemTags] as const;
 
-export const articlesContainerTags = std.articleGroupTags;
+export const articlesContainerTags = [...std.articleGroupTags, ...std.supplProvisionAppdxItemTags];
 
 export const sentencesContainerTags = [
     "Article",

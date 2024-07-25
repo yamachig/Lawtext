@@ -133,31 +133,9 @@ describe("Test $articleGroupHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
+                                tag: "__Text",
                                 attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第三十六条の三"
-                                                        },
-                                                        children: ["第三十六条の三"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
+                                children: ["第三十六条の三"]
                             }
                         ]
                     },

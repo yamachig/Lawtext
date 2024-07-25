@@ -158,7 +158,7 @@ export default tseslint.config(
     {
         files: [
             "src/parser/**/*",
-            "src/analyzer/sentenceChildrenParser/rules/**/*",
+            "src/analyzer/**/rules/**/*",
             "src/path/**/*",
         ],
         rules: {

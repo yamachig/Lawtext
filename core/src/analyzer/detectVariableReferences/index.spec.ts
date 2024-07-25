@@ -7,6 +7,7 @@ import detectVariableReferences from ".";
 import { assertELVaridity } from "../../parser/std/testHelper";
 import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
 import getScope from "../pointerEnvs/getScope";
+import detectPointers from "../detectPointers";
 
 describe("Test detectVariableReferences", () => {
 
@@ -26,7 +27,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -75,7 +78,6 @@ describe("Test detectVariableReferences", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -113,7 +115,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -180,7 +184,6 @@ describe("Test detectVariableReferences", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -219,7 +222,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -258,7 +263,6 @@ describe("Test detectVariableReferences", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -323,7 +327,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -401,7 +407,6 @@ describe("Test detectVariableReferences", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -454,7 +459,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -1105,7 +1112,6 @@ describe("Test detectVariableReferences", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -1142,7 +1148,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -1197,7 +1205,6 @@ describe("Test detectVariableReferences", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -1243,7 +1250,9 @@ describe("Test detectVariableReferences", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -1324,7 +1333,6 @@ describe("Test detectVariableReferences", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -1357,7 +1365,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -1526,7 +1536,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -1556,7 +1565,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -1706,7 +1717,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -1742,7 +1752,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -1881,7 +1893,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -1916,7 +1927,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -2034,7 +2047,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -2075,7 +2087,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -2229,7 +2243,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -2262,7 +2275,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -2341,7 +2356,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -2379,7 +2393,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -2704,7 +2720,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -2743,7 +2758,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -2969,7 +2986,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -3017,7 +3033,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -3374,7 +3392,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -3413,7 +3430,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
@@ -3611,7 +3630,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -3649,7 +3667,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
@@ -3687,7 +3707,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -3718,7 +3737,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
@@ -3923,7 +3944,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -3968,7 +3988,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
@@ -4220,7 +4242,6 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
             },
         });
 
@@ -4281,7 +4302,9 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
 
         const expectedDeclarations: JsonEL[] = [
@@ -4455,7 +4478,215 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
             locateOptions: {
                 declarations: declarations.db,
                 lawRefByDeclarationID,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
+            },
+        });
+
+        const declarationsList = declarations.values().sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(declarationsList.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            declarationsList.map(r => r.json(true)),
+            expectedDeclarations,
+        );
+
+        const varRefs = result.value.varRefs.sort((a, b) => (a.range && b.range) ? ((a.range[0] - b.range[0]) || (a.range[1] - b.range[1])) : 0);
+        // console.log(JSON.stringify(varRefs.map(r => r.json(true)), null, 2));
+        assert.deepStrictEqual(
+            varRefs.map(r => r.json(true)),
+            expected,
+        );
+
+        // console.log(JSON.stringify([...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()), null, 2));
+        assert.deepStrictEqual(
+            [...pointerEnvsStruct.pointerEnvByEL.values()].map(r => r.json()),
+            expectedPointerEnvsList,
+        );
+
+        assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
+
+        assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const lawtext = `\
+  （検査等事業者の登録）
+第二十四条の二　無線設備等の検査又は点検の事業を行う者は、総務大臣の登録を受けることができる。
+２　（略）
+３　（略）
+４　（略）
+  一　別表第一に掲げる条件のいずれかに適合する知識経験を有する者が無線設備等の点検を行うものであること。
+  二　別表第二に掲げる測定器その他の設備であつて、次のいずれかに掲げる<Ruby>較<Rt>こう</Rt></Ruby>正又は校正（略）
+    イ　（略）
+    ロ　（略）
+    ハ　（略）
+    ニ　別表第三の下欄に掲げる測定器その他の設備であつて、（略）
+  三　別表第四に掲げる条件のいずれかに適合する知識経験を有する者が無線設備等の検査（点検である部分を除く。）を行うものであること。
+  四　（略）
+５　（略）
+６　（略）
+
+# 別表第一（第二十四条の二関係）
+
+  # 一　第一級総合無線通信士、第二級総合無線通信士、第三級総合無線通信士、第一級海上無線通信士、第二級海上無線通信士、第四級海上無線通信士、航空無線通信士、第一級陸上無線技術士、第二級陸上無線技術士、陸上特殊無線技士又は第一級アマチュア無線技士の資格を有すること。
+
+
+# 別表第二（第二十四条の二関係）
+
+  # 一　周波数計
+
+# 別表第三（第二十四条の二、第三十八条の三、第三十八条の八関係）
+
+  * - 事業の区分
+    - 測定器その他の設備
+
+# 別表第四（第二十四条の二、第三十八条の三、第三十八条の八関係）
+
+  # 一　（略）
+
+`;
+        const inputElToBeModified = parse(lawtext).value;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+
+        const expectedDeclarations: JsonEL[] = [];
+
+        const expected: JsonEL[] = [];
+
+        const expectedPointerEnvsList: object[] = [
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "APPDX",
+                                name: "別表第一",
+                            },
+                            children: ["別表第一"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "別表第一",
+                            containers: ["container-Law-AppdxTable[1]"],
+                        },
+                    ],
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "APPDX",
+                                name: "別表第二",
+                            },
+                            children: ["別表第二"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "別表第二",
+                            containers: ["container-Law-AppdxTable[2]"],
+                        },
+                    ],
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "APPDX",
+                                name: "別表第三",
+                            },
+                            children: ["別表第三"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "別表第三",
+                            containers: ["container-Law-AppdxTable[3]"],
+                        },
+                    ],
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+            {
+                pointer: {
+                    tag: "____Pointer",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____PF",
+                            attr: {
+                                relPos: "NAMED",
+                                targetType: "APPDX",
+                                name: "別表第四",
+                            },
+                            children: ["別表第四"],
+                        },
+                    ],
+                },
+                located: {
+                    type: "internal",
+                    fragments: [
+                        {
+                            text: "別表第四",
+                            containers: ["container-Law-AppdxTable[4]"],
+                        },
+                    ],
+                },
+                namingParent: null,
+                namingChildren: [],
+                seriesPrev: null,
+                seriesNext: null,
+            },
+        ];
+
+        const expectedErrorMessages: string[] = [];
+
+        const result = detectVariableReferences(sentenceEnvsStruct, declarations, lawRefByDeclarationID, pointerEnvsStruct);
+        for (const pointerRanges of pointerEnvsStruct.pointerRangesList) getScope({
+            pointerRangesToBeModified: pointerRanges,
+            pointerEnvsStruct,
+            locateOptions: {
+                declarations: declarations.db,
+                lawRefByDeclarationID,
             },
         });
 

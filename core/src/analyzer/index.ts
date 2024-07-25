@@ -10,6 +10,7 @@ import type { ____PointerRanges } from "../node/el/controls";
 import type { PointerEnvsStruct } from "./pointerEnvs/getPointerEnvs";
 import getPointerEnvs from "./pointerEnvs/getPointerEnvs";
 import getScope from "./pointerEnvs/getScope";
+import detectPointers from "./detectPointers";
 
 
 export interface Analysis extends SentenceEnvsStruct, PointerEnvsStruct {
@@ -24,7 +25,11 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
 
     const sentenceEnvsStruct = getSentenceEnvs(elToBeModified);
 
-    const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+    const appdxPointersResult = detectPointers(elToBeModified);
+    errors.push(...appdxPointersResult.errors);
+    const appdxPointers = appdxPointersResult.value;
+
+    const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
     errors.push(...getPointerEnvsResult.errors);
     const pointerEnvsStruct = getPointerEnvsResult.value;
 
@@ -45,7 +50,6 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
             pointerEnvsStruct,
             locateOptions: {
                 declarations: declarations.db,
-                sentenceEnvs: sentenceEnvsStruct.sentenceEnvs,
                 lawRefByDeclarationID,
                 force: true,
             },

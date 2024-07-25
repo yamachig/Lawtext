@@ -138,57 +138,7 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["新酒税法"]
-                                            },
-                                            {
-                                                tag: "____PointerRanges",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PointerRange",
-                                                        attr: {},
-                                                        children: [
-                                                            {
-                                                                tag: "____Pointer",
-                                                                attr: {},
-                                                                children: [
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "NAMED",
-                                                                            targetType: "Article",
-                                                                            name: "第三条"
-                                                                        },
-                                                                        children: ["第三条"]
-                                                                    },
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "NAMED",
-                                                                            targetType: "Item",
-                                                                            name: "第十三号"
-                                                                        },
-                                                                        children: ["第十三号"]
-                                                                    },
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "NAMED",
-                                                                            targetType: "SUBITEM",
-                                                                            name: "ホ"
-                                                                        },
-                                                                        children: ["ホ"]
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["に掲げるものに限る。"]
+                                                children: ["新酒税法第三条第十三号ホに掲げるものに限る。"]
                                             }
                                         ]
                                     },
@@ -227,86 +177,9 @@ describe("Test $sentencesArray and sentencesArrayToString", () => {
                                         },
                                         children: [
                                             {
-                                                tag: "____PointerRanges",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PointerRange",
-                                                        attr: {},
-                                                        children: [
-                                                            {
-                                                                tag: "____Pointer",
-                                                                attr: {},
-                                                                children: [
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "SAME",
-                                                                            targetType: "Article",
-                                                                            name: "同条"
-                                                                        },
-                                                                        children: ["同条"]
-                                                                    },
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "NAMED",
-                                                                            targetType: "Item",
-                                                                            name: "第十六号"
-                                                                        },
-                                                                        children: ["第十六号"]
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["に規定するブランデーのうち、旧酒税法"]
-                                            },
-                                            {
-                                                tag: "____PointerRanges",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PointerRange",
-                                                        attr: {},
-                                                        children: [
-                                                            {
-                                                                tag: "____Pointer",
-                                                                attr: {},
-                                                                children: [
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "NAMED",
-                                                                            targetType: "Article",
-                                                                            name: "第三条"
-                                                                        },
-                                                                        children: ["第三条"]
-                                                                    },
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "NAMED",
-                                                                            targetType: "Item",
-                                                                            name: "第二十号"
-                                                                        },
-                                                                        children: ["第二十号"]
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["に規定するスピリッツに該当するものに限る。"]
+                                                children: ["同条第十六号に規定するブランデーのうち、旧酒税法第三条第二十号に規定するスピリッツに該当するものに限る。"]
                                             }
                                         ]
                                     },

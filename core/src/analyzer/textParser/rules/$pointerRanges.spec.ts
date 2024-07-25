@@ -1,8 +1,18 @@
 import { assert } from "chai";
-import { initialEnv } from "../env";
-import $pointerRanges from "./$pointerRanges";
+import { initialEnv } from "../../../parser/cst/env";
+import $pointerRanges, { $inlineWithPointerRanges, pointerRangesCandidateChars } from "./$pointerRanges";
+import { makeReOutsideParenthesesTextChars, makeReParenthesesInlineTextChars, makeRePeriodSentenceTextChars } from "../../../parser/cst/rules/$sentenceChildren";
+import { newStdEL } from "../../../law/std";
 
-const env = initialEnv({});
+const env = initialEnv({
+    options: {
+        reParenthesesInlineTextChars: makeReParenthesesInlineTextChars(pointerRangesCandidateChars),
+        reOutsideParenthesesTextChars: makeReOutsideParenthesesTextChars(pointerRangesCandidateChars),
+        rePeriodSentenceTextChars: makeRePeriodSentenceTextChars(pointerRangesCandidateChars),
+        inlineTokenRule: $inlineWithPointerRanges,
+        appdxPointers: [],
+    },
+});
 
 describe("Test $pointerRanges", () => {
 
@@ -1003,27 +1013,27 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Article",
-                                        name: "第七十五条"
+                                        name: "第七十五条",
                                     },
-                                    children: ["第七十五条"]
+                                    children: ["第七十五条"],
                                 },
                                 {
                                     tag: "____PF",
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
-                                        name: "第一項"
+                                        name: "第一項",
                                     },
-                                    children: ["第一項"]
-                                }
-                            ]
-                        }
-                    ]
+                                    children: ["第一項"],
+                                },
+                            ],
+                        },
+                    ],
                 },
                 {
                     tag: "__Text",
                     attr: {},
-                    children: ["又は"]
+                    children: ["又は"],
                 },
                 {
                     tag: "____PointerRange",
@@ -1038,39 +1048,39 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Article",
-                                        name: "第七十六条"
+                                        name: "第七十六条",
                                     },
-                                    children: ["第七十六条"]
+                                    children: ["第七十六条"],
                                 },
                                 {
                                     tag: "____PF",
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
-                                        name: "第四項"
+                                        name: "第四項",
                                     },
-                                    children: ["第四項"]
-                                }
-                            ]
+                                    children: ["第四項"],
+                                },
+                            ],
                         },
                         {
                             tag: "__Parentheses",
                             attr: {
                                 type: "round",
-                                depth: "1"
+                                depth: "1",
                             },
                             children: [
                                 {
                                     tag: "__PStart",
                                     attr: {
-                                        type: "round"
+                                        type: "round",
                                     },
-                                    children: ["（"]
+                                    children: ["（"],
                                 },
                                 {
                                     tag: "__PContent",
                                     attr: {
-                                        type: "round"
+                                        type: "round",
                                     },
                                     children: [
                                         {
@@ -1090,38 +1100,38 @@ describe("Test $pointerRanges", () => {
                                                                     attr: {
                                                                         relPos: "NAMED",
                                                                         targetType: "Item",
-                                                                        name: "第四号"
+                                                                        name: "第四号",
                                                                     },
-                                                                    children: ["第四号"]
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                            ]
+                                                                    children: ["第四号"],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
                                         },
                                         {
                                             tag: "__Text",
                                             attr: {},
-                                            children: ["を除く。"]
-                                        }
-                                    ]
+                                            children: ["を除く。"],
+                                        },
+                                    ],
                                 },
                                 {
                                     tag: "__PEnd",
                                     attr: {
-                                        type: "round"
+                                        type: "round",
                                     },
-                                    children: ["）"]
-                                }
-                            ]
-                        }
-                    ]
+                                    children: ["）"],
+                                },
+                            ],
+                        },
+                    ],
                 },
                 {
                     tag: "__Text",
                     attr: {},
-                    children: ["若しくは"]
+                    children: ["若しくは"],
                 },
                 {
                     tag: "____PointerRange",
@@ -1136,30 +1146,30 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
-                                        name: "第五項"
+                                        name: "第五項",
                                     },
-                                    children: ["第五項"]
-                                }
-                            ]
+                                    children: ["第五項"],
+                                },
+                            ],
                         },
                         {
                             tag: "__Parentheses",
                             attr: {
                                 type: "round",
-                                depth: "1"
+                                depth: "1",
                             },
                             children: [
                                 {
                                     tag: "__PStart",
                                     attr: {
-                                        type: "round"
+                                        type: "round",
                                     },
-                                    children: ["（"]
+                                    children: ["（"],
                                 },
                                 {
                                     tag: "__PContent",
                                     attr: {
-                                        type: "round"
+                                        type: "round",
                                     },
                                     children: [
                                         {
@@ -1179,35 +1189,35 @@ describe("Test $pointerRanges", () => {
                                                                     attr: {
                                                                         relPos: "NAMED",
                                                                         targetType: "Item",
-                                                                        name: "第五号"
+                                                                        name: "第五号",
                                                                     },
-                                                                    children: ["第五号"]
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                            ]
+                                                                    children: ["第五号"],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
                                         },
                                         {
                                             tag: "__Text",
                                             attr: {},
-                                            children: ["を除く。"]
-                                        }
-                                    ]
+                                            children: ["を除く。"],
+                                        },
+                                    ],
                                 },
                                 {
                                     tag: "__PEnd",
                                     attr: {
-                                        type: "round"
+                                        type: "round",
                                     },
-                                    children: ["）"]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+                                    children: ["）"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         };
 
 
@@ -1243,18 +1253,18 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "HERE",
                                         targetType: "Law",
-                                        name: "この法律"
+                                        name: "この法律",
                                     },
-                                    children: ["この法律"]
-                                }
-                            ]
-                        }
-                    ]
+                                    children: ["この法律"],
+                                },
+                            ],
+                        },
+                    ],
                 },
                 {
                     tag: "__Text",
                     attr: {},
-                    children: ["又は"]
+                    children: ["又は"],
                 },
                 {
                     tag: "____PointerRange",
@@ -1269,24 +1279,24 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "HERE",
                                         targetType: "Law",
-                                        name: "この法律"
+                                        name: "この法律",
                                     },
-                                    children: ["この法律"]
+                                    children: ["この法律"],
                                 },
                                 {
                                     tag: "____PF",
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "INFERIOR",
-                                        name: "に基づく命令"
+                                        name: "に基づく命令",
                                     },
-                                    children: ["に基づく命令"]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+                                    children: ["に基づく命令"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         };
 
         const result = $pointerRanges.abstract().match(offset, target, env);
@@ -1321,48 +1331,48 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Article",
-                                        name: "第二十四条の二"
+                                        name: "第二十四条の二",
                                     },
-                                    children: ["第二十四条の二"]
+                                    children: ["第二十四条の二"],
                                 },
                                 {
                                     tag: "____PF",
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Paragraph",
-                                        name: "第五項"
+                                        name: "第五項",
                                     },
-                                    children: ["第五項"]
+                                    children: ["第五項"],
                                 },
                                 {
                                     tag: "____PF",
                                     attr: {
                                         relPos: "EACH",
                                         targetType: "Item",
-                                        name: "各号"
+                                        name: "各号",
                                     },
-                                    children: ["各号"]
-                                }
-                            ]
+                                    children: ["各号"],
+                                },
+                            ],
                         },
                         {
                             tag: "__Parentheses",
                             attr: {
                                 type: "round",
-                                depth: "1"
+                                depth: "1",
                             },
                             children: [
                                 {
                                     tag: "__PStart",
                                     attr: {
-                                        type: "round"
+                                        type: "round",
                                     },
-                                    children: ["（"]
+                                    children: ["（"],
                                 },
                                 {
                                     tag: "__PContent",
                                     attr: {
-                                        type: "round"
+                                        type: "round",
                                     },
                                     children: [
                                         {
@@ -1382,35 +1392,35 @@ describe("Test $pointerRanges", () => {
                                                                     attr: {
                                                                         relPos: "NAMED",
                                                                         targetType: "Item",
-                                                                        name: "第二号"
+                                                                        name: "第二号",
                                                                     },
-                                                                    children: ["第二号"]
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                            ]
+                                                                    children: ["第二号"],
+                                                                },
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                            ],
                                         },
                                         {
                                             tag: "__Text",
                                             attr: {},
-                                            children: ["を除く。"]
-                                        }
-                                    ]
+                                            children: ["を除く。"],
+                                        },
+                                    ],
                                 },
                                 {
                                     tag: "__PEnd",
                                     attr: {
-                                        type: "round"
+                                        type: "round",
                                     },
-                                    children: ["）"]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+                                    children: ["）"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         };
 
         const result = $pointerRanges.abstract().match(offset, target, env);
@@ -1445,18 +1455,18 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Article",
-                                        name: "第九十九条の十二"
+                                        name: "第九十九条の十二",
                                     },
-                                    children: ["第九十九条の十二"]
-                                }
-                            ]
-                        }
-                    ]
+                                    children: ["第九十九条の十二"],
+                                },
+                            ],
+                        },
+                    ],
                 },
                 {
                     tag: "__Text",
                     attr: {},
-                    children: ["若しくは"]
+                    children: ["若しくは"],
                 },
                 {
                     tag: "____PointerRange",
@@ -1471,18 +1481,61 @@ describe("Test $pointerRanges", () => {
                                     attr: {
                                         relPos: "SAME",
                                         targetType: "Law",
-                                        name: "同法"
+                                        name: "同法",
                                     },
-                                    children: ["同法"]
+                                    children: ["同法"],
                                 },
                                 {
                                     tag: "____PF",
                                     attr: {
                                         relPos: "NAMED",
                                         targetType: "Article",
-                                        name: "第百七十八条"
+                                        name: "第百七十八条",
                                     },
-                                    children: ["第百七十八条"]
+                                    children: ["第百七十八条"],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const result = $pointerRanges.abstract().match(offset, target, env);
+        assert.isTrue(result.ok);
+        if (result.ok) {
+            // console.log(JSON.stringify(result.value.value.json(true), null, 2));
+            assert.deepStrictEqual(result.value.value.json(true), expectedPointerRanges);
+            assert.deepStrictEqual(result.value.errors.map(e => e.message), expectedErrorMessages);
+        }
+    });
+
+    it("Success case", () => {
+        /* eslint-disable no-irregular-whitespace */
+        const offset = 0;
+        const target = "別表第一に掲げる条件のいずれかに適合する知識経験を有する者が無線設備等の点検を行うものであること。";
+        const expectedErrorMessages: string[] = [];
+
+        const expectedPointerRanges = {
+            tag: "____PointerRanges",
+            attr: {},
+            children: [
+                {
+                    tag: "____PointerRange",
+                    attr: {},
+                    children: [
+                        {
+                            tag: "____Pointer",
+                            attr: {},
+                            children: [
+                                {
+                                    tag: "____PF",
+                                    attr: {
+                                        relPos: "NAMED",
+                                        targetType: "APPDX",
+                                        name: "別表第一"
+                                    },
+                                    children: ["別表第一"]
                                 }
                             ]
                         }
@@ -1491,7 +1544,20 @@ describe("Test $pointerRanges", () => {
             ]
         };
 
-        const result = $pointerRanges.abstract().match(offset, target, env);
+        const result = $pointerRanges.abstract().match(offset, target, initialEnv({
+            options: {
+                reParenthesesInlineTextChars: makeReParenthesesInlineTextChars(pointerRangesCandidateChars + "別"),
+                reOutsideParenthesesTextChars: makeReOutsideParenthesesTextChars(pointerRangesCandidateChars + "別"),
+                rePeriodSentenceTextChars: makeRePeriodSentenceTextChars(pointerRangesCandidateChars + "別"),
+                inlineTokenRule: $inlineWithPointerRanges,
+                appdxPointers: [
+                    {
+                        pointerText: "別表第一",
+                        el: newStdEL("AppdxTable"),
+                    },
+                ],
+            },
+        }));
         assert.isTrue(result.ok);
         if (result.ok) {
             // console.log(JSON.stringify(result.value.value.json(true), null, 2));

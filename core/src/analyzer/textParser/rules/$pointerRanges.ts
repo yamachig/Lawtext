@@ -3,14 +3,19 @@ import { typeCharsMap } from "../../../law/std/helpers";
 import { irohaChars, parseKanjiNum } from "../../../law/num";
 import type { SentenceChildEL } from "../../../node/cst/inline";
 import type { __Parentheses } from "../../../node/el/controls";
-import { RelPos, __Text, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
-import type { ErrorMessage } from "../error";
-import { factory } from "../factory";
-import { $kanjiDigits, arabicDigits, kanjiDigits, romanDigits } from "./lexical";
-import type { RangeMaker, RangesMaker } from "./makeRangesRule";
-import makeRangesRule from "./makeRangesRule";
-import { $ROUND_PARENTHESES_INLINE } from "./$sentenceChildren";
-import type { WithErrorRule, WithErrorValue } from "../util";
+import { RelPos, __Text, ____LawNum, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
+import type { ErrorMessage } from "../../../parser/cst/error";
+import { factory } from "../../../parser/cst/factory";
+import { $kanjiDigits, arabicDigits, kanjiDigits, romanDigits } from "../../../parser/cst/rules/lexical";
+import type { RangeMaker, RangesMaker } from "../../../parser/cst/rules/makeRangesRule";
+import makeRangesRule from "../../../parser/cst/rules/makeRangesRule";
+import { $ROUND_PARENTHESES_INLINE } from "../../../parser/cst/rules/$sentenceChildren";
+import { type WithErrorRule, type WithErrorValue } from "../../../parser/cst/util";
+import { ptnLawNumLike } from "../../../law/lawNum";
+import type { Empty, MatchResult } from "generic-parser";
+import { Rule } from "generic-parser";
+import type { Env } from "../../../parser/cst/env";
+import type { Container } from "../../../node/container";
 
 const makeRange: RangeMaker<
     WithErrorValue<____Pointer>,
@@ -30,7 +35,7 @@ const makeRange: RangeMaker<
         errors: [
             ...from.errors,
             ...(to?.errors ?? []),
-        ]
+        ],
     };
 };
 
@@ -178,9 +183,84 @@ export const $singleOnlyPointerFragment = factory
     )
     ;
 
+class AppdxPointerRule<
+        TPrevEnv extends Env
+    > extends Rule<
+        string,
+        {
+            pointerText: string,
+            container: Container,
+        },
+        TPrevEnv,
+        Empty
+    > {
+    public readonly classSignature = "AppdxPointerRule" as const;
+
+    public constructor(
+        name: string | null = null,
+    ) {
+        super(name);
+    }
+
+    protected __match__(
+        offset: number,
+        target: string,
+        env: TPrevEnv,
+    ): MatchResult<
+            {
+                pointerText: string,
+                container: Container,
+            },
+            TPrevEnv
+        > {
+        const appdxPointers = env.options.appdxPointers as {
+            pointerText: string,
+            container: Container,
+        }[] | undefined;
+
+        if (Array.isArray(appdxPointers)) {
+            loop: for (const appdxPointer of appdxPointers) {
+                if (offset + appdxPointer.pointerText.length <= target.length) {
+                    for (let i = 0; i < appdxPointer.pointerText.length; i++) {
+                        if (target[offset + i] !== appdxPointer.pointerText[i]) {
+                            continue loop;
+                        }
+                    }
+                    return {
+                        ok: true,
+                        nextOffset: offset + appdxPointer.pointerText.length,
+                        value: appdxPointer,
+                        env,
+                    };
+                }
+            }
+        }
+
+        return {
+            ok: false,
+            offset,
+            expected: this,
+            prevFail: null,
+        };
+    }
+
+    public toString(): string { return this.name ?? "[AppdxPointerRule]"; }
+}
+
 export const $firstOnlyPointerFragment = factory
     .withName("firstOnlyPointerFragment")
     .choice(c => c
+        .orSequence(s => s
+            .and(new AppdxPointerRule())
+            .action(({ text, range }) => {
+                return new ____PF({
+                    relPos: RelPos.NAMED,
+                    targetType: "APPDX",
+                    name: text(),
+                    range: range(),
+                });
+            })
+        )
         .or(r => r
             .action(r => r
                 .sequence(c => c
@@ -226,7 +306,7 @@ export const $firstOnlyPointerFragment = factory
                             .or(r => r.seqEqual("本"))
                         )
                     )
-                    .and(r => r.regExp(/^[編章節款目章条項号表]/), "type_char")
+                    .and(r => r.regExp(/^[編章節款目章条項号表]/), "type_char"),
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
@@ -248,7 +328,7 @@ export const $firstOnlyPointerFragment = factory
                             .or(r => r.seqEqual("この"))
                         )
                     )
-                    .and(r => r.regExp(/^(?:法律|勅令|政令|規則|省令|府令|内閣官房令|命令|附則|別表)/), "type")
+                    .and(r => r.regExp(/^(?:法律|勅令|政令|規則|省令|府令|内閣官房令|命令|附則|別表)/), "type"),
                 )
             , (({ text, type, range }) => {
                 return new ____PF({
@@ -257,7 +337,7 @@ export const $firstOnlyPointerFragment = factory
                         (type === "附則")
                             ? "SupplProvision"
                             : (type === "別表")
-                                ? "AppdxTable"
+                                ? "APPDX"
                                 : "Law"
                     ),
                     name: text(),
@@ -270,7 +350,7 @@ export const $firstOnlyPointerFragment = factory
             .action(r => r
                 .sequence(c => c
                     .and(r => r.seqEqual("同"))
-                    .and(r => r.regExp(/^[法編章節款目章条項号表]/), "type_char")
+                    .and(r => r.regExp(/^[法編章節款目章条項号表]/), "type_char"),
                 )
             , (({ text, type_char, range }) => {
                 return new ____PF({
@@ -416,6 +496,30 @@ export const $anyWherePointerFragment = factory
                 });
             })
         )
+    )
+    ;
+
+
+const reLawNumLike = new RegExp(`^${ptnLawNumLike}`);
+
+export const $inlineWithPointerRanges = factory
+    .withName("inlineWithPointerRanges")
+    .choice(c => c
+        .orSequence(s => s
+            .and(r => r.regExp(reSuppressPointerRanges), "text")
+            .action(({ text, range }) => ({
+                value: new __Text(text, range()),
+                errors: [],
+            }))
+        )
+        .orSequence(s => s
+            .and(r => r.regExp(reLawNumLike), "text")
+            .action(({ text, range }) => ({
+                value: new ____LawNum(text, range()),
+                errors: [],
+            }))
+        )
+        .or(() => $pointerRanges)
     )
     ;
 

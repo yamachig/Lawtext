@@ -44,7 +44,7 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
                     (!startsWithNotSupported && prefix.attr.targetType === "Paragraph") ? prefix.attr.name : undefined
                 ) ?? paragraph;
                 appdxTable = (
-                    (!startsWithNotSupported && prefix.attr.targetType === "AppdxTable") ? prefix.attr.name : undefined
+                    (!startsWithNotSupported && prefix.attr.targetType === "APPDX") ? prefix.attr.name : undefined
                 ) ?? appdxTable;
             }
             let pfIndex = -1;
@@ -67,7 +67,7 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
                         (!startsWithNotSupported && prefixOrChild.attr.targetType === "Paragraph") ? prefixOrChild.attr.name : undefined
                     ) ?? paragraph;
                     appdxTable = (
-                        (!startsWithNotSupported && prefixOrChild.attr.targetType === "AppdxTable") ? prefixOrChild.attr.name : undefined
+                        (!startsWithNotSupported && prefixOrChild.attr.targetType === "APPDX") ? prefixOrChild.attr.name : undefined
                     ) ?? appdxTable;
 
                     if (child.attr.targetType === "Law") {

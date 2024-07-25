@@ -3,8 +3,9 @@ import loadEL from "../../../node/el/loadEL";
 import { initialEnv } from "../env";
 import $nameListHead from "./$nameListHead";
 import type * as std from "../../../law/std";
-import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
 import type { SentenceChildEL } from "../../../node/cst/inline";
+import detectPointers from "../../detectPointers";
+import getSentenceEnvs from "../../getSentenceEnvs";
 
 const env = initialEnv({ target: "" });
 
@@ -17,7 +18,8 @@ describe("Test $nameListHead", () => {
             attr: {},
             children: ["この法律において、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -65,7 +67,8 @@ describe("Test $nameListHead", () => {
             attr: {},
             children: ["この法律及びこの法律に基づく命令の規定の解釈に関しては、次の定義に従うものとする。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -148,7 +151,8 @@ describe("Test $nameListHead", () => {
             attr: {},
             children: ["この法律又はこの法律に基づく命令において、次の各号に掲げる用語は、当該各号に掲げる定義に従うものとする。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -233,7 +237,8 @@ describe("Test $nameListHead", () => {
             attr: {},
             children: ["この条（第一項及び次項から第七項までを除く。）において、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -395,7 +400,8 @@ describe("Test $nameListHead", () => {
             attr: {},
             children: ["この省令において使用する用語は、鉱山保安法（以下「法」という。）及び鉱山保安法施行規則（平成十六年経済産業省令第九十六号）において使用する用語の例によるほか、次の各号に定めるところによる。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -443,7 +449,8 @@ describe("Test $nameListHead", () => {
             attr: {},
             children: ["この規則（第二条の三十五を除く。）において使用する用語は、鉱山保安法（以下「法」という。）及び鉱山保安法施行規則（平成十六年経済産業省令第九十六号）において使用する用語の例によるほか、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -554,7 +561,8 @@ describe("Test $nameListHead", () => {
             attr: {},
             children: ["この規則（第二条の三十五を除く。）において使用する用語は、法において使用する用語の例によるほか、次の各号に掲げる用語の意義は、それぞれ当該各号に定めるところによる。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];

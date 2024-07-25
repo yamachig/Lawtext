@@ -2,18 +2,21 @@
 import type { __EL } from "../../../law/std";
 import { isSub } from "../../../law/std";
 import type { ParenthesesType } from "../../../node/el/controls";
-import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____Declaration, ____LawNum } from "../../../node/el/controls";
+import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____Declaration } from "../../../node/el/controls";
 import { EL } from "../../../node/el";
 import { assertNever } from "../../../util";
 import { factory } from "../factory";
-import type { ValueRule, WithErrorRule } from "../util";
+import type { ValueRule, WithErrorRule, WithErrorValue } from "../util";
 import { $_EOL, $__ } from "./lexical";
 import type { SentenceChildEL } from "../../../node/cst/inline";
 import * as std from "../../../law/std";
 import $xml from "./$xml";
-import $pointerRanges, { pointerRangesCandidateChars, reSuppressPointerRanges } from "./$pointerRanges";
-import { ptnLawNumLike } from "../../../law/lawNum";
+// import { pointerRangesCandidateChars, reSuppressPointerRanges } from "./$pointerRanges";
+// import { ptnLawNumLike } from "../../../law/lawNum";
 import { ErrorMessage } from "../error";
+import type { Empty, MatchResult, MatchSuccess } from "generic-parser";
+import { Rule } from "generic-parser";
+import type { Env } from "../env";
 
 
 export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): string => {
@@ -96,44 +99,71 @@ export const $sentenceChildrenWithoutToplevelInlineToken: WithErrorRule<Sentence
 
 export default $sentenceChildren;
 
-const reLawNumLike = new RegExp(`^${ptnLawNumLike}`);
-
 const reCharRef = /^&#(\d+|x[\da-fA-F]+);/;
 
-export const $inlineToken = factory
+export const $charRef = factory
     .withName("inlineToken")
-    .choice(c => c
-        .orSequence(s => s
-            .and(r => r.regExp(reSuppressPointerRanges), "text")
-            .action(({ text, range }) => ({
-                value: new __Text(text, range()),
+    .sequence(s => s
+        .and(r => r.regExpObj(reCharRef), "charRef")
+        .action(({ charRef, range }) => {
+            const intStr = charRef[1].toLowerCase();
+            const isHex = intStr.startsWith("x");
+            const int = parseInt(intStr.slice(isHex ? 1 : 0), isHex ? 16 : 10);
+            return {
+                value: new __Text(String.fromCharCode(int), range()),
                 errors: [],
-            }))
-        )
-        .orSequence(s => s
-            .and(r => r.regExpObj(reCharRef), "charRef")
-            .action(({ charRef, range }) => {
-                const intStr = charRef[1].toLowerCase();
-                const isHex = intStr.startsWith("x");
-                const int = parseInt(intStr.slice(isHex ? 1 : 0), isHex ? 16 : 10);
-                return {
-                    value: new __Text(String.fromCharCode(int), range()),
-                    errors: [],
-                };
-            })
-        )
-        .orSequence(s => s
-            .and(r => r.regExp(reLawNumLike), "text")
-            .action(({ text, range }) => ({
-                value: new ____LawNum(text, range()),
-                errors: [],
-            }))
-        )
-        .or(() => $pointerRanges)
+            };
+        })
     )
     ;
 
-const rePeriodSentenceTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}])[^\r\n&<>()（）[\\]［］{}｛｝「」 　\t。])+`);
+export const makeRePeriodSentenceTextChars = (stopChars: string) => new RegExp(`^(?:(?![ァ-ヿ${stopChars}])[^\r\n&<>()（）[\\]［］{}｛｝「」 　\t。])+`);
+
+class PeriodSentenceTextCharsRule<
+    TPrevEnv extends Env
+> extends Rule<
+    string,
+    string,
+    TPrevEnv,
+    Empty
+> {
+    public readonly classSignature = "PeriodSentenceTextCharsRule" as const;
+
+    public constructor(
+        name: string | null = null,
+    ) {
+        super(name);
+    }
+
+    protected __match__(
+        offset: number,
+        target: string,
+        env: TPrevEnv,
+    ): MatchResult<
+        string,
+        TPrevEnv
+    > {
+        const rePeriodSentenceTextChars = env.options.rePeriodSentenceTextChars;
+        const m = rePeriodSentenceTextChars?.exec(target.slice(offset));
+        if (m) {
+            return {
+                ok: true,
+                nextOffset: offset + m[0].length,
+                value: m[0],
+                env,
+            };
+        } else {
+            return {
+                ok: false,
+                offset,
+                expected: this,
+                prevFail: null,
+            };
+        }
+    }
+
+    public toString(): string { return this.name ?? "[PeriodSentenceTextCharsRule]"; }
+}
 
 export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = factory
     .withName("PERIOD_SENTENCE_FRAGMENT")
@@ -143,9 +173,9 @@ export const $PERIOD_SENTENCE_FRAGMENT: WithErrorRule<SentenceChildEL[]> = facto
                 .and(r => r
                     .oneOrMore(r => r
                         .choice(c => c
-                            .or(r => r.regExp(reSuppressPointerRanges))
-                            .or(r => r.regExp(rePeriodSentenceTextChars))
-                            .or(() => $inlineToken)
+                            .or(new PeriodSentenceTextCharsRule())
+                            .or(() => $charRef)
+                            .or(new InlineTokenRule())
                             .or(r => r.regExp(/^[^\r\n&<>()（）[\]［］{}｛｝「」 　\t。]/))
                             .or(() => ANY_PARENTHESES_INLINE)
                             .or(() => $MISMATCH_END_PARENTHESIS),
@@ -230,7 +260,53 @@ export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES_WITHOUT_TOPLEVE
     )
 ;
 
-const reOutsideParenthesesTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}]|[ 　\t]*\r?\n)[^\r\n&<>()（）[\\]［］{}｛｝「」])+`);
+export const makeReOutsideParenthesesTextChars = (stopChars: string) => new RegExp(`^(?:(?![ァ-ヿ${stopChars}]|[ 　\t]*\r?\n)[^\r\n&<>()（）[\\]［］{}｛｝「」])+`);
+
+class OutsideParenthesesTextCharsRule<
+    TPrevEnv extends Env
+> extends Rule<
+    string,
+    string,
+    TPrevEnv,
+    Empty
+> {
+    public readonly classSignature = "OutsideParenthesesTextCharsRule" as const;
+
+    public constructor(
+        name: string | null = null,
+    ) {
+        super(name);
+    }
+
+    protected __match__(
+        offset: number,
+        target: string,
+        env: TPrevEnv,
+    ): MatchResult<
+        string,
+        TPrevEnv
+    > {
+        const reOutsideParenthesesTextChars = env.options.reOutsideParenthesesTextChars;
+        const m = reOutsideParenthesesTextChars?.exec(target.slice(offset));
+        if (m) {
+            return {
+                ok: true,
+                nextOffset: offset + m[0].length,
+                value: m[0],
+                env,
+            };
+        } else {
+            return {
+                ok: false,
+                offset,
+                expected: this,
+                prevFail: null,
+            };
+        }
+    }
+
+    public toString(): string { return this.name ?? "[OutsideParenthesesTextCharsRule]"; }
+}
 
 export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<SentenceChildEL[]> = factory
     .withName("OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES")
@@ -238,8 +314,9 @@ export const $OUTSIDE_PARENTHESES_INLINE_EXCLUDE_TRAILING_SPACES: WithErrorRule<
         .and(r => r
             .oneOrMore(r => r
                 .choice(c => c
-                    .or(r => r.regExp(reOutsideParenthesesTextChars))
-                    .or(() => $inlineToken)
+                    .or(new OutsideParenthesesTextCharsRule())
+                    .or(() => $charRef)
+                    .or(new InlineTokenRule())
                     .or(r => r.regExp(/^(?![ 　\t]*\r?\n)[^\r\n&<>()（）[\]［］{}｛｝「」]/))
                 )
             )
@@ -352,7 +429,98 @@ export const ANY_PARENTHESES_INLINE: WithErrorRule<SentenceChildEL> = factory
     )
 ;
 
-const reParenthesesInlineTextChars = new RegExp(`^(?:(?![ァ-ヿ${pointerRangesCandidateChars}])[^\r\n&<>()（）[\\]［］{}｛｝「」])+`);
+export const makeReParenthesesInlineTextChars = (stopChars: string) => new RegExp(`^(?:(?![ァ-ヿ${stopChars}])[^\r\n&<>()（）[\\]［］{}｛｝「」])+`);
+
+class ParenthesesInlineTextCharsRule<
+    TPrevEnv extends Env
+> extends Rule<
+    string,
+    string,
+    TPrevEnv,
+    Empty
+> {
+    public readonly classSignature = "ParenthesesInlineTextCharsRule" as const;
+
+    public constructor(
+        name: string | null = null,
+    ) {
+        super(name);
+    }
+
+    protected __match__(
+        offset: number,
+        target: string,
+        env: TPrevEnv,
+    ): MatchResult<
+        string,
+        TPrevEnv
+    > {
+        const reParenthesesInlineTextChars = env.options.reParenthesesInlineTextChars;
+        const m = reParenthesesInlineTextChars?.exec(target.slice(offset));
+        if (m) {
+            return {
+                ok: true,
+                nextOffset: offset + m[0].length,
+                value: m[0],
+                env,
+            };
+        } else {
+            return {
+                ok: false,
+                offset,
+                expected: this,
+                prevFail: null,
+            };
+        }
+    }
+
+    public toString(): string { return this.name ?? "[ParenthesesInlineTextCharsRule]"; }
+}
+
+class InlineTokenRule<
+    TPrevEnv extends Env
+> extends Rule<
+    string,
+    WithErrorValue<SentenceChildEL >,
+    TPrevEnv,
+    Empty
+> {
+    public readonly classSignature = "InlineTokenRule" as const;
+
+    public constructor(
+        name: string | null = null,
+    ) {
+        super(name);
+    }
+
+    protected __match__(
+        offset: number,
+        target: string,
+        env: TPrevEnv,
+    ): MatchResult<
+        WithErrorValue<SentenceChildEL>,
+        TPrevEnv
+    > {
+        const rule = env.options.inlineTokenRule;
+        const result = (rule instanceof Rule) ? rule.match(offset, target, env) : null;
+        if (result?.ok) {
+            return result as MatchSuccess<
+                WithErrorValue<SentenceChildEL>,
+                TPrevEnv
+            >;
+        } else {
+            return {
+                ok: false,
+                offset,
+                expected: this,
+                prevFail: result,
+            };
+        }
+    }
+
+    public toString(): string { return this.name ?? "[InlineTokenRule]"; }
+}
+
 
 export const makeParenthesesInline = (
     parenthesisType: ParenthesesType,
@@ -378,8 +546,9 @@ export const makeParenthesesInline = (
                         .and(r => r
                             .zeroOrMore(r => r
                                 .choice(c => c
-                                    .or(r => r.regExp(reParenthesesInlineTextChars))
-                                    .or(() => $inlineToken)
+                                    .or(new ParenthesesInlineTextCharsRule())
+                                    .or(() => $charRef)
+                                    .or(new InlineTokenRule())
                                     .or(r => r.regExp(/^[^\r\n&<>()（）[\]［］{}｛｝「」]/))
                                     .or(() => ANY_PARENTHESES_INLINE)
                                     .or(r => r

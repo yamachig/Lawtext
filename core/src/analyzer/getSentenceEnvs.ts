@@ -41,7 +41,7 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
             if (!rootContainer) rootContainer = container;
             const sentenceEnv = new SentenceEnv({
                 index: sentenceEnvs.length,
-                el,
+                elToBeModified: el,
                 lawType,
                 parentELs: [...prevParentELs],
                 container,
@@ -86,7 +86,7 @@ export const getSentenceEnvs = (el: EL): SentenceEnvsStruct => {
                 if (isSentenceLike(el)) {
                     const sentenceEnv = new SentenceEnv({
                         index: sentenceEnvs.length,
-                        el,
+                        elToBeModified: el,
                         lawType,
                         parentELs: [...prevParentELs],
                         container,

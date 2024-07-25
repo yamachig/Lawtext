@@ -7,7 +7,6 @@ import type { ErrorMessage } from "../parser/cst/error";
 import type { LawXMLStruct } from "./loaders/common";
 import { ElawsLawData } from "../elawsApi";
 import { xmlToEL } from "../node/el/xmlToEL";
-import addSentenceChildrenControls from "../parser/addSentenceChildrenControls";
 
 
 export interface LawDataCore {
@@ -79,12 +78,6 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
             await util.wait(30);
             const [parseXMLOrLawtextTime, el] = await util.withTime(xmlToEL)(_props.xml);
             timing.parseXMLOrLawtext = parseXMLOrLawtextTime;
-
-            onMessage("制御タグを追加しています...");
-            // console.log("onNavigated: adding control tags...");
-            await util.wait(30);
-            const [addControlTagsTime] = await util.withTime(addSentenceChildrenControls)(el as std.Law);
-            timing.addControlTags = addControlTagsTime;
 
             onMessage("法令を解析しています...");
             // console.log("onNavigated: analysing law...");

@@ -63,40 +63,9 @@ describe("Test $tableColumnLine", () => {
                         attr: {},
                         children: [
                             {
-                                tag: "____PointerRanges",
+                                tag: "__Text",
                                 attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "PREV",
-                                                            targetType: "Article",
-                                                            name: "前条"
-                                                        },
-                                                        children: ["前条"]
-                                                    },
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Paragraph",
-                                                            name: "第一項"
-                                                        },
-                                                        children: ["第一項"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
+                                children: ["前条第一項"]
                             }
                         ]
                     }

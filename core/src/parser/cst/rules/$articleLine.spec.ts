@@ -41,36 +41,9 @@ describe("Test $articleLine", () => {
                         attr: {},
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "HERE",
-                                                            targetType: "Law",
-                                                            name: "この法律"
-                                                        },
-                                                        children: ["この法律"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                ],
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。"],
+                                children: ["この法律において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。"],
                             },
                         ],
                     },

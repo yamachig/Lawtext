@@ -3,6 +3,7 @@ import { ContainerType } from ".";
 import { isIgnoreAnalysis } from "../../analyzer/common";
 import type { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
 import * as std from "../../law/std";
+import { mergeAdjacentTextsWithString } from "../../parser/cst/util";
 import type { EL } from "../el";
 import type { RangeInfo, __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, ____Declaration, ____LawNum, ____LawRef, ____Pointer, ____VarRef } from "../el/controls";
 import { __Text } from "../el/controls";
@@ -271,6 +272,10 @@ export const toSentenceTextRanges = (
 export const sentenceTextTags = [
     "Ruby",
     "QuoteStruct",
+    "ArithFormula",
+    "Sub",
+    "Sup",
+    "Line",
     "__Text",
     "__PStart",
     "__PEnd",
@@ -285,6 +290,10 @@ export const sentenceTextTags = [
 export type SentenceText = (
     | std.Ruby
     | std.QuoteStruct
+    | std.ArithFormula
+    | std.Sub
+    | std.Sup
+    | std.Line
     | __Text
     | __PStart
     | __PEnd
@@ -326,6 +335,20 @@ export function *enumerateSentenceTexts(el: EL): Iterable<SentenceText> {
     }
 }
 
+export const setTextControl = (el: EL) => {
+    if (isSentenceLike(el) && el.children.some(c => typeof c === "string")) {
+        const first = el.children[0];
+        if (typeof first === "string") {
+            el.children[0] = new __Text(first, el.range && [el.range[0], el.range[0] + first.length]);
+        }
+        el.children.splice(0, el.children.length, ...mergeAdjacentTextsWithString(el.children));
+    }
+    for (const child of el.children) {
+        if (typeof child === "string" || isSentenceText(child)) continue;
+        setTextControl(child);
+    }
+};
+
 export type SentenceLike = (
     | std.Sentence
     | std.EnactStatement
@@ -339,7 +362,7 @@ export const isSentenceLike = (el: EL | string): el is SentenceLike =>
 
 export interface SentenceEnvOptions {
     index: number,
-    el: SentenceLike,
+    elToBeModified: SentenceLike,
     lawType: string,
     parentELs: EL[],
     container: Container,
@@ -353,8 +376,6 @@ export class SentenceEnv {
     public lawType: string;
     public parentELs: EL[];
     public container: Container;
-
-    public readonly parentOfEL = new Map<EL, EL>();
 
     private _text: string;
     public get text(): string { return this._text; }
@@ -386,7 +407,7 @@ export class SentenceEnv {
     }
 
     constructor(options: SentenceEnvOptions) {
-        const { index, el, lawType, parentELs, container } = options;
+        const { index, elToBeModified: el, lawType, parentELs, container } = options;
 
         this.index = index;
         this.el = el;
@@ -394,16 +415,30 @@ export class SentenceEnv {
         this.parentELs = parentELs;
         this.container = container;
 
+        setTextControl(el);
+
         this._text = [...enumerateSentenceTexts(el)].map(textOfSentenceText).join("");
 
         const setParentOfChildELs = (el: EL) => {
             for (const c of el.children) {
                 if (typeof c === "string") continue;
-                this.parentOfEL.set(c, el);
                 setParentOfChildELs(c);
             }
         };
         setParentOfChildELs(this.el);
+    }
+
+    public linealAscendantOfEL(el: EL): EL[] | null {
+        const f = (current: EL, el: EL): EL[] | null => {
+            if (current === el) return [current];
+            for (const child of current.children) {
+                if (typeof child === "string") continue;
+                const result = f(child, el);
+                if (result) return [current, ...result];
+            }
+            return null;
+        };
+        return f(this.el, el);
     }
 
     public textRageOfEL(el: EL): [number, number] | null {

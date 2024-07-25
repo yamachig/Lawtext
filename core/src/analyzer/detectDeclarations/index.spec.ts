@@ -2,12 +2,12 @@ import { assert } from "chai";
 import type * as std from "../../law/std";
 import type { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
-import addSentenceChildrenControls from "../../parser/addSentenceChildrenControls";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from ".";
 import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";
 import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
+import detectPointers from "../detectPointers";
 
 describe("Test detectDeclarations", () => {
 
@@ -35,9 +35,10 @@ describe("Test detectDeclarations", () => {
                 },
             ],
         }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
 
         const expected: JsonEL[] = [
             {
@@ -61,13 +62,7 @@ describe("Test detectDeclarations", () => {
                 {
                     tag: "Subitem1Title",
                     attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
+                    children: ["イ"],
                 },
                 {
                     tag: "Subitem1Sentence",
@@ -262,9 +257,10 @@ describe("Test detectDeclarations", () => {
                 },
             ],
         }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expected: JsonEL[] = [
@@ -289,13 +285,7 @@ describe("Test detectDeclarations", () => {
                 {
                     tag: "Subitem1Title",
                     attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
+                    children: ["イ"],
                 },
                 {
                     tag: "Subitem1Sentence",
@@ -488,9 +478,10 @@ describe("Test detectDeclarations", () => {
                 },
             ],
         }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expected: JsonEL[] = [
@@ -521,13 +512,7 @@ describe("Test detectDeclarations", () => {
                 {
                     tag: "Subitem1Title",
                     attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
+                    children: ["イ"],
                 },
                 {
                     tag: "Subitem1Sentence",
@@ -779,8 +764,10 @@ describe("Test detectDeclarations", () => {
   二　処分　行政庁の処分その他公権力の行使に当たる行為をいう。
 `;
         const inputElToBeModified = parse(lawtext).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
@@ -1262,8 +1249,10 @@ describe("Test detectDeclarations", () => {
   二　「多施設共同研究」とは、一の臨床研究の計画書（以下「研究計画書」という。）に基づき複数の実施医療機関において実施される臨床研究をいう。
 `;
         const inputElToBeModified = parse(lawtext).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
@@ -1826,8 +1815,10 @@ describe("Test detectDeclarations", () => {
   五　「無線局」とは、無線設備及び無線設備の操作を行う者の総体をいう。但し、受信のみを目的とするものを含まない。
 `;
         const inputElToBeModified = parse(lawtext).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
@@ -2219,8 +2210,10 @@ describe("Test detectDeclarations", () => {
   十　南極<Ruby>哺<Rt>ほ</Rt></Ruby>乳類　<Ruby>哺<Rt>ほ</Rt></Ruby>乳綱に属する種であってその個体が南極地域に生息するものとして環境省令で定めるものの生きている個体をいう。
 `;
         const inputElToBeModified = parse(lawtext).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
@@ -2549,8 +2542,10 @@ describe("Test detectDeclarations", () => {
 第二条　法律の規定に基づき内閣に置かれる機関若しくは内閣の所轄の下に置かれる機関、宮内庁、内閣府設置法（平成十一年法律第八十九号）第四十九条第一項若しくは第二項に規定する機関、国家行政組織法（昭和二十三年法律第百二十号）第三条第二項に規定する機関、会計検査院若しくはこれらに置かれる機関又はこれらの機関の職員であって法律上独立に権限を行使することを認められた職員。
 `;
         const inputElToBeModified = parse(lawtext).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
@@ -2974,8 +2969,10 @@ describe("Test detectDeclarations", () => {
 第四十六条　地方公共団体は、第三条第三項において第二章から前章までの規定を適用しないこととされた処分、行政指導及び届出並びに命令等を定める行為に関する手続について、この法律の規定の趣旨にのっとり、行政運営における公正の確保と透明性の向上を図るため必要な措置を講ずるよう努めなければならない。
 `;
         const inputElToBeModified = parse(lawtext).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
@@ -3555,8 +3552,10 @@ describe("Test detectDeclarations", () => {
 １　第四条の二第二項の規定による届出をした者は、当該届出に係る実験等無線局を廃止したときは、遅滞なく、その旨を総務大臣に届け出なければならない。
 `;
         const inputElToBeModified = parse(lawtext).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
@@ -4481,8 +4480,10 @@ describe("Test detectDeclarations", () => {
 ２　命令等制定機関は、委員会等の議を経て命令等を定めようとする場合（前条第四項第四号に該当する場合を除く。）において、当該委員会等が意見公募手続に準じた手続を実施したときは、同条第一項の規定にかかわらず、自ら意見公募手続を実施することを要しない。
 `;
         const inputElToBeModified = parse(lawtext).value;
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expectedDeclarations: JsonEL[] = [
@@ -4540,9 +4541,10 @@ describe("Test detectDeclarations", () => {
                 },
             ],
         }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expected: JsonEL[] = [
@@ -4573,13 +4575,7 @@ describe("Test detectDeclarations", () => {
                 {
                     tag: "Subitem1Title",
                     attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
+                    children: ["イ"],
                 },
                 {
                     tag: "Subitem1Sentence",
@@ -4748,9 +4744,10 @@ describe("Test detectDeclarations", () => {
                 },
             ],
         }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expected: JsonEL[] = [
@@ -4781,13 +4778,7 @@ describe("Test detectDeclarations", () => {
                 {
                     tag: "Subitem1Title",
                     attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
+                    children: ["イ"],
                 },
                 {
                     tag: "Subitem1Sentence",
@@ -4973,9 +4964,10 @@ describe("Test detectDeclarations", () => {
                 },
             ],
         }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expected: JsonEL[] = [
@@ -5050,13 +5042,7 @@ describe("Test detectDeclarations", () => {
                 {
                     tag: "Subitem1Title",
                     attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
+                    children: ["イ"],
                 },
                 {
                     tag: "Subitem1Sentence",
@@ -5274,9 +5260,10 @@ describe("Test detectDeclarations", () => {
                 },
             ],
         }) as std.Subitem1;
-        addSentenceChildrenControls(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const pointerEnvsStruct = getPointerEnvs(sentenceEnvsStruct).value;
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
 
         const expected: JsonEL[] = [
@@ -5352,13 +5339,7 @@ describe("Test detectDeclarations", () => {
                 {
                     tag: "Subitem1Title",
                     attr: {},
-                    children: [
-                        {
-                            tag: "__Text",
-                            attr: {},
-                            children: ["イ"],
-                        },
-                    ],
+                    children: ["イ"],
                 },
                 {
                     tag: "Subitem1Sentence",

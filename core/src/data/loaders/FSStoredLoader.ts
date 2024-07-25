@@ -49,6 +49,7 @@ export class FSStoredLawXML extends LawXMLStruct {
         return { url, type };
     }
     public async getPictBlob(src: string): Promise<{buf: ArrayBuffer, type: string} | null> {
+        if (!src) return null;
         const _url = await this.getPictFileOrBlobURL(src);
         if (!_url) return null;
         const { url, type } = _url;

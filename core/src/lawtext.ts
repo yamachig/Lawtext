@@ -6,7 +6,6 @@ import { analyze as analyzeEL } from "./analyzer";
 import loadEL from "./node/el/loadEL";
 import { xmlToEL } from "./node/el/xmlToEL";
 import type { JsonEL } from "./node/el/jsonEL";
-import addSentenceChildrenControls from "./parser/addSentenceChildrenControls";
 import type * as std from "./law/std";
 import { assertNever } from "./util";
 import formatXML from "./util/formatXml";
@@ -96,14 +95,8 @@ If you are using the Lawtext CLI prebuilt: As the current limitation of the preb
             }
         }
         figDataManager = await FigDataManager.create({ lawXMLStruct: lawData, subsetLaw: law, figPDFType: figpdf });
-        if (analyze) {
-            addSentenceChildrenControls(law);
-        }
     } else if ("xml" in input) {
         law = xmlToEL(input.xml) as std.Law;
-        if (analyze) {
-            addSentenceChildrenControls(law);
-        }
     } else if ("json" in input) {
         const rawLaw = JSON.parse(input.json) as JsonEL;
         try {
@@ -111,9 +104,6 @@ If you are using the Lawtext CLI prebuilt: As the current limitation of the preb
         } catch (e) {
             console.error("[loading json at main]", e);
             throw e;
-        }
-        if (analyze) {
-            addSentenceChildrenControls(law);
         }
     } else if ("lawtext" in input) {
         try {

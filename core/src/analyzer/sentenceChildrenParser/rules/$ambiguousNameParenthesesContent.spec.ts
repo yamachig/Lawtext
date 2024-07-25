@@ -2,9 +2,10 @@ import { assert } from "chai";
 import loadEL from "../../../node/el/loadEL";
 import { initialEnv } from "../env";
 import type * as std from "../../../law/std";
-import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
 import type { SentenceChildEL } from "../../../node/cst/inline";
 import $ambiguousNameParenthesesContent from "./$ambiguousNameParenthesesContent";
+import detectPointers from "../../detectPointers";
+import getSentenceEnvs from "../../getSentenceEnvs";
 
 const env = initialEnv({ target: "" });
 
@@ -17,7 +18,8 @@ describe("Test $ambiguousNameParenthesesContent", () => {
             attr: {},
             children: ["行政上の意思決定について、その内容及び過程が国民にとって明らかであることをいう。第四十六条において同じ。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -66,7 +68,8 @@ describe("Test $ambiguousNameParenthesesContent", () => {
             attr: {},
             children: ["命令等で定めようとする内容を示すものをいう。以下同じ。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -88,7 +91,8 @@ describe("Test $ambiguousNameParenthesesContent", () => {
             attr: {},
             children: ["前項の期間の範囲内で主務大臣が定める期間をいう。第三十八条の十一第一項第二号及び第三号において同じ。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];
@@ -181,7 +185,8 @@ describe("Test $ambiguousNameParenthesesContent", () => {
             attr: {},
             children: ["国の行政庁が、申請等が行われた場合において、相当の期間内に何らかの国の関与のうち許可その他の処分その他公権力の行使に当たるものをすべきにかかわらず、これをしないことをいう。以下本節において同じ。"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];

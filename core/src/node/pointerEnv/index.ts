@@ -1,3 +1,5 @@
+import type { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
+import type * as std from "../../law/std";
 import { assertNever, pick } from "../../util";
 import type { Container } from "../container";
 import { getContainerType, ContainerType } from "../container";
@@ -24,10 +26,14 @@ export interface ExternalLocatedInfo {
 
 export type LocatedInfo = InternalLocatedInfo | ExternalLocatedInfo;
 
+export interface AppdxPointer {
+    pointerText: string,
+    el: std.AppdxItem | std.SupplProvisionAppdxItem,
+}
+
 export interface LocateOptions {
     force?: boolean,
     declarations: Map<string, ____Declaration>,
-    sentenceEnvs: SentenceEnv[],
     lawRefByDeclarationID: Map<string, ____LawRef>,
 }
 
@@ -42,13 +48,19 @@ export class PointerEnv {
 
     public pointer: ____Pointer;
     public sentenceEnv: SentenceEnv;
+    public sentenceEnvsStruct: SentenceEnvsStruct;
+    public appdxPointers: AppdxPointer[];
 
     public constructor(options: {
         pointer: ____Pointer,
         sentenceEnv: SentenceEnv,
+        sentenceEnvsStruct: SentenceEnvsStruct,
+        appdxPointers: AppdxPointer[],
     }) {
         this.pointer = options.pointer;
         this.sentenceEnv = options.sentenceEnv;
+        this.sentenceEnvsStruct = options.sentenceEnvsStruct;
+        this.appdxPointers = options.appdxPointers;
     }
 
     public json() {
@@ -84,7 +96,6 @@ export class PointerEnv {
             force,
             declarations,
             lawRefByDeclarationID,
-            sentenceEnvs,
         } = {
             force: false,
             ...options,
@@ -92,9 +103,10 @@ export class PointerEnv {
         if (this.located && !force) return;
 
 
-        const pointerRange = this.sentenceEnv.parentOfEL.get(this.pointer);
-        const pointerRanges = pointerRange && pointerRange.children.indexOf(this.pointer) === 0 && this.sentenceEnv.parentOfEL.get(pointerRange);
-        const parentEL = pointerRanges && pointerRanges.children.indexOf(pointerRange) === 0 && this.sentenceEnv.parentOfEL.get(pointerRanges);
+        const linealAscendant = this.sentenceEnv.linealAscendantOfEL(this.pointer);
+        const pointerRange = linealAscendant && linealAscendant[linealAscendant.length - 2];
+        const pointerRanges = linealAscendant && pointerRange && pointerRange.children.indexOf(this.pointer) === 0 && linealAscendant[linealAscendant.length - 3];
+        const parentEL = linealAscendant && pointerRanges && pointerRanges.children.indexOf(pointerRange) === 0 && linealAscendant[linealAscendant.length - 4];
 
         let prependedLawRef: ____LawRef | null = null;
         if (parentEL) {
@@ -115,7 +127,7 @@ export class PointerEnv {
                                 const declaration = declarations.get(targetEL.attr.declarationID);
                                 if (declaration && declaration.value) {
                                     const end = declaration.value.sentenceTextRange.end;
-                                    const dSentence = sentenceEnvs[end.sentenceIndex - (end.textOffset === 0 ? 1 : 0)];
+                                    const dSentence = this.sentenceEnvsStruct.sentenceEnvs[end.sentenceIndex - (end.textOffset === 0 ? 1 : 0)];
                                     const valueEL = dSentence.sentenceTextAt(end.textOffset === 0 ? dSentence.text.length - 1 : 0);
                                     targetEL = valueEL;
                                     continue;
@@ -350,7 +362,45 @@ export class PointerEnv {
             // e.g.: "第二条", "第二項"
 
             if (getContainerType(fragments[0].attr.targetType) === ContainerType.TOPLEVEL) {
-                // e.g.: "附則", "別表第二"
+                // e.g.: "附則"
+
+                if (prependedLawRef) {
+                    // e.g. "電波法附則"
+                    this.located = {
+                        type: "external",
+                        lawRef: prependedLawRef,
+                        fqPrefixFragments: [],
+                        skipSameCount: 0,
+                    };
+
+                } else {
+                    // e.g. "附則"
+
+                    const func = (c: Container) => {
+                        if (c.el.tag !== fragments[0].attr.targetType) return false;
+                        const titleEl = c.el.children.find(el =>
+                            el instanceof EL && (el.tag === `${c.el.tag}Title` || el.tag === `${c.el.tag}Label`)) as EL | undefined;
+                        return (new RegExp(`^${fragments[0].attr.name}(?:[(（]|\\s|$)`)).exec(titleEl?.text() ?? "") !== null;
+                    };
+                    const container = (
+                        this.sentenceEnv.container.findAncestorChildren(func)
+                        ?? this.sentenceEnv.container.findAncestorChildrenSub(func)
+                    );
+
+                    if (!container) {
+                        // console.warn(`Not located ${this.pointer.text()}`);
+                        return;
+                    }
+
+                    this.located = {
+                        type: "internal",
+                        fragments: locateContainersForFragments([container], fragments),
+                    };
+
+                }
+
+            } else if (fragments[0].attr.targetType === "APPDX") {
+                // e.g.: "別表第二"
 
                 if (prependedLawRef) {
                     // e.g. "電波法別表第一"
@@ -364,16 +414,9 @@ export class PointerEnv {
                 } else {
                     // e.g. "別表第一"
 
-                    const func = (c: Container) => {
-                        if (c.el.tag !== fragments[0].attr.targetType) return false;
-                        const titleEl = c.el.children.find(el =>
-                            el instanceof EL && (el.tag === `${c.el.tag}Title` || el.tag === `${c.el.tag}Label`)) as EL | undefined;
-                        return (new RegExp(`^${fragments[0].attr.name}(?:[(（]|\\s|$)`)).exec(titleEl?.text() ?? "") !== null;
-                    };
-                    const container = (
-                        this.sentenceEnv.container.findAncestorChildren(func)
-                        ?? this.sentenceEnv.container.findAncestorChildrenSub(func)
-                    );
+                    const el = this.appdxPointers.find(p => p.pointerText === fragments[0].attr.name)?.el;
+
+                    const container = el && this.sentenceEnvsStruct.containersByEL.get(el);
 
                     if (!container) {
                         // console.warn(`Not located ${this.pointer.text()}`);

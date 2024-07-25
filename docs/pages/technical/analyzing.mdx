@@ -16,8 +16,6 @@ Most of analysis processes is called via [`(core/src/analyzer).analyze()`](../li
 
 The Lawtext analyzer detects several patterns in the text, such as corresponding parentheses and clause pointers.
 
-When the input data is a Lawtext string, the patterns are analyzed during the parsing (at [`$sentenceChildren`](../lib/core/src/parser/cst/rules/$sentenceChildren/README.mdx#sentencechildren)). On the other hand, when the input data is a `StdEL` tree or a Standard Law XML, the patterns are analyzed on the existing `StdEL` tree (at [`addSentenceChildrenControls()`](../lib/core/src/parser/addSentenceChildrenControls/README.mdx#addsentencechildrencontrols)), which calls [`$sentenceChildren`](../lib/core/src/parser/cst/rules/$sentenceChildren/README.mdx#sentencechildren) internally.
-
 The patterns that the Lawtext analyzer can detect include the following.
 
 ### Corresponding parentheses
@@ -32,7 +30,7 @@ Such as `平成五年法律第八十八号` (meaning "Act No. 88 of November 12,
 
 Pointers in this context are the terms that reference a particular clause, such as`第一条` (meaning "Article 1") and `前項` (meaning "the preceding Article"). Ranges of pointers ("pointer ranges") are generalized forms of pointers like `第三十九条及び第四十一条から前条まで` (meaning "Articles 39 and 41 through the preceding Article").
 
-The parser rule is defined at [`$pointerRanges`](../lib/core/src/parser/cst/rules/$pointerRanges/README.mdx#pointerranges). The detected pointers will be resolved later to refer to the actual clauses.
+The parser rule is defined at [`$pointerRanges`](../lib/core/src/analyzer/textParser/rules/$pointerRanges/README.mdx#pointerranges). The detected pointers will be resolved later to refer to the actual clauses.
 
 ## Pointer resolution
 

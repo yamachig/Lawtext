@@ -1,6 +1,7 @@
 import { getMemorizedStringOffsetToPos } from "generic-parser";
 import type { MatchContext } from "generic-parser/lib/core";
 import type { Line } from "../../node/cst/line";
+import type { InitialEnvOptions } from "./env";
 import { initialEnv } from "./env";
 import factory from "./factory";
 import $lines from "./rules/$lines";
@@ -34,7 +35,7 @@ const $start: WithErrorRule<Line[]> = factory
 
 export const parse = (
     lawtext: string,
-    options: Record<string | number | symbol, unknown> = {},
+    options: InitialEnvOptions = {},
 ) => {
 
     const env = initialEnv(options);

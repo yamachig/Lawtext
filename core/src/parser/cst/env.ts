@@ -1,5 +1,8 @@
 import type { MatchFail, MatchContext, StringPos, BaseEnv } from "generic-parser/lib/core";
 import { getMemorizedStringOffsetToPos } from "generic-parser/lib/core";
+import type { WithErrorRule } from "./util";
+import type { SentenceChildEL } from "../../node/cst/inline";
+import { makeReOutsideParenthesesTextChars, makeReParenthesesInlineTextChars, makeRePeriodSentenceTextChars } from "./rules/$sentenceChildren";
 
 export interface Env extends BaseEnv<string, StringPos> {
     currentIndentDepth: number;
@@ -8,15 +11,21 @@ export interface Env extends BaseEnv<string, StringPos> {
         maxOffsetMatchFail: MatchFail | null;
         maxOffsetMatchContext: MatchContext | null;
     };
+    options: Record<string | number | symbol, unknown> & Partial<{
+        reParenthesesInlineTextChars: RegExp,
+        reOutsideParenthesesTextChars: RegExp,
+        rePeriodSentenceTextChars: RegExp,
+        inlineTokenRule: WithErrorRule<SentenceChildEL>,
+    }>,
 }
 
 export interface InitialEnvOptions {
-    options?: Record<string | number | symbol, unknown>,
+    options?: Env["options"],
     baseOffset?: number,
 }
 
 export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
-    const { options = {}, baseOffset = 0 } = initialEnvOptions;
+    const { options, baseOffset = 0 } = initialEnvOptions;
     const offsetToPos = getMemorizedStringOffsetToPos();
 
     const state = {
@@ -29,7 +38,12 @@ export const initialEnv = (initialEnvOptions: InitialEnvOptions): Env => {
         currentIndentDepth: 0,
         offsetToPos,
         registerCurrentRangeTarget: () => { /**/ },
-        options,
+        options: {
+            reParenthesesInlineTextChars: makeReParenthesesInlineTextChars(""),
+            reOutsideParenthesesTextChars: makeReOutsideParenthesesTextChars(""),
+            rePeriodSentenceTextChars: makeRePeriodSentenceTextChars(""),
+            ...options,
+        },
         state,
         baseOffset,
     };

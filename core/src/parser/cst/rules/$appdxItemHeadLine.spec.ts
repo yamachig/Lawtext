@@ -69,88 +69,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第二十六条"
-                                                        },
-                                                        children: ["第二十六条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第四十五条"
-                                                        },
-                                                        children: ["第四十五条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第四十六条の五"
-                                                        },
-                                                        children: ["第四十六条の五"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第二十六条、第四十五条、第四十六条の五関係"]
                             }
                         ]
                     },
@@ -234,88 +155,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第二十六条"
-                                                        },
-                                                        children: ["第二十六条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第四十五条"
-                                                        },
-                                                        children: ["第四十五条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第四十六条の五"
-                                                        },
-                                                        children: ["第四十六条の五"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第二十六条、第四十五条、第四十六条の五関係"]
                             }
                         ]
                     },
@@ -399,88 +241,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第二十六条"
-                                                        },
-                                                        children: ["第二十六条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第四十五条"
-                                                        },
-                                                        children: ["第四十五条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第四十六条の五"
-                                                        },
-                                                        children: ["第四十六条の五"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第二十六条、第四十五条、第四十六条の五関係"]
                             }
                         ]
                     },
@@ -565,62 +328,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第十九条"
-                                                        },
-                                                        children: ["第十九条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第二十一条"
-                                                        },
-                                                        children: ["第二十一条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第十九条、第二十一条関係"]
                             }
                         ]
                     },
@@ -705,62 +415,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第十九条"
-                                                        },
-                                                        children: ["第十九条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第二十一条"
-                                                        },
-                                                        children: ["第二十一条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第十九条、第二十一条関係"]
                             }
                         ]
                     },
@@ -844,36 +501,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第十四条"
-                                                        },
-                                                        children: ["第十四条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第十四条関係"]
                             }
                         ]
                     },
@@ -1006,36 +636,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第十四条"
-                                                        },
-                                                        children: ["第十四条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第十四条関係"]
                             }
                         ]
                     },
@@ -1119,36 +722,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第三条"
-                                                        },
-                                                        children: ["第三条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第三条関係"]
                             }
                         ]
                     },
@@ -1232,36 +808,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第三条"
-                                                        },
-                                                        children: ["第三条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第三条関係"]
                             }
                         ]
                     },
@@ -1345,45 +894,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第１９条"
-                                                        },
-                                                        children: ["第１９条"]
-                                                    },
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Paragraph",
-                                                            name: "第１項"
-                                                        },
-                                                        children: ["第１項"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["の表の６の項関係"]
+                                children: ["第１９条第１項の表の６の項関係"]
                             }
                         ]
                     },
@@ -1467,45 +980,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第１９条"
-                                                        },
-                                                        children: ["第１９条"]
-                                                    },
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Paragraph",
-                                                            name: "第１項"
-                                                        },
-                                                        children: ["第１項"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["の表の６の項関係"]
+                                children: ["第１９条第１項の表の６の項関係"]
                             }
                         ]
                     },
@@ -1589,71 +1066,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第一条"
-                                                        },
-                                                        children: ["第一条"]
-                                                    },
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Paragraph",
-                                                            name: "第一項"
-                                                        },
-                                                        children: ["第一項"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第九条"
-                                                        },
-                                                        children: ["第九条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第一条第一項、第九条関係"]
                             }
                         ]
                     },
@@ -1737,71 +1152,9 @@ describe("Test $appdxItemHeadLine", () => {
                         },
                         children: [
                             {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第一条"
-                                                        },
-                                                        children: ["第一条"]
-                                                    },
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Paragraph",
-                                                            name: "第一項"
-                                                        },
-                                                        children: ["第一項"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        tag: "__Text",
-                                        attr: {},
-                                        children: ["、"]
-                                    },
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "NAMED",
-                                                            targetType: "Article",
-                                                            name: "第九条"
-                                                        },
-                                                        children: ["第九条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["関係"]
+                                children: ["第一条第一項、第九条関係"]
                             }
                         ]
                     },

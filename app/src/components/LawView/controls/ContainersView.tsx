@@ -81,6 +81,11 @@ export const ContainersView = (props: HTMLComponentProps & ContainersViewProps) 
                     .find(std.isSupplProvisionLabel);
                 if (supplProvisionLabel) names.push(supplProvisionLabel.text());
 
+            } else if (std.isAppdxItem(c.el) || std.isSupplProvisionAppdxItem(c.el)) {
+                const appdxItemTitle = c.el.children
+                    .find(c => std.isAppdxItemTitle(c) || std.isSupplProvisionAppdxItemTitle(c));
+                if (appdxItemTitle) names.push(appdxItemTitle.text());
+
             } else if (std.isArticle(c.el)) {
                 const articleTitle = c.el.children
                     .find(std.isArticleTitle);

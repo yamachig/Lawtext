@@ -29,7 +29,7 @@ export type PointerTargetType = (
     | "Item"
     | "SupplProvision"
     | "TableStruct"
-    | (typeof std.appdxItemTags)[number]
+    | "APPDX" // AppdxItem and AupplProvisionAppdxItem
     | "FIRSTPART" // e.g. "前段"
     | "LATTERPART" // e.g. "後段"
     | "PROVISO" // e.g. "ただし書"

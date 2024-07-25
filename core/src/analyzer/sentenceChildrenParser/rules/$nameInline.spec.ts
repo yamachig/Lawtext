@@ -3,8 +3,9 @@ import loadEL from "../../../node/el/loadEL";
 import { initialEnv } from "../env";
 import $nameInline from "./$nameInline";
 import type * as std from "../../../law/std";
-import addSentenceChildrenControls from "../../../parser/addSentenceChildrenControls";
 import type { SentenceChildEL } from "../../../node/cst/inline";
+import detectPointers from "../../detectPointers";
+import getSentenceEnvs from "../../getSentenceEnvs";
 
 const env = initialEnv({ target: "" });
 
@@ -17,7 +18,8 @@ describe("Test $nameInline", () => {
             attr: {},
             children: ["次条第二項において単に「命令」という。）又は規則"],
         }) as std.Sentence;
-        addSentenceChildrenControls(origEL);
+        getSentenceEnvs(origEL);
+        detectPointers(origEL);
         const input = origEL.children as SentenceChildEL[];
         // console.log(JSON.stringify(input.map(el => el.json(true)), undefined, 2));
         const expectedErrorMessages: string[] = [];

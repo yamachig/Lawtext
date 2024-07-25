@@ -4,6 +4,7 @@ import type * as std from "../../law/std";
 import type { SentenceEnv } from "../../node/container/sentenceEnv";
 import type { ____Pointer } from "../../node/el/controls";
 import { ____PointerRanges } from "../../node/el/controls";
+import type { AppdxPointer } from "../../node/pointerEnv";
 import { PointerEnv } from "../../node/pointerEnv";
 import type { ErrorMessage } from "../../parser/cst/error";
 import type { WithErrorValue } from "../../parser/std/util";
@@ -16,6 +17,8 @@ const getPointerEnvsForEL = (
     sentenceEnv: SentenceEnv,
     __prevPointerEnv: PointerEnv | null,
     __namingParent: PointerEnv | null,
+    sentenceEnvsStruct: SentenceEnvsStruct,
+    appdxPointers: AppdxPointer[],
 ): (
     WithErrorValue<{
         pointerEnvByEL: Map<____Pointer, PointerEnv>;
@@ -65,6 +68,8 @@ const getPointerEnvsForEL = (
                 const pointerEnv = new PointerEnv({
                     pointer,
                     sentenceEnv,
+                    sentenceEnvsStruct,
+                    appdxPointers,
                 });
 
                 if (pointerRangesNamingParent) {
@@ -97,6 +102,8 @@ const getPointerEnvsForEL = (
                         sentenceEnv,
                         lastPointerEnv ?? prevPointerEnv,
                         pointerRangesNamingParent,
+                        sentenceEnvsStruct,
+                        appdxPointers,
                     );
                     if (result){
                         if (!firstPointerEnv) firstPointerEnv = result.value.firstPointerEnv;
@@ -129,6 +136,8 @@ const getPointerEnvsForEL = (
                 sentenceEnv,
                 lastPointerEnv ?? prevPointerEnv,
                 namingParent,
+                sentenceEnvsStruct,
+                appdxPointers,
             );
 
             if (result){
@@ -163,7 +172,9 @@ export interface PointerEnvsStruct {
     rootPointerEnvs: PointerEnv[];
 }
 
-export const getPointerEnvs = (sentenceEnvsStruct: SentenceEnvsStruct): WithErrorValue<PointerEnvsStruct> => {
+export const getPointerEnvs = (options: {sentenceEnvsStruct: SentenceEnvsStruct, appdxPointers: AppdxPointer[]}): WithErrorValue<PointerEnvsStruct> => {
+
+    const { sentenceEnvsStruct, appdxPointers } = options;
 
     const pointerEnvByEL: Map<____Pointer, PointerEnv> = new Map();
     const rootPointerEnvs: PointerEnv[] = [];
@@ -189,6 +200,8 @@ export const getPointerEnvs = (sentenceEnvsStruct: SentenceEnvsStruct): WithErro
             sentenceEnv,
             prevPointerEnv,
             null,
+            sentenceEnvsStruct,
+            appdxPointers,
         );
         if (result){
             for (const [k, pointerEnv] of result.value.pointerEnvByEL) {

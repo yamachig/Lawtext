@@ -5,6 +5,7 @@ import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";
 import getPointerEnvs from "./getPointerEnvs";
 import getScope from "./getScope";
+import detectPointers from "../detectPointers";
 
 describe("Test getScope", () => {
 
@@ -38,7 +39,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedSentenceTexts = [
             "この法律は、電波の公平且つ能率的な利用を確保することによつて、公共の福祉を増進することを目的とする。",
@@ -191,7 +194,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -211,7 +214,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -451,7 +456,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -467,7 +472,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -692,7 +699,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -714,7 +721,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1097,7 +1106,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1113,7 +1122,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1161,7 +1172,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1180,7 +1191,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1284,7 +1297,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1305,7 +1318,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1496,7 +1511,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1520,7 +1535,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1857,7 +1874,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1885,7 +1902,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -1958,7 +1977,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -1977,7 +1996,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -2055,7 +2076,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -2070,7 +2091,9 @@ describe("Test getScope", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
 
         const expectedPointerRangesList: JsonEL[] = [
             {
@@ -2148,7 +2171,7 @@ describe("Test getScope", () => {
             expectedPointerRangesList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });

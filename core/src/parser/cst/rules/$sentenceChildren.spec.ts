@@ -113,80 +113,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                                             {
                                                 tag: "__Text",
                                                 attr: {},
-                                                children: ["無線設備規則"]
-                                            },
-                                            {
-                                                tag: "____PointerRanges",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PointerRange",
-                                                        attr: {},
-                                                        children: [
-                                                            {
-                                                                tag: "____Pointer",
-                                                                attr: {},
-                                                                children: [
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "NAMED",
-                                                                            targetType: "Article",
-                                                                            name: "第三条"
-                                                                        },
-                                                                        children: ["第三条"]
-                                                                    },
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "NAMED",
-                                                                            targetType: "Item",
-                                                                            name: "第十二号"
-                                                                        },
-                                                                        children: ["第十二号"]
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["に規定する時分割・直交周波数分割多元接続方式又は時分割・シングルキャリア周波数分割多元接続方式広帯域移動無線アクセスシステムのうち、"]
-                                            },
-                                            {
-                                                tag: "____PointerRanges",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PointerRange",
-                                                        attr: {},
-                                                        children: [
-                                                            {
-                                                                tag: "____Pointer",
-                                                                attr: {},
-                                                                children: [
-                                                                    {
-                                                                        tag: "____PF",
-                                                                        attr: {
-                                                                            relPos: "SAME",
-                                                                            targetType: "Item",
-                                                                            name: "同号"
-                                                                        },
-                                                                        children: ["同号"]
-                                                                    }
-                                                                ]
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                tag: "__Text",
-                                                attr: {},
-                                                children: ["に規定するシングルキャリア周波数分割多元接続方式と他の接続方式を組み合わせた接続方式を用いることが可能なものを使用するものに限る。"]
+                                                children: ["無線設備規則第三条第十二号に規定する時分割・直交周波数分割多元接続方式又は時分割・シングルキャリア周波数分割多元接続方式広帯域移動無線アクセスシステムのうち、同号に規定するシングルキャリア周波数分割多元接続方式と他の接続方式を組み合わせた接続方式を用いることが可能なものを使用するものに限る。"]
                                             }
                                         ]
                                     },
@@ -284,39 +211,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["をいう。以下"]
-                            },
-                            {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "HERE",
-                                                            targetType: "Article",
-                                                            name: "この条"
-                                                        },
-                                                        children: ["この条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                tag: "__Text",
-                                attr: {},
-                                children: ["において同じ。"]
+                                children: ["をいう。以下この条において同じ。"]
                             }
                         ]
                     },
@@ -398,39 +293,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                             {
                                 tag: "__Text",
                                 attr: {},
-                                children: ["又はその提供を受ける対象卸電気通信役務に用いられる伝送路設備に接続される特定移動端末設備の数が五十万以上のものに限る。以下"]
-                            },
-                            {
-                                tag: "____PointerRanges",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PointerRange",
-                                        attr: {},
-                                        children: [
-                                            {
-                                                tag: "____Pointer",
-                                                attr: {},
-                                                children: [
-                                                    {
-                                                        tag: "____PF",
-                                                        attr: {
-                                                            relPos: "HERE",
-                                                            targetType: "Article",
-                                                            name: "この条"
-                                                        },
-                                                        children: ["この条"]
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                tag: "__Text",
-                                attr: {},
-                                children: ["において"]
+                                children: ["又はその提供を受ける対象卸電気通信役務に用いられる伝送路設備に接続される特定移動端末設備の数が五十万以上のものに限る。以下この条において"]
                             },
                             {
                                 tag: "__Parentheses",
@@ -513,45 +376,9 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
 同法第四十六条中「技術基準（」とあるのは";
         const expectedCST = [
             {
-                tag: "____PointerRanges",
-                attr: {},
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "SAME",
-                                            targetType: "Law",
-                                            name: "同法"
-                                        },
-                                        children: ["同法"]
-                                    },
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NAMED",
-                                            targetType: "Article",
-                                            name: "第四十六条"
-                                        },
-                                        children: ["第四十六条"]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
                 tag: "__Text",
                 attr: {},
-                children: ["中"]
+                children: ["同法第四十六条中"]
             },
             {
                 tag: "__Parentheses",
@@ -618,36 +445,9 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
 この法律において「スパイクタイヤ」とは、積雪又は凍結の状態にある路面において滑ることを防止するために金属<Ruby>鋲<Rt>びよう</Rt></Ruby>その他これに類する物をその接地部に固定したタイヤをいう。";
         const expectedCST = [
             {
-                tag: "____PointerRanges",
-                attr: {},
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "HERE",
-                                            targetType: "Law",
-                                            name: "この法律"
-                                        },
-                                        children: ["この法律"]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                ],
-            },
-            {
                 tag: "__Text",
                 attr: {},
-                children: ["において"],
+                children: ["この法律において"],
             },
             {
                 tag: "__Parentheses",
@@ -784,44 +584,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
             {
                 tag: "__Text",
                 attr: {},
-                children: ["もつぱら"],
-            },
-            {
-                tag: "____LawNum",
-                attr: {},
-                children: ["日本国憲法"],
-            },
-            {
-                tag: "____PointerRanges",
-                attr: {},
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NAMED",
-                                            targetType: "Article",
-                                            name: "第七十三条"
-                                        },
-                                        children: ["第七十三条"]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                ],
-            },
-            {
-                tag: "__Text",
-                attr: {},
-                children: ["にいう官吏に関する事務を掌理する基準を定めるものである。"],
+                children: ["もつぱら日本国憲法第七十三条にいう官吏に関する事務を掌理する基準を定めるものである。"],
             },
         ];
         const expectedErrors: ErrorMessage[] = [];
@@ -871,7 +634,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                         },
                         children: [
                             {
-                                tag: "____LawNum",
+                                tag: "__Text",
                                 attr: {},
                                 children: ["平成１６年法律第６３号"]
                             }
@@ -887,45 +650,9 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
                 ]
             },
             {
-                tag: "____PointerRanges",
-                attr: {},
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NAMED",
-                                            targetType: "Article",
-                                            name: "第２条"
-                                        },
-                                        children: ["第２条"]
-                                    },
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NAMED",
-                                            targetType: "Paragraph",
-                                            name: "第１項"
-                                        },
-                                        children: ["第１項"]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
                 tag: "__Text",
                 attr: {},
-                children: ["に規定する事件に該当する事件の捜査を行う場合は、"]
+                children: ["第２条第１項に規定する事件に該当する事件の捜査を行う場合は、"]
             }
         ];
         const expectedErrors: ErrorMessage[] = [];
@@ -953,44 +680,7 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
             {
                 tag: "__Text",
                 attr: {},
-                children: ["もつぱら　"],
-            },
-            {
-                tag: "____LawNum",
-                attr: {},
-                children: ["日本国憲法"],
-            },
-            {
-                tag: "____PointerRanges",
-                attr: {},
-                children: [
-                    {
-                        tag: "____PointerRange",
-                        attr: {},
-                        children: [
-                            {
-                                tag: "____Pointer",
-                                attr: {},
-                                children: [
-                                    {
-                                        tag: "____PF",
-                                        attr: {
-                                            relPos: "NAMED",
-                                            targetType: "Article",
-                                            name: "第七十三条"
-                                        },
-                                        children: ["第七十三条"]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                ],
-            },
-            {
-                tag: "__Text",
-                attr: {},
-                children: ["にいう官吏に関する事務を掌理する基準を定めるものである　。"],
+                children: ["もつぱら　日本国憲法第七十三条にいう官吏に関する事務を掌理する基準を定めるものである　。"],
             },
         ];
         const expectedErrors: ErrorMessage[] = [];

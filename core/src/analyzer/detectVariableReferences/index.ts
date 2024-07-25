@@ -34,6 +34,7 @@ export const matchVariableReferences = (
     {
         let ramainingText = textEL.text();
         for (const declaration of declarations.values()) {
+            if (declaration.attr.name.length === 0) continue;
             for (;;) {
                 const nameOffset = ramainingText.indexOf(declaration.attr.name);
                 if (nameOffset < 0) break;

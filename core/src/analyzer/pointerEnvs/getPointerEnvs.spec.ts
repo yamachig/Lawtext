@@ -3,6 +3,7 @@ import getSentenceEnvs from "../getSentenceEnvs";
 import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";
 import getPointerEnvs from "./getPointerEnvs";
+import detectPointers from "../detectPointers";
 
 describe("Test getPointerEnvs", () => {
 
@@ -22,6 +23,8 @@ describe("Test getPointerEnvs", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
 
         const expectedPointerEnvsList: object[] = [
             {
@@ -153,8 +156,8 @@ describe("Test getPointerEnvs", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), sentenceEnvs: sentenceEnvsStruct.sentenceEnvs, lawRefByDeclarationID: new Map() }));
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), lawRefByDeclarationID: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -162,7 +165,7 @@ describe("Test getPointerEnvs", () => {
             expectedPointerEnvsList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -201,6 +204,8 @@ describe("Test getPointerEnvs", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
 
         const expectedPointerEnvsList: object[] = [
             {
@@ -391,8 +396,8 @@ describe("Test getPointerEnvs", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), sentenceEnvs: sentenceEnvsStruct.sentenceEnvs, lawRefByDeclarationID: new Map() }));
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), lawRefByDeclarationID: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -400,7 +405,7 @@ describe("Test getPointerEnvs", () => {
             expectedPointerEnvsList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -420,6 +425,8 @@ describe("Test getPointerEnvs", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
 
         const expectedPointerEnvsList: object[] = [
             {
@@ -503,8 +510,8 @@ describe("Test getPointerEnvs", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), sentenceEnvs: sentenceEnvsStruct.sentenceEnvs, lawRefByDeclarationID: new Map() }));
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), lawRefByDeclarationID: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -512,7 +519,7 @@ describe("Test getPointerEnvs", () => {
             expectedPointerEnvsList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -536,6 +543,8 @@ describe("Test getPointerEnvs", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
 
         const expectedPointerEnvsList: object[] = [
             {
@@ -761,8 +770,8 @@ describe("Test getPointerEnvs", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), sentenceEnvs: sentenceEnvsStruct.sentenceEnvs, lawRefByDeclarationID: new Map() }));
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), lawRefByDeclarationID: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -770,7 +779,7 @@ describe("Test getPointerEnvs", () => {
             expectedPointerEnvsList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -784,6 +793,8 @@ describe("Test getPointerEnvs", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
 
         const expectedPointerEnvsList: object[] = [
             {
@@ -814,8 +825,8 @@ describe("Test getPointerEnvs", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), sentenceEnvs: sentenceEnvsStruct.sentenceEnvs, lawRefByDeclarationID: new Map() }));
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), lawRefByDeclarationID: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -823,7 +834,7 @@ describe("Test getPointerEnvs", () => {
             expectedPointerEnvsList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -843,6 +854,8 @@ describe("Test getPointerEnvs", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
 
         const expectedPointerEnvsList: object[] = [
             {
@@ -947,8 +960,8 @@ describe("Test getPointerEnvs", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), sentenceEnvs: sentenceEnvsStruct.sentenceEnvs, lawRefByDeclarationID: new Map() }));
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), lawRefByDeclarationID: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -956,7 +969,7 @@ describe("Test getPointerEnvs", () => {
             expectedPointerEnvsList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
@@ -980,6 +993,8 @@ describe("Test getPointerEnvs", () => {
 `;
         const inputElToBeModified = parse(lawtext).value;
         const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const appdxPointers = appdxPointersResult.value;
 
         const expectedPointerEnvsList: object[] = [
             {
@@ -1175,8 +1190,8 @@ describe("Test getPointerEnvs", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const getPointerEnvsResult = getPointerEnvs(sentenceEnvsStruct);
-        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), sentenceEnvs: sentenceEnvsStruct.sentenceEnvs, lawRefByDeclarationID: new Map() }));
+        const getPointerEnvsResult = getPointerEnvs({ sentenceEnvsStruct, appdxPointers });
+        [...getPointerEnvsResult.value.pointerEnvByEL.values()].forEach(p => p.locate({ declarations: new Map(), lawRefByDeclarationID: new Map() }));
 
         // console.log(JSON.stringify([...getPointerEnvsResult.value.pointerEnvByEL.values()].map(r => r.json()), null, 2));
         assert.deepStrictEqual(
@@ -1184,7 +1199,7 @@ describe("Test getPointerEnvs", () => {
             expectedPointerEnvsList,
         );
 
-        assert.deepStrictEqual(getPointerEnvsResult.errors.map(e => e.message), expectedErrorMessages);
+        assert.deepStrictEqual([...getPointerEnvsResult.errors, ...appdxPointersResult.errors].map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
     });

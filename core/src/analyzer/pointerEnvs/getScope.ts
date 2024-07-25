@@ -119,15 +119,14 @@ export const getScope = (options: {
     const {
         pointerRangesToBeModified,
         pointerEnvsStruct,
-        locateOptions,
-    } = {
-        locateOptions: {
-            declarations: new Map(),
-            sentenceEnvs: [],
-            lawRefByDeclarationID: new Map(),
-            force: false,
-        },
-        ...options,
+        locateOptions: _locateOptions,
+    } = options;
+
+    const locateOptions: LocateOptions = {
+        declarations: new Map(),
+        lawRefByDeclarationID: new Map(),
+        force: false,
+        ..._locateOptions,
     };
 
     if (!locateOptions.force) {
