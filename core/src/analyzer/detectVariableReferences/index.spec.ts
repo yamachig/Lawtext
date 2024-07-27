@@ -8,10 +8,11 @@ import { assertELVaridity } from "../../parser/std/testHelper";
 import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
 import getScope from "../pointerEnvs/getScope";
 import detectPointers from "../detectPointers";
+import { getLawTitleLength } from "..";
 
 describe("Test detectVariableReferences", () => {
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （文書等の閲覧）
@@ -31,7 +32,7 @@ describe("Test detectVariableReferences", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -100,7 +101,7 @@ describe("Test detectVariableReferences", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （定義）
@@ -119,7 +120,7 @@ describe("Test detectVariableReferences", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -206,7 +207,7 @@ describe("Test detectVariableReferences", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
       附　則　抄
@@ -226,7 +227,7 @@ describe("Test detectVariableReferences", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -285,7 +286,7 @@ describe("Test detectVariableReferences", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （定義）
@@ -331,7 +332,7 @@ describe("Test detectVariableReferences", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -429,7 +430,7 @@ describe("Test detectVariableReferences", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （目的等）
@@ -463,7 +464,7 @@ describe("Test detectVariableReferences", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1134,7 +1135,7 @@ describe("Test detectVariableReferences", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
 第二条　この法律（第四条を除く。）において、次の各号に掲げる用語の意義は、当該各号に定めるところによる。
@@ -1152,7 +1153,7 @@ describe("Test detectVariableReferences", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1227,7 +1228,7 @@ describe("Test detectVariableReferences", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
 電波法
@@ -1254,7 +1255,7 @@ describe("Test detectVariableReferences", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1358,7 +1359,7 @@ describe("Test detectVariableReferences", () => {
 
 describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
 第二条　法律の規定に基づき内閣に置かれる機関若しくは内閣の所轄の下に置かれる機関、宮内庁、内閣府設置法（平成十一年法律第八十九号）第四十九条第一項若しくは第二項に規定する機関、国家行政組織法（昭和二十三年法律第百二十号）第三条第二項に規定する機関、会計検査院若しくはこれらに置かれる機関又はこれらの機関の職員であって法律上独立に権限を行使することを認められた職員
@@ -1369,7 +1370,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1558,7 +1559,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
 第二条　公務員（国家公務員法（昭和二十二年法律第百二十号）第二条第一項に規定する国家公務員及び地方公務員法（昭和二十五年法律第二百六十一号）第三条第一項に規定する地方公務員をいう。以下同じ。）又は公務員であった者に対してその職務又は身分に関してされる処分及び行政指導
@@ -1569,7 +1570,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1739,7 +1740,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （国の機関等に対する処分等の適用除外）
@@ -1756,7 +1757,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -1915,7 +1916,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （適用除外）
@@ -1931,7 +1932,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -2069,7 +2070,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （申請の審査）
@@ -2091,7 +2092,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -2265,7 +2266,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （この法律の目的及び効力）
@@ -2279,7 +2280,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [];
 
@@ -2378,7 +2379,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （欠格事由）
@@ -2397,7 +2398,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -2742,7 +2743,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （欠格事由）
@@ -2762,7 +2763,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -3008,7 +3009,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （第一種指定電気通信設備を設置する電気通信事業者等の禁止行為等）
@@ -3037,7 +3038,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [];
 
@@ -3414,7 +3415,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （代理人）
@@ -3434,7 +3435,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
         // [...getPointerEnvsResult.value.pointerRangesList.values()].forEach(r => getScope(r, getPointerEnvsResult.value));
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [];
 
@@ -3652,7 +3653,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
       附　則
@@ -3670,7 +3671,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointersResult = detectPointers(inputElToBeModified);
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -3729,7 +3730,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
 第三条　次に掲げる処分及び行政指導については、次章から第四章の二までの規定は、適用しない。
@@ -3740,7 +3741,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointersResult = detectPointers(inputElToBeModified);
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -3972,7 +3973,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
 行政手続法施行令
@@ -3991,7 +3992,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointersResult = detectPointers(inputElToBeModified);
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -4270,7 +4271,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
       第二章　無線局の免許等
@@ -4305,7 +4306,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointersResult = detectPointers(inputElToBeModified);
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [
             {
@@ -4506,7 +4507,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （検査等事業者の登録）
@@ -4549,7 +4550,7 @@ describe("Test detectVariableReferences and PointerRanges with lawNum", () => {
         const appdxPointersResult = detectPointers(inputElToBeModified);
         const appdxPointers = appdxPointersResult.value;
         const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers }).value;
-        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct).value;
+        const { declarations, lawRefByDeclarationID } = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength()).value;
 
         const expectedDeclarations: JsonEL[] = [];
 

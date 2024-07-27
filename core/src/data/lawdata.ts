@@ -29,7 +29,7 @@ export type LawDataResult<TLawDataProps extends BaseLawDataProps> =
     { ok: true, lawData: LawDataCore & TLawDataProps, lawtextErrors?: ErrorMessage[]} | {ok: false, error: Error};
 
 export class Timing {
-    public searchLawNum: number | null = null;
+    public searchLawID: number | null = null;
     public fetchStoredLawInfo: number | null = null;
     public loadData: number | null = null;
     public extractPict: number | null = null;
@@ -41,7 +41,7 @@ export class Timing {
     public toString(): string {
         return `
 Timing {
-    searchLawNum: ${this.searchLawNum} ms,
+    searchLawID: ${this.searchLawID} ms,
     fetchStoredLawInfo: ${this.fetchStoredLawInfo} ms,
     loadData: ${this.loadData} ms,
     extractPict: ${this.extractPict} ms,
@@ -82,7 +82,7 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
             onMessage("法令を解析しています...");
             // console.log("onNavigated: analysing law...");
             await util.wait(30);
-            const [analyzeTime, analysis] = await util.withTime(analyzer.analyze)(el as std.Law);
+            const [analyzeTime, analysis] = await util.withTime(analyzer.analyze)({ elToBeModified: el as std.Law });
             timing.analyze = analyzeTime;
 
             const pictURL = new Map<string, {url: string, type: string}>();
@@ -131,7 +131,7 @@ export const toLawData = async <TLawDataProps extends BaseLawDataProps>(
             onMessage("法令を解析しています...");
             // console.log("onNavigated: analysing law...");
             await util.wait(30);
-            const [analyzeTime, analysis] = await util.withTime(analyzer.analyze)(el);
+            const [analyzeTime, analysis] = await util.withTime(analyzer.analyze)({ elToBeModified: el as std.Law });
             timing.analyze = analyzeTime;
 
             return {

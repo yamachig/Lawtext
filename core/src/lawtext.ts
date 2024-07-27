@@ -120,7 +120,7 @@ If you are using the Lawtext CLI prebuilt: As the current limitation of the preb
     } else { throw assertNever(input); }
 
     if (analyze) {
-        const analysis = analyzeEL(law);
+        const analysis = await analyzeEL({ elToBeModified: law });
         ret["analysis"] = analysis;
     }
 

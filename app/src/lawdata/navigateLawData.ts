@@ -1,7 +1,7 @@
 import { getTempLaw } from "../actions/temp_law";
 import type { ElawsLawDataProps, StoredLawDataProps, TempXMLLawDataProps, TempLawtextLawDataProps } from "./common";
 import { elawsLoader, storedLoader } from "./loaders";
-import { searchLawnum } from "./searchLawNum";
+import { searchLawID } from "./searchLawID";
 import * as util from "lawtext/dist/src/util";
 import type { LawDataResult, Timing } from "lawtext/dist/src/data/lawdata";
 import { toLawData } from "lawtext/dist/src/data/lawdata";
@@ -79,25 +79,25 @@ export const navigateLawData = async (
 
 
     if (lawIDOrLawNum === null) {
-        onMessage("法令番号を検索しています...");
-        // console.log("navigateLawData: searching lawnum...");
-        const [searchLawNumTime, lawnumResult] = await util.withTime(searchLawnum)(firstPart);
-        timing.searchLawNum = searchLawNumTime;
+        onMessage("法令IDを検索しています...");
+        // console.log("navigateLawData: searching lawid...");
+        const [searchLawIDTime, lawIDResult] = await util.withTime(searchLawID)(firstPart);
+        timing.searchLawID = searchLawIDTime;
 
-        if (!lawnumResult) {
+        if (!lawIDResult) {
             return {
                 ok: false,
                 error: new Error(`「${firstPart}」を検索しましたが、見つかりませんでした。`),
             };
-        } else if (typeof lawnumResult !== "string") {
+        } else if (typeof lawIDResult !== "string") {
             return {
                 ok: false,
-                error: new Error(`「${firstPart}」の検索時にエラーが発生しました： ${lawnumResult.error}: "${lawnumResult.message}"`),
+                error: new Error(`「${firstPart}」の検索時にエラーが発生しました： ${lawIDResult.error}: "${lawIDResult.message}"`),
             };
         }
 
         return {
-            redirectPath: [lawnumResult, ...pathStr.split("/").slice(1)].join("/"),
+            redirectPath: [`v1:${lawIDResult}`, ...pathStr.split("/").slice(1)].join("/"),
         };
     }
 

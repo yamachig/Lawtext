@@ -99,7 +99,7 @@ const renderAndParse = async (loader: Loader, lawNum: string) => {
         throw e;
     }
 
-    analyze(parsedEL);
+    await analyze({ elToBeModified: parsedEL });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const parsedXML = formatXML(outerXML(parsedEL)) as string;

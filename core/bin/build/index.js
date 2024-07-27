@@ -1,7 +1,7 @@
-const { buildLawNumTable: _buildLawNumTable } = require("./lawNumTable.js");
+const { buildLawList: _buildLawList } = require("./lawList.js");
 const { defaultBasePath: _defaultBasePath } = require("./defaultBasePath.js");
 
-const buildLawNumTable = _buildLawNumTable;
+const buildLawList = _buildLawList;
 const defaultBasePath = _defaultBasePath;
 
 /**
@@ -10,11 +10,11 @@ const defaultBasePath = _defaultBasePath;
 const build = async (basePath = defaultBasePath) => {
 
     // console.log("Compiling lawnum_table...");
-    await buildLawNumTable(basePath);
+    await buildLawList(basePath);
 };
 
 module.exports = {
-    buildLawNumTable,
+    buildLawList,
     defaultBasePath,
     build,
 };

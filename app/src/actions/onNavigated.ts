@@ -10,7 +10,7 @@ import type { LawDataProps } from "@appsrc/lawdata/common";
 import getOnMessage from "./getOnMessage";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const sampleXml: string = require("./405AC0000000088_20180401_429AC0000000004.xml").default;
+const sampleXml: string = require("./405AC0000000088_20240401_504AC0100000052.xml").default;
 
 export const onNavigated = async (
     pathStr: string,
@@ -82,6 +82,7 @@ export const onNavigated = async (
     } else {
         onMessage("法令を検索しています...");
         // console.log("onNavigated: searching law...");
+        document.title = "Lawtext";
         await util.wait(30);
         const navigateLawDataResult = await navigateLawData(pathStr, onMessage, timing);
         if ("redirectPath" in navigateLawDataResult) {

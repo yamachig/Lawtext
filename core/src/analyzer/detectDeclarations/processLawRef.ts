@@ -1,7 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import sha512 from "hash.js/lib/hash/sha/512";
-import { LAWNUM_TABLE, KEY_LENGTH } from "../../law/lawNumTable";
 import type { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
 import { __Text, ____Declaration, ____LawNum, ____LawRef } from "../../node/el/controls";
@@ -17,22 +13,16 @@ import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 import { lawNumLikeToLawNum } from "../../law/lawNum";
 import type { ValueOfRule } from "generic-parser";
 
-export const getLawTitleLength = (lawNum: string): number | null => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const digest = sha512().update(lawNum).digest("hex") as string;
-    const key = parseInt(digest.slice(0, KEY_LENGTH), 16);
-    return LAWNUM_TABLE[key] ?? null;
-};
-
 const getSuggestedLawTitleInfo = (options: {
     sentenceEnv: SentenceEnv,
     lawRefResult: ValueOfRule<typeof $lawRef>["value"],
+    lawTitleLength: (lawNum: string) => number | null,
 }) => {
     const errors: ErrorMessage[] = [];
 
     const { lawRefResult, sentenceEnv } = options;
     const { lawTitleCandidates, lawRefInfo: { lawNum } } = lawRefResult;
-    const lawTitleLength = getLawTitleLength(lawNumLikeToLawNum(lawNum.text()));
+    const lawTitleLength = options.lawTitleLength(lawNumLikeToLawNum(lawNum.text()));
 
     if (!lawTitleLength) {
         errors.push(new ErrorMessage(
@@ -137,6 +127,7 @@ export const processLawRef = (
     sentenceEnv: SentenceEnv,
     sentenceEnvsStruct: SentenceEnvsStruct,
     pointerEnvsStruct: PointerEnvsStruct,
+    lawTitleLength: (lawNum: string) => number | null,
 ): (
     WithErrorValue<{
         declarations: ____Declaration[],
@@ -196,6 +187,7 @@ export const processLawRef = (
         const SuggestedLawTitleInfo = getSuggestedLawTitleInfo({
             lawRefResult,
             sentenceEnv,
+            lawTitleLength,
         });
         errors.push(...SuggestedLawTitleInfo.errors);
 

@@ -113,7 +113,7 @@ export const LawtextAppPage: React.FC = () => {
             <OffcanvasButtonDiv className="d-md-none">
                 <OffcanvasButton className="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="offcanvasResponsive" title="サイドバーの表示を切り替える">
                     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' style={{ display: "inline", width: "1.5em" }}>
-                        <path stroke='currentColor' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22' />
+                        <path stroke='currentColor' strokeLinecap='round' strokeMiterlimit='10' strokeWidth='2' d='M4 7h22M4 15h22M4 23h22' />
                     </svg>
                     <span style={{ verticalAlign: "text-top", marginLeft: "0.25em", fontWeight: 500 }}>Lawtext</span>
                 </OffcanvasButton>

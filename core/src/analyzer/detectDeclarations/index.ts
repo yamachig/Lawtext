@@ -19,6 +19,7 @@ export const detectDeclarationsByEL = (
     sentenceEnv: SentenceEnv,
     sentenceEnvsStruct: SentenceEnvsStruct,
     pointerEnvsStruct: PointerEnvsStruct,
+    lawTitleLength: (lawNum: string) => number | null,
 ): WithErrorValue<{
     declarations: ____Declaration[],
     lawRefs: ____LawRef[],
@@ -34,6 +35,7 @@ export const detectDeclarationsByEL = (
             sentenceEnv,
             sentenceEnvsStruct,
             pointerEnvsStruct,
+            lawTitleLength,
         );
         if (result){
             declarations.push(...result.value.declarations);
@@ -72,6 +74,7 @@ export const detectDeclarationsByEL = (
                 sentenceEnv,
                 sentenceEnvsStruct,
                 pointerEnvsStruct,
+                lawTitleLength,
             );
             declarations.push(...detectLawnameResult.value.declarations);
             lawRefs.push(...detectLawnameResult.value.lawRefs);
@@ -90,6 +93,7 @@ export const detectDeclarationsBySentence = (
     sentenceEnv: SentenceEnv,
     sentenceEnvsStruct: SentenceEnvsStruct,
     pointerEnvsStruct: PointerEnvsStruct,
+    lawTitleLength: (lawNum: string) => number | null,
 ): WithErrorValue<{
     declarations: ____Declaration[],
     lawRefs: ____LawRef[],
@@ -117,6 +121,7 @@ export const detectDeclarationsBySentence = (
             sentenceEnv,
             sentenceEnvsStruct,
             pointerEnvsStruct,
+            lawTitleLength,
         );
         if (result){
             declarations.push(...result.value.declarations);
@@ -133,6 +138,7 @@ export const detectDeclarationsBySentence = (
 export const detectDeclarations = (
     sentenceEnvsStruct: SentenceEnvsStruct,
     pointerEnvsStruct: PointerEnvsStruct,
+    lawTitleLength: (lawNum: string) => number | null,
 ): WithErrorValue<{
     declarations: Declarations,
     lawRefByDeclarationID: Map<string, ____LawRef>,
@@ -143,7 +149,7 @@ export const detectDeclarations = (
     const errors: ErrorMessage[] = [];
 
     for (const sentenceEnv of sentenceEnvsStruct.sentenceEnvs) {
-        const result = detectDeclarationsBySentence(sentenceEnv, sentenceEnvsStruct, pointerEnvsStruct);
+        const result = detectDeclarationsBySentence(sentenceEnv, sentenceEnvsStruct, pointerEnvsStruct, lawTitleLength);
         if (result){
             for (const declaration of result.value.declarations) declarations.add(declaration);
             for (const lawRef of result.value.lawRefs) {

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @stylistic/js/quote-props */
 const path = require("path");
 const webpack = require("webpack");
-const nodeExternals = require("webpack-node-externals");
 
 const rootDir = path.dirname(__dirname);
 
@@ -22,7 +23,6 @@ module.exports = (env, argv) => {
                 type: "umd",
             },
         },
-        // externals: [nodeExternals()],
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
             alias: {

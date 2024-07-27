@@ -11,7 +11,11 @@ import type { PointerEnvsStruct } from "./pointerEnvs/getPointerEnvs";
 import getPointerEnvs from "./pointerEnvs/getPointerEnvs";
 import getScope from "./pointerEnvs/getScope";
 import detectPointers from "./detectPointers";
+import { getLawList } from "../law/getLawList";
 
+export interface AnalyzeOptions {
+    elToBeModified: std.StdEL | std.__EL,
+}
 
 export interface Analysis extends SentenceEnvsStruct, PointerEnvsStruct {
     pointerRangesList: ____PointerRanges[];
@@ -20,8 +24,27 @@ export interface Analysis extends SentenceEnvsStruct, PointerEnvsStruct {
     errors: ErrorMessage[],
 }
 
-export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
+let _lawTitleLength: ((lawNum: string) => number | null) | null = null;
+
+export const getLawTitleLength = async () => {
+    if (!_lawTitleLength) {
+        const lawList = await getLawList();
+        const lawByLawNum = Object.fromEntries(lawList.map((item) => [item.lawNum, item]));
+
+        _lawTitleLength = (lawNum: string): number | null => {
+            return lawByLawNum[lawNum]?.lawTitle.length ?? null;
+        };
+    }
+    return _lawTitleLength;
+};
+
+export const analyze = async (options: AnalyzeOptions): Promise<Analysis> => {
+    const {
+        elToBeModified,
+    } = options;
     const errors: ErrorMessage[] = [];
+
+    const lawTitleLength = await getLawTitleLength();
 
     const sentenceEnvsStruct = getSentenceEnvs(elToBeModified);
 
@@ -34,7 +57,7 @@ export const analyze = (elToBeModified: std.StdEL | std.__EL): Analysis => {
     const pointerEnvsStruct = getPointerEnvsResult.value;
 
     // detectDeclarations partially locates PointerRanges, assuming the located PointerRanges are all internal.
-    const detectDeclarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+    const detectDeclarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, lawTitleLength);
     const declarations = detectDeclarationsResult.value.declarations;
     const lawRefByDeclarationID = detectDeclarationsResult.value.lawRefByDeclarationID;
     errors.push(...detectDeclarationsResult.errors);

@@ -195,7 +195,7 @@ export const getParsedLaw = async (lawtext: string): Promise<{
         const { value: parsedEL, errors: parsedErrors } = parse(lawtext);
         requiredms.set("parseLawtext", lap.lapms());
 
-        analyzer.analyze(parsedEL);
+        await analyzer.analyze({ elToBeModified: parsedEL });
         requiredms.set("analyze", lap.lapms());
 
         const parsedXML = parsedEL.outerXML(false);

@@ -1,7 +1,7 @@
-import { buildLawNumTable } from "./lawNumTable";
+import { buildLawList } from "./lawList";
 import { defaultBasePath } from "./defaultBasePath";
 /**
  * @param {string} basePath
  */
 export function build(basePath?: string): Promise<void>;
-export { buildLawNumTable, defaultBasePath };
+export { buildLawList, defaultBasePath };

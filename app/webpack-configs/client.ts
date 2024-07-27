@@ -17,13 +17,13 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev"));
     const config: webpack.Configuration & { devServer: webpack_dev_server.Configuration } = {
         entry: {
-            index: [path.resolve(rootDir, "./src/index.tsx")],
+            index: path.resolve(rootDir, "./src/index.tsx"),
             ...(env.DEV_SERVER ? { "pdf.worker": "../core/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs" } : {}),
         },
         output: {
-            filename: "bundle.[name].js",
+            filename: "[name].js",
             path: env.DEV_SERVER ? "/" : distDir,
-            clean: argv.mode === "production",
+            clean: true,
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
@@ -34,7 +34,12 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 "fs": false,
                 "cli-progress": false,
                 "string_decoder": false,
-                ...(env.DEV_SERVER ? {} : { "pdfjs-dist": false }),
+                ...(env.DEV_SERVER ? {} : {
+                    "pdfjs-dist": false,
+                    "lawtext/dist/src/law/getLawList": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
+                    "../law/getLawList": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
+                    "./lawList.json": false,
+                }),
 
             },
             fallback: {
@@ -62,6 +67,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 new CssMinimizerPlugin(),
                 new TerserPlugin(),
             ],
+            runtimeChunk: "single",
         },
 
         module: {

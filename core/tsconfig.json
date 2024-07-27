@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es2017",
+        "target": "es2022",
         "downlevelIteration": true,
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "sourceMap": true,
-        "lib": ["es2017", "scripthost"],
+        "lib": ["es2023", "scripthost"],
         "jsx": "react",
         
         "composite": true,
@@ -39,6 +39,12 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
     },
+    "include": [
+        "src/**/*",
+        "src/**/*.json",
+        "bin/**/*",
+        "test/**/*"
+    ],
     "exclude": [
         "**/* copy.*",
         "./node_modules",

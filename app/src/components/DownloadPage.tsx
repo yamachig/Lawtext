@@ -11,7 +11,7 @@ export const DownloadPage: React.FC = () => {
                 <h1 className="display-3">Lawtext<small>をダウンロード</small></h1>
                 <p className="lead">LawtextのWebアプリをダウンロードすることで、インターネット接続がない環境でも法令ファイル表示などの機能を利用できます。</p>
                 <p className="lead">
-                    <a className="btn btn-primary btn-lg" href="media/Lawtext-app.zip" download="Lawtext-app.zip" role="button">
+                    <a className="btn btn-primary btn-lg" href="asset/Lawtext-app.zip" download="Lawtext-app.zip" role="button">
                     Lawtextをダウンロード
                     </a>
                 </p>

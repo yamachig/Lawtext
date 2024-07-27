@@ -3,6 +3,16 @@ import { test, expect } from "@playwright/test";
 
 test("test downloading Word file", async ({ page }, testInfo) => {
     await page.goto("/");
+    await page.addStyleTag({ content: `
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+html,body {
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+` });
+    await page.evaluate(() => document.fonts.ready);
+
     await page.getByText("Lawtextへようこそ！").waitFor({ state: "visible" });
     await testInfo.attach("top", { body: await page.screenshot(), contentType: "image/png" });
 
@@ -38,6 +48,15 @@ test("test downloading Word file", async ({ page }, testInfo) => {
 
 test("test peekView", async ({ page }, testInfo) => {
     await page.goto("/#/v1:405AC0000000088");
+    await page.addStyleTag({ content: `
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+html,body {
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+` });
+    await page.evaluate(() => document.fonts.ready);
 
     const a_1 = page.getByText(/^第一条　この法律は、処分、行政指導及び届出に関する手続並びに命令等/);
     await a_1.getByText(/^命令等$/).first().click();
@@ -64,4 +83,35 @@ test("test peekView", async ({ page }, testInfo) => {
     await testInfo.attach("a_31__p_4", { body: await page.screenshot(), contentType: "image/png" });
 
     await expect(page.locator("body")).not.toContainText("エラーが発生しました：");
+});
+
+test("test navigation", async ({ page }, testInfo) => {
+    await page.goto("/");
+    await page.addStyleTag({ content: `
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+html,body {
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+` });
+    await page.evaluate(() => document.fonts.ready);
+
+    await page.getByText("Lawtextへようこそ！").waitFor({ state: "visible" });
+    await testInfo.attach("top", { body: await page.screenshot(), contentType: "image/png" });
+
+    for (const [path, lawTitle] of [
+        ["/#/v1:405AC0000000088", "行政手続法"],
+        ["/#/マイナンバー法", "行政手続における特定の個人を識別するための番号の利用等に関する法律"],
+        ["/#/昭和五十九年法律第八十六号", "電気通信事業法"],
+    ]) {
+        await page.goto(path);
+        await page.locator(".law-title").waitFor({ state: "visible" });
+        await page.locator(".spinner-border").waitFor({ state: "hidden" });
+
+        await expect(page.locator(".law-title")).toHaveText(lawTitle);
+        await testInfo.attach(`${path}-lawView`, { body: await page.screenshot(), contentType: "image/png" });
+
+        await expect(page.locator("body")).not.toContainText("エラーが発生しました：");
+    }
 });

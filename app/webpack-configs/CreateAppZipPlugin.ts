@@ -18,7 +18,7 @@ async function *iterDirTree(dir: string, ignore: string[] = []): AsyncGenerator<
 export default class CreateAppZipPlugin {
     public apply(compiler: webpack.Compiler): void {
         compiler.hooks.afterEmit.tapPromise("CreateAppZipPlugin", async () => {
-            const relAppPath = path.join("media", "Lawtext-app.zip");
+            const relAppPath = path.join("asset", "Lawtext-app.zip");
             const ignore = [
                 "data",
                 relAppPath,

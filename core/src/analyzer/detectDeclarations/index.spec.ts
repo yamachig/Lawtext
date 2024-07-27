@@ -8,10 +8,11 @@ import { parse } from "../../parser/lawtext";
 import { assertELVaridity } from "../../parser/std/testHelper";
 import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
 import detectPointers from "../detectPointers";
+import { getLawTitleLength } from "..";
 
 describe("Test detectDeclarations", () => {
 
-    it("Success case: nameInline", () => {
+    it("Success case: nameInline", async () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -216,7 +217,7 @@ describe("Test detectDeclarations", () => {
         }
         ;
 
-        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -233,7 +234,7 @@ describe("Test detectDeclarations", () => {
         );
     });
 
-    it("Success case: lawRef", () => {
+    it("Success case: lawRef", async () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -437,7 +438,7 @@ describe("Test detectDeclarations", () => {
             ],
         };
 
-        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -454,7 +455,7 @@ describe("Test detectDeclarations", () => {
         );
     });
 
-    it("Success case: lawRef", () => {
+    it("Success case: lawRef", async () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -738,7 +739,7 @@ describe("Test detectDeclarations", () => {
         };
 
 
-        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(result.value.map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -755,7 +756,7 @@ describe("Test detectDeclarations", () => {
         );
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （定義）
@@ -1221,7 +1222,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1240,7 +1241,7 @@ describe("Test detectDeclarations", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （定義）
@@ -1787,7 +1788,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -1806,7 +1807,7 @@ describe("Test detectDeclarations", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （定義）
@@ -2183,7 +2184,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -2202,7 +2203,7 @@ describe("Test detectDeclarations", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （定義）
@@ -2516,7 +2517,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -2535,7 +2536,7 @@ describe("Test detectDeclarations", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
   （定義）
@@ -2936,7 +2937,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -2955,7 +2956,7 @@ describe("Test detectDeclarations", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
 行政手続法
@@ -3512,7 +3513,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -3531,7 +3532,7 @@ describe("Test detectDeclarations", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
 電波法
@@ -4450,7 +4451,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -4469,7 +4470,7 @@ describe("Test detectDeclarations", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case", () => {
+    it("Success case", async () => {
         /* eslint-disable no-irregular-whitespace */
         const lawtext = `\
 第三十九条　命令等制定機関は、命令等を定めようとする場合には、当該命令等の案（命令等で定めようとする内容を示すものをいう。以下同じ。）及びこれに関連する資料をあらかじめ公示し、（略）
@@ -4504,7 +4505,7 @@ describe("Test detectDeclarations", () => {
 
         const expectedErrorMessages: string[] = [];
 
-        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const declarationsResult = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(declarationsResult.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -4517,7 +4518,7 @@ describe("Test detectDeclarations", () => {
         assertELVaridity(inputElToBeModified, lawtext, true);
     });
 
-    it("Success case: lawRef", () => {
+    it("Success case: lawRef", async () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -4703,7 +4704,7 @@ describe("Test detectDeclarations", () => {
             ],
         };
 
-        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(result.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -4720,7 +4721,7 @@ describe("Test detectDeclarations", () => {
         );
     });
 
-    it("Success case: lawRef", () => {
+    it("Success case: lawRef", async () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -4896,7 +4897,7 @@ describe("Test detectDeclarations", () => {
             ],
         };
 
-        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(result.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -4913,7 +4914,7 @@ describe("Test detectDeclarations", () => {
         );
     });
 
-    it("Success case: lawRef", () => {
+    it("Success case: lawRef", async () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -5204,7 +5205,7 @@ describe("Test detectDeclarations", () => {
             ],
         };
 
-        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(result.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(
@@ -5221,7 +5222,7 @@ describe("Test detectDeclarations", () => {
         );
     });
 
-    it("Success case: lawRef", () => {
+    it("Success case: lawRef", async () => {
         /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
@@ -5597,7 +5598,7 @@ describe("Test detectDeclarations", () => {
             ],
         };
 
-        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct);
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
 
         // console.log(JSON.stringify(result.value.declarations.values().map(r => r.json(true)), null, 2));
         assert.deepStrictEqual(

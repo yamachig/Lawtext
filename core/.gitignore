@@ -24,7 +24,7 @@ MANIFEST
 /dist-prod
 /dist-bundle-dev
 /dist-bundle-prod
-/src/law/lawNumTable.ts
+/src/law/lawList.*
 /test/lawdata
 /data
 /mochawesome-report

@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es2017",
+        "target": "es2022",
         "downlevelIteration": true,
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "sourceMap": true,
-        "lib": ["es2017", "dom", "scripthost"],
+        "lib": ["es2023", "dom", "scripthost"],
         
         // "composite": true,
         // "declaration": true,
