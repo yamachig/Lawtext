@@ -55,7 +55,7 @@ export const useSearchInput = (options: {searchInputStyle?: React.CSSProperties}
         {(searchFocused !== "off" && editingKey) && (
             <ul className="dropdown-menu show">
                 {candidates?.map((r, i) => (<li key={i}>
-                    <a className="dropdown-item small lh-1" href={`/#/v1:${r.item.lawID}`}
+                    <a className="dropdown-item small lh-1" href={`#/v1:${r.item.lawID}`}
                         onMouseDown={() => {
                             setSearchFocused("leaving");
                         }}
