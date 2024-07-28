@@ -7,6 +7,7 @@ import { saveListJson } from "@appsrc/lawdata/saveListJson";
 import { ensureFetch, storedLoader } from "@appsrc/lawdata/loaders";
 import { openFile } from "@appsrc/actions/openFile";
 import { ErrorCatcher } from "./LawView/ErrorCatcher";
+import useSearchInput from "./useSearchInput";
 
 
 const ViewerMessagesDiv = styled.div`
@@ -50,11 +51,14 @@ const ViewerWelcomeDiv = styled.div`
 `;
 
 const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
-    const { navigate, path } = props;
+    const { navigate } = props;
 
-    const [editingKey, setEditingKey] = React.useState(path);
-
-    const lawSearchKeyInputRef = React.useRef<HTMLInputElement>(null);
+    const {
+        editingKey,
+        searchInputRef,
+        searchInput,
+        searchDropdown,
+    } = useSearchInput({});
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -64,7 +68,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
     const [fetchAbility, setFetchAbility] = React.useState<ResolvedType<ReturnType<typeof ensureFetch>> | null>(null);
 
     useEffect(() => {
-        const input = lawSearchKeyInputRef.current;
+        const input = searchInputRef.current;
         if (input) {
             input.focus();
         }
@@ -77,11 +81,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
         return () => {
             unmounted = true;
         };
-    }, []);
-
-    const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEditingKey(e.target.value);
-    };
+    }, [searchInputRef]);
 
     const downloadSampleLawtextOnClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
@@ -102,18 +102,12 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                     <div className="col-md-6" style={{ maxWidth: "500px" }}>
                         <form onSubmit={handleSearchSubmit}>
                             <div className="input-group">
-                                <input
-                                    ref={lawSearchKeyInputRef}
-                                    name="lawSearchKey"
-                                    onChange={lawSearchKeyOnChange}
-                                    className="form-control search-law-textbox"
-                                    placeholder={"法令名か法令番号を検索"}
-                                    value={editingKey}
-                                />
+                                {searchInput}
                                 <button className="btn btn-primary search-law-button" type="submit" >
                                     検索
                                 </button>
                             </div>
+                            {searchDropdown}
                         </form>
                     </div>
                 </div>

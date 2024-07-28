@@ -3,6 +3,7 @@ import levenshtein from "js-levenshtein";
 import { storedLoader } from "./loaders";
 import Fuse from "fuse.js";
 import { getLawList } from "lawtext/dist/src/law/getLawList";
+import type { ResolvedType } from "lawtext/dist/src/util";
 
 export const searchLawID = async (lawSearchKey: string): Promise<string | {error: string, message: string} | null> => {
 
@@ -46,21 +47,35 @@ const getLawIDStored = async (lawSearchKey: string): Promise<string | null> => {
     }
 };
 
-let lawTitleFuse: Fuse<{
-    lawID: string;
-    lawNum: string;
-    lawTitle: string;
-    abbrev: string[];
-}> | null = null;
+export type LawListItem = (ResolvedType<ReturnType<typeof getLawList>>)[number];
+
+let _lawTitleFuse: Fuse<LawListItem> | null = null;
+
+export const lawTitleFusePromise = (async () => {
+    if (!_lawTitleFuse) {
+        const lawList = await getLawList();
+        _lawTitleFuse = new Fuse(lawList, {
+            keys: [
+                "lawTitle",
+                {
+                    name: "abbrev",
+                    weight: 0.7,
+                },
+                {
+                    name: "lawNum",
+                    weight: 0.7,
+                },
+                "lawID",
+            ],
+            includeScore: true,
+            includeMatches: true,
+        });
+    }
+    return _lawTitleFuse;
+})();
 
 const getLawIDRemote = async (lawSearchKey: string): Promise<string | {error: string, message: string} | null> => {
-    // console.log(`getLawIDRemote("${lawSearchKey}")`);
-
-    if (!lawTitleFuse) {
-        const lawList = await getLawList();
-        lawTitleFuse = new Fuse(lawList, { keys: ["lawTitle", "abbrev"] });
-    }
-    const result = lawTitleFuse.search(lawSearchKey);
+    const result = (await lawTitleFusePromise).search(lawSearchKey);
     if (result.length > 0) {
         return result[0].item.lawID;
     }

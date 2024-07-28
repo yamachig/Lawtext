@@ -12,6 +12,7 @@ import makePath from "lawtext/dist/src/path/v1/make";
 import type { NavigateFunction } from "react-router-dom";
 import getOnMessage from "../actions/getOnMessage";
 import type { FigDataManagerOptions } from "lawtext/dist/src/renderer/common/docx/FigDataManager";
+import useSearchInput from "./useSearchInput";
 
 
 const SidebarH1 = styled.h1`
@@ -29,15 +30,22 @@ const SidebarHeadDiv = styled.div`
 const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
     const { origState, navigate, origSetState } = props;
 
-    const [editingKey, setEditingKey] = React.useState("");
+    const {
+        editingKey,
+        searchInput,
+        searchDropdown,
+    } = useSearchInput({
+        searchInputStyle: {
+            border: "none",
+            padding: "0.45em",
+            borderRadius: 0,
+            borderBottomLeftRadius: ".25rem",
+        },
+    });
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         navigate(`/${editingKey.replace("/", "")}`);
-    };
-
-    const lawSearchKeyOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEditingKey(e.target.value);
     };
 
     const downloadLawtextClick = () => {
@@ -88,19 +96,7 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                             onSubmit={handleSearchSubmit}
                         >
                             <div className="input-group input-group-sm">
-                                <input
-                                    name="lawSearchKey"
-                                    onChange={lawSearchKeyOnChange}
-                                    className="form-control search-law-textbox"
-                                    style={{
-                                        border: "none",
-                                        padding: "0.45em",
-                                        borderRadius: 0,
-                                        borderBottomLeftRadius: ".25rem",
-                                    }}
-                                    placeholder="法令名か法令番号を検索" aria-label="法令名か法令番号を検索"
-                                    value={editingKey}
-                                />
+                                {searchInput}
                                 <button
                                     className="btn btn-secondary"
                                     type="submit"
@@ -109,6 +105,8 @@ const SidebarHead: React.FC<LawtextAppPageStateStruct> = props => {
                                     検索
                                 </button>
                             </div>
+                            {searchDropdown}
+
                         </form>
 
                     </div>

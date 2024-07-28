@@ -115,3 +115,60 @@ html,body {
         await expect(page.locator("body")).not.toContainText("エラーが発生しました：");
     }
 });
+
+test("test search", async ({ page }, testInfo) => {
+    await page.goto("/");
+    await page.addStyleTag({ content: `
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+html,body {
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+` });
+    await page.evaluate(() => document.fonts.ready);
+
+    await page.getByText("Lawtextへようこそ！").waitFor({ state: "visible" });
+    await testInfo.attach("top", { body: await page.screenshot(), contentType: "image/png" });
+
+    const textbox = page.locator("input[placeholder='法令名か法令番号を検索']").first();
+    const dropdown = page.locator("ul.dropdown-menu").first();
+
+    for (const [key, lawTitle, lawID] of [
+        ["マイナンバー法", "行政手続における特定の個人を識別するための番号の利用等に関する法律", "425AC0000000027"],
+        ["行手法", "行政手続法", "405AC0000000088"],
+        ["個人情報保護法", "個人情報の保護に関する法律", "415AC0000000057"],
+        ["国旗国歌法", "国旗及び国歌に関する法律", "411AC0000000127"],
+    ]) {
+
+        if (testInfo.project.name.includes("Mobile")) {
+            await page.getByTitle(/^サイドバーの表示を切り替える/).click();
+            await textbox.waitFor({ state: "visible" });
+            await testInfo.attach(`${key}-sidebar`, { body: await page.screenshot(), contentType: "image/png" });
+        }
+
+        await textbox.focus();
+        await textbox.fill(key);
+        await dropdown.waitFor({ state: "visible" });
+
+        const link = dropdown.getByText(lawTitle, { exact: true });
+        await link.waitFor({ state: "visible" });
+        await testInfo.attach(`${key}-filled`, { body: await page.screenshot(), contentType: "image/png" });
+
+        await link.click();
+
+        await page.locator(".law-title").waitFor({ state: "visible" });
+        await page.locator(".spinner-border").waitFor({ state: "hidden" });
+
+        if (testInfo.project.name.includes("Mobile")) {
+            await page.mouse.click((page.viewportSize()?.width ?? 300) - 10, 10);
+            await textbox.waitFor({ state: "hidden" });
+        }
+
+        await testInfo.attach(`${key}-lawView`, { body: await page.screenshot(), contentType: "image/png" });
+
+        await expect(page).toHaveURL(new RegExp(`.*#/v1:${lawID}$`));
+
+        await expect(page.locator("body")).not.toContainText("エラーが発生しました：");
+    }
+});
