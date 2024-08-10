@@ -13,10 +13,10 @@ const xmlSerializer = new XMLSerializer();
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
 // const Blob: typeof window.Blob = (global["window"] && window.Blob) || require("buffer").Blob;
 
-export const lawlistsURL = "https://elaws.e-gov.go.jp/api/1/lawlists/1";
-export const lawdataURL = "https://elaws.e-gov.go.jp/api/1/lawdata/";
-export const articlesURL = "https://elaws.e-gov.go.jp/api/1/articles/";
-export const allXMLZipURL = "https://elaws.e-gov.go.jp/download?file_section=1&only_xml_flag=true";
+export const lawlistsURL = "https://laws.e-gov.go.jp/api/1/lawlists/1";
+export const lawdataURL = "https://laws.e-gov.go.jp/api/1/lawdata/";
+export const articlesURL = "https://laws.e-gov.go.jp/api/1/articles/";
+export const allXMLZipURL = "https://laws.e-gov.go.jp/download?file_section=1&only_xml_flag=true";
 
 export const fetchElaws = async (url: string, retry = 5): Promise<Element> => {
     if (retry <= 0) {
@@ -170,7 +170,7 @@ export const fetchAllXMLZip = async (): Promise<ArrayBuffer> => {
 
 export const fetchPartialLaw = async (options: {lawNum: string, article?: string, paragraph?: string, appdxTable?: string}): Promise<string> => {
     const { lawNum, article, paragraph, appdxTable } = options;
-    const elApplData = await fetchElaws(`${articlesURL};lawNum=${lawNum};article=${article ?? ""};paragraph=${paragraph ?? ""};apdxTable=${appdxTable ?? ""}`);
+    const elApplData = await fetchElaws(`${articlesURL};lawNum=${lawNum}${article ? ";article=" + article : ""}${paragraph ? ";paragraph=" + paragraph : ""}${appdxTable ? ";apdxTable=" + appdxTable : ""}`);
     if (!elApplData) {
         throw Error("fetchPartialLaw(): fetchElaws failed");
     }

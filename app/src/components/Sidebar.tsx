@@ -634,7 +634,7 @@ const SidebarFooter: React.FC = () => {
     return (
         <SidebarFooterDiv>
             <div style={{ fontSize: "0.8em", padding: "0.3em 0.3em 0 0.3em", color: "rgb(140, 140, 140)", lineHeight: "1em" }}>
-                法令検索・元データは<a href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov法令検索</a>・<a href="https://elaws.e-gov.go.jp/apitop/" target="_blank" rel="noreferrer">法令API</a>を使用しています。定義語・条項参照などの表示は<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>で別途解析・編集したものです。
+                法令検索・元データは<a href="https://laws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov法令検索</a>・<a href="https://laws.e-gov.go.jp/apitop/" target="_blank" rel="noreferrer">法令API</a>を使用しています。定義語・条項参照などの表示は<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>で別途解析・編集したものです。
             </div>
             <div style={{ fontSize: "0.8em", textAlign: "center", padding: "0.3em 0", color: "rgb(140, 140, 140)" }}>
                 <span style={{ marginRight: "1em" }}>

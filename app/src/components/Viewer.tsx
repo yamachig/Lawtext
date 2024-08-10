@@ -134,7 +134,7 @@ const ViewerWelcome: React.FC<LawtextAppPageStateStruct> = props => {
                     </div>
                     <div className="text-muted" style={{ marginTop: "1em" }}>
                         <ul style={{ marginBottom: 0 }}>
-                            <li><a className="link-secondary" href="https://elaws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
+                            <li><a className="link-secondary" href="https://laws.e-gov.go.jp/" target="_blank" rel="noreferrer">e-Gov</a>から法令XMLをダウンロードできます。</li>
                             <li>メモ帳などのテキストエディタで、<a className="link-secondary" href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>ファイルを作れます。<a className="link-secondary" href="#" onClick={downloadSampleLawtextOnClick}>サンプルをダウンロード</a></li>
                         </ul>
                     </div>
@@ -329,7 +329,7 @@ const DataDirInfoToggle: React.FC = () => {
                         <li>Lawtextのフォルダ内、index.htmlと同じ階層に data という名前のフォルダを作成してください。</li>
 
                         <li>
-                            <a href="https://elaws.e-gov.go.jp/download/" target="_blank" rel="noreferrer">e-Gov</a> から「全ての法令データ」（Zipファイル）をダウンロードし、Zipファイルの内容を data フォルダ内の lawdata フォルダとして展開してください。下記のようなフォルダ構成になります。
+                            <a href="https://laws.e-gov.go.jp/bulkdownload/" target="_blank" rel="noreferrer">e-Gov</a> から「全ての法令データ」（Zipファイル）をダウンロードし、Zipファイルの内容を data フォルダ内の lawdata フォルダとして展開してください。下記のようなフォルダ構成になります。
                             <pre style={{ marginLeft: "1em" }}>{`
 data
  └─ lawdata (Zipファイルを展開したもの)

@@ -1,7 +1,7 @@
 import { EL } from "../../node/el";
 
 /**
- * StdEL: a special type of {@link EL} (implements `JsonEL`) that complies with the [Standard Law XML Schema](https://elaws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
+ * StdEL: a special type of {@link EL} (implements `JsonEL`) that complies with the [Standard Law XML Schema](https://laws.e-gov.go.jp/file/XMLSchemaForJapaneseLaw_v3.xsd).
  */
 export type StdEL =
     | Law

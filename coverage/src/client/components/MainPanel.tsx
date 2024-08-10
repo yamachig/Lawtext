@@ -548,7 +548,7 @@ export const LawCoverageInfoDetail: React.FC<{
                         <span>{lawCoverage.LawNum}</span>
                         {" "}
                         <small>
-                            <a href={`https://elaws.e-gov.go.jp/document?lawid=${encodeURI(lawCoverage.LawID)}`} target="_blank" rel="noreferrer">e-Gov <FontAwesomeIcon icon="external-link-alt" /></a>
+                            <a href={`https://laws.e-gov.go.jp/law/${encodeURI(lawCoverage.LawID)}`} target="_blank" rel="noreferrer">e-Gov <FontAwesomeIcon icon="external-link-alt" /></a>
                         </small>
                         {" "}
                         <small>

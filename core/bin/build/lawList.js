@@ -16,7 +16,7 @@ const buildLawList = async (basePath = defaultBasePath) => {
     /** @type {Record<string, string[]>} */
     const aliases = {};
     {
-        const html = (await (await fetch("https://elaws.e-gov.go.jp/abb/")).text()).replace(/[\r\n]/g, "");
+        const html = (await (await fetch("https://laws.e-gov.go.jp/abb/")).text()).replace(/[\r\n]/g, "");
         const mTable = /<table id="abbreviationTable".+?<\/table>/.exec(html);
         const table = (mTable && mTable[0]) ?? "";
         const mTbody = /<tbody.+?<\/tbody>/.exec(table);
@@ -35,7 +35,7 @@ const buildLawList = async (basePath = defaultBasePath) => {
         }
     }
     
-    const response = await fetch("https://elaws.e-gov.go.jp/api/1/lawlists/1");
+    const response = await fetch("https://laws.e-gov.go.jp/api/1/lawlists/1");
     const xml = await response.text();
     const parser = new DOMParser();
 

@@ -2,7 +2,7 @@ import { assertNever } from "../util";
 import { Era } from "./std";
 
 
-// c.f. https://elaws.e-gov.go.jp/file/LawIdNamingConvention.pdf
+// c.f. https://laws.e-gov.go.jp/file/LawIdNamingConvention.pdf
 
 export enum LawIDType {
     Constitution = "Constitution",

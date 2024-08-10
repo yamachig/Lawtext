@@ -165,10 +165,10 @@ The Lawtext VSCode extension is an editing tool providing the same syntax analyz
 
 一方で、近年、日本の法令文書管理においていくつかのブレイクスルーがありました：
 
-- [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html)（2016年10月リリース)。法令文書の、政府内部での管理に用いられる、正式なデータベース・出版システムです。e-LAWSにより、現行の法律や省令などはデジタル形式で保存され、これが正式な文書として扱われるようになりました。
-- [法令標準XML](https://elaws.e-gov.go.jp/download/)（2017年5月リリース）。法令を段落単位でマークアップする、標準化されたXML形式です。法律や省令などは、（既にあるHTML形式に加えて）法令標準XMLで公開されるようになりました。
-- [e-Gov 法令 API](https://elaws.e-gov.go.jp/apitop/)（2017年6月リリース）。広く一般に利用可能な、法令標準XMLを提供するAPIです。
-- [e-Gov 法令検索リニューアル](https://elaws.e-gov.go.jp/)（2020年11月リリース）。それまでHTML形式形式で公開され、きれいに印刷することが難しい状況でしたが、RTFやPDFのダウンロードにも対応しました。
+- [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html)（2016年10月リリース）。法令文書の、政府内部での管理に用いられる、正式なデータベース・出版システムです。e-LAWSにより、現行の法律や省令などはデジタル形式で保存され、これが正式な文書として扱われるようになりました。
+- [法令標準XML](https://laws.e-gov.go.jp/help/#about-xml-format)（2017年5月リリース）。法令を段落単位でマークアップする、標準化されたXML形式です。法律や省令などは、（既にあるHTML形式に加えて）法令標準XMLで公開されるようになりました。
+- [e-Gov 法令 API](https://laws.e-gov.go.jp/apitop/)（2017年6月リリース）。広く一般に利用可能な、法令標準XMLを提供するAPIです。
+- [e-Gov 法令検索リニューアル](https://laws.e-gov.go.jp/)（2020年11月リリース）。それまでHTML形式形式で公開され、きれいに印刷することが難しい状況でしたが、RTFやPDFのダウンロードにも対応しました。
 
 e-LAWSや法令標準XMLは、法令執務の自動化の礎を築いたといえますが、しかしなお、いくつかの課題が残ります：
 
@@ -307,9 +307,9 @@ Problems of the readers' side:
 Besides, recently, some breakthroughs have been made in the field of Japanese law management:
 
 - [e-LAWS](http://www.soumu.go.jp/menu_news/s-news/01gyokan01_02000052.html) (released in October 2016), an authentic database and publishing system for laws for use inside the government. By e-LAWS, all current law documents in Japan are formally stored as digital.
-- [Standard law XML](https://elaws.e-gov.go.jp/download/) (released in May 2017), standardized paragraph-level markup format for Japanese laws. Most major Japanese laws are now made public as standard law XML (in addition to HTML already available).
-- [e-Gov laws API](https://elaws.e-gov.go.jp/apitop/) (released in June 2017), an open web API that provides standard law XML.
-- [Renewed e-Gov laws search](https://elaws.e-gov.go.jp/) (released in November 2020). Before renewal, it provided the laws HTML, which often could not be pretty-printed and is not reusable for editing. It now provides RTF or PDF.
+- [Standard law XML](https://laws.e-gov.go.jp/help/#about-xml-format) (released in May 2017), standardized paragraph-level markup format for Japanese laws. Most major Japanese laws are now made public as standard law XML (in addition to HTML already available).
+- [e-Gov laws API](https://laws.e-gov.go.jp/apitop/) (released in June 2017), an open web API that provides standard law XML.
+- [Renewed e-Gov laws search](https://laws.e-gov.go.jp/) (released in November 2020). Before renewal, it provided the laws HTML, which often could not be pretty-printed and is not reusable for editing. It now provides RTF or PDF.
 
   Example of Standard law XML (extracted):
   ```xml
@@ -434,4 +434,4 @@ For the details of Lawtext, please visit the [Lawtext documentation](https://yam
 
 -----------
 
-法令元データの取得に<a href="https://elaws.e-gov.go.jp/apitop/" target="_blank" rel="noreferrer">e-Gov法令API</a>を使用しています。定義語・条項参照などの表示は<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>で別途解析・編集したものです。
+法令元データの取得に<a href="https://laws.e-gov.go.jp/apitop/" target="_blank" rel="noreferrer">e-Gov法令API</a>を使用しています。定義語・条項参照などの表示は<a href="https://github.com/yamachig/lawtext" target="_blank" rel="noreferrer">Lawtext</a>で別途解析・編集したものです。
