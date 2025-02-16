@@ -28,7 +28,7 @@ export const HTMLArithFormulaRun = wrapHTMLComponent("HTMLArithFormulaRun", ((pr
     });
 
     if (rawBlocks.every(Array.isArray)) {
-        const runs = (rawBlocks as JSX.Element[][]).flat();
+        const runs = (rawBlocks as React.JSX.Element[][]).flat();
 
         return ((
             <span className="arith-formula" {...elProps(el, htmlOptions)}>
@@ -38,7 +38,7 @@ export const HTMLArithFormulaRun = wrapHTMLComponent("HTMLArithFormulaRun", ((pr
 
     } else {
 
-        const blocks: JSX.Element[] = [];
+        const blocks: React.JSX.Element[] = [];
 
         for (const rawBlock of rawBlocks) {
             if (Array.isArray(rawBlock)) {
@@ -71,7 +71,7 @@ export const DOCXArithFormulaRun = wrapDOCXComponent("DOCXArithFormulaRun", ((pr
     });
 
     if (rawBlocks.every(Array.isArray)) {
-        const runs = (rawBlocks as JSX.Element[][]).flat();
+        const runs = (rawBlocks as React.JSX.Element[][]).flat();
 
         return (<>
             {withKey(runs)}
@@ -79,7 +79,7 @@ export const DOCXArithFormulaRun = wrapDOCXComponent("DOCXArithFormulaRun", ((pr
 
     } else {
 
-        const blocks: JSX.Element[] = [];
+        const blocks: React.JSX.Element[] = [];
 
         for (const rawBlock of rawBlocks) {
             if (Array.isArray(rawBlock)) {

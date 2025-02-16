@@ -29,7 +29,7 @@ const ErrorComponentDiv = styled.div`
 `;
 
 class LawErrorCatcher extends ErrorCatcher {
-    protected override renderError(): JSX.Element | JSX.Element[] | null | undefined {
+    protected override renderError(): React.JSX.Element | React.JSX.Element[] | null | undefined {
         return (
             <ErrorComponentDiv className="alert alert-danger">
                 レンダリング時にエラーが発生しました：

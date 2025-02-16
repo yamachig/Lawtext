@@ -32,7 +32,7 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const RemarksLabel = el.children.find(std.isRemarksLabel);
 
@@ -44,7 +44,7 @@ export const HTMLRemarks = wrapHTMLComponent("HTMLRemarks", ((props: HTMLCompone
         ));
     }
 
-    const bodyBlocks: JSX.Element[] = [];
+    const bodyBlocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -87,7 +87,7 @@ export const DOCXRemarks = wrapDOCXComponent("DOCXRemarks", ((props: DOCXCompone
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const RemarksLabel = el.children.find(std.isRemarksLabel);
 

@@ -35,7 +35,7 @@ const renderAndParse = async (loader: Loader, lawNum: string) => {
     const tempRenderedDocx = path.join(ensureTempTestDir(), `${lawInfo.LawID}.rendered.docx`);
     const tempParsedXml = path.join(ensureTempTestDir(), `${lawInfo.LawID}.parsed.xml`);
 
-    const origDOM = domParser.parseFromString(origXML);
+    const origDOM = domParser.parseFromString(origXML, "application/xml");
     await promisify(fs.writeFile)(tempOrigXml, origXML, { encoding: "utf-8" });
 
     const origEL = xmlToEL(origXML);
@@ -103,7 +103,7 @@ const renderAndParse = async (loader: Loader, lawNum: string) => {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const parsedXML = formatXML(outerXML(parsedEL)) as string;
-    const parsedDOM = domParser.parseFromString(parsedXML);
+    const parsedDOM = domParser.parseFromString(parsedXML, "application/xml");
     await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });
 
     return { origEL, parsedEL, origDOM, parsedDOM, tempOrigXml, tempRenderedLawtext, tempRenderedHTML, tempRenderedDocx, tempParsedXml } ;

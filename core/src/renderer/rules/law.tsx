@@ -66,7 +66,7 @@ export const HTMLPreamble = wrapHTMLComponent("HTMLPreamble", ((props: HTMLCompo
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -89,7 +89,7 @@ export const DOCXPreamble = wrapDOCXComponent("DOCXPreamble", ((props: DOCXCompo
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -126,7 +126,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const LawTitle = el.children.find(std.isLawBody)?.children.find(std.isLawTitle);
     const LawNum = el.children.find(std.isLawNum);
@@ -151,7 +151,7 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
         ));
     }
 
-    const bodyBlocks: JSX.Element[] = [];
+    const bodyBlocks: React.JSX.Element[] = [];
 
     for (const child of el.children.find(std.isLawBody)?.children ?? []) {
         if (
@@ -203,7 +203,7 @@ export const DOCXLaw = wrapDOCXComponent("DOCXLaw", ((props: DOCXComponentProps 
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const LawTitle = el.children.find(std.isLawBody)?.children.find(std.isLawTitle);
     const LawNum = el.children.find(std.isLawNum);

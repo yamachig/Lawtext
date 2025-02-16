@@ -80,7 +80,7 @@ export const HTMLParagraphItem = wrapHTMLComponent("HTMLParagraphItem", ((props:
 
     const { el, htmlOptions, indent, ArticleTitle } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const ParagraphCaption = (el.children as (typeof el.children)[number][]).find(el => std.isParagraphCaption(el) || std.isArticleCaption(el)) as std.ParagraphCaption | undefined;
     if (ParagraphCaption && std.isArticleCaption(ParagraphCaption)) {
@@ -196,7 +196,7 @@ export const DOCXParagraphItem = wrapDOCXComponent("DOCXParagraphItem", ((props:
 
     const { el, docxOptions, indent, ArticleTitle } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const ParagraphCaption = (el.children as (typeof el.children)[number][]).find(el => std.isParagraphCaption(el) || std.isArticleCaption(el)) as std.ParagraphCaption | undefined;
     if (ParagraphCaption && std.isArticleCaption(ParagraphCaption)) {

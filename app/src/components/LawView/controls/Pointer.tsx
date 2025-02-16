@@ -23,7 +23,7 @@ export const Pointer = (props: HTMLComponentProps & ____PointerProps) => {
     const analysis = options.lawData.analysis;
     const pointerEnv = analysis.pointerEnvByEL.get(el);
     if (pointerEnv && pointerEnv.located) {
-        const runs: JSX.Element[] = [];
+        const runs: React.JSX.Element[] = [];
         if (pointerEnv.located.type === "external") {
             const lawNum = pointerEnv.located.lawRef.attr.lawNum;
             if (!lawNum) {

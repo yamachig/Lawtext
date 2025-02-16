@@ -34,7 +34,7 @@ export const HTMLTOC = wrapHTMLComponent("HTMLTOC", ((props: HTMLComponentProps 
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const TOCLabel = el.children.find(std.isTOCLabel);
 
@@ -46,7 +46,7 @@ export const HTMLTOC = wrapHTMLComponent("HTMLTOC", ((props: HTMLComponentProps 
         ));
     }
 
-    const bodyBlocks: JSX.Element[] = [];
+    const bodyBlocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -80,7 +80,7 @@ export const DOCXTOC = wrapDOCXComponent("DOCXTOC", ((props: DOCXComponentProps 
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const TOCLabel = el.children.find(std.isTOCLabel);
 
@@ -123,7 +123,7 @@ export const HTMLTOCItem = wrapHTMLComponent("HTMLTOCItem", ((props: HTMLCompone
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const TOCItemTitle = (el.children as (typeof el.children)[number][]).find(c => std.isArticleGroupTitle(c) || std.isSupplProvisionLabel(c) || std.isArticleTitle(c)) as std.ArticleGroupTitle | std.SupplProvisionLabel | std.ArticleTitle | undefined;
     const ArticleRange = (el.children as (typeof el.children)[number][]).find(c => std.isArticleRange(c) || std.isArticleCaption(c)) as std.ArticleRange | std.ArticleCaption | undefined;
@@ -190,7 +190,7 @@ export const DOCXTOCItem = wrapDOCXComponent("DOCXTOCItem", ((props: DOCXCompone
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const TOCItemTitle = (el.children as (typeof el.children)[number][]).find(c => std.isArticleGroupTitle(c) || std.isSupplProvisionLabel(c) || std.isArticleTitle(c)) as std.ArticleGroupTitle | std.SupplProvisionLabel | std.ArticleTitle | undefined;
     const ArticleRange = (el.children as (typeof el.children)[number][]).find(c => std.isArticleRange(c) || std.isArticleCaption(c)) as std.ArticleRange | std.ArticleCaption | undefined;

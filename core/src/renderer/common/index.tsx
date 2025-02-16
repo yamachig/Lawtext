@@ -61,8 +61,8 @@ export const renderToStaticMarkup = (element: React.ReactElement<any, string | R
     }
 };
 
-export const withKey = (els: (JSX.Element | string)[], baseKey = 0) => {
-    const ret: (JSX.Element | string)[] = [];
+export const withKey = (els: (React.JSX.Element | string)[], baseKey = 0) => {
+    const ret: (React.JSX.Element | string)[] = [];
     for (let i = 0; i < els.length; i++) {
         const el = els[i];
         if (typeof el === "string") {

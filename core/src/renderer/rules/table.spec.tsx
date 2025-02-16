@@ -178,7 +178,7 @@ describe("Test HTML table", () => {
       </td>
     </tr>
     <tr class="table-row">
-      <td class="table-column" rowspan="2">
+      <td class="table-column" rowSpan="2">
         <div>２</div>
       </td>
       <td class="table-column">

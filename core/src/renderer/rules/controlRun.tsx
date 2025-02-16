@@ -118,7 +118,7 @@ interface __ParenthesesProps { el: std.__EL }
 const __Parentheses = (props: HTMLComponentProps & __ParenthesesProps) => {
     const { el, htmlOptions } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
 

@@ -35,7 +35,7 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const ItemStructTitle = (el.children as (typeof el.children)[number][]).find(el => (
         std.isTableStructTitle(el)
@@ -53,7 +53,7 @@ export const HTMLItemStruct = wrapHTMLComponent("HTMLItemStruct", ((props: HTMLC
         ));
     }
 
-    const bodyBlocks: JSX.Element[] = [];
+    const bodyBlocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -104,7 +104,7 @@ export const DOCXItemStruct = wrapDOCXComponent("DOCXItemStruct", ((props: DOCXC
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const ItemStructTitle = (el.children as (typeof el.children)[number][]).find(el => (
         std.isTableStructTitle(el)

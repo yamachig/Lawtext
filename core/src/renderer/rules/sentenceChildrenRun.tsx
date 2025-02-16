@@ -23,7 +23,7 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
 
     const { els, htmlOptions } = props;
     const { renderControlEL } = htmlOptions;
-    const runs: (JSX.Element | string)[] = [];
+    const runs: (React.JSX.Element | string)[] = [];
 
     for (const el of els) {
         if (typeof el === "string") {
@@ -84,7 +84,7 @@ export const HTMLSentenceChildrenRun = wrapHTMLComponent("HTMLSentenceChildrenRu
 export const DOCXSentenceChildrenRun = wrapDOCXComponent("DOCXSentenceChildrenRun", ((props: DOCXComponentProps & SentenceChildrenRunProps & {emphasis?: boolean}) => {
 
     const { els, emphasis, docxOptions } = props;
-    const runs: JSX.Element[] = [];
+    const runs: React.JSX.Element[] = [];
 
     for (const el of els) {
         if (typeof el === "string" || el instanceof String) {

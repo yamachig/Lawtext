@@ -26,7 +26,7 @@ export const HTMLAmendProvision = wrapHTMLComponent("HTMLAmendProvision", ((prop
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
 
@@ -61,7 +61,7 @@ export const DOCXAmendProvision = wrapDOCXComponent("DOCXAmendProvision", ((prop
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
 

@@ -19,7 +19,7 @@ export const ContainersView = (props: HTMLComponentProps & ContainersViewProps) 
     const analysis = options.lawData.analysis;
     if (!analysis) return null;
 
-    const ret: JSX.Element[] = [];
+    const ret: React.JSX.Element[] = [];
 
     for (const containerID of containerIDs) {
 

@@ -47,7 +47,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const ArticleGroupTitle = (el.children as (typeof el.children)[number][]).find(std.isArticleGroupTitle);
 
@@ -75,7 +75,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
         ));
     }
 
-    const bodyBlocks: JSX.Element[] = [];
+    const bodyBlocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -132,7 +132,7 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const ArticleGroupTitle = (el.children as (typeof el.children)[number][]).find(std.isArticleGroupTitle);
 

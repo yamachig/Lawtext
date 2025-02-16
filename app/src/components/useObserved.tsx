@@ -6,7 +6,7 @@ export const useObserved = () => {
     const [observed, setObserved] = React.useState(false);
 
     const observedRef = React.useRef<HTMLSpanElement>(null);
-    const observerRef = React.useRef<IntersectionObserver>();
+    const observerRef = React.useRef<IntersectionObserver>(null);
 
     const unobserve = React.useCallback(() => {
         const target = observedRef.current;

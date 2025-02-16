@@ -8,7 +8,7 @@ import { makePDFOLE } from "./ole";
 import type { AsyncZippable } from "../../../util/zip";
 import { zip } from "../../../util/zip";
 
-export const renderDocxAsync = async (bodyEL: JSX.Element, docxOptions?: DOCXOptions): Promise<Uint8Array | Buffer> => {
+export const renderDocxAsync = async (bodyEL: React.JSX.Element, docxOptions?: DOCXOptions): Promise<Uint8Array | Buffer> => {
 
     const media: {Id: string, Type: string, fileName: string, buf: ArrayBuffer}[] = [];
     const embeddings: {Id: string, Type: string, fileName: string, buf: ArrayBuffer}[] = [];

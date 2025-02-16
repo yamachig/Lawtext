@@ -23,7 +23,7 @@ export const HTMLColumnsOrSentencesRun = wrapHTMLComponent("HTMLColumnsOrSentenc
 
     const { els, htmlOptions } = props;
 
-    const runs: JSX.Element[] = [];
+    const runs: React.JSX.Element[] = [];
     for (let i = 0; i < els.length; i++) {
         const el = els[i];
 
@@ -35,7 +35,7 @@ export const HTMLColumnsOrSentencesRun = wrapHTMLComponent("HTMLColumnsOrSentenc
                 runs.push(<HTMLMarginSpan className="lawtext-column-margin"/>);
             }
 
-            const subruns: JSX.Element[] = [];
+            const subruns: React.JSX.Element[] = [];
             for (let j = 0; j < el.children.length; j++) {
                 const subel = el.children[j];
                 subruns.push(<HTMLSentenceChildrenRun els={subel.children} {...{ htmlOptions }} />);
@@ -63,7 +63,7 @@ export const DOCXColumnsOrSentencesRun = wrapDOCXComponent("DOCXColumnsOrSentenc
 
     const { els, docxOptions } = props;
 
-    const runs: JSX.Element[] = [];
+    const runs: React.JSX.Element[] = [];
     for (let i = 0; i < els.length; i++) {
         const el = els[i];
 

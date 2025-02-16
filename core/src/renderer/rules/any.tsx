@@ -36,11 +36,11 @@ export const HTMLAnyELsCSS = /*css*/`
 
 `;
 
-export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (JSX.Element[] | JSX.Element)[] => {
+export const HTMLAnyELsToBlocks = (props: HTMLComponentProps & AnyELsProps): (React.JSX.Element[] | React.JSX.Element)[] => {
     const { els, htmlOptions, indent } = props;
 
-    const blocks: (JSX.Element[] | JSX.Element)[] = [];
-    let currentRuns: JSX.Element[] = [];
+    const blocks: (React.JSX.Element[] | React.JSX.Element)[] = [];
+    let currentRuns: React.JSX.Element[] = [];
     const flushRuns = () => {
         if (currentRuns.length > 0) {
             blocks.push(currentRuns);
@@ -140,7 +140,7 @@ export const HTMLAnyELs = wrapHTMLComponent("HTMLAnyELs", ((props: HTMLComponent
 
     const rawBlocks = HTMLAnyELsToBlocks(props);
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     for (const rawBlock of rawBlocks) {
         if (Array.isArray(rawBlock)) {
@@ -159,11 +159,11 @@ export const HTMLAnyELs = wrapHTMLComponent("HTMLAnyELs", ((props: HTMLComponent
     </>);
 }));
 
-export const DOCXAnyELsToBlocks = (props: DOCXComponentProps & AnyELsProps): (JSX.Element[] | JSX.Element)[] => {
+export const DOCXAnyELsToBlocks = (props: DOCXComponentProps & AnyELsProps): (React.JSX.Element[] | React.JSX.Element)[] => {
     const { els, docxOptions, indent } = props;
 
-    const blocks: (JSX.Element[] | JSX.Element)[] = [];
-    let currentRuns: JSX.Element[] = [];
+    const blocks: (React.JSX.Element[] | React.JSX.Element)[] = [];
+    let currentRuns: React.JSX.Element[] = [];
     const flushRuns = () => {
         if (currentRuns.length > 0) {
             blocks.push(currentRuns);
@@ -266,7 +266,7 @@ export const DOCXAnyELs = wrapDOCXComponent("DOCXAnyELs", ((props: DOCXComponent
 
     const rawBlocks = DOCXAnyELsToBlocks(props);
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     for (const rawBlock of rawBlocks) {
         if (Array.isArray(rawBlock)) {

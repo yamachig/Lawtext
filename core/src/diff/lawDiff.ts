@@ -4,6 +4,7 @@ import * as util from "../util";
 import type { EditTable } from "./editTable";
 import { compare } from "./editTable";
 import * as std from "../law/std";
+import { Node } from "@xmldom/xmldom";
 
 export enum TagType {
     // eslint-disable-next-line no-unused-vars

@@ -35,7 +35,7 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const AppdxItemTitle = (el.children as (typeof el.children)[number][]).find(el => (
         std.isAppdxItemTitle(el)
@@ -61,7 +61,7 @@ export const HTMLAppdxItem = wrapHTMLComponent("HTMLAppdxItem", ((props: HTMLCom
         ));
     }
 
-    const bodyBlocks: JSX.Element[] = [];
+    const bodyBlocks: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -110,7 +110,7 @@ export const DOCXAppdxItem = wrapDOCXComponent("DOCXAppdxItem", ((props: DOCXCom
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const AppdxItemTitle = (el.children as (typeof el.children)[number][]).find(el => (
         std.isAppdxItemTitle(el)

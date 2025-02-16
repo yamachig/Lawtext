@@ -1,30 +1,25 @@
-import { DOMParser } from "@xmldom/xmldom";
+import { DOMParser, Node, Element } from "@xmldom/xmldom";
 import { EL } from ".";
 
-const NodeType = {
-    TEXT_NODE: 3,
-    ELEMENT_NODE: 1,
-};
 
-
-export const elementToEL = (el: Element): EL => {
+export const elementToEL = (el: Element | HTMLElement): EL => {
     const children: Array<EL | string> = [];
-    for (const node of Array.from(el.childNodes)) {
-        if (node.nodeType === NodeType.TEXT_NODE) {
+    for (const node of Array.from<Node | ChildNode>(el.childNodes)) {
+        if (node.nodeType === Node.TEXT_NODE) {
             const text = (node.nodeValue || "")
                 .replace(/^[ \r\n\t]+/, "")
                 .replace(/[ \r\n\t]+$/, "");
             if (text) {
                 children.push(text);
             }
-        } else if (node.nodeType === NodeType.ELEMENT_NODE) {
-            children.push(elementToEL(node as Element));
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            children.push(elementToEL(node as Element | HTMLElement));
         } else {
             // console.log(node);
         }
     }
     const attr: Record<string, string> = {};
-    for (const at of Array.from(el.attributes)) {
+    for (const at of Array.from(el.attributes as NamedNodeMap)) {
         attr[at.name] = at.value;
     }
     return new EL(

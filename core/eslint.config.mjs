@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 import tsdoc from "eslint-plugin-tsdoc";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
-import stylisticJs from "@stylistic/eslint-plugin-js";
+import stylisticTs from "@stylistic/eslint-plugin-ts";
 
 export default tseslint.config(
     {
@@ -31,7 +31,7 @@ export default tseslint.config(
             tsdoc,
             react,
             "react-hooks": reactHooks,
-            "@stylistic/js": stylisticJs,
+            "@stylistic/ts": stylisticTs,
         },
 
         settings: {

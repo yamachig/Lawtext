@@ -47,7 +47,7 @@ export const HTMLTable = wrapHTMLComponent("HTMLTable", ((props: HTMLComponentPr
 
     const { el, htmlOptions, indent } = props;
 
-    const rows: JSX.Element[] = [];
+    const rows: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -77,7 +77,7 @@ export const HTMLTableRow = wrapHTMLComponent("HTMLTableRow", ((props: HTMLCompo
 
     const { el, htmlOptions } = props;
 
-    const columns: JSX.Element[] = [];
+    const columns: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -105,7 +105,7 @@ export const HTMLTableColumn = wrapHTMLComponent("HTMLTableColumn", ((props: HTM
 
     const { el, htmlOptions } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     if (std.isTableHeaderColumn(el)) {
         blocks.push((
@@ -272,7 +272,7 @@ export const DOCXTable = wrapDOCXComponent("DOCXTable", ((props: DOCXComponentPr
 
     const { el: origEL, docxOptions, indent } = props;
 
-    const rows: JSX.Element[] = [];
+    const rows: React.JSX.Element[] = [];
 
     const el = restructureTable(origEL);
 
@@ -305,7 +305,7 @@ export const DOCXTableRow = wrapDOCXComponent("DOCXTableRow", ((props: DOCXCompo
 
     const { el, docxOptions } = props;
 
-    const columns: JSX.Element[] = [];
+    const columns: React.JSX.Element[] = [];
 
     for (const child of el.children) {
         if (
@@ -346,7 +346,7 @@ export const DOCXTableColumn = wrapDOCXComponent("DOCXTableColumn", ((props: DOC
 
     const { el, docxOptions } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     if (std.isTableHeaderColumn(el)) {
         blocks.push((

@@ -74,8 +74,8 @@ export const LawCoverageInfoCard: React.FC<{
     status: LawCoverageInfoCardStatus;
     date: Date;
     requiredms?: Map<string, number> | Record<string, number>;
-    header?: JSX.Element;
-    body?: JSX.Element;
+    header?: React.JSX.Element;
+    body?: React.JSX.Element;
 }> = props => {
     const BadgeTag =
             props.status === LawCoverageInfoCardStatus.NULL ? NullTag :

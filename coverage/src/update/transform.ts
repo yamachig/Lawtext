@@ -271,10 +271,10 @@ export const getLawDiff = async (origXML: string, origEL: EL, parsedXML: string,
         });
         requiredms.set("lawDiff", lap.lapms());
 
-        const origDOM = domParser.parseFromString(origXML);
+        const origDOM = domParser.parseFromString(origXML, "application/xml");
         requiredms.set("parseOrigXML", lap.lapms());
 
-        const parsedDOM = domParser.parseFromString(parsedXML);
+        const parsedDOM = domParser.parseFromString(parsedXML, "application/xml");
         requiredms.set("parseParsedXML", lap.lapms());
 
         const diffData = lawDiff.makeDiffData(d, origDOM, parsedDOM);

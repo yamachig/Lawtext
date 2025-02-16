@@ -22,7 +22,7 @@ function* zipLongest<T extends unknown[][]>(lists: T, defaultValues: ZipItem<T>)
 
 
 const itemToSpans = (item: Partial<lawDiff.DiffTableItemData>) => {
-    const ret: JSX.Element[] = [];
+    const ret: React.JSX.Element[] = [];
     if (item.type === lawDiff.TagType.Open || item.type === lawDiff.TagType.Empty) {
         if (item.attr && item.attr.length) {
             const attr = item.attr;
@@ -90,7 +90,7 @@ const makeElementMismatchTable = (ditem: lawDiff.LawDiffElementMismatchData) => 
                         : drow.status === lawDiff.DiffStatus.Add ? AddColorSpan
                             : drow.status === lawDiff.DiffStatus.Remove ? RemoveColorSpan
                                 : assertNever(drow);
-        const lists: [JSX.Element[], JSX.Element[], JSX.Element[], JSX.Element[]] = [
+        const lists: [React.JSX.Element[], React.JSX.Element[], React.JSX.Element[], React.JSX.Element[]] = [
             (
                 oldItem
                     ? [<ColorSpan key={0}><LawPosSpan>{oldItem.pos ? oldItem.pos.str : ""}</LawPosSpan></ColorSpan>]
@@ -288,7 +288,7 @@ const makeElementNoDiffTable = (ditem: lawDiff.LawDiffNoDiffData) => {
                             : drow.status === lawDiff.DiffStatus.Add ? AddColorSpan
                                 : drow.status === lawDiff.DiffStatus.Remove ? RemoveColorSpan
                                     : assertNever(drow);
-            const lists: [JSX.Element[], JSX.Element[], JSX.Element[], JSX.Element[]] = [
+            const lists: [React.JSX.Element[], React.JSX.Element[], React.JSX.Element[], React.JSX.Element[]] = [
                 (
                     oldItem
                         ? [<ColorSpan key={0}><LawPosSpan>{oldItem.pos ? oldItem.pos.str : ""}</LawPosSpan></ColorSpan>]
@@ -463,7 +463,7 @@ function withRowTag<T>(type: RowType, f: (RowTag: React.FC<React.PropsWithChildr
     return f(RowTag);
 }
 
-interface Row { type: RowType, cols: [JSX.Element, JSX.Element, JSX.Element, JSX.Element] }
+interface Row { type: RowType, cols: [React.JSX.Element, React.JSX.Element, React.JSX.Element, React.JSX.Element] }
 
 
 const LawDiffResultItems: React.FC<{lawCoverage: LawCoverage}> = props => {

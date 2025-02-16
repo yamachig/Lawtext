@@ -15,7 +15,7 @@ export class ErrorCatcher extends React.Component<React.PropsWithChildren<{ onEr
         if (this.props.onError) this.props.onError(error);
     }
 
-    public override render(): JSX.Element | JSX.Element[] | null | undefined {
+    public override render(): React.JSX.Element | React.JSX.Element[] | null | undefined {
         if (this.state.hasError) {
             return this.renderError();
         } else {
@@ -23,11 +23,11 @@ export class ErrorCatcher extends React.Component<React.PropsWithChildren<{ onEr
         }
     }
 
-    protected renderNormal(): JSX.Element | JSX.Element[] | null | undefined {
+    protected renderNormal(): React.JSX.Element | React.JSX.Element[] | null | undefined {
         return <>{this.props.children}</>;
     }
 
-    protected renderError(): JSX.Element | JSX.Element[] | null | undefined {
+    protected renderError(): React.JSX.Element | React.JSX.Element[] | null | undefined {
         return (
             <ErrorComponentDiv className="alert alert-danger">
                 エラーが発生しました：

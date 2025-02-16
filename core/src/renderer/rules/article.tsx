@@ -28,7 +28,7 @@ export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLCompone
 
     const { el, htmlOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const ArticleCaption = el.children.find(std.isArticleCaption);
     const ArticleTitle = el.children.find(std.isArticleTitle);
@@ -42,7 +42,7 @@ export const HTMLArticle = wrapHTMLComponent("HTMLArticle", ((props: HTMLCompone
         )); /* >>>> INDENT >>>> */
     }
 
-    const bodyBlocks: JSX.Element[] = [];
+    const bodyBlocks: React.JSX.Element[] = [];
 
     for (const [i, child] of Paragraphs.entries()) {
         if (i === 0 && ArticleTitle) {
@@ -86,7 +86,7 @@ export const DOCXArticle = wrapDOCXComponent("DOCXArticle", ((props: DOCXCompone
 
     const { el, docxOptions, indent } = props;
 
-    const blocks: JSX.Element[] = [];
+    const blocks: React.JSX.Element[] = [];
 
     const ArticleCaption = el.children.find(std.isArticleCaption);
     const ArticleTitle = el.children.find(std.isArticleTitle);
@@ -103,7 +103,7 @@ export const DOCXArticle = wrapDOCXComponent("DOCXArticle", ((props: DOCXCompone
         )); /* >>>> INDENT >>>> */
     }
 
-    const bodyBlocks: JSX.Element[] = [];
+    const bodyBlocks: React.JSX.Element[] = [];
 
     for (const [i, child] of Paragraphs.entries()) {
         if (i === 0 && ArticleTitle) {
