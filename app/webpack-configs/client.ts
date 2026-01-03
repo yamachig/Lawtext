@@ -99,7 +99,14 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                                 },
                             },
                         },
-                        "sass-loader",
+                        {
+                            loader: "sass-loader",
+                            options: {
+                                sassOptions: {
+                                    quietDeps: true,
+                                },
+                            },
+                        },
                     ],
                 },
                 {

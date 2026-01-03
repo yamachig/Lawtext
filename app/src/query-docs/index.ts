@@ -52,16 +52,18 @@ export const generateDocs = async (targetDir: string): Promise<void> => {
     await prepareTempIncludes(path.join(__dirname, "./src"), tempIncludesDir);
 
     const app = await Application.bootstrap({
-        entryPoints: [path.join(__dirname, "../globals/")],
+        entryPoints: [path.join(__dirname, "../globals/**/*")],
         entryPointStrategy: "expand",
         // excludePrivate: true,
         // excludeProtected: true,
         // excludeInternal: true,
+        // @ts-ignore
         excludeNotDocumented: true,
         name: "Lawtext query",
         readme: path.join(tempIncludesDir, "readme.md"),
         // projectDocuments: [`${tempIncludesDir}/**/*`],
         out: targetDir,
+        // @ts-ignore
         sourceLinkExternal: true,
     }, [
         new TypeDocReader(),
@@ -71,7 +73,7 @@ export const generateDocs = async (targetDir: string): Promise<void> => {
     const project = await app.convert();
     if (!project) throw new Error("Error on typedoc.Application.convert()");
 
-    await app.generateDocs(project, app.options.getValue("out"));
+    await app.generateDocs(project, app.options.getValue("out") as string);
 };
 
 const main = async (): Promise<void> => {

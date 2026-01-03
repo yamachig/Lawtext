@@ -260,7 +260,7 @@ export const downloadDocx = async (options: {
 
     const buffer = await renderer.renderDocxAsync(law, { figDataManager });
     const blob = new Blob(
-        [buffer],
+        [buffer as BlobPart],
         { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
     );
     const lawName = getLawTitleWithNum(law) || "lawtext_output";

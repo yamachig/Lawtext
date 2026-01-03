@@ -37,6 +37,7 @@ export const pdfToPNG = async (pdfData: ArrayBuffer) => {
             continue;
         }
         await page.render({
+            canvas: null,
             canvasContext: context as unknown as CanvasRenderingContext2D,
             viewport,
             background: "white",
