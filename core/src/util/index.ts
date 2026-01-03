@@ -30,9 +30,10 @@ export const omit = <T, K extends keyof T>(obj: T, ...keys: K[]): Omit<T, K> => 
     return ret;
 };
 
-export const decodeBase64 = (base64: string): Uint8Array => {
+export const decodeBase64 = (base64: string) => {
     return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 };
+
 export class NotImplementedError extends Error {
     constructor(message: string) {
         super(`NotImplemented: ${message}`);

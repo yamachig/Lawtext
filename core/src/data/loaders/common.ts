@@ -135,7 +135,7 @@ export const csvTextToLawInfos = (text: string): BaseLawInfo[] => {
     const csv = parseCSVList(text);
     if (csv === null) throw new Error("Text cannot be parsed");
     return csv.map(row => {
-        const longID = /lawid=(\w+)/.exec(row["本文URL"])?.[1] ?? "";
+        const longID = /\/law\/(\w+\/\w+)/.exec(row["本文URL"])?.[1].replace("/", "_") ?? "";
         const lawInfo: BaseLawInfo = {
             LawID: row["法令ID"],
             LawNum: row["法令番号"],

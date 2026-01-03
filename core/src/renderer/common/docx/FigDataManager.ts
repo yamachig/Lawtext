@@ -45,7 +45,7 @@ export const pdfToPNG = async (pdfData: ArrayBuffer) => {
         const buf = (
             ("convertToBlob" in canvas)
                 ? await (await canvas.convertToBlob()).arrayBuffer()
-                : canvas.toBuffer()
+                : new Uint8Array(canvas.toBuffer()).buffer
         );
 
         pngs.push({
@@ -74,7 +74,7 @@ export interface FigDataManagerOptions {
 export class FigDataManager implements DOCXFigDataManager {
     pdfIcon = {
         rId: "rPdfIcon",
-        buf: decodeBase64(pdfIconBinaryBase64),
+        buf: decodeBase64(pdfIconBinaryBase64).buffer,
         fileName: "pdfIcon.emf",
     };
     constructor(

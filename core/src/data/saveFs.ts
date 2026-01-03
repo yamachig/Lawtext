@@ -55,12 +55,15 @@ export const download = async (
     tempZipStream.close();
     progress(1);
 
-    console.log("\nExtracting zip file...");
+    const zip = new Zip.async({ file: tempZip });
+    const entriesCount = await zip.entriesCount;
+
+    console.log(`\nExtracting zip file with ${entriesCount} entries...`);
 
     progress(0, "");
     await promisify(fsExtra.ensureDir)(loader.lawdataPath);
     currentLength = 0;
-    const zip = new Zip.async({ file: tempZip });
+
     zip.on("extract", (entry) => {
         currentLength += entry.compressedSize;
         progress(currentLength / contentLength, entry.name);
@@ -85,9 +88,8 @@ export const saveList = async (
         };
     })();
 
-    progress(0, "Loading CSV...");
+    console.log("Loading CSV...");
     const infos = await loader.loadBaseLawInfosFromCSV();
-    progress(0, "");
 
     if (infos === null) {
         console.error("CSV list cannot be fetched.");

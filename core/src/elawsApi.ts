@@ -129,7 +129,17 @@ export class ElawsLawData extends LawXMLStruct {
                 const ext = path.extname(relPath) as keyof typeof pictMimeDict;
                 const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
                 // const blob = new Blob([buf], { type });
-                this._pict.set(`./pict/${relPath}`, { buf, type });
+                this._pict.set(
+                    `./pict/${relPath}`,
+                    {
+                        buf: (
+                            buf.buffer instanceof ArrayBuffer
+                                ? buf.buffer
+                                : new Uint8Array(buf).buffer
+                        ),
+                        type,
+                    }
+                );
             }
         }
         return this._pict;

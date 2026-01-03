@@ -145,7 +145,7 @@ describe("Test DOCX figRun", () => {
                             cy: 77 * 9525,
                             name: "image.jpg",
                             blob: {
-                                buf: decodeBase64(FILES["./pict/image.jpg"]),
+                                buf: decodeBase64(FILES["./pict/image.jpg"]).buffer,
                                 type: "image/jpeg",
                             },
                         },
@@ -205,7 +205,7 @@ describe("Test DOCX figRun", () => {
                             cy: 100 * 9525,
                             name: "object.pdf",
                             blob: {
-                                buf: decodeBase64(FILES["./pict/object.pdf"]),
+                                buf: decodeBase64(FILES["./pict/object.pdf"]).buffer,
                                 type: "application/pdf",
                             },
                         },
@@ -292,7 +292,7 @@ describe("Test DOCX figRun", () => {
                     {
                         src: "./pict/object.pdf",
                         type: "renderedPDF",
-                        pages: (await pdfToPNG(decodeBase64(FILES["./pict/object.pdf"]))).map(({ buf, pageNumber }, i) => ({
+                        pages: (await pdfToPNG(decodeBase64(FILES["./pict/object.pdf"]).buffer)).map(({ buf, pageNumber }, i) => ({
                             id: 1000000 + i,
                             rId: `fig${1 + i}`,
                             cx: 5364000,
