@@ -106,14 +106,13 @@ export const PeekView = (props: HTMLComponentProps & PeekViewProps) => {
             {(state.mode !== PeekViewFloatState.CLOSED) && (
                 <div
                     style={{
-                        float: "right",
-                        width: "100%",
+                        width: "calc(100% - 1rem)",
                         padding: 0,
                         margin: 0,
                         textIndent: 0,
                         fontSize: 0,
                         fontWeight: "normal",
-                        position: "relative",
+                        position: "absolute",
                         zIndex: 100,
                         color: "initial",
                     }}
