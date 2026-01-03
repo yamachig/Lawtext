@@ -16,21 +16,13 @@ const buildLawList = async (basePath = defaultBasePath) => {
     /** @type {Record<string, string[]>} */
     const aliases = {};
     {
-        const html = (await (await fetch("https://warp.ndl.go.jp/info:ndljp/pid/13725617/elaws.e-gov.go.jp/abb")).text()).replace(/[\r\n]/g, "");
-        const mTable = /<table id="abbreviationTable".+?<\/table>/.exec(html);
-        const table = (mTable && mTable[0]) ?? "";
-        const mTbody = /<tbody.+?<\/tbody>/.exec(table);
-        const tbody = (mTbody && mTbody[0]) ?? "";
-        for (const mTr of tbody.matchAll(/<tr.+?<\/tr>/g)) {
-            const tr = mTr[0];
-            const mLawNum = /<td class="lawNoCol">(.+?)<\/td>/.exec(tr);
-            const lawNum = ((mLawNum && mLawNum[1]) ?? "").trim();
+        const lawList = await (await fetch("https://laws.e-gov.go.jp/api/2/laws?omit_current_revision_info=true&limit=99999")).json();
+        for (const law of lawList.laws) {
+            const lawNum = law.law_info.law_num;
             aliases[lawNum] = aliases[lawNum] ?? [];
-            for (const mTd of tr.matchAll(/<td class="abbrLawNameCol">(.+?)<\/td>/g)) {
-                const alias = mTd[1].trim();
-                if (alias) {
-                    aliases[lawNum].push(alias);
-                }
+            if (!law.revision_info.abbrev) continue;
+            for (const alias of law.revision_info.abbrev.split(",")) {
+                aliases[lawNum].push(alias.trim());
             }
         }
     }
