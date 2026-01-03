@@ -16,7 +16,7 @@ const xmlSerializer = new XMLSerializer();
 export const lawlistsURL = "https://laws.e-gov.go.jp/api/1/lawlists/1";
 export const lawdataURL = "https://laws.e-gov.go.jp/api/1/lawdata/";
 export const articlesURL = "https://laws.e-gov.go.jp/api/1/articles/";
-export const allXMLZipURL = "https://laws.e-gov.go.jp/download?file_section=1&only_xml_flag=true";
+export const allXMLZipURL = "https://laws.e-gov.go.jp/bulkdownload?file_section=1&only_xml_flag=true";
 
 export const fetchElaws = async (url: string, retry = 5): Promise<Element> => {
     if (retry <= 0) {
