@@ -115,7 +115,7 @@ export const lawCoverageSchema = new mongoose.Schema<LawCoverage>({
                 type: new mongoose.Schema<DeNull<DeNull<LawCoverage["lawDiff"]>["ok"]>>({
                     mostSeriousStatus: {
                         type: Number,
-                        enum: Object.values(lawDiff.ProblemStatus),
+                        enum: Object.values(lawDiff.ProblemStatus).filter(v => typeof v === "number"),
                         required: true,
                     },
                     result: {

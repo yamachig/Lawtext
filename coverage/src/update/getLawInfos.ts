@@ -10,7 +10,7 @@ import type { UpdateArgs } from "./args";
 
 export const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo) => {
 
-    const andConditions: mongoose.FilterQuery<LawCoverage>[] = [];
+    const andConditions: mongoose.mongo.Filter<LawCoverage>[] = [];
 
     if (args.before) {
         andConditions.push({ updateDate: { $lt: args.before } });
@@ -19,7 +19,7 @@ export const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo
     if (args.force) {
         //
     } else {
-        const orConditions: mongoose.FilterQuery<LawCoverage>[] = [
+        const orConditions: mongoose.mongo.Filter<LawCoverage>[] = [
             { originalLaw: null },
             { "originalLaw.ok": { $ne: null }, renderedHTML: null },
             { "originalLaw.ok": { $ne: null }, renderedDocx: null },
@@ -42,6 +42,7 @@ export const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo
     }
 
     const lawIDs = await db.lawCoverage
+        // @ts-expect-error: type mismatch
         .find({ ...(andConditions.length > 0 ? { $and: andConditions } : {}) })
         .select("LawID")
         .then(res => res.map(lc => lc.LawID));

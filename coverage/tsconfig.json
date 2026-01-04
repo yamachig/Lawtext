@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "nodenext",
         "target": "es2017",
         "downlevelIteration": true,
-        "moduleResolution": "node",
+        "moduleResolution": "nodenext",
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "sourceMap": true,
@@ -44,4 +44,10 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
     },
+    "exclude": [
+        "**/* copy.*",
+        "./node_modules",
+        "./dist",
+        "./dist-dev",
+    ],
 }

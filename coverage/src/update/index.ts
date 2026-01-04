@@ -116,7 +116,7 @@ const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_cou
 };
 
 const updateSerial = async (args: UpdateArgs, lawInfos: LawInfo[], db: ConnectionInfo, loader: Loader) => {
-    const update = (await import("./update")).update;
+    const update = (await import("./update.js")).update;
 
     bar.start(lawInfos.length, 0);
     let progressCount = 0;
