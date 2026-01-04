@@ -2,6 +2,7 @@
   "tsconfig": "../core/tsconfig.json",
   "entryPoints": ["../core/src/"],
   "basePath": "../",
+  "publicPath": "/lib/",
   "exclude": ["../core/src/util/node-fetch/*", "**/*.spec.ts", "**/*.spec.tsx"],
   "entryPointStrategy": "expand",
   "useTsLinkResolution": true,
@@ -11,5 +12,5 @@
   "readme": "none",
   "fileExtension": ".mdx",
   "membersWithOwnFile": ["Class", "Interface"],
-  "out": "pages/lib"
+  "out": "content/lib"
 }

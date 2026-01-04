@@ -15,7 +15,7 @@ Lawtext is a plain-text format for law (mainly targeting Japanese law). The Lawt
 
 The extracted law structure is expressed internally in the parser using a generic format **JsonEL**. You can think of `JsonEL` as a highly simplified DOM (Document Object Model) of the corresponding XML that only supports the basic structure of XML. `JsonEL` itself does not depend on Standard Law XML Schema (schema-agnostic). Within the domain of the basic structure of XML, you can easily convert the `JsonEL` into XML and vice versa.
 
-`JsonEL` definition ([library documentation here](../lib/core/src/node/el/jsonEL/interfaces/JsonEL.mdx)):
+`JsonEL` definition ([library documentation here](../../lib/core/src/node/el/jsonEL/interfaces/JsonEL.mdx)):
 
 ```ts
 interface JsonEL {
@@ -27,11 +27,11 @@ interface JsonEL {
 
 Since `JsonEL` is just a simple interface, the `JsonEL` tree can be easily serialized into JSON (and XML) and exchanged and stored between different environments.
 
-In Lawtext, a helper class [**EL**](../lib/core/src/node/el/classes/EL.mdx) that implements the `JsonEL` interface is mainly utilized to provide additional javascript functionalities.
+In Lawtext, a helper class [**EL**](../../lib/core/src/node/el/classes/EL.mdx) that implements the `JsonEL` interface is mainly utilized to provide additional javascript functionalities.
 
 ### `StdEL`: a Standard-Law-XML-Schema-compliant JSON representation
 
-**StdEL** ([library documentation here](../lib/core/src/law/std/stdEL/README.mdx#stdel)) is a special type of `JsonEL` (or `EL`) that complies with the Standard Law XML Schema. A `StdEL` object has a tag name, corresponding attributes, and children defined in the Standard Law XML Schema. The Lawtext parser aims to convert the Lawtext string into the `StdEL` tree.
+**StdEL** ([library documentation here](../../lib/core/src/law/std/stdEL/README.mdx#stdel)) is a special type of `JsonEL` (or `EL`) that complies with the Standard Law XML Schema. A `StdEL` object has a tag name, corresponding attributes, and children defined in the Standard Law XML Schema. The Lawtext parser aims to convert the Lawtext string into the `StdEL` tree.
 
 The `StdEL` works as an intermediate representation of the law. The Lawtext library provides several renderers that enable converting the law (`StdEL`) into HTML, docx, Standard Law XML, and Lawtext (reversely).
 
@@ -39,7 +39,7 @@ The `StdEL` works as an intermediate representation of the law. The Lawtext libr
 
 ## Adding extra information on `StdEL`: `__EL`
 
-Lawtext provides some functionalities for analyzing corresponding parentheses, term definition positions, clause number references, etc. The Lawtext analyzer emits that information into the parsed `StdEL` tree in the form of `JsonEL`. To distinguish the extra `JsonEL` objects from the Standard Law XML Schema elements, we append `_` (mostly `__` for visual clarity) at the beginning of the `tag` of the `JsonEL`, and call such element "**control element**." As the form of the `EL` class, the control elements have the [**__EL**](../lib/core/src/law/std/stdEL/interfaces/EL.mdx) interface.
+Lawtext provides some functionalities for analyzing corresponding parentheses, term definition positions, clause number references, etc. The Lawtext analyzer emits that information into the parsed `StdEL` tree in the form of `JsonEL`. To distinguish the extra `JsonEL` objects from the Standard Law XML Schema elements, we append `_` (mostly `__` for visual clarity) at the beginning of the `tag` of the `JsonEL`, and call such element "**control element**." As the form of the `EL` class, the control elements have the [**__EL**](../../lib/core/src/law/std/stdEL/interfaces/EL.mdx) interface.
 
 ## Examples of Lawtext, standard law XML, and `StdEL` representation
 
@@ -220,4 +220,4 @@ Hint: run `console.log(lawtext.run.help)` to show the help.
 
 ### Try using the CLI
 
-Please see [CLI usage](../cli.mdx) and run CLI with `json` output type to get the `StdEL` (`JsonEL`) representation.
+Please see [CLI usage](../../cli.mdx) and run CLI with `json` output type to get the `StdEL` (`JsonEL`) representation.
