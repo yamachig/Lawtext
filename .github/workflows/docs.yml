@@ -34,7 +34,7 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           static_site_generator: next
-          generator_config_file: ./docs/base.next.config.js
+          generator_config_file: ./docs/base.next.config.mjs
 
       - name: Install dependencies in core
         run: npm install
