@@ -9,7 +9,6 @@ const env = initialEnv({});
 describe("Test $tocHeadLine", () => {
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
 目次
@@ -37,7 +36,6 @@ describe("Test $tocHeadLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
 :toc:裁判所法目次
@@ -65,7 +63,6 @@ describe("Test $tocHeadLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
 :toc:目次
@@ -93,7 +90,6 @@ describe("Test $tocHeadLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
 :toc: 目次
@@ -149,7 +145,6 @@ describe("Test $tocHeadLine", () => {
     });
 
     it("Fail case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
 裁判所法目次
@@ -164,7 +159,6 @@ describe("Test $tocHeadLine", () => {
     });
 
     it("Fail case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
 裁判所法目次

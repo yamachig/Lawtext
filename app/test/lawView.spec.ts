@@ -68,7 +68,7 @@ html,body {
 
     const a_2__i_5__si1_1 = page.getByText(/^イ　法律の規定に基づき内閣に置かれる機関若しくは内閣の所轄の下に置かれる機関、宮内庁、内閣府設置法（平成十一年法律第八十九号）第四十九条第一項若しくは第二項/);
     await a_2__i_5__si1_1.getByText(/^第二項$/).first().click();
-    await expect(a_2__i_5__si1_1).toHaveText(/第四十九条／２　法律で国務大臣をもってその長に充てることと定められている前項の委員会には、特に必要がある場合においては、委員会又は庁を置くことができる。/);
+    await expect(a_2__i_5__si1_1).toHaveText(/第四十九条／２　法律で国務大臣をもってその長に充てることと定められている前項の委員会には、特に必要がある場合においては、委員会又は庁を置くことができる。/, { timeout: 5000 });
 
     await testInfo.attach("a_2__i_5__si1_1", { body: await page.screenshot(), contentType: "image/png" });
 

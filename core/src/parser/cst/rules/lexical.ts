@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import { irohaChars } from "../../../law/num";
 import { factory } from "../factory";
 

@@ -9,7 +9,7 @@ const fetch = async (...args) => {
         return fetch(...args);
 
     } catch {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const fetch = require("node-fetch").default;
         return fetch(...args);
     }

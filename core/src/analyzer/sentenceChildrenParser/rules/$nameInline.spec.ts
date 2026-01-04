@@ -12,7 +12,6 @@ const env = initialEnv({ target: "" });
 describe("Test $nameInline", () => {
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const origEL = loadEL({
             tag: "Sentence",
             attr: {},

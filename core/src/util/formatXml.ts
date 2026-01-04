@@ -197,7 +197,7 @@ const processProcessingInstruction = (node: XmlParserProcessingInstructionNode, 
         newLine(state);
     }
     appendContent(state, "<?" + node.name);
-    appendContent(state, ' ' + node.content.trim());
+    appendContent(state, " " + node.content.trim());
     appendContent(state, "?>");
 };
 

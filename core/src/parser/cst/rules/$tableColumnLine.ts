@@ -14,7 +14,6 @@ export const $tableColumnLine: WithErrorRule<TableColumnLine> = factory
     .withName("tableColumnLine")
     .sequence(s => s
         .and(() => $indents, "indentsStruct")
-        // eslint-disable-next-line no-irregular-whitespace
         .and(r => r
             .zeroOrOne(r => r
                 .sequence(s => s

@@ -14,7 +14,6 @@ import { renderDocxAsync } from "../common/docx/file";
 import { w } from "../common/docx/tags";
 
 describe("Test HTML sentenceChildrenRun", () => {
-    /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
         const input = loadEL({
@@ -53,7 +52,7 @@ describe("Test HTML sentenceChildrenRun", () => {
                         },
                         {
                             tag: "__PEnd",
-                            attr: { "type": "square" },
+                            attr: { type: "square" },
                             children: ["」"],
                         },
                     ],
@@ -124,7 +123,6 @@ ${rendered}
 
 
 describe("Test DOCX sentenceChildrenRun", () => {
-    /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
 
@@ -164,7 +162,7 @@ describe("Test DOCX sentenceChildrenRun", () => {
                         },
                         {
                             tag: "__PEnd",
-                            attr: { "type": "square" },
+                            attr: { type: "square" },
                             children: ["」"],
                         },
                     ],

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */ //[md-ignore]
-
 /* //[md-ignore]
 Lawtext query の使用方法
 ====================================================

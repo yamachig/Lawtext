@@ -57,12 +57,14 @@ export const generateDocs = async (targetDir: string): Promise<void> => {
         // excludePrivate: true,
         // excludeProtected: true,
         // excludeInternal: true,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         excludeNotDocumented: true,
         name: "Lawtext query",
         readme: path.join(tempIncludesDir, "readme.md"),
         // projectDocuments: [`${tempIncludesDir}/**/*`],
         out: targetDir,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         sourceLinkExternal: true,
     }, [

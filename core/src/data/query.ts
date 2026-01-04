@@ -6,7 +6,7 @@ import type { Loader } from "./loaders/common";
 import { FetchElawsLoader } from "./loaders/FetchElawsLoader";
 import type { WorkersPool } from "./workersPool";
 import { elementToEL } from "../node/el/xmlToEL";
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;
 const domParser = new DOMParser();
 
@@ -87,7 +87,7 @@ export class Query<
         } else if ("match" in criteria) {
             this.criteria = criteria;
         } else if (typeof criteria === "function") {
-            this.criteria = { "match": criteria };
+            this.criteria = { match: criteria };
         } else {
             throw assertNever(criteria);
         }
@@ -577,7 +577,6 @@ export class LawQueryItem extends LawInfo implements QueryItem {
         return item;
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     protected static initialCache = () => ({
         imageData: null as Uint8Array | null,
         xml: null as string | null,

@@ -7,7 +7,6 @@ import { toVirtualLines, VirtualOnlyLineType as VirtualL } from "./virtualLine";
 describe("Test virtualLine", () => {
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const target: [
             expected: [
                 lineType: LineType,

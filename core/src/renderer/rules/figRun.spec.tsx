@@ -18,7 +18,6 @@ import type { DOCXOptions } from "../common/docx/component";
 import { unzip } from "../../util/zip";
 
 describe("Test HTML figRun", () => {
-    /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
         const input = loadEL({
@@ -58,7 +57,6 @@ ${rendered}
 
 
 describe("Test DOCX figRun", () => {
-    /* eslint-disable no-irregular-whitespace */
 
     it("Success case: without figDataManager", async () => {
 

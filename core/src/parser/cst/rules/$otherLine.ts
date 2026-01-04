@@ -24,7 +24,6 @@ export const $otherLine: WithErrorRule<OtherLine> = factory
         .and(r => r
             .zeroOrMore(r => r
                 .sequence(s => s
-                    // eslint-disable-next-line no-irregular-whitespace
                     .and(r => r
                         .sequence(s => s
                             .and(r => r.regExp(/^:[^:\r\n]+:/), "value")

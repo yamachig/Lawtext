@@ -107,7 +107,7 @@ export class FetchStoredLoader extends Loader {
         try {
             const res = await fetch(this.listCSVPath, { method: "HEAD" });
             return res.ok;
-        } catch (e) {
+        } catch {
             return false;
         }
     }
@@ -116,7 +116,7 @@ export class FetchStoredLoader extends Loader {
         try {
             const res = await fetch(this.listJsonPath, { method: "HEAD" });
             return res.ok;
-        } catch (e) {
+        } catch {
             return false;
         }
     }

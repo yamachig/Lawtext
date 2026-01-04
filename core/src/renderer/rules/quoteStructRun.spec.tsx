@@ -160,7 +160,6 @@ describe("Test HTML quoteStructRun", () => {
 `;
         const element = <HTMLQuoteStructRun el={input} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
-        console;
         const formatted = formatXML(rendered, { collapseContent: true });
         assert.strictEqual(
             formatted,

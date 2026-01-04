@@ -49,7 +49,7 @@ export const noteLikeToLines = (noteLike: std.NoteLike, indentTexts: string[]): 
                     null,
                 ));
             }
-        } catch (e) {
+        } catch {
             //
         }
         lines.push(line);
@@ -144,9 +144,9 @@ export const $style = makeNoteLikeRule("Style");
 export const $format = makeNoteLikeRule("Format");
 
 const noteLikeRules = {
-    "NoteStruct": $note,
-    "StyleStruct": $style,
-    "FormatStruct": $format,
+    NoteStruct: $note,
+    StyleStruct: $style,
+    FormatStruct: $format,
 } as const;
 
 export const makeNoteLikeStructRule = <TTag extends (typeof std.noteLikeStructTags)[number]>(tag: TTag): WithErrorRule<StdELType<TTag>> => {

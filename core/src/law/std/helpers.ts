@@ -1,4 +1,4 @@
-/* eslint-disable @stylistic/js/quote-props */
+/* eslint-disable @stylistic/quote-props */
 import type { EL } from "../../node/el";
 import type * as std from "./stdEL";
 

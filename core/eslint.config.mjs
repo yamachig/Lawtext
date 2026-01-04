@@ -1,14 +1,15 @@
 import globals from "globals";
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 import tsdoc from "eslint-plugin-tsdoc";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
-import stylisticTs from "@stylistic/eslint-plugin-ts";
+import stylistic from "@stylistic/eslint-plugin";
 
-export default tseslint.config(
+export default defineConfig(
     {
-        ignores: ["dist/**/*", "data/**/*"],
+        ignores: ["dist/**/*", "data/**/*", "eslint.config.mjs"],
     },
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
@@ -31,7 +32,7 @@ export default tseslint.config(
             tsdoc,
             react,
             "react-hooks": reactHooks,
-            "@stylistic/ts": stylisticTs,
+            "@stylistic": stylistic,
         },
 
         settings: {
@@ -117,7 +118,7 @@ export default tseslint.config(
             "eol-last": ["error", "always"],
             "keyword-spacing": "error",
 
-            "@stylistic/js/quote-props": ["error", "as-needed"],
+            "@stylistic/quote-props": ["error", "as-needed"],
 
             "no-implicit-coercion": "error",
 
@@ -130,7 +131,7 @@ export default tseslint.config(
             "no-unused-vars": "off",
             "@typescript-eslint/no-unused-vars": ["error"],
 
-            "@typescript-eslint/type-annotation-spacing": "error",
+            "@stylistic/type-annotation-spacing": "error",
             "@typescript-eslint/consistent-type-imports": [
                 "error", {
                     disallowTypeAnnotations: false,

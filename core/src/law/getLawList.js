@@ -9,6 +9,7 @@ export const getLawList = async () => {
         try {
             lawList = (await eval("import(\"./lawList.json\", { assert: { type: \"json\" } })")).default;
         } catch {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             lawList = require("./lawList.json");
         }
         _lawList = lawList.map(([lawID, lawNum, lawTitle, abbrev]) => ({ lawID, lawNum, lawTitle, abbrev }));

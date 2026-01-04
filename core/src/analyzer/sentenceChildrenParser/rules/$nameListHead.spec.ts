@@ -12,7 +12,6 @@ const env = initialEnv({ target: "" });
 describe("Test $nameListHead", () => {
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const origEL = loadEL({
             tag: "Sentence",
             attr: {},
@@ -61,7 +60,6 @@ describe("Test $nameListHead", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const origEL = loadEL({
             tag: "Sentence",
             attr: {},
@@ -145,7 +143,6 @@ describe("Test $nameListHead", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const origEL = loadEL({
             tag: "Sentence",
             attr: {},
@@ -231,7 +228,6 @@ describe("Test $nameListHead", () => {
 
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const origEL = loadEL({
             tag: "Sentence",
             attr: {},
@@ -394,7 +390,6 @@ describe("Test $nameListHead", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const origEL = loadEL({
             tag: "Sentence",
             attr: {},
@@ -443,7 +438,6 @@ describe("Test $nameListHead", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const origEL = loadEL({
             tag: "Sentence",
             attr: {},
@@ -555,7 +549,6 @@ describe("Test $nameListHead", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const origEL = loadEL({
             tag: "Sentence",
             attr: {},

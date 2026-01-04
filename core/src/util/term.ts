@@ -1,19 +1,12 @@
 import { Bar, Presets } from "cli-progress";
 
 export enum TERMC {
-    // eslint-disable-next-line no-unused-vars
     DEFAULT = "\x1b[39m",
-    // eslint-disable-next-line no-unused-vars
     RED = "\x1b[31m",
-    // eslint-disable-next-line no-unused-vars
     GREEN = "\x1b[32m",
-    // eslint-disable-next-line no-unused-vars
     YELLOW = "\x1b[33m",
-    // eslint-disable-next-line no-unused-vars
     BLUE = "\x1b[34m",
-    // eslint-disable-next-line no-unused-vars
     MAGENTA = "\x1b[35m",
-    // eslint-disable-next-line no-unused-vars
     CYAN = "\x1b[36m",
 }
 

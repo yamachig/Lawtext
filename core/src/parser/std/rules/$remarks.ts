@@ -100,7 +100,7 @@ export const remarksToLines = (remarks: std.Remarks, indentTexts: string[]): Lin
                         null,
                     ));
                 }
-            } catch (e) {
+            } catch {
                 //
             }
             // eslint-disable-next-line no-irregular-whitespace

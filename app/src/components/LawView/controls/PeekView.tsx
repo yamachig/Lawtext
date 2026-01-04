@@ -16,11 +16,8 @@ const PeekViewTextSpan = styled.span`
     transition: background-color 0.3s, border-bottom-color 0.3s;
 `;
 
-// eslint-disable-next-line no-unused-vars
 enum PeekViewFloatState {
-    // eslint-disable-next-line no-unused-vars
     CLOSED,
-    // eslint-disable-next-line no-unused-vars
     OPEN,
 }
 

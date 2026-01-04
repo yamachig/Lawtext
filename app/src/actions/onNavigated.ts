@@ -9,7 +9,7 @@ import { showErrorModal } from "./showErrorModal";
 import type { LawDataProps } from "@appsrc/lawdata/common";
 import getOnMessage from "./getOnMessage";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const sampleXml: string = require("./405AC0000000088_20240401_504AC0100000052.xml").default;
 
 export const onNavigated = async (

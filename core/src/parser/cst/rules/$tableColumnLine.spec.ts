@@ -91,7 +91,6 @@ describe("Test $tableColumnLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
     -   [Valign="top"]  又は他の
@@ -158,7 +157,6 @@ describe("Test $tableColumnLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
     - 又は他の
@@ -217,7 +215,6 @@ describe("Test $tableColumnLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
     * 又は他の
@@ -276,7 +273,6 @@ describe("Test $tableColumnLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
     * * 又は他の
@@ -335,7 +331,6 @@ describe("Test $tableColumnLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
     * - 又は他の

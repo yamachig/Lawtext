@@ -167,7 +167,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Article",
                                 attr: {
-                                    "Num": "1",
+                                    Num: "1",
                                 },
                             },
                         },
@@ -177,7 +177,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Paragraph",
                                 attr: {
-                                    "Num": "1",
+                                    Num: "1",
                                 },
                             },
                         },
@@ -209,7 +209,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Article",
                                 attr: {
-                                    "Num": "2",
+                                    Num: "2",
                                 },
                             },
                         },
@@ -219,7 +219,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Paragraph",
                                 attr: {
-                                    "Num": "1",
+                                    Num: "1",
                                 },
                             },
                         },
@@ -229,7 +229,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Item",
                                 attr: {
-                                    "Num": "1",
+                                    Num: "1",
                                 },
                             },
                         },
@@ -261,7 +261,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Article",
                                 attr: {
-                                    "Num": "2",
+                                    Num: "2",
                                 },
                             },
                         },
@@ -271,7 +271,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Item",
                                 attr: {
-                                    "Num": "1",
+                                    Num: "1",
                                 },
                             },
                         },
@@ -311,7 +311,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Paragraph",
                                 attr: {
-                                    "Num": "2",
+                                    Num: "2",
                                 },
                             },
                         },
@@ -343,7 +343,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Chapter",
                                 attr: {
-                                    "Num": "1",
+                                    Num: "1",
                                 },
                             },
                         },
@@ -375,7 +375,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "AppdxTable",
                                 attr: {
-                                    "Num": "1",
+                                    Num: "1",
                                 },
                             },
                         },
@@ -461,7 +461,7 @@ describe("Test path.v1.locate", () => {
                     el: {
                         tag: "Article",
                         attr: {
-                            "Num": "2",
+                            Num: "2",
                         },
                     },
                 },
@@ -471,7 +471,7 @@ describe("Test path.v1.locate", () => {
                             el: {
                                 tag: "Article",
                                 attr: {
-                                    "Num": "2",
+                                    Num: "2",
                                 },
                             },
                         },

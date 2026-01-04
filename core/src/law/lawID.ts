@@ -1,3 +1,4 @@
+/* eslint-disable @stylistic/quote-props */
 import { assertNever } from "../util";
 import { Era } from "./std";
 

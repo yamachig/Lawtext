@@ -4,14 +4,14 @@ import { decodeBase64, pictMimeDict } from "./util";
 import { fetch as nodeFetch } from "./util/node-fetch";
 import { unzip } from "./util/zip";
 const fetch: typeof window.fetch = (global["fetch"]) || (global["window"] && window.fetch) || nodeFetch;
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const XMLSerializer: typeof window.XMLSerializer = (global["window"] && window.XMLSerializer) || require("@xmldom/xmldom").XMLSerializer;
 const domParser = new DOMParser();
 const xmlSerializer = new XMLSerializer();
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
-// const Blob: typeof window.Blob = (global["window"] && window.Blob) || require("buffer").Blob;
 
 export const lawlistsURL = "https://laws.e-gov.go.jp/api/1/lawlists/1";
 export const lawdataURL = "https://laws.e-gov.go.jp/api/1/lawdata/";
@@ -138,7 +138,7 @@ export class ElawsLawData extends LawXMLStruct {
                                 : new Uint8Array(buf).buffer
                         ),
                         type,
-                    }
+                    },
                 );
             }
         }

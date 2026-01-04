@@ -105,7 +105,6 @@ export class LawInfo implements BaseLawInfo {
         return lawInfo;
     }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public static getHeader() {
         return [
             "LawID",
@@ -146,7 +145,6 @@ export class LawInfo implements BaseLawInfo {
     }
 
     public addReferencingLawNums(xml: string): void {
-        // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
         for (const m of xml.match(new RegExp(ptnLawNumLike, "g")) || []) {
             if (m !== this.LawNum) this.ReferencingLawNums.add(m);
         }

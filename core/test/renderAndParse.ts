@@ -101,7 +101,6 @@ const renderAndParse = async (loader: Loader, lawNum: string) => {
 
     await analyze({ elToBeModified: parsedEL });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const parsedXML = formatXML(outerXML(parsedEL)) as string;
     const parsedDOM = domParser.parseFromString(parsedXML, "application/xml");
     await promisify(fs.writeFile)(tempParsedXml, parsedXML, { encoding: "utf-8" });

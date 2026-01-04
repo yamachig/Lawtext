@@ -1,4 +1,5 @@
-import { DOMParser, Node, Element } from "@xmldom/xmldom";
+import type { Element } from "@xmldom/xmldom";
+import { DOMParser, Node } from "@xmldom/xmldom";
 import { EL } from ".";
 
 

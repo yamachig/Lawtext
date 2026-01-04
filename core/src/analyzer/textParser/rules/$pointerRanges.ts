@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import { typeCharsMap } from "../../../law/std/helpers";
 import { irohaChars, parseKanjiNum } from "../../../law/num";
 import type { SentenceChildEL } from "../../../node/cst/inline";

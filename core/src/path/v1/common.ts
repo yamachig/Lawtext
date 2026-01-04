@@ -1,4 +1,4 @@
-/* eslint-disable @stylistic/js/quote-props */
+/* eslint-disable @stylistic/quote-props */
 import type { LawIDStruct } from "../../law/lawID";
 import type { articlesContainerTags } from "../../node/container";
 import { toplevelContainerTags } from "../../node/container";

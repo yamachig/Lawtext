@@ -17,7 +17,6 @@ const env = initialEnv({
 describe("Test $pointerRanges", () => {
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "第四十六条において同じ。";
         const expectedErrorMessages: string[] = [];
@@ -60,7 +59,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "第三十八条の二十九、第三十八条の三十一第四項及び第六項並びに第三十八条の三十八において準用する場合を含む。";
         const expectedErrorMessages: string[] = [];
@@ -190,7 +188,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "次項第三号、第十条第一項、第十二条、第十七条、第十八条、第二十四条の二第四項、第二十七条の十三第二項第九号、第三十八条の二第一項、第七十条の五の二第一項、第七十一条の五、第七十三条第一項ただし書、第三項及び第六項並びに第百二条の十八第一項において同じ。";
         const expectedErrorMessages: string[] = [];
@@ -661,7 +658,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "この号、第三十八条の三第一項第二号及び第三十八条の八第二項において";
         const expectedErrorMessages: string[] = [];
@@ -783,7 +779,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "第七十一条の三の二第四項第四号イにおいて同じ。";
         const expectedErrorMessages: string[] = [];
@@ -853,7 +848,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "前項、第三十八条の二の二第一項から第三項まで及び第三十八条の三第一項";
         const expectedErrorMessages: string[] = [];
@@ -991,7 +985,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "第七十五条第一項又は第七十六条第四項（第四号を除く。）若しくは第五項（第五号を除く。）の規定により無線局の免許の取消しを受け、その取消しの日から二年を経過しない者";
         const expectedErrorMessages: string[] = [];
@@ -1231,7 +1224,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "この法律又はこの法律に基づく命令の規定による書類等の提出";
         const expectedErrorMessages: string[] = [];
@@ -1309,7 +1301,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "第二十四条の二第五項各号（第二号を除く。）のいずれかに該当するに至つたとき。";
         const expectedErrorMessages: string[] = [];
@@ -1433,7 +1424,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "第九十九条の十二若しくは同法第百七十八条に規定する意見の聴取の手続を主宰する。";
         const expectedErrorMessages: string[] = [];
@@ -1511,7 +1501,6 @@ describe("Test $pointerRanges", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "別表第一に掲げる条件のいずれかに適合する知識経験を有する者が無線設備等の点検を行うものであること。";
         const expectedErrorMessages: string[] = [];

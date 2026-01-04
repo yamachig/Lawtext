@@ -11,7 +11,7 @@ export const ensureFetch = async (): Promise<{isFile: boolean, canFetch: boolean
     try {
         const res = await fetch("./index.html", { method: "HEAD" });
         return { isFile, canFetch: res.ok };
-    } catch (e) {
+    } catch {
         return { isFile, canFetch: false };
     }
 };

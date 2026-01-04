@@ -472,7 +472,6 @@ describe("Test $law and lawToLines", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const lawtextWithMarker = `\
 平成十四年度における国民年金法による年金の額等の改定の特例に関する法律
 （平成十四年法律第二十一号）

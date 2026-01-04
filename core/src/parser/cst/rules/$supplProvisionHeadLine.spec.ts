@@ -114,7 +114,6 @@ describe("Test $supplProvisionHeadLine", () => {
     });
 
     it("Fail case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
 附則別表第二（第十九条、第二十一条関係）

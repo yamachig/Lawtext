@@ -94,7 +94,6 @@ describe("Test $otherLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
 この法律は、会社法の施行の日から施行する。
@@ -150,7 +149,6 @@ describe("Test $otherLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
     :style-struct-title:  様式第一
@@ -263,7 +261,6 @@ describe("Test $otherLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
     :keep-leading-spaces:  様式第一
@@ -326,7 +323,6 @@ describe("Test $otherLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
     :ignore-title: 様式第一
@@ -389,7 +385,6 @@ describe("Test $otherLine", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
     :remarks:[LineBreak="true"]
@@ -451,7 +446,6 @@ describe("Test $otherLine", () => {
     });
 
     it("Fail case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = "";
         const expectedResult = {

@@ -9,7 +9,6 @@ const env = initialEnv({});
 describe("Test $blankLine", () => {
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const offset = 0;
         const target = `\
 

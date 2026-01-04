@@ -2,7 +2,7 @@ import { __loader } from "./prepareTest";
 
 if (!__loader) {
     describe("Assert loader", () => {
-        it("Assert loader", async function () {
+        it("Assert loader", async () => {
             throw new Error(`
 Some tests were skipped and marked "pending" because the environment variable DATA_PATH was not set.
 You can specify the variable in the ".env" file at the top of the "core" directory.

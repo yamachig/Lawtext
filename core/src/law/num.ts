@@ -1,3 +1,4 @@
+/* eslint-disable @stylistic/quote-props */
 import { assertNever } from "../util";
 
 const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
@@ -107,9 +108,7 @@ const replaceWideNum = (text: string): string => {
 };
 
 export enum KanaMode {
-    // eslint-disable-next-line no-unused-vars
     Iroha = "Iroha",
-    // eslint-disable-next-line no-unused-vars
     Aiu = "Aiu",
 }
 

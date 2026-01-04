@@ -34,7 +34,6 @@ describe("Test HTML arithFormulaRun", () => {
 `;
         const element = <HTMLArithFormulaRun el={input} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
-        console;
         const formatted = formatXML(rendered, { collapseContent: true });
         assert.strictEqual(
             formatted,
@@ -120,7 +119,6 @@ testtest1<span class="arith-formula" style="display:inline-block"><div class="pa
 `;
         const element = <HTMLColumnsOrSentencesRun els={[input]} htmlOptions={{}} />;
         const rendered = renderToStaticMarkup(element);
-        console;
         const formatted = formatXML(rendered, { collapseContent: true });
         assert.strictEqual(
             formatted,

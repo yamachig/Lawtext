@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import { EL } from "../../../node/el";
 import { __Text } from "../../../node/el/controls";
 import { factory } from "../factory";

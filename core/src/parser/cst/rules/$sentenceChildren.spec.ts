@@ -368,7 +368,6 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const target = `\
 同法第四十六条中「技術基準（」とあるのは
 `;
@@ -437,7 +436,6 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const target = `\
 この法律において「スパイクタイヤ」とは、積雪又は凍結の状態にある路面において滑ることを防止するために金属<Ruby>鋲<Rt>びよう</Rt></Ruby>その他これに類する物をその接地部に固定したタイヤをいう。
 `;
@@ -528,7 +526,6 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const target = `\
 技術基準（」
 `;
@@ -574,7 +571,6 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const target = `\
 もつぱら日本国憲法第七十三条にいう官吏に関する事務を掌理する基準を定めるものである。
 `;
@@ -601,7 +597,6 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const target = `\
 裁判員の参加する刑事裁判に関する法律（平成１６年法律第６３号）第２条第１項に規定する事件に該当する事件の捜査を行う場合は、
 `;
@@ -670,7 +665,6 @@ describe("Test $sentenceChildren and sentenceChildrenToString", () => {
     });
 
     it("Success case", () => {
-        /* eslint-disable no-irregular-whitespace */
         const target = `\
 もつぱら&#x3000;日本国憲法第七十三条にいう官吏に関する事務を掌理する基準を定めるものである&#12288;。
 `;

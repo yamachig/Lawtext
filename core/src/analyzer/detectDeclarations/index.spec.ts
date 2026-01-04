@@ -13,7 +13,6 @@ import { getLawTitleLength } from "..";
 describe("Test detectDeclarations", () => {
 
     it("Success case: nameInline", async () => {
-        /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
             attr: {},
@@ -235,7 +234,6 @@ describe("Test detectDeclarations", () => {
     });
 
     it("Success case: lawRef", async () => {
-        /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
             attr: {},
@@ -456,7 +454,6 @@ describe("Test detectDeclarations", () => {
     });
 
     it("Success case: lawRef", async () => {
-        /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
             attr: {},
@@ -4519,7 +4516,6 @@ describe("Test detectDeclarations", () => {
     });
 
     it("Success case: lawRef", async () => {
-        /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
             attr: {},
@@ -4722,7 +4718,6 @@ describe("Test detectDeclarations", () => {
     });
 
     it("Success case: lawRef", async () => {
-        /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
             attr: {},
@@ -4915,7 +4910,6 @@ describe("Test detectDeclarations", () => {
     });
 
     it("Success case: lawRef", async () => {
-        /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
             attr: {},
@@ -5223,7 +5217,6 @@ describe("Test detectDeclarations", () => {
     });
 
     it("Success case: lawRef", async () => {
-        /* eslint-disable no-irregular-whitespace */
         const inputElToBeModified = loadEL({
             tag: "Subitem1",
             attr: {},

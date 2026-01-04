@@ -13,7 +13,6 @@ import htmlCSS from "./htmlCSS";
 import { promisify } from "util";
 
 describe("Test HTML list", () => {
-    /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
         const input = loadEL({
@@ -86,7 +85,6 @@ ${rendered}
 });
 
 describe("Test DOCX list", () => {
-    /* eslint-disable no-irregular-whitespace */
 
     it("Success case", async () => {
         const input = loadEL({

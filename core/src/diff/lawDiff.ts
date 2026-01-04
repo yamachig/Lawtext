@@ -4,16 +4,12 @@ import * as util from "../util";
 import type { EditTable } from "./editTable";
 import { compare } from "./editTable";
 import * as std from "../law/std";
-import { Node } from "@xmldom/xmldom";
+import type { Node } from "@xmldom/xmldom";
 
 export enum TagType {
-    // eslint-disable-next-line no-unused-vars
     Open = "Open",
-    // eslint-disable-next-line no-unused-vars
     Close = "Close",
-    // eslint-disable-next-line no-unused-vars
     Empty = "Empty",
-    // eslint-disable-next-line no-unused-vars
     Text = "Text",
 }
 
@@ -28,11 +24,8 @@ export interface LawDiffResult<T> {
 
 export type LawDiffResultItem<T> = LawDiffElementMismatch<T> | LawDiffElementChange<T> | LawDiffNoDiff<T>
 export enum LawDiffType {
-    // eslint-disable-next-line no-unused-vars
     ElementMismatch,
-    // eslint-disable-next-line no-unused-vars
     ElementChange,
-    // eslint-disable-next-line no-unused-vars
     NoDiff,
 }
 
@@ -61,22 +54,15 @@ export interface LawDiffNoDiff<T> {
 }
 
 export enum ProblemStatus {
-    // eslint-disable-next-line no-unused-vars
     Error = 2,
-    // eslint-disable-next-line no-unused-vars
     Warning = 1,
-    // eslint-disable-next-line no-unused-vars
     NoProblem = 0,
 }
 
 export enum DiffStatus {
-    // eslint-disable-next-line no-unused-vars
     Add = "Add",
-    // eslint-disable-next-line no-unused-vars
     Remove = "Remove",
-    // eslint-disable-next-line no-unused-vars
     Change = "Change",
-    // eslint-disable-next-line no-unused-vars
     NoChange = "NoChange",
 }
 
@@ -290,11 +276,8 @@ const elsToTexts = (els: [ComparableEL, TagType][]) => {
 };
 
 export enum LawDiffMode {
-    // eslint-disable-next-line no-unused-vars
     DiffAll = "DiffAll",
-    // eslint-disable-next-line no-unused-vars
     NoProblemAsNoDiff = "NoProblemAsNoDiff",
-    // eslint-disable-next-line no-unused-vars
     WarningAsNoDiff = "WarningAsNoDiff",
 }
 
@@ -393,7 +376,7 @@ const getDiffTableRows = (origOldELs: [ComparableEL, TagType][], origNewELs: [Co
         let editTable: EditTable<string> | null = null;
         try {
             editTable = compare(partOldTexts, partNewTexts);
-        } catch (e) {
+        } catch {
             if (truncateTagsListIndex + 1 < truncateTagsList.length) {
                 try {
                     const rangesListL2 = chopELs(
@@ -1321,7 +1304,7 @@ const collapseChange = <T>(diff: EditTable<T>) => {
             const maxLength = Math.max(oldItems.length, newItems.length);
             for (let i = 0; i < maxLength; i++) {
                 ret.push({
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     status: status as any,
                     oldItem: oldItems[i] || null,
                     newItem: newItems[i] || null,
@@ -1369,21 +1352,19 @@ const getPosition = ([el, tt]: [ComparableEL, TagType], dom: Node): LawPosition 
 
     if (xPathString) {
         try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const r = (xpath as any).selectWithResolver(
                 xPathString,
                 dom,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (xpath as any).createNSResolver(dom),
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (xpath as any).XPathResult.ANY_TYPE,
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 null as any,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ) as any;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
             const rel = r[0];
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
             return { line: rel.lineNumber, col: rel.columnNumber, str: `${rel.lineNumber}:${rel.columnNumber}` };
         } catch (e) {
             console.error(e);
