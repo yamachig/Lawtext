@@ -1,4 +1,3 @@
-
 import type * as std from "../../law/std";
 import type { Declarations } from "../common/declarations";
 import { ____VarRef } from "../../node/el/controls/varRef";
@@ -27,51 +26,68 @@ export const matchVariableReferences = (
 ) => {
     const errors: ErrorMessage[] = [];
 
-    const found: [[offsetStart: number, offsetEnd: number], ____Declaration][] = [];
+    const candidates: [[offsetStart: number, offsetEnd: number], ____Declaration][] = [];
 
     const textRange = sentenceEnv.textRageOfEL(textEL) ?? [0, 0];
+    const rawText = textEL.text();
 
-    {
-        let ramainingText = textEL.text();
-        for (const declaration of declarations.values()) {
-            if (declaration.attr.name.length === 0) continue;
-            for (;;) {
-                const nameOffset = ramainingText.indexOf(declaration.attr.name);
-                if (nameOffset < 0) break;
+    // Collect ALL candidate matches without masking, so that longer terms
+    // that contain shorter ones are not lost due to iteration order.
+    for (const declaration of declarations.values()) {
+        if (declaration.attr.name.length === 0) continue;
+        let searchFrom = 0;
+        for (;;) {
+            const nameOffset = rawText.indexOf(declaration.attr.name, searchFrom);
+            if (nameOffset < 0) break;
 
-                const foundTextRange = {
-                    start: textRange[0] + nameOffset,
-                    end: textRange[0] + nameOffset + declaration.attr.name.length,
-                };
-                if (declaration.scope.some(scopeRange => (
-                    (
-                        (scopeRange.start.sentenceIndex < sentenceEnv.index)
-                        || (
-                            (scopeRange.start.sentenceIndex === sentenceEnv.index)
-                            && (scopeRange.start.textOffset <= foundTextRange.start)
-                        )
+            const foundTextRange = {
+                start: textRange[0] + nameOffset,
+                end: textRange[0] + nameOffset + declaration.attr.name.length,
+            };
+            if (declaration.scope.some(scopeRange => (
+                (
+                    (scopeRange.start.sentenceIndex < sentenceEnv.index)
+                    || (
+                        (scopeRange.start.sentenceIndex === sentenceEnv.index)
+                        && (scopeRange.start.textOffset <= foundTextRange.start)
                     )
-                    && (
-                        (sentenceEnv.index < scopeRange.end.sentenceIndex)
-                        || (
-                            (sentenceEnv.index === scopeRange.end.sentenceIndex)
-                            && (foundTextRange.end <= scopeRange.end.textOffset)
-                        )
+                )
+                && (
+                    (sentenceEnv.index < scopeRange.end.sentenceIndex)
+                    || (
+                        (sentenceEnv.index === scopeRange.end.sentenceIndex)
+                        && (foundTextRange.end <= scopeRange.end.textOffset)
                     )
-                ))) {
-                    found.push([[nameOffset, nameOffset + declaration.attr.name.length], declaration]);
-                    ramainingText = ramainingText.slice(0, nameOffset) + "　".repeat(declaration.attr.name.length) + ramainingText.slice(nameOffset + declaration.attr.name.length);
-                }
-
+                )
+            ))) {
+                candidates.push([[nameOffset, nameOffset + declaration.attr.name.length], declaration]);
             }
+
+            searchFrom = nameOffset + 1;
+        }
+    }
+
+    if (candidates.length === 0) return null;
+
+    // Sort by start offset ascending; for the same start, longer match first (descending end).
+    // This implements a greedy longest-match / non-overlapping selection.
+    candidates.sort(([a], [b]) => (a[0] - b[0]) || (b[1] - a[1]));
+
+    // Greedy non-overlapping selection: accept a candidate only if its
+    // start is >= the end of the last accepted match.
+    const found: [[offsetStart: number, offsetEnd: number], ____Declaration][] = [];
+    let acceptedEnd = -1;
+    for (const candidate of candidates) {
+        const [offsetRange] = candidate;
+        if (offsetRange[0] >= acceptedEnd) {
+            found.push(candidate);
+            acceptedEnd = offsetRange[1];
         }
     }
 
     if (found.length === 0) return null;
 
-    found.sort(([a], [b]) => ((a[0] - b[0]) || (a[1] - b[1]) ));
-
-    const text = textEL.text();
+    const text = rawText;
 
     const newItems: SentenceChildEL[] = [];
     const varRefs: ____VarRef[] = [];
