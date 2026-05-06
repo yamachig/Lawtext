@@ -21,3 +21,4 @@ dist
 dist-dev
 dist-prod
 __tmp__*
+local-samples/

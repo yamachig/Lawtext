@@ -2,6 +2,7 @@ import { assert } from "chai";
 import type * as std from "../../law/std";
 import type { JsonEL } from "../../node/el/jsonEL";
 import loadEL from "../../node/el/loadEL";
+import xmlToEL from "../../node/el/xmlToEL";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from ".";
 import { parse } from "../../parser/lawtext";
@@ -5606,5 +5607,61 @@ describe("Test detectDeclarations", () => {
             inputElToBeModified.json(true),
             expectedModifiedInput,
         );
+    });
+});
+
+describe("Test detectDeclarations regression cases from actual law text", () => {
+
+    it("detects every quoted term in an inline name list sharing the same scope", async () => {
+        const xml = `\
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Law Era="Heisei" Lang="ja" LawType="MinisterialOrdinance" Num="20" Year="23">
+  <LawNum>平成二十三年財務省令第二十号</LawNum>
+  <LawBody>
+    <LawTitle>東日本大震災の被災者等に係る国税関係法律の臨時特例に関する法律施行規則</LawTitle>
+    <MainProvision>
+      <Chapter Num="1">
+        <ChapterTitle>第一章　総則</ChapterTitle>
+        <Article Num="1">
+          <ArticleCaption>（定義）</ArticleCaption>
+          <ArticleTitle>第一条</ArticleTitle>
+          <Paragraph Num="2">
+            <ParagraphNum>２</ParagraphNum>
+            <ParagraphSentence>
+              <Sentence Num="1" WritingMode="vertical">次章において「居住者」、「確定申告書」、「減価償却資産」又は「国内」とは、それぞれ法第二条第二項第一号、第二号、第八号又は第九号に規定する居住者、確定申告書、減価償却資産又は国内をいう。</Sentence>
+            </ParagraphSentence>
+          </Paragraph>
+        </Article>
+      </Chapter>
+      <Chapter Num="2">
+        <ChapterTitle>第二章　所得税法等の特例</ChapterTitle>
+        <Article Num="2">
+          <ArticleTitle>第二条</ArticleTitle>
+          <Paragraph Num="1">
+            <ParagraphNum/>
+            <ParagraphSentence>
+              <Sentence Num="1" WritingMode="vertical">所得税法等の特例について定める。</Sentence>
+            </ParagraphSentence>
+          </Paragraph>
+        </Article>
+      </Chapter>
+    </MainProvision>
+  </LawBody>
+</Law>
+`;
+        const inputElToBeModified = xmlToEL(xml) as std.StdEL | std.__EL;
+        const sentenceEnvsStruct = getSentenceEnvs(inputElToBeModified);
+        const appdxPointersResult = detectPointers(inputElToBeModified);
+        const pointerEnvsStruct = getPointerEnvs({ sentenceEnvsStruct, appdxPointers: appdxPointersResult.value }).value;
+        const result = detectDeclarations(sentenceEnvsStruct, pointerEnvsStruct, await getLawTitleLength());
+        const names = ["居住者", "確定申告書", "減価償却資産", "国内"];
+
+        for (const name of names) {
+            assert.lengthOf(result.value.declarations.values().filter(declaration => (
+                declaration.attr.name === name
+                && declaration.nameSentenceTextRange.start.sentenceIndex === 0
+            )), 1, name);
+        }
+        assert.deepStrictEqual(result.errors.map(e => e.message), []);
     });
 });

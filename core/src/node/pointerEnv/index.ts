@@ -4,6 +4,8 @@ import { assertNever, pick } from "../../util";
 import type { Container } from "../container";
 import { getContainerType, ContainerType } from "../container";
 import type { PointerLike, SentenceEnv } from "../container/sentenceEnv";
+import type { SentenceTextRange } from "../container/sentenceEnv";
+import { enumerateSentenceTexts } from "../container/sentenceEnv";
 import { EL } from "../el";
 import type { ____Declaration, ____PF, ____Pointer } from "../el/controls";
 import { ____LawRef, ____VarRef, __Parentheses } from "../el/controls";
@@ -36,6 +38,87 @@ export interface LocateOptions {
     declarations: Map<string, ____Declaration>,
     lawRefByDeclarationID: Map<string, ____LawRef>,
 }
+
+const posLt = (
+    a: { sentenceIndex: number, textOffset: number },
+    b: { sentenceIndex: number, textOffset: number },
+): boolean => (
+    (a.sentenceIndex < b.sentenceIndex)
+    || (
+        (a.sentenceIndex === b.sentenceIndex)
+        && (a.textOffset < b.textOffset)
+    )
+);
+
+const overlapsSentenceTextRange = (
+    sentenceIndex: number,
+    textRange: [number, number],
+    targetRange: SentenceTextRange,
+): boolean => {
+    const start = { sentenceIndex, textOffset: textRange[0] };
+    const end = { sentenceIndex, textOffset: textRange[1] };
+    return posLt(start, targetRange.end) && posLt(targetRange.start, end);
+};
+
+const resolveLawRefFromDeclarationValue = (
+    declaration: ____Declaration,
+    options: LocateOptions,
+    sentenceEnvsStruct: SentenceEnvsStruct,
+    visitedDeclarationIDs: Set<string>,
+): ____LawRef | null => {
+    if (visitedDeclarationIDs.has(declaration.attr.declarationID)) return null;
+    visitedDeclarationIDs.add(declaration.attr.declarationID);
+
+    const valueRange = declaration.value?.sentenceTextRange;
+    if (!valueRange) return null;
+
+    const candidateELs: EL[] = [];
+    for (let sentenceIndex = valueRange.start.sentenceIndex; sentenceIndex <= valueRange.end.sentenceIndex; sentenceIndex++) {
+        const sentenceEnv = sentenceEnvsStruct.sentenceEnvs[sentenceIndex];
+        if (!sentenceEnv) continue;
+        for (const sentenceText of enumerateSentenceTexts(sentenceEnv.el)) {
+            const textRange = sentenceEnv.textRageOfEL(sentenceText);
+            if (textRange && overlapsSentenceTextRange(sentenceIndex, textRange, valueRange)) {
+                candidateELs.push(sentenceText as EL);
+            }
+        }
+    }
+
+    for (const candidateEL of candidateELs.toReversed()) {
+        const lawRef = resolveLawRefFromEL(candidateEL, options, sentenceEnvsStruct, visitedDeclarationIDs);
+        if (lawRef) return lawRef;
+    }
+
+    return null;
+};
+
+const resolveLawRefFromEL = (
+    el: EL,
+    options: LocateOptions,
+    sentenceEnvsStruct: SentenceEnvsStruct,
+    visitedDeclarationIDs: Set<string> = new Set(),
+): ____LawRef | null => {
+    if (el instanceof ____LawRef) {
+        return el;
+
+    } else if (el instanceof ____VarRef) {
+        const directLawRef = options.lawRefByDeclarationID.get(el.attr.declarationID);
+        if (directLawRef) return directLawRef;
+
+        const declaration = options.declarations.get(el.attr.declarationID);
+        if (declaration) {
+            return resolveLawRefFromDeclarationValue(declaration, options, sentenceEnvsStruct, visitedDeclarationIDs);
+        }
+    }
+
+    for (const sentenceText of [...enumerateSentenceTexts(el)].toReversed()) {
+        if (sentenceText === el) continue;
+        const lawRef = resolveLawRefFromEL(sentenceText as EL, options, sentenceEnvsStruct, visitedDeclarationIDs);
+        if (lawRef) return lawRef;
+    }
+
+    return null;
+};
 
 export class PointerEnv {
     public namingParent: PointerEnv | null = null;
@@ -115,27 +198,11 @@ export class PointerEnv {
                 if (prevEL instanceof __Parentheses) {
                     continue;
                 } else if (typeof prevEL !== "string") {
-                    let targetEL: EL | null = prevEL;
-                    while (targetEL) {
-                        if (targetEL instanceof ____LawRef) {
-                            prependedLawRef = targetEL;
-                        } else if (targetEL instanceof ____VarRef) {
-                            const lawRef = lawRefByDeclarationID.get(targetEL.attr.declarationID);
-                            if (lawRef) {
-                                prependedLawRef = lawRef;
-                            } else {
-                                const declaration = declarations.get(targetEL.attr.declarationID);
-                                if (declaration && declaration.value) {
-                                    const end = declaration.value.sentenceTextRange.end;
-                                    const dSentence = this.sentenceEnvsStruct.sentenceEnvs[end.sentenceIndex - (end.textOffset === 0 ? 1 : 0)];
-                                    const valueEL = dSentence.sentenceTextAt(end.textOffset === 0 ? dSentence.text.length - 1 : 0);
-                                    targetEL = valueEL;
-                                    continue;
-                                }
-                            }
-                        }
-                        break;
-                    }
+                    prependedLawRef = resolveLawRefFromEL(prevEL, {
+                        force,
+                        declarations,
+                        lawRefByDeclarationID,
+                    }, this.sentenceEnvsStruct);
                 }
                 break;
             }
