@@ -1,5 +1,5 @@
-import type * as lawDiff from "lawtext/dist/src/diff/lawDiff";
-import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
+import type * as lawDiff from "lawtext/dist/src/diff/lawDiff.js";
+import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo.js";
 
 export enum Era {
     Meiji = "Meiji",

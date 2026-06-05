@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { assertNever } from "lawtext/dist/src/util";
+import { assertNever } from "lawtext/dist/src/util/index.js";
 import * as React from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 
 export enum LawCoverageInfoCardStatus {

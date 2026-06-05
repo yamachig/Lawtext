@@ -1,6 +1,6 @@
-import server from "../src/server";
+import server from "../src/server/index.ts";
 
-if (typeof require !== "undefined" && require.main === module) {
+if (import.meta.main) {
     process.on("unhandledRejection", (listener) => {
         throw listener;
     });

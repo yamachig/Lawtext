@@ -1,20 +1,16 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es2022",
-        "downlevelIteration": true,
-        "moduleResolution": "node",
+        "target": "es2023",
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "sourceMap": true,
-        "lib": ["es2023", "scripthost"],
         "jsx": "react",
         
         "composite": true,
         "allowJs": true,
         "declaration": true,
 
-        "baseUrl": "./",
         "outDir": "dist",
         // "paths": {"@coresrc/*": ["src/*"]},
         // "rootDirs": ["src", "bin", "test"],

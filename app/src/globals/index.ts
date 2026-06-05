@@ -1,1 +1,1 @@
-export * as lawtext from "./lawtext";
+export * as lawtext from "./lawtext.ts";

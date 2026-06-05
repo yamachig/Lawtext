@@ -1,5 +1,5 @@
-import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
-import { storedLoader } from "./loaders";
+import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo.js";
+import { storedLoader } from "./loaders.ts";
 
 
 export const saveListJson = async (

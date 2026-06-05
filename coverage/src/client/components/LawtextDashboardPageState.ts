@@ -1,12 +1,12 @@
-import type { LawCoverage, LawCoverageCounts } from "../../lawCoverage";
-import { toSortString } from "../../lawCoverage";
-import type { TagType } from "lawtext/dist/src/diff/lawDiff";
-import { ComparableEL } from "lawtext/dist/src/diff/lawDiff";
-import type { EL } from "lawtext/dist/src/node/el";
-import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
+import type { LawCoverage, LawCoverageCounts } from "../../lawCoverage.ts";
+import { toSortString } from "../../lawCoverage.ts";
+import type { TagType } from "lawtext/dist/src/diff/lawDiff.js";
+import { ComparableEL } from "lawtext/dist/src/diff/lawDiff.js";
+import type { EL } from "lawtext/dist/src/node/el/index.js";
+import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL.js";
 import React from "react";
-import type { FilterInfo } from "./FilterInfo";
-import { filterInfoEqual, SortDirection, SortKey } from "./FilterInfo";
+import type { FilterInfo } from "./FilterInfo.tsx";
+import { filterInfoEqual, SortDirection, SortKey } from "./FilterInfo.tsx";
 import { useParams, useNavigate } from "react-router-dom";
 
 const domParser = new DOMParser();

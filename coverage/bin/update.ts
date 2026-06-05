@@ -1,9 +1,9 @@
 import yargs from "yargs/yargs";
-import update from "../src/update";
+import update from "../src/update/index.ts";
 
 const DEFAULT_MAX_DIFF_LENGTH = 40;
 
-if (typeof require !== "undefined" && require.main === module) {
+if (import.meta.main) {
     process.on("unhandledRejection", (listener) => {
         throw listener;
     });

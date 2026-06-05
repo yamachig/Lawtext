@@ -1,9 +1,9 @@
 import * as React from "react";
-import styled from "styled-components";
-import type { LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState";
-import { useLawtextDashboardPageState } from "./LawtextDashboardPageState";
-import MainPanel from "./MainPanel";
-import SidePanel from "./SidePanel";
+import { styled } from "styled-components";
+import type { LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState.ts";
+import { useLawtextDashboardPageState } from "./LawtextDashboardPageState.ts";
+import MainPanel from "./MainPanel.tsx";
+import SidePanel from "./SidePanel.tsx";
 
 
 const ViewerLoadingTag = styled.div`

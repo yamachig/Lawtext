@@ -1,6 +1,6 @@
 import React, { } from "react";
-import { omit } from "lawtext/dist/src/util";
-import type { OrigSetLawtextAppPageState } from "../LawtextAppPageState";
+import { omit } from "lawtext/dist/src/util/index.js";
+import type { OrigSetLawtextAppPageState } from "../LawtextAppPageState.ts";
 
 
 export const useAfterMountTasks = (origSetState: OrigSetLawtextAppPageState) => {

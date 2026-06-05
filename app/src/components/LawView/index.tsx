@@ -1,20 +1,20 @@
 import React, { useCallback, useMemo, useState } from "react";
-import styled, { createGlobalStyle } from "styled-components";
-import { HTMLLaw } from "lawtext/dist/src/renderer/rules/law";
-import type { LawtextAppPageStateStruct, OrigSetLawtextAppPageState } from "../LawtextAppPageState";
-import type { LawData } from "@appsrc/lawdata/common";
-import type { HTMLOptions, HTMLGetFigData } from "lawtext/dist/src/renderer/common/html";
-import htmlCSS from "lawtext/dist/src/renderer/rules/htmlCSS";
-import type { LawViewOptions } from "./common";
-import { WrapLawComponent } from "./LawWrapper";
-import useAfterMountTasks from "./useAfterMountTask";
-import ControlGlobalStyle from "./controls/ControlGlobalStyle";
-import parsePath from "lawtext/dist/src/path/v1/parse";
-import type { PathFragment } from "lawtext/dist/src/path/v1/common";
-import locatePath from "lawtext/dist/src/path/v1/locate";
-import { scrollToLawAnchor } from "../../actions/scroll";
-import { HTMLParagraphItemMenuCSS } from "./controls/WrapHTMLParagraphItem";
-import { HTMLToplevelAndArticlesMenuCSS } from "./controls/WrapHTMLToplevelAndArticles";
+import { styled, createGlobalStyle } from "styled-components";
+import { HTMLLaw } from "lawtext/dist/src/renderer/rules/law.js";
+import type { LawtextAppPageStateStruct, OrigSetLawtextAppPageState } from "../LawtextAppPageState.ts";
+import type { LawData } from "../../lawdata/common.ts";
+import type { HTMLOptions, HTMLGetFigData } from "lawtext/dist/src/renderer/common/html.js";
+import { htmlCSS } from "lawtext/dist/src/renderer/rules/htmlCSS.js";
+import type { LawViewOptions } from "./common.tsx";
+import { WrapLawComponent } from "./LawWrapper.tsx";
+import useAfterMountTasks from "./useAfterMountTask.tsx";
+import ControlGlobalStyle from "./controls/ControlGlobalStyle.tsx";
+import { parse as parsePath } from "lawtext/dist/src/path/v1/parse.js";
+import type { PathFragment } from "lawtext/dist/src/path/v1/common.js";
+import { locate as locatePath } from "lawtext/dist/src/path/v1/locate.js";
+import { scrollToLawAnchor } from "../../actions/scroll.ts";
+import { HTMLParagraphItemMenuCSS } from "./controls/WrapHTMLParagraphItem.tsx";
+import { HTMLToplevelAndArticlesMenuCSS } from "./controls/WrapHTMLToplevelAndArticles.tsx";
 
 
 const GlobalStyle = createGlobalStyle`

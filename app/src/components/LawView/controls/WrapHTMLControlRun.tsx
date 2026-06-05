@@ -1,17 +1,17 @@
 
 import React from "react";
-import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
-import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
-import type { HTMLControlRunProps } from "lawtext/dist/src/renderer/rules/controlRun";
-import type { LawViewOptions } from "../common";
-import type { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
-import { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration";
-import { ____LawNum, ____Pointer, ____VarRef } from "lawtext/dist/src/node/el/controls";
-import Declaration from "./Declaration";
-import ContainersView from "./ContainersView";
-import PeekView from "./PeekView";
-import Pointer from "./Pointer";
-import LawNum from "./LawNum";
+import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html.js";
+import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun.js";
+import type { HTMLControlRunProps } from "lawtext/dist/src/renderer/rules/controlRun.js";
+import type { LawViewOptions } from "../common.tsx";
+import type { SentenceChildEL } from "lawtext/dist/src/node/cst/inline.js";
+import { ____Declaration } from "lawtext/dist/src/node/el/controls/declaration.js";
+import { ____LawNum, ____Pointer, ____VarRef } from "lawtext/dist/src/node/el/controls/index.js";
+import Declaration from "./Declaration.tsx";
+import ContainersView from "./ContainersView.tsx";
+import PeekView from "./PeekView.tsx";
+import Pointer from "./Pointer.tsx";
+import LawNum from "./LawNum.tsx";
 
 
 export const WrapHTMLControlRun: React.FC<WrapperComponentProps> = props => {

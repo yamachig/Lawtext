@@ -1,10 +1,10 @@
 
-import { fetchPartialLaw } from "lawtext/dist/src/elawsApi";
-import * as std from "lawtext/dist/src/law/std";
-import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
-import { detectPointers } from "lawtext/dist/src/analyzer/detectPointers";
-import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html";
-import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any";
+import { fetchPartialLaw } from "lawtext/dist/src/elawsApi.js";
+import * as std from "lawtext/dist/src/law/std/index.js";
+import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL.js";
+import { detectPointers } from "lawtext/dist/src/analyzer/detectPointers.js";
+import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html.js";
+import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any.js";
 import React from "react";
 
 

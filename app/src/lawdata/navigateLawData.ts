@@ -1,13 +1,13 @@
-import { getTempLaw } from "../actions/temp_law";
-import type { ElawsLawDataProps, StoredLawDataProps, TempXMLLawDataProps, TempLawtextLawDataProps } from "./common";
-import { elawsLoader, storedLoader } from "./loaders";
-import { searchLawID } from "./searchLawID";
-import * as util from "lawtext/dist/src/util";
-import type { LawDataResult, Timing } from "lawtext/dist/src/data/lawdata";
-import { toLawData } from "lawtext/dist/src/data/lawdata";
-import { lawNumLikeToLawNum, ptnLawNumLike } from "lawtext/dist/src/law/lawNum";
-import parsePath from "lawtext/dist/src/path/v1/parse";
-import { parseLawIDOrLawRevID } from "lawtext/dist/src/law/lawID";
+import { getTempLaw } from "../actions/temp_law.ts";
+import type { ElawsLawDataProps, StoredLawDataProps, TempXMLLawDataProps, TempLawtextLawDataProps } from "./common.ts";
+import { elawsLoader, storedLoader } from "./loaders.ts";
+import { searchLawID } from "./searchLawID.ts";
+import * as util from "lawtext/dist/src/util/index.js";
+import type { LawDataResult, Timing } from "lawtext/dist/src/data/lawdata.js";
+import { toLawData } from "lawtext/dist/src/data/lawdata.js";
+import { lawNumLikeToLawNum, ptnLawNumLike } from "lawtext/dist/src/law/lawNum.js";
+import { parse as parsePath } from "lawtext/dist/src/path/v1/parse.js";
+import { parseLawIDOrLawRevID } from "lawtext/dist/src/law/lawID.js";
 
 export const navigateLawData = async (
     pathStr: string,

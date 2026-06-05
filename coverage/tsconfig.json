@@ -1,13 +1,11 @@
 {
     "compilerOptions": {
-        "module": "nodenext",
-        "target": "es2017",
-        "downlevelIteration": true,
-        "moduleResolution": "nodenext",
+        "module": "node18",
+        "rewriteRelativeImportExtensions": true,
+        "target": "es2023",
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "sourceMap": true,
-        "lib": ["es2017", "dom", "scripthost"],
         
         // "composite": true,
         "allowJs": true,
@@ -15,7 +13,6 @@
 
         "jsx": "react",
 
-        "baseUrl": "./",
         "outDir": "dist",
         // "paths": {
         //     "@coveragesrc/*": ["src/*"],
@@ -43,6 +40,7 @@
 
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "noUncheckedSideEffectImports": false,
     },
     "exclude": [
         "**/* copy.*",

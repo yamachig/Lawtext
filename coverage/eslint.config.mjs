@@ -2,8 +2,7 @@ import globals from "globals";
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import { defineConfig } from "eslint/config";
-import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
+import react from "@eslint-react/eslint-plugin";
 import stylistic from "@stylistic/eslint-plugin";
 
 export default defineConfig(
@@ -11,7 +10,8 @@ export default defineConfig(
         ignores: ["dist/**/*", "dist-dev/**/*", "dist-prod/**/*"],
     },
     eslint.configs.recommended,
-    ...tseslint.configs.recommended,
+    tseslint.configs.recommended,
+    react.configs["recommended-typescript"],
     {
         languageOptions: {
             globals: {
@@ -28,8 +28,6 @@ export default defineConfig(
         },
 
         plugins: {
-            react,
-            "react-hooks": reactHooks,
             "@stylistic": stylistic,
         },
 
@@ -134,21 +132,10 @@ export default defineConfig(
                 },
             ],
 
-            "react-hooks/rules-of-hooks": "error",
-            "react-hooks/exhaustive-deps": "warn",
+            "@eslint-react/rules-of-hooks": "error",
+            "@eslint-react/exhaustive-deps": "warn",
 
-            "react/jsx-no-target-blank": [
-                "error", {
-                    enforceDynamicLinks: "always",
-                },
-            ],
-
-            "react/prop-types": [
-                "error", {
-                    ignore: ["children"],
-                    skipUndeclared: true,
-                },
-            ],
+            "@eslint-react/dom-no-unsafe-target-blank": "error",
         },
     },
 );

@@ -1,24 +1,18 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "target": "es2022",
-        "downlevelIteration": true,
-        "moduleResolution": "node",
+        "module": "node18",
+        "target": "es2023",
+        "rewriteRelativeImportExtensions": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "sourceMap": true,
-        "lib": ["es2023", "dom", "scripthost"],
         
         // "composite": true,
         // "declaration": true,
 
         "jsx": "react",
 
-        "baseUrl": "./",
         "outDir": "dist",
-        "paths": {
-            "@appsrc/*": ["src/*"]
-        },
         "rootDir": "./",
         // "rootDirs": ["src", "bin", "test"],
 
@@ -41,5 +35,6 @@
 
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "noUncheckedSideEffectImports": false,
     },
 }

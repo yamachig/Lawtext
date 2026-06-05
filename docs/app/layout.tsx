@@ -3,13 +3,15 @@ import { Head } from "nextra/components";
 import { getPageMap } from "nextra/page-map";
 import "nextra-theme-docs/style.css";
 import React from "react";
-import HeadComponent from "./HeadComponent";
+import HeadComponent from "./HeadComponent.tsx";
 
 const navbar = (
     <Navbar
         logo={<span>Lawtext documentation</span>}
     />
 );
+
+const year = new Date().getFullYear();
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -32,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     navbar={navbar}
                     pageMap={await getPageMap()}
                     footer={<div key="layout-footer"><small>
-                      &copy; 2017-{new Date().getFullYear()} <a href="https://github.com/yamachig/" target="_blank" rel="noreferrer">yamachi</a>
+                      &copy; 2017-{year} <a href="https://github.com/yamachig/" target="_blank" rel="noreferrer">yamachi</a>
                     </small></div>}
                 >
                     {children}

@@ -1,13 +1,13 @@
-import type { OrigSetLawtextAppPageState } from "../components/LawtextAppPageState";
-import * as util from "lawtext/dist/src/util";
-import type { LawDataResult } from "lawtext/dist/src/data/lawdata";
-import { Timing, toLawData } from "lawtext/dist/src/data/lawdata";
-import { navigateLawData } from "@appsrc/lawdata/navigateLawData";
-import { downloadLawtext } from "./download";
-import { getLawTitleWithNum } from "@appsrc/law_util";
-import { showErrorModal } from "./showErrorModal";
-import type { LawDataProps } from "@appsrc/lawdata/common";
-import getOnMessage from "./getOnMessage";
+import type { OrigSetLawtextAppPageState } from "../components/LawtextAppPageState.ts";
+import * as util from "lawtext/dist/src/util/index.js";
+import type { LawDataResult } from "lawtext/dist/src/data/lawdata.js";
+import { Timing, toLawData } from "lawtext/dist/src/data/lawdata.js";
+import { navigateLawData } from "../lawdata/navigateLawData.js";
+import { downloadLawtext } from "./download.ts";
+import { getLawTitleWithNum } from "../law_util.ts";
+import { showErrorModal } from "./showErrorModal.ts";
+import type { LawDataProps } from "../lawdata/common.ts";
+import getOnMessage from "./getOnMessage.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const sampleXml: string = require("./405AC0000000088_20240401_504AC0100000052.xml").default;

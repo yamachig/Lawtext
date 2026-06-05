@@ -1,20 +1,20 @@
 // import * as compression from "compression"
 import express from "express";
 // import path from "path";
-import config from "../config";
-import type { ConnectionInfo } from "../connection";
-import { connect } from "../connection";
+import config from "../config.ts";
+import type { ConnectionInfo } from "../connection.ts";
+import { connect } from "../connection.ts";
 // import webpackDevMiddleware from "webpack-dev-middleware";
-import webpackConfigFn from "../../webpack-configs/client";
+import webpackConfigFn from "../../webpack-configs/client.ts";
 // import webpack from "webpack";
 // import WebpackDevServer from "webpack-dev-server";
-import type { Loader } from "lawtext/dist/src/data/loaders/common";
-import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
-import { getOriginalLaw, getParsedLaw, getRenderedLawtext } from "../update/transform";
-import { LawCoveragesManager } from "./lawCoverages";
-import { fromSortStirng } from "../lawCoverage";
-import type { AsyncZippable } from "lawtext/dist/src/util/zip";
-import { zip } from "lawtext/dist/src/util/zip";
+import type { Loader } from "lawtext/dist/src/data/loaders/common.d.ts";
+import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader.js";
+import { getOriginalLaw, getParsedLaw, getRenderedLawtext } from "../update/transform.ts";
+import { LawCoveragesManager } from "./lawCoverages.ts";
+import { fromSortStirng } from "../lawCoverage.ts";
+import type { AsyncZippable } from "lawtext/dist/src/util/zip.js";
+import { zip } from "lawtext/dist/src/util/zip.js";
 
 
 const asyncMiddleware = (fn: express.RequestHandler): express.RequestHandler =>
@@ -62,11 +62,11 @@ const getLawCoveragesManager = async () => {
 app.get(
     "/lawCoverages/index/:from-:to/sort/:sort",
     asyncMiddleware(async (request: express.Request, response: express.Response) => {
-        const sort = fromSortStirng(request.params.sort);
+        const sort = fromSortStirng(request.params.sort as string);
         const lawCoveragesManager = await getLawCoveragesManager();
         const lawCoverages = await lawCoveragesManager.slice(
-            parseInt(request.params.from),
-            parseInt(request.params.to) + 1,
+            parseInt(request.params.from as string),
+            parseInt(request.params.to as string) + 1,
             sort,
         );
         response.json(lawCoverages);
@@ -106,7 +106,7 @@ app.get(
     "/intermediateData/:lawID",
     asyncMiddleware(async (request: express.Request, response: express.Response) => {
         const loader = getLoader();
-        const lawID = request.params.lawID;
+        const lawID = request.params.lawID as string;
         const lawInfo = await loader.getLawInfoByLawID(lawID);
 
         const { origEL, origXML } = lawInfo

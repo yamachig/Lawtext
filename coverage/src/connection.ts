@@ -1,7 +1,7 @@
 
 import mongoose from "mongoose";
-import type { LawCoverage } from "./lawCoverage";
-import { lawCoverageSchema } from "./schema";
+import type { LawCoverage } from "./lawCoverage.ts";
+import { lawCoverageSchema } from "./schema.ts";
 
 export interface ConnectionInfo {
     connection: mongoose.Connection;

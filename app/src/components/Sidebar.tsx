@@ -1,18 +1,18 @@
 import React from "react";
-import styled from "styled-components";
-import * as std from "lawtext/dist/src/law/std";
-import { assertNever } from "lawtext/dist/src/util";
-import type { EL } from "lawtext/dist/src/node/el";
-import type { LawtextAppPageStateStruct } from "./LawtextAppPageState";
-import { downloadDocx as origDownloadDocx, downloadLawtext, downloadXml } from "../actions/download";
-import { openFile } from "@appsrc/actions/openFile";
-import { scrollToLawAnchor } from "@appsrc/actions/scroll";
-import type { Container } from "lawtext/dist/src/node/container";
-import makePath from "lawtext/dist/src/path/v1/make";
+import { styled } from "styled-components";
+import * as std from "lawtext/dist/src/law/std/index.js";
+import { assertNever } from "lawtext/dist/src/util/index.js";
+import type { EL } from "lawtext/dist/src/node/el/index.js";
+import type { LawtextAppPageStateStruct } from "./LawtextAppPageState.ts";
+import { downloadDocx as origDownloadDocx, downloadLawtext, downloadXml } from "../actions/download.ts";
+import { openFile } from "../actions/openFile.ts";
+import { scrollToLawAnchor } from "../actions/scroll.ts";
+import type { Container } from "lawtext/dist/src/node/container/index.js";
+import { make as makePath } from "lawtext/dist/src/path/v1/make.js";
 import type { NavigateFunction } from "react-router-dom";
-import getOnMessage from "../actions/getOnMessage";
-import type { FigDataManagerOptions } from "lawtext/dist/src/renderer/common/docx/FigDataManager";
-import useSearchInput from "./useSearchInput";
+import getOnMessage from "../actions/getOnMessage.ts";
+import type { FigDataManagerOptions } from "lawtext/dist/src/renderer/common/docx/FigDataManager.js";
+import useSearchInput from "./useSearchInput.tsx";
 
 
 const SidebarH1 = styled.h1`

@@ -1,4 +1,4 @@
-import * as globals from ".";
+import * as globals from "./index.ts";
 for (const key in globals) {
     if ("window" in global) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

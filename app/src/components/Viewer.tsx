@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect } from "react";
-import styled from "styled-components";
-import type { LawtextAppPageStateStruct } from "./LawtextAppPageState";
-import { LawView } from "./LawView";
-import type { ResolvedType } from "lawtext/dist/src/util";
-import { saveListJson } from "@appsrc/lawdata/saveListJson";
-import { ensureFetch, storedLoader } from "@appsrc/lawdata/loaders";
-import { openFile } from "@appsrc/actions/openFile";
-import { ErrorCatcher } from "./LawView/ErrorCatcher";
-import useSearchInput from "./useSearchInput";
+import { styled } from "styled-components";
+import type { LawtextAppPageStateStruct } from "./LawtextAppPageState.ts";
+import { LawView } from "./LawView/index.tsx";
+import type { ResolvedType } from "lawtext/dist/src/util/index.js";
+import { saveListJson } from "../lawdata/saveListJson.ts";
+import { ensureFetch, storedLoader } from "../lawdata/loaders.ts";
+import { openFile } from "../actions/openFile.ts";
+import { ErrorCatcher } from "./LawView/ErrorCatcher.tsx";
+import useSearchInput from "./useSearchInput.tsx";
 
 
 const ViewerMessagesDiv = styled.div`

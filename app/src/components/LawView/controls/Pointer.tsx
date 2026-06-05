@@ -1,17 +1,17 @@
 
 import React from "react";
-import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
-import { withKey } from "lawtext/dist/src/renderer/common";
-import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
-import type { LawViewOptions } from "../common";
-import type { ____Pointer } from "lawtext/dist/src/node/el/controls";
-import { ____PF } from "lawtext/dist/src/node/el/controls";
-import PeekView from "./PeekView";
-import ContainersView from "./ContainersView";
-import type { ElawsPartialLawViewProps } from "./ElawsPartialLawView";
-import ElawsPartialLawView from "./ElawsPartialLawView";
-import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any";
-import * as std from "lawtext/dist/src/law/std";
+import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html.js";
+import { withKey } from "lawtext/dist/src/renderer/common/index.js";
+import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun.js";
+import type { LawViewOptions } from "../common.tsx";
+import type { ____Pointer } from "lawtext/dist/src/node/el/controls/index.js";
+import { ____PF } from "lawtext/dist/src/node/el/controls/index.js";
+import PeekView from "./PeekView.tsx";
+import ContainersView from "./ContainersView.tsx";
+import type { ElawsPartialLawViewProps } from "./ElawsPartialLawView.tsx";
+import ElawsPartialLawView from "./ElawsPartialLawView.tsx";
+import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any.js";
+import * as std from "lawtext/dist/src/law/std/index.js";
 
 
 export interface ____PointerProps { el: ____Pointer, wrapperProps: WrapperComponentProps }

@@ -4,14 +4,14 @@ import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
 import webpack from "webpack";
 import type webpack_dev_server from "webpack-dev-server";
-import WatchMessagePlugin from "./WatchMessagePlugin";
-import CreateAppZipPlugin from "./CreateAppZipPlugin";
-import QueryDocsPlugin from "./QueryDocsPlugin";
+import WatchMessagePlugin from "./WatchMessagePlugin.ts";
+import CreateAppZipPlugin from "./CreateAppZipPlugin.ts";
+import QueryDocsPlugin from "./QueryDocsPlugin.ts";
 import fs from "fs";
 import { ensureDirSync } from "fs-extra";
 import TerserPlugin from "terser-webpack-plugin";
 
-const rootDir = path.dirname(__dirname);
+const rootDir = path.dirname(import.meta.dirname);
 
 export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration & { devServer: webpack_dev_server.Configuration } => {
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev"));
@@ -27,8 +27,10 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
+            extensionAlias: {
+                ".js": [".js", ".ts", ".tsx"],
+            },
             alias: {
-                "@appsrc": path.resolve(rootDir, "./src"),
                 "node-fetch": false,
                 "canvas": false,
                 "fs": false,
@@ -36,16 +38,16 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 "string_decoder": false,
                 ...(env.DEV_SERVER ? {} : {
                     "pdfjs-dist": false,
-                    "lawtext/dist/src/law/getLawList": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
-                    "../law/getLawList": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
+                    "lawtext/dist/src/law/getLawList.js": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
+                    "../law/getLawList.ts": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
                     "./lawList.json": false,
                 }),
 
             },
             fallback: {
-                "path": require.resolve("path-browserify"),
+                "path": import.meta.resolve("path-browserify"),
                 ...(env.DEV_SERVER ? {
-                    "buffer": require.resolve("buffer/"),
+                    "buffer": import.meta.resolve("buffer/"),
                 } : {}),
             },
         },

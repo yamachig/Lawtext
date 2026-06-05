@@ -1,4 +1,4 @@
-import type { LawQueryItem } from "lawtext/dist/src/data/query";
+import type { LawQueryItem } from "lawtext/dist/src/data/query.js";
 
 export const storeTempLaw = (text: string): string => {
     const id = `temp_law_${Math.floor(Math.random() * 1000000000)}`;

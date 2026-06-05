@@ -15,12 +15,14 @@ module.exports = (env, argv) => {
     return {
         mode: (argv.mode === "development") ? "development" : "production",
         entry: [path.resolve(rootDir, "./src/lawtext.ts")],
+        experiments: {
+            outputModule: true,
+        },
         output: {
             filename: "browser/lawtext.js",
             path: distDir,
             library: {
-                name: "lawtext",
-                type: "umd",
+                type: "module",
             },
         },
         resolve: {

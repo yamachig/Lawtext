@@ -163,7 +163,7 @@ export const runCLI = async (args: RunCLIArgs) => {
             process.stdout.write(result.docx as Buffer);
         }
     } else {
-        let outtext = "";
+        let outtext: string;
         if (outtype === "lawtext") {
             if (!result.lawtext) throw new Error("output does not exist");
             outtext = result.lawtext;
@@ -195,7 +195,7 @@ export const runCLI = async (args: RunCLIArgs) => {
 
 export const main = async (): Promise<void> => {
 
-    const args = yargs
+    const args = yargs()
         .option("input", {
             alias: "i",
             type: "string",

@@ -1,16 +1,16 @@
 import React, { } from "react";
-import styled from "styled-components";
-import { ErrorCatcher } from "./ErrorCatcher";
-import type { WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
-import type { LawViewOptions } from "./common";
-import { EL } from "lawtext/dist/src/node/el";
-import * as std from "lawtext/dist/src/law/std";
-import { containerInfoOf } from "../../actions/download";
-import ReplaceHTMLFigRun from "./ReplaceHTMLFigRun";
-import WrapHTMLControlRun from "./controls/WrapHTMLControlRun";
-import WrapHTMLParagraphItem from "./controls/WrapHTMLParagraphItem";
-import { containerTags } from "lawtext/dist/src/node/container";
-import WrapHTMLToplevelAndArticles from "./controls/WrapHTMLToplevelAndArticles";
+import { styled } from "styled-components";
+import { ErrorCatcher } from "./ErrorCatcher.tsx";
+import type { WrapperComponentProps } from "lawtext/dist/src/renderer/common/html.js";
+import type { LawViewOptions } from "./common.tsx";
+import { EL } from "lawtext/dist/src/node/el/index.js";
+import * as std from "lawtext/dist/src/law/std/index.js";
+import { containerInfoOf } from "../../actions/download.ts";
+import ReplaceHTMLFigRun from "./ReplaceHTMLFigRun.tsx";
+import WrapHTMLControlRun from "./controls/WrapHTMLControlRun.tsx";
+import WrapHTMLParagraphItem from "./controls/WrapHTMLParagraphItem.tsx";
+import { containerTags } from "lawtext/dist/src/node/container/index.js";
+import WrapHTMLToplevelAndArticles from "./controls/WrapHTMLToplevelAndArticles.tsx";
 
 
 const wrapperByID: Record<string, React.FC<WrapperComponentProps>> = {};

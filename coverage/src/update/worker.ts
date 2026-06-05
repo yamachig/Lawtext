@@ -1,10 +1,10 @@
 // import formatXML from "xml-formatter";
-import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
-import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
-import { connect } from "../connection";
-import config from "../config";
+import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader.js";
+import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo.js";
+import { connect } from "../connection.ts";
+import config from "../config.ts";
 import { isMainThread, workerData, parentPort } from "worker_threads";
-import { update } from "./update";
+import { update } from "./update.ts";
 
 
 const run = async (): Promise<void> => {

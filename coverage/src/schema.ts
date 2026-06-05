@@ -1,7 +1,7 @@
-import * as lawDiff from "lawtext/dist/src/diff/lawDiff";
+import * as lawDiff from "lawtext/dist/src/diff/lawDiff.js";
 import mongoose from "mongoose";
-import type { LawCoverage } from "./lawCoverage";
-import { Era, LawType } from "./lawCoverage";
+import type { LawCoverage } from "./lawCoverage.ts";
+import { Era, LawType } from "./lawCoverage.ts";
 
 type DeNull<T> = T extends null ? never : T;
 

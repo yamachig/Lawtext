@@ -1,6 +1,6 @@
-import type { LawCoverage } from "../../lawCoverage";
-import { ProblemStatus } from "lawtext/dist/src/diff/lawDiff";
-import { assertNever } from "lawtext/dist/src/util";
+import type { LawCoverage } from "../../lawCoverage.ts";
+import { ProblemStatus } from "lawtext/dist/src/diff/lawDiff.js";
+import { assertNever } from "lawtext/dist/src/util/index.js";
 
 
 export enum SortKey {

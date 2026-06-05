@@ -1,5 +1,5 @@
-import type { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "../components/LawtextAppPageState";
-import * as util from "lawtext/dist/src/util";
+import type { BaseLawtextAppPageState, OrigSetLawtextAppPageState } from "../components/LawtextAppPageState.ts";
+import * as util from "lawtext/dist/src/util/index.js";
 
 export const getOnMessage = (options: {key: string, origSetState: OrigSetLawtextAppPageState}) => {
 

@@ -5,8 +5,8 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import "bootstrap";
 import "./index.scss";
 
-import { LawtextAppPage } from "./components/LawtextAppPage";
-import { DownloadPage } from "./components/DownloadPage";
+import { LawtextAppPage } from "./components/LawtextAppPage.tsx";
+import { DownloadPage } from "./components/DownloadPage.tsx";
 
 const App = () => {
     return (
@@ -26,4 +26,4 @@ if (rootElement) {
     createRoot(rootElement).render(<App/>);
 }
 
-import "./globals/register";
+import "./globals/register.ts";

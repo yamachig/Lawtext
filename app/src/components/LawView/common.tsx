@@ -1,4 +1,4 @@
-import type { LawData } from "../../lawdata/common";
+import type { LawData } from "../../lawdata/common.ts";
 
 export const em = (input: number) => {
     const emSize = parseFloat(getComputedStyle(document.body).getPropertyValue("font-size"));

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import { Sidebar } from "./Sidebar";
-import { useLawtextAppPageState } from "./LawtextAppPageState";
-import { Viewer } from "./Viewer";
-import { onNavigated } from "@appsrc/actions/onNavigated";
-import { OpenFileInputName, readFileInput } from "@appsrc/actions/openFile";
-import { ErrorModalID } from "@appsrc/actions/showErrorModal";
-import { storeTempLaw } from "@appsrc/actions/temp_law";
-import { omit } from "lawtext/dist/src/util";
+import { styled } from "styled-components";
+import { Sidebar } from "./Sidebar.tsx";
+import { useLawtextAppPageState } from "./LawtextAppPageState.ts";
+import { Viewer } from "./Viewer.tsx";
+import { onNavigated } from "../actions/onNavigated.ts";
+import { OpenFileInputName, readFileInput } from "../actions/openFile.ts";
+import { ErrorModalID } from "../actions/showErrorModal.ts";
+import { storeTempLaw } from "../actions/temp_law.ts";
+import { omit } from "lawtext/dist/src/util/index.js";
 
 
 const ViewerFlexDiv = styled.div`

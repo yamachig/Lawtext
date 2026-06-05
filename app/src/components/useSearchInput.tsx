@@ -1,7 +1,7 @@
 import React from "react";
-import { lawTitleFusePromise, type LawListItem } from "../lawdata/searchLawID";
+import { lawTitleFusePromise, type LawListItem } from "../lawdata/searchLawID.ts";
 import type { FuseResult } from "fuse.js";
-import { throttle } from "lawtext/dist/src/util";
+import { throttle } from "lawtext/dist/src/util/index.js";
 
 export const useSearchInput = (options: {searchInputStyle?: React.CSSProperties}) => {
 

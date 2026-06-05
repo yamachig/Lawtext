@@ -15,7 +15,7 @@ title: CLI usage
 
 - Copy the URL of [lawtext.js](/static/lawtext_bundles/browser/lawtext.js).
 - Open the browser console (for Chrome, press `Ctrl+Shift+J` (Windows/Linux) or `Cmd+Opt+J` (Mac)).
-- Run `await import("...")` (replace `...` with the copied URL of [lawtext.js](/static/lawtext_bundles/browser/lawtext.js)) in the browser console.
+- Run `lawtext = (await import("...")).default` (replace `...` with the copied URL of [lawtext.js](/static/lawtext_bundles/browser/lawtext.js)) in the browser console.
 - Run `console.log(lawtext.run.help)` in the browser console.
 
 ## How to use in Node.js
@@ -24,8 +24,8 @@ title: CLI usage
 
 ### Option 1: Run the prebuilt bundle
 
-- Download the prebuilt bundle from here: [lawtext_cli.js](/static/lawtext_bundles/node/lawtext_cli.js)
-- Run `node lawtext_cli.js --help`
+- Download the prebuilt bundle from here: [lawtext_cli.cjs](/static/lawtext_bundles/node/lawtext_cli.cjs)
+- Run `node lawtext_cli.cjs --help`
 
 ### Option 2: Run using `npx` globally
 

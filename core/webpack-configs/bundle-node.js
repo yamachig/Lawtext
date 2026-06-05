@@ -16,11 +16,10 @@ module.exports = (env, argv) => {
         mode: (argv.mode === "development") ? "development" : "production",
         entry: [path.resolve(rootDir, "./src/main.ts")],
         output: {
-            filename: "node/lawtext_cli.js",
+            filename: "node/lawtext_cli.cjs",
             path: distDir,
             library: {
-                name: "lawtext",
-                type: "umd",
+                type: "commonjs2",
             },
         },
         resolve: {

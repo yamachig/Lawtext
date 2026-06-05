@@ -1,11 +1,11 @@
 // import formatXML from "xml-formatter";
 // import * as law_diff from "lawtext/dist/src/diff/law_diff";
-import type { Loader } from "lawtext/dist/src/data/loaders/common";
+import type { Loader } from "lawtext/dist/src/data/loaders/common.js";
 import type mongoose from "mongoose";
-import type { LawInfo } from "lawtext/dist/src/data/lawinfo";
-import type { LawCoverage } from "../lawCoverage";
-import type { ConnectionInfo } from "../connection";
-import type { UpdateArgs } from "./args";
+import type { LawInfo } from "lawtext/dist/src/data/lawinfo.js";
+import type { LawCoverage } from "../lawCoverage.ts";
+import type { ConnectionInfo } from "../connection.ts";
+import type { UpdateArgs } from "./args.ts";
 
 
 export const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo) => {
@@ -42,7 +42,6 @@ export const getToUpdateLawIDsOnDB = async (args: UpdateArgs, db: ConnectionInfo
     }
 
     const lawIDs = await db.lawCoverage
-        // @ts-expect-error: type mismatch
         .find({ ...(andConditions.length > 0 ? { $and: andConditions } : {}) })
         .select("LawID")
         .then(res => res.map(lc => lc.LawID));

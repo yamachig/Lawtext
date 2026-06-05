@@ -3,10 +3,10 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
 import webpack from "webpack";
-import WatchMessagePlugin from "./WatchMessagePlugin";
-import QueryDocsPlugin from "./QueryDocsPlugin";
+import WatchMessagePlugin from "./WatchMessagePlugin.ts";
+import QueryDocsPlugin from "./QueryDocsPlugin.ts";
 
-const rootDir = path.dirname(__dirname);
+const rootDir = path.dirname(import.meta.dirname);
 
 export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration => {
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev") + "-local");
@@ -22,8 +22,10 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
+            extensionAlias: {
+                ".js": [".js", ".ts", ".tsx"],
+            },
             alias: {
-                "@appsrc": path.resolve(rootDir, "./src"),
                 "node-fetch": false,
                 "canvas": false,
                 "fs": false,
@@ -31,8 +33,8 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 "string_decoder": false,
             },
             fallback: {
-                "path": require.resolve("path-browserify"),
-                "buffer": require.resolve("buffer/"),
+                "path": import.meta.resolve("path-browserify"),
+                "buffer": import.meta.resolve("buffer/"),
             },
         },
 

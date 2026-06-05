@@ -3,8 +3,8 @@ import fs from "fs";
 import { promisify } from "util";
 import path from "path";
 import fsExtra from "fs-extra";
-import type { AsyncZippable } from "lawtext/dist/src/util/zip";
-import { zip } from "lawtext/dist/src/util/zip";
+import type { AsyncZippable } from "lawtext/dist/src/util/zip.js";
+import { zip } from "lawtext/dist/src/util/zip.js";
 
 async function *iterDirTree(dir: string, ignore: string[] = []): AsyncGenerator<string> {
     for (const item of await promisify(fs.readdir)(dir, { withFileTypes: true })) {

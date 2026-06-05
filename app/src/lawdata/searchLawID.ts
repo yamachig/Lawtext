@@ -1,9 +1,9 @@
-import type { LawInfo } from "lawtext/dist/src/data/lawinfo";
+import type { LawInfo } from "lawtext/dist/src/data/lawinfo.js";
 import levenshtein from "js-levenshtein";
-import { storedLoader } from "./loaders";
+import { storedLoader } from "./loaders.ts";
 import Fuse from "fuse.js";
-import { getLawList } from "lawtext/dist/src/law/getLawList";
-import type { ResolvedType } from "lawtext/dist/src/util";
+import { getLawList } from "lawtext/dist/src/law/getLawList.js";
+import type { ResolvedType } from "lawtext/dist/src/util/index.js";
 
 export const searchLawID = async (lawSearchKey: string): Promise<string | {error: string, message: string} | null> => {
 

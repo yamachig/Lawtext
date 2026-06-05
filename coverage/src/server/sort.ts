@@ -1,6 +1,6 @@
-import { Era, LawType, SortDirection, SortKey } from "../lawCoverage";
-import { ProblemStatus } from "lawtext/dist/src/diff/lawDiff";
-import type { ConnectionInfo } from "../connection";
+import { Era, LawType, SortDirection, SortKey } from "../lawCoverage.ts";
+import { ProblemStatus } from "lawtext/dist/src/diff/lawDiff.js";
+import type { ConnectionInfo } from "../connection.ts";
 
 
 export const forSortAgg = {

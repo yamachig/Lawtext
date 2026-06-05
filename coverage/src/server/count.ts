@@ -1,7 +1,7 @@
-import type { ConnectionInfo } from "../connection";
-import { ProblemStatus } from "lawtext/dist/src/diff/lawDiff";
-import type { LawCoverageCounts } from "../lawCoverage";
-import { OriginalLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus } from "../lawCoverage";
+import type { ConnectionInfo } from "../connection.ts";
+import { ProblemStatus } from "lawtext/dist/src/diff/lawDiff.js";
+import type { LawCoverageCounts } from "../lawCoverage.ts";
+import { OriginalLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus } from "../lawCoverage.ts";
 
 
 const forCountAgg = {

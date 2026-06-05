@@ -1,12 +1,12 @@
-import type { LawCoverage } from "../../lawCoverage";
+import type { LawCoverage } from "../../lawCoverage.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
-import styled from "styled-components";
-import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedHTMLStatus, getRenderedDocxStatus, getRenderedLawtextStatus, LawDiffStatus, OriginalLawStatus, ParsedLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, SortDirection, SortKey } from "./FilterInfo";
-import LawCoverageInfoCard from "./LawCoverageInfoCard";
-import type { LawCoveragesStruct, LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState";
-import { useLawCoverageCounts, useLawCoveragesStruct } from "./LawtextDashboardPageState";
-import { convertStatus } from "./MainPanel";
+import { styled } from "styled-components";
+import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedHTMLStatus, getRenderedDocxStatus, getRenderedLawtextStatus, LawDiffStatus, OriginalLawStatus, ParsedLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, SortDirection, SortKey } from "./FilterInfo.tsx";
+import LawCoverageInfoCard from "./LawCoverageInfoCard.tsx";
+import type { LawCoveragesStruct, LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState.ts";
+import { useLawCoverageCounts, useLawCoveragesStruct } from "./LawtextDashboardPageState.ts";
+import { convertStatus } from "./MainPanel.tsx";
 import type {
     DragEndEvent } from "@dnd-kit/core";
 import {

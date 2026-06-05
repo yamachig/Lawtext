@@ -1,18 +1,18 @@
 // import formatXML from "xml-formatter";
-import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader";
-import type { Loader } from "lawtext/dist/src/data/loaders/common";
+import { FSStoredLoader } from "lawtext/dist/src/data/loaders/FSStoredLoader.js";
+import type { Loader } from "lawtext/dist/src/data/loaders/common.js";
 import { Bar, Presets } from "cli-progress";
-import type { BaseLawInfo, LawInfo } from "lawtext/dist/src/data/lawinfo";
-import { fetch } from "../node-fetch";
-import type { ConnectionInfo } from "../connection";
-import { connect } from "../connection";
-import config from "../config";
+import type { BaseLawInfo, LawInfo } from "lawtext/dist/src/data/lawinfo.js";
+import { fetch } from "../node-fetch/index.js";
+import type { ConnectionInfo } from "../connection.ts";
+import { connect } from "../connection.ts";
+import config from "../config.ts";
 import { Worker } from "worker_threads";
-import { pick, range } from "lawtext/dist/src/util";
-import type { UpdateArgs } from "./args";
-import { getToProcessLawInfos } from "./getLawInfos";
+import { pick, range } from "lawtext/dist/src/util/index.js";
+import type { UpdateArgs } from "./args.ts";
+import { getToProcessLawInfos } from "./getLawInfos.ts";
 import os from "os";
-import prand from "pure-rand";
+import { xoroshiro128plus } from "pure-rand/generator/xoroshiro128plus";
 
 class ProgressBar {
     public bar: Bar;
@@ -47,7 +47,7 @@ const updateParallel = async (args: UpdateArgs, lawInfos: LawInfo[], workers_cou
     console.log(`[${new Date().toISOString()}] Initializing ${workers_count} workers...`);
 
     const workers: Map<number, Worker> = new Map(await Promise.all(Array.from(range(0, workers_count)).map(workerIndex => new Promise<[number, Worker]>((resolve, reject) => {
-        const worker = new Worker(__dirname + "/worker", { workerData: { maxDiffLength: args.maxDiffLength } });
+        const worker = new Worker(import.meta.dirname + "/worker", { workerData: { maxDiffLength: args.maxDiffLength } });
         worker.once("error", reject);
         worker.once("exit", (code) => {
             if (code !== 0) reject(new Error("Worker stopped with error"));
@@ -149,8 +149,8 @@ const update = async (args: UpdateArgs, db: ConnectionInfo, loader: Loader) => {
         return;
     }
 
-    const randGen = prand.xoroshiro128plus(origLawInfos.length);
-    const lawInfosWithRand = origLawInfos.map(l => [randGen.unsafeNext(), l] as const);
+    const randGen = xoroshiro128plus(origLawInfos.length);
+    const lawInfosWithRand = origLawInfos.map(l => [randGen.next(), l] as const);
     lawInfosWithRand.sort((a, b) => a[0] - b[0]);
     const lawInfos = lawInfosWithRand.map(([, l]) => l);
 

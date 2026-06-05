@@ -1,13 +1,13 @@
-import * as std from "lawtext/dist/src/law/std";
-import { EL } from "lawtext/dist/src/node/el";
-import * as renderer from "lawtext/dist/src/renderer";
-import render_lawtext from "lawtext/dist/src/renderer/lawtext";
-import type { FigDataManagerOptions } from "lawtext/dist/src/renderer/common/docx/FigDataManager";
-import FigDataManager from "lawtext/dist/src/renderer/common/docx/FigDataManager";
+import * as std from "lawtext/dist/src/law/std/index.js";
+import { EL } from "lawtext/dist/src/node/el/index.js";
+import * as renderer from "lawtext/dist/src/renderer/index.js";
+import { renderLawtext } from "lawtext/dist/src/renderer/index.js";
+import type { FigDataManagerOptions } from "lawtext/dist/src/renderer/common/docx/FigDataManager.js";
+import { FigDataManager } from "lawtext/dist/src/renderer/common/docx/FigDataManager.js";
 import { saveAs } from "file-saver";
-import { getLawTitleWithNum } from "@appsrc/law_util";
-import { newStdEL } from "lawtext/dist/src/law/std";
-import type { LawData } from "../lawdata/common";
+import { getLawTitleWithNum } from "../law_util.ts";
+import { newStdEL } from "lawtext/dist/src/law/std/index.js";
+import type { LawData } from "../lawdata/common.ts";
 
 
 interface SelectionRange {
@@ -270,7 +270,7 @@ export const downloadDocx = async (options: {
 export const downloadLawtext = async (
     law: std.Law,
 ): Promise<void> => {
-    const sLawtext = render_lawtext(law);
+    const sLawtext = renderLawtext(law);
     const blob = new Blob(
         [sLawtext],
         { type: "text/plain" },

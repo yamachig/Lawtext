@@ -1,13 +1,13 @@
 
 import React from "react";
-import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
-import type { ParagraphItemProps, HTMLParagraphItem } from "lawtext/dist/src/renderer/rules/paragraphItem";
+import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html.js";
+import type { ParagraphItemProps, HTMLParagraphItem } from "lawtext/dist/src/renderer/rules/paragraphItem.js";
 import { createGlobalStyle } from "styled-components";
-import type { LawViewOptions } from "../common";
-import makePath from "lawtext/dist/src/path/v1/make";
-import { isArticleTitle } from "lawtext/dist/src/law/std";
-import * as std from "lawtext/dist/src/law/std";
-import { digitsToKanjiNum } from "lawtext/dist/src/law/num";
+import type { LawViewOptions } from "../common.tsx";
+import { make as makePath } from "lawtext/dist/src/path/v1/make.js";
+import { isArticleTitle } from "lawtext/dist/src/law/std/index.js";
+import * as std from "lawtext/dist/src/law/std/index.js";
+import { digitsToKanjiNum } from "lawtext/dist/src/law/num.js";
 
 export const HTMLParagraphItemMenuCSS = createGlobalStyle/*css*/`
 .paragraph-item-menu {

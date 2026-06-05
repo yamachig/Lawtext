@@ -45,14 +45,14 @@ const prepareTempIncludes = async (dir: string, tempIncludesDir: string, relpath
 };
 
 export const generateDocs = async (targetDir: string): Promise<void> => {
-    const tempIncludesDir = path.join(__dirname, "./temp-includes");
+    const tempIncludesDir = path.join(import.meta.dirname, "./temp-includes");
 
     if (await promisify(fs.exists)(tempIncludesDir)) await promisify(fs.rm)(tempIncludesDir, { recursive: true });
     await fsExtra.ensureDir(tempIncludesDir);
-    await prepareTempIncludes(path.join(__dirname, "./src"), tempIncludesDir);
+    await prepareTempIncludes(path.join(import.meta.dirname, "./src"), tempIncludesDir);
 
     const app = await Application.bootstrap({
-        entryPoints: [path.join(__dirname, "../globals/**/*")],
+        entryPoints: [path.join(import.meta.dirname, "../globals/**/*")],
         entryPointStrategy: "expand",
         // excludePrivate: true,
         // excludeProtected: true,
@@ -79,9 +79,9 @@ export const generateDocs = async (targetDir: string): Promise<void> => {
 };
 
 const main = async (): Promise<void> => {
-    const yargs = await import("yargs");
+    const yargs = (await import("yargs")).default;
 
-    const args = await yargs
+    const args = await yargs(process.argv.slice(2))
         .option("target-dir", {
             type: "string",
             demandOption: true,
@@ -93,7 +93,7 @@ const main = async (): Promise<void> => {
 };
 
 
-if (typeof require !== "undefined" && require.main === module) {
+if (import.meta.main) {
     process.on("unhandledRejection", e => {
         console.dir(e);
         process.exit(1);

@@ -5,9 +5,9 @@ import path from "path";
 import fs from "fs";
 import type webpack from "webpack";
 import type webpack_dev_server from "webpack-dev-server";
-import WatchMessagePlugin from "./WatchMessagePlugin";
+import WatchMessagePlugin from "./WatchMessagePlugin.ts";
 
-let rootDir = path.dirname(__dirname);
+let rootDir = path.dirname(import.meta.dirname);
 while (!fs.existsSync(path.join(rootDir, "package.json"))) {
     const newRootDir = path.dirname(rootDir);
     if (newRootDir === rootDir) break;
@@ -26,13 +26,16 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
+            extensionAlias: {
+                ".js": [".js", ".ts", ".tsx"],
+            },
             alias: {
                 // "@coveragesrc": path.resolve(rootDir, "./src"),
                 // "@coresrc": path.resolve(rootDir, "../core/src"),
                 "node-fetch": false,
             },
             fallback: {
-                "path": require.resolve("path-browserify"),
+                "path": import.meta.resolve("path-browserify"),
             },
         },
 

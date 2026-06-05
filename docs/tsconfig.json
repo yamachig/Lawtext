@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "nodenext",
     "target": "es2017",
-    "downlevelIteration": true,
+    "rewriteRelativeImportExtensions": true,
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -15,7 +15,6 @@
     // "composite": true,
     // "declaration": true,
     "jsx": "react-jsx",
-    "baseUrl": "./",
     "outDir": "dist",
     "rootDir": "./",
     // "rootDirs": ["src", "bin", "test"],

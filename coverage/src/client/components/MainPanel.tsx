@@ -1,14 +1,14 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as lawDiff from "lawtext/dist/src/diff/lawDiff";
-import { assertNever } from "lawtext/dist/src/util";
+import * as lawDiff from "lawtext/dist/src/diff/lawDiff.js";
+import { assertNever } from "lawtext/dist/src/util/index.js";
 import * as React from "react";
-import styled from "styled-components";
-import LawCoverageInfoCard, { LawCoverageInfoCardStatus } from "./LawCoverageInfoCard";
-import type { LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState";
-import { useDetailLawCoverageStruct } from "./LawtextDashboardPageState";
-import type { LawCoverage } from "../../lawCoverage";
-import type { OriginalLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus } from "./FilterInfo";
-import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedHTMLStatus, getRenderedDocxStatus, getRenderedLawtextStatus } from "./FilterInfo";
+import { styled } from "styled-components";
+import LawCoverageInfoCard, { LawCoverageInfoCardStatus } from "./LawCoverageInfoCard.tsx";
+import type { LawtextDashboardPageStateStruct } from "./LawtextDashboardPageState.ts";
+import { useDetailLawCoverageStruct } from "./LawtextDashboardPageState.ts";
+import type { LawCoverage } from "../../lawCoverage.ts";
+import type { OriginalLawStatus, RenderedHTMLStatus, RenderedDocxStatus, RenderedLawtextStatus, ParsedLawStatus, LawDiffStatus } from "./FilterInfo.tsx";
+import { getLawDiffStatus, getOriginalLawStatus, getParsedLawStatus, getRenderedHTMLStatus, getRenderedDocxStatus, getRenderedLawtextStatus } from "./FilterInfo.tsx";
 
 
 type ZipItem<T extends unknown[][]> = { [I in keyof T]: T[I] extends Array<infer U> ? U : never };

@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "dev": "npx concurrently -n core,docs \"npx typedoc --options core-typedoc.json --watch --preserveWatchOutput\" \"next dev\"",
     "build": "npm run core-docs && next build",
@@ -9,25 +10,29 @@
     "core-docs": "npx typedoc --options core-typedoc.json",
     "export": "npm run build && npm run build-core-bundles"
   },
+  "overrides": {
+    "zod": "4.3.6"
+  },
   "dependencies": {
-    "next": "^16.1.1",
+    "next": "^16.2.7",
     "nextra": "^4.6.1",
     "nextra-theme-docs": "^4.6.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "typedoc": "^0.28.15",
-    "typedoc-plugin-markdown": "^4.9.0"
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typedoc": "^0.28.19",
+    "typedoc-plugin-markdown": "^4.12.0"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^16.1.1",
-    "@stylistic/eslint-plugin": "^5.6.1",
-    "@types/node": "^25.0.3",
-    "@types/react": "^19.2.7",
-    "concurrently": "^9.2.1",
-    "eslint": "^9.39.2",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.51.0"
+    "@eslint-react/eslint-plugin": "^5.8.8",
+    "@eslint/js": "^10.0.1",
+    "@next/eslint-plugin-next": "^16.2.7",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.2.16",
+    "concurrently": "^10.0.3",
+    "eslint": "^10.4.1",
+    "globals": "^17.6.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.60.1"
   }
 }

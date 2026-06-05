@@ -1,9 +1,9 @@
 import React, { } from "react";
-import styled from "styled-components";
-import type { HTMLFigData, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
-import type * as std from "lawtext/dist/src/law/std";
-import { NotImplementedError } from "lawtext/dist/src/util";
-import { useObserved } from "../useObserved";
+import { styled } from "styled-components";
+import type { HTMLFigData, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html.js";
+import type * as std from "lawtext/dist/src/law/std/index.js";
+import { NotImplementedError } from "lawtext/dist/src/util/index.js";
+import { useObserved } from "../useObserved.tsx";
 
 
 export const ReplaceHTMLFigRun: React.FC<WrapperComponentProps> = props => {

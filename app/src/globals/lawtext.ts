@@ -3,13 +3,13 @@
  * @module
  */
 
-import * as temp_law from "@appsrc/actions/temp_law";
-import * as coreQuery from "./coreQuery";
-import * as law_util from "@appsrc/law_util";
-import { elawsLoader, storedLoader } from "@appsrc/lawdata/loaders";
-import type { LawInfo } from "lawtext/dist/src/data/lawinfo";
-import * as _lawUtil from "lawtext/dist/src/law/std";
-import type { Loader } from "lawtext/dist/src/data/loaders/common";
+import * as temp_law from "../actions/temp_law.ts";
+import * as coreQuery from "./coreQuery.ts";
+import * as law_util from "../law_util.ts";
+import { elawsLoader, storedLoader } from "../lawdata/loaders.ts";
+import type { LawInfo } from "lawtext/dist/src/data/lawinfo.js";
+import * as _lawUtil from "lawtext/dist/src/law/std/index.js";
+import type { Loader } from "lawtext/dist/src/data/loaders/common.js";
 
 /**
  * `lawtext.law.lawUtil` モジュールの内容。

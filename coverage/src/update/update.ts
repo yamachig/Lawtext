@@ -1,11 +1,11 @@
 // import formatXML from "xml-formatter";
-import type { Loader } from "lawtext/dist/src/data/loaders/common";
-import { parseLawNum } from "lawtext/dist/src/law/lawNum";
-import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
-import type { Era, LawCoverage, LawType } from "../lawCoverage";
-import type { ConnectionInfo } from "../connection";
-import { getLawDiff, getOriginalLaw, getParsedLaw, getRenderedDocx, getRenderedHTML, getRenderedLawtext } from "./transform";
-import { pick } from "lawtext/dist/src/util";
+import type { Loader } from "lawtext/dist/src/data/loaders/common.js";
+import { parseLawNum } from "lawtext/dist/src/law/lawNum.js";
+import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo.js";
+import type { Era, LawCoverage, LawType } from "../lawCoverage.ts";
+import type { ConnectionInfo } from "../connection.ts";
+import { getLawDiff, getOriginalLaw, getParsedLaw, getRenderedDocx, getRenderedHTML, getRenderedLawtext } from "./transform.ts";
+import { pick } from "lawtext/dist/src/util/index.js";
 
 
 export const update = async (lawInfo: BaseLawInfo, maxDiffLength: number, db: ConnectionInfo, loader: Loader) => {

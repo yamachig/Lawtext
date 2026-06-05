@@ -1,15 +1,15 @@
 // import formatXML from "xml-formatter";
 import { DOMParser } from "@xmldom/xmldom";
-import * as lawDiff from "lawtext/dist/src/diff/lawDiff";
-import { parse } from "lawtext/dist/src/parser/lawtext";
-import * as analyzer from "lawtext/dist/src/analyzer";
-import { renderDocxAsync, renderHTML, renderLawtext } from "lawtext/dist/src/renderer";
-import type { Loader } from "lawtext/dist/src/data/loaders/common";
-import type { EL } from "lawtext/dist/src/node/el";
-import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo";
-import type { Era, LawCoverage, LawType } from "../lawCoverage";
-import type { Law } from "lawtext/dist/src/law/std";
-import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL";
+import * as lawDiff from "lawtext/dist/src/diff/lawDiff.js";
+import { parse } from "lawtext/dist/src/parser/lawtext.js";
+import * as analyzer from "lawtext/dist/src/analyzer/index.js";
+import { renderDocxAsync, renderHTML, renderLawtext } from "lawtext/dist/src/renderer/index.js";
+import type { Loader } from "lawtext/dist/src/data/loaders/common.js";
+import type { EL } from "lawtext/dist/src/node/el/index.js";
+import type { BaseLawInfo } from "lawtext/dist/src/data/lawinfo.js";
+import type { Era, LawCoverage, LawType } from "../lawCoverage.ts";
+import type { Law } from "lawtext/dist/src/law/std/index.js";
+import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL.js";
 import { getMemorizedStringOffsetToPos } from "generic-parser";
 
 const domParser = new DOMParser();

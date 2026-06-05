@@ -1,8 +1,8 @@
-import type { LawCoverage, LawCoverageCounts, SortDirection, SortKey } from "../lawCoverage";
-import type { ConnectionInfo } from "../connection";
+import type { LawCoverage, LawCoverageCounts, SortDirection, SortKey } from "../lawCoverage.ts";
+import type { ConnectionInfo } from "../connection.ts";
 import type mongoose from "mongoose";
-import { sortedLawCoverages } from "./sort";
-import { countLawCoverages } from "./count";
+import { sortedLawCoverages } from "./sort.ts";
+import { countLawCoverages } from "./count.ts";
 
 export class LawCoveragesManager {
     public constructor(

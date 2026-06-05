@@ -19,7 +19,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { Route, Routes } from "react-router-dom";
 import { HashRouter } from "react-router-dom";
-import { LawtextDashboardPage } from "./components/LawtextDashboardPage";
+import { LawtextDashboardPage } from "./components/LawtextDashboardPage.tsx";
 import "./index.scss";
 moment.locale("ja");
 

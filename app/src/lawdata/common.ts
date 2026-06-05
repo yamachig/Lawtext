@@ -1,4 +1,4 @@
-import type { BaseLawtextLawDataProps, BaseXMLLawDataProps, LawDataCore } from "lawtext/dist/src/data/lawdata";
+import type { BaseLawtextLawDataProps, BaseXMLLawDataProps, LawDataCore } from "lawtext/dist/src/data/lawdata.js";
 
 export interface StoredLawDataProps extends BaseXMLLawDataProps {
     source: "stored",

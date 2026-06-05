@@ -1,10 +1,10 @@
 import React from "react";
-import type * as std from "lawtext/dist/src/law/std";
-import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html";
-import styled from "styled-components";
-import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
-import type { SentenceChildEL } from "lawtext/dist/src/node/cst/inline";
-import { lawNumLikeToLawNum } from "lawtext/dist/src/law/lawNum";
+import type * as std from "lawtext/dist/src/law/std/index.js";
+import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html.js";
+import { styled } from "styled-components";
+import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun.js";
+import type { SentenceChildEL } from "lawtext/dist/src/node/cst/inline.js";
+import { lawNumLikeToLawNum } from "lawtext/dist/src/law/lawNum.js";
 
 
 const LawNumA = styled.a`

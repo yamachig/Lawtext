@@ -1,13 +1,13 @@
 
 import React, { Fragment } from "react";
-import * as std from "lawtext/dist/src/law/std";
-import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html";
-import { HTMLMarginSpan } from "lawtext/dist/src/renderer/common/html";
-import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun";
-import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any";
-import type { LawViewOptions } from "../common";
-import { EL } from "lawtext/dist/src/node/el";
-import { NotImplementedError } from "lawtext/dist/src/util";
+import * as std from "lawtext/dist/src/law/std/index.js";
+import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html.js";
+import { HTMLMarginSpan } from "lawtext/dist/src/renderer/common/html.js";
+import { HTMLSentenceChildrenRun } from "lawtext/dist/src/renderer/rules/sentenceChildrenRun.js";
+import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any.js";
+import type { LawViewOptions } from "../common.tsx";
+import { EL } from "lawtext/dist/src/node/el/index.js";
+import { NotImplementedError } from "lawtext/dist/src/util/index.js";
 
 
 export interface ContainersViewProps { containerIDs: string[] }

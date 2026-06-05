@@ -1,12 +1,12 @@
 
 import React from "react";
-import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html";
+import type { HTMLComponentProps, WrapperComponentProps } from "lawtext/dist/src/renderer/common/html.js";
 import { createGlobalStyle } from "styled-components";
-import type { LawViewOptions } from "../common";
-import makePath from "lawtext/dist/src/path/v1/make";
-import * as std from "lawtext/dist/src/law/std";
-import { initialEnv } from "lawtext/dist/src/parser/cst/env";
-import $articleGroupNum from "lawtext/dist/src/parser/cst/rules/$articleGroupNum";
+import type { LawViewOptions } from "../common.tsx";
+import { make as makePath } from "lawtext/dist/src/path/v1/make.js";
+import * as std from "lawtext/dist/src/law/std/index.js";
+import { initialEnv } from "lawtext/dist/src/parser/cst/env.js";
+import { $articleGroupNum } from "lawtext/dist/src/parser/cst/rules/$articleGroupNum.js";
 
 export const HTMLToplevelAndArticlesMenuCSS = createGlobalStyle/*css*/`
 .toplevel-and-articles-wrap {
