@@ -65,7 +65,7 @@ export const HTMLArticleGroup = wrapHTMLComponent("HTMLArticleGroup", ((props: H
 
     if (SupplProvisionLabel && std.isSupplProvision(el)) {
         const Extract = el.attr.Extract === "true" ? <><HTMLMarginSpan/>抄</> : "";
-        const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
+        const AmendLawNum = el.attr.AmendLawNum ? <><HTMLMarginSpan/>（{el.attr.AmendLawNum}）</> : "";
         if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
         blocks.push((
             <div className={`suppl-provision-label indent-${indent + 3}`} {...elProps(SupplProvisionLabel, htmlOptions)}>
@@ -152,8 +152,8 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
     }
 
     if (SupplProvisionLabel && std.isSupplProvision(el)) {
-        const Extract = el.attr.Extract === "true" ? <>${DOCXMargin}抄</> : "";
-        const AmendLawNum = el.attr.AmendLawNum ? `（${el.attr.AmendLawNum}）` : "";
+        const Extract = el.attr.Extract === "true" ? `${DOCXMargin}抄` : "";
+        const AmendLawNum = el.attr.AmendLawNum ? `${DOCXMargin}（${el.attr.AmendLawNum}）` : "";
         if (blocks.length > 0) blocks.push(<EmptyParagraph/>);
         blocks.push((
             <w.p>
@@ -161,8 +161,14 @@ export const DOCXArticleGroup = wrapDOCXComponent("DOCXArticleGroup", ((props: D
                     <w.pStyle w:val={`IndentHanging${indent + 3}`}/>
                 </w.pPr>
                 <DOCXSentenceChildrenRun els={SupplProvisionLabel.children} emphasis={true} {...{ docxOptions }} />
-                {AmendLawNum}
-                {Extract}
+                <w.r>
+                    <w.rStyle w:val="Emphasis"/>
+                    <w.t>{AmendLawNum}</w.t>
+                </w.r>
+                <w.r>
+                    <w.rStyle w:val="Emphasis"/>
+                    <w.t>{Extract}</w.t>
+                </w.r>
             </w.p>
         ));
     }
