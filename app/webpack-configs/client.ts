@@ -39,7 +39,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 ...(env.DEV_SERVER ? {} : {
                     "pdfjs-dist": false,
                     "lawtext/dist/src/law/getLawList.js": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
-                    "../law/getLawList.ts": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
+                    "../law/getLawList": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
                     "./lawList.json": false,
                 }),
 
