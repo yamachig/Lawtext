@@ -87,7 +87,7 @@ const main = async (): Promise<void> => {
             demandOption: true,
             alias: "td",
         })
-        .argv;
+        .parseAsync();
 
     await generateDocs(args["target-dir"]);
 };

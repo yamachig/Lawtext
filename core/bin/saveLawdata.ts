@@ -19,7 +19,7 @@ const saveList = async (dataDir: string): Promise<void> => {
 
 const main = async (): Promise<void> => {
 
-    const args = await yargs()
+    const args = await yargs(process.argv.slice(2))
         .option("mode", {
             type: "string",
             choices: ["all", "download", "save-list"],
@@ -32,7 +32,7 @@ const main = async (): Promise<void> => {
             demandOption: true,
             alias: "d",
         })
-        .argv;
+        .parseAsync();
 
     if (args.mode === "download" || args.mode === "all") {
         bar.start(1, 0);
