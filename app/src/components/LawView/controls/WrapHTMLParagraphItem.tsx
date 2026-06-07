@@ -5,9 +5,11 @@ import type { ParagraphItemProps, HTMLParagraphItem } from "lawtext/dist/src/ren
 import { createGlobalStyle } from "styled-components";
 import type { LawViewOptions } from "../common.tsx";
 import { make as makePath } from "lawtext/dist/src/path/v1/make.js";
-import { isArticleTitle } from "lawtext/dist/src/law/std/index.js";
+import { isArticleTitle, typeCharsMap } from "lawtext/dist/src/law/std/index.js";
 import * as std from "lawtext/dist/src/law/std/index.js";
 import { digitsToKanjiNum } from "lawtext/dist/src/law/num.js";
+import { renderLawtext } from "lawtext/dist/src/renderer/lawtext.js";
+import { ContainerType } from "lawtext/dist/src/node/container/index.js";
 
 export const HTMLParagraphItemMenuCSS = createGlobalStyle/*css*/`
 .paragraph-item-menu {
@@ -52,6 +54,9 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
         articlePath = makePath(articleContainer);
         articleTitle = article.children.find(isArticleTitle)?.text() ?? "この条";
     }
+
+    const topSentencesContainer = [container, ...container.parentsSub(c => c.type === ContainerType.SENTENCES)].slice(-1)[0] ?? null;
+    const topSentencesTypeChar = Object.entries(typeCharsMap).find(([, type]) => type === topSentencesContainer?.el.tag)?.[0] ?? null;
 
     const path = (
         articleContainer
@@ -170,6 +175,14 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
         return false;
     };
 
+    const onClickCopyTopSentencesContainerAsLawtext: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+        if (!topSentencesContainer) return;
+        const topSentencesContainerText = renderLawtext(topSentencesContainer.el);
+        navigator.clipboard.writeText(topSentencesContainerText);
+        e.preventDefault();
+        return false;
+    };
+
     return <div className="paragraph-item-menu">
         <div className="btn-group dropdown">
             <button className="btn btn-sm btn-outline-secondary paragraph-item-menu-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -210,6 +223,14 @@ export const HTMLParagraphItemMenu: React.FC<HTMLComponentProps & ParagraphItemP
                         >名称をコピー：<br/><small style={{ whiteSpace: "normal" }} className="text-muted">「{lawTitleAndNum}{articleTitle}」</small></a>
                     </li>
                 </>)}
+                {topSentencesContainer && (
+                    <li>
+                        <a
+                            className="dropdown-item lh-1"
+                            onClick={onClickCopyTopSentencesContainerAsLawtext}
+                        >この{topSentencesTypeChar ?? "項目"}をLawtextテキストとしてコピー</a>
+                    </li>
+                )}
             </ul>
         </div>
     </div>;
