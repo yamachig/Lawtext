@@ -10,7 +10,7 @@ import type * as std from "./law/std";
 import { assertNever } from "./util";
 import formatXML from "./util/formatXml";
 import type { VirtualLine } from "./parser/std/virtualLine";
-import { fetchLawData } from "./elawsApi";
+import { fetchLawData } from "./data/loaders/FetchElawsLoader";
 import type { figPDFTypes } from "./renderer/common/docx/FigDataManager";
 import FigDataManager from "./renderer/common/docx/FigDataManager";
 import { getPdfjs } from "./renderer/common/docx/getPdfjs";

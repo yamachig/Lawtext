@@ -142,6 +142,9 @@ export default defineConfig(
 
             "@eslint-react/dom-no-unsafe-target-blank": "error",
         },
+        ignores: [
+            "src/elawsOpenapi/**/*",
+        ],
     },
     {
         files: [

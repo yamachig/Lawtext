@@ -1,9 +1,8 @@
-import { fetchLawData } from "../elawsApi";
 import { assertNever } from "../util";
 import type { EL } from "../node/el";
 import { LawInfo } from "./lawinfo";
 import type { Loader } from "./loaders/common";
-import { FetchElawsLoader } from "./loaders/FetchElawsLoader";
+import { FetchElawsLoader, fetchLawData } from "./loaders/FetchElawsLoader";
 import type { WorkersPool } from "./workersPool";
 import { elementToEL } from "../node/el/xmlToEL";
 // eslint-disable-next-line @typescript-eslint/no-require-imports

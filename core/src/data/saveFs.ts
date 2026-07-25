@@ -1,12 +1,13 @@
 import Zip from "node-stream-zip";
 import path from "path";
-import { allXMLZipURL } from "../elawsApi";
 import os from "os";
 import fs from "fs";
 import { fetch } from "../util/node-fetch";
 import fsExtra from "fs-extra";
 import { promisify } from "util";
 import type { FSStoredLoader } from "./loaders/FSStoredLoader";
+
+export const allXMLZipURL = "https://laws.e-gov.go.jp/bulkdownload?file_section=1&only_xml_flag=true";
 
 export const download = async (
     loader: FSStoredLoader,

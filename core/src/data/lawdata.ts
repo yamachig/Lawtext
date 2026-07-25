@@ -5,7 +5,7 @@ import { parse } from "../parser/lawtext";
 import type { EL } from "../node/el";
 import type { ErrorMessage } from "../parser/cst/error";
 import type { LawXMLStruct } from "./loaders/common";
-import { ElawsLawData } from "../elawsApi";
+import { ElawsLawData } from "./loaders/FetchElawsLoader";
 import { xmlToEL } from "../node/el/xmlToEL";
 import { getLawList } from "../law/getLawList";
 

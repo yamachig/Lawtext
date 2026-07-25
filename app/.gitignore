@@ -26,6 +26,5 @@ MANIFEST
 /dist-test
 /dist-bin
 /test/lawdata
-playwright-report
-playwright-results
+playwright-output
 /src/query-docs/temp-includes

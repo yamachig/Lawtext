@@ -1,11 +1,12 @@
-
-import { fetchPartialLaw } from "lawtext/dist/src/elawsApi.js";
 import * as std from "lawtext/dist/src/law/std/index.js";
 import { xmlToEL } from "lawtext/dist/src/node/el/xmlToEL.js";
 import { detectPointers } from "lawtext/dist/src/analyzer/detectPointers.js";
 import type { HTMLComponentProps } from "lawtext/dist/src/renderer/common/html.js";
 import { HTMLAnyELs } from "lawtext/dist/src/renderer/rules/any.js";
+import * as elawsApi from "lawtext/dist/src/elawsOpenapi/index.js";
 import React from "react";
+import { parseNamedNum } from "lawtext/dist/src/law/num.js";
+import { decodeBase64 } from "lawtext/dist/src/util/index.js";
 
 
 export interface ElawsPartialLawViewProps {
@@ -23,13 +24,23 @@ export const ElawsPartialLawView = (props: HTMLComponentProps & ElawsPartialLawV
 
     React.useEffect(() => {
         (async () => {
-            const xml = await fetchPartialLaw({
-                lawNum,
-                article: article?.replace("ノ", "の"),
-                paragraph,
-                appdxTable,
-            });
-            const el = xmlToEL(xml) as std.StdEL;
+            const elData = (await elawsApi.getLawData({
+                throwOnError: true,
+                path: {
+                    law_id_or_num_or_revision_id: lawNum,
+                },
+                query: {
+                    response_format: "json",
+                    law_full_text_format: "xml",
+                    elm: [
+                        "MainProvision",
+                        ...(article ? [`Article_${parseNamedNum(article)}`] : []),
+                        ...(paragraph ? [`Paragraph_${parseNamedNum(paragraph)}`] : []),
+                        ...(appdxTable ? [`AppdxTable_${parseNamedNum(appdxTable)}`] : []),
+                    ].join("-"),
+                },
+            })).data;
+            const el = xmlToEL(new TextDecoder().decode(decodeBase64(elData.law_full_text as string))) as std.StdEL;
             if (std.isParagraph(el)) {
                 let paragraphNum = el.children.find(std.isParagraphNum);
                 if (paragraphNum && paragraphNum.text() === "" && el.attr.Num === "1") {

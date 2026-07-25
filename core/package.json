@@ -22,6 +22,7 @@
   },
   "scripts": {
     "emitBinDeclarations": "tsc -p bin/build/tsconfig.json",
+    "elaws-openapi": "node bin/elawsOpenapi/createClient.js",
     "build": "node --trace-deprecation --trace-warnings bin/build/ && tsc",
     "watch": "node --trace-deprecation --trace-warnings bin/build/ && tsc --watch",
     "build-bundles": "webpack --mode=development --config ./webpack-configs/bundles.js",
@@ -50,6 +51,7 @@
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.8.8",
     "@eslint/js": "^10.0.1",
+    "@hey-api/openapi-ts": "0.98.2",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/chai": "^5.2.3",
     "@types/cli-progress": "^3.11.6",

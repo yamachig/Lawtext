@@ -1,0 +1,3054 @@
+# Source: https://laws.e-gov.go.jp/api/2/swagger-ui/lawapi-v2.yaml
+
+openapi: 3.0.3
+info:
+  version: 2.1.139
+  title: 法令API Version 2
+  description: |
+    ## はじめに
+    > * 本APIは<a href="https://laws.e-gov.go.jp/apitop/" target="_blank">法令API（Version1）</a>を改良開発したHTTP APIです。<br>
+    > * 仕様変更情報やサーバーメンテナンス情報につきましては、<a href="https://laws.e-gov.go.jp/" target="_blank">e-Gov法令検索</a>をご覧ください。<br>
+    > * 取得可能な法令データの範囲は、<a href="https://laws.e-gov.go.jp/help/#:~:text=%E8%AA%AD%E3%81%BF%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84-,e%2DGov%E6%B3%95%E4%BB%A4%E6%A4%9C%E7%B4%A2%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6,-%E5%B9%B3%E6%88%9029%E5%B9%B4" target="_blank">e-Gov法令検索について</a>をご覧ください。
+    > * 法令構造や法令XMLの理解を深めたい方は、<a href="https://laws.e-gov.go.jp/docs/"  target="_blank">法令ドキュメンテーションα版</a>をご覧ください。<br>
+    > * 本ページを視覚的にわかりやすく表現した<a href="https://laws.e-gov.go.jp/api/2/redoc/"  target="_blank">Redoc</a>も提供しておりますのでご覧ください。<br>
+
+
+    ## 注意事項
+    > <font color="red">&nbsp;&nbsp;本APIが提供している機能のうち、以下は試行版となり仕様変更が発生する場合がありますのでご了承ください。</font><br>
+    > <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;- 法令本文取得APIで返却されるJSON形式のデータ<br></font>
+    > <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;- 法令本文ファイル取得APIで取得できるJSON形式のデータ<br></font>
+    > <font color="red">&nbsp;&nbsp;&nbsp;&nbsp;- キーワード検索APIで名称に`law_num`を含むパラメータ指定時のレスポンスデータ<br></font>
+
+
+    ## XML一括ダウンロードについて
+    > &nbsp;&nbsp;本APIはe-Gov法令検索で公開されているデータを使用します。<br>
+    > &nbsp;&nbsp;法令データをダウンロードする場合は、<a href="https://laws.e-gov.go.jp/bulkdownload/" target="_blank">XML一括ダウンロード</a>にアクセスするか、以下のURLを利用してダウンロードしてください。<br>
+
+
+    >> * ### すべての法令データ
+    >>> <pre><code>
+        https://laws.e-gov.go.jp/bulkdownload?file_section=1&only_xml_flag=true
+      </code></pre>
+
+
+    >> * ### 法令分類データ
+    >>> <pre><code>
+        https://laws.e-gov.go.jp/bulkdownload?file_section=2&category_cd={カテゴリーコード}&only_xml_flag=true
+      </code></pre>
+
+
+    >>> ※ {カテゴリーコード}はSchemasの<a href="#model-category_cd">`category_cd`</a>を参照してください。<br>
+    >>> ※ `category_cd`の2桁目、3桁目の0は除いてください。（例えば、憲法は`001`ではなく`1`を使用します）
+
+
+    >> * ### 最新の更新法令データ
+    >>> <pre><code>
+        https://laws.e-gov.go.jp/bulkdownload?file_section=3&update_date={取得する法令データの日付}&only_xml_flag=true
+      </code></pre>
+
+
+      >>> ※ {取得する法令データの日付}は「YYYYMMDD」（YYYY:年、MM:月、DD:日）形式で指定してください。<br>
+      >>> 例： 2024年1月1日の場合は`20240101`<br>
+      >>> （更新法令データの取得範囲は過去３ヶ月です。）
+
+
+    ## 改正区分について
+    > &nbsp;&nbsp;法令APIでは、法令一覧取得API、法令履歴一覧取得API、法令本文取得API、キーワード検索APIのレスポンス`revision_info`内の要素で以下のように判断できます。<br>
+
+
+    >> <table bgcolor="white" border="1">
+    >>    <tr bgcolor="#DDFFFF">
+    >>        <th width="5%">改正区分</th>
+    >>        <th width="25%">改正区分の見分け方</th>
+    >>    </tr>
+    >>    <tr>
+    >>        <td>　新規制定 </td>
+    >>        <td>　amendment_typeが「1」 かつ missionが「New」のもの</td>
+    >>    </tr>
+    >>    <tr>
+    >>        <td>　一部改正 </td>
+    >>        <td>　missionが「Partial」のもの</td>
+    >>    </tr>
+    >>    <tr>
+    >>        <td>　被改正法 </td>
+    >>        <td>　amendment_typeが「3」 かつ missionが「New」のもの</td>
+    >>    </tr>
+    >>    <tr>
+    >>        <td>　廃止 </td>
+    >>        <td>　amendment_typeが「8」 又は repeal_statusが「Repeal」「Expire」「LossOfEffectiveness」のもの</td>
+    >>    </tr>
+    >>  </table>
+
+servers:
+  - url: https://laws.e-gov.go.jp/api/2
+
+tags:
+  - name: laws-api
+    description: 法令データを取得・検索するAPIです。
+
+paths:
+  # <!-- 法令一覧取得API -->
+  /laws:
+    get:
+      tags:
+        - laws-api
+      summary: 法令一覧取得API
+      operationId: get-laws
+      description: |
+        ## 概要
+        > &nbsp;&nbsp;指定条件に該当する法令データが返却されます。<br>
+        > &nbsp;&nbsp;例えば、法令名（`law_title`）を指定した場合、指定した法令名を含む法令データが返却されます。<br>
+        > &nbsp;&nbsp;法令種別（`law_type`）を指定した場合、指定した法令種別の法令データが返却されます。<br>
+        > &nbsp;&nbsp;指定必須のパラメータはありません。また、全パラメータを組み合わせる必要もありません。<br>
+        > &nbsp;&nbsp;必要なパラメータを組み合わせて法令データを取得することができます。<br>
+
+
+        ## 補足事項
+        > &nbsp;&nbsp;本エンドポイントは、指定条件に該当するデータを`laws`に格納します。<br>
+        > &nbsp;&nbsp;`laws`配下に格納されるデータの解説は以下のとおりです。<br>
+
+        > * `law_info`
+        >> &nbsp;&nbsp;&nbsp;法令番号（`law_num`）や公布日（`promulgation_date`）等、改正履歴に依存しないデータが格納されます。
+        <br>
+
+        > * `revision_info`
+        >> &nbsp;&nbsp;&nbsp;改正後の法令名（`law_title`）や改正法令公布日（`amendment_promulgate_date`）等、改正履歴に依存するデータが格納されます。<br>
+        >> &nbsp;&nbsp;&nbsp;法令の時点（`asof`）を指定した場合はその時点で最新の改正履歴を格納します。<br>
+
+        > * `current_revision_info`
+        >>  &nbsp;&nbsp;&nbsp;法令の時点（`asof`）等の指定にかかわらず、現時点で最新の改正履歴を格納します。<br>
+
+      parameters:
+        - name: law_id
+          in: query
+          description: |
+            法令ID（部分一致）<br>
+            > 例： `322CO0000000016`<br>
+          schema:
+            type: string
+
+        - name: law_num
+          in: query
+          description: |
+            法令番号（部分一致）<br>
+            > 例： `昭和二十二年政令第十六号`<br>
+          schema:
+            type: string
+
+        - name: law_num_era
+          in: query
+          description: |
+            法令番号の元号<br>
+            > 例： `Showa`<br>
+          schema:
+            $ref: "#/components/schemas/law_num_era"
+
+        - name: law_num_num
+          in: query
+          description: |
+            法令番号の号数<br>
+            > 例： `88`<br>
+          schema:
+            type: string
+
+        - name: law_num_type
+          in: query
+          description: |
+            法令番号の法令種別<br>
+            種類の定義はSchemasの<a href="#model-law_num_type">`law_num_type`</a>を参照してください。<br>
+            > 例： `Act`<br>
+          schema:
+            $ref: "#/components/schemas/law_num_type"
+
+        - name: law_num_year
+          in: query
+          description: |
+            法令番号の年<br>
+            > 例： `60`<br>
+          schema:
+            type: integer
+
+        - name: law_title
+          in: query
+          description: |
+            法令名又は法令略称（部分一致）<br>
+            > 例： `国家行政組織法`<br>
+          schema:
+            type: string
+
+        - name: law_title_kana
+          in: query
+          description: |
+            法令名読み（部分一致）<br>
+            > 例： `こっかぎょうせいそしきほう`<br>
+          schema:
+            type: string
+
+        - name: law_type
+          in: query
+          style: form
+          explode: false
+          description: |
+            法令種別（複数指定可）<br>
+            > 例： `Act,Rule`<br>
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/law_type"
+
+        - name: amendment_law_id
+          in: query
+          description: |
+            改正法令の法令ID（部分一致）<br>
+            > 注意：本パラメータを指定した場合、パラメータ：法令の時点（`asof`）を無視します。<br>
+            > 例： `429AC0000000054`<br>
+          schema:
+            type: string
+
+        - name: asof
+          in: query
+          description: |
+            法令の時点。指定時点以前で最新の改正履歴を、各法令の `revision_info` に格納します。省略した場合、現時点で検索します。<br>
+            > 例： `2023-07-01`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: category_cd
+          in: query
+          style: form
+          explode: false
+          description: |
+            事項別分類コード（複数指定可）<br>
+            コードの定義はSchemasの<a href="#model-category_cd">`category_cd`</a>を参照してください。<br>
+            > 例： `001,002`<br>
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/category_cd"
+
+        - name: mission
+          in: query
+          style: form
+          explode: false
+          description: |
+            新規制定又は被改正法令（`New`）・一部改正法令（`Partial`）を指定（複数指定可）<br>
+            > 例： `New,Partial`<br>
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/mission"
+
+        - name: omit_current_revision_info
+          in: query
+          description: |
+            `true`の場合、法令の時点（`asof`）に依存しない現在以前の最新の版の情報（`current_revision_info`）をレスポンスに含めない<br>
+            > 例： `true`<br>
+            > 既定値： `false`<br>
+          schema:
+            type: boolean
+
+        - name: promulgation_date_from
+          in: query
+          description: |
+            公布日（指定値を含む、それ以後）<br>
+            > 例： `2023-07-01`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: promulgation_date_to
+          in: query
+          description: |
+            公布日（指定値を含む、それ以前）<br>
+            > 例： `2023-07-01`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: repeal_status
+          in: query
+          style: form
+          explode: false
+          description: |
+            廃止等の状態（複数指定可）<br>
+            状態の定義はSchemasの<a href="#model-repeal_status">`repeal_status`</a>を参照してください。<br>
+            > 例： `Repeal,Expire`<br>
+
+            <font color=red>`Expire`、`LossOfEffectiveness`指定時のレスポンスデータについて、<br>
+            廃止日（`repeal_date`）は実際に法令が廃止された日ではなく、データ廃止処理日を指しますので御留意ください。</font><br>
+
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/repeal_status"
+
+        - name: limit
+          in: query
+          description: |
+            レスポンスの `laws` の取得件数の上限。<br>
+            > 例：`50`<br>
+            > 既定値：`100`<br>
+          schema:
+            type: integer
+            format: int32
+
+        - name: offset
+          in: query
+          description: |
+            レスポンスデータの取得開始位置。例えば`10`を指定した場合、11件目からレスポンスデータが取得される。<br>
+            1〜10件目は取得されない。<br>
+            > 例： `10`<br>
+            > 既定値： `0`<br>
+          schema:
+            type: integer
+            format: int32
+
+        - name: order
+          in: query
+          style: form
+          explode: false
+          description: |
+            レスポンスの並び順を指定（複数指定可）。<br>
+            <a href="#model-law_info">`law_info`</a> 及び <a href="#model-revision_info">`revision_info`</a> 配下のフィールドを指定可能。<br>
+            先頭に + を付けると昇順、- を付けると降順、符号がない場合は昇順。<br><br>
+            
+            例： `+law_info.law_id,-revision_info.amendment_promulgate_date`<br>
+            既定値： `law_info.law_id`<br>
+          schema:
+            type: string
+
+        - name: response_format
+          in: query
+          description: |
+            レスポンス形式（`json` 又は `xml`）。指定なしの場合はAcceptヘッダから判断、判断できない場合は `json` とする。<br>
+            > 例： `json`<br>
+            > 既定値： 指定なし<br>
+          schema:
+            nullable: true
+            allOf:
+              - $ref: "#/components/schemas/response_format"
+
+      responses:
+        "200":
+          description: 200 リクエスト処理、レスポンス処理が正しく行えた時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/laws_response"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_laws_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/laws_response"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_laws_xml"
+
+        "400":
+          description: 400 Bad Request API クライアント側の問題によるエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_laws_400error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_laws_400error_xml"
+
+        "500":
+          description: 500 Internal Server Error サーバ内処理でエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_laws_500error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_laws_500error_xml"
+
+  # <!-- 法令履歴一覧取得API -->
+  /law_revisions/{law_id_or_num}:
+    get:
+      tags:
+        - laws-api
+      summary: 法令履歴一覧取得API
+      operationId: get-revisions
+      description: |
+        ## 概要
+        > &nbsp;&nbsp;法令ID（`law_id`）又は法令番号（`law_num`）を指定必須として、指定した法令の改正履歴が返却されます。<br>
+        > &nbsp;&nbsp;改正履歴は`revisions`配下に格納されており、上から法令履歴ID（`law_revision_id`）が新しい順で改正履歴が返却されます。<br>
+        > &nbsp;&nbsp;指定任意のパラメータと組み合わせることで、返却データを絞り込むことができます。<br>
+
+        ## 補足事項
+        > &nbsp;&nbsp;本エンドポイントで返却されるデータの解説は以下のとおりです。<br>
+
+        > * `law_info`
+        >> &nbsp;&nbsp;&nbsp;法令番号（`law_num`）や公布日（`promulgation_date`）等、改正履歴に依存しない法令データが格納されます。
+
+        > * `revisions`
+        >> &nbsp;&nbsp;&nbsp;改正後の法令名（`law_title`）や改正法令公布日（`amendment_promulgate_date`）等、改正履歴に依存する法令データが格納されます。<br>
+
+      parameters:
+        - name: law_id_or_num
+          in: path
+          required: true
+          description: |
+            法令ID又は法令番号（完全一致）。<br>
+            > 例： `503AC0000000036`、`令和三年法律第三十六号`<br>
+          schema:
+            type: string
+
+        - name: law_title
+          in: query
+          description: |
+            法令名又は法令略称（部分一致又は正規表現）<br>
+            * 本パラメータを`/`で囲まずに指定した場合は、部分一致で検索します。<br>
+            > 例： `デジタル庁設置法`<br>
+            * 本パラメータを`/`で囲んで指定した場合は、正規表現を利用して完全一致で検索します。<br>
+            > 例： `/デジタル庁.*法/`、`/^デジタル庁設置法$/`<br>
+          schema:
+            type: string
+
+        - name: law_title_kana
+          in: query
+          description: |
+            法令名読み（部分一致）<br>
+            > 例： `でじたるちょうせっちほう`<br>
+          schema:
+            type: string
+
+        - name: amendment_date_from
+          in: query
+          description: |
+            改正法令施行期日（指定値を含む、それ以後）<br>
+            > 例： `2024-06-07`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: amendment_date_to
+          in: query
+          description: |
+            改正法令施行期日（指定値を含む、それ以前）<br>
+            > 例： `2024-06-07`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: amendment_law_id
+          in: query
+          description: |
+            改正法令の法令ID（部分一致）<br>
+            > 例： `506AC0000000046`<br>
+          schema:
+            type: string
+
+        - name: amendment_law_num
+          in: query
+          description: |
+            改正法令の法令番号（部分一致）<br>
+            > 例： `令和六年法律第四十六号`<br>
+          schema:
+            type: string
+
+        - name: amendment_law_title
+          in: query
+          description: |
+            改正法令の法令名（部分一致又は正規表現）<br>
+            * 本パラメータを`/`で囲まずに指定した場合は、部分一致で検索します。<br>
+            > 例： `デジタル社会形成基本法等の一部を改正する法律`<br>
+            * 本パラメータを`/`で囲んで指定した場合は、正規表現を利用して完全一致で検索します。<br>
+            > 例： `/^情報通信技術.*法律$/`<br>
+          schema:
+            type: string
+
+        - name: amendment_law_title_kana
+          in: query
+          description: |
+            改正法令の法令名読み（部分一致）<br>
+            > 例： `でじたるしゃかいけいせいきほんほうとうのいちぶをかいせいするほうりつ`<br>
+          schema:
+            type: string
+
+        - name: amendment_promulgate_date_from
+          in: query
+          description: |
+            改正法令公布日（指定値を含む、それ以後）<br>
+            > 例： `2024-06-07`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: amendment_promulgate_date_to
+          in: query
+          description: |
+            改正法令公布日（指定値を含む、それ以前）<br>
+            > 例： `2024-06-07`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: amendment_type
+          in: query
+          style: form
+          explode: false
+          description: |
+            改正種別（複数指定可）<br>
+            改正種別の定義はSchemasの<a href="#model-amendment_type">`amendment_type`</a>を参照してください。<br>
+            > 例： `1,3`<br>
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/amendment_type"
+
+        - name: category_cd
+          in: query
+          style: form
+          explode: false
+          description: |
+            事項別分類コード（複数指定可）<br>
+            コードの定義はSchemasの<a href="#model-category_cd">`category_cd`</a>を参照してください。<br>
+            > 例： `011,021`<br>
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/category_cd"
+
+        - name: current_revision_status
+          in: query
+          style: form
+          explode: false
+          description: |
+            履歴の状態（法令の時点（`asof`）の値に関わらず常に現時点の状態と比較する）（複数指定可）<br>
+            状態の定義はSchemasの<a href="#model-current_revision_status">`current_revision_status`</a>を参照してください。<br>
+            > 例： `CurrentEnforced,PreviousEnforced`<br>
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/current_revision_status"
+
+        - name: mission
+          in: query
+          style: form
+          explode: false
+          description: |
+            新規制定又は被改正法令（`New`）・一部改正法令（`Partial`）を指定（複数指定可）<br>
+            > 例： `New,Partial`<br>
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/mission"
+
+        - name: remain_in_force
+          in: query
+          description: |
+            廃止後の効力（`true`:廃止後でも効力を有するもの / `false`:廃止後に効力を有しないもの）<br>
+            > 例： `false`<br>
+          schema:
+            type: boolean
+
+        - name: repeal_date_from
+          in: query
+          description: |
+            廃止日（指定値を含む、それ以後）<br>
+            > 例： `2024-04-01`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: repeal_date_to
+          in: query
+          description: |
+            廃止日（指定値を含む、それ以前）<br>
+            > 例： `2024-04-01`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: repeal_status
+          in: query
+          style: form
+          explode: false
+          description: |
+            廃止等の状態（複数指定可）<br>
+            状態の定義はSchemasの<a href="#model-repeal_status">`repeal_status`</a>を参照してください。<br>
+
+            > 例： `None,Repeal`<br>
+
+            <font color=red>`Expire`、`LossOfEffectiveness`指定時のレスポンスデータについて、<br>
+            廃止日（`repeal_date`）は実際に法令が廃止された日ではなく、データ廃止処理日を指しますので御留意ください。</font><br>
+
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/repeal_status"
+
+        - name: updated_from
+          in: query
+          description: |
+            データの更新日（指定値を含む、それ以後）<br>
+            > 例： `2024-06-07`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: updated_to
+          in: query
+          description: |
+            データの更新日（指定値を含む、それ以前）<br>
+            > 例： `2024-06-07`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: response_format
+          in: query
+          description: |
+            レスポンス形式（`json` 又は `xml`）。指定なしの場合はAcceptヘッダから判断、判断できない場合は `json` とする。<br>
+            > 例： `json`<br>
+            > 既定値： 指定なし<br>
+          schema:
+            nullable: true
+            allOf:
+              - $ref: "#/components/schemas/response_format"
+
+      responses:
+        "200":
+          description: 200 リクエスト処理、レスポンス処理が正しく行えた時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/law_revisions_response"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_law_revisions_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/law_revisions_response"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_law_revisions_xml"
+
+        "400":
+          description: 400 Bad Request API クライアント側の問題によるエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_law_revisions_400error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_law_revisions_400error_xml"
+
+        "500":
+          description: 500 Internal Server Error サーバ内処理でエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_law_revisions_500error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_law_revisions_500error_xml"
+
+  # <!-- 法令本文取得取得API -->
+  /law_data/{law_id_or_num_or_revision_id}:
+    get:
+      tags:
+        - laws-api
+      summary: 法令本文取得API
+      operationId: get-law_data
+      description: |
+        ## 概要
+        > &nbsp;&nbsp;法令ID（`law_id`）、法令番号（`law_num`）、法令履歴ID（`law_revision_id`）のいずれかを指定必須として、指定した法令の本文を取得します。<br>
+        > * &nbsp;&nbsp;法令ID（`law_id`）、法令番号（`law_num`）を指定した場合は、現時点で最新のリビジョンの本文を取得します。<br>
+        > * &nbsp;&nbsp;法令履歴ID（`law_revision_id`）を指定した場合は、該当するリビジョンの本文を取得します。<br>
+        > * &nbsp;&nbsp;上記の指定必須のパラメータがわからない場合は、法令一覧取得APIで法令名（`law_title`）等を指定してパラメータを調べてください。
+
+        >&nbsp;&nbsp;<font color="red"><b>注意：</b><br>
+        >&nbsp;&nbsp;法令本文のデータサイズが大きい場合、エラーが発生することがあります。<br>
+        >&nbsp;&nbsp;エラーが発生した場合は、SwaggerUI以外（Microsoft EdgeやGoogle Chromeといったブラウザで法令APIのURLを直接指定等）で実行してください。</font>
+
+
+        ## 補足事項
+        > &nbsp;&nbsp;本エンドポイントで返却されるデータの解説は以下のとおりです。<br>
+
+        > * `attached_files_info`
+        >>&nbsp;&nbsp;添付ファイルに関するデータが格納されます。
+
+
+        > * `law_info`
+        >>&nbsp;&nbsp;法令番号（`law_num`）や公布日（`promulgation_date`）等、改正履歴に依存しないデータが格納されます。
+
+
+        > * `revision_info`
+        >>&nbsp;&nbsp;改正後の法令名（`law_title`）や改正法令公布日（`amendment_promulgate_date`）等、改正履歴に依存するデータが格納されます。<br>
+        >>&nbsp;&nbsp;法令の時点（`asof`）を指定した場合はその時点で最新の改正履歴を格納します。
+
+        > * `law_full_text`
+        >>&nbsp;&nbsp;法令の本文情報が格納されます。<br>
+        >>&nbsp;&nbsp;要素（`elm`）パラメータを指定することで要素を絞り込んで本文を取得することができます。指定方法はSchemasの<a href="#model-elm">`elm`</a>を参照してください。
+
+
+        ## 法令本文のレスポンス形式
+        > &nbsp;&nbsp;レスポンス形式（`response_format`）を指定することでデータのレスポンス形式をJSON、又はXMLに切り替えることができます。<br>
+        > &nbsp;&nbsp;また、法令本文の形式（`law_full_text_format`）を指定することで法令本文（`law_full_text`）のレスポンス形式を切り替えることができます。
+
+        > * レスポンス形式（`response_format`）を`json` 、かつ法令本文（`law_full_text`） を`xml`で指定した場合、法令本文（`law_full_text`）はXML形式で返却されます。<br>
+
+        > * レスポンス形式（`response_format`）を`xml`、かつ法令本文（`law_full_text`）を`json`で指定した場合、法令本文（`law_full_text`）はJSON形式で返却されます。<br>
+
+        >> <font color="red">上記のように`response_format`と`law_full_text`が異なる場合、`law_full_text`の返却値はBase64でエンコードしておりますので、ご利用の際はBase64でデコードしてください。</font>
+
+
+        ## XMLとJSONの関係性
+
+        >> 例）以下のXMLをJSONで表した場合の対応表を以下に記します。<br>
+        >> ### XML
+        >>> <pre><code>&lt;Sentence Num="1" WritingMode="vertical"&gt;
+        &nbsp;&nbsp;この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、・・・
+        &lt;/Sentence&gt;
+        </pre></code>
+
+        >> ### JSON（詳細版）
+        >>> <pre><code>{
+        &nbsp;&nbsp;"tag": "Sentence",
+        &nbsp;&nbsp;"attr": {
+        &nbsp;&nbsp;&nbsp;&nbsp;"Num": "1",
+        &nbsp;&nbsp;&nbsp;&nbsp;"WritingMode": "vertical"
+        &nbsp;&nbsp;},
+        &nbsp;&nbsp;"children": [
+        &nbsp;&nbsp;&nbsp;&nbsp;"この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、・・・"
+        &nbsp;&nbsp;]
+        }
+        </pre></code>
+
+        >> ### JSON（簡易版）
+        >>> <pre><code>{
+        &nbsp;&nbsp;"Sentence": [  
+        &nbsp;&nbsp;&nbsp;&nbsp; "この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、・・・"
+        &nbsp;&nbsp;&nbsp;&nbsp;]
+        }
+        </code></pre>
+
+        >>> - インライン要素（Ruby等）はテキストにタグごと埋め込まれます。
+        >>> - 属性は`AmendLawNum`、`Extract`、`Paragraph`要素の`Num`のみ、フィールドとして含まれます。
+        
+
+        >> ### XMLとJSON（詳細版）の対応表
+        >>> <table bgcolor="white" border="1">
+          <tr bgcolor="#DDFFFF">
+            <th width="10%">項目名</th>
+            <th width="30%">XML</th>
+            <th width="30%">JSON（詳細版）</th>
+            <th width="30%">JSON（簡易版）</th>
+          </tr>
+          <tr>
+            <td>タグ</td>
+            <td>Sentence</td>
+            <td>"tag": "Sentence"</td>
+            <td>Sentence</td>
+          </tr>
+          <tr>
+            <td>属性</td>
+            <td>Num="1" WritingMode="vertical"</td>
+            <td>"attr": {"Num": "1","WritingMode": "vertical"}</td>
+            <td>なし（一部の属性は、該当タグと同階層に別要素として格納する場合あり）</td>
+            </tr>
+          <tr>
+            <td>子要素</td>
+            <td>この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、・・・</td>
+            <td>"children": ["この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、・・・"]</td>
+            <td>この法律は、処分、行政指導及び届出に関する手続並びに命令等を定める手続に関し、・・・</td>
+          </tr>
+        </table>
+
+      parameters:
+        - name: law_id_or_num_or_revision_id
+          in: path
+          required: true
+          description: |
+            法令ID、法令番号又は法令履歴ID（完全一致）。<br>
+            > 例： `411AC0000000127`、`平成十一年法律第百二十七号`、`411AC0000000127_19990813_000000000000000`<br>
+          schema:
+            type: string
+
+        - name: law_full_text_format
+          in: query
+          description: |
+            法令本文の形式（`json` 又は `xml`）。指定なしの場合は`response_format`により判断される形式に合わせる。<br>
+            > 例： `json`<br>
+            > 既定値： 指定なし<br>
+          schema:
+            nullable: true
+            allOf:
+              - $ref: "#/components/schemas/response_format"
+            default: null
+
+        - name: asof
+          in: query
+          description: |
+            法令の時点。指定時点以前で最新の履歴に対応する法令本文を取得します。<br>
+            `law_id_or_num_or_revision_id`に法令履歴IDを指定した場合は無視されます。<br>
+            > 例： `2023-04-01`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: elm
+          in: query
+          description: |
+            法令本文の一部のみを取得する場合、取得する条項等の要素を指定します。指定しない場合は全文を取得します。<br>
+            指定方法はSchemasの<a href="#model-elm">`elm`</a>を参照してください。<br>
+            > 例： `MainProvision-Paragraph[1]`<br>
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/elm"
+
+        - name: json_format
+          in: query
+          description: |
+            JSONレスポンスの`law_full_text`の形式を指定します。<br>
+            `full`を指定した場合、JSON（詳細版）が返却されます。法令XMLを解説した詳細な構造です。<br>
+            `light`を指定した場合、JSON（簡易版）が返却されます。パースに最適化された簡易的な構造です。<br>
+            レスポンス形式がJSONの場合のみ有効です。<br>
+            > 例： `light`<br>
+            > 既定値： `full`<br>
+          schema:
+            nullable: true
+            type: string
+            enum: [full, light]
+
+        - name: omit_amendment_suppl_provision
+          in: query
+          description: |
+            `true`の場合、レスポンスの`law_full_text`の中に改正法令の附則を含めない<br>
+            > 例： `true`<br>
+            > 既定値： `false`<br>
+          schema:
+            type: boolean
+
+        - name: include_attached_file_content
+          in: query
+          description: |
+            `true`の場合、レスポンスの`attached_files_info`の`image_data`を返却します。<br>
+            > 例： `true`<br>
+            > 既定値： `false`<br>
+          schema:
+            type: boolean
+
+        - name: response_format
+          in: query
+          description: |
+            レスポンス形式（`json` 又は `xml`）。指定なしの場合はAcceptヘッダから判断、判断できない場合は `json` とする。<br>
+            > 例： `json`<br>
+            > 既定値： 指定なし<br>
+          schema:
+            nullable: true
+            allOf:
+              - $ref: "#/components/schemas/response_format"
+            default: null
+
+      responses:
+        "200":
+          description: 200 リクエスト処理、レスポンス処理が正しく行えた時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/law_data_response"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_law_data_json"
+                Example 2:
+                  $ref: "#/components/examples/example_law_data_json2"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/law_data_response"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_law_data_xml"
+
+        "400":
+          description: 400 Bad Request API クライアント側の問題によるエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_law_data_400error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_law_data_400error_xml"
+
+        "500":
+          description: 500 Internal Server Error サーバ内処理でエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_law_data_500error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_law_data_500error_xml"
+
+  # <!-- 添付ファイル取得API -->
+  /attachment/{law_revision_id}:
+    get:
+      tags:
+        - laws-api
+      summary: 添付ファイル取得API
+      operationId: get-attachment
+      description: |
+        ## 概要
+        > &nbsp;&nbsp;法令履歴ID（`law_revision_id`）を指定必須パラメータとして、法令本文の添付ファイルを取得します。<br>
+        > &nbsp;&nbsp;法令データ上に存在する添付ファイルの拡張子には、`jpg`、`pdf`があります。<br>
+
+        > &nbsp;&nbsp;法令本文取得APIのレスポンスデータに含まれる`attached_files_info`のsrc属性（`src`）を指定することで特定の添付ファイルが取得できます。<br>
+        > &nbsp;&nbsp;src属性（`src`）を指定しない場合は、法令本文に含まれる添付ファイルをZip形式で一括取得できます。
+
+
+        ## 補足事項
+        > &nbsp;&nbsp;src属性（`src`）の指定有無によってレスポンスの動作が異なります。<br>
+
+        > &nbsp;&nbsp;src属性（`src`）指定時、
+        > * &nbsp;&nbsp;SwaggerUIでAPIを実行した場合、`jpg`が返却される場合は画像が表示されます。`pdf`の場合はダウンロードリンクが表示されます。
+        > * &nbsp;&nbsp;URLを直接入力した場合、`jpg`が返却される場合は画像が表示されます。`pdf`の場合はファイルがダウンロードされます。
+
+        > &nbsp;&nbsp;src属性（`src`）未指定時、
+        > * &nbsp;&nbsp;SwaggerUIでAPIを実行した場合、`jpg`、`pdf`のいずれもダウンロードリンクが表示されます。
+        > * &nbsp;&nbsp;URLを直接入力した場合、`jpg`、`pdf`のいずれもZip形式でファイルがダウンロードされます。
+
+      parameters:
+        - name: law_revision_id
+          in: path
+          required: true
+          description: |
+            法令履歴ID（完全一致）<br>
+            > jpgの例：`411AC0000000127_19990813_000000000000000`<br>
+            <br>
+            > pdfの例：`322M40000010094_20240601_506M60000010035`<br>
+          schema:
+            type: string
+
+        - name: src
+          in: query
+          description: |
+            法令XML中のFig要素のsrc属性<br>
+            >  jpgの例：`./pict/H11HO127-001.jpg`<br>
+            <br>
+            >  pdfの例：`./pict/2FH00000007000.pdf`<br>
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: 200 リクエスト処理、レスポンス処理が正しく行えた時
+          content:
+            "*/*":
+              schema:
+                type: string
+                format: binary
+                description: ファイルの内容（バイナリ形式）
+              examples:
+                Example 1:
+                  value: "（ここにバイナリデータが返却されます）"
+        "400":
+          description: 400 Bad Request API クライアント側の問題によるエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_attachment_400error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_attachment_400error_xml"
+        "500":
+          description: 500 Internal Server Error サーバ内処理でエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_attachment_500error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_attachment_500error_xml"
+
+  # <!-- キーワード検索API -->
+  /keyword:
+    get:
+      tags:
+        - laws-api
+      summary: キーワード検索API
+      operationId: get-keyword
+      description: |
+        ## 概要
+        > キーワード（`keyword`）を指定必須とし、法令本文内に指定したキーワード（`keyword`）を含む法令を取得します。<br>
+        > 本エンドポイントでは、法令本文（`law_full_text`）を対象に全文検索を行います。<br>
+        > 指定任意のパラメータと組み合わせることで、返却データを絞り込むことができます。
+
+        ## 補足事項
+        > &nbsp;&nbsp;本エンドポイントで返却されるデータの解説は以下のとおりです。
+
+        > * `law_info`
+        >> &nbsp;&nbsp;&nbsp;法令番号（`law_num`）や公布日（`promulgation_date`）等、改正履歴に依存しないデータが格納されます。
+        <br>
+
+        > * `revision_info`
+        >> &nbsp;&nbsp;&nbsp;改正後の法令名（`law_title`）や改正法令公布日（`amendment_promulgate_date`）等、改正履歴に依存するデータが格納されます。<br>
+        >> &nbsp;&nbsp;&nbsp;法令の時点（`asof`）を指定した場合はその時点で最新の改正履歴を格納します。<br>
+
+        > * ### `sentences`
+        >> &nbsp;&nbsp;キーワード（`keyword`）に該当する法令本文の見出し等の構造（`position`）と条文内容（`text`）が格納されます。
+
+      parameters:
+        - name: keyword
+          in: query
+          description: |
+            キーワード<br>
+            入力したキーワードを含む法令本文を検索します。<br>
+            ワイルドカード検索、AND検索、OR検索、NOT検索でキーワードを指定できます。<br>
+            * ワイルドカード検索
+
+            > 例えば、第○条のように一部のキーワードが不明な時にワイルドカードを使用すると、該当する法令本文を検索することができます。
+
+            > <table bgcolor="white" border="1">
+               <tr bgcolor="#DDFFFF">
+                 <th width=20%>キーワード</th>
+                 <th width=20%>該当する例</th>
+                 <th width=20%>備考</th>
+               </tr>
+               <tr>
+                 <td>第*条</td>
+                 <td>第二十一条</td>
+                 <td>*は0文字以上の文字</td>
+               </tr>
+               <tr>
+                 <td>第?条</td>
+                 <td>第五条</td>
+                 <td>?は1文字の文字</td>
+               </tr>
+            </table>
+
+
+            * AND検索、OR検索、NOT検索
+
+            > 検索方法の仕様は、<a href="https://laws.e-gov.go.jp/help/#how-to-write-a-search-expression" target="_blank">検索式の書き方</a>をご覧ください。<br>
+            > 複数のキーワードを記号でつなげることにより、AND検索、OR検索、NOT検索を組み合わせて検索することができます。<br>
+            > ワイルドカード検索と組み合わせて検索することはできません。
+            > <br>
+            > <br>
+            > 例： `デジタル庁`<br>
+
+          schema:
+            type: string
+          required: true
+
+        - name: law_num
+          in: query
+          description: |
+            法令番号（部分一致）<br>
+            > 例： `平成二十八年個人情報保護委員会規則第六号`<br>
+          schema:
+            type: string
+
+        - name: law_num_era
+          in: query
+          description: |
+            法令番号の元号<br>
+            > 例： `Heisei`<br>
+          schema:
+            $ref: "#/components/schemas/law_num_era"
+
+        - name: law_num_num
+          in: query
+          description: |
+            法令番号の号数<br>
+            > 例： `006`<br>
+          schema:
+            type: string
+
+        - name: law_num_type
+          in: query
+          description: |
+            法令番号の法令種別<br>
+            種類の定義はSchemasの<a href="#model-law_num_type">`law_num_type`</a>を参照してください。<br>
+            > 例： `Rule`<br>
+          schema:
+            $ref: "#/components/schemas/law_num_type"
+
+        - name: law_num_year
+          in: query
+          description: |
+            法令番号の年<br>
+            > 例： `28`<br>
+          schema:
+            type: integer
+
+        - name: law_type
+          in: query
+          style: form
+          explode: false
+          description: |
+            法令種別（複数指定可）<br>
+            > 例： `Act,Rule`<br>
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/law_type"
+
+        - name: asof
+          in: query
+          description: |
+            法令の時点。指定時点以前で最新の改正履歴を、各法令の `revision_info` に格納します。省略した場合、現時点で検索します。<br>
+            > 例： `2024-05-27`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: category_cd
+          in: query
+          style: form
+          explode: false
+          description: |
+            事項別分類コード（複数指定可）<br>
+            コードの定義はSchemasの<a href="#model-category_cd">`category_cd`</a>を参照してください。<br>
+            > 例： `011,021`<br>
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/category_cd"
+
+        - name: promulgation_date_from
+          in: query
+          description: |
+            公布日（開始）<br>
+            > 例： `2016-12-15`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: promulgation_date_to
+          in: query
+          description: |
+            公布日（終了）<br>
+            > 例： `2016-12-15`<br>
+          schema:
+            type: string
+            format: date
+
+        - name: limit
+          in: query
+          description: |
+            レスポンスの`sentences`の`position`数の総和の上限。<br>
+            > 例：`50`<br>
+            >  既定値： `100`<br>
+            >  上限値： `1000`
+          schema:
+            type: integer
+            format: int32
+
+        - name: offset
+          in: query
+          description: |
+            レスポンスデータの取得開始位置。例えば`10`を指定した場合、11件目からレスポンスデータが取得される。<br>
+            1〜10件目は取得されない。<br>
+            > 例： `10`<br>
+            > 既定値： `0`<br>
+          schema:
+            type: integer
+            format: int32
+
+        - name: order
+          in: query
+          style: form
+          explode: false
+          description: |
+            レスポンスの並び順を指定（複数指定可）。<br>
+            <a href="#model-law_info">`law_info`</a> 及び <a href="#model-revision_info">`revision_info`</a> 配下のフィールドを指定可能。<br>
+            先頭に + を付けると昇順、- を付けると降順、符号がない場合は昇順。<br><br>
+            
+            例： `+law_info.law_id,-revision_info.amendment_promulgate_date`<br>
+            既定値： `law_info.law_id`<br>
+          schema:
+            type: string
+
+        - name: response_format
+          in: query
+          description: |
+            レスポンス形式（`json` 又は `xml`）。指定なしの場合はAcceptヘッダから判断、判断できない場合は `json` とする。<br>
+            > 例： `json`<br>
+            > 既定値： 指定なし<br>
+          schema:
+            nullable: true
+            allOf:
+              - $ref: "#/components/schemas/response_format"
+
+        - name: sentences_limit
+          in: query
+          description: |
+            `sentences`に表示される件数が制限されます。<br>
+            <br>
+            ※本パラメータを指定した場合、<br>
+            　`limit`で指定した件数とレスポンスで取得される件数が合わなくなることがあります。<br>
+            　`limit`を上回る値を指定した場合、`limit`の指定値が優先されます。<br>
+            > 例：`5`<br>
+          schema:
+            type: integer
+            format: int32
+
+        - name: sentence_text_size
+          in: query
+          description: |
+            レスポンス：`items`->`sentences`->`text` の表示文字数（`highlight_tag`で指定したHTMLタグを含む）<br>
+            > 例：`20`<br>
+            > 既定値： `100`<br>
+          schema:
+            type: integer
+            format: int32
+
+        - name: highlight_tag
+          in: query
+          description: |
+            `keyword`で指定された文言のヒット箇所を囲むHTMLタグ名。<br>
+            > 例： `em`<br>
+            > 規定値： `span`<br>
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: 200 リクエスト処理、レスポンス処理が正しく行えた時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/keyword_response"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_keyword_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/keyword_response"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_keyword_xml"
+
+        "400":
+          description: 400 Bad Request API クライアント側の問題によるエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_keyword_400error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_keyword_400error_xml"
+
+        "500":
+          description: 500 Internal Server Error サーバ内処理でエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_keyword_500error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_keyword_500error_xml"
+
+  # <!-- 法令本文ファイル取得API -->
+  /law_file/{file_type}/{law_id_or_num_or_revision_id}:
+    get:
+      tags:
+        - laws-api
+      summary: 法令本文ファイル取得API
+      operationId: get-law_file
+      description: |
+        ## 概要
+        > &nbsp;&nbsp;法令ID（`law_id`）、法令番号（`law_num`）、法令履歴ID（`law_revision_id`）のいずれかと、ファイル種別（`file_type`）を指定必須として、<br>
+        > &nbsp;&nbsp;法令本文をダウンロードすることができます。
+
+      parameters:
+        - name: law_id_or_num_or_revision_id
+          in: path
+          required: true
+          description: |
+            法令ID、法令番号又は法令履歴ID（完全一致）。<br>
+            > 例： `405AC0000000088`、`昭和二十二年政令第十六号`、`322CO0000000016_20240401_505CO0000000293`<br>
+          schema:
+            type: string
+
+        - name: file_type
+          in: path
+          required: true
+          description: |
+            ファイル種別<br>
+            コードの定義はSchemasの<a href="#model-file_type">`file_type`</a>を参照してください。<br>
+            > 例： `xml`<br>
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/file_type"
+
+        - name: asof
+          in: query
+          description: |
+            法令の時点。指定時点以前で最新の履歴に対応する法令本文ファイルを取得します。<br>
+            `law_id_or_num_or_revision_id`に法令履歴IDを指定した場合は無視されます。<br>
+            > 例： `2023-04-01`<br>
+          schema:
+            type: string
+            format: date
+
+      responses:
+        "200":
+          description: 200 リクエスト処理、レスポンス処理が正しく行えた時
+          content:
+            "*/*":
+              schema:
+                type: string
+                format: binary
+                description: 法令本文ファイル（バイナリ形式）
+              examples:
+                Example 1:
+                  value: "（ここにレスポンスボディが返却されます）"
+        "400":
+          description: 400 Bad Request API クライアント側の問題によるエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_law_file_400error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_law_file_400error_xml"
+        "500":
+          description: 500 Internal Server Error サーバ内処理でエラー発生時
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 1:
+                  $ref: "#/components/examples/example_law_file_500error_json"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/error_info"
+              examples:
+                Example 2:
+                  $ref: "#/components/examples/example_law_file_500error_xml"
+
+components:
+  examples:
+    example_laws_json:
+      value:
+        total_count: 1
+        count: 1
+        laws:
+          - law_info:
+              law_type: CabinetOrder
+              law_id: 322CO0000000016
+              law_num: 昭和二十二年政令第十六号
+              law_num_era: Showa
+              law_num_year: 22
+              law_num_type: CabinetOrder
+              law_num_num: "016"
+              promulgation_date: "1947-05-03"
+            revision_info:
+              law_revision_id: 322CO0000000016_20240401_506CO0000000161
+              law_type: CabinetOrder
+              law_title: 地方自治法施行令
+              law_title_kana: ちほうじちほうしこうれい
+              abbrev: 地自法施行令
+              category: 地方自治
+              updated: "2024-04-19T13:42:44+09:00"
+              amendment_promulgate_date: "2024-03-30"
+              amendment_enforcement_date: "2024-04-01"
+              amendment_enforcement_comment: null
+              amendment_scheduled_enforcement_date: null
+              amendment_law_id: 506CO0000000161
+              amendment_law_title: 児童福祉法等の一部を改正する法律の施行に伴う関係政令の整備等に関する政令
+              amendment_law_title_kana: null
+              amendment_law_num: 令和六年政令第百六十一号
+              amendment_type: "3"
+              repeal_status: None
+              repeal_date: null
+              remain_in_force: false
+              mission: New
+              current_revision_status: CurrentEnforced
+            current_revision_info:
+              law_revision_id: 322CO0000000016_20240401_506CO0000000161
+              law_type: CabinetOrder
+              law_title: 地方自治法施行令
+              law_title_kana: ちほうじちほうしこうれい
+              abbrev: 地自法施行令
+              category: 地方自治
+              updated: "2024-04-19T13:42:44+09:00"
+              amendment_promulgate_date: "2024-03-30"
+              amendment_enforcement_date: "2024-04-01"
+              amendment_enforcement_comment: null
+              amendment_scheduled_enforcement_date: null
+              amendment_law_id: 506CO0000000161
+              amendment_law_title: 児童福祉法等の一部を改正する法律の施行に伴う関係政令の整備等に関する政令
+              amendment_law_title_kana: null
+              amendment_law_num: 令和六年政令第百六十一号
+              amendment_type: "3"
+              repeal_status: false
+              repeal_date: null
+              remain_in_force: false
+              mission: New
+              current_revision_status: CurrentEnforced
+
+    example_laws_xml:
+      value: |
+        <laws_response>
+          <total_count>1</total_count>
+          <count>1</count>
+          <laws>
+            <law>
+              <law_info>
+                <law_type>CabinetOrder</law_type>
+                <law_id>322CO0000000016</law_id>
+                <law_num>昭和二十二年政令第十六号</law_num>
+                <law_num_era>Showa</law_num_era>
+                <law_num_year>22</law_num_year>
+                <law_num_type>CabinetOrder</law_num_type>
+                <law_num_num>016</law_num_num>
+                <promulgation_date>1947-05-03</promulgation_date>
+              </law_info>
+              <revision_info>
+                <law_revision_id>322CO0000000016_20240401_506CO0000000161</law_revision_id>
+                <law_type>CabinetOrder</law_type>
+                <law_title>地方自治法施行令</law_title>
+                <law_title_kana>ちほうじちほうしこうれい</law_title_kana>
+                <abbrev>地自法施行令</abbrev>
+                <category>地方自治</category>
+                <updated>2024-04-19T13:42:44+09:00</updated>
+                <amendment_promulgate_date>2024-03-30</amendment_promulgate_date>
+                <amendment_enforcement_date>2024-04-01</amendment_enforcement_date>
+                <amendment_enforcement_comment/>
+                <amendment_scheduled_enforcement_date/>
+                <amendment_law_id>506CO0000000161</amendment_law_id>
+                <amendment_law_title>児童福祉法等の一部を改正する法律の施行に伴う関係政令の整備等に関する政令</amendment_law_title>
+                <amendment_law_title_kana/>
+                <amendment_law_num>令和六年政令第百六十一号</amendment_law_num>
+                <amendment_type>3</amendment_type>
+                <repeal_status>None</repeal_status>
+                <repeal_date/>
+                <remain_in_force>false</remain_in_force>
+                <mission>New</mission>
+                <current_revision_status>PreviousEnforced</current_revision_status>
+              </revision_info>
+              <current_revision_info>
+                <law_revision_id>322CO0000000016_20240401_506CO0000000161</law_revision_id>
+                <law_type>CabinetOrder</law_type>
+                <law_title>地方自治法施行令</law_title>
+                <law_title_kana>ちほうじちほうしこうれい</law_title_kana>
+                <abbrev>地自法施行令</abbrev>
+                <category>地方自治</category>
+                <updated>2024-04-19T13:42:44+09:00</updated>
+                <amendment_promulgate_date>2024-03-30</amendment_promulgate_date>
+                <amendment_enforcement_date>2024-04-01</amendment_enforcement_date>
+                <amendment_enforcement_comment/>
+                <amendment_scheduled_enforcement_date/>
+                <amendment_law_id>506CO0000000161</amendment_law_id>
+                <amendment_law_title>児童福祉法等の一部を改正する法律の施行に伴う関係政令の整備等に関する政令</amendment_law_title>
+                <amendment_law_title_kana/>
+                <amendment_law_num>令和六年政令第百六十一号</amendment_law_num>
+                <amendment_type>3</amendment_type>
+                <repeal_status>None</repeal_status>
+                <repeal_date/>
+                <remain_in_force>false</remain_in_force>
+                <mission>New</mission>
+                <current_revision_status>PreviousEnforced</current_revision_status>
+              </current_revision_info>
+            </law>
+          </laws>
+        </laws_response>
+
+    example_law_revisions_json:
+      value:
+        law_info:
+          law_type: Act
+          law_id: 503AC0000000036
+          law_num: 令和三年法律第三十六号
+          law_num_era: Reiwa
+          law_num_year: 3
+          law_num_type: Act
+          law_num_num: "036"
+          promulgation_date: "2021-05-19"
+        revisions:
+          - law_revision_id: 503AC0000000036_20240607_506AC0000000046
+            law_type: Act
+            law_title: デジタル庁設置法
+            law_title_kana: でじたるちょうせっちほう
+            abbrev: null
+            category: 行政組織
+            updated: "2024-06-07T09:15:59+09:00"
+            amendment_promulgate_date: 2024-06-07
+            amendment_enforcement_date: 2024-06-07
+            amendment_enforcement_comment: null
+            amendment_scheduled_enforcement_date: null
+            amendment_law_id: 506AC0000000046
+            amendment_law_title: 情報通信技術の活用による行政手続等に係る関係者の利便性の向上並びに行政運営の簡素化及び効率化を図るためのデジタル社会形成基本法等の一部を改正する法律
+            amendment_law_title_kana: null
+            amendment_law_num: 令和六年法律第四十六号
+            amendment_type: "3"
+            repeal_status: None
+            repeal_date: null
+            remain_in_force: false
+            mission: New
+            current_revision_status: PreviousEnforced
+
+    example_law_revisions_xml:
+      value: |
+        <law_revisions_response>
+          <law_info>
+            <law_type>Act</law_type>
+            <law_id>503AC0000000036</law_id>
+            <law_num>令和三年法律第三十六号</law_num>
+            <law_num_era>Reiwa</law_num_era>
+            <law_num_year>3</law_num_year>
+            <law_num_type>Act</law_num_type>
+            <law_num_num>036</law_num_num>
+            <promulgation_date>2021-05-19</promulgation_date>
+          </law_info>
+          <revisions>
+            <revision>
+              <law_revision_id>503AC0000000036_20240607_506AC0000000046</law_revision_id>
+              <law_type>Act</law_type>
+              <law_title>デジタル庁設置法</law_title>
+              <law_title_kana>でじたるちょうせっちほう</law_title_kana>
+              <abbrev>
+              </abbrev>
+              <category>行政組織</category>
+              <updated>2024-06-07T09:15:59+09:00</updated>
+              <amendment_promulgate_date>2024-06-07</amendment_promulgate_date>
+              <amendment_enforcement_date>2024-06-07</amendment_enforcement_date>
+              <amendment_enforcement_comment/>
+              <amendment_scheduled_enforcement_date/>
+              <amendment_law_id>506AC0000000046</amendment_law_id>
+              <amendment_law_title>情報通信技術の活用による行政手続等に係る関係者の利便性の向上並びに行政運営の簡素化及び効率化を図るためのデジタル社会形成基本法等の一部を改正する法律</amendment_law_title>
+              <amendment_law_title_kana/>
+              <amendment_law_num>令和六年法律第四十六号</amendment_law_num>
+              <amendment_type>3</amendment_type>
+              <repeal_status>None</repeal_status>
+              <repeal_date/>
+              <remain_in_force>false</remain_in_force>
+              <mission>New</mission>
+              <current_revision_status>PreviousEnforced</current_revision_status>
+            </revision>
+          </revisions>
+        </law_revisions_response>
+
+    example_law_data_json:
+      value:
+        attached_files_info:
+          image_data: ""
+          attached_files:
+            - law_revision_id: 411AC0000000127_19990813_000000000000000
+              src: ./pict/H11HO127-001.jpg
+              updated: "2024-11-23T01:05:36+09:00"
+            - law_revision_id: 411AC0000000127_19990813_000000000000000
+              src: ./pict/H11HO127-002.jpg
+              updated: "2024-11-23T01:05:36+09:00"
+        law_info:
+          law_type: Act
+          law_id: 411AC0000000127
+          law_num: 平成十一年法律第百二十七号
+          law_num_era: Heisei
+          law_num_year: "11"
+          law_num_type: Act
+          law_num_num: "127"
+          promulgation_date: "1999-08-13"
+        revision_info:
+          law_revision_id: 411AC0000000127_19990813_000000000000000
+          law_type: Act
+          law_title: 国旗及び国歌に関する法律
+          law_title_kana: こっきおよびこっかにかんするほうりつ
+          abbrev: 国旗国歌法,日の丸君が代法,国旗・国歌法
+          category: 文化
+          updated: "2024-07-21T13:56:59+09:00"
+          amendment_promulgate_date: "1999-08-13"
+          amendment_enforcement_date: "1999-08-13"
+          amendment_enforcement_comment: null
+          amendment_scheduled_enforcement_date: null
+          amendment_law_id: null
+          amendment_law_title: null
+          amendment_law_title_kana: ""
+          amendment_law_num: null
+          amendment_type: "1"
+          repeal_status: None
+          repeal_date: null
+          remain_in_force: false
+          mission: New
+          current_revision_status: CurrentEnforced
+        law_full_text:
+          tag: Law
+          attr:
+            Era: Heisei
+            Lang: ja
+            LawType: Act
+            Num: "127"
+            Year: "11"
+            PromulgateMonth: "08"
+            PromulgateDay: "13"
+          children:
+            - tag: LawNum
+              attr: ""
+              children:
+                - 平成十一年法律第百二十七号
+            - tag: LawBody
+              attr: ""
+              children:
+                - tag: LawTitle
+                  attr:
+                    Kana: こっきおよびこっかにかんするほうりつ
+                    Abbrev: 国旗国歌法,日の丸君が代法,国旗・国歌法
+                    AbbrevKana: こ,ひ,こ
+                  children:
+                    - 国旗及び国歌に関する法律
+                - tag: MainProvision
+                  attr: ""
+                  children:
+                    - tag: Article
+                      attr:
+                        Delete: "false"
+                        Hide: "false"
+                        Num: "1"
+                      children:
+                        - tag: ArticleCaption
+                          attr: ""
+                          children:
+                            - （国旗）
+                        - tag: ArticleTitle
+                          attr: ""
+                          children:
+                            - 第一条
+                        - tag: Paragraph
+                          attr:
+                            Hide: "false"
+                            Num: "1"
+                            OldStyle: "false"
+
+
+    example_law_data_json2:
+      value:
+        attached_files_info:
+          image_data: ""
+          attached_files:
+            - law_revision_id: 411AC0000000127_19990813_000000000000000
+              src: ./pict/H11HO127-001.jpg
+              updated: "2024-11-23T01:05:36+09:00"
+            - law_revision_id: 411AC0000000127_19990813_000000000000000
+              src: ./pict/H11HO127-002.jpg
+              updated: "2024-11-23T01:05:36+09:00"
+        law_info:
+          law_type: Act
+          law_id: 411AC0000000127
+          law_num: 平成十一年法律第百二十七号
+          law_num_era: Heisei
+          law_num_num: '127'
+          law_num_type: Act
+          law_num_year: '11'
+          promulgation_date: '1999-08-13'
+        revision_info:
+          abbrev: 国旗国歌法,日の丸君が代法,国旗・国歌法
+          amendment_enforcement_comment: null
+          amendment_enforcement_date: '1999-08-13'
+          amendment_law_id: null
+          amendment_law_num: null
+          amendment_law_title: null
+          amendment_law_title_kana: null
+          amendment_promulgate_date: '1999-08-13'
+          amendment_scheduled_enforcement_date: null
+          amendment_type: '1'
+          category: 文化
+          current_revision_status: CurrentEnforced
+          law_revision_id: 411AC0000000127_19990813_000000000000000
+          law_title: 国旗及び国歌に関する法律
+          law_title_kana: こっきおよびこっかにかんするほうりつ
+          law_type: Act
+          mission: New
+          remain_in_force: 'false'
+          repeal_date: null
+          repeal_status: None
+          updated: '2024-07-21T13:56:59+09:00'
+        law_full_text:
+          Law:
+            LawBody:
+              LawTitle: 国旗及び国歌に関する法律
+              LawNum: 平成十一年法律第百二十七号
+              MainProvision:
+                Article:
+                - ArticleCaption: （国旗）
+                  ArticleTitle: 第一条
+                  Paragraph:
+                  - ParagraphNum: null
+                    ParagraphSentence:
+                      Sentence:
+                      - 国旗は、日章旗とする。
+                  - ParagraphNum: ２
+                    ParagraphSentence:
+                      Sentence:
+                      - 日章旗の制式は、別記第一のとおりとする。
+                - ArticleCaption: （国歌）
+                  ArticleTitle: 第二条
+                  Paragraph:
+                  - ParagraphNum: null
+                    ParagraphSentence:
+                      Sentence:
+                      - 国歌は、君が代とする。
+                  - ParagraphNum: ２
+                    ParagraphSentence:
+                      Sentence:
+                      - 君が代の歌詞及び楽曲は、別記第二のとおりとする。
+              SupplProvision:
+                Paragraph:
+                - ParagraphCaption: （施行期日）
+                  ParagraphNum: １
+                  ParagraphSentence:
+                    Sentence:
+                    - この法律は、公布の日から施行する。
+                - ParagraphCaption: （商船規則の廃止）
+                  ParagraphNum: ２
+                  ParagraphSentence:
+                    Sentence:
+                    - 商船規則（明治三年太政官布告第五十七号）は、廃止する。
+                - ParagraphCaption: （日章旗の制式の特例）
+                  ParagraphNum: ３
+                  ParagraphSentence:
+                    Sentence:
+                    - 日章旗の制式については、当分の間、別記第一の規定にかかわらず、寸法の割合について縦を横の十分の七とし、かつ、日章の中心の位置について旗の中心から旗<Ruby>竿<Rt>ざお</Rt></Ruby>側に横の長さの百分の一偏した位置とすることができる。
+                SupplProvisionLabel: 附　則
+        
+
+    example_law_data_xml:
+      value: |
+        <law_data_response>
+          <attached_files_info>
+            <image_data>
+            </image_data>
+            <attached_files>
+              <attached_file>
+                <law_revision_id>411AC0000000127_19990813_000000000000000</law_revision_id>
+                <src>./pict/H11HO127-001.jpg</src>
+                <updated>2024-11-23T01:05:36+09:00</updated>
+              </attached_file>
+              <attached_file>
+                <law_revision_id>411AC0000000127_19990813_000000000000000</law_revision_id>
+                <src>./pict/H11HO127-002.jpg</src>
+                <updated>2024-11-23T01:05:36+09:00</updated>
+              </attached_file>
+            </attached_files>
+          </attached_files_info>
+          <law_info>
+            <law_type>Act</law_type>
+            <law_id>411AC0000000127</law_id>
+            <law_num>平成十一年法律第百二十七号</law_num>
+            <law_num_era>Heisei</law_num_era>
+            <law_num_year>11</law_num_year>
+            <law_num_type>Act</law_num_type>
+            <law_num_num>127</law_num_num>
+            <promulgation_date>1999-08-13</promulgation_date>
+          </law_info>
+          <revision_info>
+            <law_revision_id>411AC0000000127_19990813_000000000000000</law_revision_id>
+            <law_type>Act</law_type>
+            <law_title>国旗及び国歌に関する法律</law_title>
+            <law_title_kana>こっきおよびこっかにかんするほうりつ</law_title_kana>
+            <abbrev>国旗国歌法,日の丸君が代法,国旗・国歌法</abbrev>
+            <category>文化</category>
+            <updated>2024-07-21T13:56:59+09:00</updated>
+            <amendment_promulgate_date>1999-08-13</amendment_promulgate_date>
+            <amendment_enforcement_date>1999-08-13</amendment_enforcement_date>
+            <amendment_enforcement_comment/>
+            <amendment_scheduled_enforcement_date/>
+            <amendment_law_id/>
+            <amendment_law_title/>
+            <amendment_law_title_kana>
+            </amendment_law_title_kana>
+            <amendment_law_num/>
+            <amendment_type>1</amendment_type>
+            <repeal_status>None</repeal_status>
+            <repeal_date/>
+            <remain_in_force>false</remain_in_force>
+            <mission>New</mission>
+            <current_revision_status>CurrentEnforced</current_revision_status>
+          </revision_info>
+          <law_full_text>
+            <Law Era="Heisei" Lang="ja" LawType="Act" Num="127" PromulgateDay="13" PromulgateMonth="08" Year="11">
+              <LawNum>平成十一年法律第百二十七号</LawNum>
+              <LawBody>
+                <LawTitle Abbrev="国旗国歌法,日の丸君が代法,国旗・国歌法" AbbrevKana="こ,ひ,こ" Kana="こっきおよびこっかにかんするほうりつ">国旗及び国歌に関する法律</LawTitle>
+                <MainProvision>
+                  <Article Delete="false" Hide="false" Num="1">
+                    <ArticleCaption>（国旗）</ArticleCaption>
+                    <ArticleTitle>第一条</ArticleTitle>
+                    <Paragraph Hide="false" Num="1" OldStyle="false">
+                      <ParagraphNum/>
+                      <ParagraphSentence>
+                        <Sentence WritingMode="vertical">国旗は、日章旗とする。</Sentence>
+                      </ParagraphSentence>
+                    </Paragraph>
+                    <Paragraph Hide="false" Num="2" OldStyle="false">
+                      <ParagraphNum>２</ParagraphNum>
+                      <ParagraphSentence>
+                        <Sentence WritingMode="vertical">日章旗の制式は、別記第一のとおりとする。</Sentence>
+                      </ParagraphSentence>
+                    </Paragraph>
+                  </Article>
+                  <Article Delete="false" Hide="false" Num="2">
+                    <ArticleCaption>（国歌）</ArticleCaption>
+                    <ArticleTitle>第二条</ArticleTitle>
+                    <Paragraph Hide="false" Num="1" OldStyle="false">
+                      <ParagraphNum/>
+                      <ParagraphSentence>
+                        <Sentence WritingMode="vertical">国歌は、君が代とする。</Sentence>
+                      </ParagraphSentence>
+                    </Paragraph>
+                    <Paragraph Hide="false" Num="2" OldStyle="false">
+                      <ParagraphNum>２</ParagraphNum>
+                      <ParagraphSentence>
+                        <Sentence WritingMode="vertical">君が代の歌詞及び楽曲は、別記第二のとおりとする。</Sentence>
+                      </ParagraphSentence>
+                    </Paragraph>
+                  </Article>
+                </MainProvision>
+                <SupplProvision>
+                  <SupplProvisionLabel>附　則</SupplProvisionLabel>
+                  <Paragraph Hide="false" Num="1" OldStyle="false">
+                    <ParagraphCaption>（施行期日）</ParagraphCaption>
+                    <ParagraphNum>１</ParagraphNum>
+                    <ParagraphSentence>
+                      <Sentence WritingMode="vertical">この法律は、公布の日から施行する。</Sentence>
+                    </ParagraphSentence>
+                  </Paragraph>
+                  <Paragraph Hide="false" Num="2" OldStyle="false">
+                    <ParagraphCaption>（商船規則の廃止）</ParagraphCaption>
+                    <ParagraphNum>２</ParagraphNum>
+                    <ParagraphSentence>
+                      <Sentence WritingMode="vertical">商船規則（明治三年太政官布告第五十七号）は、廃止する。</Sentence>
+                    </ParagraphSentence>
+                  </Paragraph>
+                  <Paragraph Hide="false" Num="3" OldStyle="false">
+                    <ParagraphCaption>（日章旗の制式の特例）</ParagraphCaption>
+                    <ParagraphNum>３</ParagraphNum>
+                    <ParagraphSentence>
+                      <Sentence WritingMode="vertical">
+                          日章旗の制式については、当分の間、別記第一の規定にかかわらず、寸法の割合について縦を横の十分の七とし、かつ、日章の中心の位置について旗の中心から旗
+                        <Ruby>
+                            竿
+                          <Rt>ざお</Rt>
+                        </Ruby>
+                          側に横の長さの百分の一偏した位置とすることができる。
+                      </Sentence>
+                    </ParagraphSentence>
+                  </Paragraph>
+                </SupplProvision>
+                <AppdxNote>
+                  <AppdxNoteTitle WritingMode="vertical">別記第一</AppdxNoteTitle>
+                  <RelatedArticleNum>（第一条関係）</RelatedArticleNum>
+                  <TableStruct>
+                    <TableStructTitle WritingMode="vertical">日章旗の制式</TableStructTitle>
+                    <Table WritingMode="vertical">
+                      <TableRow>
+                        <TableColumn BorderBottom="none" BorderLeft="none" BorderRight="none" BorderTop="none" Valign="top">
+                          <FigStruct>
+                            <Fig src="./pict/H11HO127-001.jpg"/>
+                          </FigStruct>
+                        </TableColumn>
+                        <TableColumn BorderBottom="none" BorderLeft="none" BorderRight="none" BorderTop="none" Valign="top">
+                          <Item Delete="false" Hide="false" Num="1">
+                            <ItemTitle>一</ItemTitle>
+                            <ItemSentence>
+                              <Sentence WritingMode="vertical">寸法の割合及び日章の位置</Sentence>
+                            </ItemSentence>
+                            <List>
+                              <ListSentence>
+                                <Column LineBreak="false" Num="1">
+                                  <Sentence WritingMode="vertical">縦</Sentence>
+                                </Column>
+                                <Column LineBreak="false" Num="2">
+                                  <Sentence WritingMode="vertical">横の三分の二</Sentence>
+                                </Column>
+                              </ListSentence>
+                            </List>
+                            <List>
+                              <ListSentence>
+                                <Sentence WritingMode="vertical">日章</Sentence>
+                              </ListSentence>
+                              <Sublist1>
+                                <Sublist1Sentence>
+                                  <Column LineBreak="false" Num="1">
+                                    <Sentence WritingMode="vertical">直径</Sentence>
+                                  </Column>
+                                  <Column LineBreak="false" Num="2">
+                                    <Sentence WritingMode="vertical">縦の五分の三</Sentence>
+                                  </Column>
+                                </Sublist1Sentence>
+                              </Sublist1>
+                              <Sublist1>
+                                <Sublist1Sentence>
+                                  <Column LineBreak="false" Num="1">
+                                    <Sentence WritingMode="vertical">中心</Sentence>
+                                  </Column>
+                                  <Column LineBreak="false" Num="2">
+                                    <Sentence WritingMode="vertical">旗の中心</Sentence>
+                                  </Column>
+                                </Sublist1Sentence>
+                              </Sublist1>
+                            </List>
+                          </Item>
+                          <Item Delete="false" Hide="false" Num="2">
+                            <ItemTitle>二</ItemTitle>
+                            <ItemSentence>
+                              <Sentence WritingMode="vertical">彩色</Sentence>
+                            </ItemSentence>
+                            <List>
+                              <ListSentence>
+                                <Column LineBreak="false" Num="1">
+                                  <Sentence WritingMode="vertical">地</Sentence>
+                                </Column>
+                                <Column LineBreak="false" Num="2">
+                                  <Sentence WritingMode="vertical">白色</Sentence>
+                                </Column>
+                              </ListSentence>
+                            </List>
+                            <List>
+                              <ListSentence>
+                                <Column LineBreak="false" Num="1">
+                                  <Sentence WritingMode="vertical">日章</Sentence>
+                                </Column>
+                                <Column LineBreak="false" Num="2">
+                                  <Sentence WritingMode="vertical">紅色</Sentence>
+                                </Column>
+                              </ListSentence>
+                            </List>
+                          </Item>
+                        </TableColumn>
+                      </TableRow>
+                    </Table>
+                  </TableStruct>
+                </AppdxNote>
+                <AppdxNote>
+                  <AppdxNoteTitle WritingMode="vertical">別記第二</AppdxNoteTitle>
+                  <RelatedArticleNum>（第二条関係）</RelatedArticleNum>
+                  <TableStruct>
+                    <TableStructTitle WritingMode="vertical">君が代の歌詞及び楽曲</TableStructTitle>
+                    <Table WritingMode="vertical">
+                      <TableRow>
+                        <TableColumn BorderBottom="none" BorderLeft="none" BorderRight="none" BorderTop="none" Valign="top">
+                          <Item Delete="false" Hide="false" Num="1">
+                            <ItemTitle>一</ItemTitle>
+                            <ItemSentence>
+                              <Sentence WritingMode="vertical">歌詞</Sentence>
+                            </ItemSentence>
+                            <List>
+                              <ListSentence>
+                                <Sentence WritingMode="vertical">君が代は</Sentence>
+                              </ListSentence>
+                            </List>
+                            <List>
+                              <ListSentence>
+                                <Sentence WritingMode="vertical">千代に八千代に</Sentence>
+                              </ListSentence>
+                            </List>
+                            <List>
+                              <ListSentence>
+                                <Sentence WritingMode="vertical">さざれ石の</Sentence>
+                              </ListSentence>
+                            </List>
+                            <List>
+                              <ListSentence>
+                                <Sentence WritingMode="vertical">いわおとなりて</Sentence>
+                              </ListSentence>
+                            </List>
+                            <List>
+                              <ListSentence>
+                                <Sentence WritingMode="vertical">こけのむすまで</Sentence>
+                              </ListSentence>
+                            </List>
+                          </Item>
+                        </TableColumn>
+                        <TableColumn BorderBottom="none" BorderLeft="none" BorderRight="none" BorderTop="none" Valign="top">
+                          <Item Delete="false" Hide="false" Num="2">
+                            <ItemTitle>二</ItemTitle>
+                            <ItemSentence>
+                              <Sentence WritingMode="vertical">楽曲</Sentence>
+                            </ItemSentence>
+                            <FigStruct>
+                              <Fig src="./pict/H11HO127-002.jpg"/>
+                            </FigStruct>
+                          </Item>
+                        </TableColumn>
+                      </TableRow>
+                    </Table>
+                  </TableStruct>
+                </AppdxNote>
+              </LawBody>
+            </Law>
+          </law_full_text>
+        </law_data_response>
+
+
+    example_keyword_json:
+      value:
+        total_count: 447
+        sentence_count: 100
+        next_offset: 100
+        items:
+          - law_info:
+              law_type: Rule
+              law_id: 428M60020000006
+              law_num: 平成二十八年個人情報保護委員会規則第六号
+              law_num_era: Heisei
+              law_num_year: 28
+              law_num_type: Rule
+              law_num_num: "006"
+              promulgation_date: "2016-12-15"
+            revision_info:
+              law_revision_id: 428M60020000006_20240527_506M60020000003
+              law_type: Rule
+              law_title: 行政手続における特定の個人を識別するための番号の利用等に関する法律第十九条第九号の規定により提供することができる利用特定個人情報の範囲の限定に関する規則
+              law_title_kana: ぎょうせいてつづきにおけるとくていのこじんをしきべつするためのばんごうのりようとうにかんするほうりつだいじゅうきゅうじょうだいきゅうごうのきていによりていきょうすることができるりようとくていこじんじょうほうのはんいのげんていにかんするきそく
+              abbrev: null
+              category: 行政手続
+              updated: "2024-06-12T14:43:47+09:00"
+              amendment_promulgate_date: "2024-05-27"
+              amendment_enforcement_date: "2024-05-27"
+              amendment_enforcement_comment: null
+              amendment_scheduled_enforcement_date: null
+              amendment_law_id: 506M60020000003
+              amendment_law_title: 行政手続における特定の個人を識別するための番号の利用等に関する法律等の一部を改正する法律の施行に伴う個人情報保護委員会関係規則の整備に関する規則
+              amendment_law_title_kana: null
+              amendment_law_num: 令和六年個人情報保護委員会規則第三号
+              amendment_type: "3"
+              repeal_status: None
+              repeal_date: null
+              remain_in_force: false
+              mission: New
+              current_revision_status: CurrentEnforced
+            sentences:
+              - position: amendsupplprovision
+                text: この規則は、<span>デジタル庁</span>設置法及びデジタル社会の形成を図るための関係法律の整備に関する法律の施行の日（令和三年九月一日）から施行する。
+
+    example_keyword_xml:
+      value: |
+        <keyword_response>
+          <total_count>447</total_count>
+          <sentence_count>100</sentence_count>
+          <next_offset>100</next_offset>
+          <items>
+            <item>
+              <law_info>
+                <law_type>Rule</law_type>
+                <law_id>428M60020000006</law_id>
+                <law_num>平成二十八年個人情報保護委員会規則第六号</law_num>
+                <law_num_era>Heisei</law_num_era>
+                <law_num_year>28</law_num_year>
+                <law_num_type>Rule</law_num_type>
+                <law_num_num>006</law_num_num>
+                <promulgation_date>2016-12-15</promulgation_date>
+              </law_info>
+              <revision_info>
+                <law_revision_id>428M60020000006_20240527_506M60020000003</law_revision_id>
+                <law_type>Rule</law_type>
+                <law_title>行政手続における特定の個人を識別するための番号の利用等に関する法律第十九条第九号の規定により提供することができる利用特定個人情報の範囲の限定に関する規則</law_title>
+                <law_title_kana>ぎょうせいてつづきにおけるとくていのこじんをしきべつするためのばんごうのりようとうにかんするほうりつだいじゅうきゅうじょうだいきゅうごうのきていによりていきょうすることができるりようとくていこじんじょうほうのはんいのげんていにかんするきそく</law_title_kana>
+                <abbrev/>
+                <category>行政手続</category>
+                <updated>2024-06-12T14:43:47+09:00</updated>
+                <amendment_promulgate_date>2024-05-27</amendment_promulgate_date>
+                <amendment_enforcement_date>2024-05-27</amendment_enforcement_date>
+                <amendment_enforcement_comment/>
+                <amendment_scheduled_enforcement_date/>
+                <amendment_law_id>506M60020000003</amendment_law_id>
+                <amendment_law_title>行政手続における特定の個人を識別するための番号の利用等に関する法律等の一部を改正する法律の施行に伴う個人情報保護委員会関係規則の整備に関する規則</amendment_law_title>
+                <amendment_law_title_kana/>
+                <amendment_law_num>令和六年個人情報保護委員会規則第三号</amendment_law_num>
+                <amendment_type>3</amendment_type>
+                <repeal_status>None</repeal_status>
+                <repeal_date/>
+                <remain_in_force>false</remain_in_force>
+                <mission>New</mission>
+                <current_revision_status>CurrentEnforced</current_revision_status>
+              </revision_info>
+              <sentences>
+                <sentence>
+                  <position>amendsupplprovision</position>
+                  <text>この規則は、<span>デジタル庁</span>設置法及びデジタル社会の形成を図るための関係法律の整備に関する法律の施行の日（令和三年九月一日）から施行する。</text>
+                </sentence>
+              </sentences>
+            </item>
+          </items>
+        </keyword_response>
+
+    example_laws_400error_json:
+      value:
+        code: "400004"
+        message: 日付（asof等）が誤っています。
+
+    example_laws_400error_xml:
+      value: |
+        <error_info>
+            <code>400004</code>
+            <message>日付（asof等）が誤っています。</message>
+        </error_info>
+
+    example_laws_500error_json:
+      value:
+        code: "500001"
+        message: サーバ内処理で異常が発生しました。
+
+    example_laws_500error_xml:
+      value: |
+        <error_info>
+            <code>500001</code>
+            <message>サーバ内処理で異常が発生しました。</message>
+        </error_info>
+
+    example_law_revisions_400error_json:
+      value:
+        code: "400004"
+        message: 日付（asof等）が誤っています。
+
+    example_law_revisions_400error_xml:
+      value: |
+        <error_info>
+            <code>400004</code>
+            <message>日付（asof等）が誤っています。</message>
+        </error_info>
+
+    example_law_revisions_500error_json:
+      value:
+        code: "500001"
+        message: サーバ内処理で異常が発生しました。
+
+    example_law_revisions_500error_xml:
+      value: |
+        <error_info>
+            <code>500001</code>
+            <message>サーバ内処理で異常が発生しました。</message>
+        </error_info>
+
+    example_law_data_400error_json:
+      value:
+        code: "400004"
+        message: 日付（asof等）が誤っています。
+
+    example_law_data_400error_xml:
+      value: |
+        <error_info>
+            <code>400004</code>
+            <message>日付（asof等）が誤っています。</message>
+        </error_info>
+
+    example_law_data_500error_json:
+      value:
+        code: "500001"
+        message: サーバ内処理で異常が発生しました。
+
+    example_law_data_500error_xml:
+      value: |
+        <error_info>
+            <code>500001</code>
+            <message>サーバ内処理で異常が発生しました。</message>
+        </error_info>
+
+    example_attachment_400error_json:
+      value:
+        code: "404003"
+        message: 指定のパラメータで取得できる添付ファイルは存在しません。
+
+    example_attachment_400error_xml:
+      value: |
+        <error_info>
+            <code>404003</code>
+            <message>指定のパラメータで取得できる添付ファイルは存在しません。</message>
+        </error_info>
+
+    example_attachment_500error_json:
+      value:
+        code: "500001"
+        message: サーバ内処理で異常が発生しました。
+
+    example_attachment_500error_xml:
+      value: |
+        <error_info>
+            <code>500001</code>
+            <message>サーバ内処理で異常が発生しました。</message>
+        </error_info>
+
+    example_keyword_400error_json:
+      value:
+        code: "400004"
+        message: 日付（asof等）が誤っています。
+
+    example_keyword_400error_xml:
+      value: |
+        <error_info>
+            <code>400004</code>
+            <message>日付（asof等）が誤っています。</message>
+        </error_info>
+
+    example_keyword_500error_json:
+      value:
+        code: "500001"
+        message: サーバ内処理で異常が発生しました。
+
+    example_keyword_500error_xml:
+      value: |
+        <error_info>
+            <code>500001</code>
+            <message>サーバ内処理で異常が発生しました。</message>
+        </error_info>
+
+    example_law_file_400error_json:
+      value:
+        code: "400004"
+        message: 日付（asof等）が誤っています。
+
+    example_law_file_400error_xml:
+      value: |
+        <error_info>
+            <code>400004</code>
+            <message>日付（asof等）が誤っています。</message>
+        </error_info>
+
+    example_law_file_500error_json:
+      value:
+        code: "500001"
+        message: サーバ内処理で異常が発生しました。
+
+    example_law_file_500error_xml:
+      value: |
+        <error_info>
+            <code>500001</code>
+            <message>サーバ内処理で異常が発生しました。</message>
+        </error_info>
+
+  schemas:
+    amendment_type:
+      title: amendment_type
+      type: string
+      description: >-
+        改正種別
+          * `1`      - 新規
+          * `3`      - 被改正
+          * `8`      - 廃止
+      enum:
+        - "1"
+        - "3"
+        - "8"
+
+    attached_file:
+      title: attached_file
+      type: object
+      description: |
+        添付ファイル情報
+      properties:
+        law_revision_id:
+          type: string
+          description: 法令ID
+          example: 322CO0000000016_20230508_505CO0000000175
+        src:
+          type: string
+          description: 法令XML中のFig要素のsrc属性
+          example: ./pict/M06SE065-001.jpg
+        updated:
+          description: 正誤等による更新日時
+          type: string
+          example: 2023-07-01T14:30:15+09:00
+          format: date-time
+
+    attached_files_info:
+      title: attached_files_info
+      type: object
+      description: 添付ファイル情報
+      properties:
+        image_data:
+          type: string
+          description: 添付ファイルデータ（添付ファイルをフォルダ名pictに収集し、フォルダ全体をZip形式で圧縮したファイルをBase64でエンコードした文字列）
+          example: ""
+        attached_files:
+          type: array
+          xml:
+            wrapped: true
+          description: 添付ファイル一覧
+          items:
+            xml:
+              name: item
+            allOf:
+              - $ref: "#/components/schemas/attached_file"
+
+    category_cd:
+      title: category_cd
+      type: string
+      description: >-
+        事項別分類コード:<br>
+          * `001` - 憲法
+          * `002` - 刑事
+          * `003` - 財務通則
+          * `004` - 水産業
+          * `005` - 観光
+          * `006` - 国会
+          * `007` - 警察
+          * `008` - 国有財産
+          * `009` - 鉱業
+          * `010` - 郵務
+          * `011` - 行政組織
+          * `012` - 消防
+          * `013` - 国税
+          * `014` - 工業
+          * `015` - 電気通信
+          * `016` - 国家公務員
+          * `017` - 国土開発
+          * `018` - 事業
+          * `019` - 商業
+          * `020` - 労働
+          * `021` - 行政手続
+          * `022` - 土地
+          * `023` - 国債
+          * `024` - 金融・保険
+          * `025` - 環境保全
+          * `026` - 統計
+          * `027` - 都市計画
+          * `028` - 教育
+          * `029` - 外国為替・貿易
+          * `030` - 厚生
+          * `031` - 地方自治
+          * `032` - 道路
+          * `033` - 文化
+          * `034` - 陸運
+          * `035` - 社会福祉
+          * `036` - 地方財政
+          * `037` - 河川
+          * `038` - 産業通則
+          * `039` - 海運
+          * `040` - 社会保険
+          * `041` - 司法
+          * `042` - 災害対策
+          * `043` - 農業
+          * `044` - 航空
+          * `045` - 防衛
+          * `046` - 民事
+          * `047` - 建築・住宅
+          * `048` - 林業
+          * `049` - 貨物運送
+          * `050` - 外事
+      enum:
+        - "001"
+        - "002"
+        - "003"
+        - "004"
+        - "005"
+        - "006"
+        - "007"
+        - "008"
+        - "009"
+        - "010"
+        - "011"
+        - "012"
+        - "013"
+        - "014"
+        - "015"
+        - "016"
+        - "017"
+        - "018"
+        - "019"
+        - "020"
+        - "021"
+        - "022"
+        - "023"
+        - "024"
+        - "025"
+        - "026"
+        - "027"
+        - "028"
+        - "029"
+        - "030"
+        - "031"
+        - "032"
+        - "033"
+        - "034"
+        - "035"
+        - "036"
+        - "037"
+        - "038"
+        - "039"
+        - "040"
+        - "041"
+        - "042"
+        - "043"
+        - "044"
+        - "045"
+        - "046"
+        - "047"
+        - "048"
+        - "049"
+        - "050"
+
+    current_revision_status:
+      title: current_revision_status
+      description: >-
+        履歴の状態:
+          * `CurrentEnforced`  - 現施行法令
+          * `UnEnforced`       - 未施行法令
+          * `PreviousEnforced` - 過去施行法令
+          * `Repeal`           - 廃止法令（廃止・失効・実効性喪失）
+      type: string
+      enum:
+        - CurrentEnforced
+        - UnEnforced
+        - PreviousEnforced
+        - Repeal
+
+    elm:
+      title: elm
+      type: string
+      description: |
+        指定した法令XMLの要素に該当する法令本文を取得することができます。<br>
+        * 要素を組み合わせる場合は、`-`（半角ハイフン）で要素を結合してください。<br>
+        > （例：本則第１項 `MainProvision-Paragraph_1`）
+        * 下記の表に要素毎の一覧と指定方法を記載しております。
+        * 表に掲載している要素は一例であり、elmで取得可能な要素の詳細は<a href="https://laws.e-gov.go.jp/docs/" target="_blank">法令データ ドキュメンテーション</a>を参照してください。<br>
+
+        <font color="red">
+        補足：<br>
+        &nbsp;&nbsp;指定した要素内に他要素がある場合は、他要素の情報も取得されます。<br>
+        &nbsp;&nbsp;例えば、`MainProvision-Paragraph[1]`を指定した場合は、指定された`Paragraph`要素内に`FigStruct`要素が存在していると`FigStruct`情報も含めて取得されます。
+        </font>
+
+        <table bgcolor="white" border="1">
+             <tr bgcolor="#DDFFFF">
+               <th width="20%">法令XML要素</th>
+               <th width="20%">要素の意味</th>
+               <th width="20%">指定例</th>
+             </tr>
+             <tr>
+               <td>&nbsp; LawNum </td>
+               <td>&nbsp; 法令番号 </td>
+               <td>&nbsp; LawNum[1]</td>
+             </tr>
+             <tr>
+               <td>&nbsp; LawTitle </td>
+               <td>&nbsp; 題名 </td>
+               <td>&nbsp; LawTitle[1]</td>
+             </tr>
+             <tr>
+               <td>&nbsp; EnactStatement </td>
+               <td>&nbsp; 制定文 </td>
+               <td>&nbsp; EnactStatement[1] </td>
+             </tr>
+             <tr>
+               <td>&nbsp; TOC </td>
+               <td>&nbsp; 目次 </td>
+               <td>&nbsp; TOC[1] </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Preamble </td>
+               <td>&nbsp; 前文 </td>
+               <td>&nbsp; Preamble[1] </td>
+             </tr>
+             <tr>
+               <td>&nbsp; MainProvision </td>
+               <td>&nbsp; 本則 </td>
+               <td>&nbsp; MainProvision[1] </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Part </td>
+               <td>&nbsp; 編 </td>
+               <td>&nbsp; Part_1 </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Chapter </td>
+               <td>&nbsp; 章 </td>
+               <td>&nbsp; Chapter_1 </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Section </td>
+               <td>&nbsp; 節 </td>
+               <td>&nbsp; Section_1 </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Subsection </td>
+               <td>&nbsp; 款 </td>
+               <td>&nbsp; Subsection_1 </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Division </td>
+               <td>&nbsp; 目 </td>
+               <td>&nbsp; Division_1 </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Article </td>
+               <td>&nbsp; 条 </td>
+               <td>&nbsp; Article_1 </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Paragraph </td>
+               <td>&nbsp; 項 </td>
+               <td>&nbsp; Paragraph_1 </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Item </td>
+               <td>&nbsp; 号 </td>
+               <td>&nbsp; Item_1 </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Subitem1 </td>
+               <td>&nbsp; 号細分 </td>
+               <td>&nbsp; Subitem1_1 </td>
+             </tr>
+             <tr>
+               <td>&nbsp; SupplProvision </td>
+               <td>&nbsp; 附則 </td>
+               <td>&nbsp; SupplProvision[1] </td>
+             </tr>
+             <tr>
+               <td>&nbsp; AppdxTable </td>
+               <td>&nbsp; 別表 </td>
+               <td>&nbsp; AppdxTable[1] </td>
+             </tr>
+             <tr>
+               <td>&nbsp; AppdxStyle </td>
+               <td>&nbsp; 別記様式 </td>
+               <td>&nbsp; AppdxStyle[1] </td>
+             </tr>
+             <tr>
+               <td>&nbsp; AppdxFormat </td>
+               <td>&nbsp; 別記書式 </td>
+               <td>&nbsp; AppdxFormat[1] </td>
+             </tr>
+             <tr>
+               <td>&nbsp; Appdx </td>
+               <td>&nbsp; 付録 </td>
+               <td>&nbsp; Appdx[1] </td>
+             </tr>
+             <tr>
+               <td>&nbsp; AppdxFig </td>
+               <td>&nbsp; 別図 </td>
+               <td>&nbsp; AppdxFig[1] </td>
+             </tr>
+           </table>
+
+    error_info:
+      type: object
+      description: エラー情報
+      properties:
+        code:
+          type: string
+          description: |
+            エラーコード<br>
+          example: "400001"
+        message:
+          type: string
+          description: エラーメッセージ
+          example: "法令種別（law_type、law_num_type）が誤っています。"
+
+    file_type:
+      title: file_type
+      description: >-
+        ファイル種別:
+          * `xml`         - XML
+          * `json`        - JSON
+          * `html`        - HTML
+          * `rtf`         - RTF
+          * `docx`        - DOCX
+      type: string
+      enum:
+        - xml
+        - json
+        - html
+        - rtf
+        - docx
+
+    keyword_response:
+      type: object
+      description: キーワード検索APIレスポンス
+      properties:
+        total_count:
+          type: integer
+          description: 指定`keyword`でヒットした総件数
+          format: int64
+          example: 10000
+        sentence_count:
+          type: integer
+          description: レスポンス単位で表示した`sentences`数の総和
+          format: int64
+          example: 100
+        next_offset:
+          type: integer
+          description: 次指定する`offset`値。末尾まで取得が完了した場合はnull
+          format: int64
+          nullable: true
+          example: 200
+        items:
+          type: array
+          xml:
+            wrapped: true
+          description: |
+            法令ID単位の情報リスト<br>
+            * `revision_info` - 指定時点において効力を持つ版のメタ情報
+          items:
+            type: object
+            xml:
+              name: item
+            properties:
+              law_info:
+                $ref: "#/components/schemas/law_info"
+              revision_info:
+                $ref: "#/components/schemas/revision_info"
+              sentences:
+                type: array
+                xml:
+                  wrapped: true
+                description: 検索ヒット箇所一覧
+                items:
+                  type: object
+                  xml:
+                    name: sentence
+                  description: 添付ファイル情報
+                  properties:
+                    position:
+                      allOf:
+                        - $ref: "#/components/schemas/elm"
+                      description: 検索ヒットの場所
+                      example: MainProvision-Article_21-Paragraph_3
+                    text:
+                      type: string
+                      description: 条文内容です。ハイライト箇所は`<span>`タグで囲まれます。XMLでのレスポンスの場合、タグはエスケープされることにご注意ください。
+                      example: 局、部又は委員会の<span>事務局</span>には、次長を置くことができるものとし、その設置、職務及び定数は、政令でこれを定める。
+      required:
+        - count
+
+    law_data_response:
+      type: object
+      description: 法令本文取得APIレスポンス
+      properties:
+        attached_files_info:
+          $ref: "#/components/schemas/attached_files_info"
+        law_info:
+          $ref: "#/components/schemas/law_info"
+        revision_info:
+          $ref: "#/components/schemas/revision_info"
+        law_full_text:
+          description: |
+            法令本文<br><br>
+              * `law_full_text_format`と`response_format`の指定方法によって、レスポンス形式が変化します。<br><br>
+              * データ構造の詳細は<a href="https://laws.e-gov.go.jp/docs/" target="_blank">法令データ ドキュメンテーション</a>を参照してください。<br><br>
+              * JSON（詳細版）形式、JSON（簡易版）形式とXML形式の各要素は、丸数字で対応関係を表現しています。<br><br>
+              * JSON（詳細版）形式では、`children`オブジェクトでXML形式の階層構造を表現しています。<br><br>
+
+          oneOf:
+            - type: object
+              description: |
+                - `law_full_text_format`と`response_format`が`json`の場合、JSON形式で返却します。
+                - <a target="_blank" href="/api/2/swagger-ui/lawapi-v2-json-light-schema.yaml" rel="noopener noreferrer" class="link"><span class="url"> lawapi-v2-json-light-schema.yaml</span></a>に、JSON（簡易版）のLawスキーマ配下のスキーマ定義が記載されております。
+                
+                >> ### JSON（詳細版）
+                >>> <pre><code>{
+                &nbsp;&nbsp;"tag": "Law",  ①
+                &nbsp;&nbsp;"attr": {
+                &nbsp;&nbsp;&nbsp;&nbsp;"LawId": "123AC0000000001",  ②
+                &nbsp;&nbsp;&nbsp;&nbsp;"LawType": "Act"  ③
+                &nbsp;&nbsp;},
+                &nbsp;&nbsp;"children": [
+                &nbsp;&nbsp;&nbsp;&nbsp;{
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"tag": "LawBody",  ④
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"attr": {
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"children": [
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"tag": "LawTitle",  ⑤
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"attr": {
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"AbbrKanaSeion": ""  ⑥
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"children": [
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"保管金規則"  ⑦
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]
+                &nbsp;&nbsp;&nbsp;&nbsp;}
+                &nbsp;&nbsp;]
+                }</code></pre>
+
+
+                >> ### JSON（簡易版）
+                >>> <pre><code>{
+                &nbsp;&nbsp;"Law": {  ①
+                &nbsp;&nbsp;&nbsp;&nbsp;"LawBody": {  ④
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"LawTitle": "保管金規則"  ⑤ ⑦
+                &nbsp;&nbsp;&nbsp;&nbsp;}
+                &nbsp;&nbsp;}
+                }</code></pre>
+
+
+                <br><br>
+                `law_full_text_format`と`response_format`が`xml`の場合、XML形式で返却します。<br>
+
+
+                >> ### XML
+                >>> <pre><code>&nbsp;①  ②                      ③
+                &lt;Law LawId="123AC0000000001" LawType="Act"&gt;
+                &nbsp;&nbsp;&nbsp;④
+                &nbsp;&nbsp;&lt;LawBody&gt;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⑤       ⑥               ⑦
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;LawTitle AbbrKanaSeion=""&gt;保管金規則&lt;/LawTitle&gt;
+                &nbsp;&nbsp;&lt;/LawBody&gt;
+                &lt;/Law&gt;</code></pre>
+
+
+            - type: string
+              description: |
+                <br>
+                `law_full_text_format`と`response_format`が異なる場合、Base64でエンコードして返却します。
+
+
+                >> ### Base64形式例
+                >>><pre><code>"PFBhcmFncmFwaCBIaWRlPSJmYWxzZSIgTnVtPSIxIiBPbGRTdHlsZT0iZmFsc2UiPgogICAgICAgICAgPFBhcmFncmFwaE51bS8+CiAgICAgICAgICA8UGFyYWdyYXBoU2VudGVuY2U+CiAgICAgICAgICAgIDxTZW50ZW5jZSBXcml0aW5nTW9kZT0idmVydGljYWwiPuWbveaXl+OBr+OAgeaXpeeroOaXl+OBqOOBmeOCi+OAgjwvU2VudGVuY2U+CiAgICAgICAgICA8L1BhcmFncmFwaFNlbnRlbmNlPgogICAgICAgIDwvUGFyYWdyYXBoPg=="</code></pre>
+
+    law_info:
+      type: object
+      title: law_info
+      description: 履歴に依存しない法令（法令IDで特定される法令）のメタ情報
+      properties:
+        law_type:
+          description: 法令種別
+          allOf:
+            - $ref: "#/components/schemas/law_type"
+        law_id:
+          description: 法令ID
+          type: string
+          example: 322CO0000000016
+        law_num:
+          description: 法令番号
+          type: string
+          example: 昭和二十二年政令第十六号
+        law_num_era:
+          description: 法令番号の元号
+          allOf:
+            - $ref: "#/components/schemas/law_num_era"
+        law_num_year:
+          description: 法令番号の年
+          type: integer
+          example: 5
+        law_num_type:
+          description: 法令番号の法令種別
+          allOf:
+            - $ref: "#/components/schemas/law_num_type"
+        law_num_num:
+          description: 法令番号の号数
+          type: string
+          example: "192"
+        promulgation_date:
+          description: 公布日
+          type: string
+          example: 2023-07-01
+          format: date
+
+    law_num_era:
+      title: law_num_era
+      description: 法令番号の元号
+      type: string
+      enum:
+        - Meiji
+        - Taisho
+        - Showa
+        - Heisei
+        - Reiwa
+
+    law_num_type:
+      title: law_num_type
+      description: >-
+        法令番号の法令種別:
+          * `Constitution`         - 憲法
+          * `Act`                  - 法律
+          * `CabinetOrder`         - 政令
+          * `ImperialOrder`        - 勅令
+          * `MinisterialOrdinance` - 府省令
+          * `Rule`                 - 規則
+          * `Misc`                 - その他
+      type: string
+      enum:
+        - Constitution
+        - Act
+        - CabinetOrder
+        - ImperialOrder
+        - MinisterialOrdinance
+        - Rule
+        - Misc
+
+    law_revisions_response:
+      type: object
+      description: 法令履歴一覧取得APIレスポンス
+      properties:
+        law_info:
+          $ref: "#/components/schemas/law_info"
+        revisions:
+          type: array
+          xml:
+            wrapped: true
+          description: 版一覧
+          items:
+            xml:
+              name: item
+            allOf:
+              - $ref: "#/components/schemas/revision_info"
+      required:
+        - law_info
+        - revisions
+
+    law_type:
+      title: law_type
+      description: >-
+        法令種別:
+          * `Constitution`         - 憲法
+          * `Act`                  - 法律
+          * `CabinetOrder`         - 政令
+          * `ImperialOrder`        - 勅令
+          * `MinisterialOrdinance` - 府省令
+          * `Rule`                 - 規則
+          * `Misc`                 - その他
+      type: string
+      enum:
+        - Constitution
+        - Act
+        - CabinetOrder
+        - ImperialOrder
+        - MinisterialOrdinance
+        - Rule
+        - Misc
+
+    laws_response:
+      type: object
+      description: 法令一覧取得API レスポンス
+      properties:
+        total_count:
+          type: integer
+          description: 取得件数の上限（`limit`）、何件目から取得するか（`offset`）適用前のリストに含まれる項目数（検索条件にマッチした全件数）
+          format: int64
+          example: 10000
+        count:
+          type: integer
+          description: 返却するリスト（取得件数の上限（`limit`）、何件目から取得するか（`offset`）適用後）に含まれる項目数
+          format: int64
+          example: 100
+        next_offset:
+          type: integer
+          description: 次の何件目から取得するか（`offset`）。末尾まで取得が完了した場合はnull
+          format: int64
+          nullable: true
+          example: 200
+        laws:
+          type: array
+          xml:
+            wrapped: true
+          description: 法令ID単位の法令情報
+          items:
+            type: object
+            xml:
+              name: item
+            properties:
+              law_info:
+                description: 改正履歴に依存しない法令情報
+                allOf:
+                  - $ref: "#/components/schemas/law_info"
+              revision_info:
+                description: 取得した改正履歴における法令情報
+                allOf:
+                  - $ref: "#/components/schemas/revision_info"
+              current_revision_info:
+                description: 最新の履歴における法令情報<br>法令の時点（`asof`）に依存しない現在以前の最新のリビジョン
+                allOf:
+                  - $ref: "#/components/schemas/revision_info"
+      required:
+        - count
+
+    mission:
+      title: mission
+      description: >-
+        新規制定又は被改正法令（`New`）・一部改正法令（`Partial`）
+          * `New`      - 新規制定
+          * `Partial`  - 一部改正
+      type: string
+      enum:
+        - New
+        - Partial
+
+    repeal_status:
+      title: repeal_status
+      description: >-
+        廃止等の状態:
+          * `None`                - 廃止・失効等の状態なし
+          * `Repeal`              - 廃止
+          * `Expire`              - 失効
+          * `Suspend`             - 停止
+          * `LossOfEffectiveness` - 実効性喪失
+      type: string
+      enum:
+        - None
+        - Repeal
+        - Expire
+        - Suspend
+        - LossOfEffectiveness
+
+    response_format:
+      title: response_format
+      description: レスポンス形式（`json` 又は `xml`）
+      type: string
+      enum:
+        - json
+        - xml
+
+    revision_info:
+      type: object
+      title: revision_info
+      description: 法令の履歴に関する情報
+      properties:
+        law_revision_id:
+          type: string
+          description: 法令履歴ID
+          example: 322CO0000000016_20230508_505CO0000000175
+        law_type:
+          description: 法令種別
+          allOf:
+            - $ref: "#/components/schemas/law_type"
+        law_title:
+          type: string
+          description: 法令名
+          example: 地方自治法施行令
+        law_title_kana:
+          type: string
+          description: 法令名読み
+          example: ちほうじちほうせこうれい
+        abbrev:
+          type: string
+          description: 法令略称
+          example: 地方自治令
+        category:
+          type: string
+          description: 法令分野分類
+          example: 行政組織
+        updated:
+          description: 正誤等による更新日時
+          type: string
+          example: 2023-07-01T14:30:15+09:00
+          format: date-time
+        amendment_promulgate_date:
+          description: 改正法令公布日
+          type: string
+          example: 2023-07-01
+          format: date
+        amendment_enforcement_date:
+          description: 改正法令施行期日（この履歴に対応する改正の施行期日）
+          type: string
+          example: 2023-07-01
+          format: date
+        amendment_enforcement_comment:
+          type: string
+          description: 施行期日規定等の参考情報（この履歴に対応する改正の施行期日）
+          example: 公布の日から起算して一年を超えない範囲内において政令で定める日
+        amendment_scheduled_enforcement_date:
+          description: 擬似的な施行期日（実際の施行期日とは限らない）（この履歴に対応する改正の施行期日）
+          type: string
+          example: 2023-07-01
+          format: date
+        amendment_law_id:
+          type: string
+          description: 改正法令の法令ID（この履歴に対応する改正法令）
+          example: 505CO0000000175
+        amendment_law_title:
+          description: 改正法令名
+          type: string
+          example: 組織的な犯罪の処罰及び犯罪収益の規制等に関する法律等の一部を改正する法律
+        amendment_law_title_kana:
+          type: string
+          description: 改正法令名読み
+          example: "そしきてきなはんざいのしょばつおよび"
+        amendment_law_num:
+          description: 改正法令番号
+          type: string
+          example: 令和五年政令百九十二号
+        amendment_type:
+          description: 改正種別
+          allOf:
+            - $ref: "#/components/schemas/amendment_type"
+        repeal_status:
+          description: 廃止等の状態
+          allOf:
+            - $ref: "#/components/schemas/repeal_status"
+        repeal_date:
+          description: 廃止日
+          type: string
+          example: 2023-07-01
+          format: date
+          nullable: true
+        remain_in_force:
+          description: 廃止後の効力（`true`:廃止後でも効力を有するもの / `false`:廃止後に効力を有しないもの）
+          type: boolean
+          nullable: true
+        mission:
+          description: 新規制定又は被改正法令（`New`）・一部改正法令（`Partial`）
+          allOf:
+            - $ref: "#/components/schemas/mission"
+        current_revision_status:
+          description: 履歴の状態
+          allOf:
+            - $ref: "#/components/schemas/current_revision_status"
