@@ -3,7 +3,13 @@
   "entryPoints": ["../core/src/"],
   "basePath": "../",
   "publicPath": "/lib/",
-  "exclude": ["../core/src/util/node-fetch/*", "**/*.spec.ts", "**/*.spec.tsx"],
+  "exclude": [
+    "../core/src/util/node-fetch/*",
+    "../core/src/elawsOpenapi/sdk.gen.ts",
+    "../core/src/elawsOpenapi/types.gen.ts",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
   "entryPointStrategy": "expand",
   "useTsLinkResolution": true,
   "name": "Lawtext core references",
