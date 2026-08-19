@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import type * as std from "../../law/std";
 import type { JsonEL } from "../../node/el/jsonEL";
 import getSentenceEnvs from "../getSentenceEnvs";
 import detectDeclarations from "../detectDeclarations";
@@ -8,7 +9,10 @@ import { assertELVaridity } from "../../parser/std/testHelper";
 import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
 import getScope from "../pointerEnvs/getScope";
 import detectPointers from "../detectPointers";
-import { getLawTitleLength } from "..";
+import { analyze, getLawTitleLength } from "..";
+import xmlToEL from "../../node/el/xmlToEL";
+
+const analyzeXML = async (xml: string) => analyze({ elToBeModified: xmlToEL(xml) as std.StdEL | std.__EL });
 
 describe("Test detectVariableReferences", () => {
 
@@ -1354,6 +1358,158 @@ describe("Test detectVariableReferences", () => {
         assert.deepStrictEqual(result.errors.map(e => e.message), expectedErrorMessages);
 
         assertELVaridity(inputElToBeModified, lawtext, true);
+    });
+});
+
+describe("Test detectVariableReferences regression cases from actual law text", () => {
+
+    it("detects a term referenced by a pointer and に規定する outside the term's normal scope", async () => {
+        const xml = `\
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Law Era="Heisei" Lang="ja" LawType="Act" Num="57" Year="15">
+  <LawNum>平成十五年法律第五十七号</LawNum>
+  <LawBody>
+    <LawTitle>個人情報の保護に関する法律</LawTitle>
+    <MainProvision>
+      <Article Num="30_2">
+        <ArticleCaption>（個人情報に係る統計作成等の特例）</ArticleCaption>
+        <ArticleTitle>第三十条の二</ArticleTitle>
+        <Paragraph Num="4">
+          <ParagraphNum>４</ParagraphNum>
+          <ParagraphSentence>
+            <Sentence Num="1" WritingMode="vertical">第一項の規定により取得された要配慮個人情報又はその全部若しくは一部を複製し、若しくは加工した生存する個人に関する情報（第六項に規定する提供統計作成等用個人情報等であるものを除く。以下「統計作成等用要配慮個人情報等」という。）を取り扱う個人情報取扱事業者は、第十八条の規定にかかわらず、法令に基づく場合及び人命の救助、災害の救援その他非常の事態への対応のため緊急の必要がある場合（以下この章において「法令に基づく場合等」という。）を除くほか、当該統計作成等用要配慮個人情報等を、次の各号に掲げる場合の区分に応じて、当該各号に定める行為を行うために必要な範囲を超えて取り扱ってはならない。</Sentence>
+          </ParagraphSentence>
+        </Paragraph>
+        <Paragraph Num="6">
+          <ParagraphNum>６</ParagraphNum>
+          <ParagraphSentence>
+            <Sentence Num="1" WritingMode="vertical">前項本文の規定により個人情報の提供を受けた第三者（個人情報取扱事業者である者に限る。以下この条及び第七十二条の三第五項第一号において「特例個人情報受領者」という。）は、前項第一号の個人情報保護委員会規則で定める方法により、当該個人情報又はその全部若しくは一部を複製し、若しくは加工した生存する個人に関する情報（以下「提供統計作成等用個人情報等」という。）を取り扱っている期間、同号に規定する事項（当該事項を次項本文の規定により変更した場合又は第八項の場合にあっては、変更後の当該事項）を継続して公表しなければならない。</Sentence>
+          </ParagraphSentence>
+        </Paragraph>
+      </Article>
+    </MainProvision>
+  </LawBody>
+</Law>
+`;
+
+        const result = await analyzeXML(xml);
+        const refs = result.variableReferences.filter(ref => ref.attr.refName === "提供統計作成等用個人情報等");
+
+        assert.lengthOf(refs.filter(ref => ref.refSentenceTextRange.start.sentenceIndex === 0), 1);
+        assert.deepStrictEqual(refs[0].refSentenceTextRange, {
+            start: { sentenceIndex: 0, textOffset: 67 },
+            end: { sentenceIndex: 0, textOffset: 80 },
+        });
+    });
+
+    it("detects variable references whose names are split by pointer markup", async () => {
+        const xml = `\
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Law Era="Heisei" Lang="ja" LawType="Act" Num="57" Year="15">
+  <LawNum>平成十五年法律第五十七号</LawNum>
+  <LawBody>
+    <LawTitle>個人情報の保護に関する法律</LawTitle>
+    <MainProvision>
+      <Article Num="148_3">
+        <ArticleCaption>（課徴金納付命令）</ArticleCaption>
+        <ArticleTitle>第百四十八条の三</ArticleTitle>
+        <Paragraph Num="1">
+          <ParagraphNum/>
+          <ParagraphSentence>
+            <Sentence Num="1" WritingMode="vertical">個人情報取扱事業者が、次に掲げる行為（以下この項において「違反行為」という。）をした場合（当該個人情報取扱事業者が、当該違反行為が行われた期間を通じて、当該違反行為を防止するための相当の注意を怠った者でないと認められる場合を除く。）において、代金、報酬、利用料、手数料その他名目のいかんを問わず、当該違反行為又は当該違反行為をやめることの対価として金銭その他の財産上の利益（以下この条において「金銭等」という。）を得たときは、委員会は、当該個人情報取扱事業者に対し、当該金銭等に相当する額として政令で定める方法により算定した額（次条において「第一項対価額」という。）に相当する額の課徴金を国庫に納付することを命じなければならない。ただし、当該違反行為に係る個人情報又は個人データ（第十六条第三項に規定する個人データをいう。第三号において同じ。）の本人の数が千人を超えないときその他個人の権利利益を害する程度が大きくない場合として政令で定めるときは、その納付を命ずることができない。</Sentence>
+          </ParagraphSentence>
+        </Paragraph>
+        <Paragraph Num="2">
+          <ParagraphNum>２</ParagraphNum>
+          <ParagraphSentence>
+            <Sentence Num="1" WritingMode="vertical">個人情報取扱事業者が、第二十条第一項の規定に違反して個人情報を取得し、当該個人情報を利用した場合（当該個人情報取扱事業者が、当該取得及び利用が行われた期間を通じて、当該取得及び利用を防止するための相当の注意を怠った者でないと認められる場合を除く。）において、当該利用又は当該利用をやめることの対価として金銭等を得たときは、委員会は、当該個人情報取扱事業者に対し、当該金銭等に相当する額として政令で定める方法により算定した額（次条において「第二項対価額」という。）に相当する額の課徴金を国庫に納付することを命じなければならない。ただし、当該利用に係る個人情報の本人の数が千人を超えないときその他個人の権利利益を害する程度が大きくない場合として政令で定めるときは、その納付を命ずることができない。</Sentence>
+          </ParagraphSentence>
+        </Paragraph>
+      </Article>
+      <Article Num="148_4">
+        <ArticleCaption>（課徴金の計算の基礎となるべき事実の推計）</ArticleCaption>
+        <ArticleTitle>第百四十八条の四</ArticleTitle>
+        <Paragraph Num="1">
+          <ParagraphNum/>
+          <ParagraphSentence>
+            <Sentence Num="1" WritingMode="vertical">前条各項の規定による命令（以下「課徴金納付命令」という。）をする場合において、当該個人情報取扱事業者が当該課徴金納付命令に係る課徴金の計算の基礎となるべき事実について第百四十六条第一項の規定による報告又は資料の提出の要求に応じなかったときは、委員会は、当該事実の報告又は資料の提出が行われず課徴金の計算の基礎となるべき事実を把握することができない期間における第一項対価額又は第二項対価額を、当該個人情報取扱事業者若しくはこれと取引を行う他の事業者又は当該課徴金納付命令に係る課徴金対象行為（前条第一項に規定する違反行為又は同条第二項に規定する取得及び利用をいう。以下同じ。）に係る事業と同種の事業を行う他の事業者若しくはこれと取引を行う他の事業者から入手した資料その他の資料を用いて、個人情報保護委員会規則で定める合理的な方法により推計して、課徴金納付命令をすることができる。</Sentence>
+          </ParagraphSentence>
+        </Paragraph>
+      </Article>
+    </MainProvision>
+  </LawBody>
+</Law>
+`;
+
+        const result = await analyzeXML(xml);
+
+        assert.lengthOf(result.variableReferences.filter(ref => ref.attr.refName === "第一項対価額"), 1);
+        assert.lengthOf(result.variableReferences.filter(ref => ref.attr.refName === "第二項対価額"), 1);
+    });
+
+    it("locates a pointer prepended by a law-title alias that refers to another law-title reference", async () => {
+        const xml = `\
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Law Era="Heisei" Lang="ja" LawType="MinisterialOrdinance" Num="20" Year="23">
+  <LawNum>平成二十三年財務省令第二十号</LawNum>
+  <LawBody>
+    <LawTitle>東日本大震災の被災者等に係る国税関係法律の臨時特例に関する法律施行規則</LawTitle>
+    <EnactStatement>東日本大震災の被災者等に係る国税関係法律の臨時特例に関する法律（平成二十三年法律第二十九号）の規定に基づき、並びに同法を実施するため、東日本大震災の被災者等に係る国税関係法律の臨時特例に関する法律施行規則を次のように定める。</EnactStatement>
+    <MainProvision>
+      <Article Num="1">
+        <ArticleCaption>（定義）</ArticleCaption>
+        <ArticleTitle>第一条</ArticleTitle>
+        <Paragraph Num="1">
+          <ParagraphNum/>
+          <ParagraphSentence>
+            <Sentence Num="1" WritingMode="vertical">この省令において、「東日本大震災」とは、東日本大震災の被災者等に係る国税関係法律の臨時特例に関する法律（以下「法」という。）第二条第一項に規定する東日本大震災をいう。</Sentence>
+          </ParagraphSentence>
+        </Paragraph>
+        <Paragraph Num="2">
+          <ParagraphNum>２</ParagraphNum>
+          <ParagraphSentence>
+            <Sentence Num="1" WritingMode="vertical">次章において「居住者」、「確定申告書」、「減価償却資産」又は「国内」とは、それぞれ法第二条第二項第一号、第二号、第八号又は第九号に規定する居住者、確定申告書、減価償却資産又は国内をいう。</Sentence>
+          </ParagraphSentence>
+        </Paragraph>
+        <Paragraph Num="3">
+          <ParagraphNum>３</ParagraphNum>
+          <ParagraphSentence>
+            <Sentence Num="1" WritingMode="vertical">第三章において「人格のない社団等」、「法人課税信託」、「減価償却資産」、「分割法人」又は「現物出資法人」とは、それぞれ法第二条第三項第一号、第二号、第十号、第二十四号又は第二十五号に規定する人格のない社団等、法人課税信託、減価償却資産、分割法人又は現物出資法人をいう。</Sentence>
+          </ParagraphSentence>
+        </Paragraph>
+      </Article>
+    </MainProvision>
+  </LawBody>
+</Law>
+`;
+
+        const result = await analyzeXML(xml);
+        const pointerEnv = [...result.pointerEnvByEL.values()].find(pointerEnv => (
+            pointerEnv.sentenceEnv.text.includes("法第二条第二項第一号")
+            && pointerEnv.pointer.text() === "第二条第二項第一号"
+        ));
+
+        assert.exists(pointerEnv);
+        assert.strictEqual(pointerEnv?.located?.type, "external");
+        assert.strictEqual(pointerEnv?.located?.type === "external" && pointerEnv.located.lawRef.attr.lawNum, "平成二十三年法律第二十九号");
+
+        const corporationTaxTrustSentence = result.sentenceEnvs.find(sentenceEnv => (
+            sentenceEnv.text.includes("法人課税信託")
+        ));
+        assert.exists(corporationTaxTrustSentence);
+        const lawRefsInCorporationTaxTrustSentence = result.variableReferences.filter(ref => (
+            ref.attr.refName === "法"
+            && ref.refSentenceTextRange.start.sentenceIndex === corporationTaxTrustSentence?.index
+        ));
+        assert.lengthOf(lawRefsInCorporationTaxTrustSentence, 1);
+        const [lawRef] = lawRefsInCorporationTaxTrustSentence;
+        assert.strictEqual(
+            corporationTaxTrustSentence?.text.slice(
+                lawRef.refSentenceTextRange.start.textOffset,
+                lawRef.refSentenceTextRange.start.textOffset + 4,
+            ),
+            "法第二条",
+        );
     });
 });
 

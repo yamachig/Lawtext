@@ -1,6 +1,6 @@
 import type { WithErrorValue } from "../../parser/std/util";
 import { ErrorMessage } from "../../parser/cst/error";
-import { __Parentheses, __Text, ____Declaration } from "../../node/el/controls";
+import { ____PointerRanges, __Parentheses, __Text, ____Declaration } from "../../node/el/controls";
 import $nameListHead from "../sentenceChildrenParser/rules/$nameListHead";
 import { initialEnv } from "../sentenceChildrenParser/env";
 import type { SentenceChildEL } from "../../node/cst/inline";
@@ -11,6 +11,101 @@ import type { SentenceEnvsStruct } from "../getSentenceEnvs";
 import getScope from "../pointerEnvs/getScope";
 import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
 
+const processInlineNameList = (
+    headSentenceEnv: SentenceEnv,
+    sentenceEnvsStruct: SentenceEnvsStruct,
+    pointerEnvsStruct: PointerEnvsStruct,
+): WithErrorValue<____Declaration[]> => {
+    const errors: ErrorMessage[] = [];
+    const declarations: ____Declaration[] = [];
+    const children = headSentenceEnv.el.children;
+
+    const pointerRanges = children[0];
+    const afterPointer = children[1];
+    if (!(pointerRanges instanceof ____PointerRanges)) return { value: declarations, errors };
+    if (!(afterPointer instanceof __Text) || !afterPointer.text().startsWith("において")) return { value: declarations, errors };
+
+    getScope({ pointerRangesToBeModified: pointerRanges, pointerEnvsStruct });
+
+    const scope = toSentenceTextRanges(
+        pointerRanges.targetContainerIDRanges,
+        sentenceEnvsStruct,
+    );
+    if (scope.length === 0) return { value: declarations, errors };
+
+    const nameParentheses: __Parentheses[] = [];
+    for (let childIndex = 2; childIndex < children.length; childIndex++) {
+        const child = children[childIndex];
+        if (child instanceof __Text && child.text().includes("とは")) break;
+        if (child instanceof __Parentheses && child.attr.type === "square") {
+            nameParentheses.push(child);
+        }
+    }
+    if (nameParentheses.length < 2) return { value: declarations, errors };
+
+    for (const nameParenthesis of nameParentheses.slice(1)) {
+        const name = nameParenthesis.content.text();
+        if (name.length === 0) continue;
+
+        const nameTextRange = headSentenceEnv.textRageOfEL(nameParenthesis.content);
+        if (!nameTextRange) {
+            errors.push(new ErrorMessage(
+                "nameTextRange is null",
+                [
+                    nameParenthesis?.range?.[0] ?? 0,
+                    nameParenthesis?.range?.[1] ?? 0,
+                ],
+            ));
+            continue;
+        }
+
+        const nameSentenceTextRange: SentenceTextRange = {
+            start: {
+                sentenceIndex: headSentenceEnv.index,
+                textOffset: nameTextRange[0],
+            },
+            end: {
+                sentenceIndex: headSentenceEnv.index,
+                textOffset: nameTextRange[1],
+            },
+        };
+
+        const declarationID = `decl-sentence_${headSentenceEnv.index}-text_${nameSentenceTextRange.start.textOffset}_${nameSentenceTextRange.end.textOffset}`;
+
+        const declaration = new ____Declaration({
+            declarationID,
+            type: "Keyword",
+            name,
+            value: {
+                isCandidate: true,
+                sentenceTextRange: {
+                    start: {
+                        sentenceIndex: headSentenceEnv.index,
+                        textOffset: 0,
+                    },
+                    end: {
+                        sentenceIndex: headSentenceEnv.index,
+                        textOffset: 0,
+                    },
+                },
+            },
+            scope,
+            nameSentenceTextRange,
+            range: nameParenthesis.content.range,
+            children: [...nameParenthesis.content.children] as (string | std.Ruby | std.Sup | std.Sub | std.__EL)[],
+        });
+        declarations.push(declaration);
+
+        nameParenthesis.content.children.splice(
+            0,
+            nameParenthesis.content.children.length,
+            declaration,
+        );
+    }
+
+    return { value: declarations, errors };
+};
+
 export const processNameList = (
     headSentenceEnv: SentenceEnv,
     sentenceEnvsStruct: SentenceEnvsStruct,
@@ -20,6 +115,16 @@ export const processNameList = (
 ) => {
     const errors: ErrorMessage[] = [];
     const declarations: ____Declaration[] = [];
+
+    {
+        const result = processInlineNameList(
+            headSentenceEnv,
+            sentenceEnvsStruct,
+            pointerEnvsStruct,
+        );
+        declarations.push(...result.value);
+        errors.push(...result.errors);
+    }
 
 
     const result = $nameListHead.match(
