@@ -15,7 +15,7 @@ const HeadComponent = () => {
                 .catch(() => {
                     return import(/*webpackIgnore: true*/ fallbackSrc);
                 })
-                .catch(console.error)).default;
+                .catch(console.error));
         })();
     }, [src]);
     return null;
