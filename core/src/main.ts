@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 import yargs from "yargs";
-import * as lawtext from "./lawtext";
-import * as fs from "fs";
-import { assertNever } from "./util";
-import { figPDFTypes } from "./renderer/common/docx/FigDataManager";
+import * as lawtext from "./lawtext.ts";
+import * as fs from "node:fs";
+import { assertNever } from "./util/index.ts";
+import { figPDFTypes } from "./renderer/common/docx/FigDataManager.ts";
 
-export { run } from "./lawtext";
+export { run } from "./lawtext.ts";
 
 export interface RunCLIArgs {
     input: string | null;

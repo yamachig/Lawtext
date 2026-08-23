@@ -1,8 +1,8 @@
 /* eslint-disable @stylistic/quote-props */
-import type { LawIDStruct } from "../../law/lawID";
-import type { articlesContainerTags } from "../../node/container";
-import { toplevelContainerTags } from "../../node/container";
-import * as std from "../../law/std";
+import type { LawIDStruct } from "../../law/lawID.ts";
+import type { articlesContainerTags } from "../../node/container/index.ts";
+import { toplevelContainerTags } from "../../node/container/index.ts";
+import * as std from "../../law/std/index.ts";
 
 // e.g. `405AC0000000088`, `405AC0000000088_20240401_504AC0100000052`
 export interface PathFragmentLaw {

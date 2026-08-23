@@ -1,6 +1,6 @@
 // This file is auto-generated from https://laws.e-gov.go.jp/api/2/swagger-ui/lawapi-v2.yaml
 
-import type { Config } from './types.gen';
+import type { Config } from './types.gen.js';
 
 export type ServerSentEventsOptions<TData = unknown> = Omit<RequestInit, 'method'> &
   Pick<Config, 'method' | 'responseTransformer' | 'responseValidator'> & {

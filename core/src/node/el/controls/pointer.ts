@@ -1,7 +1,7 @@
-import { EL } from "..";
-import type * as std from "../../../law/std";
-import type { SentenceChildEL } from "../../cst/inline";
-import { __Parentheses } from "./parentheses";
+import { EL } from "../index.ts";
+import type * as std from "../../../law/std/index.ts";
+import type { SentenceChildEL } from "../../cst/inline.ts";
+import { __Parentheses } from "./parentheses.ts";
 
 export enum RelPos {
     PREV = "PREV",

@@ -12,7 +12,9 @@ import type {
     XmlParserDocumentChildNode,
     XmlParserElementChildNode,
 } from "xml-parser-xo";
-import parser from "xml-parser-xo";
+import * as xmlParser from "xml-parser-xo";
+
+const parser = xmlParser.default as unknown as typeof import("xml-parser-xo").default;
 
 const trim = (str: string) => {
     return str.replace(/^[ \r\n\t\v]+|[ \r\n\t\v]+$/g, "");

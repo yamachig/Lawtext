@@ -1,10 +1,10 @@
 import React from "react";
-import type * as std from "../../law/std";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, wrapHTMLComponent } from "../common/html";
-import type { DOCXComponentProps } from "../common/docx/component";
-import { wrapDOCXComponent } from "../common/docx/component";
-import { DOCXAnyELs, HTMLAnyELs } from "./any";
+import type * as std from "../../law/std/index.ts";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, wrapHTMLComponent } from "../common/html.tsx";
+import type { DOCXComponentProps } from "../common/docx/component.tsx";
+import { wrapDOCXComponent } from "../common/docx/component.tsx";
+import { DOCXAnyELs, HTMLAnyELs } from "./any.tsx";
 
 
 export interface NoteLikeProps {

@@ -1,6 +1,6 @@
-import { EL } from "../";
-import type * as std from "../../../law/std";
-import type { SentenceTextRange } from "../../container/sentenceEnv";
+import { EL } from "../index.ts";
+import type * as std from "../../../law/std/index.ts";
+import type { SentenceTextRange } from "../../container/sentenceEnv.ts";
 
 export type DeclarationValue =
     | {

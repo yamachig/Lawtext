@@ -1,4 +1,4 @@
-import type fflate from "fflate";
+import type * as fflate from "fflate";
 import { unzip as fflateUnzip, zip as fflateZip, strToU8 } from "fflate";
 
 export const unzip = (data: Uint8Array, opts?: fflate.AsyncUnzipOptions) => {

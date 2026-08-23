@@ -1,15 +1,15 @@
-import type { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
-import type * as std from "../../law/std";
-import { assertNever, pick } from "../../util";
-import type { Container } from "../container";
-import { getContainerType, ContainerType } from "../container";
-import type { PointerLike, SentenceEnv } from "../container/sentenceEnv";
-import type { SentenceTextRange } from "../container/sentenceEnv";
-import { enumerateSentenceTexts } from "../container/sentenceEnv";
-import { EL } from "../el";
-import type { ____Declaration, ____PF, ____Pointer } from "../el/controls";
-import { ____LawRef, ____VarRef, __Parentheses } from "../el/controls";
-import { RelPos } from "../el/controls";
+import type { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs.ts";
+import type * as std from "../../law/std/index.ts";
+import { assertNever, pick } from "../../util/index.ts";
+import type { Container } from "../container/index.ts";
+import { getContainerType, ContainerType } from "../container/index.ts";
+import type { PointerLike, SentenceEnv } from "../container/sentenceEnv.ts";
+import type { SentenceTextRange } from "../container/sentenceEnv.ts";
+import { enumerateSentenceTexts } from "../container/sentenceEnv.ts";
+import { EL } from "../el/index.ts";
+import type { ____Declaration, ____PF, ____Pointer } from "../el/controls/index.ts";
+import { ____LawRef, ____VarRef, __Parentheses } from "../el/controls/index.ts";
+import { RelPos } from "../el/controls/index.ts";
 
 export interface InternalLocatedInfo {
     type: "internal",

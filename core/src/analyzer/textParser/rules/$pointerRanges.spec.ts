@@ -1,8 +1,8 @@
 import { assert } from "chai";
-import { initialEnv } from "../../../parser/cst/env";
-import $pointerRanges, { $inlineWithPointerRanges, pointerRangesCandidateChars } from "./$pointerRanges";
-import { makeReOutsideParenthesesTextChars, makeReParenthesesInlineTextChars, makeRePeriodSentenceTextChars } from "../../../parser/cst/rules/$sentenceChildren";
-import { newStdEL } from "../../../law/std";
+import { initialEnv } from "../../../parser/cst/env.ts";
+import $pointerRanges, { $inlineWithPointerRanges, pointerRangesCandidateChars } from "./$pointerRanges.ts";
+import { makeReOutsideParenthesesTextChars, makeReParenthesesInlineTextChars, makeRePeriodSentenceTextChars } from "../../../parser/cst/rules/$sentenceChildren.ts";
+import { newStdEL } from "../../../law/std/index.ts";
 
 const env = initialEnv({
     options: {

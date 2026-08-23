@@ -1,13 +1,13 @@
-import type { Rule, Empty } from "generic-parser/lib/core";
-import { __Parentheses } from "../../node/el/controls";
-import type { SentencesArray } from "../../node/cst/inline";
-import type { Line } from "../../node/cst/line";
-import { LineType } from "../../node/cst/line";
-import { ErrorMessage } from "../cst/error";
-import type { Env } from "./env";
-import factory from "./factory";
-import type { Dedent, Indent, PhysicalLine, VirtualLine } from "./virtualLine";
-import { isVirtualLine, VirtualOnlyLineType } from "./virtualLine";
+import type { Rule, Empty } from "generic-parser/lib/core/index.js";
+import { __Parentheses } from "../../node/el/controls/index.ts";
+import type { SentencesArray } from "../../node/cst/inline.ts";
+import type { Line } from "../../node/cst/line.ts";
+import { LineType } from "../../node/cst/line.ts";
+import { ErrorMessage } from "../cst/error.ts";
+import type { Env } from "./env.ts";
+import factory from "./factory.ts";
+import type { Dedent, Indent, PhysicalLine, VirtualLine } from "./virtualLine.ts";
+import { isVirtualLine, VirtualOnlyLineType } from "./virtualLine.ts";
 
 export type ValueRule<TValue> = Rule<VirtualLine[], TValue, Env, Empty>
 export type WithErrorValue<TValue> = { value: TValue, errors: ErrorMessage[] }

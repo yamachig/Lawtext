@@ -1,9 +1,9 @@
-import * as std from "../law/std";
-import { isControl, isStdEL } from "../law/std";
-import type { EL } from "../node/el";
-import { anyToLines } from "../parser/std/rules/$any";
-import { lawToLines } from "../parser/std/rules/$law";
-import { NotImplementedError } from "../util";
+import * as std from "../law/std/index.ts";
+import { isControl, isStdEL } from "../law/std/index.ts";
+import type { EL } from "../node/el/index.ts";
+import { anyToLines } from "../parser/std/rules/$any.ts";
+import { lawToLines } from "../parser/std/rules/$law.ts";
+import { NotImplementedError } from "../util/index.ts";
 
 export const renderLawtext = (el: EL, indentTexts: string[] = []): string => {
     let ret = "";

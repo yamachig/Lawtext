@@ -1,12 +1,12 @@
 // This file is auto-generated from https://laws.e-gov.go.jp/api/2/swagger-ui/lawapi-v2.yaml
 
-import type { Auth } from '../core/auth.gen';
+import type { Auth } from '../core/auth.gen.js';
 import type {
   ServerSentEventsOptions,
   ServerSentEventsResult,
-} from '../core/serverSentEvents.gen';
-import type { Client as CoreClient, Config as CoreConfig } from '../core/types.gen';
-import type { Middleware } from './utils.gen';
+} from '../core/serverSentEvents.gen.js';
+import type { Client as CoreClient, Config as CoreConfig } from '../core/types.gen.js';
+import type { Middleware } from './utils.gen.js';
 
 export type ResponseStyle = 'data' | 'fields';
 

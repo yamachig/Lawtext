@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import { $supplProvisionAppdx, $supplProvisionAppdxStyle, $supplProvisionAppdxTable, supplProvisionAppdxItemToLines } from "./$supplProvisionAppdxItem";
+import { testLawtextToStd } from "../testHelper.ts";
+import { $supplProvisionAppdx, $supplProvisionAppdxStyle, $supplProvisionAppdxTable, supplProvisionAppdxItemToLines } from "./$supplProvisionAppdxItem.ts";
 
 describe("Test $supplProvisionAppdx and supplProvisionAppdxItemToLines", () => {
 

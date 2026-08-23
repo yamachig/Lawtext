@@ -1,4 +1,4 @@
-import { EL } from "..";
+import { EL } from "../index.ts";
 
 export class __Text extends EL {
     public override tag = "__Text" as const;

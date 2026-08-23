@@ -1,11 +1,11 @@
 import Zip from "node-stream-zip";
 import path from "path";
-import os from "os";
-import fs from "fs";
-import { fetch } from "../util/node-fetch";
+import os from "node:os";
+import fs from "node:fs";
+import { fetch } from "../util/node-fetch/index.js";
 import fsExtra from "fs-extra";
-import { promisify } from "util";
-import type { FSStoredLoader } from "./loaders/FSStoredLoader";
+import { promisify } from "node:util";
+import type { FSStoredLoader } from "./loaders/FSStoredLoader.ts";
 
 export const allXMLZipURL = "https://laws.e-gov.go.jp/bulkdownload?file_section=1&only_xml_flag=true";
 

@@ -1,6 +1,6 @@
-import { EL } from ".";
-import { controlFromEL } from "./controls";
-import type { JsonEL } from "./jsonEL";
+import { EL } from "./index.ts";
+import { controlFromEL } from "./controls/index.ts";
+import type { JsonEL } from "./jsonEL.ts";
 
 
 export const loadEL = <T extends JsonEL | string>(rawLaw: T): T extends string ? string : EL => {

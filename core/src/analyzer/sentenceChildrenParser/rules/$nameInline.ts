@@ -1,7 +1,7 @@
-// import * as std from "../../../law/std";
-import { __Parentheses, __Text, ____PointerRanges } from "../../../node/el/controls";
-import factory from "../factory";
-import type { WithErrorRule } from "../util";
+// import * as std from "../../../law/std/index.ts";
+import { __Parentheses, __Text, ____PointerRanges } from "../../../node/el/controls/index.ts";
+import factory from "../factory.ts";
+import type { WithErrorRule } from "../util.ts";
 
 export const $nameInline: WithErrorRule<{
     nameSquareParentheses: __Parentheses,

@@ -1,6 +1,6 @@
-import factory from "../factory";
-import { $_ } from "./lexical";
-import { Control } from "../../../node/cst/inline";
+import factory from "../factory.ts";
+import { $_ } from "./lexical.ts";
+import { Control } from "../../../node/cst/inline.ts";
 
 export const autoTagControls = ["#"];
 

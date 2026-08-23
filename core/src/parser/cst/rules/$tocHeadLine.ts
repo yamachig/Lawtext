@@ -1,10 +1,10 @@
-import factory from "../factory";
-import $indents from "./$indents";
-import { TOCHeadLine } from "../../../node/cst/line";
-import { $_, $_EOL } from "./lexical";
-import type { WithErrorRule } from "../util";
-import { Control } from "../../../node/cst/inline";
-import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren";
+import factory from "../factory.ts";
+import $indents from "./$indents.ts";
+import { TOCHeadLine } from "../../../node/cst/line.ts";
+import { $_, $_EOL } from "./lexical.ts";
+import type { WithErrorRule } from "../util.ts";
+import { Control } from "../../../node/cst/inline.ts";
+import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren.ts";
 
 /**
  * The parser rule for {@link TOCHeadLine} that represents a head line of a TOC (Table Of Contents). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/cst/rules/$tocHeadLine.spec.ts) for examples.

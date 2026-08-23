@@ -1,5 +1,5 @@
-import type { MatchFail, MatchContext, BasePos, BaseEnv } from "generic-parser/lib/core";
-import type { VirtualLine } from "./virtualLine";
+import type { MatchFail, MatchContext, BasePos, BaseEnv } from "generic-parser/lib/core/index.js";
+import type { VirtualLine } from "./virtualLine.ts";
 
 export interface Env extends BaseEnv<VirtualLine[], BasePos> {
     state: {

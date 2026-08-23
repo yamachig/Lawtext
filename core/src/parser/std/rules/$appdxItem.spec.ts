@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, appdxItemToLines } from "./$appdxItem";
+import { testLawtextToStd } from "../testHelper.ts";
+import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, appdxItemToLines } from "./$appdxItem.ts";
 
 describe("Test $appdx and appdxItemToLines", () => {
 

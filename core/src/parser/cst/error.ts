@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-// import { wrapSingle } from "../../util/term";
+// import { wrapSingle } from "../../util/term.ts";
 
 // export const sliceLinesWithNumbers = (
 //     allLines: string[],

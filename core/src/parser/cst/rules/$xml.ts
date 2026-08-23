@@ -1,8 +1,8 @@
-import { EL } from "../../../node/el";
-import { __Text } from "../../../node/el/controls";
-import { factory } from "../factory";
-import type { WithErrorRule } from "../util";
-import { $_ } from "./lexical";
+import { EL } from "../../../node/el/index.ts";
+import { __Text } from "../../../node/el/controls/index.ts";
+import { factory } from "../factory.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $_ } from "./lexical.ts";
 
 export const $xml: WithErrorRule<EL> = factory
     .withName("xml")

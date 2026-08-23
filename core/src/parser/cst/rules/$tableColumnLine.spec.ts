@@ -1,9 +1,9 @@
 import { assert } from "chai";
-import { matchResultToJson } from "generic-parser/lib/core";
-import type { AttrEntries } from "../../../node/cst/inline";
-import { LineType } from "../../../node/cst/line";
-import { initialEnv } from "../env";
-import $tableColumnLine from "./$tableColumnLine";
+import { matchResultToJson } from "generic-parser/lib/core/index.js";
+import type { AttrEntries } from "../../../node/cst/inline.ts";
+import { LineType } from "../../../node/cst/line.ts";
+import { initialEnv } from "../env.ts";
+import $tableColumnLine from "./$tableColumnLine.ts";
 
 const env = initialEnv({});
 

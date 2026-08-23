@@ -1,5 +1,5 @@
-import type { ComponentWithTag } from "./component";
-import { makeComponentWithTag } from "./component";
+import type { ComponentWithTag } from "./component.tsx";
+import { makeComponentWithTag } from "./component.tsx";
 
 
 const wTags = [

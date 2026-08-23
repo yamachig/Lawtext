@@ -1,19 +1,19 @@
 import React from "react";
-import * as std from "../../law/std";
-import { assertNever } from "../../util";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, wrapHTMLComponent } from "../common/html";
-import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import type { DOCXComponentProps } from "../common/docx/component";
-import { wrapDOCXComponent } from "../common/docx/component";
-import { w } from "../common/docx/tags";
-import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
-import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
-import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem";
-import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
-import { DOCXTOC, HTMLTOC } from "./toc";
-import EmptyParagraph from "../common/docx/EmptyParagraph";
-import { withKey } from "../common";
+import * as std from "../../law/std/index.ts";
+import { assertNever } from "../../util/index.ts";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, wrapHTMLComponent } from "../common/html.tsx";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun.tsx";
+import type { DOCXComponentProps } from "../common/docx/component.tsx";
+import { wrapDOCXComponent } from "../common/docx/component.tsx";
+import { w } from "../common/docx/tags.ts";
+import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup.tsx";
+import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren.ts";
+import { DOCXAppdxItem, HTMLAppdxItem } from "./appdxItem.tsx";
+import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem.tsx";
+import { DOCXTOC, HTMLTOC } from "./toc.tsx";
+import EmptyParagraph from "../common/docx/EmptyParagraph.tsx";
+import { withKey } from "../common/index.tsx";
 
 
 export interface EnactStatementProps {

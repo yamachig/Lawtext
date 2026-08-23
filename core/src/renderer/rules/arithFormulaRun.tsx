@@ -1,13 +1,13 @@
 import React from "react";
-import type * as std from "../../law/std";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, wrapHTMLComponent } from "../common/html";
-import type { DOCXComponentProps } from "../common/docx/component";
-import { wrapDOCXComponent } from "../common/docx/component";
-import { w } from "../common/docx/tags";
-import { DOCXAnyELsToBlocks, HTMLAnyELsToBlocks } from "./any";
-import TextBoxRun from "../common/docx/TextBoxRun";
-import { withKey } from "../common";
+import type * as std from "../../law/std/index.ts";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, wrapHTMLComponent } from "../common/html.tsx";
+import type { DOCXComponentProps } from "../common/docx/component.tsx";
+import { wrapDOCXComponent } from "../common/docx/component.tsx";
+import { w } from "../common/docx/tags.ts";
+import { DOCXAnyELsToBlocks, HTMLAnyELsToBlocks } from "./any.tsx";
+import TextBoxRun from "../common/docx/TextBoxRun.tsx";
+import { withKey } from "../common/index.tsx";
 
 
 export interface ArithFormulaRunProps {

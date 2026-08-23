@@ -1,5 +1,5 @@
-import type { MatchFail, MatchContext, BasePos, BaseEnv } from "generic-parser/lib/core";
-import type { SentenceChildEL } from "../../node/cst/inline";
+import type { MatchFail, MatchContext, BasePos, BaseEnv } from "generic-parser/lib/core/index.js";
+import type { SentenceChildEL } from "../../node/cst/inline.ts";
 
 export interface Env extends BaseEnv<SentenceChildEL[], BasePos> {
     state: {

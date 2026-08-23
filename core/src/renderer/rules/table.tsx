@@ -1,20 +1,20 @@
 import React from "react";
-import * as std from "../../law/std";
-import { assertNever } from "../../util";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, wrapHTMLComponent } from "../common/html";
-import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import type { DOCXComponentProps } from "../common/docx/component";
-import { wrapDOCXComponent } from "../common/docx/component";
-import { w } from "../common/docx/tags";
-import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
-import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
-import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup";
-import { DOCXArticle, HTMLArticle } from "./article";
-import { newStdEL } from "../../law/std";
-import { DOCXRemarks, HTMLRemarks } from "./remarks";
-import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
-import { withKey } from "../common";
+import * as std from "../../law/std/index.ts";
+import { assertNever } from "../../util/index.ts";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, wrapHTMLComponent } from "../common/html.tsx";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun.tsx";
+import type { DOCXComponentProps } from "../common/docx/component.tsx";
+import { wrapDOCXComponent } from "../common/docx/component.tsx";
+import { w } from "../common/docx/tags.ts";
+import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem.tsx";
+import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun.tsx";
+import { DOCXArticleGroup, HTMLArticleGroup } from "./articleGroup.tsx";
+import { DOCXArticle, HTMLArticle } from "./article.tsx";
+import { newStdEL } from "../../law/std/index.ts";
+import { DOCXRemarks, HTMLRemarks } from "./remarks.tsx";
+import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct.tsx";
+import { withKey } from "../common/index.tsx";
 
 
 export interface TableProps {

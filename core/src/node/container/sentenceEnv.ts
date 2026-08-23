@@ -1,13 +1,13 @@
-import type { Container } from ".";
-import { ContainerType } from ".";
-import { isIgnoreAnalysis } from "../../analyzer/common";
-import type { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs";
-import * as std from "../../law/std";
-import { mergeAdjacentTextsWithString } from "../../parser/cst/util";
-import type { EL } from "../el";
-import type { RangeInfo, __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, ____Declaration, ____LawNum, ____LawRef, ____Pointer, ____VarRef } from "../el/controls";
-import { __Text } from "../el/controls";
-import type { PointerEnv } from "../pointerEnv";
+import type { Container } from "./index.ts";
+import { ContainerType } from "./index.ts";
+import { isIgnoreAnalysis } from "../../analyzer/common/index.ts";
+import type { SentenceEnvsStruct } from "../../analyzer/getSentenceEnvs.ts";
+import * as std from "../../law/std/index.ts";
+import { mergeAdjacentTextsWithString } from "../../parser/cst/util.ts";
+import type { EL } from "../el/index.ts";
+import type { RangeInfo, __MismatchEndParenthesis, __MismatchStartParenthesis, __PEnd, __PStart, ____Declaration, ____LawNum, ____LawRef, ____Pointer, ____VarRef } from "../el/controls/index.ts";
+import { __Text } from "../el/controls/index.ts";
+import type { PointerEnv } from "../pointerEnv/index.ts";
 
 export interface SentenceTextPos {
     sentenceIndex: number,

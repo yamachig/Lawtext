@@ -1,6 +1,6 @@
 /* eslint-disable @stylistic/quote-props */
-import type { EL } from "../../node/el";
-import type * as std from "./stdEL";
+import type { EL } from "../../node/el/index.ts";
+import type * as std from "./stdEL.ts";
 
 export enum Era {
     Meiji = "Meiji",

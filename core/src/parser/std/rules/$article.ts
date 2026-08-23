@@ -1,23 +1,23 @@
-import type { Line } from "../../../node/cst/line";
-import { LineType, OtherLine } from "../../../node/cst/line";
-import { newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
-import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import CST from "../toCSTSettings";
-import { assertNever } from "../../../util";
-import type { SentenceChildEL } from "../../../node/cst/inline";
-import { Control, Sentences } from "../../../node/cst/inline";
-import type { WithErrorRule } from "../util";
-import { captionControl, isSingleParentheses } from "../util";
-import factory from "../factory";
-import { VirtualOnlyLineType } from "../virtualLine";
-import { $blankLine } from "../util";
-import $paragraphItem, { $autoParagraphItemChildrenOuter, paragraphItemFromAuto, paragraphItemToLines } from "./$paragraphItem";
-import $supplNote, { supplNoteToLines } from "./$supplNote";
-import { rangeOfELs } from "../../../node/el";
-import { parseNamedNum } from "../../../law/num";
-import $sentenceChildren, { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import { initialEnv } from "../../cst/env";
+import type { Line } from "../../../node/cst/line.ts";
+import { LineType, OtherLine } from "../../../node/cst/line.ts";
+import { newStdEL } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import { sentencesArrayToColumnsOrSentences } from "./columnsOrSentences.ts";
+import CST from "../toCSTSettings.ts";
+import { assertNever } from "../../../util/index.ts";
+import type { SentenceChildEL } from "../../../node/cst/inline.ts";
+import { Control, Sentences } from "../../../node/cst/inline.ts";
+import type { WithErrorRule } from "../util.ts";
+import { captionControl, isSingleParentheses } from "../util.ts";
+import factory from "../factory.ts";
+import { VirtualOnlyLineType } from "../virtualLine.ts";
+import { $blankLine } from "../util.ts";
+import $paragraphItem, { $autoParagraphItemChildrenOuter, paragraphItemFromAuto, paragraphItemToLines } from "./$paragraphItem.ts";
+import $supplNote, { supplNoteToLines } from "./$supplNote.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
+import { parseNamedNum } from "../../../law/num.ts";
+import $sentenceChildren, { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren.ts";
+import { initialEnv } from "../../cst/env.ts";
 
 /**
  * The renderer for {@link std.Article}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$article.spec.ts) for examples.

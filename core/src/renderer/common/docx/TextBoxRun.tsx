@@ -1,5 +1,5 @@
 import React from "react";
-import { w, wp, a, wps } from "./tags";
+import { w, wp, a, wps } from "./tags.ts";
 
 export const TextBoxRun: React.FC<React.PropsWithChildren<{id: string | number, name: string}>> = props => {
 

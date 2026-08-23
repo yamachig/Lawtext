@@ -1,17 +1,17 @@
-import factory from "../factory";
-import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren";
-import $indents from "./$indents";
-import { AppdxItemHeadLine } from "../../../node/cst/line";
-import { $_EOL } from "./lexical";
-import type { WithErrorRule } from "../util";
-import { mergeAdjacentTexts } from "../util";
-import { __Parentheses } from "../../../node/el/controls";
-import { $appdxControl, $appdxFigControl, $appdxFormatControl, $appdxNoteControl, $appdxStyleControl, $appdxTableControl, $autoTagControl } from "./$tagControl";
-import type { ChoiceRule } from "generic-parser/lib/rules/choice";
-import type { Env } from "../env";
-import type { ErrorMessage } from "../error";
-import type { Control } from "../../../node/cst/inline";
-import type { appdxItemTags } from "../../../law/std";
+import factory from "../factory.ts";
+import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren.ts";
+import $indents from "./$indents.ts";
+import { AppdxItemHeadLine } from "../../../node/cst/line.ts";
+import { $_EOL } from "./lexical.ts";
+import type { WithErrorRule } from "../util.ts";
+import { mergeAdjacentTexts } from "../util.ts";
+import { __Parentheses } from "../../../node/el/controls/index.ts";
+import { $appdxControl, $appdxFigControl, $appdxFormatControl, $appdxNoteControl, $appdxStyleControl, $appdxTableControl, $autoTagControl } from "./$tagControl.ts";
+import type { ChoiceRule } from "generic-parser/lib/rules/choice.js";
+import type { Env } from "../env.ts";
+import type { ErrorMessage } from "../error.ts";
+import type { Control } from "../../../node/cst/inline.ts";
+import type { appdxItemTags } from "../../../law/std/index.ts";
 
 export const appdxItemTitlePtns = [
     ["AppdxFig", /^[別付附]?図/],

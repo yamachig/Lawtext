@@ -1,15 +1,15 @@
 import { assert } from "chai";
-import type * as std from "../../law/std";
-import type { JsonEL } from "../../node/el/jsonEL";
-import loadEL from "../../node/el/loadEL";
-import xmlToEL from "../../node/el/xmlToEL";
-import getSentenceEnvs from "../getSentenceEnvs";
-import detectDeclarations from ".";
-import { parse } from "../../parser/lawtext";
-import { assertELVaridity } from "../../parser/std/testHelper";
-import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
-import detectPointers from "../detectPointers";
-import { getLawTitleLength } from "..";
+import type * as std from "../../law/std/index.ts";
+import type { JsonEL } from "../../node/el/jsonEL.ts";
+import loadEL from "../../node/el/loadEL.ts";
+import xmlToEL from "../../node/el/xmlToEL.ts";
+import getSentenceEnvs from "../getSentenceEnvs.ts";
+import detectDeclarations from "./index.ts";
+import { parse } from "../../parser/lawtext.ts";
+import { assertELVaridity } from "../../parser/std/testHelper.ts";
+import getPointerEnvs from "../pointerEnvs/getPointerEnvs.ts";
+import detectPointers from "../detectPointers.ts";
+import { getLawTitleLength } from "../index.ts";
 
 describe("Test detectDeclarations", () => {
 

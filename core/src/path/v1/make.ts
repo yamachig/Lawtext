@@ -1,8 +1,8 @@
-import type { Container } from "../../node/container";
-import { ContainerType } from "../../node/container";
-import { assertNever } from "../../util";
-import type { PathFragment, PathFragmentArticlesContainer, PathFragmentSentencesContainer, PathFragmentTopLevel } from "./common";
-import { sentencesContainerAlias, topLevelAlias } from "./common";
+import type { Container } from "../../node/container/index.ts";
+import { ContainerType } from "../../node/container/index.ts";
+import { assertNever } from "../../util/index.ts";
+import type { PathFragment, PathFragmentArticlesContainer, PathFragmentSentencesContainer, PathFragmentTopLevel } from "./common.ts";
+import { sentencesContainerAlias, topLevelAlias } from "./common.ts";
 
 
 export const makePathFragments = (container: Container, childFragments: PathFragment[]): PathFragment[] => {

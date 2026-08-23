@@ -1,15 +1,15 @@
-import { newStdEL } from "../../../law/std";
-import { __Text } from "../../../node/el/controls";
-import { factory } from "../factory";
-import $sentenceChildren, { $PERIOD_SENTENCE_FRAGMENT, sentenceChildrenToString } from "./$sentenceChildren";
-import { $_, $__ } from "./lexical";
-import type { WithErrorRule } from "../util";
-import { mergeAdjacentTexts } from "../util";
-import type { SentenceChildEL, SentencesArray } from "../../../node/cst/inline";
-import { Sentences } from "../../../node/cst/inline";
-import * as std from "../../../law/std";
-import $squareAttr from "./$squareAttr";
-import type { ErrorMessage } from "../error";
+import { newStdEL } from "../../../law/std/index.ts";
+import { __Text } from "../../../node/el/controls/index.ts";
+import { factory } from "../factory.ts";
+import $sentenceChildren, { $PERIOD_SENTENCE_FRAGMENT, sentenceChildrenToString } from "./$sentenceChildren.ts";
+import { $_, $__ } from "./lexical.ts";
+import type { WithErrorRule } from "../util.ts";
+import { mergeAdjacentTexts } from "../util.ts";
+import type { SentenceChildEL, SentencesArray } from "../../../node/cst/inline.ts";
+import { Sentences } from "../../../node/cst/inline.ts";
+import * as std from "../../../law/std/index.ts";
+import $squareAttr from "./$squareAttr.ts";
+import type { ErrorMessage } from "../error.ts";
 
 export interface SentencesArrayToStringOptions {
     withoutAttrs?: boolean;

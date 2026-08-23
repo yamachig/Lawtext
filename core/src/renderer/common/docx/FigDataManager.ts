@@ -1,10 +1,10 @@
-import type { LawXMLStruct } from "../../../data/loaders/common";
+import type { LawXMLStruct } from "../../../data/loaders/common.ts";
 import { imageSize } from "image-size";
-import type { DOCXFigData, DOCXFigDataManager, DOCXFigEmbedFile, DOCXFigImageFile } from "./component";
-import * as std from "../../../law/std";
-import type { EL } from "../../../node/el";
-import { decodeBase64 } from "../../../util";
-import { getPdfjs } from "./getPdfjs";
+import type { DOCXFigData, DOCXFigDataManager, DOCXFigEmbedFile, DOCXFigImageFile } from "./component.tsx";
+import * as std from "../../../law/std/index.ts";
+import type { EL } from "../../../node/el/index.ts";
+import { decodeBase64 } from "../../../util/index.ts";
+import { getPdfjs } from "./getPdfjs.js";
 
 function *iterateFig(el: EL): IterableIterator<std.Fig> {
     if (std.isFig(el)) yield el;

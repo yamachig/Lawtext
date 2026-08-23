@@ -1,24 +1,24 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { LineType, OtherLine } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import { isSentenceChildEL, Sentences } from "../../../node/cst/inline";
-import { NotImplementedError } from "../../../util";
-import $remarks, { remarksToLines } from "./$remarks";
-import { amendProvisionToLines } from "./$amendProvision";
-import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
-import $article, { articleToLines } from "./$article";
-import { $requireControlParagraphItem, paragraphItemToLines } from "./$paragraphItem";
-import $figStruct, { $fig, figStructToLines, figToLines } from "./$figStruct";
-import { $list, listOrSublistToLines } from "./$list";
-import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines, noteLikeToLines } from "./$noteLike";
-import $preamble, { preambleToLines } from "./$preamble";
-import $tableStruct, { tableStructToLines, tableToLines } from "./$tableStruct";
-import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import $articleGroup from "./$articleGroup";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { LineType, OtherLine } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { newStdEL } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import { isSentenceChildEL, Sentences } from "../../../node/cst/inline.ts";
+import { NotImplementedError } from "../../../util/index.ts";
+import $remarks, { remarksToLines } from "./$remarks.ts";
+import { amendProvisionToLines } from "./$amendProvision.ts";
+import $arithFormula, { arithFormulaToLines } from "./$arithFormula.ts";
+import $article, { articleToLines } from "./$article.ts";
+import { $requireControlParagraphItem, paragraphItemToLines } from "./$paragraphItem.ts";
+import $figStruct, { $fig, figStructToLines, figToLines } from "./$figStruct.ts";
+import { $list, listOrSublistToLines } from "./$list.ts";
+import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines, noteLikeToLines } from "./$noteLike.ts";
+import $preamble, { preambleToLines } from "./$preamble.ts";
+import $tableStruct, { tableStructToLines, tableToLines } from "./$tableStruct.ts";
+import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences.ts";
+import $articleGroup from "./$articleGroup.ts";
 
 
 export const anyToLines = (any: (std.StdEL | std.__EL | string), indentTexts: string[]): Line[] => {

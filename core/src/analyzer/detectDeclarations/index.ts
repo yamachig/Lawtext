@@ -1,17 +1,17 @@
-import type { SentenceEnvsStruct } from "../getSentenceEnvs";
-import type * as std from "../../law/std";
-import type { ErrorMessage } from "../../parser/cst/error";
-import type { WithErrorValue } from "../../parser/std/util";
-import { processNameInline } from "./processNameInline";
-import type { ____Declaration } from "../../node/el/controls";
-import { ____LawRef } from "../../node/el/controls";
-import type { SentenceEnv } from "../../node/container/sentenceEnv";
-import { processLawRef } from "./processLawRef";
-import { isIgnoreAnalysis } from "../common";
-import { processNameList } from "./processNameList";
-import { Declarations } from "../common/declarations";
-import { processAmbiguousNameInline } from "./processAmbiguousNameInline";
-import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs.ts";
+import type * as std from "../../law/std/index.ts";
+import type { ErrorMessage } from "../../parser/cst/error.ts";
+import type { WithErrorValue } from "../../parser/std/util.ts";
+import { processNameInline } from "./processNameInline.ts";
+import type { ____Declaration } from "../../node/el/controls/index.ts";
+import { ____LawRef } from "../../node/el/controls/index.ts";
+import type { SentenceEnv } from "../../node/container/sentenceEnv.ts";
+import { processLawRef } from "./processLawRef.ts";
+import { isIgnoreAnalysis } from "../common/index.ts";
+import { processNameList } from "./processNameList.ts";
+import { Declarations } from "../common/declarations.ts";
+import { processAmbiguousNameInline } from "./processAmbiguousNameInline.ts";
+import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs.ts";
 
 
 export const detectDeclarationsByEL = (

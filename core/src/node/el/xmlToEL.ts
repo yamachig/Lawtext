@@ -1,6 +1,6 @@
 import type { Element } from "@xmldom/xmldom";
 import { DOMParser, Node } from "@xmldom/xmldom";
-import { EL } from ".";
+import { EL } from "./index.ts";
 
 
 export const elementToEL = (el: Element | HTMLElement): EL => {

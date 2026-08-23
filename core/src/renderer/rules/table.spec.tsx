@@ -1,16 +1,16 @@
 import React from "react";
 import { assert } from "chai";
-import loadEL from "../../node/el/loadEL";
-import type * as std from "../../law/std";
-import { DOCXTable, HTMLTable } from "./table";
-import { renderToStaticMarkup } from "../common";
-import { renderDocxAsync } from "../common/docx/file";
-import ensureTempTestDir from "../../../test/ensureTempTestDir";
+import loadEL from "../../node/el/loadEL.ts";
+import type * as std from "../../law/std/index.ts";
+import { DOCXTable, HTMLTable } from "./table.tsx";
+import { renderToStaticMarkup } from "../common/index.tsx";
+import { renderDocxAsync } from "../common/docx/file.tsx";
+import ensureTempTestDir from "../../../test/ensureTempTestDir.ts";
 import path from "path";
-import fs from "fs";
-import formatXML from "../../util/formatXml";
-import htmlCSS from "./htmlCSS";
-import { promisify } from "util";
+import fs from "node:fs";
+import formatXML from "../../util/formatXml.ts";
+import htmlCSS from "./htmlCSS.tsx";
+import { promisify } from "node:util";
 
 describe("Test HTML table", () => {
     /* eslint-disable no-irregular-whitespace */

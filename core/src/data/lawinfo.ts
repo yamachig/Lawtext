@@ -1,4 +1,4 @@
-import { ptnLawNumLike } from "../law/lawNum";
+import { ptnLawNumLike } from "../law/lawNum.ts";
 
 export type LawInfoListItem = [
     LawID: string,

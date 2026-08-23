@@ -1,8 +1,8 @@
 import { assert } from "chai";
-import { matchResultToJson } from "generic-parser/lib/core";
-import { LineType } from "../../../node/cst/line";
-import { initialEnv } from "../env";
-import $supplProvisionHeadLine from "./$supplProvisionHeadLine";
+import { matchResultToJson } from "generic-parser/lib/core/index.js";
+import { LineType } from "../../../node/cst/line.ts";
+import { initialEnv } from "../env.ts";
+import $supplProvisionHeadLine from "./$supplProvisionHeadLine.ts";
 
 const env = initialEnv({});
 

@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import $article, { articleToLines } from "./$article";
+import { testLawtextToStd } from "../testHelper.ts";
+import $article, { articleToLines } from "./$article.ts";
 
 describe("Test $supplNote and supplNoteToLines", () => {
 

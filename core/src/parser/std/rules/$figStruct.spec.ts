@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import $figStruct, { figStructToLines } from "./$figStruct";
+import { testLawtextToStd } from "../testHelper.ts";
+import $figStruct, { figStructToLines } from "./$figStruct.ts";
 
 describe("Test $figStruct and figStructToLines", () => {
 

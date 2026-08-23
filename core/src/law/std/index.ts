@@ -1,2 +1,2 @@
-export * from "./stdEL";
-export * from "./helpers";
+export * from "./stdEL.ts";
+export * from "./helpers.ts";

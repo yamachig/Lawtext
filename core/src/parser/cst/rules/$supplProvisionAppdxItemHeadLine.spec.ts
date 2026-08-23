@@ -1,9 +1,9 @@
 import { assert } from "chai";
-import { matchResultToJson } from "generic-parser/lib/core";
-import type { Controls } from "../../../node/cst/inline";
-import { LineType } from "../../../node/cst/line";
-import { initialEnv } from "../env";
-import $supplProvisionAppdxItemHeadLine from "./$supplProvisionAppdxItemHeadLine";
+import { matchResultToJson } from "generic-parser/lib/core/index.js";
+import type { Controls } from "../../../node/cst/inline.ts";
+import { LineType } from "../../../node/cst/line.ts";
+import { initialEnv } from "../env.ts";
+import $supplProvisionAppdxItemHeadLine from "./$supplProvisionAppdxItemHeadLine.ts";
 
 const env = initialEnv({});
 

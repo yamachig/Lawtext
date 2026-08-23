@@ -1,16 +1,16 @@
 import React from "react";
 import { assert } from "chai";
-import loadEL from "../../node/el/loadEL";
-import type * as std from "../../law/std";
-import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision";
-import { renderToStaticMarkup } from "../common";
-import { renderDocxAsync } from "../common/docx/file";
+import loadEL from "../../node/el/loadEL.ts";
+import type * as std from "../../law/std/index.ts";
+import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision.tsx";
+import { renderToStaticMarkup } from "../common/index.tsx";
+import { renderDocxAsync } from "../common/docx/file.tsx";
 import path from "path";
-import fs from "fs";
-import formatXML from "../../util/formatXml";
-import htmlCSS from "./htmlCSS";
-import { promisify } from "util";
-import ensureTempTestDir from "../../../test/ensureTempTestDir";
+import fs from "node:fs";
+import formatXML from "../../util/formatXml.ts";
+import htmlCSS from "./htmlCSS.tsx";
+import { promisify } from "node:util";
+import ensureTempTestDir from "../../../test/ensureTempTestDir.ts";
 
 describe("Test HTML amendProvision", () => {
     /* eslint-disable no-irregular-whitespace */

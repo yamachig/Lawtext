@@ -1,5 +1,5 @@
 import React from "react";
-import { w } from "./tags";
+import { w } from "./tags.ts";
 
 export const EmptyParagraph: React.FC = () => {
     return (

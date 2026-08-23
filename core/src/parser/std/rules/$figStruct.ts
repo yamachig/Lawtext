@@ -1,17 +1,17 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { BlankLine, LineType, OtherLine } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { $blankLine, makeIndentBlockWithCaptureRule } from "../util";
-import { isFig, newStdEL } from "../../../law/std";
-import type * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import { ErrorMessage } from "../../cst/error";
-import { Control, Sentences } from "../../../node/cst/inline";
-import { EL, rangeOfELs } from "../../../node/el";
-import { assertNever } from "../../../util";
-import $remarks, { remarksToLines } from "./$remarks";
-import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { BlankLine, LineType, OtherLine } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $blankLine, makeIndentBlockWithCaptureRule } from "../util.ts";
+import { isFig, newStdEL } from "../../../law/std/index.ts";
+import type * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import { ErrorMessage } from "../../cst/error.ts";
+import { Control, Sentences } from "../../../node/cst/inline.ts";
+import { EL, rangeOfELs } from "../../../node/el/index.ts";
+import { assertNever } from "../../../util/index.ts";
+import $remarks, { remarksToLines } from "./$remarks.ts";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray.ts";
 
 export const figStructControl = ":fig-struct:";
 

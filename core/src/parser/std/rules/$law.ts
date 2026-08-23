@@ -1,23 +1,23 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { BlankLine, LineType, OtherLine } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { $blankLine, isSingleParentheses } from "../util";
-import * as std from "../../../law/std";
-import type { VirtualLine, VirtualOnlyLineType } from "../virtualLine";
-import { isAppdxItem, isEnactStatement, isLawBody, isLawNum, isLawTitle, isMainProvision, isPreamble, isSupplProvision, isTOC, newStdEL } from "../../../law/std";
-import { AttrEntry, Control, Sentences } from "../../../node/cst/inline";
-import CST from "../toCSTSettings";
-import { assertNever } from "../../../util";
-import $toc, { tocToLines } from "./$toc";
-import $preamble, { preambleToLines } from "./$preamble";
-import $mainProvision, { mainProvisionToLines } from "./$mainProvision";
-import $supplProvision, { supplProvisionToLines } from "./$supplProvision";
-import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, appdxItemToLines } from "./$appdxItem";
-import { ErrorMessage } from "../../cst/error";
-import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
-import { parseLawNum } from "../../../law/lawNum";
-import { rangeOfELs } from "../../../node/el";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { BlankLine, LineType, OtherLine } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $blankLine, isSingleParentheses } from "../util.ts";
+import * as std from "../../../law/std/index.ts";
+import type { VirtualLine, VirtualOnlyLineType } from "../virtualLine.ts";
+import { isAppdxItem, isEnactStatement, isLawBody, isLawNum, isLawTitle, isMainProvision, isPreamble, isSupplProvision, isTOC, newStdEL } from "../../../law/std/index.ts";
+import { AttrEntry, Control, Sentences } from "../../../node/cst/inline.ts";
+import CST from "../toCSTSettings.ts";
+import { assertNever } from "../../../util/index.ts";
+import $toc, { tocToLines } from "./$toc.ts";
+import $preamble, { preambleToLines } from "./$preamble.ts";
+import $mainProvision, { mainProvisionToLines } from "./$mainProvision.ts";
+import $supplProvision, { supplProvisionToLines } from "./$supplProvision.ts";
+import { $appdx, $appdxFig, $appdxFormat, $appdxNote, $appdxStyle, $appdxTable, appdxItemToLines } from "./$appdxItem.ts";
+import { ErrorMessage } from "../../cst/error.ts";
+import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray.ts";
+import { parseLawNum } from "../../../law/lawNum.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
 
 
 /**

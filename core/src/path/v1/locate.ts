@@ -1,7 +1,7 @@
-import type { Container } from "../../node/container";
-import { ErrorMessage } from "../../parser/cst/error";
-import { assertNever } from "../../util";
-import type { PathFragment } from "./common";
+import type { Container } from "../../node/container/index.ts";
+import { ErrorMessage } from "../../parser/cst/error.ts";
+import { assertNever } from "../../util/index.ts";
+import type { PathFragment } from "./common.ts";
 
 
 export interface LocateSuccess {

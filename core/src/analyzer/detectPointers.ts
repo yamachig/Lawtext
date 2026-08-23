@@ -1,14 +1,14 @@
-import { digitsToKanjiNum } from "../law/num";
-import * as std from "../law/std";
-import { isSentenceLike } from "../node/container/sentenceEnv";
-import type { EL } from "../node/el";
-import { __Parentheses } from "../node/el/controls";
-import type { AppdxPointer } from "../node/pointerEnv";
-import { initialEnv } from "../parser/cst/env";
-import type { ErrorMessage } from "../parser/cst/error";
-import $sentenceChildren, { makeReOutsideParenthesesTextChars, makeReParenthesesInlineTextChars, makeRePeriodSentenceTextChars } from "../parser/cst/rules/$sentenceChildren";
-import type { WithErrorValue } from "../parser/cst/util";
-import { $inlineWithPointerRanges, pointerRangesCandidateChars } from "./textParser/rules/$pointerRanges";
+import { digitsToKanjiNum } from "../law/num.ts";
+import * as std from "../law/std/index.ts";
+import { isSentenceLike } from "../node/container/sentenceEnv.ts";
+import type { EL } from "../node/el/index.ts";
+import { __Parentheses } from "../node/el/controls/index.ts";
+import type { AppdxPointer } from "../node/pointerEnv/index.ts";
+import { initialEnv } from "../parser/cst/env.ts";
+import type { ErrorMessage } from "../parser/cst/error.ts";
+import $sentenceChildren, { makeReOutsideParenthesesTextChars, makeReParenthesesInlineTextChars, makeRePeriodSentenceTextChars } from "../parser/cst/rules/$sentenceChildren.ts";
+import type { WithErrorValue } from "../parser/cst/util.ts";
+import { $inlineWithPointerRanges, pointerRangesCandidateChars } from "./textParser/rules/$pointerRanges.ts";
 
 export const detectPointersInner = (
     options: {

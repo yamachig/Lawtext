@@ -1,11 +1,11 @@
-import factory from "../factory";
-import $indents from "./$indents";
-import { ArticleLine } from "../../../node/cst/line";
-import { $__, $_EOL } from "./lexical";
-import $articleTitle from "./$articleTitle";
-import $columnsOrSentences from "./$sentencesArray";
-import makeRangesRule from "./makeRangesRule";
-import type { WithErrorRule } from "../util";
+import factory from "../factory.ts";
+import $indents from "./$indents.ts";
+import { ArticleLine } from "../../../node/cst/line.ts";
+import { $__, $_EOL } from "./lexical.ts";
+import $articleTitle from "./$articleTitle.ts";
+import $columnsOrSentences from "./$sentencesArray.ts";
+import makeRangesRule from "./makeRangesRule.ts";
+import type { WithErrorRule } from "../util.ts";
 
 const { $ranges: $articleRanges } = makeRangesRule(() => $articleTitle);
 

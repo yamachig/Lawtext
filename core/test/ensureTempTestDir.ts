@@ -1,6 +1,6 @@
-import os from "os";
+import os from "node:os";
 import path from "path";
-import fs from "fs";
+import fs from "node:fs";
 
 export const ensureTempTestDir = () => {
     const tempDir = path.join(os.tmpdir(), "lawtext_core_test");

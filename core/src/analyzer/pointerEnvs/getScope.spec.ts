@@ -1,11 +1,11 @@
 import { assert } from "chai";
-import type { JsonEL } from "../../node/el/jsonEL";
-import getSentenceEnvs from "../getSentenceEnvs";
-import { parse } from "../../parser/lawtext";
-import { assertELVaridity } from "../../parser/std/testHelper";
-import getPointerEnvs from "./getPointerEnvs";
-import getScope from "./getScope";
-import detectPointers from "../detectPointers";
+import type { JsonEL } from "../../node/el/jsonEL.ts";
+import getSentenceEnvs from "../getSentenceEnvs.ts";
+import { parse } from "../../parser/lawtext.ts";
+import { assertELVaridity } from "../../parser/std/testHelper.ts";
+import getPointerEnvs from "./getPointerEnvs.ts";
+import getScope from "./getScope.ts";
+import detectPointers from "../detectPointers.ts";
 
 describe("Test getScope", () => {
 

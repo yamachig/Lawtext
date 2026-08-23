@@ -1,9 +1,9 @@
 import { assert } from "chai";
-import getSentenceEnvs from "../getSentenceEnvs";
-import { parse } from "../../parser/lawtext";
-import { assertELVaridity } from "../../parser/std/testHelper";
-import getPointerEnvs from "./getPointerEnvs";
-import detectPointers from "../detectPointers";
+import getSentenceEnvs from "../getSentenceEnvs.ts";
+import { parse } from "../../parser/lawtext.ts";
+import { assertELVaridity } from "../../parser/std/testHelper.ts";
+import getPointerEnvs from "./getPointerEnvs.ts";
+import detectPointers from "../detectPointers.ts";
 
 describe("Test getPointerEnvs", () => {
 

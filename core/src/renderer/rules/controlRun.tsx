@@ -1,12 +1,12 @@
 
 import React from "react";
-import type * as std from "../../law/std";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, wrapHTMLComponent } from "../common/html";
-import { HTMLSentenceChildrenRun } from "../../renderer/rules/sentenceChildrenRun";
-import { NotImplementedError } from "../../util";
-import type { SentenceChildEL } from "../../node/cst/inline";
-import { withKey } from "../common";
+import type * as std from "../../law/std/index.ts";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, wrapHTMLComponent } from "../common/html.tsx";
+import { HTMLSentenceChildrenRun } from "../../renderer/rules/sentenceChildrenRun.tsx";
+import { NotImplementedError } from "../../util/index.ts";
+import type { SentenceChildEL } from "../../node/cst/inline.ts";
+import { withKey } from "../common/index.tsx";
 
 
 export const HTMLControlRunCSS = /*css*/`

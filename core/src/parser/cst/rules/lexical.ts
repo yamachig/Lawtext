@@ -1,5 +1,5 @@
-import { irohaChars } from "../../../law/num";
-import { factory } from "../factory";
+import { irohaChars } from "../../../law/num.ts";
+import { factory } from "../factory.ts";
 
 export const ptn$_ = "[ 　\t]*";
 export const $_ = factory

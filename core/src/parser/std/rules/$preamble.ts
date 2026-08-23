@@ -1,15 +1,15 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { LineType, OtherLine } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { $blankLine, makeIndentBlockWithCaptureRule } from "../util";
-import { isParagraph, isParagraphItemTitle, newStdEL } from "../../../law/std";
-import type * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import { Control } from "../../../node/cst/inline";
-import type { ErrorMessage } from "../../cst/error";
-import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
-import { rangeOfELs } from "../../../node/el";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { LineType, OtherLine } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $blankLine, makeIndentBlockWithCaptureRule } from "../util.ts";
+import { isParagraph, isParagraphItemTitle, newStdEL } from "../../../law/std/index.ts";
+import type * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import { Control } from "../../../node/cst/inline.ts";
+import type { ErrorMessage } from "../../cst/error.ts";
+import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
 
 export const preambleControl = ":preamble:";
 

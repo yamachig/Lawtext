@@ -1,13 +1,13 @@
 import React from "react";
-import { EL } from "../node/el";
-import * as std from "../law/std";
-import { HTMLLaw } from "./rules/law";
-import htmlCSS from "./rules/htmlCSS";
-import { renderToStaticMarkup } from "./common";
-import { HTMLAnyELs } from "./rules/any";
-import type { HTMLOptions } from "./common/html";
-import loadEL from "../node/el/loadEL";
-import type { JsonEL } from "../node/el/jsonEL";
+import { EL } from "../node/el/index.ts";
+import * as std from "../law/std/index.ts";
+import { HTMLLaw } from "./rules/law.tsx";
+import htmlCSS from "./rules/htmlCSS.tsx";
+import { renderToStaticMarkup } from "./common/index.tsx";
+import { HTMLAnyELs } from "./rules/any.tsx";
+import type { HTMLOptions } from "./common/html.tsx";
+import loadEL from "../node/el/loadEL.ts";
+import type { JsonEL } from "../node/el/jsonEL.ts";
 
 export const renderHTML = (elOrJsonEL: JsonEL | EL, htmlOptions?: HTMLOptions): string => {
     const rendered = renderHTMLfragment(elOrJsonEL, htmlOptions);

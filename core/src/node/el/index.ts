@@ -1,5 +1,5 @@
-import { innerXML, outerXML, wrapXML } from "./elToXML";
-import type { JsonEL } from "./jsonEL";
+import { innerXML, outerXML, wrapXML } from "./elToXML.ts";
+import type { JsonEL } from "./jsonEL.ts";
 
 
 let currentID = 0;

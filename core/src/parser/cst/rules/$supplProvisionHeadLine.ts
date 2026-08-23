@@ -1,9 +1,9 @@
-import factory from "../factory";
-import $indents from "./$indents";
-import { SupplProvisionHeadLine } from "../../../node/cst/line";
-import { $_, $_EOL } from "./lexical";
-import type { WithErrorRule } from "../util";
-import { Control } from "../../../node/cst/inline";
+import factory from "../factory.ts";
+import $indents from "./$indents.ts";
+import { SupplProvisionHeadLine } from "../../../node/cst/line.ts";
+import { $_, $_EOL } from "./lexical.ts";
+import type { WithErrorRule } from "../util.ts";
+import { Control } from "../../../node/cst/inline.ts";
 
 // eslint-disable-next-line no-irregular-whitespace
 export const supplProvisionLabelPtn = /^[附付][ 　\t\r\n]*則/;

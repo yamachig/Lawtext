@@ -1,11 +1,11 @@
 import * as gp from "generic-parser";
-import { ErrorMessage } from "../../parser/cst/error";
-import { articlesContainerTags } from "../../node/container";
-import type { LawIDStruct } from "../../law/lawID";
-import { parseLawID, ptnLawID } from "../../law/lawID";
+import { ErrorMessage } from "../../parser/cst/error.ts";
+import { articlesContainerTags } from "../../node/container/index.ts";
+import type { LawIDStruct } from "../../law/lawID.ts";
+import { parseLawID, ptnLawID } from "../../law/lawID.ts";
 import type { Empty, Rule } from "generic-parser";
-import type { PathFragment, PathFragmentArticlesContainer, PathFragmentLaw, PathFragmentSentencesContainer, PathFragmentTopLevel } from "./common";
-import { sentencesContainerAlias, topLevelAlias } from "./common";
+import type { PathFragment, PathFragmentArticlesContainer, PathFragmentLaw, PathFragmentSentencesContainer, PathFragmentTopLevel } from "./common.ts";
+import { sentencesContainerAlias, topLevelAlias } from "./common.ts";
 
 const makeEnv = () => gp.makeStringEnv();
 const factory = new gp.RuleFactory<string, ReturnType<typeof makeEnv>>();

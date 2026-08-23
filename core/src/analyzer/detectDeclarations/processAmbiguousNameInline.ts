@@ -1,18 +1,18 @@
-import type { WithErrorValue } from "../../parser/std/util";
-import { ErrorMessage } from "../../parser/cst/error";
-import type { ____PointerRanges } from "../../node/el/controls";
-import { __Parentheses, __Text, ____Declaration } from "../../node/el/controls";
-import { initialEnv } from "../sentenceChildrenParser/env";
-import type { SentenceChildEL } from "../../node/cst/inline";
-import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
-import { toSentenceTextRanges } from "../../node/container/sentenceEnv";
-import type * as std from "../../law/std";
-import type { SentenceEnvsStruct } from "../getSentenceEnvs";
-import type { Declarations } from "../common/declarations";
-import $ambiguousNameParenthesesContent from "../sentenceChildrenParser/rules/$ambiguousNameParenthesesContent";
-import getScope from "../pointerEnvs/getScope";
-import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
-import type { EL } from "../../node/el";
+import type { WithErrorValue } from "../../parser/std/util.ts";
+import { ErrorMessage } from "../../parser/cst/error.ts";
+import type { ____PointerRanges } from "../../node/el/controls/index.ts";
+import { __Parentheses, __Text, ____Declaration } from "../../node/el/controls/index.ts";
+import { initialEnv } from "../sentenceChildrenParser/env.ts";
+import type { SentenceChildEL } from "../../node/cst/inline.ts";
+import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv.ts";
+import { toSentenceTextRanges } from "../../node/container/sentenceEnv.ts";
+import type * as std from "../../law/std/index.ts";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs.ts";
+import type { Declarations } from "../common/declarations.ts";
+import $ambiguousNameParenthesesContent from "../sentenceChildrenParser/rules/$ambiguousNameParenthesesContent.ts";
+import getScope from "../pointerEnvs/getScope.ts";
+import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs.ts";
+import type { EL } from "../../node/el/index.ts";
 
 // Characters other than Hiragana's, spaces, and punctuations.
 const ptnNameChar = "(?!(?:\\s|[。、]))[^ぁ-ゟ]";

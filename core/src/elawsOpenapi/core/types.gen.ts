@@ -1,7 +1,7 @@
 // This file is auto-generated from https://laws.e-gov.go.jp/api/2/swagger-ui/lawapi-v2.yaml
 
-import type { Auth, AuthToken } from './auth.gen';
-import type { BodySerializer, QuerySerializer, QuerySerializerOptions } from './bodySerializer.gen';
+import type { Auth, AuthToken } from './auth.gen.js';
+import type { BodySerializer, QuerySerializer, QuerySerializerOptions } from './bodySerializer.gen.js';
 
 export type HttpMethod =
   | 'connect'

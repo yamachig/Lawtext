@@ -1,15 +1,15 @@
-import factory from "../factory";
-import $indents from "./$indents";
-import { OtherLine } from "../../../node/cst/line";
-import { $_, $_EOL } from "./lexical";
-import $sentencesArray from "./$sentencesArray";
-import type { WithErrorRule } from "../util";
-import { Control, Sentences } from "../../../node/cst/inline";
-import $xml from "./$xml";
-import { newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
-import { EL } from "../../../node/el";
-import $squareAttr from "./$squareAttr";
+import factory from "../factory.ts";
+import $indents from "./$indents.ts";
+import { OtherLine } from "../../../node/cst/line.ts";
+import { $_, $_EOL } from "./lexical.ts";
+import $sentencesArray from "./$sentencesArray.ts";
+import type { WithErrorRule } from "../util.ts";
+import { Control, Sentences } from "../../../node/cst/inline.ts";
+import $xml from "./$xml.ts";
+import { newStdEL } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import { EL } from "../../../node/el/index.ts";
+import $squareAttr from "./$squareAttr.ts";
 
 export const keepLeadingSpacesControl = ":keep-leading-spaces:";
 export const ignoreTitleControl = ":ignore-title:";

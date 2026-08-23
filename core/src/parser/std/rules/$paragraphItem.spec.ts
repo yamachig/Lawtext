@@ -1,6 +1,6 @@
-import { testLawtextToStd } from "../testHelper";
-import $article, { articleToLines } from "./$article";
-import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
+import { testLawtextToStd } from "../testHelper.ts";
+import $article, { articleToLines } from "./$article.ts";
+import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem.ts";
 
 describe("Test $paragraphItem and paragraphItemToLines", () => {
 

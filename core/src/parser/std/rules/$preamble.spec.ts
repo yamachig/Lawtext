@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import $preamble, { preambleToLines } from "./$preamble";
+import { testLawtextToStd } from "../testHelper.ts";
+import $preamble, { preambleToLines } from "./$preamble.ts";
 
 describe("Test $preamble and preambleToLines", () => {
 

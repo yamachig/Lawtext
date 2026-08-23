@@ -1,20 +1,20 @@
-import type { EL } from "..";
-import { __Text } from "./text";
-import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __PContent, __PEnd, __PStart } from "./parentheses";
-import { ____Declaration } from "./declaration";
-import { ____VarRef } from "./varRef";
-import { ____PointerRanges, ____PointerRange, ____Pointer, ____PF } from "./pointer";
-import { ____LawNum } from "./lawNum";
-import { ____LawRef } from "./lawRef";
+import type { EL } from "../index.ts";
+import { __Text } from "./text.ts";
+import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __PContent, __PEnd, __PStart } from "./parentheses.ts";
+import { ____Declaration } from "./declaration.ts";
+import { ____VarRef } from "./varRef.ts";
+import { ____PointerRanges, ____PointerRange, ____Pointer, ____PF } from "./pointer.ts";
+import { ____LawNum } from "./lawNum.ts";
+import { ____LawRef } from "./lawRef.ts";
 
 
-export * from "./text";
-export * from "./parentheses";
-export * from "./varRef";
-export * from "./declaration";
-export * from "./pointer";
-export * from "./lawNum";
-export * from "./lawRef";
+export * from "./text.ts";
+export * from "./parentheses.ts";
+export * from "./varRef.ts";
+export * from "./declaration.ts";
+export * from "./pointer.ts";
+export * from "./lawNum.ts";
+export * from "./lawRef.ts";
 
 export const controlFromEL = (el: EL): EL => {
     if (el.tag === "__Text") {

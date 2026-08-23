@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import $mainProvision, { mainProvisionToLines } from "./$mainProvision";
+import { testLawtextToStd } from "../testHelper.ts";
+import $mainProvision, { mainProvisionToLines } from "./$mainProvision.ts";
 
 describe("Test $mainProvision and mainProvisionToLines", () => {
 

@@ -1,17 +1,17 @@
 import React from "react";
-import * as std from "../../law/std";
-import { assertNever } from "../../util";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, wrapHTMLComponent } from "../common/html";
-import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import type { DOCXComponentProps } from "../common/docx/component";
-import { wrapDOCXComponent } from "../common/docx/component";
-import { w } from "../common/docx/tags";
-import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
-import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
-import { DOCXRemarks, HTMLRemarks } from "./remarks";
-import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
-import { withKey } from "../common";
+import * as std from "../../law/std/index.ts";
+import { assertNever } from "../../util/index.ts";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, wrapHTMLComponent } from "../common/html.tsx";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun.tsx";
+import type { DOCXComponentProps } from "../common/docx/component.tsx";
+import { wrapDOCXComponent } from "../common/docx/component.tsx";
+import { w } from "../common/docx/tags.ts";
+import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct.tsx";
+import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem.tsx";
+import { DOCXRemarks, HTMLRemarks } from "./remarks.tsx";
+import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun.tsx";
+import { withKey } from "../common/index.tsx";
 
 
 export interface AppdxItemProps {

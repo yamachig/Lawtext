@@ -1,16 +1,16 @@
 import { assert } from "chai";
-import type * as std from "../../law/std";
-import type { JsonEL } from "../../node/el/jsonEL";
-import getSentenceEnvs from "../getSentenceEnvs";
-import detectDeclarations from "../detectDeclarations";
-import { parse } from "../../parser/lawtext";
-import detectVariableReferences from ".";
-import { assertELVaridity } from "../../parser/std/testHelper";
-import getPointerEnvs from "../pointerEnvs/getPointerEnvs";
-import getScope from "../pointerEnvs/getScope";
-import detectPointers from "../detectPointers";
-import { analyze, getLawTitleLength } from "..";
-import xmlToEL from "../../node/el/xmlToEL";
+import type * as std from "../../law/std/index.ts";
+import type { JsonEL } from "../../node/el/jsonEL.ts";
+import getSentenceEnvs from "../getSentenceEnvs.ts";
+import detectDeclarations from "../detectDeclarations/index.ts";
+import { parse } from "../../parser/lawtext.ts";
+import detectVariableReferences from "./index.ts";
+import { assertELVaridity } from "../../parser/std/testHelper.ts";
+import getPointerEnvs from "../pointerEnvs/getPointerEnvs.ts";
+import getScope from "../pointerEnvs/getScope.ts";
+import detectPointers from "../detectPointers.ts";
+import { analyze, getLawTitleLength } from "../index.ts";
+import xmlToEL from "../../node/el/xmlToEL.ts";
 
 const analyzeXML = async (xml: string) => analyze({ elToBeModified: xmlToEL(xml) as std.StdEL | std.__EL });
 

@@ -1,8 +1,8 @@
-import * as std from "../../../law/std";
-import { __Parentheses, __Text, ____LawNum, ____PointerRanges } from "../../../node/el/controls";
-import { initialEnv } from "../env";
-import factory from "../factory";
-import type { WithErrorRule } from "../util";
+import * as std from "../../../law/std/index.ts";
+import { __Parentheses, __Text, ____LawNum, ____PointerRanges } from "../../../node/el/controls/index.ts";
+import { initialEnv } from "../env.ts";
+import factory from "../factory.ts";
+import type { WithErrorRule } from "../util.ts";
 
 interface LawRefInfo {
     lawNum: ____LawNum,

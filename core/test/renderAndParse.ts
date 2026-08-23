@@ -1,23 +1,23 @@
-import chai from "chai";
-import fs from "fs";
+import * as chai from "chai";
+import fs from "node:fs";
 import path from "path";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { promisify } from "util";
+import { promisify } from "node:util";
 import xmldom from "@xmldom/xmldom";
-import { parse } from "../src/parser/lawtext";
-import { analyze } from "../src/analyzer";
-import { renderDocxAsync, renderHTML, renderLawtext } from "../src/renderer";
-import { TERMC } from "../src/util/term";
-import type { ErrorMessage } from "../src/parser/cst/error";
-import formatXML from "../src/util/formatXml";
-import { xmlToEL } from "../src/node/el/xmlToEL";
-import { outerXML } from "../src/node/el/elToXML";
-import type { Loader } from "../src/data/loaders/common";
+import { parse } from "../src/parser/lawtext.ts";
+import { analyze } from "../src/analyzer/index.ts";
+import { renderDocxAsync, renderHTML, renderLawtext } from "../src/renderer/index.ts";
+import { TERMC } from "../src/util/term.ts";
+import type { ErrorMessage } from "../src/parser/cst/error.ts";
+import formatXML from "../src/util/formatXml.ts";
+import { xmlToEL } from "../src/node/el/xmlToEL.ts";
+import { outerXML } from "../src/node/el/elToXML.ts";
+import type { Loader } from "../src/data/loaders/common.ts";
 import { getMemorizedStringOffsetToPos } from "generic-parser";
-import { lawNumLikeToLawNum } from "../src/law/lawNum";
-import ensureTempTestDir from "./ensureTempTestDir";
-import FigDataManager from "../src/renderer/common/docx/FigDataManager";
+import { lawNumLikeToLawNum } from "../src/law/lawNum.ts";
+import ensureTempTestDir from "./ensureTempTestDir.ts";
+import FigDataManager from "../src/renderer/common/docx/FigDataManager.ts";
 
 const domParser = new xmldom.DOMParser();
 
@@ -108,7 +108,7 @@ const renderAndParse = async (loader: Loader, lawNum: string) => {
     return { origEL, parsedEL, origDOM, parsedDOM, tempOrigXml, tempRenderedLawtext, tempRenderedHTML, tempRenderedDocx, tempParsedXml } ;
 };
 
-// if (typeof require !== "undefined" && require.main === module) {
+// if (import.meta.main) {
 //     console.log("running renderAndParse() from toplevel.");
 //     process.on("unhandledRejection", e => {
 //         // const newErr = new Error(`Unhandled rejection in prepare(): ${e}`);

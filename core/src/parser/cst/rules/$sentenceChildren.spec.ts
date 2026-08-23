@@ -1,10 +1,10 @@
 import { assert } from "chai";
-import { initialEnv } from "../env";
-import $sentenceChildren, { sentenceChildrenToString } from "./$sentenceChildren";
-import type { ErrorMessage } from "../error";
-import type { SentenceChildEL } from "../../../node/cst/inline";
-import loadEL from "../../../node/el/loadEL";
-import { matchResultToJson } from "generic-parser/lib/core";
+import { initialEnv } from "../env.ts";
+import $sentenceChildren, { sentenceChildrenToString } from "./$sentenceChildren.ts";
+import type { ErrorMessage } from "../error.ts";
+import type { SentenceChildEL } from "../../../node/cst/inline.ts";
+import loadEL from "../../../node/el/loadEL.ts";
+import { matchResultToJson } from "generic-parser/lib/core/index.js";
 
 const env = initialEnv({});
 

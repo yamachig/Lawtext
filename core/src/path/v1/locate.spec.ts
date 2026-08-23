@@ -1,11 +1,11 @@
 /* eslint-disable no-irregular-whitespace */
 import { assert } from "chai";
-import getSentenceEnvs from "../../analyzer/getSentenceEnvs";
-import xmlToEL from "../../node/el/xmlToEL";
-import { omit } from "../../util";
-import type { LocateFail, LocateResult } from "./locate";
-import locate from "./locate";
-import parse from "./parse";
+import getSentenceEnvs from "../../analyzer/getSentenceEnvs.ts";
+import xmlToEL from "../../node/el/xmlToEL.ts";
+import { omit } from "../../util/index.ts";
+import type { LocateFail, LocateResult } from "./locate.ts";
+import locate from "./locate.ts";
+import parse from "./parse.ts";
 
 const xml1 = `\
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>

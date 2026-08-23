@@ -1,15 +1,15 @@
-import { parseNamedNum } from "../../law/num";
-// import { lawNumLikeToLawNum } from "../../law/lawNum";
-import type * as std from "../../law/std";
-import type { SentenceEnv } from "../../node/container/sentenceEnv";
-import type { ____Pointer } from "../../node/el/controls";
-import { ____PointerRanges } from "../../node/el/controls";
-import type { AppdxPointer } from "../../node/pointerEnv";
-import { PointerEnv } from "../../node/pointerEnv";
-import type { ErrorMessage } from "../../parser/cst/error";
-import type { WithErrorValue } from "../../parser/std/util";
-import { isIgnoreAnalysis } from "../common";
-import type { SentenceEnvsStruct } from "../getSentenceEnvs";
+import { parseNamedNum } from "../../law/num.ts";
+// import { lawNumLikeToLawNum } from "../../law/lawNum.ts";
+import type * as std from "../../law/std/index.ts";
+import type { SentenceEnv } from "../../node/container/sentenceEnv.ts";
+import type { ____Pointer } from "../../node/el/controls/index.ts";
+import { ____PointerRanges } from "../../node/el/controls/index.ts";
+import type { AppdxPointer } from "../../node/pointerEnv/index.ts";
+import { PointerEnv } from "../../node/pointerEnv/index.ts";
+import type { ErrorMessage } from "../../parser/cst/error.ts";
+import type { WithErrorValue } from "../../parser/std/util.ts";
+import { isIgnoreAnalysis } from "../common/index.ts";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs.ts";
 
 
 const getPointerEnvsForEL = (

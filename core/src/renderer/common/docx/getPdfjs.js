@@ -36,4 +36,4 @@ const getPdfjs = async () => {
 
     return pdfjs;
 };
-exports.getPdfjs = getPdfjs;
+export { getPdfjs };

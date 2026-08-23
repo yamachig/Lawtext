@@ -1,5 +1,5 @@
-import { digitsToKanjiNum, parseKanjiNum, parseNamedNum } from "./num";
-import { eras } from "./std";
+import { digitsToKanjiNum, parseKanjiNum, parseNamedNum } from "./num.ts";
+import { eras } from "./std/index.ts";
 
 export const ptnLawNum = "(?:\
 (?<era>明治|大正|昭和|平成|令和)(?<year>[一二三四五六七八九十]+|元)年\

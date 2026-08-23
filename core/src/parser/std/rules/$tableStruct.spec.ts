@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import $tableStruct, { tableStructToLines } from "./$tableStruct";
+import { testLawtextToStd } from "../testHelper.ts";
+import $tableStruct, { tableStructToLines } from "./$tableStruct.ts";
 
 describe("Test $tableStruct and tableStructToLines", () => {
 

@@ -1,6 +1,6 @@
-import factory from "../factory";
-import type { WithErrorRule } from "../util";
-import { arabicDigits, kanjiDigits } from "./lexical";
+import factory from "../factory.ts";
+import type { WithErrorRule } from "../util.ts";
+import { arabicDigits, kanjiDigits } from "./lexical.ts";
 
 
 export const $articleTitle: WithErrorRule<string> = factory

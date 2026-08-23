@@ -1,6 +1,6 @@
-import { testLawtextToStd } from "../testHelper";
-import $article, { articleToLines } from "./$article";
-import $mainProvision, { mainProvisionToLines } from "./$mainProvision";
+import { testLawtextToStd } from "../testHelper.ts";
+import $article, { articleToLines } from "./$article.ts";
+import $mainProvision, { mainProvisionToLines } from "./$mainProvision.ts";
 
 describe("Test $list and listOrSublistToLines", () => {
 

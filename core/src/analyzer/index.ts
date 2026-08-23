@@ -1,17 +1,17 @@
-import type { SentenceEnvsStruct } from "./getSentenceEnvs";
-import getSentenceEnvs from "./getSentenceEnvs";
-import detectVariableReferences from "./detectVariableReferences";
-import type { Declarations } from "./common/declarations";
-import type { ____VarRef } from "../node/el/controls/varRef";
-import type * as std from "../law/std";
-import type { ErrorMessage } from "../parser/cst/error";
-import detectDeclarations from "./detectDeclarations";
-import type { ____PointerRanges } from "../node/el/controls";
-import type { PointerEnvsStruct } from "./pointerEnvs/getPointerEnvs";
-import getPointerEnvs from "./pointerEnvs/getPointerEnvs";
-import getScope from "./pointerEnvs/getScope";
-import detectPointers from "./detectPointers";
-import { getLawList } from "../law/getLawList";
+import type { SentenceEnvsStruct } from "./getSentenceEnvs.ts";
+import getSentenceEnvs from "./getSentenceEnvs.ts";
+import detectVariableReferences from "./detectVariableReferences/index.ts";
+import type { Declarations } from "./common/declarations.ts";
+import type { ____VarRef } from "../node/el/controls/varRef.ts";
+import type * as std from "../law/std/index.ts";
+import type { ErrorMessage } from "../parser/cst/error.ts";
+import detectDeclarations from "./detectDeclarations/index.ts";
+import type { ____PointerRanges } from "../node/el/controls/index.ts";
+import type { PointerEnvsStruct } from "./pointerEnvs/getPointerEnvs.ts";
+import getPointerEnvs from "./pointerEnvs/getPointerEnvs.ts";
+import getScope from "./pointerEnvs/getScope.ts";
+import detectPointers from "./detectPointers.ts";
+import { getLawList } from "../law/getLawList.js";
 
 export interface AnalyzeOptions {
     elToBeModified: std.StdEL | std.__EL,

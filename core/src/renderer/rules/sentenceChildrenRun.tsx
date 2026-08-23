@@ -1,16 +1,16 @@
 import React from "react";
-import type { SentenceChildEL } from "../../node/cst/inline";
-import * as std from "../../law/std";
-import { assertNever } from "../../util";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, wrapHTMLComponent } from "../common/html";
-import type { DOCXComponentProps } from "../common/docx/component";
-import { wrapDOCXComponent } from "../common/docx/component";
-import { w } from "../common/docx/tags";
-import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
-import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun";
-import { HTMLControlRun } from "./controlRun";
-import { withKey } from "../common";
+import type { SentenceChildEL } from "../../node/cst/inline.ts";
+import * as std from "../../law/std/index.ts";
+import { assertNever } from "../../util/index.ts";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, wrapHTMLComponent } from "../common/html.tsx";
+import type { DOCXComponentProps } from "../common/docx/component.tsx";
+import { wrapDOCXComponent } from "../common/docx/component.tsx";
+import { w } from "../common/docx/tags.ts";
+import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun.tsx";
+import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun.tsx";
+import { HTMLControlRun } from "./controlRun.tsx";
+import { withKey } from "../common/index.tsx";
 
 interface SentenceChildrenRunProps {
     els: (string | SentenceChildEL)[];

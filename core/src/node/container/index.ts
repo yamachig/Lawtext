@@ -1,6 +1,6 @@
-import type { EL } from "../el";
-import * as std from "../../law/std";
-import type { SentenceEnv } from "./sentenceEnv";
+import type { EL } from "../el/index.ts";
+import * as std from "../../law/std/index.ts";
+import type { SentenceEnv } from "./sentenceEnv.ts";
 
 export enum ContainerType {
     ROOT = "ROOT",

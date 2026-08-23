@@ -1,20 +1,20 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { BlankLine, LineType, SupplProvisionHeadLine } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { $blankLine } from "../util";
-import { isArticle, isArticleGroup, isParagraph, isParagraphItem, isParagraphItemTitle, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
-import { assertNever } from "../../../util";
-import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import $article, { articleToLines } from "./$article";
-import $articleGroup, { articleGroupToLines } from "./$articleGroup";
-import { $supplProvisionAppdx, $supplProvisionAppdxStyle, $supplProvisionAppdxTable, supplProvisionAppdxItemToLines } from "./$supplProvisionAppdxItem";
-import { Control } from "../../../node/cst/inline";
-import { supplProvisionControl, supplProvisionLabelPtn } from "../../cst/rules/$supplProvisionHeadLine";
-import { rangeOfELs } from "../../../node/el";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { BlankLine, LineType, SupplProvisionHeadLine } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $blankLine } from "../util.ts";
+import { isArticle, isArticleGroup, isParagraph, isParagraphItem, isParagraphItemTitle, isSupplProvisionAppdxItem, newStdEL } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem.ts";
+import { assertNever } from "../../../util/index.ts";
+import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren.ts";
+import $article, { articleToLines } from "./$article.ts";
+import $articleGroup, { articleGroupToLines } from "./$articleGroup.ts";
+import { $supplProvisionAppdx, $supplProvisionAppdxStyle, $supplProvisionAppdxTable, supplProvisionAppdxItemToLines } from "./$supplProvisionAppdxItem.ts";
+import { Control } from "../../../node/cst/inline.ts";
+import { supplProvisionControl, supplProvisionLabelPtn } from "../../cst/rules/$supplProvisionHeadLine.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
 
 /**
  * The renderer for {@link std.SupplProvision}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$supplProvision.spec.ts) for examples.

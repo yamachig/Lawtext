@@ -1,15 +1,15 @@
 import React from "react";
-import * as std from "../../law/std";
-import { assertNever } from "../../util";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, wrapHTMLComponent } from "../common/html";
-import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import type { DOCXComponentProps } from "../common/docx/component";
-import { wrapDOCXComponent } from "../common/docx/component";
-import { w } from "../common/docx/tags";
-import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem";
-import { DOCXSupplNote, HTMLSupplNote } from "./supplNote";
-import { withKey } from "../common";
+import * as std from "../../law/std/index.ts";
+import { assertNever } from "../../util/index.ts";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, wrapHTMLComponent } from "../common/html.tsx";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun.tsx";
+import type { DOCXComponentProps } from "../common/docx/component.tsx";
+import { wrapDOCXComponent } from "../common/docx/component.tsx";
+import { w } from "../common/docx/tags.ts";
+import { DOCXParagraphItem, HTMLParagraphItem } from "./paragraphItem.tsx";
+import { DOCXSupplNote, HTMLSupplNote } from "./supplNote.tsx";
+import { withKey } from "../common/index.tsx";
 
 
 export interface ArticleProps {

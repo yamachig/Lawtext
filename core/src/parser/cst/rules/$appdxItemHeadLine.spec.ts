@@ -1,10 +1,10 @@
 import { assert } from "chai";
-import { matchResultToJson } from "generic-parser/lib/core";
-import type { Controls } from "../../../node/cst/inline";
-import { LineType } from "../../../node/cst/line";
-import type { JsonEL } from "../../../node/el/jsonEL";
-import { initialEnv } from "../env";
-import $appdxItemHeadLine from "./$appdxItemHeadLine";
+import { matchResultToJson } from "generic-parser/lib/core/index.js";
+import type { Controls } from "../../../node/cst/inline.ts";
+import { LineType } from "../../../node/cst/line.ts";
+import type { JsonEL } from "../../../node/el/jsonEL.ts";
+import { initialEnv } from "../env.ts";
+import $appdxItemHeadLine from "./$appdxItemHeadLine.ts";
 
 const env = initialEnv({});
 

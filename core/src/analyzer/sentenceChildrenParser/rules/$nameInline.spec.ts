@@ -1,11 +1,11 @@
 import { assert } from "chai";
-import loadEL from "../../../node/el/loadEL";
-import { initialEnv } from "../env";
-import $nameInline from "./$nameInline";
-import type * as std from "../../../law/std";
-import type { SentenceChildEL } from "../../../node/cst/inline";
-import detectPointers from "../../detectPointers";
-import getSentenceEnvs from "../../getSentenceEnvs";
+import loadEL from "../../../node/el/loadEL.ts";
+import { initialEnv } from "../env.ts";
+import $nameInline from "./$nameInline.ts";
+import type * as std from "../../../law/std/index.ts";
+import type { SentenceChildEL } from "../../../node/cst/inline.ts";
+import detectPointers from "../../detectPointers.ts";
+import getSentenceEnvs from "../../getSentenceEnvs.ts";
 
 const env = initialEnv({ target: "" });
 

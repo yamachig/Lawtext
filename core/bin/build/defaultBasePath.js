@@ -1,7 +1,5 @@
-const path = require("path");
+import path from "path";
 
-const defaultBasePath = path.dirname(path.dirname(__dirname));
+const defaultBasePath = path.dirname(path.dirname(import.meta.dirname));
 
-module.exports = {
-    defaultBasePath,
-};
+export { defaultBasePath };

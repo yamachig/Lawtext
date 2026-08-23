@@ -1,17 +1,17 @@
 import { assert } from "chai";
-import type { MatchResult } from "generic-parser/lib/core";
-import { isLawNum, isLawTitle } from "../../law/std";
-import { __Text } from "../../node/el/controls";
-import type { Line } from "../../node/cst/line";
-import { EL, rangeOfELs } from "../../node/el";
-import type { ErrorMessage } from "../cst/error";
-import parse from "../cst/parse";
-import type { Env } from "./env";
-import { initialEnv } from "./env";
-import type { VirtualLine } from "./virtualLine";
-import { toVirtualLines } from "./virtualLine";
-import loadEL from "../../node/el/loadEL";
-import type { JsonEL } from "../../node/el/jsonEL";
+import type { MatchResult } from "generic-parser/lib/core/index.js";
+import { isLawNum, isLawTitle } from "../../law/std/index.ts";
+import { __Text } from "../../node/el/controls/index.ts";
+import type { Line } from "../../node/cst/line.ts";
+import { EL, rangeOfELs } from "../../node/el/index.ts";
+import type { ErrorMessage } from "../cst/error.ts";
+import parse from "../cst/parse.ts";
+import type { Env } from "./env.ts";
+import { initialEnv } from "./env.ts";
+import type { VirtualLine } from "./virtualLine.ts";
+import { toVirtualLines } from "./virtualLine.ts";
+import loadEL from "../../node/el/loadEL.ts";
+import type { JsonEL } from "../../node/el/jsonEL.ts";
 
 
 export const testLawtextToStd = <

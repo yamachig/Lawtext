@@ -1,15 +1,15 @@
-import factory from "../factory";
-import $sentenceChildren from "./$sentenceChildren";
-import $articleGroupNum from "./$articleGroupNum";
-import $indents from "./$indents";
-import { ArticleGroupHeadLine } from "../../../node/cst/line";
-import { $__, $_EOL, $_ } from "./lexical";
-import type { WithErrorRule } from "../util";
-import { mergeAdjacentTexts } from "../util";
-import { typeCharsMap } from "../../../law/std/helpers";
-import { Control } from "../../../node/cst/inline";
-import makeRangesRule from "./makeRangesRule";
-import { __Text } from "../../../node/el/controls";
+import factory from "../factory.ts";
+import $sentenceChildren from "./$sentenceChildren.ts";
+import $articleGroupNum from "./$articleGroupNum.ts";
+import $indents from "./$indents.ts";
+import { ArticleGroupHeadLine } from "../../../node/cst/line.ts";
+import { $__, $_EOL, $_ } from "./lexical.ts";
+import type { WithErrorRule } from "../util.ts";
+import { mergeAdjacentTexts } from "../util.ts";
+import { typeCharsMap } from "../../../law/std/helpers.ts";
+import { Control } from "../../../node/cst/inline.ts";
+import makeRangesRule from "./makeRangesRule.ts";
+import { __Text } from "../../../node/el/controls/index.ts";
 
 const { $ranges: $articleGroupRanges } = makeRangesRule(() => $articleGroupNum);
 

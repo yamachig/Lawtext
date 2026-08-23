@@ -1,12 +1,12 @@
 import React from "react";
-import { renderToStaticMarkup } from "..";
-import { w } from "./tags";
-import styles from "./styles";
-import type { DOCXOptions } from "./component";
-import { Relationships, Types } from "./component";
-import { makePDFOLE } from "./ole";
-import type { AsyncZippable } from "../../../util/zip";
-import { zip } from "../../../util/zip";
+import { renderToStaticMarkup } from "../index.tsx";
+import { w } from "./tags.ts";
+import styles from "./styles.tsx";
+import type { DOCXOptions } from "./component.tsx";
+import { Relationships, Types } from "./component.tsx";
+import { makePDFOLE } from "./ole.ts";
+import type { AsyncZippable } from "../../../util/zip.ts";
+import { zip } from "../../../util/zip.ts";
 
 export const renderDocxAsync = async (bodyEL: React.JSX.Element, docxOptions?: DOCXOptions): Promise<Uint8Array | Buffer> => {
 

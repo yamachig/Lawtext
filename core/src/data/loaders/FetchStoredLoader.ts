@@ -1,9 +1,9 @@
-import type { LawInfosStruct } from "./common";
-import { csvTextToLawInfos, jsonTextToLawInfos, LawXMLStruct, Loader } from "./common";
-import type { BaseLawInfo } from "../lawinfo";
-import * as data_paths from "../paths";
+import type { LawInfosStruct } from "./common.ts";
+import { csvTextToLawInfos, jsonTextToLawInfos, LawXMLStruct, Loader } from "./common.ts";
+import type { BaseLawInfo } from "../lawinfo.ts";
+import * as data_paths from "../paths.ts";
 import path from "path";
-import { fetch as nodeFetch } from "../../util/node-fetch";
+import { fetch as nodeFetch } from "../../util/node-fetch/index.js";
 const fetch: typeof window.fetch = (global["fetch"]) || (global["window"] && window.fetch) || nodeFetch;
 console.log(`fetch: ${fetch}`);
 

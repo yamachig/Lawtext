@@ -1,13 +1,13 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { LineType, OtherLine } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { newStdEL } from "../../../law/std";
-import type * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import { Control, Sentences } from "../../../node/cst/inline";
-import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
-import { rangeOfELs } from "../../../node/el";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { LineType, OtherLine } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { newStdEL } from "../../../law/std/index.ts";
+import type * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import { Control, Sentences } from "../../../node/cst/inline.ts";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
 
 export const supplNoteControl = ":suppl-note:";
 

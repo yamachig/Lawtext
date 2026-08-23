@@ -1,9 +1,9 @@
 import { assert } from "chai";
-import { LineType } from "../../../node/cst/line";
-import { initialEnv } from "../env";
-import $paragraphItemLine from "./$paragraphItemLine";
-import type { Controls, SentencesArray } from "../../../node/cst/inline";
-import { matchResultToJson } from "generic-parser/lib/core";
+import { LineType } from "../../../node/cst/line.ts";
+import { initialEnv } from "../env.ts";
+import $paragraphItemLine from "./$paragraphItemLine.ts";
+import type { Controls, SentencesArray } from "../../../node/cst/inline.ts";
+import { matchResultToJson } from "generic-parser/lib/core/index.js";
 
 const env = initialEnv({});
 

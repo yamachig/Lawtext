@@ -1,16 +1,16 @@
-import type { Line } from "../../../node/cst/line";
-import { LineType, TableColumnLine } from "../../../node/cst/line";
-import { isListOrSublist, isListOrSublistSentence, newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
-import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import type { WithErrorRule } from "../util";
-import { $blankLine, makeIndentBlockWithCaptureRule } from "../util";
-import factory from "../factory";
-import type { ErrorMessage } from "../../cst/error";
-import CST from "../toCSTSettings";
-import type { Diff } from "../../../util";
-import { assertNever } from "../../../util";
-import { rangeOfELs } from "../../../node/el";
+import type { Line } from "../../../node/cst/line.ts";
+import { LineType, TableColumnLine } from "../../../node/cst/line.ts";
+import { isListOrSublist, isListOrSublistSentence, newStdEL } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $blankLine, makeIndentBlockWithCaptureRule } from "../util.ts";
+import factory from "../factory.ts";
+import type { ErrorMessage } from "../../cst/error.ts";
+import CST from "../toCSTSettings.ts";
+import type { Diff } from "../../../util/index.ts";
+import { assertNever } from "../../../util/index.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
 
 /**
  * The renderer for List or sublist ({@link std.ListOrSublist | ListOrSublist}). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$list.spec.ts) for examples.

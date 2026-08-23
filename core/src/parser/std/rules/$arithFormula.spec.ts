@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
+import { testLawtextToStd } from "../testHelper.ts";
+import $arithFormula, { arithFormulaToLines } from "./$arithFormula.ts";
 
 describe("Test $arithFormula and arithFormulaToLines", () => {
 

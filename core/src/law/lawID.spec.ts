@@ -1,9 +1,9 @@
 import { assert } from "chai";
-import type { LawIDStructAct, LawIDStructCabinetOrder, LawIDStructConstitution, LawIDStructDajokanFukoku, LawIDStructDajokanFutatsu, LawIDStructDajokanTasshi, LawIDStructImperialOrder, LawIDStructJinji, LawIDStructMinisterialOrdinance, LawIDStructPrimeMinisterDecision, LawIDStructRule } from "./lawID";
-import { LawIDActCategory, LawIDCabinetOrderEffect, LawIDType, parseLawID } from "./lawID";
-import { Era } from "./std";
-import { assertLoader } from "../../test/prepareTest";
-import type { LawInfo } from "../data/lawinfo";
+import type { LawIDStructAct, LawIDStructCabinetOrder, LawIDStructConstitution, LawIDStructDajokanFukoku, LawIDStructDajokanFutatsu, LawIDStructDajokanTasshi, LawIDStructImperialOrder, LawIDStructJinji, LawIDStructMinisterialOrdinance, LawIDStructPrimeMinisterDecision, LawIDStructRule } from "./lawID.ts";
+import { LawIDActCategory, LawIDCabinetOrderEffect, LawIDType, parseLawID } from "./lawID.ts";
+import { Era } from "./std/index.ts";
+import { assertLoader } from "../../test/prepareTest.ts";
+import type { LawInfo } from "../data/lawinfo.ts";
 
 
 describe("Test parseLawID", () => {

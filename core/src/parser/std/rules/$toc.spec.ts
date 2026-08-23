@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import $toc, { tocToLines } from "./$toc";
+import { testLawtextToStd } from "../testHelper.ts";
+import $toc, { tocToLines } from "./$toc.ts";
 
 describe("Test $toc and tocToLines", () => {
 

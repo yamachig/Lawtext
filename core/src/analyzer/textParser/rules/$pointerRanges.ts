@@ -1,20 +1,20 @@
-import { typeCharsMap } from "../../../law/std/helpers";
-import { irohaChars, parseKanjiNum } from "../../../law/num";
-import type { SentenceChildEL } from "../../../node/cst/inline";
-import type { __Parentheses } from "../../../node/el/controls";
-import { RelPos, __Text, ____LawNum, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls";
-import type { ErrorMessage } from "../../../parser/cst/error";
-import { factory } from "../../../parser/cst/factory";
-import { $kanjiDigits, arabicDigits, kanjiDigits, romanDigits } from "../../../parser/cst/rules/lexical";
-import type { RangeMaker, RangesMaker } from "../../../parser/cst/rules/makeRangesRule";
-import makeRangesRule from "../../../parser/cst/rules/makeRangesRule";
-import { $ROUND_PARENTHESES_INLINE } from "../../../parser/cst/rules/$sentenceChildren";
-import { type WithErrorRule, type WithErrorValue } from "../../../parser/cst/util";
-import { ptnLawNumLike } from "../../../law/lawNum";
+import { typeCharsMap } from "../../../law/std/helpers.ts";
+import { irohaChars, parseKanjiNum } from "../../../law/num.ts";
+import type { SentenceChildEL } from "../../../node/cst/inline.ts";
+import type { __Parentheses } from "../../../node/el/controls/index.ts";
+import { RelPos, __Text, ____LawNum, ____PF, ____Pointer, ____PointerRange, ____PointerRanges } from "../../../node/el/controls/index.ts";
+import type { ErrorMessage } from "../../../parser/cst/error.ts";
+import { factory } from "../../../parser/cst/factory.ts";
+import { $kanjiDigits, arabicDigits, kanjiDigits, romanDigits } from "../../../parser/cst/rules/lexical.ts";
+import type { RangeMaker, RangesMaker } from "../../../parser/cst/rules/makeRangesRule.ts";
+import makeRangesRule from "../../../parser/cst/rules/makeRangesRule.ts";
+import { $ROUND_PARENTHESES_INLINE } from "../../../parser/cst/rules/$sentenceChildren.ts";
+import { type WithErrorRule, type WithErrorValue } from "../../../parser/cst/util.ts";
+import { ptnLawNumLike } from "../../../law/lawNum.ts";
 import type { Empty, MatchResult } from "generic-parser";
 import { Rule } from "generic-parser";
-import type { Env } from "../../../parser/cst/env";
-import type { Container } from "../../../node/container";
+import type { Env } from "../../../parser/cst/env.ts";
+import type { Container } from "../../../node/container/index.ts";
 
 const makeRange: RangeMaker<
     WithErrorValue<____Pointer>,

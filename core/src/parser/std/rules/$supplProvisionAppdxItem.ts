@@ -1,23 +1,23 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { SupplProvisionAppdxItemHeadLine, LineType } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { $blankLine, makeIndentBlockWithCaptureRule } from "../util";
-import type { StdELType } from "../../../law/std";
-import { isSupplProvisionAppdxItemTitle, newStdEL, supplProvisionAppdxItemTags, supplProvisionAppdxItemTitleTags, isRelatedArticleNum, isTableStruct, isNoteLikeStruct, isArithFormula } from "../../../law/std";
-import * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import type { ErrorMessage } from "../../cst/error";
-import { mergeAdjacentTextsWithString } from "../../cst/util";
-import { Control } from "../../../node/cst/inline";
-import { rangeOfELs } from "../../../node/el";
-import { assertNever } from "../../../util";
-import { $styleStruct, noteLikeStructToLines } from "./$noteLike";
-import $tableStruct, { tableStructToLines } from "./$tableStruct";
-import $arithFormula, { arithFormulaToLines } from "./$arithFormula";
-import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import { autoTagControls, supplProvisionAppdxItemControls } from "../../cst/rules/$tagControl";
-import { detectSupplProvisionAppdxItemTitle } from "../../cst/rules/$supplProvisionAppdxItemHeadLine";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { SupplProvisionAppdxItemHeadLine, LineType } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $blankLine, makeIndentBlockWithCaptureRule } from "../util.ts";
+import type { StdELType } from "../../../law/std/index.ts";
+import { isSupplProvisionAppdxItemTitle, newStdEL, supplProvisionAppdxItemTags, supplProvisionAppdxItemTitleTags, isRelatedArticleNum, isTableStruct, isNoteLikeStruct, isArithFormula } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import type { ErrorMessage } from "../../cst/error.ts";
+import { mergeAdjacentTextsWithString } from "../../cst/util.ts";
+import { Control } from "../../../node/cst/inline.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
+import { assertNever } from "../../../util/index.ts";
+import { $styleStruct, noteLikeStructToLines } from "./$noteLike.ts";
+import $tableStruct, { tableStructToLines } from "./$tableStruct.ts";
+import $arithFormula, { arithFormulaToLines } from "./$arithFormula.ts";
+import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren.ts";
+import { autoTagControls, supplProvisionAppdxItemControls } from "../../cst/rules/$tagControl.ts";
+import { detectSupplProvisionAppdxItemTitle } from "../../cst/rules/$supplProvisionAppdxItemHeadLine.ts";
 
 
 /**

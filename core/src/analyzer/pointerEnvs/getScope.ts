@@ -1,10 +1,10 @@
-import { assertNever } from "../../util";
-import type { Container } from "../../node/container";
-import { ____PointerRanges } from "../../node/el/controls/pointer";
-import type { RangeInfo } from "../../node/el/controls";
-import { __Text } from "../../node/el/controls";
-import type { PointerEnvsStruct } from "./getPointerEnvs";
-import type { LocateOptions } from "../../node/pointerEnv";
+import { assertNever } from "../../util/index.ts";
+import type { Container } from "../../node/container/index.ts";
+import { ____PointerRanges } from "../../node/el/controls/pointer.ts";
+import type { RangeInfo } from "../../node/el/controls/index.ts";
+import { __Text } from "../../node/el/controls/index.ts";
+import type { PointerEnvsStruct } from "./getPointerEnvs.ts";
+import type { LocateOptions } from "../../node/pointerEnv/index.ts";
 
 
 interface ObjRangeInfo {

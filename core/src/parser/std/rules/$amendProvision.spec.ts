@@ -1,6 +1,6 @@
-import { testLawtextToStd } from "../testHelper";
-import $amendProvision, { amendProvisionToLines } from "./$amendProvision";
-import $article, { articleToLines } from "./$article";
+import { testLawtextToStd } from "../testHelper.ts";
+import $amendProvision, { amendProvisionToLines } from "./$amendProvision.ts";
+import $article, { articleToLines } from "./$article.ts";
 
 describe("Test $amendProvision and amendProvisionToLines", () => {
 

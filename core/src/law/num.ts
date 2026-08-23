@@ -1,5 +1,5 @@
 /* eslint-disable @stylistic/quote-props */
-import { assertNever } from "../util";
+import { assertNever } from "../util/index.ts";
 
 const reKanjiNum = /((\S*)千)?((\S*)百)?((\S*)十)?(\S*)/;
 

@@ -5,7 +5,7 @@ const getLawListPromise = (async () => {
     /** @type {[string, string, string, string[]][]} */
     let lawList;
     try {
-        lawList = (await eval("import(\"./lawList.json\", { assert: { type: \"json\" } })")).default;
+        lawList = (await eval("import(\"./lawList.json\", { with: { type: \"json\" } })")).default;
     } catch {
         lawList = await (await fetch("https://lic857vlz1.execute-api.ap-northeast-1.amazonaws.com/prod/Lawtext-API?method=lawlist")).json();
     }

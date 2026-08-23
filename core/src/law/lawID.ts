@@ -1,6 +1,6 @@
 /* eslint-disable @stylistic/quote-props */
-import { assertNever } from "../util";
-import { Era } from "./std";
+import { assertNever } from "../util/index.ts";
+import { Era } from "./std/index.ts";
 
 
 // c.f. https://laws.e-gov.go.jp/file/LawIdNamingConvention.pdf

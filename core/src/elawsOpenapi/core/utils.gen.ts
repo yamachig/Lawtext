@@ -1,12 +1,12 @@
 // This file is auto-generated from https://laws.e-gov.go.jp/api/2/swagger-ui/lawapi-v2.yaml
 
-import type { BodySerializer, QuerySerializer } from './bodySerializer.gen';
+import type { BodySerializer, QuerySerializer } from './bodySerializer.gen.js';
 import {
   type ArraySeparatorStyle,
   serializeArrayParam,
   serializeObjectParam,
   serializePrimitiveParam,
-} from './pathSerializer.gen';
+} from './pathSerializer.gen.js';
 
 export interface PathSerializer {
   path: Record<string, unknown>;

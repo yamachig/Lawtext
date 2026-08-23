@@ -1,8 +1,8 @@
-import type { SentencesArray } from "../../../node/cst/inline";
-import { AttrEntry, Sentences } from "../../../node/cst/inline";
-import * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import { assertNever, NotImplementedError } from "../../../util";
+import type { SentencesArray } from "../../../node/cst/inline.ts";
+import { AttrEntry, Sentences } from "../../../node/cst/inline.ts";
+import * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import { assertNever, NotImplementedError } from "../../../util/index.ts";
 
 
 export const columnsOrSentencesToSentencesArray = (

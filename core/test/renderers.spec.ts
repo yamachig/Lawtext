@@ -1,12 +1,12 @@
-import chai from "chai";
+import * as chai from "chai";
 import { it } from "mocha";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { lawDiff, LawDiffMode, makeDiffData, ProblemStatus } from "../src/diff/lawDiff";
-import { TERMC, toTableText } from "../src/util/term";
-import renderAndParse from "./renderAndParse";
-import makeDiffTable from "./makeDiffTable";
-import { assertLoader } from "./prepareTest";
+import { lawDiff, LawDiffMode, makeDiffData, ProblemStatus } from "../src/diff/lawDiff.ts";
+import { TERMC, toTableText } from "../src/util/term.ts";
+import renderAndParse from "./renderAndParse.ts";
+import makeDiffTable from "./makeDiffTable.ts";
+import { assertLoader } from "./prepareTest.ts";
 
 const LIMIT_WIDTH = 34;
 const MAX_DIFF_LENGTH = 20;

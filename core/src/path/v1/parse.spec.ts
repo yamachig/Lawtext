@@ -1,8 +1,8 @@
 import { assert } from "chai";
-import { LawIDActCategory, LawIDType } from "../../law/lawID";
-import { Era } from "../../law/std";
-import type { ParseResult } from "./parse";
-import parse from "./parse";
+import { LawIDActCategory, LawIDType } from "../../law/lawID.ts";
+import { Era } from "../../law/std/index.ts";
+import type { ParseResult } from "./parse.ts";
+import parse from "./parse.ts";
 
 describe("Test path.v1.parse", () => {
 

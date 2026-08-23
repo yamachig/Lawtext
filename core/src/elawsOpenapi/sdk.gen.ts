@@ -1,8 +1,8 @@
 // This file is auto-generated from https://laws.e-gov.go.jp/api/2/swagger-ui/lawapi-v2.yaml
 
-import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
-import { client } from './client.gen';
-import type { GetAttachmentData, GetAttachmentErrors, GetAttachmentResponses, GetKeywordData, GetKeywordErrors, GetKeywordResponses, GetLawDataData, GetLawDataErrors, GetLawDataResponses, GetLawFileData, GetLawFileErrors, GetLawFileResponses, GetLawsData, GetLawsErrors, GetLawsResponses, GetRevisionsData, GetRevisionsErrors, GetRevisionsResponses } from './types.gen';
+import { client } from './client.gen.js';
+import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client/index.js';
+import type { GetAttachmentData, GetAttachmentErrors, GetAttachmentResponses, GetKeywordData, GetKeywordErrors, GetKeywordResponses, GetLawDataData, GetLawDataErrors, GetLawDataResponses, GetLawFileData, GetLawFileErrors, GetLawFileResponses, GetLawsData, GetLawsErrors, GetLawsResponses, GetRevisionsData, GetRevisionsErrors, GetRevisionsResponses } from './types.gen.js';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**

@@ -1,21 +1,21 @@
 import React from "react";
 import { assert } from "chai";
-import { DOCXFigRun, HTMLFigRun } from "./figRun";
-import loadEL from "../../node/el/loadEL";
-import type * as std from "../../law/std";
-import { renderToStaticMarkup } from "../common";
-import formatXML from "../../util/formatXml";
-import htmlCSS from "./htmlCSS";
+import { DOCXFigRun, HTMLFigRun } from "./figRun.tsx";
+import loadEL from "../../node/el/loadEL.ts";
+import type * as std from "../../law/std/index.ts";
+import { renderToStaticMarkup } from "../common/index.tsx";
+import formatXML from "../../util/formatXml.ts";
+import htmlCSS from "./htmlCSS.tsx";
 import path from "path";
-import { promisify } from "util";
-import fs from "fs";
-import ensureTempTestDir from "../../../test/ensureTempTestDir";
-import { renderDocxAsync } from "../common/docx/file";
-import { w } from "../common/docx/tags";
-import FigDataManager, { pdfToPNG } from "../common/docx/FigDataManager";
-import { decodeBase64 } from "../../util";
-import type { DOCXOptions } from "../common/docx/component";
-import { unzip } from "../../util/zip";
+import { promisify } from "node:util";
+import fs from "node:fs";
+import ensureTempTestDir from "../../../test/ensureTempTestDir.ts";
+import { renderDocxAsync } from "../common/docx/file.tsx";
+import { w } from "../common/docx/tags.ts";
+import FigDataManager, { pdfToPNG } from "../common/docx/FigDataManager.ts";
+import { decodeBase64 } from "../../util/index.ts";
+import type { DOCXOptions } from "../common/docx/component.tsx";
+import { unzip } from "../../util/zip.ts";
 
 describe("Test HTML figRun", () => {
 

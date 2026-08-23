@@ -1,17 +1,17 @@
 import React from "react";
-import * as std from "../../law/std";
-import { assertNever, NotImplementedError } from "../../util";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
-import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
-import type { DOCXComponentProps } from "../common/docx/component";
-import { DOCXMargin, wrapDOCXComponent } from "../common/docx/component";
-import { w } from "../common/docx/tags";
-import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct";
-import { DOCXList, HTMLList } from "./list";
-import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision";
-import { withKey } from "../common";
+import * as std from "../../law/std/index.ts";
+import { assertNever, NotImplementedError } from "../../util/index.ts";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html.tsx";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun.tsx";
+import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun.tsx";
+import type { DOCXComponentProps } from "../common/docx/component.tsx";
+import { DOCXMargin, wrapDOCXComponent } from "../common/docx/component.tsx";
+import { w } from "../common/docx/tags.ts";
+import { DOCXItemStruct, HTMLItemStruct } from "./itemStruct.tsx";
+import { DOCXList, HTMLList } from "./list.tsx";
+import { DOCXAmendProvision, HTMLAmendProvision } from "./amendProvision.tsx";
+import { withKey } from "../common/index.tsx";
 
 export interface ParagraphItemProps {
     el: std.ParagraphItem,

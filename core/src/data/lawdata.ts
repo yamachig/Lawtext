@@ -1,13 +1,13 @@
-import * as std from "../law/std";
-import * as analyzer from "../analyzer";
-import * as util from "../util";
-import { parse } from "../parser/lawtext";
-import type { EL } from "../node/el";
-import type { ErrorMessage } from "../parser/cst/error";
-import type { LawXMLStruct } from "./loaders/common";
-import { ElawsLawData } from "./loaders/FetchElawsLoader";
-import { xmlToEL } from "../node/el/xmlToEL";
-import { getLawList } from "../law/getLawList";
+import * as std from "../law/std/index.ts";
+import * as analyzer from "../analyzer/index.ts";
+import * as util from "../util/index.ts";
+import { parse } from "../parser/lawtext.ts";
+import type { EL } from "../node/el/index.ts";
+import type { ErrorMessage } from "../parser/cst/error.ts";
+import type { LawXMLStruct } from "./loaders/common.ts";
+import { ElawsLawData } from "./loaders/FetchElawsLoader.ts";
+import { xmlToEL } from "../node/el/xmlToEL.ts";
+import { getLawList } from "../law/getLawList.js";
 
 
 export interface LawDataCore {

@@ -1,8 +1,8 @@
-import type { MatchFail, MatchContext, StringPos, BaseEnv } from "generic-parser/lib/core";
-import { getMemorizedStringOffsetToPos } from "generic-parser/lib/core";
-import type { WithErrorRule } from "./util";
-import type { SentenceChildEL } from "../../node/cst/inline";
-import { makeReOutsideParenthesesTextChars, makeReParenthesesInlineTextChars, makeRePeriodSentenceTextChars } from "./rules/$sentenceChildren";
+import type { MatchFail, MatchContext, StringPos, BaseEnv } from "generic-parser/lib/core/index.js";
+import { getMemorizedStringOffsetToPos } from "generic-parser/lib/core/index.js";
+import type { WithErrorRule } from "./util.ts";
+import type { SentenceChildEL } from "../../node/cst/inline.ts";
+import { makeReOutsideParenthesesTextChars, makeReParenthesesInlineTextChars, makeRePeriodSentenceTextChars } from "./rules/$sentenceChildren.ts";
 
 export interface Env extends BaseEnv<string, StringPos> {
     currentIndentDepth: number;

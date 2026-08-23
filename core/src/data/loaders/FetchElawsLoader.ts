@@ -1,12 +1,12 @@
-import type { LawInfosStruct } from "./common";
-import { LawXMLStruct } from "./common";
-import { lawInfosToByLawnumAndID, Loader } from "./common";
-import type { BaseLawInfo } from "../lawinfo";
-import { LawInfo } from "../lawinfo";
-import * as elawsApi from "../../elawsOpenapi";
-import { unzip } from "../../util/zip";
+import type { LawInfosStruct } from "./common.ts";
+import { LawXMLStruct } from "./common.ts";
+import { lawInfosToByLawnumAndID, Loader } from "./common.ts";
+import type { BaseLawInfo } from "../lawinfo.ts";
+import { LawInfo } from "../lawinfo.ts";
+import * as elawsApi from "../../elawsOpenapi/index.ts";
+import { unzip } from "../../util/zip.ts";
 import path from "path";
-import { decodeBase64, pictMimeDict } from "../../util";
+import { decodeBase64, pictMimeDict } from "../../util/index.ts";
 
 const fetchBaseLawInfosFromElaws = async (): Promise<BaseLawInfo[]> => {
     const lawNameList = (await elawsApi.getLaws({
@@ -21,7 +21,7 @@ const fetchBaseLawInfosFromElaws = async (): Promise<BaseLawInfo[]> => {
         ?.map(item => {
             const baseLawInfo: BaseLawInfo = {
                 LawID: item.law_info?.law_id ?? "",
-                LawNum: item.law_info?.law_id ?? "",
+                LawNum: item.law_info?.law_num ?? "",
                 LawTitle: item.revision_info?.law_title ?? "",
                 Enforced: true,
                 Path: item.law_info?.law_id ?? "",

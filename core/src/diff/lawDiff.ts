@@ -1,9 +1,9 @@
-import * as xpath from "xpath";
-import type { JsonEL } from "../node/el/jsonEL";
-import * as util from "../util";
-import type { EditTable } from "./editTable";
-import { compare } from "./editTable";
-import * as std from "../law/std";
+import xpath from "xpath";
+import type { JsonEL } from "../node/el/jsonEL.ts";
+import * as util from "../util/index.ts";
+import type { EditTable } from "./editTable.ts";
+import { compare } from "./editTable.ts";
+import * as std from "../law/std/index.ts";
 import type { Node } from "@xmldom/xmldom";
 
 export enum TagType {

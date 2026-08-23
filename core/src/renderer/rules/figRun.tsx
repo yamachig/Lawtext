@@ -1,11 +1,11 @@
 import React from "react";
-import type * as std from "../../law/std";
-import type { HTMLFigData, HTMLComponentProps } from "../common/html";
-import { elProps, wrapHTMLComponent } from "../common/html";
-import type { DOCXComponentProps, DOCXFigData, DOCXFigDataManager } from "../common/docx/component";
-import { wrapDOCXComponent } from "../common/docx/component";
-import { w, wp, a, pic, o, v } from "../common/docx/tags";
-import { NotImplementedError } from "../../util";
+import type * as std from "../../law/std/index.ts";
+import type { HTMLFigData, HTMLComponentProps } from "../common/html.tsx";
+import { elProps, wrapHTMLComponent } from "../common/html.tsx";
+import type { DOCXComponentProps, DOCXFigData, DOCXFigDataManager } from "../common/docx/component.tsx";
+import { wrapDOCXComponent } from "../common/docx/component.tsx";
+import { w, wp, a, pic, o, v } from "../common/docx/tags.ts";
+import { NotImplementedError } from "../../util/index.ts";
 
 
 export interface FigRunProps {

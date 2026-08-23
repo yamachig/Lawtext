@@ -1,14 +1,14 @@
-import * as fs from "fs";
-import type { EL } from "../src/node/el";
+import * as fs from "node:fs";
+import type { EL } from "../src/node/el/index.ts";
 import path from "path";
-import { xmlToEL } from "../src/node/el/xmlToEL";
+import { xmlToEL } from "../src/node/el/xmlToEL.ts";
 
 // const Node = {
 //     TEXT_NODE: 3,
 //     ELEMENT_NODE: 1,
 // };
 
-let rootDir = path.dirname(__dirname);
+let rootDir = path.dirname(import.meta.dirname);
 while (!fs.existsSync(path.join(rootDir, "package.json"))) {
     const newRootDir = path.dirname(rootDir);
     if (newRootDir === rootDir) break;

@@ -1,15 +1,15 @@
 import React from "react";
-import * as std from "../../law/std";
-import { assertNever } from "../../util";
-import { withKey } from "../common";
-import type { DOCXComponentProps } from "../common/docx/component";
-import { DOCXMargin, wrapDOCXComponent } from "../common/docx/component";
-import { w } from "../common/docx/tags";
-import TextBoxRun from "../common/docx/TextBoxRun";
-import type { HTMLComponentProps } from "../common/html";
-import { elProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html";
-import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun";
-import { DOCXTable, HTMLTable } from "./table";
+import * as std from "../../law/std/index.ts";
+import { assertNever } from "../../util/index.ts";
+import { withKey } from "../common/index.tsx";
+import type { DOCXComponentProps } from "../common/docx/component.tsx";
+import { DOCXMargin, wrapDOCXComponent } from "../common/docx/component.tsx";
+import { w } from "../common/docx/tags.ts";
+import TextBoxRun from "../common/docx/TextBoxRun.tsx";
+import type { HTMLComponentProps } from "../common/html.tsx";
+import { elProps, HTMLMarginSpan, wrapHTMLComponent } from "../common/html.tsx";
+import { DOCXSentenceChildrenRun, HTMLSentenceChildrenRun } from "./sentenceChildrenRun.tsx";
+import { DOCXTable, HTMLTable } from "./table.tsx";
 
 
 interface ColumnsOrSentencesRunProps {

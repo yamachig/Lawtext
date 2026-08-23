@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import $articleGroup, { articleGroupToLines } from "./$articleGroup";
+import { testLawtextToStd } from "../testHelper.ts";
+import $articleGroup, { articleGroupToLines } from "./$articleGroup.ts";
 
 describe("Test $articleGroup and articleGroupToLines", () => {
 

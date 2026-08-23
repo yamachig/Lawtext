@@ -1,8 +1,8 @@
-import type { __Parentheses } from "../../../node/el/controls";
-import type { WithErrorValue } from "../../std/util";
-import factory from "../factory";
-import type { ValueRule, WithErrorRule } from "../util";
-import { $ROUND_PARENTHESES_INLINE } from "./$sentenceChildren";
+import type { __Parentheses } from "../../../node/el/controls/index.ts";
+import type { WithErrorValue } from "../../std/util.ts";
+import factory from "../factory.ts";
+import type { ValueRule, WithErrorRule } from "../util.ts";
+import { $ROUND_PARENTHESES_INLINE } from "./$sentenceChildren.ts";
 
 export type RangeMaker<TPointer, TRange> = (
     from: TPointer,

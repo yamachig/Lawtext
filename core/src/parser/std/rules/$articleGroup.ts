@@ -1,21 +1,21 @@
-import type { Line } from "../../../node/cst/line";
-import { ArticleGroupHeadLine, BlankLine, LineType } from "../../../node/cst/line";
-import { newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import type { Diff } from "../../../util";
-import { assertNever, range } from "../../../util";
-import type { WithErrorRule } from "../util";
-import factory from "../factory";
-import { $blankLine, $indentBlock } from "../util";
-import { paragraphItemToLines } from "./$paragraphItem";
-import { mergeAdjacentTextsWithString } from "../../cst/util";
-import $article, { articleToLines } from "./$article";
-import { parseNamedNum } from "../../../law/num";
-import { appdxItemToLines } from "./$appdxItem";
-import { ErrorMessage } from "../../cst/error";
-import { Control } from "../../../node/cst/inline";
-import { rangeOfELs } from "../../../node/el";
+import type { Line } from "../../../node/cst/line.ts";
+import { ArticleGroupHeadLine, BlankLine, LineType } from "../../../node/cst/line.ts";
+import { newStdEL } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import type { Diff } from "../../../util/index.ts";
+import { assertNever, range } from "../../../util/index.ts";
+import type { WithErrorRule } from "../util.ts";
+import factory from "../factory.ts";
+import { $blankLine, $indentBlock } from "../util.ts";
+import { paragraphItemToLines } from "./$paragraphItem.ts";
+import { mergeAdjacentTextsWithString } from "../../cst/util.ts";
+import $article, { articleToLines } from "./$article.ts";
+import { parseNamedNum } from "../../../law/num.ts";
+import { appdxItemToLines } from "./$appdxItem.ts";
+import { ErrorMessage } from "../../cst/error.ts";
+import { Control } from "../../../node/cst/inline.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
 
 /**
  * The renderer for article group ({@link std.ArticleGroup | ArticleGroup}) such as Chapter. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$articleGroup.spec.ts) for examples.

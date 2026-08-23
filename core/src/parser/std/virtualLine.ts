@@ -1,6 +1,6 @@
-import type { AppdxItemHeadLine, ArticleGroupHeadLine, ArticleLine, BlankLine, Line, OtherLine, ParagraphItemLine, SupplProvisionAppdxItemHeadLine, SupplProvisionHeadLine, TableColumnLine, TOCHeadLine } from "../../node/cst/line";
-import { LineType } from "../../node/cst/line";
-import { captionControl, isSingleParentheses } from "./util";
+import type { AppdxItemHeadLine, ArticleGroupHeadLine, ArticleLine, BlankLine, Line, OtherLine, ParagraphItemLine, SupplProvisionAppdxItemHeadLine, SupplProvisionHeadLine, TableColumnLine, TOCHeadLine } from "../../node/cst/line.ts";
+import { LineType } from "../../node/cst/line.ts";
+import { captionControl, isSingleParentheses } from "./util.ts";
 
 /**
  * The extension of CST with the structure of indent blocks.

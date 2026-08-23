@@ -1,21 +1,21 @@
-import type { Line } from "../../../node/cst/line";
-import { ArticleGroupHeadLine, ArticleLine, BlankLine, LineType, OtherLine, SupplProvisionHeadLine, TOCHeadLine } from "../../../node/cst/line";
-import { articleGroupTags, articleGroupTitleTags, isTOCAppdxTableLabel, isTOCArticle, isTOCArticleGroup, isTOCPreambleLabel, isTOCSupplProvision, newStdEL, tocArticleGroupTags } from "../../../law/std";
-import * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import { assertNever } from "../../../util";
-import type { WithErrorRule } from "../util";
-import { makeIndentBlockWithCaptureRule } from "../util";
-import factory from "../factory";
-import { Control, Sentences } from "../../../node/cst/inline";
-import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren";
-import { mergeAdjacentTexts, mergeAdjacentTextsWithString } from "../../cst/util";
-import { VirtualOnlyLineType } from "../virtualLine";
-import type { ErrorMessage } from "../../cst/error";
-import { __Parentheses, __Text } from "../../../node/el/controls";
-import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
-import { rangeOfELs } from "../../../node/el";
-import { parseNamedNum } from "../../../law/num";
+import type { Line } from "../../../node/cst/line.ts";
+import { ArticleGroupHeadLine, ArticleLine, BlankLine, LineType, OtherLine, SupplProvisionHeadLine, TOCHeadLine } from "../../../node/cst/line.ts";
+import { articleGroupTags, articleGroupTitleTags, isTOCAppdxTableLabel, isTOCArticle, isTOCArticleGroup, isTOCPreambleLabel, isTOCSupplProvision, newStdEL, tocArticleGroupTags } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import { assertNever } from "../../../util/index.ts";
+import type { WithErrorRule } from "../util.ts";
+import { makeIndentBlockWithCaptureRule } from "../util.ts";
+import factory from "../factory.ts";
+import { Control, Sentences } from "../../../node/cst/inline.ts";
+import { sentenceChildrenToString } from "../../cst/rules/$sentenceChildren.ts";
+import { mergeAdjacentTexts, mergeAdjacentTextsWithString } from "../../cst/util.ts";
+import { VirtualOnlyLineType } from "../virtualLine.ts";
+import type { ErrorMessage } from "../../cst/error.ts";
+import { __Parentheses, __Text } from "../../../node/el/controls/index.ts";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
+import { parseNamedNum } from "../../../law/num.ts";
 
 /**
  * The renderer for {@link std.TOC}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$toc.spec.ts) for examples.

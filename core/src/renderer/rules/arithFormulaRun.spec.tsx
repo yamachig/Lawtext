@@ -1,18 +1,18 @@
 import React from "react";
 import { assert } from "chai";
-import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun";
-import loadEL from "../../node/el/loadEL";
-import * as std from "../../law/std";
-import { renderToStaticMarkup } from "../common";
-import formatXML from "../../util/formatXml";
-import htmlCSS from "./htmlCSS";
+import { DOCXArithFormulaRun, HTMLArithFormulaRun } from "./arithFormulaRun.tsx";
+import loadEL from "../../node/el/loadEL.ts";
+import * as std from "../../law/std/index.ts";
+import { renderToStaticMarkup } from "../common/index.tsx";
+import formatXML from "../../util/formatXml.ts";
+import htmlCSS from "./htmlCSS.tsx";
 import path from "path";
-import { promisify } from "util";
-import fs from "fs";
-import ensureTempTestDir from "../../../test/ensureTempTestDir";
-import { renderDocxAsync } from "../common/docx/file";
-import { w } from "../common/docx/tags";
-import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun";
+import { promisify } from "node:util";
+import fs from "node:fs";
+import ensureTempTestDir from "../../../test/ensureTempTestDir.ts";
+import { renderDocxAsync } from "../common/docx/file.tsx";
+import { w } from "../common/docx/tags.ts";
+import { DOCXColumnsOrSentencesRun, HTMLColumnsOrSentencesRun } from "./columnsOrSentencesRun.tsx";
 
 describe("Test HTML arithFormulaRun", () => {
     /* eslint-disable no-irregular-whitespace */

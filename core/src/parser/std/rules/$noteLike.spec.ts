@@ -1,5 +1,5 @@
-import { testLawtextToStd } from "../testHelper";
-import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines } from "./$noteLike";
+import { testLawtextToStd } from "../testHelper.ts";
+import { $formatStruct, $noteStruct, $styleStruct, noteLikeStructToLines } from "./$noteLike.ts";
 
 describe("Test $noteStruct and noteLikeStructToLines", () => {
 

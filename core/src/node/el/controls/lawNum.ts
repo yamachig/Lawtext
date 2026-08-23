@@ -1,4 +1,4 @@
-import { EL } from "..";
+import { EL } from "../index.ts";
 
 export class ____LawNum extends EL {
     public override tag = "____LawNum" as const;

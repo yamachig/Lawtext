@@ -1,25 +1,25 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { BlankLine, LineType, OtherLine, TableColumnLine } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { $blankLine, makeDoubleIndentBlockWithCaptureRule, makeIndentBlockWithCaptureRule } from "../util";
-import { isColumn, isSentence, isTableColumn, isTableHeaderColumn, isTableHeaderRow, isTableRow, newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import { ErrorMessage } from "../../cst/error";
-import { AttrEntry, Control, Sentences } from "../../../node/cst/inline";
-import { assertNever } from "../../../util";
-import $remarks, { remarksToLines } from "./$remarks";
-import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import { anyToLines } from "./$any";
-import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray";
-import { rangeOfELs } from "../../../node/el";
-import $article from "./$article";
-import $articleGroup from "./$articleGroup";
-import { $requireControlParagraphItem } from "./$paragraphItem";
-import $figStruct from "./$figStruct";
-import { mergeAdjacentTextsWithString } from "../../cst/util";
-import { __Text } from "../../../node/el/controls";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { BlankLine, LineType, OtherLine, TableColumnLine } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $blankLine, makeDoubleIndentBlockWithCaptureRule, makeIndentBlockWithCaptureRule } from "../util.ts";
+import { isColumn, isSentence, isTableColumn, isTableHeaderColumn, isTableHeaderRow, isTableRow, newStdEL } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import { ErrorMessage } from "../../cst/error.ts";
+import { AttrEntry, Control, Sentences } from "../../../node/cst/inline.ts";
+import { assertNever } from "../../../util/index.ts";
+import $remarks, { remarksToLines } from "./$remarks.ts";
+import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences.ts";
+import { anyToLines } from "./$any.ts";
+import { forceSentencesArrayToSentenceChildren } from "../../cst/rules/$sentencesArray.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
+import $article from "./$article.ts";
+import $articleGroup from "./$articleGroup.ts";
+import { $requireControlParagraphItem } from "./$paragraphItem.ts";
+import $figStruct from "./$figStruct.ts";
+import { mergeAdjacentTextsWithString } from "../../cst/util.ts";
+import { __Text } from "../../../node/el/controls/index.ts";
 
 
 /**

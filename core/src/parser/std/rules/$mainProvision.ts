@@ -1,16 +1,16 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { BlankLine } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { $blankLine } from "../util";
-import { isArticle, isArticleGroup, isParagraph, isParagraphItem, isParagraphItemTitle, newStdEL } from "../../../law/std";
-import * as std from "../../../law/std";
-import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem";
-import { assertNever } from "../../../util";
-import $article, { articleToLines } from "./$article";
-import $articleGroup, { articleGroupToLines } from "./$articleGroup";
-import CST from "../toCSTSettings";
-import { rangeOfELs } from "../../../node/el";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { BlankLine } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $blankLine } from "../util.ts";
+import { isArticle, isArticleGroup, isParagraph, isParagraphItem, isParagraphItemTitle, newStdEL } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import $paragraphItem, { $noControlAnonymParagraph, paragraphItemToLines } from "./$paragraphItem.ts";
+import { assertNever } from "../../../util/index.ts";
+import $article, { articleToLines } from "./$article.ts";
+import $articleGroup, { articleGroupToLines } from "./$articleGroup.ts";
+import CST from "../toCSTSettings.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
 
 /**
  * The renderer for {@link std.MainProvision}. Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$mainProvision.spec.ts) for examples.

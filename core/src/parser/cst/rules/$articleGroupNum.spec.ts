@@ -1,8 +1,8 @@
 import { assert } from "chai";
-import { matchResultToJson } from "generic-parser/lib/core";
-import { initialEnv } from "../env";
-import type { ErrorMessage } from "../error";
-import $articleGroupNum from "./$articleGroupNum";
+import { matchResultToJson } from "generic-parser/lib/core/index.js";
+import { initialEnv } from "../env.ts";
+import type { ErrorMessage } from "../error.ts";
+import $articleGroupNum from "./$articleGroupNum.ts";
 
 const env = initialEnv({});
 

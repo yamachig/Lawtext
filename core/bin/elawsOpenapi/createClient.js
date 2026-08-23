@@ -1,6 +1,6 @@
 import { createClient } from "@hey-api/openapi-ts";
 import fs from "node:fs";
-import path from "node:path";
+import path from "path";
 
 const createElawsOpenapiClient = async () => {
     const url = "https://laws.e-gov.go.jp/api/2/swagger-ui/lawapi-v2.yaml";

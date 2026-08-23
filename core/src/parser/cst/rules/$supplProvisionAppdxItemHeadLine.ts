@@ -1,17 +1,17 @@
-import factory from "../factory";
-import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren";
-import $indents from "./$indents";
-import { SupplProvisionAppdxItemHeadLine } from "../../../node/cst/line";
-import { $_EOL } from "./lexical";
-import type { WithErrorRule } from "../util";
-import { mergeAdjacentTexts } from "../util";
-import { __Parentheses } from "../../../node/el/controls";
-import { $autoTagControl, $supplProvisionAppdxControl, $supplProvisionAppdxStyleControl, $supplProvisionAppdxTableControl } from "./$tagControl";
-import type { ChoiceRule } from "generic-parser/lib/rules/choice";
-import type { ErrorMessage } from "../error";
-import type { Control } from "../../../node/cst/inline";
-import type { supplProvisionAppdxItemTags } from "../../../law/std";
-import type { Env } from "../env";
+import factory from "../factory.ts";
+import { $sentenceChildrenWithoutToplevelInlineToken } from "./$sentenceChildren.ts";
+import $indents from "./$indents.ts";
+import { SupplProvisionAppdxItemHeadLine } from "../../../node/cst/line.ts";
+import { $_EOL } from "./lexical.ts";
+import type { WithErrorRule } from "../util.ts";
+import { mergeAdjacentTexts } from "../util.ts";
+import { __Parentheses } from "../../../node/el/controls/index.ts";
+import { $autoTagControl, $supplProvisionAppdxControl, $supplProvisionAppdxStyleControl, $supplProvisionAppdxTableControl } from "./$tagControl.ts";
+import type { ChoiceRule } from "generic-parser/lib/rules/choice.js";
+import type { ErrorMessage } from "../error.ts";
+import type { Control } from "../../../node/cst/inline.ts";
+import type { supplProvisionAppdxItemTags } from "../../../law/std/index.ts";
+import type { Env } from "../env.ts";
 
 export const supplProvisionAppdxItemTitlePtns = [
     ["SupplProvisionAppdx", /^[付附]則[付附]録/],

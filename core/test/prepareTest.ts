@@ -1,8 +1,8 @@
-import fs from "fs";
-import { promisify } from "util";
-import { download, saveList } from "../src/data/saveFs";
-import { ProgressBar } from "../src/util/term";
-import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader";
+import fs from "node:fs";
+import { promisify } from "node:util";
+import { download, saveList } from "../src/data/saveFs.ts";
+import { ProgressBar } from "../src/util/term.ts";
+import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader.ts";
 // import { before } from "mocha";
 import dotenv from "dotenv";
 dotenv.config();
@@ -41,7 +41,7 @@ export const prepare = async (loader: FSStoredLoader): Promise<void> => {
     }
 };
 
-if (typeof require !== "undefined" && require.main === module) {
+if (import.meta.main) {
     console.log("running prepare() from toplevel.");
     process.on("unhandledRejection", e => {
         // const newErr = new Error(`Unhandled rejection in prepare(): ${e}`);

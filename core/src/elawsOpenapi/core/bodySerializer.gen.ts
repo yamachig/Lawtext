@@ -1,6 +1,6 @@
 // This file is auto-generated from https://laws.e-gov.go.jp/api/2/swagger-ui/lawapi-v2.yaml
 
-import type { ArrayStyle, ObjectStyle, SerializerOptions } from './pathSerializer.gen';
+import type { ArrayStyle, ObjectStyle, SerializerOptions } from './pathSerializer.gen.js';
 
 export type QuerySerializer = (query: Record<string, unknown>) => string;
 

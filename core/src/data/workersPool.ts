@@ -1,7 +1,7 @@
-import type { URL } from "url";
-import type { WorkerOptions } from "worker_threads";
-import { Worker } from "worker_threads";
-import { range } from "../util";
+import type { URL } from "node:url";
+import type { WorkerOptions } from "node:worker_threads";
+import { Worker } from "node:worker_threads";
+import { range } from "../util/index.ts";
 
 
 export class WorkersPool<TInput, TResult> {

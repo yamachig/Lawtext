@@ -1,7 +1,7 @@
-import { parse as cstParse } from "./cst/parse";
-import { initialEnv } from "./std/env";
-import $law from "./std/rules/$law";
-import { toVirtualLines } from "./std/virtualLine";
+import { parse as cstParse } from "./cst/parse.ts";
+import { initialEnv } from "./std/env.ts";
+import $law from "./std/rules/$law.ts";
+import { toVirtualLines } from "./std/virtualLine.ts";
 
 export const parse = (lawtext: string) => {
     const lines = cstParse(lawtext);

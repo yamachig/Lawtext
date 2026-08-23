@@ -1,11 +1,11 @@
 import { getMemorizedStringOffsetToPos } from "generic-parser";
-import type { MatchContext } from "generic-parser/lib/core";
-import type { Line } from "../../node/cst/line";
-import type { InitialEnvOptions } from "./env";
-import { initialEnv } from "./env";
-import factory from "./factory";
-import $lines from "./rules/$lines";
-import type { WithErrorRule } from "./util";
+import type { MatchContext } from "generic-parser/lib/core/index.js";
+import type { Line } from "../../node/cst/line.ts";
+import type { InitialEnvOptions } from "./env.ts";
+import { initialEnv } from "./env.ts";
+import factory from "./factory.ts";
+import $lines from "./rules/$lines.ts";
+import type { WithErrorRule } from "./util.ts";
 
 const makeMatchContextString = (context: MatchContext, target: string): string => {
     const { offset, prevRule, prevContext } = context;

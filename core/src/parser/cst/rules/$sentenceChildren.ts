@@ -1,22 +1,22 @@
 /* eslint-disable no-irregular-whitespace */
-import type { __EL } from "../../../law/std";
-import { isSub } from "../../../law/std";
-import type { ParenthesesType } from "../../../node/el/controls";
-import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____Declaration } from "../../../node/el/controls";
-import { EL } from "../../../node/el";
-import { assertNever } from "../../../util";
-import { factory } from "../factory";
-import type { ValueRule, WithErrorRule, WithErrorValue } from "../util";
-import { $_EOL, $__ } from "./lexical";
-import type { SentenceChildEL } from "../../../node/cst/inline";
-import * as std from "../../../law/std";
-import $xml from "./$xml";
+import type { __EL } from "../../../law/std/index.ts";
+import { isSub } from "../../../law/std/index.ts";
+import type { ParenthesesType } from "../../../node/el/controls/index.ts";
+import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __Text, ____Declaration } from "../../../node/el/controls/index.ts";
+import { EL } from "../../../node/el/index.ts";
+import { assertNever } from "../../../util/index.ts";
+import { factory } from "../factory.ts";
+import type { ValueRule, WithErrorRule, WithErrorValue } from "../util.ts";
+import { $_EOL, $__ } from "./lexical.ts";
+import type { SentenceChildEL } from "../../../node/cst/inline.ts";
+import * as std from "../../../law/std/index.ts";
+import $xml from "./$xml.ts";
 // import { pointerRangesCandidateChars, reSuppressPointerRanges } from "./$pointerRanges";
-// import { ptnLawNumLike } from "../../../law/lawNum";
-import { ErrorMessage } from "../error";
+// import { ptnLawNumLike } from "../../../law/lawNum.ts";
+import { ErrorMessage } from "../error.ts";
 import type { Empty, MatchResult, MatchSuccess } from "generic-parser";
 import { Rule } from "generic-parser";
-import type { Env } from "../env";
+import type { Env } from "../env.ts";
 
 
 export const sentenceChildrenToString = ( els: (string | SentenceChildEL)[]): string => {

@@ -1,22 +1,22 @@
-import { factory } from "../factory";
-import type { Line } from "../../../node/cst/line";
-import { LineType, OtherLine } from "../../../node/cst/line";
-import type { WithErrorRule } from "../util";
-import { $blankLine, makeIndentBlockWithCaptureRule } from "../util";
-import type { StdELType } from "../../../law/std";
-import { isNoteLike, isNoteLikeStructTitle, newStdEL, noteLikeStructTags, noteLikeStructTitleTags } from "../../../law/std";
-import * as std from "../../../law/std";
-import CST from "../toCSTSettings";
-import type { ErrorMessage } from "../../cst/error";
-import { Control, Sentences } from "../../../node/cst/inline";
-import { rangeOfELs } from "../../../node/el";
-import { assertNever } from "../../../util";
-import $remarks, { remarksToLines } from "./$remarks";
-import $any, { anyToLines } from "./$any";
-import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray";
-import { columnsOrSentencesToSentencesArray } from "./columnsOrSentences";
-import parseCST from "../../cst/parse";
-import { ignoreTitleControl } from "../../cst/rules/$otherLine";
+import { factory } from "../factory.ts";
+import type { Line } from "../../../node/cst/line.ts";
+import { LineType, OtherLine } from "../../../node/cst/line.ts";
+import type { WithErrorRule } from "../util.ts";
+import { $blankLine, makeIndentBlockWithCaptureRule } from "../util.ts";
+import type { StdELType } from "../../../law/std/index.ts";
+import { isNoteLike, isNoteLikeStructTitle, newStdEL, noteLikeStructTags, noteLikeStructTitleTags } from "../../../law/std/index.ts";
+import * as std from "../../../law/std/index.ts";
+import CST from "../toCSTSettings.ts";
+import type { ErrorMessage } from "../../cst/error.ts";
+import { Control, Sentences } from "../../../node/cst/inline.ts";
+import { rangeOfELs } from "../../../node/el/index.ts";
+import { assertNever } from "../../../util/index.ts";
+import $remarks, { remarksToLines } from "./$remarks.ts";
+import $any, { anyToLines } from "./$any.ts";
+import { forceSentencesArrayToSentenceChildren, sentencesArrayToString } from "../../cst/rules/$sentencesArray.ts";
+import { columnsOrSentencesToSentencesArray } from "./columnsOrSentences.ts";
+import parseCST from "../../cst/parse.ts";
+import { ignoreTitleControl } from "../../cst/rules/$otherLine.ts";
 
 /**
  * The renderer for note-like item ({@link std.NoteLike | NoteLike}). Please see the source code for the detailed syntax, and the [test code](https://github.com/yamachig/Lawtext/blob/main/core/src/parser/std/rules/$noteLike.spec.ts) for examples.

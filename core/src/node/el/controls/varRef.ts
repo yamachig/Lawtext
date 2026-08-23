@@ -1,5 +1,5 @@
-import { EL } from "..";
-import type { SentenceTextRange } from "../../container/sentenceEnv";
+import { EL } from "../index.ts";
+import type { SentenceTextRange } from "../../container/sentenceEnv.ts";
 
 
 export interface VarRefOptions {

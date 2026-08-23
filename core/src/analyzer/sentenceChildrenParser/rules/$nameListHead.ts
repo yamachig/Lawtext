@@ -1,7 +1,7 @@
-// import * as std from "../../../law/std";
-import { __Text, ____PointerRanges } from "../../../node/el/controls";
-import factory from "../factory";
-import type { WithErrorRule } from "../util";
+// import * as std from "../../../law/std/index.ts";
+import { __Text, ____PointerRanges } from "../../../node/el/controls/index.ts";
+import factory from "../factory.ts";
+import type { WithErrorRule } from "../util.ts";
 
 const reAfterScope = /(?:の規定)?/;
 const reAfterInferior = /(?:において|中(?:の)?|の|における)(?:(?:使用する)?用語は)?(?:解釈に(?:関して|ついて)は)?(?:、)?/;

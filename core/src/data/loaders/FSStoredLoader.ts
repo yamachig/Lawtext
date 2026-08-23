@@ -1,12 +1,12 @@
 
-import type { LawInfosStruct } from "./common";
-import { csvTextToLawInfos, jsonTextToLawInfos, LawXMLStruct, Loader } from "./common";
-import type { BaseLawInfo } from "../lawinfo";
-import * as data_paths from "../paths";
-import { promisify } from "util";
-import fs from "fs";
+import type { LawInfosStruct } from "./common.ts";
+import { csvTextToLawInfos, jsonTextToLawInfos, LawXMLStruct, Loader } from "./common.ts";
+import type { BaseLawInfo } from "../lawinfo.ts";
+import * as data_paths from "../paths.ts";
+import { promisify } from "node:util";
+import fs from "node:fs";
 import path from "path";
-import { pictMimeDict } from "../../util";
+import { pictMimeDict } from "../../util/index.ts";
 
 const readText = async (textPath: string) => {
     try {

@@ -1,7 +1,7 @@
 import { assert } from "chai";
-import { initialEnv } from "../env";
-import type { ErrorMessage } from "../error";
-import $indents from "./$indents";
+import { initialEnv } from "../env.ts";
+import type { ErrorMessage } from "../error.ts";
+import $indents from "./$indents.ts";
 
 const env = initialEnv({});
 

@@ -1,8 +1,8 @@
 
 import yargs from "yargs";
-import { ProgressBar } from "../src/util/term";
-import * as save_fs from "../src/data/saveFs";
-import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader";
+import { ProgressBar } from "../src/util/term.ts";
+import * as save_fs from "../src/data/saveFs.ts";
+import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader.ts";
 
 const bar = new ProgressBar();
 const progress = bar.progress.bind(bar);
@@ -46,7 +46,7 @@ const main = async (): Promise<void> => {
     }
 };
 
-if (typeof require !== "undefined" && require.main === module) {
+if (import.meta.main) {
     process.on("unhandledRejection", e => {
         console.dir(e);
         process.exit(1);

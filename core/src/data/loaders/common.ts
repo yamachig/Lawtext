@@ -1,5 +1,5 @@
-import type { BaseLawInfo, LawList } from "../lawinfo";
-import { LawInfo, LawListGenerator } from "../lawinfo";
+import type { BaseLawInfo, LawList } from "../lawinfo.ts";
+import { LawInfo, LawListGenerator } from "../lawinfo.ts";
 
 export interface LawInfosStruct {
     lawInfos: LawInfo[],

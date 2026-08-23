@@ -1,10 +1,10 @@
 import { assert } from "chai";
-import { initialEnv } from "../env";
-import type * as std from "../../../law/std";
-import $sentencesArray, { sentencesArrayToString } from "./$sentencesArray";
-import type { ErrorMessage } from "../error";
-import loadEL from "../../../node/el/loadEL";
-import { matchResultToJson } from "generic-parser/lib/core";
+import { initialEnv } from "../env.ts";
+import type * as std from "../../../law/std/index.ts";
+import $sentencesArray, { sentencesArrayToString } from "./$sentencesArray.ts";
+import type { ErrorMessage } from "../error.ts";
+import loadEL from "../../../node/el/loadEL.ts";
+import { matchResultToJson } from "generic-parser/lib/core/index.js";
 
 const env = initialEnv({});
 

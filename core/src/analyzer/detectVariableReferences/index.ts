@@ -1,19 +1,19 @@
 
-import type * as std from "../../law/std";
-import type { Declarations } from "../common/declarations";
-import { ____VarRef } from "../../node/el/controls/varRef";
-import type { SentenceEnvsStruct } from "../getSentenceEnvs";
-import type { ____LawRef } from "../../node/el/controls";
-import type { ____Declaration } from "../../node/el/controls";
-import { ____PointerRanges, __Parentheses, __Text } from "../../node/el/controls";
-import type { WithErrorValue } from "../../parser/std/util";
-import type { SentenceChildEL } from "../../node/cst/inline";
-import { ErrorMessage } from "../../parser/cst/error";
-import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
-import { isSentenceText, toSentenceTextRanges } from "../../node/container/sentenceEnv";
-import { isIgnoreAnalysis } from "../common";
-import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
-import getScope from "../pointerEnvs/getScope";
+import type * as std from "../../law/std/index.ts";
+import type { Declarations } from "../common/declarations.ts";
+import { ____VarRef } from "../../node/el/controls/varRef.ts";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs.ts";
+import type { ____LawRef } from "../../node/el/controls/index.ts";
+import type { ____Declaration } from "../../node/el/controls/index.ts";
+import { ____PointerRanges, __Parentheses, __Text } from "../../node/el/controls/index.ts";
+import type { WithErrorValue } from "../../parser/std/util.ts";
+import type { SentenceChildEL } from "../../node/cst/inline.ts";
+import { ErrorMessage } from "../../parser/cst/error.ts";
+import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv.ts";
+import { isSentenceText, toSentenceTextRanges } from "../../node/container/sentenceEnv.ts";
+import { isIgnoreAnalysis } from "../common/index.ts";
+import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs.ts";
+import getScope from "../pointerEnvs/getScope.ts";
 
 const isWordLikeCharForShortNameBoundary = (char: string): boolean => (
     /^[\u3400-\u9fff\uf900-\ufaff々〆ヵヶァ-ヶｦ-ﾟA-Za-z0-9０-９Ａ-Ｚａ-ｚ]$/u.test(char)

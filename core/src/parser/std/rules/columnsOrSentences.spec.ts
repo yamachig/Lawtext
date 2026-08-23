@@ -1,9 +1,9 @@
 import { assert } from "chai";
-import { initialEnv as cstInitialEnv } from "../../cst/env";
-import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences";
-import $sentencesArray, { sentencesArrayToString } from "../../cst/rules/$sentencesArray";
-import type * as std from "../../../law/std";
-import loadEL from "../../../node/el/loadEL";
+import { initialEnv as cstInitialEnv } from "../../cst/env.ts";
+import { columnsOrSentencesToSentencesArray, sentencesArrayToColumnsOrSentences } from "./columnsOrSentences.ts";
+import $sentencesArray, { sentencesArrayToString } from "../../cst/rules/$sentencesArray.ts";
+import type * as std from "../../../law/std/index.ts";
+import loadEL from "../../../node/el/loadEL.ts";
 
 const cstEnv = cstInitialEnv({});
 

@@ -1,4 +1,4 @@
-import type { JsonEL } from "./jsonEL";
+import type { JsonEL } from "./jsonEL.ts";
 
 const xmlReplacers: Record<string, string> = {
     "<": "&lt;",

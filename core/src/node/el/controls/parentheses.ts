@@ -1,5 +1,5 @@
-import { EL } from "..";
-import type { SentenceChildEL } from "../../cst/inline";
+import { EL } from "../index.ts";
+import type { SentenceChildEL } from "../../cst/inline.ts";
 
 export const parenthesesTypeStrings = [
     "round",

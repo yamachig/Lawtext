@@ -1,13 +1,18 @@
-import { assertNever } from "../util";
-import type { EL } from "../node/el";
-import { LawInfo } from "./lawinfo";
-import type { Loader } from "./loaders/common";
-import { FetchElawsLoader, fetchLawData } from "./loaders/FetchElawsLoader";
-import type { WorkersPool } from "./workersPool";
-import { elementToEL } from "../node/el/xmlToEL";
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const DOMParser: typeof window.DOMParser = (global["window"] && window.DOMParser) || require("@xmldom/xmldom").DOMParser;
-const domParser = new DOMParser();
+import { assertNever } from "../util/index.ts";
+import type { EL } from "../node/el/index.ts";
+import { LawInfo } from "./lawinfo.ts";
+import type { Loader } from "./loaders/common.ts";
+import { FetchElawsLoader, fetchLawData } from "./loaders/FetchElawsLoader.ts";
+import type { WorkersPool } from "./workersPool.ts";
+import { elementToEL } from "../node/el/xmlToEL.ts";
+const domParserCache: { value: DOMParser | null } = { value: null };
+const getDomParser = async () => {
+    if (!domParserCache.value) {
+        const DOMParser = (global["window"] && window.DOMParser) || (await import("@xmldom/xmldom")).DOMParser;
+        domParserCache.value = new DOMParser();
+    }
+    return domParserCache.value;
+};
 
 interface CoreQueryCriteria<TItem> {
     match: (item: TItem) => boolean | Promise<boolean>;
@@ -611,7 +616,7 @@ export class LawQueryItem extends LawInfo implements QueryItem {
         if (this._cache.document === null) {
             const xml = await this.getXML();
             if (xml === null) return null;
-            this._cache.document = domParser.parseFromString(xml, "text/xml");
+            this._cache.document = (await getDomParser()).parseFromString(xml, "text/xml");
         }
         return this._cache.document;
     }

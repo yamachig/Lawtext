@@ -1,8 +1,8 @@
-import type { appdxItemTags, articleGroupTags, paragraphItemTags, supplProvisionAppdxItemTags } from "../../law/std";
-import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren";
-import { sentencesArrayToString } from "../../parser/cst/rules/$sentencesArray";
-import { rangeOfELs } from "../el";
-import type { AttrEntries, SentencesArray, Controls, SentenceChildEL } from "./inline";
+import type { appdxItemTags, articleGroupTags, paragraphItemTags, supplProvisionAppdxItemTags } from "../../law/std/index.ts";
+import { sentenceChildrenToString } from "../../parser/cst/rules/$sentenceChildren.ts";
+import { sentencesArrayToString } from "../../parser/cst/rules/$sentencesArray.ts";
+import { rangeOfELs } from "../el/index.ts";
+import type { AttrEntries, SentencesArray, Controls, SentenceChildEL } from "./inline.ts";
 
 /**
  * Line: the unit of a CST of the parsed lawtext.
@@ -134,7 +134,7 @@ abstract class WithControlsLine<TType extends LineType = LineType> extends Inden
 type BlankLineOptions = Omit<BaseLineOptions<never>, "type">;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $blankLine } from "../../parser/cst/rules/$blankLine";
+import { type $blankLine } from "../../parser/cst/rules/$blankLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A blank line with no printable characters. Please see the source code of {@link $blankLine} for the detailed syntax.
@@ -156,7 +156,7 @@ type TOCHeadLineOptions = Omit<WithControlsLineOptions<never>, "type"> & {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $tocHeadLine } from "../../parser/cst/rules/$tocHeadLine";
+import { type $tocHeadLine } from "../../parser/cst/rules/$tocHeadLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A head line of a TOC (Table Of Contents). Please see the source code of {@link $tocHeadLine} for the detailed syntax.
@@ -197,7 +197,7 @@ type ArticleGroupHeadLineOptions = Omit<WithControlsLineOptions<never>, "type"> 
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $articleGroupHeadLine } from "../../parser/cst/rules/$articleGroupHeadLine";
+import { type $articleGroupHeadLine } from "../../parser/cst/rules/$articleGroupHeadLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A head line of an article group (e.g. "Chapter"). Please see the source code of {@link $articleGroupHeadLine} for the detailed syntax.
@@ -238,7 +238,7 @@ type AppdxItemHeadLineOptions = Omit<WithControlsLineOptions<never>, "type"> & {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $appdxItemHeadLine } from "../../parser/cst/rules/$appdxItemHeadLine";
+import { type $appdxItemHeadLine } from "../../parser/cst/rules/$appdxItemHeadLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A head line of an appended item such as an appended table. Please see the source code of {@link $appdxItemHeadLine} for the detailed syntax.
@@ -294,7 +294,7 @@ type SupplProvisionHeadLineOptions = Omit<WithControlsLineOptions<never>, "type"
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $supplProvisionHeadLine } from "../../parser/cst/rules/$supplProvisionHeadLine";
+import { type $supplProvisionHeadLine } from "../../parser/cst/rules/$supplProvisionHeadLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A head line of a supplementary provision. Please see the source code of {@link $supplProvisionHeadLine} for the detailed syntax.
@@ -359,7 +359,7 @@ type SupplProvisionAppdxItemHeadLineOptions = Omit<WithControlsLineOptions<never
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $supplProvisionAppdxItemHeadLine } from "../../parser/cst/rules/$supplProvisionAppdxItemHeadLine";
+import { type $supplProvisionAppdxItemHeadLine } from "../../parser/cst/rules/$supplProvisionAppdxItemHeadLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A head line of an appended item in a supplementary provision. Please see the source code of {@link $supplProvisionAppdxItemHeadLine} for the detailed syntax.
@@ -412,7 +412,7 @@ type ArticleLineOptions = Omit<IndentsLineOptions<never>, "type"> & {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $articleLine } from "../../parser/cst/rules/$articleLine";
+import { type $articleLine } from "../../parser/cst/rules/$articleLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A first line of an article. Please see the source code of {@link $articleLine} for the detailed syntax.
@@ -474,7 +474,7 @@ type ParagraphItemLineOptions<TTag extends (typeof paragraphItemTags)[number] | 
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $paragraphItemLine } from "../../parser/cst/rules/$paragraphItemLine";
+import { type $paragraphItemLine } from "../../parser/cst/rules/$paragraphItemLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A first line of a paragraph, item, and subitem. Please see the source code of {@link $paragraphItemLine} for the detailed syntax.
@@ -548,7 +548,7 @@ type TableColumnLineOptions = Omit<IndentsLineOptions<never>, "type"> & {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $tableColumnLine } from "../../parser/cst/rules/$tableColumnLine";
+import { type $tableColumnLine } from "../../parser/cst/rules/$tableColumnLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A line of table column. Please see the source code of {@link $tableColumnLine} for the detailed syntax.
@@ -654,7 +654,7 @@ type OtherLineOptions = Omit<WithControlsLineOptions<never>, "type"> & {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type $otherLine } from "../../parser/cst/rules/$otherLine";
+import { type $otherLine } from "../../parser/cst/rules/$otherLine.ts";
 /* eslint-disable tsdoc/syntax */
 /**
  * A line of other types. Please see the source code of {@link $otherLine} for the detailed syntax.

@@ -1,5 +1,5 @@
-const { buildLawList: _buildLawList } = require("./lawList.js");
-const { defaultBasePath: _defaultBasePath } = require("./defaultBasePath.js");
+import { buildLawList as _buildLawList } from "./lawList.js";
+import { defaultBasePath as _defaultBasePath } from "./defaultBasePath.js";
 
 const buildLawList = _buildLawList;
 const defaultBasePath = _defaultBasePath;
@@ -13,13 +13,9 @@ const build = async (basePath = defaultBasePath) => {
     await buildLawList(basePath);
 };
 
-module.exports = {
-    buildLawList,
-    defaultBasePath,
-    build,
-};
+export { buildLawList, defaultBasePath, build };
 
-if (typeof require !== "undefined" && require.main === module) {
+if (import.meta.main) {
     build().catch(console.error);
 }
 

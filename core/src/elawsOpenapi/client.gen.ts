@@ -1,7 +1,7 @@
 // This file is auto-generated from https://laws.e-gov.go.jp/api/2/swagger-ui/lawapi-v2.yaml
 
-import { type Client, type ClientOptions, type Config, createClient, createConfig } from './client';
-import type { ClientOptions as ClientOptions2 } from './types.gen';
+import { type Client, type ClientOptions, type Config, createClient, createConfig } from './client/index.js';
+import type { ClientOptions as ClientOptions2 } from './types.gen.js';
 
 /**
  * The `createClientConfig()` function will be called on client initialization

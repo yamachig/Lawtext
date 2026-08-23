@@ -1,17 +1,17 @@
 import React from "react";
 import { assert } from "chai";
-import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun";
-import loadEL from "../../node/el/loadEL";
-import type * as std from "../../law/std";
-import { renderToStaticMarkup } from "../common";
-import formatXML from "../../util/formatXml";
-import htmlCSS from "./htmlCSS";
+import { DOCXQuoteStructRun, HTMLQuoteStructRun } from "./quoteStructRun.tsx";
+import loadEL from "../../node/el/loadEL.ts";
+import type * as std from "../../law/std/index.ts";
+import { renderToStaticMarkup } from "../common/index.tsx";
+import formatXML from "../../util/formatXml.ts";
+import htmlCSS from "./htmlCSS.tsx";
 import path from "path";
-import { promisify } from "util";
-import fs from "fs";
-import ensureTempTestDir from "../../../test/ensureTempTestDir";
-import { renderDocxAsync } from "../common/docx/file";
-import { w } from "../common/docx/tags";
+import { promisify } from "node:util";
+import fs from "node:fs";
+import ensureTempTestDir from "../../../test/ensureTempTestDir.ts";
+import { renderDocxAsync } from "../common/docx/file.tsx";
+import { w } from "../common/docx/tags.ts";
 
 describe("Test HTML quoteStructRun", () => {
     /* eslint-disable no-irregular-whitespace */

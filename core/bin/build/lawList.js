@@ -1,8 +1,8 @@
-const fs = require("fs");
-const path = require("path");
-const { promisify } = require("util");
-const { fetch } = require("../../src/util/node-fetch/index.js");
-const { defaultBasePath } = require("./defaultBasePath.js");
+import fs from "node:fs";
+import path from "path";
+import { promisify } from "node:util";
+import { fetch } from "../../src/util/node-fetch/index.js";
+import { defaultBasePath } from "./defaultBasePath.js";
 
 /**
  * @param {string} basePath
@@ -30,10 +30,8 @@ const buildLawList = async (basePath = defaultBasePath) => {
     await promisify(fs.writeFile)(destPath, JSON.stringify(lawList));
 };
 
-module.exports = {
-    buildLawList: buildLawList,
-};
+export { buildLawList };
 
-if (typeof require !== "undefined" && require.main === module) {
+if (import.meta.main) {
     buildLawList().catch(console.error);
 }

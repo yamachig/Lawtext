@@ -1,10 +1,10 @@
-import factory from "../factory";
-import $indents from "./$indents";
-import { TableColumnLine } from "../../../node/cst/line";
-import { $_, $_EOL } from "./lexical";
-import $squareAttr from "./$squareAttr";
-import $columnsOrSentences from "./$sentencesArray";
-import type { WithErrorRule } from "../util";
+import factory from "../factory.ts";
+import $indents from "./$indents.ts";
+import { TableColumnLine } from "../../../node/cst/line.ts";
+import { $_, $_EOL } from "./lexical.ts";
+import $squareAttr from "./$squareAttr.ts";
+import $columnsOrSentences from "./$sentencesArray.ts";
+import type { WithErrorRule } from "../util.ts";
 
 
 /**

@@ -1,9 +1,9 @@
-import { containerTags, Container, ContainerType } from "../node/container";
-import type { EL } from "../node/el";
-import { isIgnoreAnalysis } from "./common";
-import { isSentenceLike, SentenceEnv } from "../node/container/sentenceEnv";
-import * as std from "../law/std";
-import { parseNamedNum } from "../law/num";
+import { containerTags, Container, ContainerType } from "../node/container/index.ts";
+import type { EL } from "../node/el/index.ts";
+import { isIgnoreAnalysis } from "./common/index.ts";
+import { isSentenceLike, SentenceEnv } from "../node/container/sentenceEnv.ts";
+import * as std from "../law/std/index.ts";
+import { parseNamedNum } from "../law/num.ts";
 
 export interface SentenceEnvsStruct {
     sentenceEnvs: SentenceEnv[];

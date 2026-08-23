@@ -1,4 +1,4 @@
-import { EL } from "..";
+import { EL } from "../index.ts";
 
 
 export interface LawRefOptions {

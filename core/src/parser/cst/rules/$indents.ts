@@ -1,5 +1,5 @@
-import factory from "../factory";
-import type { WithErrorRule } from "../util";
+import factory from "../factory.ts";
+import type { WithErrorRule } from "../util.ts";
 
 export const $indents: WithErrorRule<{indentTexts: string[], indentDepth: number}> = factory
     .withName("indent")

@@ -1,16 +1,16 @@
-import type { WithErrorValue } from "../../parser/std/util";
-import { ErrorMessage } from "../../parser/cst/error";
-import { __Text, ____Declaration, ____LawNum, ____LawRef } from "../../node/el/controls";
-import $lawRef from "../sentenceChildrenParser/rules/$lawRef";
-import { initialEnv } from "../sentenceChildrenParser/env";
-import type { SentenceChildEL } from "../../node/cst/inline";
-import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv";
-import { toSentenceTextRanges } from "../../node/container/sentenceEnv";
-import * as std from "../../law/std";
-import type { SentenceEnvsStruct } from "../getSentenceEnvs";
-import getScope from "../pointerEnvs/getScope";
-import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs";
-import { lawNumLikeToLawNum } from "../../law/lawNum";
+import type { WithErrorValue } from "../../parser/std/util.ts";
+import { ErrorMessage } from "../../parser/cst/error.ts";
+import { __Text, ____Declaration, ____LawNum, ____LawRef } from "../../node/el/controls/index.ts";
+import $lawRef from "../sentenceChildrenParser/rules/$lawRef.ts";
+import { initialEnv } from "../sentenceChildrenParser/env.ts";
+import type { SentenceChildEL } from "../../node/cst/inline.ts";
+import type { SentenceEnv, SentenceTextRange } from "../../node/container/sentenceEnv.ts";
+import { toSentenceTextRanges } from "../../node/container/sentenceEnv.ts";
+import * as std from "../../law/std/index.ts";
+import type { SentenceEnvsStruct } from "../getSentenceEnvs.ts";
+import getScope from "../pointerEnvs/getScope.ts";
+import type { PointerEnvsStruct } from "../pointerEnvs/getPointerEnvs.ts";
+import { lawNumLikeToLawNum } from "../../law/lawNum.ts";
 import type { ValueOfRule } from "generic-parser";
 
 const getSuggestedLawTitleInfo = (options: {

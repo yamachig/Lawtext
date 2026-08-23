@@ -1,24 +1,24 @@
-import { range } from "../../util";
-import { HTMLAmendProvisionCSS } from "./amendProvision";
-import { HTMLAnyELsCSS } from "./any";
-import { HTMLAppdxItemCSS } from "./appdxItem";
-import { HTMLArithFormulaRunCSS } from "./arithFormulaRun";
-import { HTMLArticleCSS } from "./article";
-import { HTMLArticleGroupCSS } from "./articleGroup";
-import { HTMLColumnsOrSentencesRunCSS } from "./columnsOrSentencesRun";
-import { HTMLControlRunCSS } from "./controlRun";
-import { HTMLFigRunCSS } from "./figRun";
-import { HTMLItemStructCSS } from "./itemStruct";
-import { HTMLEnactStatementCSS, HTMLLawCSS, HTMLPreambleCSS } from "./law";
-import { HTMLListCSS } from "./list";
-import { HTMLNoteLikeCSS } from "./noteLike";
-import { HTMLParagraphItemCSS } from "./paragraphItem";
-import { HTMLQuoteStructRunCSS } from "./quoteStructRun";
-import { HTMLRemarksCSS } from "./remarks";
-import { HTMLSentenceChildrenRunCSS } from "./sentenceChildrenRun";
-import { HTMLSupplNoteCSS } from "./supplNote";
-import { HTMLTableCSS } from "./table";
-import { HTMLTOCCSS } from "./toc";
+import { range } from "../../util/index.ts";
+import { HTMLAmendProvisionCSS } from "./amendProvision.tsx";
+import { HTMLAnyELsCSS } from "./any.tsx";
+import { HTMLAppdxItemCSS } from "./appdxItem.tsx";
+import { HTMLArithFormulaRunCSS } from "./arithFormulaRun.tsx";
+import { HTMLArticleCSS } from "./article.tsx";
+import { HTMLArticleGroupCSS } from "./articleGroup.tsx";
+import { HTMLColumnsOrSentencesRunCSS } from "./columnsOrSentencesRun.tsx";
+import { HTMLControlRunCSS } from "./controlRun.tsx";
+import { HTMLFigRunCSS } from "./figRun.tsx";
+import { HTMLItemStructCSS } from "./itemStruct.tsx";
+import { HTMLEnactStatementCSS, HTMLLawCSS, HTMLPreambleCSS } from "./law.tsx";
+import { HTMLListCSS } from "./list.tsx";
+import { HTMLNoteLikeCSS } from "./noteLike.tsx";
+import { HTMLParagraphItemCSS } from "./paragraphItem.tsx";
+import { HTMLQuoteStructRunCSS } from "./quoteStructRun.tsx";
+import { HTMLRemarksCSS } from "./remarks.tsx";
+import { HTMLSentenceChildrenRunCSS } from "./sentenceChildrenRun.tsx";
+import { HTMLSupplNoteCSS } from "./supplNote.tsx";
+import { HTMLTableCSS } from "./table.tsx";
+import { HTMLTOCCSS } from "./toc.tsx";
 
 export const HTMLIndentCSS = [...range(0, 30)]
     .map(indent => /*css*/`
