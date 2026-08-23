@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @stylistic/js/quote-props */
-const path = require("path");
-const webpack = require("webpack");
-const TerserPlugin = require("terser-webpack-plugin");
+import path from "path";
+import webpack from "webpack";
+import TerserPlugin from "terser-webpack-plugin";
 
-const rootDir = path.dirname(__dirname);
+const rootDir = path.dirname(import.meta.dirname);
 
 /** @returns {import("webpack").Configuration} */
-module.exports = (env, argv) => {
+export default (env, argv) => {
     const distDir = path.resolve(
         rootDir,
         (argv.mode === "development") ? "dist-bundle-dev" : "dist-bundle-prod",
@@ -27,6 +27,9 @@ module.exports = (env, argv) => {
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
+            extensionAlias: {
+                ".js": [".js", ".ts", ".tsx"],
+            },
             alias: {
                 "node-fetch": false,
                 "fs": false,
@@ -34,7 +37,7 @@ module.exports = (env, argv) => {
                 "pdfjs-dist": false,
             },
             fallback: {
-                "path": require.resolve("path-browserify"),
+                "path": import.meta.resolve("path-browserify"),
             },
         },
         module: {

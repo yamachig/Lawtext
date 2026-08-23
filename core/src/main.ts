@@ -265,11 +265,7 @@ export const main = async (): Promise<void> => {
     }
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const mainModule = (typeof __non_webpack_require__ !== "undefined") ? __non_webpack_require__.main : require.main;
-
-if (mainModule?.filename === __filename) {
+if (import.meta.main) {
     process.on("unhandledRejection", e => {
         console.dir(e);
         process.exit(1);

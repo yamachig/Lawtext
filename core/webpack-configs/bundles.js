@@ -1,4 +1,7 @@
-module.exports = [
-    require("./bundle-node"),
-    require("./bundle-browser"),
+import bundleNode from "./bundle-node.js";
+import bundleBrowser from "./bundle-browser.js";
+
+export default [
+    bundleNode,
+    bundleBrowser,
 ];
