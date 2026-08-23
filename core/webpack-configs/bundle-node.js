@@ -15,11 +15,16 @@ export default (env, argv) => {
         target: "node",
         mode: (argv.mode === "development") ? "development" : "production",
         entry: [path.resolve(rootDir, "./src/main.ts")],
+        experiments: {
+            outputModule: true,
+        },
         output: {
-            filename: "node/lawtext_cli.cjs",
+            filename: "node/lawtext_cli.mjs",
             path: distDir,
+            module: true,
+            chunkFormat: "module",
             library: {
-                type: "commonjs2",
+                type: "module",
             },
         },
         resolve: {
@@ -37,6 +42,11 @@ export default (env, argv) => {
         },
         module: {
             rules: [{ test: /\.tsx?$/, use: "ts-loader" }],
+            parser: {
+                javascript: {
+                    importMeta: false,
+                },
+            },
         },
         plugins: [
             new webpack.optimize.LimitChunkCountPlugin({

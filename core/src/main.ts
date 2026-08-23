@@ -195,7 +195,7 @@ export const runCLI = async (args: RunCLIArgs) => {
 
 export const main = async (): Promise<void> => {
 
-    const args = yargs()
+    const args = yargs(process.argv.slice(2))
         .option("input", {
             alias: "i",
             type: "string",
@@ -255,10 +255,11 @@ export const main = async (): Promise<void> => {
             type: "boolean",
             default: defaultRunCLIArgs.controlel,
             description: "If set, emit the control elements in XML or JSON output.",
-        });
+        })
+        .help();
 
     try {
-        await runCLI(await args.argv);
+        await runCLI(await args.parseAsync());
     } catch (e) {
         args.showHelp();
         throw e;
