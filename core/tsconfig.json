@@ -11,10 +11,10 @@
         "composite": true,
         "allowJs": true,
         "declaration": true,
+        "declarationMap": true,
 
+        "rootDir": "./src",
         "outDir": "dist",
-        // "paths": {"@coresrc/*": ["src/*"]},
-        // "rootDirs": ["src", "bin", "test"],
 
         "skipLibCheck": true,
 
@@ -38,8 +38,7 @@
     },
     "include": [
         "src/**/*",
-        "src/**/*.json",
-        "bin/**/*"
+        "src/**/*.json"
     ],
     "exclude": [
         "**/* copy.*",

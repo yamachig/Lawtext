@@ -1,7 +1,10 @@
 import * as fs from "node:fs";
-import type { EL } from "../src/node/el/index.ts";
-import path from "path";
+import path from "node:path";
 import { xmlToEL } from "../src/node/el/xmlToEL.ts";
+
+/**
+ * @typedef {import("../src/node/el/index.ts").EL} EL
+ */
 
 // const Node = {
 //     TEXT_NODE: 3,
@@ -17,11 +20,16 @@ while (!fs.existsSync(path.join(rootDir, "package.json"))) {
 
 const schema = xmlToEL(fs.readFileSync(path.join(rootDir, "/bin/stdLaw.xsd"), "utf-8"));
 
-const elementIfs: string[] = [];
-const newStdELConditions: string[] = [];
-const stdElTags: string[] = [];
+const elementIfs = [];
+const newStdELConditions = [];
+const stdElTags = [];
 
-function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
+/**
+ * @param {EL} el
+ * @param {string} tag
+ * @returns {Generator<EL, void, undefined>}
+ */
+function* getByTagName(el, tag) {
     for (const child of el.children) {
         if (typeof child === "string") continue;
         if (child.tag === tag) {
@@ -33,8 +41,7 @@ function* getByTagName(el: EL, tag: string): IterableIterator<EL> {
 }
 
 elementIfs.push(`\
-import { EL } from "../../node/el";
-import { Diff } from "../../util";
+import { EL } from "../../node/el/index.ts";
 `);
 elementIfs.push(`\
 export interface __EL extends EL {
@@ -103,8 +110,8 @@ const defaultAttrOf${element.attr.name ?? ""} = {
 
         if (isMixed2) childTags.add("string").add("StdEL").add("__EL");
 
-        const attrLines: string[] = [];
-        const defaultAttrLines: string[] = [];
+        const attrLines = [];
+        const defaultAttrLines = [];
         for (const attr of getByTagName(element, "xs:attribute")) {
             const name = attr.attr.name ?? "";
             const optional = attr.attr.use === "required" ? "" : "?";

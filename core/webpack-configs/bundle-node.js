@@ -1,11 +1,14 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @stylistic/js/quote-props */
+/* eslint-disable @stylistic/quote-props */
 import path from "path";
 import webpack from "webpack";
 
 const rootDir = path.dirname(import.meta.dirname);
 
-/** @returns {import("webpack").Configuration} */
+/**
+ * @param {Record<string, any>} env
+ * @param {Record<string, any>} argv
+ * @returns {import("webpack").Configuration}
+ * */
 export default (env, argv) => {
     const distDir = path.resolve(
         rootDir,

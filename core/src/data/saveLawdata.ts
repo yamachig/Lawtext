@@ -1,8 +1,8 @@
 
 import yargs from "yargs";
-import { ProgressBar } from "../src/util/term.ts";
-import * as save_fs from "../src/data/saveFs.ts";
-import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader.ts";
+import { ProgressBar } from "../util/term.ts";
+import * as save_fs from "./saveFs.ts";
+import { FSStoredLoader } from "./loaders/FSStoredLoader.ts";
 
 const bar = new ProgressBar();
 const progress = bar.progress.bind(bar);

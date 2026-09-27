@@ -13,11 +13,31 @@
   "license": "MIT",
   "author": "yamachi",
   "type": "module",
-  "main": "./dist/src/main.js",
-  "types": "./dist/src/main.d.ts",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
   "bin": {
-    "lawtext": "dist/src/main.js"
+    "lawtext": "dist/main.js"
   },
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    },
+    "./dist/src/*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    },
+    "./dist/src/*.js": {
+      "default": "./dist/*.js"
+    },
+    "./dist/src/*.d.ts": {
+      "types": "./dist/*.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "emitBinDeclarations": "tsc -p bin/build/tsconfig.json",
     "elaws-openapi": "node bin/elawsOpenapi/createClient.js",
@@ -26,8 +46,8 @@
     "build-bundles": "webpack --mode=development --config ./webpack-configs/bundles.js",
     "build-bundles:prod": "webpack --mode=production --config ./webpack-configs/bundles.js",
     "prepare": "rm -rf ./dist && npm run build",
-    "lawtext": "node ./dist/src/main.js",
-    "test": "node --max_old_space_size=8192 ./dist/src/test/prepareTest.js && npx mocha"
+    "lawtext": "node ./dist/main.js",
+    "test": "node --max_old_space_size=8192 ./dist/test/prepareTest.js && npx mocha"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.9.10",

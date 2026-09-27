@@ -4,7 +4,6 @@
     "timeout": 20000,
     "enable-source-maps": true,
     "spec": [
-        "dist/src/**/*.spec.js",
-        "dist/src/test/**/*.spec.js"
+        "dist/**/*.spec.js"
     ]
 }

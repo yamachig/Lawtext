@@ -45,11 +45,11 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
 
         module: {
             rules: [
-                // {
-                //     test: /\.(?:jsx?|tsx?)$/,
-                //     enforce: "pre",
-                //     use: ["source-map-loader"],
-                // },
+                {
+                    test: /\.(?:jsx?|tsx?)$/,
+                    enforce: "pre",
+                    use: ["source-map-loader"],
+                },
                 { test: /\.tsx?$/, loader: "ts-loader" },
                 {
                     test: /\.html$/,
