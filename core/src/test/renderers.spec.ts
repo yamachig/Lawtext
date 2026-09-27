@@ -2,8 +2,8 @@ import * as chai from "chai";
 import { it } from "mocha";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { lawDiff, LawDiffMode, makeDiffData, ProblemStatus } from "../src/diff/lawDiff.ts";
-import { TERMC, toTableText } from "../src/util/term.ts";
+import { lawDiff, LawDiffMode, makeDiffData, ProblemStatus } from "../diff/lawDiff.ts";
+import { TERMC, toTableText } from "../util/term.ts";
 import renderAndParse from "./renderAndParse.ts";
 import makeDiffTable from "./makeDiffTable.ts";
 import { assertLoader } from "./prepareTest.ts";

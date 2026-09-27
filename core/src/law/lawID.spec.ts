@@ -2,7 +2,7 @@ import { assert } from "chai";
 import type { LawIDStructAct, LawIDStructCabinetOrder, LawIDStructConstitution, LawIDStructDajokanFukoku, LawIDStructDajokanFutatsu, LawIDStructDajokanTasshi, LawIDStructImperialOrder, LawIDStructJinji, LawIDStructMinisterialOrdinance, LawIDStructPrimeMinisterDecision, LawIDStructRule } from "./lawID.ts";
 import { LawIDActCategory, LawIDCabinetOrderEffect, LawIDType, parseLawID } from "./lawID.ts";
 import { Era } from "./std/index.ts";
-import { assertLoader } from "../../test/prepareTest.ts";
+import { assertLoader } from "../test/prepareTest.ts";
 import type { LawInfo } from "../data/lawinfo.ts";
 
 

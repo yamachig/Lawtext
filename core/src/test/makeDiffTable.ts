@@ -1,7 +1,7 @@
-import type { DiffTableItemData, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffNoDiffData, LawDiffResultItemData } from "../src/diff/lawDiff.ts";
-import { DiffStatus, LawDiffType, ProblemStatus, TagType } from "../src/diff/lawDiff.ts";
-import { TERMC } from "../src/util/term.ts";
-import * as util from "../src/util/index.ts";
+import type { DiffTableItemData, LawDiffElementChangeData, LawDiffElementMismatchData, LawDiffNoDiffData, LawDiffResultItemData } from "../diff/lawDiff.ts";
+import { DiffStatus, LawDiffType, ProblemStatus, TagType } from "../diff/lawDiff.ts";
+import { TERMC } from "../util/term.ts";
+import * as util from "../util/index.ts";
 
 function* zipLongest<T>(lists: T[][], defaultValues: T[]) {
     if (lists.length !== defaultValues.length) throw new Error("Length mismatch");

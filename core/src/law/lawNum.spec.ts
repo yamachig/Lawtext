@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { assertLoader } from "../../test/prepareTest.ts";
+import { assertLoader } from "../test/prepareTest.ts";
 import type { LawInfo } from "../data/lawinfo.ts";
 import { LawIDType, parseLawID } from "./lawID.ts";
 import { ptnLawNum, ptnLawNumLike, lawNumLikeToLawNum, parseLawNum } from "./lawNum.ts";

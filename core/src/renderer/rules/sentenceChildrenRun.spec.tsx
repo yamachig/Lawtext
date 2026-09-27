@@ -9,7 +9,7 @@ import htmlCSS from "./htmlCSS.tsx";
 import path from "path";
 import { promisify } from "node:util";
 import fs from "node:fs";
-import ensureTempTestDir from "../../../test/ensureTempTestDir.ts";
+import ensureTempTestDir from "../../test/ensureTempTestDir.ts";
 import { renderDocxAsync } from "../common/docx/file.tsx";
 import { w } from "../common/docx/tags.ts";
 

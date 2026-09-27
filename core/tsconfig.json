@@ -39,8 +39,7 @@
     "include": [
         "src/**/*",
         "src/**/*.json",
-        "bin/**/*",
-        "test/**/*"
+        "bin/**/*"
     ],
     "exclude": [
         "**/* copy.*",

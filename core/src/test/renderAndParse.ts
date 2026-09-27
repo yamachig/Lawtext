@@ -5,19 +5,19 @@ import path from "path";
 // @ts-ignore
 import { promisify } from "node:util";
 import xmldom from "@xmldom/xmldom";
-import { parse } from "../src/parser/lawtext.ts";
-import { analyze } from "../src/analyzer/index.ts";
-import { renderDocxAsync, renderHTML, renderLawtext } from "../src/renderer/index.ts";
-import { TERMC } from "../src/util/term.ts";
-import type { ErrorMessage } from "../src/parser/cst/error.ts";
-import formatXML from "../src/util/formatXml.ts";
-import { xmlToEL } from "../src/node/el/xmlToEL.ts";
-import { outerXML } from "../src/node/el/elToXML.ts";
-import type { Loader } from "../src/data/loaders/common.ts";
+import { parse } from "../parser/lawtext.ts";
+import { analyze } from "../analyzer/index.ts";
+import { renderDocxAsync, renderHTML, renderLawtext } from "../renderer/index.ts";
+import { TERMC } from "../util/term.ts";
+import type { ErrorMessage } from "../parser/cst/error.ts";
+import formatXML from "../util/formatXml.ts";
+import { xmlToEL } from "../node/el/xmlToEL.ts";
+import { outerXML } from "../node/el/elToXML.ts";
+import type { Loader } from "../data/loaders/common.ts";
 import { getMemorizedStringOffsetToPos } from "generic-parser";
-import { lawNumLikeToLawNum } from "../src/law/lawNum.ts";
+import { lawNumLikeToLawNum } from "../law/lawNum.ts";
 import ensureTempTestDir from "./ensureTempTestDir.ts";
-import FigDataManager from "../src/renderer/common/docx/FigDataManager.ts";
+import FigDataManager from "../renderer/common/docx/FigDataManager.ts";
 
 const domParser = new xmldom.DOMParser();
 

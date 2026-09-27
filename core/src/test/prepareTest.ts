@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import { promisify } from "node:util";
-import { download, saveList } from "../src/data/saveFs.ts";
-import { ProgressBar } from "../src/util/term.ts";
-import { FSStoredLoader } from "../src/data/loaders/FSStoredLoader.ts";
+import { download, saveList } from "../data/saveFs.ts";
+import { ProgressBar } from "../util/term.ts";
+import { FSStoredLoader } from "../data/loaders/FSStoredLoader.ts";
 // import { before } from "mocha";
 import dotenv from "dotenv";
 dotenv.config();

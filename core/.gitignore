@@ -25,6 +25,6 @@ MANIFEST
 /dist-bundle-dev
 /dist-bundle-prod
 /src/law/lawList.*
-/test/lawdata
+/src/test/lawdata
 /data
 /mochawesome-report

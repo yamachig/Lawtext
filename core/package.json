@@ -18,9 +18,6 @@
   "bin": {
     "lawtext": "dist/src/main.js"
   },
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "emitBinDeclarations": "tsc -p bin/build/tsconfig.json",
     "elaws-openapi": "node bin/elawsOpenapi/createClient.js",
@@ -30,7 +27,7 @@
     "build-bundles:prod": "webpack --mode=production --config ./webpack-configs/bundles.js",
     "prepare": "rm -rf ./dist && npm run build",
     "lawtext": "node ./dist/src/main.js",
-    "test": "node --max_old_space_size=8192 ./dist/test/prepareTest.js && npx mocha"
+    "test": "node --max_old_space_size=8192 ./dist/src/test/prepareTest.js && npx mocha"
   },
   "dependencies": {
     "@xmldom/xmldom": "^0.9.10",

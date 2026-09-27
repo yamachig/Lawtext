@@ -5,6 +5,6 @@
     "enable-source-maps": true,
     "spec": [
         "dist/src/**/*.spec.js",
-        "dist/test/**/*.spec.js"
+        "dist/src/test/**/*.spec.js"
     ]
 }

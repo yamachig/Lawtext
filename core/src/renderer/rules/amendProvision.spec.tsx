@@ -10,7 +10,7 @@ import fs from "node:fs";
 import formatXML from "../../util/formatXml.ts";
 import htmlCSS from "./htmlCSS.tsx";
 import { promisify } from "node:util";
-import ensureTempTestDir from "../../../test/ensureTempTestDir.ts";
+import ensureTempTestDir from "../../test/ensureTempTestDir.ts";
 
 describe("Test HTML amendProvision", () => {
     /* eslint-disable no-irregular-whitespace */
