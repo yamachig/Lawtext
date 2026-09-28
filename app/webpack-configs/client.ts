@@ -3,25 +3,29 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import path from "path";
 import webpack from "webpack";
-import type webpack_dev_server from "webpack-dev-server";
+import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 import WatchMessagePlugin from "./WatchMessagePlugin.ts";
 import CreateAppZipPlugin from "./CreateAppZipPlugin.ts";
 import QueryDocsPlugin from "./QueryDocsPlugin.ts";
-import fs from "fs";
-import { ensureDirSync } from "fs-extra";
 import TerserPlugin from "terser-webpack-plugin";
 
 const rootDir = path.dirname(import.meta.dirname);
 
-export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration & { devServer: webpack_dev_server.Configuration } => {
+export default (env: Record<string, string>, argv: Record<string, string>): webpack.Configuration & { devServer: WebpackDevServerConfiguration } => {
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev"));
-    const config: webpack.Configuration & { devServer: webpack_dev_server.Configuration } = {
+    const config: webpack.Configuration & { devServer: WebpackDevServerConfiguration } = {
         entry: {
             index: path.resolve(rootDir, "./src/index.tsx"),
-            ...(env.DEV_SERVER ? { "pdf.worker": "../core/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs" } : {}),
         },
         output: {
             filename: "[name].js",
+            workerChunkFilename: (pathData) => {
+                const name = pathData.chunk?.name || pathData.chunk?.id || "";
+                if (typeof name === "string" && name.includes("pdf_worker")) {
+                    return "pdf.worker.js";
+                }
+                return "[name].js";
+            },
             path: env.DEV_SERVER ? "/" : distDir,
             clean: true,
         },
@@ -37,7 +41,6 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 "cli-progress": false,
                 "string_decoder": false,
                 ...(env.DEV_SERVER ? {} : {
-                    "pdfjs-dist": false,
                     "lawtext/dist/src/law/getLawList.js": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
                     "../law/getLawList.js": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
                     "./lawList.json": false,
@@ -70,10 +73,29 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 new TerserPlugin(),
             ],
             runtimeChunk: "single",
+            splitChunks: {
+                cacheGroups: {
+                    pdfjsGroup: {
+                        test: /[\\/]node_modules[\\/]pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf\.mjs$/,
+                        name: "pdf",
+                        chunks: "async",
+                        priority: 20,
+                        enforce: true,
+                    },
+                },
+            },
         },
 
         module: {
             rules: [
+                {
+                    test: /pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf(?:\.worker)?\.mjs$/,
+                    loader: "string-replace-loader",
+                    options: {
+                        search: /import\.meta\.url/g,
+                        replace: "globalThis.location.href",
+                    },
+                },
                 {
                     test: /\.(?:jsx?|tsx?)$/,
                     enforce: "pre",
@@ -133,26 +155,6 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             }),
             ...(env.DEV_SERVER ? [] : [new QueryDocsPlugin()]),
             ...(env.DEV_SERVER ? [] : [new CreateAppZipPlugin()]),
-            ...(env.DEV_SERVER ? [] : [
-                new (class {
-                    public apply(compiler: webpack.Compiler): void {
-                        compiler.hooks.afterEmit.tapPromise("CopyPDFjsPlugin", async () => {
-                            const targetDir = path.join(compiler.outputPath, "pdfjs");
-                            ensureDirSync(targetDir);
-                            const sourceDir = "../core/node_modules/pdfjs-dist/build/";
-                            if (argv.mode === "production") {
-                                fs.copyFileSync(path.join(sourceDir, "pdf.min.mjs"), path.join(targetDir, "pdf.min.mjs"));
-                                fs.copyFileSync(path.join(sourceDir, "pdf.worker.min.mjs"), path.join(targetDir, "pdf.worker.min.mjs"));
-                            } else {
-                                fs.copyFileSync(path.join(sourceDir, "pdf.mjs"), path.join(targetDir, "pdf.mjs"));
-                                fs.copyFileSync(path.join(sourceDir, "pdf.mjs.map"), path.join(targetDir, "pdf.mjs.map"));
-                                fs.copyFileSync(path.join(sourceDir, "pdf.worker.mjs"), path.join(targetDir, "pdf.worker.mjs"));
-                                fs.copyFileSync(path.join(sourceDir, "pdf.worker.mjs.map"), path.join(targetDir, "pdf.worker.mjs.map"));
-                            }
-                        });
-                    }
-                })(),
-            ]),
         ],
 
         watchOptions: {

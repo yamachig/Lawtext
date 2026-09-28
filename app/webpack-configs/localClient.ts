@@ -41,14 +41,42 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         optimization: {
             minimizer: [new CssMinimizerPlugin()],
             runtimeChunk: "single",
+            splitChunks: {
+                cacheGroups: {
+                    pdfjsGroup: {
+                        test: /[\\/]node_modules[\\/]pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf\.mjs$/,
+                        name: "index",
+                        chunks: "all",
+                        priority: 20,
+                        enforce: true,
+                    },
+                },
+            },
         },
 
         module: {
             rules: [
                 {
-                    test: /\.(?:jsx?|tsx?)$/,
+                    test: /pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf(?:\.worker)?\.mjs$/,
+                    loader: "string-replace-loader",
+                    options: {
+                        search: /import\.meta\.url/g,
+                        replace: "globalThis.location.href",
+                    },
+                },
+                {
+                    test: /\.[jt]sx?|\.mjs$/,
                     enforce: "pre",
-                    use: ["source-map-loader"],
+                    use: [
+                        {
+                            loader: "string-replace-loader",
+                            options: {
+                                search: /pdfjs\.GlobalWorkerOptions\.workerPort = new Worker\(\s*new URL\(\s*["']pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf\.worker\.mjs["'],\s*import\.meta\.url\s*\),\s*\{\s*type:\s*["']module["']\s*\}\s*\)/g,
+                                replace: "pdfjs.GlobalWorkerOptions.workerSrc = \"./pdf.worker.js\"",
+                            },
+                        },
+                        "source-map-loader",
+                    ],
                 },
                 { test: /\.tsx?$/, loader: "ts-loader" },
                 {
