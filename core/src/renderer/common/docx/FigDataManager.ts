@@ -15,11 +15,12 @@ function *iterateFig(el: EL): IterableIterator<std.Fig> {
 }
 
 const createCanvas = async (width: number, height: number) => {
-    return (
-        global.OffscreenCanvas
-            ? new OffscreenCanvas(width, height)
-            : (new (await import("canvas")).Canvas(width, height))
-    );
+    if (global.OffscreenCanvas) return new OffscreenCanvas(width, height);
+    if (typeof process !== "undefined" && process.versions?.node) {
+        const { createCanvas } = await import(/* webpackIgnore: true */ "@napi-rs/canvas");
+        return createCanvas(width, height);
+    }
+    return new (await import("canvas")).Canvas(width, height);
 };
 
 export const pdfToPNG = async (pdfData: ArrayBuffer) => {

@@ -12,8 +12,10 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
     const distDir = path.resolve(rootDir, "dist-" + (argv.mode === "production" ? "prod" : "dev") + "-local");
     const config: webpack.Configuration = {
         entry: {
-            index: path.resolve(rootDir, "./src/index.tsx"),
-            "pdf.worker": "../core/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs",
+            index: [
+                path.resolve(rootDir, "../core/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs"),
+                path.resolve(rootDir, "./src/index.tsx"),
+            ],
         },
         output: {
             filename: "[name].js",
@@ -26,6 +28,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 ".js": [".js", ".ts", ".tsx"],
             },
             alias: {
+                "./createPdfjsWorker.js$": false,
                 "node-fetch": false,
                 "canvas": false,
                 "fs": false,
@@ -65,18 +68,9 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                     },
                 },
                 {
-                    test: /\.[jt]sx?|\.mjs$/,
+                    test: /\.(?:jsx?|tsx?)$/,
                     enforce: "pre",
-                    use: [
-                        {
-                            loader: "string-replace-loader",
-                            options: {
-                                search: /pdfjs\.GlobalWorkerOptions\.workerPort = new Worker\(\s*new URL\(\s*["']pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf\.worker\.mjs["'],\s*import\.meta\.url\s*\),\s*\{\s*type:\s*["']module["']\s*\}\s*\)/g,
-                                replace: "pdfjs.GlobalWorkerOptions.workerSrc = \"./pdf.worker.js\"",
-                            },
-                        },
-                        "source-map-loader",
-                    ],
+                    use: ["source-map-loader"],
                 },
                 { test: /\.tsx?$/, loader: "ts-loader" },
                 {

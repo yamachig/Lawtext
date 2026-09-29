@@ -15,6 +15,9 @@ import type { figPDFTypes } from "./renderer/common/docx/FigDataManager.ts";
 import FigDataManager from "./renderer/common/docx/FigDataManager.ts";
 import { getPdfjs } from "./renderer/common/docx/getPdfjs.js";
 
+export { configurePdfjs } from "./renderer/common/docx/getPdfjs.js";
+export type { PdfjsModule, PdfjsOptions } from "./renderer/common/docx/getPdfjs.js";
+
 export const intypeChoices = ["fromext", "lawtext", "xml", "json"] as const;
 export const outtypeChoices = ["fromext", "lawtext", "xml", "json", "html", "htmlfragment", "docx"] as const;
 type ToSingleKeyObj<T extends string | number | symbol, V> = T extends unknown ? {[K in T]: V} : never;
@@ -90,7 +93,7 @@ export const run = async (args: RunArgs) => {
             } catch {
                 throw new Error(`\
 PDF.js not found.
-If you are using the Lawtext CLI prebuilt: As the current limitation of the prebuilt "lawtext_cli.js", it cannot render PDF. Please run Lawtext CLI as an NPM package like: "npx lawtext"
+If you are using the Lawtext CLI prebuilt: As the current limitation of the prebuilt "lawtext_cli.mjs", it cannot render PDF. Please run Lawtext CLI as an NPM package like: "npx lawtext"
 `);
             }
         }

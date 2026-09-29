@@ -34,6 +34,7 @@ export default (env, argv) => {
                 ".js": [".js", ".ts", ".tsx"],
             },
             alias: {
+                "./createPdfjsWorker.js$": false,
                 "node-fetch": false,
                 "fs": false,
                 "canvas": false,

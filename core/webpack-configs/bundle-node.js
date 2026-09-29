@@ -17,6 +17,7 @@ export default (env, argv) => {
     return {
         target: "node",
         mode: (argv.mode === "development") ? "development" : "production",
+        devtool: (argv.mode === "development") ? "inline-source-map" : false,
         entry: [path.resolve(rootDir, "./src/main.ts")],
         experiments: {
             outputModule: true,
@@ -37,24 +38,20 @@ export default (env, argv) => {
             },
             alias: {
                 "canvas": false,
+                "./createPdfjsWorker.js$": false,
                 "pdfjs-dist": false,
-            },
-            fallback: {
-                "path": import.meta.resolve("path-browserify"),
             },
         },
         module: {
             rules: [{ test: /\.tsx?$/, use: "ts-loader" }],
-            parser: {
-                javascript: {
-                    importMeta: false,
-                },
-            },
         },
         plugins: [
             new webpack.optimize.LimitChunkCountPlugin({
                 maxChunks: 1,
             }),
         ],
+        optimization: {
+            concatenateModules: false,
+        },
     };
 };
