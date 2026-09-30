@@ -1,4 +1,4 @@
-/* eslint-disable @stylistic/quote-props */
+
 import path from "path";
 import webpack from "webpack";
 
@@ -31,15 +31,18 @@ export default (env, argv) => {
                 type: "module",
             },
         },
+        externalsType: "import",
+        externals: {
+            "pdfjs-dist/legacy/build/pdf.mjs": "pdfjs-dist/legacy/build/pdf.mjs",
+            "@napi-rs/canvas": "@napi-rs/canvas",
+        },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
             extensionAlias: {
                 ".js": [".js", ".ts", ".tsx"],
             },
             alias: {
-                "canvas": false,
                 "./createPdfjsWorker.js$": false,
-                "pdfjs-dist": false,
             },
         },
         module: {

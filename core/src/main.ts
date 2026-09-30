@@ -4,8 +4,6 @@ import yargs from "yargs/yargs";
 import { hideBin } from "yargs/helpers";
 import * as lawtext from "./lawtext.ts";
 import * as fs from "node:fs";
-import * as path from "node:path";
-import { pathToFileURL } from "node:url";
 import { assertNever } from "./util/index.ts";
 import { figPDFTypes } from "./renderer/common/docx/FigDataManager.ts";
 
@@ -21,8 +19,6 @@ export interface RunCLIArgs {
     intype: (typeof lawtext.intypeChoices)[number];
     outtype: (typeof lawtext.outtypeChoices)[number];
     figpdf: Lowercase<(typeof figPDFTypes)[number]>;
-    pdfjs?: string;
-    pdfjsworker?: string;
     analyze: boolean;
     format: boolean;
     controlel: boolean;
@@ -36,8 +32,6 @@ export const defaultRunCLIArgs = {
     intype: "fromext" as const,
     outtype: "fromext" as const,
     figpdf: "embed" as const,
-    pdfjs: "./pdf.mjs",
-    pdfjsworker: "./pdf.worker.mjs",
     analyze: false,
     format: false,
     controlel: false,
@@ -52,8 +46,6 @@ export const runCLI = async (args: RunCLIArgs) => {
         intype: origIntype,
         outtype: origOuttype,
         figpdf: origFigpdf,
-        pdfjs,
-        pdfjsworker,
         analyze,
         format,
         controlel,
@@ -117,18 +109,6 @@ export const runCLI = async (args: RunCLIArgs) => {
         }
     }
     if (!figpdf) throw new Error("Cannot recognize the type specified for \"--figpdf\".");
-
-    if (figpdf === "render" || figpdf === "embedAndRender") {
-        const cliDirectory = process.argv[1]
-            ? path.dirname(path.resolve(process.argv[1]))
-            : process.cwd();
-        const pdfjsURL = pathToFileURL(path.resolve(cliDirectory, pdfjs)).href;
-        const pdfjsWorkerURL = pathToFileURL(path.resolve(cliDirectory, pdfjsworker));
-        lawtext.configurePdfjs({
-            loadPdfjs: () => import(/* webpackIgnore: true */ pdfjsURL),
-            workerSrc: pdfjsWorkerURL,
-        });
-    }
 
     if (analysisout && !analyze) {
         console.error("Warning: \"--analysisout\" has no effect without \"--analyze\".");
@@ -260,16 +240,6 @@ export const main = async (): Promise<void> => {
             choices: figPDFTypes.map(t => t.toLowerCase()) as Lowercase<(typeof figPDFTypes)[number]>[],
             default: defaultRunCLIArgs.figpdf,
             description: "How to process embedded PDF files. (Only applicable for the combination of `elaws` input and `docx` output.)",
-        })
-        .option("pdfjs", {
-            type: "string",
-            default: defaultRunCLIArgs.pdfjs,
-            description: "Path to the PDF.js module. Relative paths are resolved from this CLI file. (Default: ./pdf.mjs)",
-        })
-        .option("pdfjsworker", {
-            type: "string",
-            default: defaultRunCLIArgs.pdfjsworker,
-            description: "Path to the PDF.js worker module. Relative paths are resolved from this CLI file. (Default: ./pdf.worker.mjs)",
         })
         .option("analyze", {
             alias: "an",

@@ -45,13 +45,13 @@
     "watch": "node --trace-deprecation --trace-warnings bin/build/index.js && tsc --watch",
     "build-bundles": "webpack --mode=development --config ./webpack-configs/bundles.js",
     "build-bundles:prod": "webpack --mode=production --config ./webpack-configs/bundles.js",
-    "prepare": "rm -rf ./dist && npm run build",
+    "prepare": "rm -rf ./dist && rm -f tsconfig.tsbuildinfo && npm run build",
     "lawtext": "node ./dist/main.js",
     "test": "node --max_old_space_size=8192 ./dist/test/prepareTest.js && npx mocha"
   },
   "dependencies": {
+    "@napi-rs/canvas": "^1.0.9",
     "@xmldom/xmldom": "^0.9.10",
-    "canvas": "^3.2.3",
     "cli-progress": "^3.12.0",
     "fflate": "^0.8.3",
     "fs-extra": "^11.3.5",

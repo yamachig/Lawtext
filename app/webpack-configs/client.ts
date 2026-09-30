@@ -36,7 +36,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             },
             alias: {
                 "node-fetch": false,
-                "canvas": false,
+                "@napi-rs/canvas": false,
                 "fs": false,
                 "cli-progress": false,
                 "string_decoder": false,
@@ -49,9 +49,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             },
             fallback: {
                 "path": import.meta.resolve("path-browserify"),
-                ...(env.DEV_SERVER ? {
-                    "buffer": import.meta.resolve("buffer/"),
-                } : {}),
+                "buffer": import.meta.resolve("buffer/"),
             },
         },
 

@@ -37,7 +37,7 @@ export default (env, argv) => {
                 "./createPdfjsWorker.js$": false,
                 "node-fetch": false,
                 "fs": false,
-                "canvas": false,
+                "@napi-rs/canvas": false,
                 "pdfjs-dist": false,
             },
             fallback: {

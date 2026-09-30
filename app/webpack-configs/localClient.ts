@@ -30,7 +30,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             alias: {
                 "./createPdfjsWorker.js$": false,
                 "node-fetch": false,
-                "canvas": false,
+                "@napi-rs/canvas": false,
                 "fs": false,
                 "cli-progress": false,
                 "string_decoder": false,
