@@ -7,7 +7,7 @@ export const getLawList = async () => {
         /** @type {[string, string, string, string[]][]} */
         let lawList;
         try {
-            lawList = (await eval("import(\"./lawList.json\", { assert: { type: \"json\" } })")).default;
+            lawList = (await new Function("return import(\"./lawList.json\", { assert: { type: \"json\" } })")()).default;
         } catch {
             lawList = (await import("./preloadedLawList.json", { with: { type: "json" } })).default;
         }
