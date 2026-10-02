@@ -9,7 +9,7 @@ import { defaultBasePath } from "./defaultBasePath.js";
  */
 const buildLawList = async (basePath = defaultBasePath) => {
     const srcPath = path.join(basePath, "src");
-    const destPath = path.join(srcPath, "law/lawList.json");
+    const destPath = path.join(srcPath, "law/preloadedLawList.json");
     // if (fs.existsSync(destPath)) return;
 
     const laws = (await (await fetch("https://laws.e-gov.go.jp/api/2/laws?omit_current_revision_info=true&limit=99999")).json()).laws;

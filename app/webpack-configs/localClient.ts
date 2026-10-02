@@ -5,6 +5,7 @@ import path from "path";
 import webpack from "webpack";
 import WatchMessagePlugin from "./WatchMessagePlugin.ts";
 import QueryDocsPlugin from "./QueryDocsPlugin.ts";
+import TerserPlugin from "terser-webpack-plugin";
 
 const rootDir = path.dirname(import.meta.dirname);
 
@@ -42,15 +43,18 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
 
         optimization: {
-            minimizer: [new CssMinimizerPlugin()],
-            runtimeChunk: "single",
+            minimizer: [
+                new CssMinimizerPlugin(),
+                new TerserPlugin(),
+            ],
+            runtimeChunk: false,
             splitChunks: {
                 cacheGroups: {
-                    pdfjsGroup: {
-                        test: /[\\/]node_modules[\\/]pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf\.mjs$/,
+                    anyModulesGroup: {
+                        test: () => true,
                         name: "index",
                         chunks: "all",
-                        priority: 20,
+                        priority: 30,
                         enforce: true,
                     },
                 },

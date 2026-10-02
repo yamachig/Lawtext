@@ -19,13 +19,7 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         },
         output: {
             filename: "[name].js",
-            workerChunkFilename: (pathData) => {
-                const name = pathData.chunk?.name || pathData.chunk?.id || "";
-                if (typeof name === "string" && name.includes("pdf_worker")) {
-                    return "pdf.worker.js";
-                }
-                return "[name].js";
-            },
+            workerChunkFilename: "[name].js",
             path: env.DEV_SERVER ? "/" : distDir,
             clean: true,
         },
@@ -73,6 +67,24 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             runtimeChunk: "single",
             splitChunks: {
                 cacheGroups: {
+                    ignoredModulesGroup: {
+                        test: (module: webpack.Module) => module.identifier().includes("ignored|"),
+                        name: "index",
+                        chunks: "all",
+                        priority: 30,
+                        enforce: true,
+                    },
+                    nodeModulesInMainGroup: {
+                        test: (module: webpack.Module) => {
+                            const identifier = module.identifier();
+                            return identifier.includes("node_modules")
+                                && !/[\\/]pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf(?:\.worker)?\.mjs$/.test(identifier);
+                        },
+                        name: "index",
+                        chunks: "all",
+                        priority: 30,
+                        enforce: true,
+                    },
                     pdfjsGroup: {
                         test: /[\\/]node_modules[\\/]pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf\.mjs$/,
                         name: "pdf",
@@ -142,6 +154,20 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
             new webpack.ProvidePlugin({
                 Buffer: ["buffer", "Buffer"],
             }),
+            {
+                apply: (compiler) => {
+                    compiler.hooks.compilation.tap("PdfWorkerChunkNamePlugin", (compilation) => {
+                        compilation.hooks.afterChunks.tap("PdfWorkerChunkNamePlugin", () => {
+                            for (const chunk of compilation.chunks) {
+                                if (!chunk.getEntryOptions()?.worker) continue;
+                                const isPdfWorker = [...compilation.chunkGraph.getChunkModulesIterable(chunk)]
+                                    .some(module => module.identifier().includes("pdf.worker.mjs"));
+                                if (isPdfWorker) chunk.name = "pdf.worker";
+                            }
+                        });
+                    });
+                },
+            },
             new WatchMessagePlugin(),
             new MiniCssExtractPlugin({
                 filename: "[name].css",
