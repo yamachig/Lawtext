@@ -13,6 +13,7 @@ export default (env, argv) => {
     const distDir = path.resolve(
         rootDir,
         (argv.mode === "development") ? "dist-bundle-dev" : "dist-bundle-prod",
+        "node",
     );
     return {
         target: "node",
@@ -23,8 +24,9 @@ export default (env, argv) => {
             outputModule: true,
         },
         output: {
-            filename: "node/lawtext_cli.mjs",
+            filename: "lawtext_cli.mjs",
             path: distDir,
+            clean: true,
             module: true,
             chunkFormat: "module",
             library: {
@@ -34,7 +36,6 @@ export default (env, argv) => {
         externalsType: "import",
         externals: {
             "pdfjs-dist/legacy/build/pdf.mjs": "pdfjs-dist/legacy/build/pdf.mjs",
-            "@napi-rs/canvas": "@napi-rs/canvas",
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],

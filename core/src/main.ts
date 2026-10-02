@@ -8,6 +8,8 @@ import { assertNever } from "./util/index.ts";
 import { figPDFTypes } from "./renderer/common/docx/FigDataManager.ts";
 
 export { run } from "./lawtext.ts";
+import { configurePdfjs } from "./renderer/common/docx/getPdfjs.ts";
+configurePdfjs({ workerSrc: "pdfjs-dist/legacy/build/pdf.worker.mjs" });
 export { configurePdfjs } from "./renderer/common/docx/getPdfjs.ts";
 export type { PdfjsModule, PdfjsOptions } from "./renderer/common/docx/getPdfjs.ts";
 

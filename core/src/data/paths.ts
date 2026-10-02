@@ -1,5 +1,5 @@
-import path from "path";
+import { join } from "pathe";
 
-export const getLawdataPath = (dataDir: string): string => path.join(dataDir, "lawdata");
-export const getListJsonPath = (dataDir: string): string => path.join(dataDir, "list.json");
-export const getListCSVPath = (dataDir: string): string => path.join(dataDir, "lawdata", "all_law_list.csv");
+export const getLawdataPath = (dataDir: string): string => join(dataDir, "lawdata");
+export const getListJsonPath = (dataDir: string): string => join(dataDir, "list.json");
+export const getListCSVPath = (dataDir: string): string => join(dataDir, "lawdata", "all_law_list.csv");

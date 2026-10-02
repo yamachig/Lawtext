@@ -54,7 +54,6 @@
         "html-loader": "^5.1.0",
         "html-webpack-plugin": "^5.6.8",
         "mini-css-extract-plugin": "^2.10.2",
-        "path-browserify": "^1.0.1",
         "postcss-loader": "^8.2.1",
         "raw-loader": "^4.0.2",
         "sass": "1.105.0",

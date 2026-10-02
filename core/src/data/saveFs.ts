@@ -2,7 +2,6 @@ import Zip from "node-stream-zip";
 import path from "path";
 import os from "node:os";
 import fs from "node:fs";
-import { fetch } from "../util/node-fetch/index.js";
 import fsExtra from "fs-extra";
 import { promisify } from "node:util";
 import type { FSStoredLoader } from "./loaders/FSStoredLoader.ts";

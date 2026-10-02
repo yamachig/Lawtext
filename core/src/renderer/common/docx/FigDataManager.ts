@@ -18,7 +18,7 @@ const createCanvas = async (width: number, height: number) => {
     if (global.OffscreenCanvas) {
         return new OffscreenCanvas(width, height);
     } else {
-        const { createCanvas } = await import("@napi-rs/canvas");
+        const { createCanvas } = process.getBuiltinModule("module").createRequire(import.meta.url)("@napi-rs/canvas");
         return createCanvas(width, height);
     }
 };

@@ -5,7 +5,7 @@ import type { BaseLawInfo } from "../lawinfo.ts";
 import { LawInfo } from "../lawinfo.ts";
 import * as elawsApi from "../../elawsOpenapi/index.ts";
 import { unzip } from "../../util/zip.ts";
-import path from "path";
+import { extname } from "pathe";
 import { decodeBase64, pictMimeDict } from "../../util/index.ts";
 
 const fetchBaseLawInfosFromElaws = async (): Promise<BaseLawInfo[]> => {
@@ -55,7 +55,7 @@ export class ElawsLawData extends LawXMLStruct {
             const zipData = await unzip(this.imageData);
             for (const relPath in zipData) {
                 const buf = zipData[relPath];
-                const ext = path.extname(relPath) as keyof typeof pictMimeDict;
+                const ext = extname(relPath) as keyof typeof pictMimeDict;
                 const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
                 // const blob = new Blob([buf], { type });
                 this._pict.set(

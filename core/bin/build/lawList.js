@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "path";
 import { promisify } from "node:util";
-import { fetch } from "../../src/util/node-fetch/index.js";
 import { defaultBasePath } from "./defaultBasePath.js";
 
 /**

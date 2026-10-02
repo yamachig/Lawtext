@@ -29,20 +29,13 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
                 ".js": [".js", ".ts", ".tsx"],
             },
             alias: {
-                "node-fetch": false,
-                "@napi-rs/canvas": false,
-                "fs": false,
-                "cli-progress": false,
-                "string_decoder": false,
                 ...(env.DEV_SERVER ? {} : {
                     "lawtext/dist/src/law/getLawList.js": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
                     "../law/getLawList.js": path.resolve(rootDir, "./webpack-configs/getLawList.js"),
-                    "./lawList.json": false,
+                    "./preloadedLawList.json": false,
                 }),
-
             },
             fallback: {
-                "path": import.meta.resolve("path-browserify"),
                 "buffer": import.meta.resolve("buffer/"),
             },
         },

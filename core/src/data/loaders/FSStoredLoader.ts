@@ -5,7 +5,7 @@ import type { BaseLawInfo } from "../lawinfo.ts";
 import * as data_paths from "../paths.ts";
 import { promisify } from "node:util";
 import fs from "node:fs";
-import path from "path";
+import { join, extname } from "pathe";
 import { pictMimeDict } from "../../util/index.ts";
 
 const readText = async (textPath: string) => {
@@ -41,10 +41,10 @@ export class FSStoredLawXML extends LawXMLStruct {
         return this._xml;
     }
     public async getPictFileOrBlobURL(src: string): Promise<{url: string, type: string} | null> {
-        const url = path.join(this.lawdataPath, this.lawInfo.Path, src);
+        const url = join(this.lawdataPath, this.lawInfo.Path, src);
         // const res = await fetch(url, { method: "HEAD" });
         // if (!res.ok) return null;
-        const ext = path.extname(src) as keyof typeof pictMimeDict;
+        const ext = extname(src) as keyof typeof pictMimeDict;
         const type = ext in pictMimeDict ? pictMimeDict[ext] : "application/octet-stream";
         return { url, type };
     }
@@ -80,8 +80,7 @@ export class FSStoredLoader extends Loader {
     }
 
     public async loadBaseLawInfosFromCSV(): Promise<BaseLawInfo[]> {
-        let text: string | null = null;
-        text = await readSjisText(this.listCSVPath);
+        let text: string | null = await readSjisText(this.listCSVPath);
         if (!(text?.includes("法令番号"))) {
             text = await readText(this.listCSVPath);
             if (text?.charCodeAt(0) === 0xFEFF) {
@@ -93,7 +92,7 @@ export class FSStoredLoader extends Loader {
     }
 
     public getXmlPath(lawInfo: BaseLawInfo): string {
-        return path.join(this.lawdataPath, lawInfo.Path, lawInfo.XmlName);
+        return join(this.lawdataPath, lawInfo.Path, lawInfo.XmlName);
     }
 
     public async loadLawXMLStructByInfo(lawInfo: BaseLawInfo): Promise<FSStoredLawXML> {

@@ -2,10 +2,7 @@ import type { LawInfosStruct } from "./common.ts";
 import { csvTextToLawInfos, jsonTextToLawInfos, LawXMLStruct, Loader } from "./common.ts";
 import type { BaseLawInfo } from "../lawinfo.ts";
 import * as data_paths from "../paths.ts";
-import path from "path";
-import { fetch as nodeFetch } from "../../util/node-fetch/index.js";
-const fetch: typeof window.fetch = (global["fetch"]) || (global["window"] && window.fetch) || nodeFetch;
-console.log(`fetch: ${fetch}`);
+import { join } from "pathe";
 
 const fetchText = async (textPath: string) => {
     try {
@@ -49,13 +46,13 @@ export class StoredLawXML extends LawXMLStruct {
         return this._xml;
     }
     public async getPictFileOrBlobURL(src: string): Promise<{url: string, type: string} | null> {
-        const url = path.join(this.lawdataPath, this.lawInfo.Path, src);
+        const url = join(this.lawdataPath, this.lawInfo.Path, src);
         const res = await fetch(url, { method: "HEAD" });
         if (!res.ok) return null;
         return { url, type: res.headers.get("Content-Type") ?? "" };
     }
     public async getPictBlob(src: string): Promise<{buf: ArrayBuffer, type: string} | null> {
-        const url = path.join(this.lawdataPath, this.lawInfo.Path, src);
+        const url = join(this.lawdataPath, this.lawInfo.Path, src);
         const res = await fetch(url);
         if (!res.ok) return null;
         const blob = await res.blob();
@@ -84,8 +81,7 @@ export class FetchStoredLoader extends Loader {
     }
 
     public async loadBaseLawInfosFromCSV(): Promise<BaseLawInfo[]> {
-        let text: string | null = null;
-        text = await fetchSjisText(this.listCSVPath);
+        let text = await fetchSjisText(this.listCSVPath);
         if (!(text?.includes("法令番号"))) {
             text = await fetchText(this.listCSVPath);
             if (text?.charCodeAt(0) === 0xFEFF) {
@@ -97,7 +93,7 @@ export class FetchStoredLoader extends Loader {
     }
 
     public async loadLawXMLStructByInfo(lawInfo: BaseLawInfo): Promise<StoredLawXML> {
-        const filepath = path.join(this.lawdataPath, lawInfo.Path, lawInfo.XmlName);
+        const filepath = join(this.lawdataPath, lawInfo.Path, lawInfo.XmlName);
         const text = await fetchText(filepath);
         if (text === null) throw new Error("Text cannot be fetched");
         return new StoredLawXML(this.lawdataPath, lawInfo, text);

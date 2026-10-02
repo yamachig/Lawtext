@@ -1,4 +1,4 @@
-/* eslint-disable @stylistic/quote-props */
+
 import path from "path";
 import webpack from "webpack";
 import TerserPlugin from "terser-webpack-plugin";
@@ -14,16 +14,23 @@ export default (env, argv) => {
     const distDir = path.resolve(
         rootDir,
         (argv.mode === "development") ? "dist-bundle-dev" : "dist-bundle-prod",
+        "browser",
     );
     return {
         mode: (argv.mode === "development") ? "development" : "production",
-        entry: [path.resolve(rootDir, "./src/lawtext.ts")],
+        entry: {
+            index: [
+                path.resolve(rootDir, "../core/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs"),
+                path.resolve(rootDir, "./src/lawtext.ts"),
+            ],
+        },
         experiments: {
             outputModule: true,
         },
         output: {
-            filename: "browser/lawtext.js",
+            filename: "lawtext.js",
             path: distDir,
+            clean: true,
             library: {
                 type: "module",
             },
@@ -35,13 +42,6 @@ export default (env, argv) => {
             },
             alias: {
                 "./createPdfjsWorker.js$": false,
-                "node-fetch": false,
-                "fs": false,
-                "@napi-rs/canvas": false,
-                "pdfjs-dist": false,
-            },
-            fallback: {
-                "path": import.meta.resolve("path-browserify"),
             },
         },
         module: {
