@@ -45,7 +45,17 @@ export default (env, argv) => {
             },
         },
         module: {
-            rules: [{ test: /\.tsx?$/, use: "ts-loader" }],
+            rules: [
+                {
+                    test: /pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf(?:\.worker)?\.mjs$/,
+                    loader: "string-replace-loader",
+                    options: {
+                        search: /import\.meta\.url/g,
+                        replace: "globalThis.location.href",
+                    },
+                },
+                { test: /\.tsx?$/, use: "ts-loader" },
+            ],
         },
         plugins: [
             new webpack.optimize.LimitChunkCountPlugin({

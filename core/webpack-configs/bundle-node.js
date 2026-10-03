@@ -47,6 +47,16 @@ export default (env, argv) => {
             },
         },
         module: {
+            parser: {
+                javascript: {
+                    importMeta: {
+                        url: false,
+                        resolve: false,
+                        dirname: false,
+                        filename: false,
+                    },
+                },
+            },
             rules: [{ test: /\.tsx?$/, use: "ts-loader" }],
         },
         plugins: [
