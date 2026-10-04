@@ -86,7 +86,6 @@
     "globals": "^17.6.0",
     "mocha": "^11.7.6",
     "path-browserify": "^1.0.1",
-    "string-replace-loader": "^3.3.0",
     "terser-webpack-plugin": "^5.6.1",
     "ts-loader": "^9.6.0",
     "typescript": "^6.0.3",

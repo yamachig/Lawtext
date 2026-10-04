@@ -55,6 +55,7 @@ export default (env, argv) => {
                         dirname: false,
                         filename: false,
                     },
+                    createRequire: false,
                 },
             },
             rules: [{ test: /\.tsx?$/, use: "ts-loader" }],

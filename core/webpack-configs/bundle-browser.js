@@ -45,19 +45,14 @@ export default (env, argv) => {
             },
         },
         module: {
-            rules: [
-                {
-                    test: /pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf(?:\.worker)?\.mjs$/,
-                    loader: "string-replace-loader",
-                    options: {
-                        search: /import\.meta\.url/g,
-                        replace: "globalThis.location.href",
-                    },
-                },
-                { test: /\.tsx?$/, use: "ts-loader" },
-            ],
+            rules: [{ test: /\.tsx?$/, use: "ts-loader" }],
         },
         plugins: [
+            new webpack.DefinePlugin({
+                "import.meta.url": webpack.DefinePlugin.runtimeValue(() => {
+                    return "(document.currentScript && document.currentScript.src || location.href)";
+                }, []),
+            }),
             new webpack.optimize.LimitChunkCountPlugin({
                 maxChunks: 1,
             }),

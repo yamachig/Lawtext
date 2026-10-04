@@ -58,14 +58,6 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         module: {
             rules: [
                 {
-                    test: /pdfjs-dist[\\/]legacy[\\/]build[\\/]pdf(?:\.worker)?\.mjs$/,
-                    loader: "string-replace-loader",
-                    options: {
-                        search: /import\.meta\.url/g,
-                        replace: "globalThis.location.href",
-                    },
-                },
-                {
                     test: /\.(?:jsx?|tsx?)$/,
                     enforce: "pre",
                     use: ["source-map-loader"],
@@ -112,6 +104,11 @@ export default (env: Record<string, string>, argv: Record<string, string>): webp
         plugins: [
             new webpack.ProvidePlugin({
                 Buffer: ["buffer", "Buffer"],
+            }),
+            new webpack.DefinePlugin({
+                "import.meta.url": webpack.DefinePlugin.runtimeValue(() => {
+                    return "(document.currentScript && document.currentScript.src || location.href)";
+                }, []),
             }),
             new WatchMessagePlugin(),
             new MiniCssExtractPlugin({
