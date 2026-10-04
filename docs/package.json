@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "npx concurrently -n core,docs \"npx typedoc --options core-typedoc.json --watch --preserveWatchOutput\" \"next dev\"",
     "build": "npm run core-docs && next build",
-    "build-core-bundles": "cd \"../core\" && npm run build-bundles:prod -- --output-path=\"../docs/out/static/lawtext_bundles\"",
+    "build-core-bundles": "cd \"../core\" && npx webpack --mode=production --config ./webpack-configs/bundle-browser.js --output-path=\"../docs/out/static/lawtext_bundles/browser\" && npx webpack --mode=production --config ./webpack-configs/bundle-node.js --output-path=\"../docs/out/static/lawtext_bundles/node\"",
     "start": "next start",
     "lint": "next lint",
     "core-docs-watch": "npx typedoc --options core-typedoc.json --watch",

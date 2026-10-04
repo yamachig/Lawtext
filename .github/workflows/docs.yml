@@ -64,7 +64,7 @@ jobs:
         working-directory: ./docs
 
       - name: Build core bundles
-        run: npm run build-bundles:prod -- --output-path="../docs/out/static/lawtext_bundles"
+        run: npx webpack --mode=production --config ./webpack-configs/bundle-browser.js --output-path="../docs/out/static/lawtext_bundles/browser" && npx webpack --mode=production --config ./webpack-configs/bundle-node.js --output-path="../docs/out/static/lawtext_bundles/node"
         working-directory: ./core
 
       - name: Upload artifact
