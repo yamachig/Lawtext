@@ -23,6 +23,12 @@
       "types": "./dist/*.d.ts",
       "default": "./dist/*.js"
     },
+    "./*.js": {
+      "default": "./dist/*.js"
+    },
+    "./*.d.ts": {
+      "types": "./dist/*.d.ts"
+    },
     "./dist/src/*": {
       "types": "./dist/*.d.ts",
       "default": "./dist/*.js"
