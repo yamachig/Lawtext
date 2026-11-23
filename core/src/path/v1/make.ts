@@ -4,18 +4,28 @@ import { assertNever } from "../../util/index.ts";
 import type { PathFragment, PathFragmentArticlesContainer, PathFragmentSentencesContainer, PathFragmentTopLevel } from "./common.ts";
 import { sentencesContainerAlias, topLevelAlias } from "./common.ts";
 
+export interface MakeOptions {
+    useAlias: boolean,
+};
 
-export const makePathFragments = (container: Container, childFragments: PathFragment[]): PathFragment[] => {
+export const makePathFragments = (container: Container, childFragments: PathFragment[], options: MakeOptions): PathFragment[] => {
+
+    const { useAlias } = options;
+
     if (!container.parent || container.type === ContainerType.ROOT) {
         return childFragments;
 
     } else if (container.type === ContainerType.TOPLEVEL) {
 
         if (container.el.tag === "MainProvision" && childFragments.length > 0) {
-            return makePathFragments(container.parent, childFragments);
+            return makePathFragments(container.parent, childFragments, options);
         }
 
-        const alias = (Object.entries(topLevelAlias).find(([, value]) => value === container.el.tag) ?? [container.el.tag])[0];
+        const alias = (
+            useAlias
+                ? (Object.entries(topLevelAlias).find(([, value]) => value === container.el.tag) ?? [container.el.tag])[0]
+                : container.el.tag
+        );
 
         if (
             (
@@ -36,7 +46,7 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
                 attr: [],
                 nth: null,
             };
-            return makePathFragments(container.parent, [fragment, ...childFragments]);
+            return makePathFragments(container.parent, [fragment, ...childFragments], options);
 
         } else {
             let num: string | null = null;
@@ -66,7 +76,7 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
                 attr,
                 nth,
             };
-            return makePathFragments(container.parent, [fragment, ...childFragments]);
+            return makePathFragments(container.parent, [fragment, ...childFragments], options);
         }
 
     } else if (container.type === ContainerType.ARTICLES) {
@@ -93,13 +103,17 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
             attr: [],
             nth,
         };
-        return makePathFragments(container.parent, [fragment, ...childFragments]);
+        return makePathFragments(container.parent, [fragment, ...childFragments], options);
 
     } else if (container.type === ContainerType.SENTENCES) {
 
         if (!container.subParent) return childFragments;
 
-        const alias = (Object.entries(sentencesContainerAlias).find(([, value]) => value === container.el.tag) ?? [container.el.tag])[0];
+        const alias = (
+            useAlias
+                ? (Object.entries(sentencesContainerAlias).find(([, value]) => value === container.el.tag) ?? [container.el.tag])[0]
+                : container.el.tag
+        );
 
         let num: string | null = null;
         let nth: string | null = null;
@@ -135,6 +149,7 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
                     : container.subParent
             ),
             [fragment, ...childFragments],
+            options,
         );
 
     }
@@ -142,8 +157,12 @@ export const makePathFragments = (container: Container, childFragments: PathFrag
 
 };
 
-export const make = (container: Container): string => {
-    const fragments = makePathFragments(container, []);
+export const make = (container: Container, options: Partial<MakeOptions> = {}): string => {
+    const filledOptions: MakeOptions = {
+        useAlias: true,
+        ...options,
+    };
+    const fragments = makePathFragments(container, [], filledOptions);
     return fragments.map(f => f.text).join("/");
 };
 export default make;

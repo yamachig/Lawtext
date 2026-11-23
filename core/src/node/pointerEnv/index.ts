@@ -10,6 +10,7 @@ import { EL } from "../el/index.ts";
 import type { ____Declaration, ____PF, ____Pointer } from "../el/controls/index.ts";
 import { ____LawRef, ____VarRef, __Parentheses } from "../el/controls/index.ts";
 import { RelPos } from "../el/controls/index.ts";
+import makePath from "../../path/v1/make.ts";
 
 export interface InternalLocatedInfo {
     type: "internal",
@@ -183,8 +184,64 @@ export class PointerEnv {
             force: false,
             ...options,
         };
+
         if (this.located && !force) return;
 
+        const newLocated = this.getLocated({ force, declarations, lawRefByDeclarationID });
+
+        if (newLocated) {
+            this.located = newLocated;
+
+            for (const fragment of this.pointer.fragments()) {
+                delete fragment.attr.targetScope;
+                delete fragment.attr.targetLawNum;
+                delete fragment.attr.targetPath;
+                delete fragment.attr.targetPaths;
+                delete fragment.attr.targetContainerID;
+                delete fragment.attr.targetContainerIDs;
+            }
+
+            if (this.located.type === "internal") {
+                for (const { fragment, containers } of this.located.fragments) {
+                    fragment.attr.targetScope = "internal";
+                    if (containers.length === 1) {
+                        fragment.attr.targetContainerID = containers[0].containerID;
+                        fragment.attr.targetPath = makePath(containers[0], { useAlias: false });
+                    } else if (containers.length > 1) {
+                        fragment.attr.targetContainerIDs = JSON.stringify(containers.map(c => c.containerID));
+                        fragment.attr.targetPaths = JSON.stringify(containers.map(c => makePath(c, { useAlias: false })));
+                    }
+                }
+            } else if (this.located.type === "external") {
+                const lawNum = this.located.lawRef.attr.lawNum;
+                const lastPrefixFragment = (
+                    this.located.fqPrefixFragments.length > 0
+                        ? this.located.fqPrefixFragments[this.located.fqPrefixFragments.length - 1]
+                        : null
+                );
+                let currentPath = lastPrefixFragment?.attr.targetPath ?? "";
+                for (const [i, fragment] of this.pointer.fragments().entries()) {
+                    fragment.attr.targetScope = "external";
+                    fragment.attr.targetLawNum = lawNum;
+                    if (i < this.located.skipSameCount) {
+                        const fqFragment = this.located.fqPrefixFragments[this.located.fqPrefixFragments.length - this.located.skipSameCount + i];
+                        currentPath = fqFragment.attr.targetPath ?? "";
+                        fragment.attr.targetPath = currentPath;
+                    } else if (fragment.attr.relPos !== "EACH") {
+                        currentPath = `${currentPath}${currentPath === "" ? "" : "/"}${fragment.attr.targetType}${fragment.attr.num ? ("=" + fragment.attr.num) : "[1]"}`;
+                        fragment.attr.targetPath = currentPath;
+                    }
+                }
+            } else { throw assertNever(this.located); }
+        }
+    }
+
+    public getLocated(options: Required<LocateOptions>): LocatedInfo | null {
+        const {
+            force,
+            declarations,
+            lawRefByDeclarationID,
+        } = options;
 
         const linealAscendant = this.sentenceEnv.linealAscendantOfEL(this.pointer);
         const pointerRange = linealAscendant && linealAscendant[linealAscendant.length - 2];
@@ -251,7 +308,7 @@ export class PointerEnv {
 
             if (!referredPointerLike) {
                 // console.warn(`No seriesPrev and namingParent for ${this.pointer.text()}`);
-                return;
+                return null;
             }
 
             if (referredPointerLike instanceof PointerEnv) {
@@ -260,7 +317,7 @@ export class PointerEnv {
                 const prev = referredEnv.located;
                 if (!prev) {
                     // console.warn(`Not located ${this.seriesPrev.pointer.text()}`);
-                    return;
+                    return null;
                 } else if (prev.type === "external") {
 
                     const prevFragments = referredEnv.pointer.fragments();
@@ -273,7 +330,7 @@ export class PointerEnv {
                     const skipSameCount = 1;
                     const fqDupIndex = fqPrefixCandidate.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
                     const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex + skipSameCount);
-                    this.located = {
+                    return {
                         type: "external",
                         lawRef: prev.lawRef,
                         fqPrefixFragments,
@@ -288,9 +345,9 @@ export class PointerEnv {
                     ) ?? null;
                     if (!container) {
                         // console.warn(`Not located ${this.pointer.text()}`);
-                        return;
+                        return null;
                     }
-                    this.located = {
+                    return {
                         type: "internal",
                         fragments: locateContainersForFragments([container], fragments),
                     };
@@ -300,7 +357,7 @@ export class PointerEnv {
             } else if (Array.isArray(referredPointerLike) || referredPointerLike instanceof ____LawRef) {
                 const lawRef = Array.isArray(referredPointerLike) ? referredPointerLike[1] : referredPointerLike;
 
-                this.located = {
+                return {
                     type: "external",
                     lawRef,
                     fqPrefixFragments: [],
@@ -318,10 +375,10 @@ export class PointerEnv {
 
             if (!scopeContainer) {
                 // console.warn(`Not located ${this.pointer.text()}`);
-                return;
+                return null;
             }
 
-            this.located = {
+            return {
                 type: "internal",
                 fragments: locateContainersForFragments([scopeContainer], fragments),
             };
@@ -334,7 +391,7 @@ export class PointerEnv {
 
             if (!scopeContainer) {
                 // console.warn(`Not located ${this.pointer.text()}`);
-                return;
+                return null;
             }
 
             let count = fragments[0].attr.count === "all" ? Number.MAX_SAFE_INTEGER : Number(fragments[0].attr.count);
@@ -350,10 +407,10 @@ export class PointerEnv {
 
                 if (containers.length <= 0) {
                     // console.warn(`Not located ${this.pointer.text()}`);
-                    return;
+                    return null;
                 }
 
-                this.located = {
+                return {
                     type: "internal",
                     fragments: locateContainersForFragments(containers, fragments),
                 };
@@ -369,10 +426,10 @@ export class PointerEnv {
 
                 if (!container) {
                     // console.warn(`Not located ${this.pointer.text()}`);
-                    return;
+                    return null;
                 }
 
-                this.located = {
+                return {
                     type: "internal",
                     fragments: locateContainersForFragments([container], fragments),
                 };
@@ -385,7 +442,7 @@ export class PointerEnv {
                 .thisOrClosest(c => c.el.tag === fragments[0].attr.targetType);
             if (!scopeContainer) {
                 // console.warn(`Not located ${this.pointer.text()}`);
-                return;
+                return null;
             }
 
             let count = fragments[0].attr.count === "all" ? Number.MAX_SAFE_INTEGER : Number(fragments[0].attr.count);
@@ -399,10 +456,10 @@ export class PointerEnv {
 
                 if (containers.length <= 0) {
                     // console.warn(`Not located ${this.pointer.text()}`);
-                    return;
+                    return null;
                 }
 
-                this.located = {
+                return {
                     type: "internal",
                     fragments: locateContainersForFragments(containers, fragments),
                 };
@@ -416,10 +473,10 @@ export class PointerEnv {
 
                 if (!container) {
                     // console.warn(`Not located ${this.pointer.text()}`);
-                    return;
+                    return null;
                 }
 
-                this.located = {
+                return {
                     type: "internal",
                     fragments: locateContainersForFragments([container], fragments),
                 };
@@ -433,7 +490,7 @@ export class PointerEnv {
 
                 if (prependedLawRef) {
                     // e.g. "電波法附則"
-                    this.located = {
+                    return {
                         type: "external",
                         lawRef: prependedLawRef,
                         fqPrefixFragments: [],
@@ -456,10 +513,10 @@ export class PointerEnv {
 
                     if (!container) {
                         // console.warn(`Not located ${this.pointer.text()}`);
-                        return;
+                        return null;
                     }
 
-                    this.located = {
+                    return {
                         type: "internal",
                         fragments: locateContainersForFragments([container], fragments),
                     };
@@ -471,7 +528,7 @@ export class PointerEnv {
 
                 if (prependedLawRef) {
                     // e.g. "電波法別表第一"
-                    this.located = {
+                    return {
                         type: "external",
                         lawRef: prependedLawRef,
                         fqPrefixFragments: [],
@@ -487,10 +544,10 @@ export class PointerEnv {
 
                     if (!container) {
                         // console.warn(`Not located ${this.pointer.text()}`);
-                        return;
+                        return null;
                     }
 
-                    this.located = {
+                    return {
                         type: "internal",
                         fragments: locateContainersForFragments([container], fragments),
                     };
@@ -501,8 +558,6 @@ export class PointerEnv {
                 // e.g. "イ"
 
                 // Assuming no prependedLawRef
-
-                let located = false;
 
                 if (this.namingParent) this.namingParent.locate(options);
                 const prev = this.namingParent?.located;
@@ -520,13 +575,12 @@ export class PointerEnv {
 
                         const fqDupIndex = fqPrefixCandidate.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
                         const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex);
-                        this.located = {
+                        return {
                             type: "external",
                             lawRef: prev.lawRef,
                             fqPrefixFragments,
                             skipSameCount: 0,
                         };
-                        located = true;
 
                     } else if (prev.type === "internal") {
                         const scopeContainer = (
@@ -545,13 +599,14 @@ export class PointerEnv {
 
                         if (!container) {
                             // console.warn(`Not located ${this.pointer.text()}`);
-                            return;
+                            return null;
                         }
-                        this.located = {
+                        return {
                             type: "internal",
                             fragments: locateContainersForFragments([container], fragments),
                         };
                     }
+                    else { throw assertNever(prev); }
 
                 } else {
                     const scopeContainer = this.sentenceEnv.container;
@@ -566,25 +621,20 @@ export class PointerEnv {
 
                     if (!container) {
                         // console.warn(`Not located ${this.pointer.text()}`);
-                        return;
+                        return null;
                     }
-                    this.located = {
+                    return {
                         type: "internal",
                         fragments: locateContainersForFragments([container], fragments),
                     };
 
                 }
 
-                if (!located) {
-                    // console.warn(`Not located ${this.pointer.text()}`);
-                    return;
-                }
-
             } else {
 
                 if (prependedLawRef) {
                     // e.g. "行政手続法第二条"
-                    this.located = {
+                    return {
                         type: "external",
                         lawRef: prependedLawRef,
                         fqPrefixFragments: [],
@@ -593,7 +643,6 @@ export class PointerEnv {
 
                 } else {
                     // e.g. "第二条"
-                    let located = false;
 
                     if (this.namingParent) this.namingParent.locate(options);
                     const prev = this.namingParent?.located;
@@ -610,13 +659,12 @@ export class PointerEnv {
 
                         const fqDupIndex = fqPrefixCandidate.findIndex(f => f.attr.targetType === fragments[0].attr.targetType);
                         const fqPrefixFragments = (fqDupIndex < 0) ? fqPrefixCandidate : fqPrefixCandidate.slice(0, fqDupIndex);
-                        this.located = {
+                        return {
                             type: "external",
                             lawRef: prev.lawRef,
                             fqPrefixFragments,
                             skipSameCount: 0,
                         };
-                        located = true;
 
                     } else {
 
@@ -641,50 +689,41 @@ export class PointerEnv {
                             );
 
                             if (container) {
-                                this.located = {
+                                return {
                                     type: "internal",
                                     fragments: locateContainersForFragments([container], fragments),
                                 };
-                                located = true;
                             }
                         }
 
-                        if (!located) {
-                            // e.g. "第三項"
+                        // e.g. "第三項"
 
-                            const scopeContainer = this.sentenceEnv.container;
+                        const scopeContainer = this.sentenceEnv.container;
 
-                            const func = (c: Container) => (
-                                (c.el.tag === fragments[0].attr.targetType)
+                        const func = (c: Container) => (
+                            (c.el.tag === fragments[0].attr.targetType)
                                 && ((c.num || null) === fragments[0].attr.num)
-                            );
-                            const mpContainer = scopeContainer.linealAscendant()[0].children.find(c => c.el.tag === "MainProvision");
-                            const container = (
-                                scopeContainer.children.find(func)
+                        );
+                        const mpContainer = scopeContainer.linealAscendant()[0].children.find(c => c.el.tag === "MainProvision");
+                        const container = (
+                            scopeContainer.children.find(func)
                                 ?? scopeContainer.findAncestorChildren(func)
                                 ?? scopeContainer.findAncestorChildrenSub(func)
                                 ?? mpContainer?.children.find(func)
                                 ?? mpContainer?.subChildren.find(func)
                                 ?? null
-                            );
+                        );
 
-                            if (!container) {
-                                // console.warn(`Not located ${this.pointer.text()}`);
-                                return;
-                            }
-                            this.located = {
-                                type: "internal",
-                                fragments: locateContainersForFragments([container], fragments),
-                            };
-                            located = true;
+                        if (!container) {
+                            // console.warn(`Not located ${this.pointer.text()}`);
+                            return null;
                         }
-
+                        return {
+                            type: "internal",
+                            fragments: locateContainersForFragments([container], fragments),
+                        };
                     }
 
-                    if (!located) {
-                        // console.warn(`Not located ${this.pointer.text()}`);
-                        return;
-                    }
                 }
             }
 
@@ -692,7 +731,7 @@ export class PointerEnv {
             // e.g.: "各号"
 
             // console.warn(`Not located ${this.pointer.text()}`);
-            return;
+            return null;
         }
         else { throw assertNever(fragments[0].attr.relPos); }
     }
@@ -758,7 +797,7 @@ const locateContainersForFragments = (
 
             if (containers.length > 0) {
                 locatedContainersForFragments.push({ fragment, containers });
-                parentContainer = containers[0]; // containers is an Array only if fragment.attr.relPos === RelPos.EACH
+                parentContainer = containers[0]; // containers can be an Array only for the last fragment
             } else {
                 break;
             }

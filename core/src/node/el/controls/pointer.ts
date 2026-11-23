@@ -57,6 +57,18 @@ export class ____PF extends EL {
         name: string,
         num?: string,
         count?: string,
+
+        // The following attributes are set during the locate process
+        targetScope?: "internal" | "external",
+
+        targetPath?: string,
+        targetPaths?: string, // either targetPath or targetPaths is set
+
+         // targetContainerID and targetContainerIDs are undefined if targetScope is "external"
+        targetContainerID?: string,
+        targetContainerIDs?: string, // either targetContainerID or targetContainerIDs is set
+
+        targetLawNum?: string, // set if targetScope is "external"
     };
     public override children: [string];
 
