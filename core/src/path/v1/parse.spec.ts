@@ -396,6 +396,57 @@ describe("Test path.v1.parse", () => {
         assert.deepStrictEqual(actual, expected);
     });
 
+    it("Success case", () => {
+        const text = "Article=1/Item=2/Subitem10=3/si10=4/Subitem1=5";
+        const expected: ParseResult = {
+            ok: true,
+            value: [
+                {
+                    type: "SENTENCES",
+                    text: "Article=1",
+                    tag: "Article",
+                    num: "1",
+                    attr: [],
+                    nth: null,
+                },
+                {
+                    type: "SENTENCES",
+                    text: "Item=2",
+                    tag: "Item",
+                    num: "2",
+                    attr: [],
+                    nth: null,
+                },
+                {
+                    type: "SENTENCES",
+                    text: "Subitem10=3",
+                    tag: "Subitem10",
+                    num: "3",
+                    attr: [],
+                    nth: null,
+                },
+                {
+                    type: "SENTENCES",
+                    text: "si10=4",
+                    tag: "Subitem10",
+                    num: "4",
+                    attr: [],
+                    nth: null,
+                },
+                {
+                    type: "SENTENCES",
+                    text: "Subitem1=5",
+                    tag: "Subitem1",
+                    num: "5",
+                    attr: [],
+                    nth: null,
+                },
+            ],
+        };
+        const actual = parse(text);
+        assert.deepStrictEqual(actual, expected);
+    });
+
     it("Fail case", () => {
         const text = "405AC0000000088//p=1";
         const expected: ParseResult = {

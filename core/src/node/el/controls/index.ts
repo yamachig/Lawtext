@@ -64,5 +64,7 @@ export const analysisControlElFilter = {
         "targetContainerID",
         "targetContainerIDs",
         "targetLawNum",
+        "targetTextFragments",
+        "targetSuggestedLawTitle",
     ],
 } as const satisfies ControlElFilter;

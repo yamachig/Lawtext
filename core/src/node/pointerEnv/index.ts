@@ -11,6 +11,7 @@ import type { ____Declaration, ____PF, ____Pointer } from "../el/controls/index.
 import { ____LawRef, ____VarRef, __Parentheses } from "../el/controls/index.ts";
 import { RelPos } from "../el/controls/index.ts";
 import makePath from "../../path/v1/make.ts";
+import { makeTextFragments } from "./textFragments.ts";
 
 export interface InternalLocatedInfo {
     type: "internal",
@@ -199,11 +200,26 @@ export class PointerEnv {
                 delete fragment.attr.targetPaths;
                 delete fragment.attr.targetContainerID;
                 delete fragment.attr.targetContainerIDs;
+                delete fragment.attr.targetTextFragments;
+                delete fragment.attr.targetSuggestedLawTitle;
             }
 
             if (this.located.type === "internal") {
+                const namedTextByContainer = new Map<Container, string>();
+                for (const { fragment, containers } of this.located.fragments) {
+                    if (containers.length === 1 && fragment.attr.relPos === RelPos.NAMED && fragment.attr.targetType !== "Law") {
+                        namedTextByContainer.set(containers[0], fragment.attr.name);
+                    }
+                }
+
                 for (const { fragment, containers } of this.located.fragments) {
                     fragment.attr.targetScope = "internal";
+                    if (containers.length === 1) {
+                        fragment.attr.targetTextFragments = JSON.stringify(makeTextFragments(containers[0], { namedTextByContainer }));
+                    } else if (containers.length > 1) {
+                        const parentTextFragments = makeTextFragments(containers[0], { namedTextByContainer }).slice(0, -1);
+                        fragment.attr.targetTextFragments = JSON.stringify([...parentTextFragments, fragment.attr.name]);
+                    }
                     if (containers.length === 1) {
                         fragment.attr.targetContainerID = containers[0].containerID;
                         fragment.attr.targetPath = makePath(containers[0], { useAlias: false });
@@ -214,6 +230,12 @@ export class PointerEnv {
                 }
             } else if (this.located.type === "external") {
                 const lawNum = this.located.lawRef.attr.lawNum;
+                const suggestedLawTitle = this.located.lawRef.attr.suggestedLawTitle;
+                const { fqPrefixFragments, skipSameCount } = this.located;
+                const textFragments: string[] = fqPrefixFragments
+                    .slice(0, Math.max(0, fqPrefixFragments.length - skipSameCount))
+                    .filter(f => f.attr.targetType !== "Law")
+                    .map(f => f.attr.name);
                 const lastPrefixFragment = (
                     this.located.fqPrefixFragments.length > 0
                         ? this.located.fqPrefixFragments[this.located.fqPrefixFragments.length - 1]
@@ -223,6 +245,14 @@ export class PointerEnv {
                 for (const [i, fragment] of this.pointer.fragments().entries()) {
                     fragment.attr.targetScope = "external";
                     fragment.attr.targetLawNum = lawNum;
+                    if (suggestedLawTitle !== undefined) fragment.attr.targetSuggestedLawTitle = suggestedLawTitle;
+                    const resolvedFragment = (
+                        (i < skipSameCount)
+                            ? (fqPrefixFragments[fqPrefixFragments.length - skipSameCount + i] as ____PF | undefined) ?? fragment
+                            : fragment
+                    );
+                    if (resolvedFragment.attr.targetType !== "Law") textFragments.push(resolvedFragment.attr.name);
+                    fragment.attr.targetTextFragments = JSON.stringify(textFragments);
                     if (i < this.located.skipSameCount) {
                         const fqFragment = this.located.fqPrefixFragments[this.located.fqPrefixFragments.length - this.located.skipSameCount + i] as ____PF | undefined;
                         currentPath = fqFragment?.attr.targetPath ?? "";

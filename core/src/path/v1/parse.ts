@@ -8,6 +8,8 @@ import type { PathFragment, PathFragmentArticlesContainer, PathFragmentLaw, Path
 import { sentencesContainerAlias, topLevelAlias } from "./common.ts";
 
 const makeEnv = () => gp.makeStringEnv();
+
+const makeKeywordsRegExp = (keywords: readonly string[]) => new RegExp(`^(?:${[...keywords].sort((a, b) => b.length - a.length).join("|")})`);
 const factory = new gp.RuleFactory<string, ReturnType<typeof makeEnv>>();
 export type ValueRule<TValue> = Rule<string, TValue, ReturnType<typeof makeEnv>, Empty>;
 
@@ -90,7 +92,7 @@ const $suareBracketsNth = factory
 
 const $fragmentTopLevel: ValueRule<PathFragmentTopLevel> = factory
     .sequence(s => s
-        .and(r => r.regExp(new RegExp(`^(?:${Object.keys(topLevelAlias).join("|")})`)), "topLevelKey")
+        .and(r => r.regExp(makeKeywordsRegExp(Object.keys(topLevelAlias))), "topLevelKey")
         .and(r => r.zeroOrOne(() => $equalsNum), "num")
         .and(r => r.zeroOrMore(() => $suareBracketsAttr), "attr")
         .and(r => r.zeroOrOne(() => $suareBracketsNth), "nth")
@@ -107,7 +109,7 @@ const $fragmentTopLevel: ValueRule<PathFragmentTopLevel> = factory
 
 const $fragmentArticlesContainer: ValueRule<PathFragmentArticlesContainer> = factory
     .sequence(s => s
-        .and(r => r.regExp(new RegExp(`^(?:${articlesContainerTags.join("|")})`)), "tag")
+        .and(r => r.regExp(makeKeywordsRegExp(articlesContainerTags)), "tag")
         .and(r => r.zeroOrOne(() => $equalsNum), "num")
         .and(r => r.zeroOrMore(() => $suareBracketsAttr), "attr")
         .and(r => r.zeroOrOne(() => $suareBracketsNth), "nth")
@@ -124,8 +126,8 @@ const $fragmentArticlesContainer: ValueRule<PathFragmentArticlesContainer> = fac
 
 const $fragmentSentencesContainer: ValueRule<PathFragmentSentencesContainer> = factory
     .sequence(s => s
-        .andOmit(r => r.nextIsNot(r => r.regExp(new RegExp(`^(?:${Object.keys(topLevelAlias).join("|")})`))))
-        .and(r => r.regExp(new RegExp(`^(?:${Object.keys(sentencesContainerAlias).join("|")})`)), "sentencesContainerKey")
+        .andOmit(r => r.nextIsNot(r => r.regExp(makeKeywordsRegExp(Object.keys(topLevelAlias)))))
+        .and(r => r.regExp(makeKeywordsRegExp(Object.keys(sentencesContainerAlias))), "sentencesContainerKey")
         .and(r => r.zeroOrOne(() => $equalsNum), "num")
         .and(r => r.zeroOrMore(() => $suareBracketsAttr), "attr")
         .and(r => r.zeroOrOne(() => $suareBracketsNth), "nth")

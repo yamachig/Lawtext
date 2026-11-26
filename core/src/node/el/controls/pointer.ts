@@ -69,6 +69,10 @@ export class ____PF extends EL {
         targetContainerIDs?: string, // either targetContainerID or targetContainerIDs is set
 
         targetLawNum?: string, // set if targetScope is "external"
+
+        targetTextFragments?: string,
+
+        targetSuggestedLawTitle?: string, // set if targetScope is "external" and the suggested law title is available
     };
     public override children: [string];
 
