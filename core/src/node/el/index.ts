@@ -1,4 +1,5 @@
-import { innerXML, outerXML, wrapXML } from "./elToXML.ts";
+import type { WithControlEl } from "./elToXML.ts";
+import { filterControlEl, innerXML, outerXML, wrapXML } from "./elToXML.ts";
 import type { JsonEL } from "./jsonEL.ts";
 
 
@@ -53,7 +54,7 @@ export class EL implements JsonEL {
         return el;
     }
 
-    public json(withControlEl = false, withProperties = false): JsonEL {
+    public json(withControlEl: WithControlEl = false, withProperties = false): JsonEL {
         const children: Array<JsonEL | string> = [];
         for (const el of this.children) {
             if (!(el instanceof EL || typeof el === "string")) {
@@ -64,7 +65,7 @@ export class EL implements JsonEL {
                 children.push(el);
             } else {
                 const js = el.json(withControlEl, withProperties);
-                if (withControlEl || el.tag[0] !== "_") {
+                if (filterControlEl(el, withControlEl) !== null) {
                     children.push(js);
                 } else {
                     children.push(...js.children);
@@ -80,7 +81,7 @@ export class EL implements JsonEL {
                 joinedChildren.push(child);
             }
         }
-        const attr = { ...this.attr };
+        const attr = { ...(filterControlEl(this, withControlEl) ?? this.attr) };
         if (withProperties) {
             attr["__id"] = JSON.stringify(this.id);
             attr["__range"] = JSON.stringify(this.range);
@@ -102,11 +103,11 @@ export class EL implements JsonEL {
         return wrapXML(this, inner);
     }
 
-    public outerXML(withControlEl = false): string {
+    public outerXML(withControlEl: WithControlEl = false): string {
         return outerXML(this, withControlEl);
     }
 
-    public innerXML(withControlEl = false): string {
+    public innerXML(withControlEl: WithControlEl = false): string {
         return innerXML(this, withControlEl);
     }
 }

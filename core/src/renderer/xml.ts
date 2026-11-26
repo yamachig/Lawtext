@@ -1,9 +1,10 @@
 import type { EL } from "../node/el/index.ts";
+import type { WithControlEl } from "../node/el/elToXML.ts";
 import type { JsonEL } from "../node/el/jsonEL.ts";
 import loadEL from "../node/el/loadEL.ts";
 import formatXML from "../util/formatXml.ts";
 
-export const renderXML = (elOrJsonEL: JsonEL | EL, withControlEl = false, format = false): string => {
+export const renderXML = (elOrJsonEL: JsonEL | EL, withControlEl: WithControlEl = false, format = false): string => {
     const el = loadEL(elOrJsonEL);
     let body = el.outerXML(withControlEl);
     if (format) body = formatXML(body);

@@ -1,4 +1,5 @@
 import type { EL } from "../index.ts";
+import type { ControlElFilter } from "../elToXML.ts";
 import { __Text } from "./text.ts";
 import { __MismatchEndParenthesis, __MismatchStartParenthesis, __Parentheses, __PContent, __PEnd, __PStart } from "./parentheses.ts";
 import { ____Declaration } from "./declaration.ts";
@@ -51,3 +52,17 @@ export const controlFromEL = (el: EL): EL => {
         return el;
     }
 };
+
+export const analysisControlElFilter = {
+    ____Declaration: ["declarationID"],
+    ____VarRef: ["declarationID"],
+    ____LawRef: ["lawNum"],
+    ____PF: [
+        "targetScope",
+        "targetPath",
+        "targetPaths",
+        "targetContainerID",
+        "targetContainerIDs",
+        "targetLawNum",
+    ],
+} as const satisfies ControlElFilter;

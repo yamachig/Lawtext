@@ -14,19 +14,22 @@ import { fetchLawData } from "./data/loaders/FetchElawsLoader.ts";
 import type { figPDFTypes } from "./renderer/common/docx/FigDataManager.ts";
 import FigDataManager from "./renderer/common/docx/FigDataManager.ts";
 import { getPdfjs } from "./renderer/common/docx/getPdfjs.js";
+import type { WithControlEl } from "./node/el/elToXML.ts";
+import { analysisControlElFilter } from "./node/el/controls/index.ts";
 
 export { configurePdfjs } from "./renderer/common/docx/getPdfjs.js";
 export type { PdfjsModule, PdfjsOptions } from "./renderer/common/docx/getPdfjs.js";
 
 export const intypeChoices = ["fromext", "lawtext", "xml", "json"] as const;
 export const outtypeChoices = ["fromext", "lawtext", "xml", "json", "html", "htmlfragment", "docx"] as const;
+export const controlChoices = ["none", "all", "analysis"] as const;
 type ToSingleKeyObj<T extends string | number | symbol, V> = T extends unknown ? {[K in T]: V} : never;
 export interface RunArgs {
     input: { elaws: string } | ToSingleKeyObj<Exclude<(typeof intypeChoices)[number], "fromext">, string>;
     outtypes: Exclude<(typeof outtypeChoices)[number], "fromext">[];
     analyze: boolean;
     format: boolean;
-    controlel: boolean;
+    control: (typeof controlChoices)[number];
     figpdf: (typeof figPDFTypes)[number],
 }
 
@@ -47,8 +50,12 @@ options:
         # If true, conduct the analysis process.
     format: boolean [default: false]
         # If true, format the XML or JSON output.
-    controlel: boolean [default: false]
-        # If true, emit the control elements in XML or JSON output.
+    control: "none" | "all" | "analysis" [default: "none"]
+        # Specify which control elements to emit in XML or JSON output.
+        #   "none": Do not emit any control elements.
+        #   "all": Emit all control elements with all attributes.
+        #   "analysis": Emit only the control elements representing the analysis results
+        #     (____Declaration, ____VarRef, ____LawRef and ____PF) with limited attributes.
 `;
 
 export interface RunResult {
@@ -76,8 +83,17 @@ export const run = async (args: RunArgs) => {
         figpdf = "embed",
         analyze = false,
         format = false,
-        controlel = false,
+        control = "none",
     } = args;
+
+    let withControlEl: WithControlEl;
+    if (control === "none") {
+        withControlEl = false;
+    } else if (control === "all") {
+        withControlEl = true;
+    } else if (control === "analysis") {
+        withControlEl = analysisControlElFilter;
+    } else { throw assertNever(control); }
 
     const ret: Partial<RunResult> = {};
 
@@ -135,13 +151,13 @@ If you are using the Lawtext CLI prebuilt: As the current limitation of the preb
             const outtext = renderLawtext(law);
             ret[outtype] = outtext;
         } else if (outtype === "xml") {
-            let outtext = renderer.renderXML(law, controlel);
+            let outtext = renderer.renderXML(law, withControlEl);
             if (format) {
                 outtext = formatXML(outtext);
             }
             ret[outtype] = outtext;
         } else if (outtype === "json") {
-            ret[outtype] = law.json(controlel, controlel);
+            ret[outtype] = law.json(withControlEl, control === "all");
         } else if (outtype === "html") {
             const outtext = renderer.renderHTML(law);
             ret[outtype] = outtext;

@@ -23,7 +23,7 @@ export interface RunCLIArgs {
     figpdf: Lowercase<(typeof figPDFTypes)[number]>;
     analyze: boolean;
     format: boolean;
-    controlel: boolean;
+    control: (typeof lawtext.controlChoices)[number];
 }
 
 export const defaultRunCLIArgs = {
@@ -36,7 +36,7 @@ export const defaultRunCLIArgs = {
     figpdf: "embed" as const,
     analyze: false,
     format: false,
-    controlel: false,
+    control: "none" as const,
 };
 
 export const runCLI = async (args: RunCLIArgs) => {
@@ -50,7 +50,7 @@ export const runCLI = async (args: RunCLIArgs) => {
         figpdf: origFigpdf,
         analyze,
         format,
-        controlel,
+        control,
     } = {
         ...defaultRunCLIArgs,
         ...args,
@@ -142,7 +142,7 @@ export const runCLI = async (args: RunCLIArgs) => {
         figpdf,
         analyze,
         format,
-        controlel,
+        control,
     });
 
 
@@ -255,11 +255,11 @@ export const main = async (): Promise<void> => {
             default: defaultRunCLIArgs.format,
             description: "If set, format the XML or JSON output.",
         })
-        .option("controlel", {
+        .option("control", {
             alias: "ce",
-            type: "boolean",
-            default: defaultRunCLIArgs.controlel,
-            description: "If set, emit the control elements in XML or JSON output.",
+            choices: lawtext.controlChoices,
+            default: defaultRunCLIArgs.control,
+            description: "Which control elements to emit in XML or JSON output. \"all\": all control elements with all attributes. \"analysis\": only the control elements representing the analysis results (____Declaration, ____VarRef, ____LawRef and ____PF) with limited attributes.",
         })
         .help();
 
