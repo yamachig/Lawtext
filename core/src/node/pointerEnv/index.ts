@@ -224,8 +224,8 @@ export class PointerEnv {
                     fragment.attr.targetScope = "external";
                     fragment.attr.targetLawNum = lawNum;
                     if (i < this.located.skipSameCount) {
-                        const fqFragment = this.located.fqPrefixFragments[this.located.fqPrefixFragments.length - this.located.skipSameCount + i];
-                        currentPath = fqFragment.attr.targetPath ?? "";
+                        const fqFragment = this.located.fqPrefixFragments[this.located.fqPrefixFragments.length - this.located.skipSameCount + i] as ____PF | undefined;
+                        currentPath = fqFragment?.attr.targetPath ?? "";
                         fragment.attr.targetPath = currentPath;
                     } else if (fragment.attr.relPos !== "EACH") {
                         currentPath = `${currentPath}${currentPath === "" ? "" : "/"}${fragment.attr.targetType}${fragment.attr.num ? ("=" + fragment.attr.num) : "[1]"}`;
