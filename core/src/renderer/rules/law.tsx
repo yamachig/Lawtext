@@ -106,6 +106,48 @@ export const DOCXPreamble = wrapDOCXComponent("DOCXPreamble", ((props: DOCXCompo
     </>);
 }));
 
+export const isAmendSupplProvision = (el: std.SupplProvision): boolean => {
+    return Boolean(el.attr.AmendLawNum);
+};
+
+export const getAmendSupplProvisionGroups = (lawBodyChildren: std.LawBody["children"]): Map<std.SupplProvision, std.SupplProvision[]> => {
+    const groups = new Map<std.SupplProvision, std.SupplProvision[]>();
+    let currentGroup: std.SupplProvision[] | null = null;
+    for (const child of lawBodyChildren) {
+        if (std.isSupplProvision(child) && isAmendSupplProvision(child)) {
+            if (currentGroup) {
+                currentGroup.push(child);
+            } else {
+                currentGroup = [child];
+                groups.set(child, currentGroup);
+            }
+        } else {
+            currentGroup = null;
+        }
+    }
+    return groups;
+};
+
+export interface AmendSupplProvisionsProps {
+    els: std.SupplProvision[],
+    indent: number,
+}
+
+export const HTMLAmendSupplProvisions = wrapHTMLComponent("HTMLAmendSupplProvisions", ((props: HTMLComponentProps & AmendSupplProvisionsProps) => {
+
+    const { els, htmlOptions, indent } = props;
+
+    const blocks: React.JSX.Element[] = [];
+
+    for (const el of els) {
+        if (blocks.length > 0) blocks.push(<div className="empty"><br/></div>);
+        blocks.push(<HTMLArticleGroup el={el} indent={indent} {...{ htmlOptions }} />);
+    }
+
+    return (<>
+        {withKey(blocks)}
+    </>);
+}));
 
 export interface LawProps {
     el: std.Law,
@@ -153,7 +195,10 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
 
     const bodyBlocks: React.JSX.Element[] = [];
 
-    for (const child of el.children.find(std.isLawBody)?.children ?? []) {
+    const lawBodyChildren = el.children.find(std.isLawBody)?.children ?? [];
+    const amendSupplProvisionGroups = getAmendSupplProvisionGroups(lawBodyChildren);
+
+    for (const child of lawBodyChildren) {
         if (
             std.isLawTitle(child)
         ) {
@@ -162,6 +207,12 @@ export const HTMLLaw = wrapHTMLComponent("HTMLLaw", ((props: HTMLComponentProps 
         } else if (std.isTOC(child)) {
             if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
             bodyBlocks.push(<HTMLTOC el={child} indent={indent} {...{ htmlOptions }} />);
+
+        } else if (std.isSupplProvision(child) && isAmendSupplProvision(child)) {
+            const group = amendSupplProvisionGroups.get(child);
+            if (!group) continue;
+            if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);
+            bodyBlocks.push(<HTMLAmendSupplProvisions els={group} indent={indent} {...{ htmlOptions }} />);
 
         } else if (std.isMainProvision(child) || std.isSupplProvision(child)) {
             if (bodyBlocks.length > 0) bodyBlocks.push(<div className="empty"><br/></div>);

@@ -11,6 +11,7 @@ import WrapHTMLControlRun from "./controls/WrapHTMLControlRun.tsx";
 import WrapHTMLParagraphItem from "./controls/WrapHTMLParagraphItem.tsx";
 import { containerTags } from "lawtext/dist/src/node/container/index.js";
 import WrapHTMLToplevelAndArticles from "./controls/WrapHTMLToplevelAndArticles.tsx";
+import WrapHTMLAmendSupplProvisions from "./controls/WrapHTMLAmendSupplProvisions.tsx";
 
 
 const wrapperByID: Record<string, React.FC<WrapperComponentProps>> = {};
@@ -24,6 +25,7 @@ wrapperByID["HTMLAppdxItem"] = WrapHTMLToplevelAndArticles;
 wrapperByID["HTMLSupplProvision"] = WrapHTMLToplevelAndArticles;
 wrapperByID["HTMLEnactStatement"] = WrapHTMLToplevelAndArticles;
 wrapperByID["HTMLPreamble"] = WrapHTMLToplevelAndArticles;
+wrapperByID["HTMLAmendSupplProvisions"] = WrapHTMLAmendSupplProvisions;
 
 const ErrorComponentDiv = styled.div`
 `;

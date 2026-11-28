@@ -15,6 +15,7 @@ import { locate as locatePath } from "lawtext/dist/src/path/v1/locate.js";
 import { scrollToLawAnchor } from "../../actions/scroll.ts";
 import { HTMLParagraphItemMenuCSS } from "./controls/WrapHTMLParagraphItem.tsx";
 import { HTMLToplevelAndArticlesMenuCSS } from "./controls/WrapHTMLToplevelAndArticles.tsx";
+import { HTMLAmendSupplProvisionsCSS } from "./controls/WrapHTMLAmendSupplProvisions.tsx";
 
 
 const GlobalStyle = createGlobalStyle`
@@ -94,6 +95,7 @@ export const LawView: React.FC<LawtextAppPageStateStruct> = props => {
             <ControlGlobalStyle/>
             <HTMLParagraphItemMenuCSS/>
             <HTMLToplevelAndArticlesMenuCSS/>
+            <HTMLAmendSupplProvisionsCSS/>
             {origState.hasError && <LawViewError {...props} />}
             {origState.law &&
             // (origState.navigatedPath === props.path) &&

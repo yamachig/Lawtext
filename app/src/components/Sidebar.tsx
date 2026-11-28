@@ -13,6 +13,8 @@ import type { NavigateFunction } from "react-router-dom";
 import getOnMessage from "../actions/getOnMessage.ts";
 import type { FigDataManagerOptions } from "lawtext/dist/src/renderer/common/docx/FigDataManager.js";
 import useSearchInput from "./useSearchInput.tsx";
+import { getAmendSupplProvisionGroups, isAmendSupplProvision } from "lawtext/dist/src/renderer/rules/law.js";
+import { getAmendSupplProvisionsLabel } from "./LawView/controls/WrapHTMLAmendSupplProvisions.tsx";
 
 
 const SidebarH1 = styled.h1`
@@ -444,6 +446,18 @@ const NavSupplProvision: React.FC<{el: std.SupplProvision, indent: number} & TOC
     }
 };
 
+const NavAmendSupplProvisions: React.FC<{els: std.SupplProvision[], indent: number} & TOCItemPropsForPath> = props => {
+    const { els, ...rest } = props;
+    if (els.length === 0) return null;
+    return (
+        <TOCItem
+            {...rest}
+            el={els[0]}
+            text={getAmendSupplProvisionsLabel(els, false)}
+        />
+    );
+};
+
 const NavAppdxTable: React.FC<{el: std.AppdxTable, indent: number} & TOCItemPropsForPath> = props => {
     const appdxTableTitle = props.el.children.find((el) => el.tag === "AppdxTableTitle") as std.AppdxTableTitle | undefined;
 
@@ -565,11 +579,16 @@ const NavAnyLaw: React.FC<{el: std.StdEL, indent: number} & TOCItemPropsForPath>
 };
 
 const LawBody: React.FC<{el: std.LawBody} & TOCItemPropsForPath> = props => {
+    const amendSupplProvisionGroups = getAmendSupplProvisionGroups(props.el.children);
     return (
         <>
             {props.el.children.map((el, i) => {
                 if (el.tag === "LawTitle") {
                     return null;
+                } else if (el.tag === "SupplProvision" && isAmendSupplProvision(el)) {
+                    const group = amendSupplProvisionGroups.get(el);
+                    if (!group) return null;
+                    return <NavAmendSupplProvisions {...props} key={i} els={group} indent={0} />;
                 } else if (el.tag === "EnactStatement") {
                     return <NavEnactStatement {...props} key={i} el={el} indent={0} />;
                 } else if (el.tag === "TOC") {
