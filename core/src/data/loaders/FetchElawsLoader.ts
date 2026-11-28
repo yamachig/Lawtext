@@ -78,14 +78,22 @@ export class ElawsLawData extends LawXMLStruct {
     }
 }
 
-export const fetchLawData = async (lawIDOrLawNum: string): Promise<ElawsLawData> => {
+export interface FetchLawDataOptions {
+    includeAttachedFileContent?: boolean,
+}
+
+export const fetchLawData = async (
+    lawIDOrLawNum: string,
+    options: FetchLawDataOptions = {},
+): Promise<ElawsLawData> => {
+    const { includeAttachedFileContent = false } = options;
     const responseData = (await elawsApi.getLawData({
         throwOnError: true,
         path: {
             law_id_or_num_or_revision_id: lawIDOrLawNum,
         },
         query: {
-            include_attached_file_content: true,
+            include_attached_file_content: includeAttachedFileContent,
             response_format: "json",
             law_full_text_format: "xml",
         },
@@ -116,13 +124,16 @@ export class FetchElawsLoader extends Loader {
         return fetchBaseLawInfosFromElaws();
     }
 
-    public async loadLawXMLStructByInfo(lawInfoOrLawIDOrLawNum: BaseLawInfo | string): Promise<LawXMLStruct> {
+    public async loadLawXMLStructByInfo(
+        lawInfoOrLawIDOrLawNum: BaseLawInfo | string,
+        options?: FetchLawDataOptions,
+    ): Promise<LawXMLStruct> {
         const LawIDOrLawNum = (
             typeof lawInfoOrLawIDOrLawNum === "string"
                 ? lawInfoOrLawIDOrLawNum
                 : lawInfoOrLawIDOrLawNum.LawID
         );
-        return fetchLawData(LawIDOrLawNum);
+        return fetchLawData(LawIDOrLawNum, options);
     }
 
 }

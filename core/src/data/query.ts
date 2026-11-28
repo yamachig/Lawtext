@@ -582,7 +582,6 @@ export class LawQueryItem extends LawInfo implements QueryItem {
     }
 
     protected static initialCache = () => ({
-        imageData: null as Uint8Array | null,
         xml: null as string | null,
         document: null as XMLDocument | null,
         el: null as EL | null,
@@ -600,7 +599,6 @@ export class LawQueryItem extends LawInfo implements QueryItem {
             if (this.loader instanceof FetchElawsLoader) {
                 const elawsLawData = await fetchLawData(this.LawID);
                 this._cache.xml = elawsLawData.xml;
-                this._cache.imageData = elawsLawData.imageData;
             } else {
                 this._cache.xml = (await this.loader.loadLawXMLStructByInfo(this)).xml;
             }

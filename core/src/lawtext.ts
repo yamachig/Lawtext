@@ -100,20 +100,23 @@ export const run = async (args: RunArgs) => {
     let law: std.Law;
     let figDataManager: FigDataManager | undefined = undefined;
     if ("elaws" in input) {
-        const lawData = await fetchLawData(input.elaws);
+        const needsFig = outtypes.includes("docx");
+        const lawData = await fetchLawData(input.elaws, { includeAttachedFileContent: needsFig });
 
         law = xmlToEL(lawData.xml) as std.Law;
-        if (figpdf === "render" || figpdf === "embedAndRender") {
-            try {
-                await getPdfjs();
-            } catch {
-                throw new Error(`\
+        if (needsFig) {
+            if (figpdf === "render" || figpdf === "embedAndRender") {
+                try {
+                    await getPdfjs();
+                } catch {
+                    throw new Error(`\
 PDF.js not found.
 If you are using the Lawtext CLI prebuilt: As the current limitation of the prebuilt "lawtext_cli.mjs", it cannot render PDF. Please run Lawtext CLI as an NPM package like: "npx lawtext"
 `);
+                }
             }
+            figDataManager = await FigDataManager.create({ lawXMLStruct: lawData, subsetLaw: law, figPDFType: figpdf });
         }
-        figDataManager = await FigDataManager.create({ lawXMLStruct: lawData, subsetLaw: law, figPDFType: figpdf });
     } else if ("xml" in input) {
         law = xmlToEL(input.xml) as std.Law;
     } else if ("json" in input) {

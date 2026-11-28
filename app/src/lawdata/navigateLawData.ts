@@ -130,7 +130,7 @@ export const navigateLawData = async (
     try {
         onMessage("e-Gov 法令APIから法令XMLを取得しています...");
         console.log(`navigateLawData: fetching law data via e-LAWS API for "${lawIDOrLawNum}"...`);
-        const [loadDataTime, lawXMLStruct] = await util.withTime(elawsLoader.loadLawXMLStructByInfo.bind(storedLoader))(lawIDOrLawNum);
+        const [loadDataTime, lawXMLStruct] = await util.withTime(elawsLoader.loadLawXMLStructByInfo.bind(elawsLoader))(lawIDOrLawNum, { includeAttachedFileContent: true });
         timing.loadData = loadDataTime;
 
         onMessage("法令XMLをパースしています...");
